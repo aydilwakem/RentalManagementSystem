@@ -1,0 +1,36 @@
+1. app.blade.php – Layout for Authenticated Users (Super Admin, Admin, Receptionists) 
+
+pages:
+- dashboard
+- inventory pages
+- roles and permissions 
+
+2. guest.blade.php – Layout for Unauthenticated Users (Super Admin, Admin, Receptionists)
+
+pages: 
+- login
+- register
+- forgot password
+- email verification
+
+3. tenant.blade.php - Layout for Tenants (long-term)
+
+pages: 
+- login
+- register
+- dashboard
+- leases
+- payments
+
+4. visitor.blade.php - Layout for Guests (short-term)
+
+pages:
+- home
+- reservation form
+- events
+- feedback form
+ 
+Question: Bakit visitor ang name ng file? Bakit hindi guest? 
+Answer: Nagamit na kasi ni Jetstream 'yung guest layout mostly sa mga auth pages. Changing them will be time consuming.
+<x-guest-layout> <---- halos lahat ng auth pages meron na nito. 
+
