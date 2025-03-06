@@ -1,0 +1,86 @@
+ROUTE NAMING CONVENTION
+
+uri stands for Uniform Resource Identifier
+s
+prefix: admin
+    uri:   /dashboard                 alias: admin.dashboard
+    uri:   /activities                alias: admin.activities
+    uri:   /add/activity              alias: admin.add-activity
+    uri:   /view/{activity}/activity  alias: admin.view-activity
+    uri:   /edit/{activity}/activity  alias: admin.edit-activity
+
+prefix: guest
+    uri:   /dashboard                alias: guest.dashboard
+    
+prefix: tenant
+    uri:   /dashboard                alias: tenant.dashboard
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Authentication Middleware Group
+Route::middleware([
+'auth:sanctum',
+config('jetstream.auth_session'),
+'verified',
+])->group(function () {
+
+// Dashboard Route
+Route::get('/dashboard', function () {
+return view('admin.dashboard');
+})->name('dashboard');
+
+// Activities Route
+Route::get('/activities', function () {
+return view('admin.activities.view-activities');
+})->name('admin.activities');
+});
+
+
+
+

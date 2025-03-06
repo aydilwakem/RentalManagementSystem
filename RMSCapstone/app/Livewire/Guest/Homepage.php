@@ -4,10 +4,10 @@ namespace App\Livewire\Guest;
 
 use Livewire\Component;
 
-class Counter extends Component
+class Homepage extends Component
 {
     public function render()
     {
-        return view('livewire.guest.counter');
+        return view('livewire.guest.homepage');
     }
 }
