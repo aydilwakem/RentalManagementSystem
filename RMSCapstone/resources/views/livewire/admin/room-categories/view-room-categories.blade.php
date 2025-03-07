@@ -8,7 +8,7 @@
                 <div class="flex items-center justify-between p-4">
                     <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
                         onclick="window.location.href='{{ route('admin.create-room-category') }}'">
-                        + Create Room
+                        + Create Category
                     </button>
                 </div>
 
@@ -47,30 +47,44 @@
                                 <th scope="col" class="px-4 py-3">ID</th>
                                 <th scope="col" class="px-4 py-3">Name</th>
                                 <th scope="col" class="px-4 py-3">Description</th>
+                                <th scope="col" class="px-4 py-3">Amenities</th>
                                 <th scope="col" class="px-4 py-3 text-center">Actions</th>
                                 {{--<th scope="col" class="px-4 py-3">
                                     <span class="sr-only">Actions</span>
                                 </th>--}}
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-b ">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap ">
-                                    1</th>
-                                <td class="px-4 py-3">Cozy Room</td>
-                                <td class="px-4 py-3">Masikip</td>
+                        @foreach($roomCategories as $category)
+                            <tr class="border-b">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $category->id }}
+                                </th>
+                                <td class="px-4 py-3">{{ $category->name }}</td>
+                                <td class="px-4 py-3">{{ $category->description ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">
+                                    @if($category->amenities->count() > 0)
+                                        {{ implode(', ', $category->amenities->pluck('name')->toArray()) }}
+                                    @else
+                                        No Amenities
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer"></i>
+                                    <i class="fas fa-eye text-blue-500 cursor-pointer"
+                                        wire:click="viewCategory({{ $category->id }})">
+                                    </i>
 
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-yellow-500 cursor-pointer"></i>
+                                    <i class="fas fa-edit text-yellow-500 curssor-pointer"></i>
 
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-red-500 cursor-pointer"></i>
+                                    <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                        wire:click="deleteCategory({{ $category->id }})">
+                                    </i>
+
                                 </td>
                             </tr>
-                        </tbody>
+                        @endforeach
                     </table>
                 </div>
 
