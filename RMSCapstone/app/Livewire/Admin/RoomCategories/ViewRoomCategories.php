@@ -24,11 +24,6 @@ class ViewRoomCategories extends Component
         }
     }
 
-    public function viewCategory($categoryId)
-    {
-        return redirect()->route('admin.view-room-category', ['id' => $categoryId]);
-    }
-
     public function render()
     {
         $roomCategories = RoomCategory::all(); // Fetch all room categories

@@ -70,13 +70,14 @@
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer"
-                                        wire:click="viewCategory({{ $category->id }})">
+                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.view-room-category', ['roomCategory' => $category->id]) }}">
                                     </i>
 
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-yellow-500 curssor-pointer"></i>
-
+                                    <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.edit-room-category', ['roomCategory' => $category->id]) }}">
+                                    </i>
                                     <!-- Delete Icon -->
                                     <i class="fas fa-trash-alt text-red-500 cursor-pointer"
                                         wire:click="deleteCategory({{ $category->id }})">

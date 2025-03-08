@@ -1,8 +1,8 @@
 <div class="shadow-lg rounded-lg p-6 bg-white max-w-2xl mx-auto">
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-            <h2 class="mb-4 text-xl font-bold text-gray-900">Add a new Category</h2>
-            <form wire:submit.prevent="saveCategory">
+            <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Category</h2>
+            <form wire:submit.prevent="updateCategory">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                     <!-- Name of Category -->
@@ -44,7 +44,13 @@
                         <input type="file" wire:model="image" id="image"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
-                        <!-- Image Preview (Only if an image is selected and processed) -->
+                        <!-- Existing Image Preview -->
+                        @if ($image)
+                            <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        @endif
+
+
+                        <!-- New Image Preview -->
                         @if ($image && method_exists($image, 'temporaryUrl'))
                             <div class="mt-2">
                                 <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
@@ -55,7 +61,7 @@
 
                 <button type="submit"
                     class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800">
-                    Add Category
+                    Update Category
                 </button>
             </form>
         </div>

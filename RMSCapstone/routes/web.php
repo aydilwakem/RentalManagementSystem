@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
+use App\Livewire\Admin\RoomCategories\EditRoomCategory;
+
+
 
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
@@ -36,10 +39,13 @@ Route::middleware([
         return view('admin.room-categories.create-room-category');
     })->name('admin.create-room-category');
 
-    // Create
-    Route::get('create/room-category', function () {
-        return view('admin.room-categories.create-room-category');
-    })->name('admin.create-room-category');
+    // View
+    Route::get('view/room-category/{roomCategory}', ViewRoomCategory::class)
+        ->name('admin.view-room-category');
+
+    // Edit
+    Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
+        ->name('admin.edit-room-category');
 });
     
     
