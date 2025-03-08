@@ -15,4 +15,4 @@
 
 
 
-navigation-menu.blade.php - navigation menu for stakeholdersS
+navigation-menu.blade.php - navigation menu for stakeholders
