@@ -9,6 +9,4 @@
         @livewire('admin.room-categories.view-room-categories')
     </div>
 
-
-
 </x-app-layout>
