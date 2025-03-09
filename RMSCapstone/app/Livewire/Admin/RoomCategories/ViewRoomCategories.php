@@ -11,7 +11,7 @@ class ViewRoomCategories extends Component
 
     use WithPagination;
 
-    public $sortBy = 'name';
+    public $sortBy = 'id';
     public $sortDir = 'ASC';
 
     public $search = '';
