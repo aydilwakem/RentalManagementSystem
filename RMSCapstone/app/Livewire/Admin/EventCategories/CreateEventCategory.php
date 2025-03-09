@@ -10,7 +10,7 @@ class CreateEventCategory extends Component
 {
     use WithFileUploads;
 
-    public $name;   
+    public $name;
     public $description;
     public $image;
 
@@ -45,7 +45,7 @@ class CreateEventCategory extends Component
         // Redirect back to event categories list
         return redirect()->route('admin.event-categories');
     }
-    
+
     public function render()
     {
         return view('livewire.admin.event-categories.create-event-category');

@@ -37,8 +37,11 @@
 
             <!-- Action Buttons -->
             <div class="flex items-center space-x-4">
+
+                <!-- Edit -->
                 <button type="button"
-                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                    wire:navigate href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
                     <svg aria-hidden="true" class="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
                         <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
@@ -48,6 +51,8 @@
                     </svg>
                     Edit
                 </button>
+
+                <!-- Delete -->
                 <button type="button"
                     class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
                     wire:click="deleteCategory({{ $roomCategory->id }})">
@@ -60,6 +65,7 @@
                     </svg>
                     Delete
                 </button>
+
             </div>
         </div>
     </section>
