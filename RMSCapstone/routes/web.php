@@ -31,6 +31,17 @@ Route::middleware([
         return view('admin.dashboard');
     })->name('dashboard');
 
+    // Rooms Route
+
+    // List
+    Route::get('/rooms', function () {
+        return view('admin.rooms.view-rooms');
+    })->name('admin.rooms');
+
+
+
+
+
     // Room Categories Route
 
     // List
@@ -51,13 +62,13 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
 
-    
+
     // Event Categories Route
 
     //List
     Route::get('/event-categories', function () {
-            return view('admin.event-categories.view-event-categories');
-        })->name('admin.event-categories');
+        return view('admin.event-categories.view-event-categories');
+    })->name('admin.event-categories');
 
     // Create
     Route::get('create/create-event-category', function () {
@@ -92,7 +103,7 @@ Route::middleware([
     // View
     Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
         ->name('admin.view-event-hall');
-   
+
 });
 
     
