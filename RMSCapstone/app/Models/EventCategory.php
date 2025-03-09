@@ -13,4 +13,9 @@ class EventCategory extends Model
 
     protected $fillable = ['name', 'image', 'description'];
 
+    public function scopeSearch($query, $value){
+        $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%{$value}%");
+    }
+
+
 }

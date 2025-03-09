@@ -3,12 +3,25 @@
 namespace App\Livewire\Admin\EventCategories;
 
 use App\Models\EventCategory;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ViewEventCategories extends Component
 {
-    
-   public $eventCategories;
+    use WithPagination;
+
+    #[Url(history:true)]
+    public $search = '';
+
+    #[Url()]
+    public $perPage = 5;
+
+    #[Url(history:true)]
+    public $sortBy='created_at';
+
+    #[Url(history:true)]
+    public $sortDir='DESC';
 
    public function deleteEventCategory($id)
     {
@@ -24,10 +37,28 @@ class ViewEventCategories extends Component
         }
     }
 
+    public function setSortBy($sortByField){
+
+        if($this->sortBy == $sortByField){
+            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            return ;
+        }
+        $this->sortBy = $sortByField;
+        $this->sortDir = "ASC";
+    }
+
     public function render()
     {
-        //fetch all inputs form db
-        $this->eventCategories = EventCategory::all();
-        return view('livewire.admin.event-categories.view-event-categories');
+
+        $eventCategories = EventCategory::query()
+            ->search($this->search)
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
+        return view('livewire.admin.event-categories.view-event-categories', compact('eventCategories'));
+
+        // old fetch code
+        // //fetch all inputs form db
+        // $this->eventCategories = EventCategory::all();
+        // return view('livewire.admin.event-categories.view-event-categories');
     }
 }
