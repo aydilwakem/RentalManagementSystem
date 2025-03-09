@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Admin\EventCategories\EditEventCategory;
+use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
@@ -46,8 +48,29 @@ Route::middleware([
     // Edit
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
-});
+
     
+    // Event Categories Route
+
+    //List
+    Route::get('/event-categories', function () {
+            return view('admin.event-categories.view-event-categories');
+        })->name('admin.event-categories');
+
+    // Create
+    Route::get('create/create-event-category', function () {
+        return view('admin.event-categories.create-event-category');
+    })->name('admin.create-event-category');
+
+    // View
+    Route::get('view/event-category/{eventCategory}', ViewEventCategory::class)
+        ->name('admin.view-event-category');
+
+    // Edit
+    Route::get('edit/event-category/{eventCategory}', EditEventCategory::class)
+        ->name('admin.edit-event-category');    
+});
+
     
     
     
