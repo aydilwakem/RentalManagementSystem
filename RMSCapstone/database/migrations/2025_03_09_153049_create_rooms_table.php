@@ -9,12 +9,12 @@ return new class extends Migration {
     {
         Schema::create('prd_rooms', function (Blueprint $table) {
             $table->id('id'); // Primary Key
-            $table->string('name', 100);
-            $table->unsignedBigInteger('room_category_id'); // Foreign Key reference
-            $table->integer('ideal_guest');
-            $table->integer('max_adults');
-            $table->integer('max_kids');
-            $table->integer('turnover_duration');
+            $table->string('name', 100)->nullable();
+            $table->unsignedBigInteger('room_category_id')->nullable();
+            $table->integer('ideal_guest')->nullable();
+            $table->integer('max_adults')->nullable();
+            $table->integer('max_kids')->nullable();
+            $table->integer('turnover_duration')->nullable();
             $table->enum('room_status', ['Available', 'Booked', 'Out of Service'])->default('Available');
             $table->string('image')->nullable();
             $table->timestamps();

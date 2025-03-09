@@ -6,12 +6,12 @@
 
                 <!-- Create Room Button -->
 
-                {{-- <div class="flex items-center justify-between p-4">
+                <div class="flex items-center justify-between p-4">
                     <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        onclick="window.location.href='{{ route('admin.create-room-category') }}'">
-                        + Create Category
+                        onclick="window.location.href='{{ route('admin.create-room') }}'">
+                        + Create Room
                     </button>
-                </div> --}}
+                </div>
 
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -286,7 +286,8 @@
                                     <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate>
                                     </i>
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate>
+                                    <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
                                     </i>
                                     <!-- Delete Icon -->
                                     <i class="fas fa-trash-alt text-red-500 cursor-pointer"
