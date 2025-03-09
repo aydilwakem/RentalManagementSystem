@@ -2,6 +2,15 @@
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a new Event Category</h2>
+            @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li class="py-1">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             <form wire:submit.prevent="saveEventCategory">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
@@ -25,8 +34,19 @@
                     <!-- Image Upload -->
                     <div class="sm:col-span-2">
                         <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                        <input type="file" wire:model="image" id="image"
+                        <input accept="image/png, image/jpeg" type="file" wire:model="image" id="image"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+
+                        <!-- Error Message -->
+                        @error('image')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+
+                        <!-- Loading Indicator (Shows when file is being uploaded) -->
+                        <div wire:loading wire:target="image" class="mt-2 text-blue-600">
+                            Uploading image...
+                        </div>
+
 
                         <!-- Image Preview (Only if an image is selected and processed) -->
                         @if ($image && method_exists($image, 'temporaryUrl'))
@@ -39,7 +59,8 @@
 
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 mt-5">
+                        class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700"
+                        wire:loading.attr="disabled" wire:target="image">
                         Add Event Category
                     </button>
                 </div>

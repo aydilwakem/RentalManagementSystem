@@ -33,14 +33,22 @@ class EditEventCategory extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'newImage' => 'nullable|image|max:2048',
+            'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);
+
+        // Ensure the image is uploaded properly
+        if ($this->newImage && !$this->newImage->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
 
         // Handle Image Upload
         if ($this->newImage) {
             if ($this->eventCategory->image) {
                 Storage::disk('public')->delete($this->eventCategory->image);
             }
+
+            //save the image in public folder
             $this->image = $this->newImage->store('event-categories', 'public');
         }
 
