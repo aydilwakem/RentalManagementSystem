@@ -20,8 +20,14 @@ class CreateEventCategory extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048', // Max 2MB image
+            'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+
+        // Ensure image upload is complete before storing
+        if ($this->image && !$this->image->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
 
         // Store Image (if uploaded)
         $imagePath = null;

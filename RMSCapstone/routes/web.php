@@ -2,6 +2,8 @@
 
 use App\Livewire\Admin\EventCategories\EditEventCategory;
 use App\Livewire\Admin\EventCategories\ViewEventCategory;
+use App\Livewire\Admin\EventHalls\EditEventHall;
+use App\Livewire\Admin\EventHalls\ViewEventHall;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
@@ -68,7 +70,29 @@ Route::middleware([
 
     // Edit
     Route::get('edit/event-category/{eventCategory}', EditEventCategory::class)
-        ->name('admin.edit-event-category');    
+        ->name('admin.edit-event-category');   
+        
+        
+    // Event Halls
+
+    //List
+    Route::get('/event-halls', function () {
+        return view('admin.event-halls.view-event-halls');
+    })->name('admin.event-halls');
+
+    //Create
+    Route::get('/create/create-event-hall', function(){
+        return view('admin.event-halls.create-event-hall');
+    })->name('admin.create-event-hall');
+
+    // Edit
+    Route::get('edit/event-hall/{eventHall}', EditEventHall::class)
+        ->name('admin.edit-event-hall'); 
+
+    // View
+    Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
+        ->name('admin.view-event-hall');
+   
 });
 
     
