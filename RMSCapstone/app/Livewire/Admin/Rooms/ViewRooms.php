@@ -10,7 +10,7 @@ class ViewRooms extends Component
 {
     use WithPagination;
 
-    public $sortBy = 'id';
+    public $sortBy = 'name';
     public $sortDir = 'ASC';
 
     public $search = '';

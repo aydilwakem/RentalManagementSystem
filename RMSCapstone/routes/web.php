@@ -5,7 +5,6 @@ use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
-use App\Livewire\Admin\Rooms\EditRoom;
 
 
 
@@ -37,14 +36,7 @@ Route::middleware([
         return view('admin.rooms.view-rooms');
     })->name('admin.rooms');
 
-    // Create
-    Route::get('create/room', function () {
-        return view('admin.rooms.create-room');
-    })->name('admin.create-room');
 
-    // Edit
-    Route::get('edit/room/{room}', EditRoom::class)
-        ->name('admin.edit-room');
 
 
 
