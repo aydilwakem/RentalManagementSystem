@@ -77,7 +77,7 @@
                                         @endif
                                     </button>
                                 </th>
-                        
+
                                 <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
                                     <button class="flex items-center">
                                         Name
@@ -104,7 +104,7 @@
                                         @endif
                                     </button>
                                 </th>
-                        
+
                                 <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
                                     <button class="flex items-center">
                                         Description
@@ -131,7 +131,7 @@
                                         @endif
                                     </button>
                                 </th>
-                        
+
                                 <th scope="col" class="px-4 py-3">Amenities</th>
                                 <th scope="col" class="px-4 py-3 text-center">Actions</th>
                             </tr>

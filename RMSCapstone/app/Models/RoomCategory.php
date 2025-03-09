@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Room;
 
 class RoomCategory extends Model
 {
@@ -12,6 +13,11 @@ class RoomCategory extends Model
     protected $table = 'prd_room_categories';
 
     protected $fillable = ['name', 'image', 'description'];
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class, 'room_category_id');
+    }
 
     public function amenities()
     {
