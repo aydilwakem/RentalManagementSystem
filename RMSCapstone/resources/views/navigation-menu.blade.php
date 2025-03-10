@@ -17,39 +17,65 @@
                     </x-nav-link>
                 </div>
 
+                {{-- Rooms --}}
                 <div x-data="{ open: false }" class="relative hidden sm:-my-px sm:ms-10 sm:flex">
                     <!-- Dropdown Button -->
-                    <button @click="open = !open" class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
+                    <button @click="open = !open"
+                        class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
                         <span>{{ __('Rooms') }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform duration-300" :class="{ 'rotate-180': open }" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4 transform transition-transform duration-300" :class="{ 'rotate-180': open }"
+                            viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
                         </svg>
                     </button>
-                
+
                     <!-- Dropdown Menu -->
-                    <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
-                        <x-nav-link href="{{ route('admin.rooms') }}" :active="request()->routeIs('admin.rooms')" class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+                        <x-nav-link href="{{ route('admin.rooms') }}" :active="request()->routeIs('admin.rooms')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Rooms') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('admin.room-categories') }}" :active="request()->routeIs('admin.room-categories')" class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                        <x-nav-link href="{{ route('admin.room-categories') }}"
+                            :active="request()->routeIs('admin.room-categories')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Room Categories') }}
                         </x-nav-link>
                     </div>
                 </div>
-                
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('admin.event-categories') }}"
-                        :active="request()->routeIs('admin.event-categories')">
-                        {{ __('Event Categories') }}
-                    </x-nav-link>
-                </div>
+                {{-- Events Drop Down --}}
+                <div x-data="{ open: false }" class="relative hidden sm:-my-px sm:ms-10 sm:flex">
+                    <!-- Dropdown Button -->
+                    <button @click="open = !open"
+                        class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
+                        <span>{{ __('Events') }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4 transform transition-transform duration-300" :class="{ 'rotate-180': open }"
+                            viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('admin.event-halls') }}"
-                        :active="request()->routeIs('admin.event-halls')">
-                        {{ __('Event Halls') }}
-                    </x-nav-link>
+                    <!-- Events, Halls, and Categories Dropdown Menu -->
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+                        <x-nav-link href="{{ route('admin.event-halls') }}"
+                            :active="request()->routeIs('admin.event-halls')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                            {{ __('Event Halls') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('admin.event-categories') }}"
+                            :active="request()->routeIs('admin.event-categories')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                            {{ __('Event Categories') }}
+                        </x-nav-link>
+                    </div>
                 </div>
 
 
