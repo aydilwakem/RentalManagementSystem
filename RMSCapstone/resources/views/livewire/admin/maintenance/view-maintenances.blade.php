@@ -6,7 +6,8 @@
 
                 <!-- Create Room Button -->
                 <div class="flex items-center justify-between p-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                        onclick="window.location.href='{{ route('admin.create-maintenance') }}'">
                         + Create Maintenance
                     </button>
                 </div>
@@ -223,11 +224,13 @@
                             </td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                 <!-- View Icon -->
-                                <i class="fas fa-eye text-blue-500 cursor-pointer">
+                                <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                    href="{{ route('admin.view-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
                                 </i>
 
                                 <!-- Edit Icon -->
-                                <i class=" fas fa-edit text-blue-500 cursor-pointer">
+                                <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                    href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
                                 </i>
                                 <!-- Delete Icon -->
                                 <i class="fas fa-trash-alt text-red-500 cursor-pointer"

@@ -11,7 +11,12 @@ class Maintenance extends Model
 
     protected $table = 'mnt_maintenance';
 
-    protected $fillable = ['description', 'reported_at', 'resolved_at', 'status'];
+    protected $fillable = ['description', 'reported_at', 'resolved_at', 'priority_status'];
+
+    protected $casts = [
+        'reported_at' => 'date:Y-m-d',
+        'resolved_at' => 'date:Y-m-d',
+    ];
 
     public function scopeSearch($query, $search){
         $query->where('description', 'like', "%{$search}%");

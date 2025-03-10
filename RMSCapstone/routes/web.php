@@ -4,6 +4,8 @@ use App\Livewire\Admin\EventCategories\EditEventCategory;
 use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use App\Livewire\Admin\EventHalls\EditEventHall;
 use App\Livewire\Admin\EventHalls\ViewEventHall;
+use App\Livewire\Admin\Maintenance\EditMaintenance;
+use App\Livewire\Admin\Maintenance\ViewMaintenance;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
@@ -126,6 +128,19 @@ Route::middleware([
     Route::get('/maintenance', function () {
         return view('admin.maintenance.view-maintenances');
     })->name('admin.maintenances');
+
+    //Create
+    Route::get('/create/create-maintenance', function () {
+        return view('admin.maintenance.create-maintenance');
+    })->name('admin.create-maintenance');
+
+    // Edit
+    Route::get('edit/maintenance/{maintenance}', EditMaintenance::class)
+        ->name('admin.edit-maintenance');
+
+    // View
+    Route::get('view/maintenance/{maintenance}', ViewMaintenance::class)
+        ->name('admin.view-maintenance');
 });
 
     
