@@ -13,6 +13,8 @@ use App\Livewire\Admin\Rooms\EditRoom;
 use App\Livewire\Admin\Rooms\ViewRoom;
 use App\Livewire\Admin\Activities\ViewActivity;
 use App\Livewire\Admin\Activities\EditActivity;
+use App\Livewire\Admin\Amenities\ViewAmenity;
+use App\Livewire\Admin\Amenities\EditAmenity;
 
 
 
@@ -37,6 +39,7 @@ Route::middleware([
         return view('admin.dashboard');
     })->name('dashboard');
 
+
     // Rooms Route
 
     // List
@@ -56,6 +59,9 @@ Route::middleware([
     // Edit
     Route::get('edit/room/{room}', EditRoom::class)
         ->name('admin.edit-room');
+
+
+
 
 
     // Room Categories Route
@@ -78,6 +84,31 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
 
+
+
+    // Amenities Route
+
+    // List
+    Route::get('/amenities', function () {
+        return view('admin.amenities.view-amenities');
+    })->name('admin.amenities');
+
+    // Create
+    Route::get('create/amenities', function () {
+        return view('admin.amenities.create-amenity');
+    })->name('admin.create-amenity');
+
+    // View
+    Route::get('view/amenity/{amenity}', ViewAmenity::class)
+        ->name('admin.view-amenity');
+
+    // Edit
+    Route::get('edit/amenity/{amenity}', EditAmenity::class)
+        ->name('admin.edit-amenity');
+
+
+
+
     // Activities Route
 
     //List
@@ -97,6 +128,8 @@ Route::middleware([
     // Edit
     Route::get('edit/activity/{activity}', EditActivity::class)
         ->name('admin.edit-activity');
+
+
 
 
 
@@ -121,6 +154,9 @@ Route::middleware([
         ->name('admin.edit-event-category');
 
 
+
+
+
     // Event Halls
 
     //List
@@ -140,6 +176,8 @@ Route::middleware([
     // View
     Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
         ->name('admin.view-event-hall');
+
+
 
 
     // Maintenance

@@ -39,10 +39,17 @@
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Rooms') }}
                         </x-nav-link>
+
                         <x-nav-link href="{{ route('admin.room-categories') }}"
                             :active="request()->routeIs('admin.room-categories')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Room Categories') }}
+                        </x-nav-link>
+
+                        <x-nav-link href="{{ route('admin.amenities') }}"
+                            :active="request()->routeIs('admin.amenities')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                            {{ __('Amenities') }}
                         </x-nav-link>
                     </div>
                 </div>
