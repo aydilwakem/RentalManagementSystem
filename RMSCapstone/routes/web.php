@@ -154,6 +154,17 @@ Route::middleware([
 
 
 
+    //Events
+
+    // List
+    Route::get('/events', function () {
+        return view('admin.events.view-events');
+    })->name('admin.events');
+
+    // Create
+    Route::get('create/create-event', function () {
+        return view('admin.events.create-event');
+    })->name('admin.create-event');
 
 
     // Event Categories Route

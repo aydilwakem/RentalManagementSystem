@@ -13,6 +13,12 @@ class EventHall extends Model
 
     protected $fillable = ['name', 'image', 'description', 'capacity', 'amount', 'extra_charge_per_hr'];
 
+    
+    public function events()
+    {
+        return $this->hasOne(Event::class, 'event_hall_id');
+    }
+
     public function scopeSearch($query, $search){
         $query->where('name', 'like', "%{$search}%")->orWhere('description', 'like', "%{$search}%");
     }

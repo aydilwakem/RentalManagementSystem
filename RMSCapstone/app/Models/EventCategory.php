@@ -13,6 +13,11 @@ class EventCategory extends Model
 
     protected $fillable = ['name', 'image', 'description'];
 
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'event_category_id');
+    }
+
     public function scopeSearch($query, $value){
         $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%{$value}%");
     }

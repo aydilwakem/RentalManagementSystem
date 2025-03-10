@@ -72,6 +72,10 @@
                     <!-- Events, Halls, and Categories Dropdown Menu -->
                     <div x-show="open" @click.away="open = false"
                         class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+                        <x-nav-link href="{{ route('admin.events') }}" :active="request()->routeIs('admin.events')"
+                            class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
+                            {{ __('Events') }}
+                        </x-nav-link>
                         <x-nav-link href="{{ route('admin.event-halls') }}"
                             :active="request()->routeIs('admin.event-halls')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
