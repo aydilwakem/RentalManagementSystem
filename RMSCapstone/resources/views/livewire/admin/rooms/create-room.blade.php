@@ -1,4 +1,3 @@
-@ -0,0 +1,101 @@
 <div class="shadow-lg rounded-lg p-6 bg-white max-w-2xl mx-auto">
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">

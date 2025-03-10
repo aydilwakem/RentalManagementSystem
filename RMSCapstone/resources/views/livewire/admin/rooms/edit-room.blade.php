@@ -101,16 +101,16 @@
 
                         <div wire:loading wire:target="image" class="mt-2 text-blue-600">Uploading image...</div>
 
-                        @if ($image && method_exists($image, 'temporaryUrl'))
-                            <div class="mt-2">
-                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                            </div>
-                        @elseif ($newImage)
-                            <div class="mt-2">
-                                <img src="{{ asset('storage/' . $newImage) }}"
+                        <!-- Image Preview (Shows New Image if Selected, Otherwise Shows Current Image) -->
+                        <div class="mt-2">
+                            @if ($newImage)
+                                <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                            @elseif ($image)
+                                <img src="{{ asset('storage/' . $image) }}"
                                     class="w-32 h-32 object-cover rounded-lg shadow">
-                            </div>
-                        @endif
+                            @endif
+                        </div>
+
                     </div>
                 </div>
 
