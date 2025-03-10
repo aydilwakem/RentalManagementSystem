@@ -283,7 +283,8 @@
 
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate>
+                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate 
+                                    href="{{ route('admin.view-room', ['room' => $room->id]) }}">
                                     </i>
                                     <!-- Edit Icon -->
                                     <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
