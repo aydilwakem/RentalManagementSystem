@@ -238,10 +238,12 @@
                                 </i>
 
                                 <!-- Edit Icon -->
-                                <i class=" fas fa-edit text-blue-500 cursor-pointer">
+                                <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                    href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
                                 </i>
                                 <!-- Delete Icon -->
-                                <i class="fas fa-trash-alt text-red-500 cursor-pointer">
+                                <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                    wire:click="deleteEvent({{ $eventItem->id }})">
                                 </i>
 
                             </td>

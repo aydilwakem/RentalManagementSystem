@@ -24,6 +24,12 @@ class Event extends Model
         'requests',
     ];
 
+    protected $casts = [
+        'event_date_start' => 'date:Y-m-d',
+        'event_date_end' => 'date:Y-m-d',
+        'event_time' => 'datetime:H:i', // Cast event_time to 'HH:MM' format
+    ];
+
     public function category()
     {
         return $this->belongsTo(EventCategory::class, 'event_category_id');
