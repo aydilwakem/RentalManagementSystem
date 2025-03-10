@@ -13,7 +13,7 @@ class Maintenance extends Model
 
     protected $fillable = ['description', 'reported_at', 'resolved_at', 'status'];
 
-    // public function scopeSearch($query, $search){
-    //     $query->where('description', 'like', "%{$search}%");
-    // }
+    public function scopeSearch($query, $search){
+        $query->where('description', 'like', "%{$search}%");
+    }
 }

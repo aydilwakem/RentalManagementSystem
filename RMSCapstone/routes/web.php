@@ -118,6 +118,14 @@ Route::middleware([
     // View
     Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
         ->name('admin.view-event-hall');
+
+
+    // Maintenance
+
+    //List
+    Route::get('/maintenance', function () {
+        return view('admin.maintenance.view-maintenances');
+    })->name('admin.maintenances');
 });
 
     
