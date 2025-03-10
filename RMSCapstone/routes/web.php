@@ -12,7 +12,7 @@ use App\Livewire\Admin\RoomCategories\EditRoomCategory;
 // Welcome page
 Route::get('/', function () {
     return view('admin.welcome');
-});
+})->name('admin.welcome');
 
 
 // Authentication Middleware Group
@@ -47,10 +47,10 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
 });
-    
-    
-    
-    
+
+
+
+
 
 
 
