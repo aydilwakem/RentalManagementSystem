@@ -11,6 +11,8 @@ use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
 use App\Livewire\Admin\Rooms\EditRoom;
 use App\Livewire\Admin\Rooms\ViewRoom;
+use App\Livewire\Admin\Activities\ViewActivity;
+use App\Livewire\Admin\Activities\EditActivity;
 
 
 
@@ -56,9 +58,6 @@ Route::middleware([
         ->name('admin.edit-room');
 
 
-
-
-
     // Room Categories Route
 
     // List
@@ -78,6 +77,27 @@ Route::middleware([
     // Edit
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
+
+    // Activities Route
+
+    //List
+    Route::get('/activities', function () {
+        return view('admin.activities.view-activities');
+    })->name('admin.activities');
+
+    // Create
+    Route::get('create/activity', function () {
+        return view('admin.activities.create-activity');
+    })->name('admin.create-activity');
+
+    // View
+    Route::get('view/activity/{activity}', ViewActivity::class)
+        ->name('admin.view-activity');
+
+    // Edit
+    Route::get('edit/activity/{activity}', EditActivity::class)
+        ->name('admin.edit-activity');
+
 
 
     // Event Categories Route

@@ -78,6 +78,14 @@
                     </div>
                 </div>
 
+                 {{-- Activities --}}
+                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link href="{{ route('admin.activities') }}"
+                        :active="request()->routeIs('admin.activities')">
+                        {{ __('Activities') }}
+                    </x-nav-link>
+                </div>
+
                 {{-- Maintenance --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.maintenances') }}"
