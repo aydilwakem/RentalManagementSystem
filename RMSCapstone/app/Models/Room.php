@@ -25,6 +25,11 @@ class Room extends Model
         return $this->belongsTo(RoomCategory::class, 'room_category_id');
     }
 
+    public function roomRates()
+    {
+        return $this->hasMany(RoomRate::class, 'room_id');
+    }
+
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%");

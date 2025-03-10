@@ -15,6 +15,8 @@ use App\Livewire\Admin\Activities\ViewActivity;
 use App\Livewire\Admin\Activities\EditActivity;
 use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
+use App\Livewire\Admin\RoomRates\ViewRoomRate;
+use App\Livewire\Admin\RoomRates\EditRoomRate;
 
 
 
@@ -83,6 +85,27 @@ Route::middleware([
     // Edit
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
+
+
+    // Room Rates Route
+
+    // List
+    Route::get('/room-rates', function () {
+        return view('admin.room-rates.view-room-rates');
+    })->name('admin.room-rates');
+
+    // Create
+    Route::get('create/room-rate', function () {
+        return view('admin.room-rates.create-room-rate');
+    })->name('admin.create-room-rate');
+
+    // View
+    Route::get('view/room-rate/{roomRate}', ViewRoomRate::class)
+        ->name('admin.view-room-rate');
+
+    // Edit
+    Route::get('edit/room-rate/{roomRate}', EditRoomRate::class)
+        ->name('admin.edit-room-rate');
 
 
 
