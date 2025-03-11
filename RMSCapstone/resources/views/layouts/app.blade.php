@@ -22,25 +22,32 @@
 </head>
 
 <body class="font-sans antialiased">
+
     <x-banner />
 
-    <div class="min-h-screen bg-gray-100">
-        @livewire('navigation-menu')
+    <div class="min-h-screen bg-gray-100 flex" x-data="{ sidebarOpen: true }">
+        <!-- Sidebar -->
+        <livewire:sidebar />
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col transition-all duration-300"
+        :class="sidebarOpen ? 'ml-64' : 'ml-16'">
 
         <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
+        @livewire('navigation-menu')
+            @if (isset($header))
+                <header class="bg-white shadow w-full">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
-
+            <!-- Page Content -->
+            <main class="p-6">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 
     @stack('modals')
