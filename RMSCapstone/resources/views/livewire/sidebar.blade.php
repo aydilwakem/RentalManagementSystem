@@ -81,63 +81,131 @@
                     </span>
                 </a>
             </li>
-            <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
+            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
+                <!-- Dropdown Toggle -->
+                <button @click="openDropdown = !openDropdown"
+                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
                     <i class="fas fa-calendar-check"></i>
                     <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
                         :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
                         Reservations
                     </span>
-                </a>
+
+                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
+                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
+                    </i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
+                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
+                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
+                    <li>
+                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
+                            New Reservations
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
+                            Confirmed Reservations
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
+                            On-Going Reservations
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
+            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
+                <!-- Dropdown Toggle -->
+                <button @click="openDropdown = !openDropdown"
+                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
                     <i class="fas fa-bed"></i>
                     <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
                         :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
                         Rooms
                     </span>
-                </a>
+
+                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
+                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
+                    </i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
+                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
+                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
+                    <li>
+                        <a href="{{route('admin.rooms')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Rooms
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('admin.room-categories')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Room Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('admin.amenities')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Amenities
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-list"></i>
+            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
+                <!-- Dropdown Toggle -->
+                <button @click="openDropdown = !openDropdown"
+                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
+                    <i class="fas fa-calendar-check"></i>
                     <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
                         :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Room Categories
+                        Events
                     </span>
-                </a>
+
+                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
+                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
+                    </i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
+                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
+                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
+                    <li>
+                        <a href="{{route('admin.events')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Events
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('admin.event-halls')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Event Halls
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('admin.event-categories')}}" class="block px-5 py-2 hover:bg-green-900">
+                            Event Categories
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-building"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Event Halls
-                    </span>
-                </a>
-            </li>
-            <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-layer-group"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Event Categories
-                    </span>
-                </a>
-            </li>
-            <li class="relative flex items-center">
-                <a href="{{ route('admin.room-categories') }}"
+                <a href="#"
                     class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
                     <i class="fas fa-person-swimming"></i>
                     <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
                         :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
                         Activities
+                    </span>
+                </a>
+            </li>
+            <li class="relative flex items-center">
+                <a href="#"
+                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
+                    <i class="fas fa-broom"></i>
+                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
+                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
+                        Maintenance
                     </span>
                 </a>
             </li>
