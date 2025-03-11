@@ -6,7 +6,6 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\RoomCategory;
 use App\Models\Amenity;
-use Illuminate\Support\Facades\Storage;
 
 class CreateRoomCategory extends Component
 {
@@ -31,9 +30,15 @@ class CreateRoomCategory extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048', // Max 2MB image
+            'image' => 'nullable|image|max:1024', // Max 1MB image
             'selectedAmenities' => 'array',
         ]);
+
+        // Ensure image upload is complete before storing
+        if ($this->image && !$this->image->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
 
         // Store Image (if uploaded)
         $imagePath = null;
@@ -60,6 +65,7 @@ class CreateRoomCategory extends Component
         // Redirect back to room categories list
         return redirect()->route('admin.room-categories');
     }
+
 
     public function render()
     {

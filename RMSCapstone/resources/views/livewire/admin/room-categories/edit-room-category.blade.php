@@ -41,28 +41,39 @@
                     <!-- Image Upload -->
                     <div class="sm:col-span-2">
                         <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                        <input type="file" wire:model="image" id="image"
+                        <input accept="image/png, image/jpeg" type="file" wire:model="newImage" id="image"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
-                        <!-- Existing Image Preview -->
-                        @if ($image)
-                            <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        @endif
+                        <!-- Error Message -->
+                        @error('newImage')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror 
 
+                        <!-- Loading Indicator (Shows when file is being uploaded) -->
+                        <div wire:loading wire:target="newImage" class="mt-2 text-blue-600">
+                            Uploading image...
+                        </div>
 
-                        <!-- New Image Preview -->
-                        @if ($image && method_exists($image, 'temporaryUrl'))
-                            <div class="mt-2">
-                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                            </div>
-                        @endif
+                        <!-- Image Preview (Shows New Image if Selected, Otherwise Shows Current Image) -->
+                        <div class="mt-2">
+                            @if ($newImage)
+                                <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                            @elseif ($image)
+                                <img src="{{ asset('storage/' . $image) }}"
+                                    class="w-32 h-32 object-cover rounded-lg shadow">
+                            @endif
+                        </div>
                     </div>
+
                 </div>
 
+                <!-- Submit Button -->
                 <button type="submit"
-                    class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800">
+                    class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700"
+                    wire:loading.attr="disabled" wire:target="newImage">
                     Update Category
                 </button>
+
             </form>
         </div>
     </section>

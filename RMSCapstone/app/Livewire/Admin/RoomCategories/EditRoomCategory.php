@@ -37,15 +37,23 @@ class EditRoomCategory extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'newImage' => 'nullable|image|max:2048',
+            'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
             'selectedAmenities' => 'array',
         ]);
 
+        // Ensure the image is uploaded properly
+        if ($this->newImage && !$this->newImage->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
+
         // Handle Image Upload
         if ($this->newImage) {
+            // Delete old image if it exists
             if ($this->roomCategory->image) {
                 Storage::disk('public')->delete($this->roomCategory->image);
             }
+            // Save new image
             $this->image = $this->newImage->store('room-categories', 'public');
         }
 
@@ -53,7 +61,7 @@ class EditRoomCategory extends Component
         $this->roomCategory->update([
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->image,
+            'image' => $this->image, // Ensure image path is updated
         ]);
 
         // Sync selected amenities
@@ -63,6 +71,7 @@ class EditRoomCategory extends Component
 
         return redirect()->route('admin.room-categories');
     }
+
 
     public function render()
     {

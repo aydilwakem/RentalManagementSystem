@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Room;
 
 class RoomCategory extends Model
 {
@@ -13,8 +14,18 @@ class RoomCategory extends Model
 
     protected $fillable = ['name', 'image', 'description'];
 
+    public function rooms()
+    {
+        return $this->hasMany(Room::class, 'room_category_id');
+    }
+
     public function amenities()
     {
         return $this->belongsToMany(Amenity::class, 'room_category_amenity');
+    }
+
+    public function scopeSearch($query, $value)
+    {
+        $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%($value)%");
     }
 }

@@ -41,8 +41,18 @@
                     <!-- Image Upload -->
                     <div class="sm:col-span-2">
                         <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                        <input type="file" wire:model="image" id="image"
+                        <input accept="image/png, image/jpeg" type="file" wire:model="image" id="image"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+
+                        <!-- Error Message -->
+                        @error('image')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror 
+
+                        <!-- Loading Indicator (Shows when file is being uploaded) -->
+                        <div wire:loading wire:target="image" class="mt-2 text-blue-600">
+                            Uploading image...
+                        </div>
 
                         <!-- Image Preview (Only if an image is selected and processed) -->
                         @if ($image && method_exists($image, 'temporaryUrl'))
@@ -54,9 +64,11 @@
                 </div>
 
                 <button type="submit"
-                    class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800">
+                    class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700"
+                    wire:loading.attr="disabled" wire:target="image">
                     Add Category
                 </button>
+
             </form>
         </div>
     </section>

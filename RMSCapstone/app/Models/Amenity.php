@@ -17,4 +17,9 @@ class Amenity extends Model
     {
         return $this->belongsToMany(RoomCategory::class, 'prd_room_category_amenities');
     }
+
+    public function scopeSearch($query, $value)
+    {
+        $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%{$value}%");
+    }
 }
