@@ -218,8 +218,10 @@
                                 {{ $maintenanceItem->id }}
                             </th>
                             <td class="px-4 py-3"> {{ $maintenanceItem->description }}</td>
-                            <td class="px-4 py-3"> {{ $maintenanceItem->reported_at }} </td>
-                            <td class="px-4 py-3"> {{ $maintenanceItem->resolved_at }}</td>
+                            <td class="px-4 py-3"> {{
+                                \Carbon\Carbon::parse($maintenanceItem->reported_at)->format('Y-m-d')}} </td>
+                            <td class="px-4 py-3"> {{
+                                \Carbon\Carbon::parse($maintenanceItem->resolved_at)->format('Y-m-d')}} </td>
                             <td class="px-4 py-3">
                                 @if($maintenanceItem->priority_status === 'planned')
                                 <span class="px-2 py-1 bg-green-500 text-white rounded">Planned</span>

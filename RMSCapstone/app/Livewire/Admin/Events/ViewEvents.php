@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Events;
 
 use App\Models\Event;
+use Carbon\Carbon;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,7 +25,6 @@ class ViewEvents extends Component
     public $sortDir='DESC';
 
     public $eventStatus = ''; 
-
 
     public function deleteEvent($id)
     {

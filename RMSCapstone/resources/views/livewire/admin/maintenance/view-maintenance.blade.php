@@ -15,7 +15,7 @@
             <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Reported At</h3>
                 <p class="font-light text-gray-500">
-                    {{ $maintenance->reported_at }}
+                    {{\Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d')}}
                 </p>
             </div>
 
@@ -23,7 +23,7 @@
             <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Resolved At</h3>
                 <p class="font-light text-gray-500">
-                    {{ $maintenance->reported_at }}
+                    {{\Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d')}}
                 </p>
             </div>
 
