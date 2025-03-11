@@ -29,4 +29,9 @@ class RoomRate extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+
+    public function scopeSearch($query, $value)
+    {
+        $query->where('name', 'like', "%{$value}%");
+    }
 }

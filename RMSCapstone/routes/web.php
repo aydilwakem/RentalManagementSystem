@@ -88,7 +88,6 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category');
 
-
     // Room Rates Route
 
     // List

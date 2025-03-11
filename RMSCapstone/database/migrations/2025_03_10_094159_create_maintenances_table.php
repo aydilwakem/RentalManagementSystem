@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamp('reported_at')->nullable();
             $table->timestamp('resolved_at')->nullable();
-           //priority id
+            //priority id
             $table->enum('priority_status', ['emergency', 'urgent', 'routine', 'planned'])->default('planned');
             $table->timestamps();
         });
