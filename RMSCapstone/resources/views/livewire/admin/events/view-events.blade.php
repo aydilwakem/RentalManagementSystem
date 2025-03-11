@@ -12,6 +12,15 @@
                     </button>
                 </div>
 
+                {{-- Display Session Message --}}
+                @if (session('message'))
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
+                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('message') }}
+                </div>
+                @endif
+
                 {{-- Search Bar --}}
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -219,9 +228,12 @@
                             <td class="px-4 py-3"> {{ $eventItem->eventHall->name }} </td>
                             <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
                             <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->event_date_start }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->event_date_end }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->event_time }} </td>
+                            <td class="px-4 py-3"> {{
+                                \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d')}} </td>
+                            <td class="px-4 py-3"> {{
+                                \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d')}} </td>
+                            <td class="px-4 py-3"> {{ \Carbon\Carbon::parse($eventItem->event_time)->format('h:i A') }}
+                            </td>
                             <td class="px-4 py-3"> {{ $eventItem->capacity }} </td>
                             <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>
                             <td class="px-4 py-3">
@@ -235,11 +247,12 @@
                             </td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                 <!-- View Icon -->
-                                <i class="fas fa-eye text-blue-500 cursor-pointer">
+                                <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                    href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
                                 </i>
 
                                 <!-- Edit Icon -->
-                                <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                <i class=" fas fa-edit text-green-500 cursor-pointer" wire:navigate
                                     href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
                                 </i>
                                 <!-- Delete Icon -->

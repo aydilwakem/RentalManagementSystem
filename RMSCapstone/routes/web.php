@@ -16,6 +16,7 @@ use App\Livewire\Admin\Activities\EditActivity;
 use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
 use App\Livewire\Admin\Events\EditEvent;
+use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
 
@@ -166,6 +167,10 @@ Route::middleware([
     Route::get('create/create-event', function () {
         return view('admin.events.create-event');
     })->name('admin.create-event');
+
+    // View
+    Route::get('view/event/{event}', ViewEvent::class)
+        ->name('admin.view-event');
 
     // Edit
     Route::get('edit/event/{event}', EditEvent::class)
