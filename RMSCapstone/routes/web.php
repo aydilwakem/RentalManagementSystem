@@ -28,7 +28,7 @@ use App\Livewire\Admin\RoomRates\EditRoomRate;
 // Welcome page
 Route::get('/', function () {
     return view('admin.welcome');
-});
+})->name('admin.welcome');
 
 
 // Authentication Middleware Group
@@ -245,9 +245,12 @@ Route::middleware([
         ->name('admin.view-maintenance');
 });
 
-    
-    
-    
+
+
+
+
+
+
 
 
 
