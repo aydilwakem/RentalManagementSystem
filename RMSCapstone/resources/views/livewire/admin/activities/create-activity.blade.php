@@ -2,15 +2,18 @@
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a new Activity</h2>
+
+            {{-- Display Validation Errors --}}
             @if ($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li class="py-1">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li class="py-1">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
+
             <form wire:submit.prevent="saveActivity">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
@@ -55,7 +58,7 @@
 
                         <!-- Error Message -->
                         @error('image')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
                         <!-- Loading Indicator (Shows when file is being uploaded) -->
@@ -65,9 +68,9 @@
 
                         <!-- Image Preview (Only if an image is selected and processed) -->
                         @if ($image && method_exists($image, 'temporaryUrl'))
-                            <div class="mt-2">
-                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                            </div>
+                        <div class="mt-2">
+                            <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        </div>
                         @endif
                     </div>
                 </div>

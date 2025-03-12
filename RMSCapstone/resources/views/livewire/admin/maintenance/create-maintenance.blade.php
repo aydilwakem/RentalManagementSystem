@@ -2,6 +2,8 @@
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Maintenance</h2>
+
+            {{-- Display Validation Errors --}}
             @if ($errors->any())
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 <ul>
