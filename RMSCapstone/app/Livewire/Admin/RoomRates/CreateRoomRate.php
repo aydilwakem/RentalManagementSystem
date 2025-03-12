@@ -34,13 +34,13 @@ class CreateRoomRate extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'room_id' => 'required|exists:prd_rooms,id',
-            'start_date' => 'required|integer|min:1',
-            'end_date' => 'required|integer|min:1',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
             'amount' => 'required|integer|min:0',
             'extra_person_charge' => 'required|numeric|min:100|max:50000.00',
             'extended_stay_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
-            'description' => 'required|string',
-            'rate_type' => 'required|in:Weekdays, Weekend',
+            'description' => 'nullable|string',
+            'rate_type' => 'nullable|in:Weekdays,Weekend',
         ]);
 
 
