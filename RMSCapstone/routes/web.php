@@ -19,6 +19,8 @@ use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
+use App\Livewire\Admin\Users\ViewUSer;
+use App\Livewire\Admin\Users\EditUser;
 
 
 
@@ -42,6 +44,27 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
+
+
+    // Users Route
+
+    // List
+    Route::get('/manage-users', function () {
+        return view('admin.users.view-users');
+    })->name('admin.manage-users');
+
+    // Create
+    Route::get('create/user', function () {
+        return view('admin.users.create-user');
+    })->name('admin.create-user');
+
+    // View
+    Route::get('view/user/{user}', ViewUser::class)
+        ->name('admin.view-user');
+
+    // Edit
+    Route::get('edit/user/{user}', EditUser::class)
+        ->name('admin.edit-user');
 
 
     // Rooms Route
