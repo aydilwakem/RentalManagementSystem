@@ -1,7 +1,7 @@
-<div class="shadow-lg rounded-lg p-6 bg-white max-w-2xl mx-auto">
-    <section class="bg-white">
-        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-            <h2 class="mb-4 text-xl font-bold text-gray-900">Add a new Category</h2>
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+    <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
+        <div class="mx-auto max-w-2xl lg:py-2 ">
+            <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Category</h2>
             <form wire:submit.prevent="saveCategory">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
@@ -17,7 +17,7 @@
                     <div class="sm:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                         <div class="grid grid-cols-2 gap-2">
-                            @foreach($amenities as $amenity)
+                            @foreach ($amenities as $amenity)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedAmenities" value="{{ $amenity->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
@@ -47,7 +47,7 @@
                         <!-- Error Message -->
                         @error('image')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror 
+                        @enderror
 
                         <!-- Loading Indicator (Shows when file is being uploaded) -->
                         <div wire:loading wire:target="image" class="mt-2 text-blue-600">
@@ -57,19 +57,22 @@
                         <!-- Image Preview (Only if an image is selected and processed) -->
                         @if ($image && method_exists($image, 'temporaryUrl'))
                             <div class="mt-2">
-                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                                <img src="{{ $image->temporaryUrl() }}"
+                                    class="w-32 h-32 object-cover rounded-lg shadow">
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <button type="submit"
-                    class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700"
-                    wire:loading.attr="disabled" wire:target="image">
-                    Add Category
-                </button>
-
+                <div class="flex justify-between items-center space-y-2 mt-6">
+                    <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                        Cancel
+                    </x-button>
+                    <x-button wire:loading.attr="disabled" wire:target="image">
+                        Add Category
+                    </x-button>
+                </div>
             </form>
         </div>
-    </section>
+    </div>
 </div>

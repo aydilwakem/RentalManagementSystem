@@ -2,7 +2,7 @@
     x-bind:class="sidebarOpen ? 'w-64' : 'w-16'">
 
     {{-- #TODO: make sidebar save its current state when switching pages --}}
-    <div class="flex p-4">
+    <div class="flex p-4 border-b">
         <!-- Logo -->
         <div class="flex items-center space-x-2 cursor-pointer" @click="sidebarOpen = !sidebarOpen">
             <button class="focus:outline-none relative left-[-4px]">
@@ -66,9 +66,6 @@
             </svg>
         </button>
     </div>
-
-    <hr>
-
     <!-- Sidebar Content -->
     <div class="mt-4">
         <ul class="space-y-3">
@@ -210,8 +207,5 @@
                 </a>
             </li>
         </ul>
-
-
     </div>
-
 </div>

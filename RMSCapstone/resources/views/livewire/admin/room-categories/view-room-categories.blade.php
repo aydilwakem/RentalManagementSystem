@@ -1,17 +1,18 @@
-<div>
-    <section class="mt-10">
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+    @if ($roomCategories->isNotEmpty())
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Room Categories') }}
+            </h2>
+        </x-slot>
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-            <!-- Start coding here -->
-            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
-
-                <!-- Create Room Button -->
-                <div class="flex items-center justify-between p-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        onclick="window.location.href='{{ route('admin.create-room-category') }}'">
-                        + Create Category
-                    </button>
-                </div>
-
+            <!-- Create Room Button -->
+            <div class="flex items-center justify-between p-4">
+                <x-button type="button" icon="fas fa-plus" href="{{ route('admin.create-room-category') }}">
+                    Create Category
+                </x-button>
+            </div>
+            <div class=" bg-white-500 relative  sm:rounded-lg overflow-hidden border shadow-md">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">
@@ -46,10 +47,8 @@
 
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-
-
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-sm text-gray-700 bg-gray-200">
                             <tr>
                                 <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
                                     <button class="flex items-center">
@@ -61,15 +60,17 @@
                                                     d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            @if ($sortDir == 'ASC')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                                 </svg>
                                             @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                                 </svg>
@@ -88,15 +89,17 @@
                                                     d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            @if ($sortDir == 'ASC')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                                 </svg>
                                             @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                                 </svg>
@@ -115,15 +118,17 @@
                                                     d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            @if ($sortDir == 'ASC')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                                 </svg>
                                             @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                                 </svg>
@@ -131,15 +136,12 @@
                                         @endif
                                     </button>
                                 </th>
-
                                 <th scope="col" class="px-4 py-3">Amenities</th>
                                 <th scope="col" class="px-4 py-3 text-center">Actions</th>
                             </tr>
                         </thead>
 
-
-
-                        @foreach($roomCategories as $roomCategory)
+                        @foreach ($roomCategories as $roomCategory)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $roomCategory->id }}
@@ -147,24 +149,26 @@
                                 <td class="px-4 py-3">{{ $roomCategory->name }}</td>
                                 <td class="px-4 py-3">{{ $roomCategory->description ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">
-                                    @if($roomCategory->amenities->count() > 0)
+                                    @if ($roomCategory->amenities->count() > 0)
                                         {{ implode(', ', $roomCategory->amenities->pluck('name')->toArray()) }}
                                     @else
                                         No Amenities
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                    <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                        wire:navigate
                                         href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
 
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                    <i class="fas fa-edit text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        wire:navigate
                                         href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                         wire:click="deleteCategory({{ $roomCategory->id }})">
                                     </i>
 
@@ -177,7 +181,7 @@
                 {{-- Per Page --}}
                 <div class="py-4 px-3">
                     <div class="flex ">
-                        <div class="flex space-x-4 items-center mb-3">
+                        <div class="flex space-x-2 items-center mb-3">
                             <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
                             <select wire:model.live='perPage'
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
@@ -193,5 +197,15 @@
                 </div>
             </div>
         </div>
-    </section>
+    @else
+        <!-- Empty Table Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-room-category') }}" icon="fas fa-plus">
+                Create Room
+            </x-button>
+
+        </div>
+    @endif
+
 </div>

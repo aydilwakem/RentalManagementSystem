@@ -76,7 +76,7 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
-                    <div wire:loading wire:target="image" class="mt-2 text-blue-600">
+                    <div wire:loading wire:target="image" class="mt-2 text-gray-600">
                         Uploading image...
                     </div>
 
@@ -89,7 +89,7 @@
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" class="bg-white !text-gray-800 hover:!bg-gray-300">
+                <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
                 <x-button wire:loading.attr="disabled" wire:target="image">
