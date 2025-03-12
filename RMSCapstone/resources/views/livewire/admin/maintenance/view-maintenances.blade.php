@@ -89,6 +89,7 @@
                                         @endif
                                     </button>
                                 </th>
+                                <th scope="col">Name</th>
                                 <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
                                     <button class="flex items-center">
                                         DESCRIPTION
@@ -216,6 +217,9 @@
                         <tr class="border-b">
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $maintenanceItem->id }}
+                            </th>
+                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                {{ $maintenanceItem->name }}
                             </th>
                             <td class="px-4 py-3"> {{ $maintenanceItem->description }}</td>
                             <td class="px-4 py-3"> {{

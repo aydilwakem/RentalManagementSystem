@@ -8,6 +8,7 @@ use Livewire\Component;
 class CreateMaintenance extends Component
 {
 
+    public $name;
     public $description;
     public $reported_at;
     public $resolved_at;
@@ -15,9 +16,9 @@ class CreateMaintenance extends Component
 
     public function saveMaintenance()
     {
-       
         // Validate form input 
-        $this->validate([   
+        $this->validate([  
+            'name' =>  'required|string',
             'description' => 'required|string',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
@@ -27,6 +28,7 @@ class CreateMaintenance extends Component
 
         // Create Maintenance
         $maintenance = Maintenance::create([
+            'name' => $this->name,
             'description' => $this->description,
             'reported_at' => $this->reported_at,
             'resolved_at' => $this->resolved_at,
@@ -34,7 +36,7 @@ class CreateMaintenance extends Component
         ]);
 
         // Reset form fields
-        $this->reset(['description', 'reported_at', 'resolved_at', 'priority_status']);
+        $this->reset(['name', 'description', 'reported_at', 'resolved_at', 'priority_status']);
 
         // Flash message for success
         session()->flash('message', 'Maintenance successfully created!');

@@ -11,7 +11,7 @@ class Maintenance extends Model
 
     protected $table = 'mnt_maintenance';
 
-    protected $fillable = ['description', 'reported_at', 'resolved_at', 'priority_status'];
+    protected $fillable = ['name','description', 'reported_at', 'resolved_at', 'priority_status'];
 
     protected $casts = [
         'reported_at' => 'date:Y-m-d',

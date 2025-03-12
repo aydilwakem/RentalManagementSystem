@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('mnt_maintenance', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->timestamp('reported_at')->nullable();
-            $table->timestamp('resolved_at')->nullable();
-            //priority id
-            $table->enum('priority_status', ['emergency', 'urgent', 'routine', 'planned'])->default('planned');
+            $table->date('reported_at')->nullable();
+            $table->date('resolved_at')->nullable();
+            $table->enum('priority_status', ['emergency', 'urgent', 'routine', 'planned'])->default('planned'); // Priority status with default
             $table->timestamps();
         });
     }
