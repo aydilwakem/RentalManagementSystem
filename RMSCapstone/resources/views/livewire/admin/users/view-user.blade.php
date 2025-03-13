@@ -25,6 +25,28 @@
             </div>
 
             <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Role</h3>
+                <ul>
+                    @forelse($userRoles as $role)
+                        <li>{{ $role }}</li>
+                    @empty
+                        <li class="text-gray-500">No roles assigned.</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Permissions</h3>
+                <ul>
+                    @forelse($userPermissions as $permission)
+                        <li>{{ $permission }}</li>
+                    @empty
+                        <li class="text-gray-500">No permissions assigned.</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Email Verified At</h3>
                 <p class="font-light text-gray-500">{{ $user->email_verified_at ?? 'Not Verified' }}</p>
             </div>

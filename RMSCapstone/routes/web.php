@@ -21,8 +21,10 @@ use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
 use App\Livewire\Admin\Settings\Payments\EditPayment;
 use App\Livewire\Admin\Settings\Payments\ViewPayment;
-use App\Livewire\Admin\Users\ViewUSer;
+use App\Livewire\Admin\Users\ViewUser;
 use App\Livewire\Admin\Users\EditUser;
+use App\Livewire\Admin\Roles\ViewRole;
+use App\Livewire\Admin\Roles\EditRole;
 
 
 
@@ -67,6 +69,25 @@ Route::middleware([
     // Edit
     Route::get('edit/user/{user}', EditUser::class)
         ->name('admin.edit-user');
+
+
+
+    // Roles Route
+
+    // Create
+    Route::get('create/role', function () {
+        return view('admin.roles.create-role');
+    })->name('admin.create-role');
+
+    // View
+    Route::get('view/role/{role}', ViewRole::class)
+        ->name('admin.view-role');
+
+    // Edit
+    Route::get('edit/role/{role}', EditRole::class)
+        ->name('admin.edit-role');
+
+
 
 
     // Rooms Route

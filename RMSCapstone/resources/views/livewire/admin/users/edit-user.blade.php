@@ -28,6 +28,18 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="">
                     </div>
+
+                    <!-- Role Selection -->
+                    <div class="sm:col-span-2">
+                        <label for="role" class="block mb-2 text-sm font-medium text-gray-900">Select Role</label>
+                        <select id="role" wire:model="selectedRole"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            <option value="" disabled>Select a role</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
