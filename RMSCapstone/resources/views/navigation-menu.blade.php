@@ -19,6 +19,7 @@
 
                 {{-- Rooms --}}
                 <div x-data="{ open: false }" class="relative hidden sm:-my-px sm:ms-10 sm:flex">
+                    @can('room-list')
                     <!-- Dropdown Button -->
                     <button @click="open = !open"
                         class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
@@ -31,32 +32,47 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
+                    @endcan
 
                     <!-- Dropdown Menu -->
                     <div x-show="open" @click.away="open = false"
                         class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+
+                        <!-- Rooms -->
+                        @can('room-list')
                         <x-nav-link href="{{ route('admin.rooms') }}" :active="request()->routeIs('admin.rooms')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Rooms') }}
                         </x-nav-link>
-
+                        @endcan
+                        
+                        <!-- Room Categories -->
+                        @can('room-category-list')
                         <x-nav-link href="{{ route('admin.room-categories') }}"
                             :active="request()->routeIs('admin.room-categories')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Room Categories') }}
                         </x-nav-link>
-
+                        @endcan
+                        
+                        <!-- Room Rates -->
+                        @can('room-rate-list')
                         <x-nav-link href="{{ route('admin.room-rates') }}"
                             :active="request()->routeIs('admin.room-rates')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Room Rates') }}
                         </x-nav-link>
+                        @endcan
 
+                        <!-- Amenities -->
+                        @can('amenity-list')
                         <x-nav-link href="{{ route('admin.amenities') }}"
                             :active="request()->routeIs('admin.amenities')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Amenities') }}
                         </x-nav-link>
+                        @endcan
+                        
                     </div>
                 </div>
 
@@ -110,13 +126,21 @@
                     </x-nav-link>
                 </div>
 
-                {{-- Manage Users
+                 {{-- Manage Users --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.manage-users') }}"
                         :active="request()->routeIs('admin.manage-users')">
                         {{ __('Manage Users') }}
                     </x-nav-link>
-                </div> --}}
+                </div> 
+
+                {{-- Settings - Payment Method --}}
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link href="{{ route('admin.payments') }}"
+                        :active="request()->routeIs('admin.payments')">
+                        {{ __('Payment Methods') }}
+                    </x-nav-link>
+                </div> 
 
 
             </div>

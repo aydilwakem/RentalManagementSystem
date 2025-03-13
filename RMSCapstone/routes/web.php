@@ -95,20 +95,20 @@ Route::middleware([
     // List
     Route::get('/rooms', function () {
         return view('admin.rooms.view-rooms');
-    })->name('admin.rooms');
+    })->name('admin.rooms')->middleware('can:room-list');
 
     // Create
     Route::get('create/room', function () {
         return view('admin.rooms.create-room');
-    })->name('admin.create-room');
+    })->name('admin.create-room')->middleware('can:room-create');
 
     // View
     Route::get('view/room/{room}', ViewRoom::class)
-        ->name('admin.view-room');
+        ->name('admin.view-room')->middleware('can:room-view');
 
     // Edit
     Route::get('edit/room/{room}', EditRoom::class)
-        ->name('admin.edit-room');
+        ->name('admin.edit-room')->middleware('can:room-edit');
 
 
 
@@ -119,20 +119,20 @@ Route::middleware([
     // List
     Route::get('/room-categories', function () {
         return view('admin.room-categories.view-room-categories');
-    })->name('admin.room-categories');
+    })->name('admin.room-categories')->middleware('can:room-category-list');
 
     // Create
     Route::get('create/room-category', function () {
         return view('admin.room-categories.create-room-category');
-    })->name('admin.create-room-category');
+    })->name('admin.create-room-category')->middleware('can:room-category-create');
 
     // View
     Route::get('view/room-category/{roomCategory}', ViewRoomCategory::class)
-        ->name('admin.view-room-category');
+        ->name('admin.view-room-category')->middleware('can:room-category-view');
 
     // Edit
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
-        ->name('admin.edit-room-category');
+        ->name('admin.edit-room-category')->middleware('can:room-category-edit');
 
     // Room Rates Route
 
@@ -161,20 +161,20 @@ Route::middleware([
     // List
     Route::get('/amenities', function () {
         return view('admin.amenities.view-amenities');
-    })->name('admin.amenities');
+    })->name('admin.amenities')->middleware('can:amenity-list');
 
     // Create
     Route::get('create/amenities', function () {
         return view('admin.amenities.create-amenity');
-    })->name('admin.create-amenity');
+    })->name('admin.create-amenity')->middleware('can:amenity-create');
 
     // View
     Route::get('view/amenity/{amenity}', ViewAmenity::class)
-        ->name('admin.view-amenity');
+        ->name('admin.view-amenity')->middleware('can:amenity-view');
 
     // Edit
     Route::get('edit/amenity/{amenity}', EditAmenity::class)
-        ->name('admin.edit-amenity');
+        ->name('admin.edit-amenity')->middleware('can:amenity-edit');
 
 
 
