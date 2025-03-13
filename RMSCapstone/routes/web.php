@@ -19,6 +19,8 @@ use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
+use App\Livewire\Admin\Settings\Payments\EditPayment;
+use App\Livewire\Admin\Settings\Payments\ViewPayment;
 use App\Livewire\Admin\Users\ViewUSer;
 use App\Livewire\Admin\Users\EditUser;
 
@@ -266,6 +268,28 @@ Route::middleware([
     // View
     Route::get('view/maintenance/{maintenance}', ViewMaintenance::class)
         ->name('admin.view-maintenance');
+
+
+    // Settings
+
+    //Payment Methods
+    //List
+    Route::get('/settings/payment-methods', function () {
+        return view('admin.settings.payments.view-payments');
+    })->name('admin.payments');
+
+    //Create
+    Route::get('/settings/create/payment-method', function () {
+        return view('admin.settings.payments.create-payment');
+    })->name('admin.create-payment');
+
+    // Edit
+    Route::get('settings/edit/payment-method/{paymentMethod}', EditPayment::class)
+        ->name('admin.edit-payment');
+
+    // View
+    Route::get('settings/view/payment-method/{paymentMethod}', ViewPayment::class)
+        ->name('admin.view-payment');
 });
 
 
