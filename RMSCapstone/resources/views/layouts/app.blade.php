@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-screen">
 
 <head>
     <meta charset="utf-8">
@@ -21,30 +21,36 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased">
+<body class="h-screen font-sans antialiased">
 
     <x-banner />
 
-    <div class="min-h-screen bg-gray-100 flex" x-data="{ sidebarOpen: true }">
+    <div class="h-screen flex bg-gray-100"
+        x-data="{ sidebarWidth: 256 }"
+        x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
+
         <!-- Sidebar -->
-        <livewire:sidebar />
+        <livewire:sidebar
+            x-ref="sidebar"
+            x-on:resize.window="sidebarWidth = $refs.sidebar.offsetWidth"
+            class="fixed left-0 top-0 bottom-0 w-[var(--sidebar-width)] h-full flex flex-col bg-white shadow-lg" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col transition-all duration-300"
-        :class="sidebarOpen ? 'ml-64' : 'ml-16'">
+        <div class="flex-1 flex flex-col ml-[var(--sidebar-width)] transition-all duration-300">
 
-        <!-- Page Heading -->
-        @livewire('navigation-menu')
+            <!-- Page Heading -->
+            {{-- @livewire('navigation-menu') --}}
+
             @if (isset($header))
-                <header class="bg-white shadow w-full">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-white shadow w-full px-6">
+                    <div class="py-6">
                         {{ $header }}
                     </div>
                 </header>
             @endif
 
             <!-- Page Content -->
-            <main class="p-6">
+            <main class="p-6 flex-1 overflow-auto">
                 {{ $slot }}
             </main>
         </div>

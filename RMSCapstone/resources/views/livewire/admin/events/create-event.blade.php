@@ -1,20 +1,18 @@
-<div class="shadow-lg rounded-lg p-6 bg-white max-w-2xl mx-auto">
-    <section class="bg-white">
-        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+    <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
+        <div class="mx-auto max-w-2xl lg:py-2">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Event</h2>
             @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li class="py-1">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li class="py-1">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
-
             <form wire:submit.prevent="saveEvent">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-
                     <!-- Event Name -->
                     <div class="sm:col-span-2">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Event Name</label>
@@ -30,8 +28,8 @@
                         <select wire:model="event_category_id" id="event_category_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Category</option>
-                            @foreach($eventCategories as $eventCategory)
-                            <option value="{{ $eventCategory->id }}">{{ $eventCategory->name }}</option>
+                            @foreach ($eventCategories as $eventCategory)
+                                <option value="{{ $eventCategory->id }}">{{ $eventCategory->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -43,8 +41,8 @@
                         <select wire:model="event_hall_id" id="event_hall_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Event Hall</option>
-                            @foreach($eventHalls as $eventHall)
-                            <option value="{{ $eventHall->id }}">{{ $eventHall->name }}</option>
+                            @foreach ($eventHalls as $eventHall)
+                                <option value="{{ $eventHall->id }}">{{ $eventHall->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -129,24 +127,29 @@
                         </select>
                     </div>
 
+                    <!-- Event Request -->
                     <div class="sm:col-span-2">
                         <label for="requests" class="block mb-2 text-sm font-medium text-gray-900">Event
                             Requests</label>
                         <textarea wire:model="requests" id="requests" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                             placeholder="Enter event requests"></textarea>
                     </div>
 
                 </div>
 
                 <!-- Submit Button -->
-                <div class="flex justify-end">
-                    <button type="submit"
-                        class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700">
+                <div class="flex justify-between items-center space-y-2 mt-6">
+                    <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                        Cancel
+                    </x-button>
+                    <x-button class="mt-4" type="submit">
                         Add Event
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>
-    </section>
+
+
+    </div>
 </div>

@@ -34,7 +34,7 @@
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900">Description</label>
                         <textarea wire:model="description" id="description" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
                             placeholder="Your description here"></textarea>
                     </div>
 

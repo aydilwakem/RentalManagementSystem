@@ -1,11 +1,52 @@
-<div class="bg-green-800 bg-opacity-90 text-white h-screen fixed top-0 left-0 transition-all duration-300"
-    x-bind:class="sidebarOpen ? 'w-64' : 'w-16'">
+<!DOCTYPE html>
+<html lang="en">
 
-    {{-- #TODO: make sidebar save its current state when switching pages --}}
-    <div class="flex p-4 border-b">
-        <!-- Logo -->
-        <div class="flex items-center space-x-2 cursor-pointer" @click="sidebarOpen = !sidebarOpen">
-            <button class="focus:outline-none relative left-[-4px]">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidebar</title>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- hide elements while page load -->
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<div class="h-full flex flex-col">
+
+    <body x-data="{ store: $store.sidebar }" class="h-screen mx-auto antialiased flex justify-between">
+        <!-- Mobile Menu Toggle -->
+        <button @click="$store.sidebar.navOpen = !$store.sidebar.navOpen"
+            class="sm:hidden absolute top-5 right-5 focus:outline-none">
+            <!-- Menu Icons -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+
+            <!-- Close Menu -->
+            <svg x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                x-bind:class="$store.sidebar.navOpen ? '' : 'hidden'" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="h-screen bg-green-800 fixed sm:relative flex flex-col w-64 transition-all duration-300"
+            x-bind:class="{
+                'w-64': $store.sidebar.full,
+                'w-64 sm:w-20': !$store.sidebar.full,
+                'top-0 left-0': $store.sidebar.navOpen,
+                'top-0 -left-64 sm:left-0': !$store.sidebar.navOpen
+            }">
+
+            <div class="flex items-center space-x-2 px-4 py-3 border-b mb-2">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40"
                     height="40" version="1.0" viewBox="0 0 360 360">
                     <defs>
@@ -48,164 +89,280 @@
                             width="240" height="269" transform="matrix(1.13437 0 0 1.13476 53.127 6.566)" />
                     </g>
                 </svg>
-            </button>
+                <h1 class="text-white font-semibold overflow-hidden whitespace-nowrap transition-all duration-300"
+                    x-bind:class="$store.sidebar.full ? 'text-lg w-auto opacity-100 ml-2' : 'w-0 opacity-0 ml-0'">
+                    Canopy Farm
+                </h1>
+            </div>
 
-            <p class="text-white font-semibold absolute left-12 top-6 transition-all duration-100 pl-2"
-                x-bind:class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90'">
-                Canopy Farm
-            </p>
+            <div class="px-4 space-y-2 flex flex-col overflow-y-auto">
+                <!-- SideBar Toggle -->
+                <button @click="$store.sidebar.full = !$store.sidebar.full"
+                    class="hidden sm:block focus:outline-none absolute p-1 -right-3 top-10 bg-green-700 border rounded-full shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 transition-all duration-300 text-white transform"
+                        x-bind:class="$store.sidebar.full ? 'rotate-90' : '-rotate-90 '" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <!-- Dashboard -->
+                <a href="{{ route('dashboard') }}" wire:navigate>
+                    <div @click="$store.sidebar.active = 'home' "
+                        class=" relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-gray-200 bg-green-600': $store.sidebar.active == 'home',
+                            'text-gray-400 ': $store
+                                .sidebar.active != 'home'
+                        }">
+                        <i class="fa-solid fa-house"></i>
+                        <h1 x-cloak x-show="$store.sidebar.full">
+                            Dashboard</h1>
+                    </div>
+                </a>
 
+                <!-- Reservations -->
+                <div @click="$store.sidebar.active = 'reservations'"
+                    class="relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                    x-bind:class="{
+                        'justify-start': $store.sidebar.full,
+                        'sm:justify-center': !$store.sidebar.full,
+                        'text-gray-200 bg-green-600': $store.sidebar.active == 'schedules',
+                        'text-gray-400': $store.sidebar.active != 'schedules'
+                    }">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-calendar"></i>
+                        <h1 x-cloak x-show="$store.sidebar.full">
+                            Reservations
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Rooms -->
+                <div x-data="dropdown" class="relative">
+                    <!-- Dropdown head -->
+                    <div @click="toggle('rooms')"
+                        class="flex justify-between text-gray-400 hover:text-gray-200 hover:bg-green-700 items-center space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-white bg-green-600': $store.sidebar.active ==
+                                'rooms',
+                            'text-gray-400 ': $store.sidebar.active != 'rooms'
+                        }">
+                        <div class="relative flex space-x-2 items-center">
+                            <i class="fa-solid fa-bed"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Rooms</h1>
+                        </div>
+                        <svg x-cloak x-bind:class="$store.sidebar.full ? '' : 'sm:hidden'"
+                            xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <!-- Dropdown content -->
+                    <div x-cloak x-show="open" @click.outside="open = false"
+                        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        <a href="{{ route('admin.rooms') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Rooms</h1>
+                        </a>
+                        <a href="{{ route('admin.room-categories') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Room Categories</h1>
+                        </a>
+                        <a href="{{ route('admin.room-rates') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Room Rates</h1>
+                        </a>
+                        <a href="{{ route('admin.amenities') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Amenities</h1>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div x-data="dropdown" class="relative">
+                    <!-- Dropdown head -->
+                    <div @click="toggle('events')"
+                        class="flex justify-between text-gray-400 hover:text-gray-200 hover:bg-green-700 items-center space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-white bg-green-600': $store.sidebar.active ==
+                                'events',
+                            'text-gray-400 ': $store.sidebar.active != 'events'
+                        }">
+                        <div class="relative flex space-x-2 items-center">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Events</h1>
+                        </div>
+                        <svg x-cloak x-bind:class="$store.sidebar.full ? '' : 'sm:hidden'"
+                            xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <!-- Dropdown content -->
+                    <div x-cloak x-show="open" @click.outside="open = false"
+                        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        <a href="{{ route('admin.events') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Events</h1>
+                        </a>
+                        <a href="{{ route('admin.event-halls') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Event Halls</h1>
+                        </a>
+                        <a href="{{ route('admin.event-categories') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Event Categories</h1>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Activities -->
+                <div @click="$store.sidebar.active = 'activities' "
+                    class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                    x-bind:class="{
+                        'justify-start': $store.sidebar.full,
+                        'sm:justify-center': !$store.sidebar
+                            .full,
+                        'text-gray-200 bg-green-600': $store.sidebar.active == 'activities',
+                        'text-gray-400 ': $store
+                            .sidebar.active != 'activities'
+                    }">
+                    <div class="flex  items-center space-x-2">
+                        <i class="fa-solid fa-person-swimming"></i>
+                        <h1 x-cloak x-show="$store.sidebar.full">
+                            Activities</h1>
+                    </div>
+                </div>
+
+                <!-- Maintenance -->
+                <div @click="$store.sidebar.active = 'maintenance' "
+                    class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                    x-bind:class="{
+                        'justify-start': $store.sidebar.full,
+                        'sm:justify-center': !$store.sidebar
+                            .full,
+                        'text-gray-200 bg-green-600': $store.sidebar.active == 'maintenance',
+                        'text-gray-400 ': $store
+                            .sidebar.active != 'maintenance'
+                    }">
+                    <div class="flex  items-center space-x-2">
+                        <i class="fa-solid fa-broom"></i>
+                        <h1 x-cloak x-show="$store.sidebar.full">
+                            Maintenance</h1>
+                    </div>
+                </div>
+
+                <!-- Account Management -->
+                <div>
+                    <a href="{{ route('profile.show') }}" wire:navigate>
+                        <div @click="$store.sidebar.active = 'profile'"
+                            class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                            x-bind:class="{
+                                'text-gray-200 bg-green-600': $store.sidebar.active == 'profile',
+                                'text-gray-400 ': $store.sidebar.active != 'profile'
+                            }">
+                            <i class="fa-solid fa-user"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">Profile</h1>
+                        </div>
+                    </a>
+
+                    @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                        <a href="{{ route('api-tokens.index') }}" wire:navigate>
+                            <div @click="$store.sidebar.active = 'api-tokens'"
+                                class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                x-bind:class="{
+                                    'text-gray-200 bg-green-600': $store.sidebar.active == 'api-tokens',
+                                    'text-gray-400 ': $store.sidebar.active != 'api-tokens'
+                                }">
+                                <i class="fa-solid fa-key"></i>
+                                <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
+                            </div>
+                        </a>
+                    @endif
+                </div>
+
+                <!-- Logout -->
+                <div class="absolute inset-x-0 bottom-2 px-4">
+                    <form method="POST" action="{{ route('logout') }}" x-data>
+                        @csrf
+                        <button type="submit"
+                            class="relative flex w-full items-center hover:text-gray-200 hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
+                            <i class="fa-solid fa-sign-out"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">Logout</h1>
+                        </button>
+                    </form>
+
+                    @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                        <div class="border-t border-gray-600 mt-3"></div>
+
+                        <div class="block px-4 py-2 text-xs text-gray-400">
+                            {{ __('Manage Team') }}
+                        </div>
+
+                        <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" wire:navigate>
+                            <div @click="$store.sidebar.active = 'team-settings'"
+                                class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                x-bind:class="{
+                                    'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
+                                    'text-gray-400 ': $store.sidebar.active != 'team-settings'
+                                }">
+                                <i class="fa-solid fa-users"></i>
+                                <h1 x-cloak x-show="$store.sidebar.full">Team Settings</h1>
+                            </div>
+                        </a>
+
+                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                            <a href="{{ route('teams.create') }}" wire:navigate>
+                                <div @click="$store.sidebar.active = 'create-team'"
+                                    class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                    x-bind:class="{
+                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                        'text-gray-400 ': $store.sidebar.active != 'create-team'
+                                    }">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <h1 x-cloak x-show="$store.sidebar.full">Create New Team</h1>
+                                </div>
+                            </a>
+                        @endcan
+
+                        @if (Auth::user()->allTeams()->count() > 1)
+                            <div class="border-t border-gray-600 mt-3"></div>
+
+                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                {{ __('Switch Teams') }}
+                            </div>
+
+                            @foreach (Auth::user()->allTeams() as $team)
+                                <x-switchable-team :team="$team" component="sidebar-link" />
+                            @endforeach
+                        @endif
+                    @endif
+                </div>
+            </div>
         </div>
-
-        <!-- Toggle Button -->
-        <button class="text-white p-3 focus:outline-none absolute top-2 right-2" @click="sidebarOpen = !sidebarOpen"
-            x-show="sidebarOpen">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24">
-                <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M13 5v14m3-11h2m-2 3h2m-2 3h2M6.2 19h11.6c1.12 0 1.68 0 2.108-.218a2 2 0 0 0 .874-.874C21 17.48 21 16.92 21 15.8V8.2c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874C19.48 5 18.92 5 17.8 5H6.2c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874C3 6.52 3 7.08 3 8.2v7.6c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874C4.52 19 5.08 19 6.2 19Z" />
-            </svg>
-        </button>
-    </div>
-    <!-- Sidebar Content -->
-    <div class="mt-4">
-        <ul class="space-y-3">
-            <li class="relative flex items-center">
-                <a href="{{ route('dashboard') }}" class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-home"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Dashboard
-                    </span>
-                </a>
-            </li>
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-calendar-check"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Reservations
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            New Reservations
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            Confirmed Reservations
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            On-Going Reservations
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-bed"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Rooms
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-                    <li>
-                        <a href="{{route('admin.rooms')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Rooms
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{route('admin.room-categories')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Room Categories
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{route('admin.amenities')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Amenities
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-calendar-check"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Events
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-                    <li>
-                        <a href="{{route('admin.events')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Events
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{route('admin.event-halls')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Event Halls
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{route('admin.event-categories')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Event Categories
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="relative flex items-center">
-                <a href="#"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-person-swimming"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Activities
-                    </span>
-                </a>
-            </li>
-            <li class="relative flex items-center">
-                <a href="#"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-broom"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Maintenance
-                    </span>
-                </a>
-            </li>
-        </ul>
-    </div>
+        <script src="./js/app.js"></script>
+    </body>
 </div>
+
+
+</html>

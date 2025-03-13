@@ -157,18 +157,18 @@
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
                                         wire:navigate
                                         href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
 
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-gray-700 hover:text-blue-600 cursor-pointer"
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
                                         wire:navigate
                                         href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                    <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
                                         wire:click="deleteCategory({{ $roomCategory->id }})">
                                     </i>
 
