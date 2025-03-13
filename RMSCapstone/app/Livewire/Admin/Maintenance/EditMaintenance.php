@@ -11,6 +11,7 @@ class EditMaintenance extends Component
 {
 
     public Maintenance $maintenance;
+    public $name;
     public $description;
     public $reported_at;
     public $resolved_at;
@@ -19,6 +20,7 @@ class EditMaintenance extends Component
     //To display info of selected item
     public function mount(Maintenance $maintenance)
     {
+        $this->name = $maintenance->name;
         $this->description = $maintenance->description;
         $this->reported_at = optional($maintenance->reported_at)->format('Y-m-d');
         $this->resolved_at = optional($maintenance->resolved_at)->format('Y-m-d');
@@ -29,6 +31,7 @@ class EditMaintenance extends Component
     {
         // Validate form input 
         $this->validate([   
+            'name' => 'required|string',
             'description' => 'required|string',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
@@ -38,6 +41,7 @@ class EditMaintenance extends Component
 
         // Update Event Hall
         $this->maintenance->update([
+            'name' => $this->name,
             'description' => $this->description,
             'reported_at' => $this->reported_at,
             'resolved_at' => $this->resolved_at,

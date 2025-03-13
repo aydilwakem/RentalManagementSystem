@@ -2,6 +2,18 @@
     <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
         <div class="mx-auto max-w-2xl lg:py-2 ">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Category</h2>
+
+            {{-- Display Validation Errors --}}
+            @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li class="py-1">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <form wire:submit.prevent="saveCategory">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 

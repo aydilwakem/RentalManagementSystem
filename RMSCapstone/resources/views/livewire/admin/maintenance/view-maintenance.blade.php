@@ -8,8 +8,16 @@
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl">
-                {{ $maintenance->description }}
+                {{ $maintenance->name }}
             </h2>
+
+            <!-- Reported At -->
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Reported At</h3>
+                <p class="font-light text-gray-500">
+                    {{ $maintenance->description}}
+                </p>
+            </div>
 
             <!-- Reported At -->
             <div class="mb-4">

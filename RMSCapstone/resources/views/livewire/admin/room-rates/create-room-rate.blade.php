@@ -7,10 +7,13 @@
 
                     <!-- Room Rate Name -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Room Name</label>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Room Rate Name</label>
                         <input type="text" wire:model="name" id="name" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter room name">
+                        @error('name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <!-- Room Name -->
@@ -20,64 +23,107 @@
                         <select wire:model="room_id" id="room_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Room</option>
-                            @foreach($rooms as $room)
+                            @foreach ($rooms as $room)
                                 <option value="{{ $room->id }}">{{ $room->name }}</option>
                             @endforeach
                         </select>
+                        @error('room_id')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <!-- Ideal Guest -->
+                    <!-- Start Date -->
                     <div>
-                        <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal
-                            Guest</label>
-                        <input type="number" wire:model="ideal_guest" id="ideal_guest"
+                        <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start Date</label>
+                        <input type="date" wire:model="start_date" id="start_date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('start_date')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <!-- Max Adults -->
+                    <!-- End Date -->
                     <div>
-                        <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max Adults</label>
-                        <input type="number" wire:model="max_adults" id="max_adults" min="0"
+                        <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Date</label>
+                        <input type="date" wire:model="end_date" id="end_date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('end_date')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <!-- Max Kids -->
+                    <!-- Amount -->
                     <div>
-                        <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
-                        <input type="number" wire:model="max_kids" id="max_kids" min="0"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Amount</label>
+                        <input type="number" wire:model="amount" id="amount"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Enter rate amount">
+                        @error('amount')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <!-- Turnover Duration -->
+                    <!-- Extra Person Charge -->
                     <div>
-                        <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
-                            Duration (Hours)</label>
-                        <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra
+                            Person Charge</label>
+                        <input type="number" wire:model="extra_person_charge" id="extra_person_charge"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Enter total amount">
+                        @error('extra_person_charge')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <!-- Room Status -->
+                    <!-- Extended Stay Charge Per Hour -->
+                    <div>
+                        <label for="extended_stay_charge_per_hr"
+                            class="block mb-2 text-sm font-medium text-gray-900">Extra Stay Charge Per Hour</label>
+                        <input type="number" wire:model="extended_stay_charge_per_hr" id="extended_stay_charge_per_hr"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Enter total amount">
+                        @error('extended_stay_charge_per_hr')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Rate Type -->
                     <div class="sm:col-span-2">
-                        <label for="room_status" class="block mb-2 text-sm font-medium text-gray-900">Room
-                            Status</label>
-                        <select wire:model="room_status" id="room_status"
+                        <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900">Rate Type</label>
+                        <select wire:model="rate_type" id="rate_type"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                            <option value="Available">Available</option>
-                            <option value="Booked">Booked</option>
-                            <option value="Out of Service">Out of Service</option>
+                            <option value="Weekdays">Weekdays</option>
+                            <option value="Weekend">Weekend</option>
                         </select>
+                        @error('rate_type')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center space-y-2 mt-6">
-                    <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                        Cancel
-                    </x-button>
-                    <x-button wire:loading.attr="disabled" wire:target="image">
-                        Add Room Rate
-                    </x-button>
+                <!-- Description -->
+                <div class="sm:col-span-2">
+                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+                    <textarea wire:model="description" id="description"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        rows="5"></textarea>
+                    @error('description')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
-            </form>
+
         </div>
+
+        <div class="flex justify-between items-center space-y-2 mt-6">
+            <x-button onclick="history.back()" type="button"
+                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                Cancel
+            </x-button>
+            <x-button wire:loading.attr="disabled" wire:target="image">
+                Add Room Rate
+            </x-button>
+        </div>
+        </form>
     </div>
+</div>
 </div>

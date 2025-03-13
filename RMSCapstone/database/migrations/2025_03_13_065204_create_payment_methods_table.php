@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mnt_maintenance', function (Blueprint $table) {
+        Schema::create('pm_payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->text('description')->nullable();
-            $table->timestamp('reported_at')->nullable();
-            $table->timestamp('resolved_at')->nullable();
-            //priority id
-            $table->enum('priority_status', ['emergency', 'urgent', 'routine', 'planned'])->default('planned');
+            $table->string('mode_of_payment_name', 255);
+            $table->string('account_name', 100);
+            $table->string('account_number', 100);
+            $table->string('mode_of_payment_qr_image')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('maintenances');
+        Schema::dropIfExists('payment_methods');
     }
 };

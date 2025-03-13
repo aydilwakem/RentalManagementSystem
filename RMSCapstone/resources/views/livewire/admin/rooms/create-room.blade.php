@@ -1,6 +1,18 @@
 <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
     <div class="mx-auto max-w-2xl lg:py-2s">
         <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Room</h2>
+
+        {{-- Display Validation Errors --}}
+        @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li class="py-1">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         <form wire:submit.prevent="saveRoom">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Room Name -->
@@ -19,7 +31,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Category</option>
                         @foreach ($roomCategories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -73,7 +85,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('image')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <div wire:loading wire:target="image" class="mt-2 text-gray-600">
@@ -81,9 +93,9 @@
                     </div>
 
                     @if ($image && method_exists($image, 'temporaryUrl'))
-                        <div class="mt-2">
-                            <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        </div>
+                    <div class="mt-2">
+                        <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                    </div>
                     @endif
                 </div>
             </div>

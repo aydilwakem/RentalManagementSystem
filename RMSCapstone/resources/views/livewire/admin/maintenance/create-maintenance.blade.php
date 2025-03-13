@@ -2,6 +2,8 @@
     <section class="bg-white">
         <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
             <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Maintenance</h2>
+
+            {{-- Display Validation Errors --}}
             @if ($errors->any())
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 <ul>
@@ -13,6 +15,14 @@
             @endif
             <form wire:submit.prevent="saveMaintenance">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
+                    <!-- Maintenance Name -->
+                    <div class="sm:col-span-2">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Maintenance Name</label>
+                        <input type="text" wire:model="name" id="name" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            placeholder="Enter maintenance name">
+                    </div>
 
                     <!-- Maintenance Description -->
                     <div class="sm:col-span-2">

@@ -19,6 +19,12 @@ use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
+use App\Livewire\Admin\Settings\Payments\EditPayment;
+use App\Livewire\Admin\Settings\Payments\ViewPayment;
+use App\Livewire\Admin\Users\ViewUser;
+use App\Livewire\Admin\Users\EditUser;
+use App\Livewire\Admin\Roles\ViewRole;
+use App\Livewire\Admin\Roles\EditRole;
 
 
 
@@ -42,6 +48,46 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
+
+
+    // Users Route
+
+    // List
+    Route::get('/manage-users', function () {
+        return view('admin.users.view-users');
+    })->name('admin.manage-users');
+
+    // Create
+    Route::get('create/user', function () {
+        return view('admin.users.create-user');
+    })->name('admin.create-user');
+
+    // View
+    Route::get('view/user/{user}', ViewUser::class)
+        ->name('admin.view-user');
+
+    // Edit
+    Route::get('edit/user/{user}', EditUser::class)
+        ->name('admin.edit-user');
+
+
+
+    // Roles Route
+
+    // Create
+    Route::get('create/role', function () {
+        return view('admin.roles.create-role');
+    })->name('admin.create-role');
+
+    // View
+    Route::get('view/role/{role}', ViewRole::class)
+        ->name('admin.view-role');
+
+    // Edit
+    Route::get('edit/role/{role}', EditRole::class)
+        ->name('admin.edit-role');
+
+
 
 
     // Rooms Route
@@ -243,6 +289,28 @@ Route::middleware([
     // View
     Route::get('view/maintenance/{maintenance}', ViewMaintenance::class)
         ->name('admin.view-maintenance');
+
+
+    // Settings
+
+    //Payment Methods
+    //List
+    Route::get('/settings/payment-methods', function () {
+        return view('admin.settings.payments.view-payments');
+    })->name('admin.payments');
+
+    //Create
+    Route::get('/settings/create/payment-method', function () {
+        return view('admin.settings.payments.create-payment');
+    })->name('admin.create-payment');
+
+    // Edit
+    Route::get('settings/edit/payment-method/{paymentMethod}', EditPayment::class)
+        ->name('admin.edit-payment');
+
+    // View
+    Route::get('settings/view/payment-method/{paymentMethod}', ViewPayment::class)
+        ->name('admin.view-payment');
 });
 
 

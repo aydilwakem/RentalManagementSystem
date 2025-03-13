@@ -11,9 +11,17 @@
                 </ul>
             </div>
             @endif
+
             <form wire:submit.prevent="updateMaintenance">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
+                    <!-- Maintenance Name -->
+                    <div class="sm:col-span-2">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Maintenance Name</label>
+                        <input type="text" wire:model="name" id="name" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            placeholder="Enter maintenance name">
+                    </div>
                     <!-- Maintenance Description -->
                     <div class="sm:col-span-2">
                         <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Maintenance
