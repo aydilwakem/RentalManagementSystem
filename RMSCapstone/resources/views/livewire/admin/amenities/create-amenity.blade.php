@@ -32,6 +32,8 @@
                         Add Amenity
                     </x-button>
                 </div>
+
+
             </form>
         </div>
     </div>

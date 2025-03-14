@@ -29,7 +29,7 @@ class EditRole extends Component
     public function updateRole()
     {
         $this->validate([
-            'name' => 'required|string|min:3|unique:roles,name',
+            'name' => 'nullable|string|min:3|unique:roles,name,' . $this->role->id,
         ]);
 
         // Update role details

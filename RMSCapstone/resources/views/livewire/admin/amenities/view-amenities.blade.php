@@ -52,12 +52,12 @@
                                     <button class="flex items-center">
                                         ID
                                         @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
                                             @if ($sortDir == 'ASC')
                                                 {{-- Up arrow (Ascending) --}}
@@ -86,12 +86,12 @@
                                     <button class="flex items-center">
                                         Name
                                         @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
                                             @if ($sortDir == 'ASC')
                                                 {{-- Up arrow (Ascending) --}}
@@ -125,15 +125,26 @@
                                 </th>
                                 <td class="px-4 py-3">{{ $amenity->name }}</td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
-                                    </i>
-                                    <i class="fas fa-edit text-yellow-500 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
-                                    </i>
-                                    <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                        wire:click="deleteAmenity({{ $amenity->id }})">
-                                    </i>
+
+                                    @can('amenity-view')
+                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
+                                        </i>
+                                    @endcan
+
+
+                                    @can('amenity-edit')
+                                        <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
+                                        </i>
+                                    @endcan
+
+                                    @can('amenity-delete')
+                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                            wire:click="deleteAmenity({{ $amenity->id }})">
+                                        </i>
+                                    @endcan
+
                                 </td>
                             </tr>
                         @endforeach

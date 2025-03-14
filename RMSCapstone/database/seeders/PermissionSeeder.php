@@ -14,29 +14,65 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            // Room
-            "room-list",
-            "room-create",
-            "room-edit",
-            "room-delete",
 
-            // Room Category
-            "room-category-list",
-            "room-category-create",
-            "room-category-edit",
-            "room-category-delete",
+            // Activity
+            "activity-view",
+            "activity-list",
+            "activity-create",
+            "activity-edit",
+            "activity-delete",
 
-            // Room Rate
-            "room-rate-list",
-            "room-rate-create",
-            "room-rate-edit",
-            "room-rate-delete",
+            // Event Category
+            "event-category-view",
+            "event-category-list",
+            "event-category-create",
+            "event-category-edit",
+            "event-category-delete",
 
-            // Amenities
-            "amenity-list",
-            "amenity-create",
-            "amenity-edit",
-            "amenity-delete",
+            // Event Hall
+            "event-hall-view",
+            "event-hall-list",
+            "event-hall-create",
+            "event-hall-edit",
+            "event-hall-delete",
+
+            // Event
+            "event-view",
+            "event-list",
+            "event-create",
+            "event-edit",
+            "event-delete",
+
+            // Maintenance
+            "maintenance-view",
+            "maintenance-list",
+            "maintenance-create",
+            "maintenance-edit",
+            "maintenance-delete",
+
+            // Role
+            "role-view",
+            "role-list",
+            "role-create",
+            "role-edit",
+            "role-delete",
+
+            // Setting Payment Method
+            "payment-method-view",
+            "payment-method-list",
+            "payment-method-create",
+            "payment-method-edit",
+            "payment-method-delete",
+
+            // User
+            "user-view",
+            "user-list",
+            "user-create",
+            "user-edit",
+            "user-delete",
+
+            // Dashboard
+            "dashboard-view"
         ];
 
         foreach ($permissions as $key => $permission) {
