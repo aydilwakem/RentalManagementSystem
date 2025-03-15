@@ -6,18 +6,20 @@
 
 
                 <!-- Create Room Button -->
-                <div class="flex items-center justify-between p-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        onclick="window.location.href='{{ route('admin.create-user') }}'">
-                        + Create User
-                    </button>
-                </div>
+                @can('user-create')
+                    <div class="flex items-center justify-between p-4">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                            onclick="window.location.href='{{ route('admin.create-user') }}'">
+                            + Create User
+                        </button>
+                    </div>
+                @endcan
 
                 {{-- Display Session Message --}}
                 @if (session('message'))
                     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                         class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                                       {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                               {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                         {{ session('message') }}
                     </div>
                 @endif
@@ -202,18 +204,28 @@
                                 <td class="p-2">{{ $user->created_at }}</td>
                                 <td class="p-2">{{ $user->updated_at }}</td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
+
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-user', ['user' => $user->id]) }}">
-                                    </i>
+                                    @can('user-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-user', ['user' => $user->id]) }}">
+                                        </i>
+                                    @endcan
+
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-user', ['user' => $user->id]) }}">
-                                    </i>
+                                    @can('user-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-user', ['user' => $user->id]) }}">
+                                        </i>
+                                    @endcan
+
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="deleteUser({{ $user->id }})">
-                                    </i>
+                                    @can('user-delete')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="deleteUser({{ $user->id }})">
+                                        </i>
+                                    @endcan
+
                                 </td>
                             </tr>
                         @endforeach

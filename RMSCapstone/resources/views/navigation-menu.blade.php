@@ -11,15 +11,16 @@
                 </div>
 
                 <!-- Navigation Links -->
+                @can('dashboard')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                @endcan
 
                 {{-- Rooms --}}
                 <div x-data="{ open: false }" class="relative hidden sm:-my-px sm:ms-10 sm:flex">
-                    @can('room-list')
                     <!-- Dropdown Button -->
                     <button @click="open = !open"
                         class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
@@ -32,7 +33,6 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
-                    @endcan
 
                     <!-- Dropdown Menu -->
                     <div x-show="open" @click.away="open = false"
@@ -78,6 +78,7 @@
 
                 {{-- Events Drop Down --}}
                 <div x-data="{ open: false }" class="relative hidden sm:-my-px sm:ms-10 sm:flex">
+
                     <!-- Dropdown Button -->
                     <button @click="open = !open"
                         class="flex items-center space-x-2 px-4 py-2 text-gray-900 hover:text-blue-500 focus:outline-none">
@@ -94,53 +95,74 @@
                     <!-- Events, Halls, and Categories Dropdown Menu -->
                     <div x-show="open" @click.away="open = false"
                         class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
+
+                        {{-- Event --}}
+                        @can('event-list')
                         <x-nav-link href="{{ route('admin.events') }}" :active="request()->routeIs('admin.events')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Events') }}
-                        </x-nav-link>
+                        </x-nav-link>    
+                        @endcan
+
+                        {{-- Event Hall --}}
+                        @can('event-hall-list')
                         <x-nav-link href="{{ route('admin.event-halls') }}"
                             :active="request()->routeIs('admin.event-halls')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Event Halls') }}
                         </x-nav-link>
+                        @endcan
+
+                        {{-- Event Category --}}
+                        @can('event-category-list')
                         <x-nav-link href="{{ route('admin.event-categories') }}"
                             :active="request()->routeIs('admin.event-categories')"
                             class="block px-4 py-2 text-gray-900 hover:bg-gray-100">
                             {{ __('Event Categories') }}
                         </x-nav-link>
+                        @endcan
+
                     </div>
                 </div>
 
                 {{-- Activities --}}
+                @can('activity-list')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.activities') }}" :active="request()->routeIs('admin.activities')">
                         {{ __('Activities') }}
                     </x-nav-link>
                 </div>
+                @endcan
 
                 {{-- Maintenance --}}
+                @can('maintenance-list')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.maintenances') }}"
                         :active="request()->routeIs('admin.maintenances')">
                         {{ __('Maintenance') }}
                     </x-nav-link>
                 </div>
+                @endcan
 
                  {{-- Manage Users --}}
+                @can('user-list')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.manage-users') }}"
                         :active="request()->routeIs('admin.manage-users')">
                         {{ __('Manage Users') }}
                     </x-nav-link>
                 </div> 
+                @endcan
 
                 {{-- Settings - Payment Method --}}
+                @can('payment-method-list')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('admin.payments') }}"
                         :active="request()->routeIs('admin.payments')">
                         {{ __('Payment Methods') }}
                     </x-nav-link>
                 </div> 
+                @endcan
 
 
             </div>

@@ -55,20 +55,20 @@ Route::middleware([
     // List
     Route::get('/manage-users', function () {
         return view('admin.users.view-users');
-    })->name('admin.manage-users');
+    })->name('admin.manage-users')->middleware('can:user-list');
 
     // Create
     Route::get('create/user', function () {
         return view('admin.users.create-user');
-    })->name('admin.create-user');
+    })->name('admin.create-user')->middleware('can:user-create');
 
     // View
     Route::get('view/user/{user}', ViewUser::class)
-        ->name('admin.view-user');
+        ->name('admin.view-user')->middleware('can:user-view');
 
     // Edit
     Route::get('edit/user/{user}', EditUser::class)
-        ->name('admin.edit-user');
+        ->name('admin.edit-user')->middleware('can:user-edit');
 
 
 
@@ -77,15 +77,15 @@ Route::middleware([
     // Create
     Route::get('create/role', function () {
         return view('admin.roles.create-role');
-    })->name('admin.create-role');
+    })->name('admin.create-role')->middleware('can:role-create');
 
     // View
     Route::get('view/role/{role}', ViewRole::class)
-        ->name('admin.view-role');
+        ->name('admin.view-role')->middleware('can:role-view');
 
     // Edit
     Route::get('edit/role/{role}', EditRole::class)
-        ->name('admin.edit-role');
+        ->name('admin.edit-role')->middleware('can:role-edit');
 
 
 
@@ -139,20 +139,20 @@ Route::middleware([
     // List
     Route::get('/room-rates', function () {
         return view('admin.room-rates.view-room-rates');
-    })->name('admin.room-rates');
+    })->name('admin.room-rates')->middleware('can:room-rate-list');
 
     // Create
     Route::get('create/room-rate', function () {
         return view('admin.room-rates.create-room-rate');
-    })->name('admin.create-room-rate');
+    })->name('admin.create-room-rate')->middleware('can:room-rate-create');
 
     // View
     Route::get('view/room-rate/{roomRate}', ViewRoomRate::class)
-        ->name('admin.view-room-rate');
+        ->name('admin.view-room-rate')->middleware('can:room-rate-view');
 
     // Edit
     Route::get('edit/room-rate/{roomRate}', EditRoomRate::class)
-        ->name('admin.edit-room-rate');
+        ->name('admin.edit-room-rate')->middleware('can:room-rate-edit');
 
 
 
@@ -184,20 +184,20 @@ Route::middleware([
     //List
     Route::get('/activities', function () {
         return view('admin.activities.view-activities');
-    })->name('admin.activities');
+    })->name('admin.activities')->middleware('can:activity-list');
 
     // Create
     Route::get('create/activity', function () {
         return view('admin.activities.create-activity');
-    })->name('admin.create-activity');
+    })->name('admin.create-activity')->middleware('can:activity-create');
 
     // View
     Route::get('view/activity/{activity}', ViewActivity::class)
-        ->name('admin.view-activity');
+        ->name('admin.view-activity')->middleware('can:activity-view');
 
     // Edit
     Route::get('edit/activity/{activity}', EditActivity::class)
-        ->name('admin.edit-activity');
+        ->name('admin.edit-activity')->middleware('can:activity-edit');
 
 
 
@@ -206,20 +206,20 @@ Route::middleware([
     // List
     Route::get('/events', function () {
         return view('admin.events.view-events');
-    })->name('admin.events');
+    })->name('admin.events')->middleware('can:event-list');
 
     // Create
     Route::get('create/create-event', function () {
         return view('admin.events.create-event');
-    })->name('admin.create-event');
+    })->name('admin.create-event')->middleware('can:event-create');
 
     // View
     Route::get('view/event/{event}', ViewEvent::class)
-        ->name('admin.view-event');
+        ->name('admin.view-event')->middleware('can:event-view');
 
     // Edit
     Route::get('edit/event/{event}', EditEvent::class)
-        ->name('admin.edit-event');
+        ->name('admin.edit-event')->middleware('can:event-edit');
 
 
 
@@ -228,20 +228,20 @@ Route::middleware([
     //List
     Route::get('/event-categories', function () {
         return view('admin.event-categories.view-event-categories');
-    })->name('admin.event-categories');
+    })->name('admin.event-categories')->middleware('can:event-category-list');
 
     // Create
     Route::get('create/create-event-category', function () {
         return view('admin.event-categories.create-event-category');
-    })->name('admin.create-event-category');
+    })->name('admin.create-event-category')->middleware('can:event-category-create');
 
     // View
     Route::get('view/event-category/{eventCategory}', ViewEventCategory::class)
-        ->name('admin.view-event-category');
+        ->name('admin.view-event-category')->middleware('can:event-category-view');
 
     // Edit
     Route::get('edit/event-category/{eventCategory}', EditEventCategory::class)
-        ->name('admin.edit-event-category');
+        ->name('admin.edit-event-category')->middleware('can:event-category-edit');
 
 
 
@@ -252,20 +252,20 @@ Route::middleware([
     //List
     Route::get('/event-halls', function () {
         return view('admin.event-halls.view-event-halls');
-    })->name('admin.event-halls');
+    })->name('admin.event-halls')->middleware('can:event-hall-list');
 
     //Create
     Route::get('/create/create-event-hall', function () {
         return view('admin.event-halls.create-event-hall');
-    })->name('admin.create-event-hall');
+    })->name('admin.create-event-hall')->middleware('can:event-hall-create');
 
     // Edit
     Route::get('edit/event-hall/{eventHall}', EditEventHall::class)
-        ->name('admin.edit-event-hall');
+        ->name('admin.edit-event-hall')->middleware('can:event-hall-edit');
 
     // View
     Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
-        ->name('admin.view-event-hall');
+        ->name('admin.view-event-hall')->middleware('can:event-hall-view');
 
 
 
@@ -275,42 +275,43 @@ Route::middleware([
     //List
     Route::get('/maintenance', function () {
         return view('admin.maintenance.view-maintenances');
-    })->name('admin.maintenances');
+    })->name('admin.maintenances')->middleware('can:maintenance-list');
 
     //Create
     Route::get('/create/create-maintenance', function () {
         return view('admin.maintenance.create-maintenance');
-    })->name('admin.create-maintenance');
+    })->name('admin.create-maintenance')->middleware('can:maintenance-create');
 
     // Edit
     Route::get('edit/maintenance/{maintenance}', EditMaintenance::class)
-        ->name('admin.edit-maintenance');
+        ->name('admin.edit-maintenance')->middleware('can:maintenance-edit');
 
     // View
     Route::get('view/maintenance/{maintenance}', ViewMaintenance::class)
-        ->name('admin.view-maintenance');
+        ->name('admin.view-maintenance')->middleware('can:maintenance-view');
 
 
     // Settings
 
     //Payment Methods
+
     //List
     Route::get('/settings/payment-methods', function () {
         return view('admin.settings.payments.view-payments');
-    })->name('admin.payments');
+    })->name('admin.payments')->middleware('can:payment-method-list');
 
     //Create
     Route::get('/settings/create/payment-method', function () {
         return view('admin.settings.payments.create-payment');
-    })->name('admin.create-payment');
+    })->name('admin.create-payment')->middleware('can:payment-method-create');
 
     // Edit
     Route::get('settings/edit/payment-method/{paymentMethod}', EditPayment::class)
-        ->name('admin.edit-payment');
+        ->name('admin.edit-payment')->middleware('can:payment-method-edit');
 
     // View
     Route::get('settings/view/payment-method/{paymentMethod}', ViewPayment::class)
-        ->name('admin.view-payment');
+        ->name('admin.view-payment')->middleware('can:payment-method-view');
 });
 
 

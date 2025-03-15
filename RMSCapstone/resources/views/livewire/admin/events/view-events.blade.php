@@ -5,20 +5,22 @@
             <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
 
                 <!-- Create Room Button -->
-                <div class="flex items-center justify-between p-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        onclick="window.location.href='{{ route('admin.create-event') }}'">
-                        + Create Event
-                    </button>
-                </div>
+                @can('event-create')
+                    <div class="flex items-center justify-between p-4">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                            onclick="window.location.href='{{ route('admin.create-event') }}'">
+                            + Create Event
+                        </button>
+                    </div>
+                @endcan
 
                 {{-- Display Session Message --}}
                 @if (session('message'))
-                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                    {{ session('message') }}
-                </div>
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
+                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        {{ session('message') }}
+                    </div>
                 @endif
 
                 {{-- Search Bar --}}
@@ -63,28 +65,28 @@
                                     <button class="flex items-center">
                                         ID
                                         @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
-                                        @if($sortDir == 'ASC')
-                                        {{-- Up arrow (Ascending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                        </svg>
-                                        @else
-                                        {{-- Down arrow (Descending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        @endif
+                                            @if($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
                                     </button>
                                 </th>
@@ -92,28 +94,28 @@
                                     <button class="flex items-center">
                                         NAME
                                         @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
-                                        @if($sortDir == 'ASC')
-                                        {{-- Up arrow (Ascending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                        </svg>
-                                        @else
-                                        {{-- Down arrow (Descending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        @endif
+                                            @if($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
                                     </button>
                                 </th>
@@ -123,28 +125,28 @@
                                     <button class="flex items-center">
                                         COMPANY NAME
                                         @if ($sortBy !== 'company_name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
-                                        @if($sortDir == 'ASC')
-                                        {{-- Up arrow (Ascending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                        </svg>
-                                        @else
-                                        {{-- Down arrow (Descending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        @endif
+                                            @if($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
                                     </button>
                                 </th>
@@ -152,28 +154,28 @@
                                     <button class="flex items-center">
                                         CONTACT PERSON
                                         @if ($sortBy !== 'contact_person')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
-                                        @if($sortDir == 'ASC')
-                                        {{-- Up arrow (Ascending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                        </svg>
-                                        @else
-                                        {{-- Down arrow (Descending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        @endif
+                                            @if($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
                                     </button>
                                 </th>
@@ -181,28 +183,28 @@
                                     <button class="flex items-center">
                                         EVENT START
                                         @if ($sortBy !== 'event_date_start')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
                                         @else
-                                        @if($sortDir == 'ASC')
-                                        {{-- Up arrow (Ascending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                        </svg>
-                                        @else
-                                        {{-- Down arrow (Descending) --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        @endif
+                                            @if($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
                                     </button>
                                 </th>
@@ -219,49 +221,57 @@
                         </thead>
 
                         @foreach($event as $eventItem)
-                        <tr class="border-b">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $eventItem->id }}
-                            </th>
-                            <td class="px-4 py-3"> {{ $eventItem->name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->category->name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->eventHall->name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
-                            <td class="px-4 py-3"> {{
-                                \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d')}} </td>
-                            <td class="px-4 py-3"> {{
-                                \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d')}} </td>
-                            <td class="px-4 py-3"> {{ \Carbon\Carbon::parse($eventItem->event_time)->format('h:i A') }}
-                            </td>
-                            <td class="px-4 py-3"> {{ $eventItem->capacity }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>
-                            <td class="px-4 py-3">
-                                @if($eventItem->status === 'confirmed')
-                                <span class="px-2 py-1 bg-green-500 text-white rounded">Confirmed</span>
-                                @elseif($eventItem->status === 'on-going')
-                                <span class="px-2 py-1 bg-blue-500 text-white rounded">On-going</span>
-                                @elseif($eventItem->status === 'cancelled')
-                                <span class="px-2 py-1 bg-red-500 text-white rounded">Cancelled</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-4">
-                                <!-- View Icon -->
-                                <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
-                                    href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
-                                </i>
+                                            <tr class="border-b">
+                                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                                    {{ $eventItem->id }}
+                                                </th>
+                                                <td class="px-4 py-3"> {{ $eventItem->name }} </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->category->name }} </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->eventHall->name }} </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
+                                                <td class="px-4 py-3"> {{
+                            \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d')}} </td>
+                                                <td class="px-4 py-3"> {{
+                            \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d')}} </td>
+                                                <td class="px-4 py-3"> {{ \Carbon\Carbon::parse($eventItem->event_time)->format('h:i A') }}
+                                                </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->capacity }} </td>
+                                                <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>
+                                                <td class="px-4 py-3">
+                                                    @if($eventItem->status === 'confirmed')
+                                                        <span class="px-2 py-1 bg-green-500 text-white rounded">Confirmed</span>
+                                                    @elseif($eventItem->status === 'on-going')
+                                                        <span class="px-2 py-1 bg-blue-500 text-white rounded">On-going</span>
+                                                    @elseif($eventItem->status === 'cancelled')
+                                                        <span class="px-2 py-1 bg-red-500 text-white rounded">Cancelled</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
-                                <!-- Edit Icon -->
-                                <i class=" fas fa-edit text-green-500 cursor-pointer" wire:navigate
-                                    href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
-                                </i>
-                                <!-- Delete Icon -->
-                                <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                    wire:click="deleteEvent({{ $eventItem->id }})">
-                                </i>
+                                                    <!-- View Icon -->
+                                                    @can('event-view')
+                                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                                            href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
+                                                        </i>
+                                                    @endcan
 
-                            </td>
-                        </tr>
+                                                    <!-- Edit Icon -->
+                                                    @can('event-edit')
+                                                        <i class=" fas fa-edit text-green-500 cursor-pointer" wire:navigate
+                                                            href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
+                                                        </i>
+                                                    @endcan
+
+                                                    <!-- Delete Icon -->
+                                                    @can('event-delete')
+                                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                                            wire:click="deleteEvent({{ $eventItem->id }})">
+                                                        </i>
+                                                    @endcan
+
+                                                </td>
+                                            </tr>
                         @endforeach
                     </table>
                 </div>

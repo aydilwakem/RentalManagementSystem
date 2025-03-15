@@ -72,6 +72,8 @@
     <!-- Sidebar Content -->
     <div class="mt-4">
         <ul class="space-y-3">
+            
+            @can('dashboard-view')
             <li class="relative flex items-center">
                 <a href="{{ route('dashboard') }}" class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
                     <i class="fas fa-home"></i>
@@ -81,6 +83,9 @@
                     </span>
                 </a>
             </li>
+            @endcan
+
+            
             <li x-data="{ openDropdown: false }" class="relative flex flex-col">
                 <!-- Dropdown Toggle -->
                 <button @click="openDropdown = !openDropdown"
@@ -95,6 +100,7 @@
                         :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
                     </i>
                 </button>
+
 
                 <!-- Dropdown Menu -->
                 <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
@@ -117,8 +123,10 @@
                     </li>
                 </ul>
             </li>
+
             <li x-data="{ openDropdown: false }" class="relative flex flex-col">
                 <!-- Dropdown Toggle -->
+                
                 <button @click="openDropdown = !openDropdown"
                     class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
                     <i class="fas fa-bed"></i>
@@ -136,22 +144,33 @@
                 <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
                     class="w-full bg-green-800 rounded shadow-md overflow-hidden"
                     :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
+
+                    @can('room-list')
                     <li>
                         <a href="{{route('admin.rooms')}}" class="block px-5 py-2 hover:bg-green-900">
                             Rooms
                         </a>
                     </li>
+                    @endcan
+
+                    @can('room-category-list')
                     <li>
                         <a href="{{route('admin.room-categories')}}" class="block px-5 py-2 hover:bg-green-900">
                             Room Categories
                         </a>
                     </li>
+                    @endcan
+
+                    @can('amenity-list')
                     <li>
                         <a href="{{route('admin.amenities')}}" class="block px-5 py-2 hover:bg-green-900">
                             Amenities
                         </a>
                     </li>
+                    @endcan
                 </ul>
+
+
             </li>
             <li x-data="{ openDropdown: false }" class="relative flex flex-col">
                 <!-- Dropdown Toggle -->
@@ -172,23 +191,35 @@
                 <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
                     class="w-full bg-green-800 rounded shadow-md overflow-hidden"
                     :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
+
+                    @can('event-list')
                     <li>
                         <a href="{{route('admin.events')}}" class="block px-5 py-2 hover:bg-green-900">
                             Events
                         </a>
                     </li>
+                    @endcan
+
+                    @can('event-hall-list')
                     <li>
                         <a href="{{route('admin.event-halls')}}" class="block px-5 py-2 hover:bg-green-900">
                             Event Halls
                         </a>
                     </li>
+                    @endcan
+
+                    @can('event-category-list')
                     <li>
                         <a href="{{route('admin.event-categories')}}" class="block px-5 py-2 hover:bg-green-900">
                             Event Categories
                         </a>
                     </li>
+                    @endcan
+
                 </ul>
             </li>
+            
+            @can('activity-list')
             <li class="relative flex items-center">
                 <a href="#"
                     class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
@@ -199,6 +230,9 @@
                     </span>
                 </a>
             </li>
+            @endcan
+
+            @can('maintenance-list')
             <li class="relative flex items-center">
                 <a href="#"
                     class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
@@ -209,6 +243,8 @@
                     </span>
                 </a>
             </li>
+            @endcan
+
         </ul>
 
 

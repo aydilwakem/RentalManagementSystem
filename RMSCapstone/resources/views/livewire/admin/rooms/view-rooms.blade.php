@@ -13,7 +13,7 @@
     @if (session('message'))
         <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
             class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
             {{ session('message') }}
         </div>
     @endif
@@ -22,7 +22,7 @@
     <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto border">
         <div class="flex items-center justify-between d p-4">
             <div class="flex">
-                <div class=" w-full">
+                <div class="relative w-full">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg">
@@ -41,7 +41,7 @@
             {{-- Status Type --}}
             <div class="flex space-x-3">
                 <div class="flex space-x-3 items-center">
-                    <label class="w-40 text-sm font-medium text-gray-900">User Type :</label>
+                    <label class="w-40 text-sm font-medium text-gray-900">Status :</label>
                     <select wire:model.live="statusFilter"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         <option value="">All</option>
@@ -267,20 +267,21 @@
                         <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                             <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                href="{{ route('admin.view-room', ['room' => $room->id]) }}">
-                            </i>
+                            @can('room-view')
+                                <i class="fas fa-eye text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                    href="{{ route('admin.view-room', ['room' => $room->id]) }}">
+                                </i>
+                            @endcan
 
-
+                            <!-- Edit Icon -->
                             @can('room-edit')
-                                <!-- Edit Icon -->
                                 <i class="fas fa-edit text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                     href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
                                 </i>
                             @endcan
 
+                            <!-- Delete Icon -->
                             @can('room-delete')
-                                <!-- Delete Icon -->
                                 <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                     wire:click="deleteRoom({{ $room->id }})">
                                 </i>

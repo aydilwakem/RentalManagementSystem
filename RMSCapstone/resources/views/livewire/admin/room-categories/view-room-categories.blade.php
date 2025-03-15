@@ -5,19 +5,22 @@
             <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
 
                 <!-- Create Room Button -->
-                <div class="flex items-center justify-between p-4">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        onclick="window.location.href='{{ route('admin.create-room-category') }}'">
-                        + Create Category
-                    </button>
-                </div>
+                @can('room-category-create')
+                    <div class="flex items-center justify-between p-4">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                            onclick="window.location.href='{{ route('admin.create-room-category') }}'">
+                            + Create Category
+                        </button>
+                    </div>
+                @endcan
 
                 {{-- Display Session Message --}}
                 @if (session('message'))
-                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                            {{ session('message') }}
-                        </div>
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
+                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        {{ session('message') }}
+                    </div>
                 @endif
 
                 <div class="flex items-center justify-between d p-4">
@@ -162,19 +165,27 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
+
                                     <!-- View Icon -->
-                                    <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
+                                    @can('room-category-view')
+                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
                                     <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
+                                    @can('room-category-edit')
+                                        <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
+                                    @endcan
+
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                        wire:click="deleteCategory({{ $roomCategory->id }})">
-                                    </i>
+                                    @can('room-category-delete')
+                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                            wire:click="deleteCategory({{ $roomCategory->id }})">
+                                        </i>
+                                    @endcan
 
                                 </td>
                             </tr>
