@@ -1,4 +1,4 @@
-<div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
+<div class="border rounded-lg p-6 max-w-2xl mx-auto mb-8 mt-8">
     <div class="mx-auto max-w-2xl lg:py-2s">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new event hall</h2>
         @if ($errors->any())
@@ -38,7 +38,7 @@
 
                 <!-- Capacity -->
                 <div class="sm:col-span-2">
-                    <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900">Capacity</label>
+                    <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900">Max Capacity</label>
                     <input type="number" wire:model="capacity" id="capacity" rows="8"
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Event hall capacity"></input>
@@ -85,7 +85,7 @@
                 </x-button>
                 <x-button type="submit"
                     wire:loading.attr="disabled" wire:target="image">
-                    Add Event Category
+                    Add Event Hall
                 </x-button>
             </div>
         </form>

@@ -12,7 +12,7 @@
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <div class="flex items-center justify-between p-4">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
-                    Create Amenity
+                    New Amenity
                 </x-button>
             </div>
             <div class="bg-white-500 relative shadow-md rounded-lg overflow-hidden border">
@@ -119,29 +119,31 @@
                                 <th scope="col" class="px-4 py-3 text-center">Action</th>
                             </tr>
                         </thead>
+                        <tbody class="text-left">
                         @foreach ($amenities as $amenity)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $amenity->id }}
                                 </th>
-                                <td class="px-4 py-3">{{ $amenity->name }}</td>
+                                <td class="px-4 py-3 font-semibold text-gray-900">{{ $amenity->name }}</td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
                                     @can('amenity-view')
-                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                             href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
                                         </i>
                                     @endcan
 
 
                                     @can('amenity-edit')
-                                        <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                            wire:navigate
                                             href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
                                         </i>
                                     @endcan
 
                                     @can('amenity-delete')
-                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                             wire:click="deleteAmenity({{ $amenity->id }})"
                                             wire:confirm="Are you sure you want to delete this post?">
                                         </i>
@@ -150,6 +152,7 @@
                                 </td>
                             </tr>
                         @endforeach
+                        </tbody>
                     </table>
 
 

@@ -13,12 +13,12 @@
         @can('event-hall-create')
         <div class="flex items-center justify-between p-4">
             <x-button icon="fas fa-plus" href="{{ route('admin.create-event-hall') }}">
-                Create Event Hall
+                New Event Hall
             </x-button>
         </div>
         @endcan
         <!-- Table -->
-        <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
+        <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden border">
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -199,25 +199,25 @@
                                 <td class="px-4 py-3"> {{ $hall->capacity }}</td>
                                 <td class="px-4 py-3"> {{ $hall->amount }} </td>
                                 <td class="px-4 py-3"> {{ $hall->extra_charge_per_hr }} </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->
                                     @can('event-hall-view')
-                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                             href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('event-hall-edit')
-                                        <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                             href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('event-hall-delete')
-                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                        <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
                                             wire:click="deleteEventHall({{ $hall->id }})">
                                         </i>
                                     @endcan

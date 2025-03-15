@@ -88,7 +88,9 @@
                             clip-rule="evenodd" />
                     </svg>
                 </button>
+
                 <!-- Dashboard -->
+                @can('dashboard-view')
                 <a href="{{ route('dashboard') }}" wire:navigate>
                     <div @click="$store.sidebar.active = 'home' "
                         class=" relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
@@ -105,6 +107,7 @@
                             Dashboard</h1>
                     </div>
                 </a>
+                @endcan
 
                 <!-- Reservations -->
                 <div @click="$store.sidebar.active = 'reservations'"
@@ -152,22 +155,32 @@
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        @can('room-list')
                         <a href="{{ route('admin.rooms') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Rooms</h1>
                         </a>
+                        @endcan
+
+                        @can('room-category-list')
                         <a href="{{ route('admin.room-categories') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Room Categories</h1>
                         </a>
+                        @endcan
+
+
                         <a href="{{ route('admin.room-rates') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Room Rates</h1>
                         </a>
+
+                        @can('amenity-list')
                         <a href="{{ route('admin.amenities') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Amenities</h1>
                         </a>
+                        @endcan
                     </div>
                 </div>
 
@@ -201,24 +214,33 @@
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+
+                        @can('event-list')
                         <a href="{{ route('admin.events') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Events</h1>
                         </a>
+                        @endcan
+
+                        @can('event-hall-list')
                         <a href="{{ route('admin.event-halls') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Event Halls</h1>
                         </a>
+                        @endcan
+
+                        @can('event-category-list')
                         <a href="{{ route('admin.event-categories') }}" wire:navigate
                             class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
                             <h1 class="cursor-pointer">Event Categories</h1>
                         </a>
+                        @endcan
                     </div>
                 </div>
 
                 <!-- Activities -->
+                @can('activity-list')
                 <a href="{{ route('admin.activities') }}" wire:navigate>
-
                     <div @click="$store.sidebar.active = 'activities' "
                         class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                         x-bind:class="{
@@ -236,8 +258,10 @@
                         </div>
                     </div>
                 </a>
+                @endcan
 
                 <!-- Maintenance -->
+                @can('maintenance-list')
                 <a href="{{ route('admin.maintenances') }}" wire:navigate>
                     <div @click="$store.sidebar.active = 'maintenance' "
                         class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
@@ -256,6 +280,53 @@
                         </div>
                     </div>
                 </a>
+                @endcan
+
+                <!-- Settings -->
+                <div x-data="dropdown" class="relative">
+                    <!-- Dropdown head -->
+                    <div @click="toggle('settings')"
+                        class="flex justify-between text-gray-400 hover:text-gray-200 hover:bg-green-700 items-center space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-white bg-green-600': $store.sidebar.active ==
+                                'settings',
+                            'text-gray-400 ': $store.sidebar.active != 'settings'
+                        }">
+                        <div class="relative flex space-x-2 items-center">
+                            <i class="fa-solid fa-cogs"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Settings</h1>
+                        </div>
+                        <svg x-cloak x-bind:class="$store.sidebar.full ? '' : 'sm:hidden'"
+                            xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <!-- Dropdown content -->
+                    <div x-cloak x-show="open" @click.outside="open = false"
+                        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        <a href="{{ route('admin.manage-users') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">User Management</h1>
+                        </a>
+
+                        <a href="{{ route('admin.payments') }}" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Payment Methods</h1>
+                        </a>
+
+                        <a href="#" wire:navigate
+                            class="block px-3 py-2 hover:text-gray-200 hover:underline rounded-lg transition">
+                            <h1 class="cursor-pointer">Appearance</h1>
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Account Management -->
                 <div>
@@ -345,189 +416,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
-
-    <hr>
-
-    <!-- Sidebar Content -->
-    <div class="mt-4">
-        <ul class="space-y-3">
-
-            @can('dashboard-view')
-            <li class="relative flex items-center">
-                <a href="{{ route('dashboard') }}" class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-home"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Dashboard
-                    </span>
-                </a>
-            </li>
-            @endcan
-
-
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-calendar-check"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Reservations
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            New Reservations
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            Confirmed Reservations
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-5 py-2 hover:bg-green-900">
-                            On-Going Reservations
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-bed"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Rooms
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-
-                    @can('room-list')
-                    <li>
-                        <a href="{{route('admin.rooms')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Rooms
-                        </a>
-                    </li>
-                    @endcan
-
-                    @can('room-category-list')
-                    <li>
-                        <a href="{{route('admin.room-categories')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Room Categories
-                        </a>
-                    </li>
-                    @endcan
-
-                    @can('amenity-list')
-                    <li>
-                        <a href="{{route('admin.amenities')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Amenities
-                        </a>
-                    </li>
-                    @endcan
-                </ul>
-
-
-            </li>
-            <li x-data="{ openDropdown: false }" class="relative flex flex-col">
-                <!-- Dropdown Toggle -->
-                <button @click="openDropdown = !openDropdown"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full focus:outline-none">
-                    <i class="fas fa-calendar-check"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Events
-                    </span>
-
-                    <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
-                        :class="sidebarOpen ? (openDropdown ? 'rotate-180 opacity-100' : 'rotate-0 opacity-100') : 'opacity-0 scale-0'">
-                    </i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <ul x-show="openDropdown && sidebarOpen" x-collapse x-transition
-                    class="w-full bg-green-800 rounded shadow-md overflow-hidden"
-                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-
-                    @can('event-list')
-                    <li>
-                        <a href="{{route('admin.events')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Events
-                        </a>
-                    </li>
-                    @endcan
-
-                    @can('event-hall-list')
-                    <li>
-                        <a href="{{route('admin.event-halls')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Event Halls
-                        </a>
-                    </li>
-                    @endcan
-
-                    @can('event-category-list')
-                    <li>
-                        <a href="{{route('admin.event-categories')}}" class="block px-5 py-2 hover:bg-green-900">
-                            Event Categories
-                        </a>
-                    </li>
-                    @endcan
-
-                </ul>
-            </li>
-
-            @can('activity-list')
-            <li class="relative flex items-center">
-                <a href="#"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-person-swimming"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Activities
-                    </span>
-                </a>
-            </li>
-            @endcan
-
-            @can('maintenance-list')
-            <li class="relative flex items-center">
-                <a href="#"
-                    class="px-5 py-3 flex items-center hover:bg-green-800 w-full">
-                    <i class="fas fa-broom"></i>
-                    <span class="absolute left-14 whitespace-nowrap transition-opacity duration-300"
-                        :class="sidebarOpen ? 'opacity-100' : 'opacity-0'">
-                        Maintenance
-                    </span>
-                </a>
-            </li>
-            @endcan
-
-        </ul>
-
 
     </div>
 

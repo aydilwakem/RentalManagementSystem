@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
         <div class="mx-auto max-w-2xl lg:py-2">
-            <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Event</h2>
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a New Event</h2>
             @if ($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                     <ul>

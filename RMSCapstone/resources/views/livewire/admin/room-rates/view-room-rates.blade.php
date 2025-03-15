@@ -14,7 +14,7 @@
             @can('room-rate-create')
             <div class="flex items-center justify-between p-4">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-room-rate') }}">
-                    Create Room Rate
+                    New Room Rate
                 </x-button>
             </div>
             @endcan
@@ -380,13 +380,13 @@
                             {{-- Rate Type --}}
                             <td class="px-4 py-3">
                                 @if ($roomRate->rate_type === 'Weekdays')
-                                    <span class="px-2 py-1 bg-green-500 text-white rounded">Weekdays</span>
+                                    <span class="px-2 py-1 bg-green-700 text-white rounded">Weekdays</span>
                                 @elseif($roomRate->rate_type === 'Weekend')
-                                    <span class="px-2 py-1 bg-yellow-500 text-white rounded">Weekend</span>
+                                    <span class="px-2 py-1 bg-yellow-700 text-white rounded">Weekend</span>
                                 @endif
                             </td>
 
-                            <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                            <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                 <!-- View Icon -->
                                 @can('room-rate-view')
                                 <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate

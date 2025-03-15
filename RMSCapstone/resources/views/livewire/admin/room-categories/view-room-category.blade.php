@@ -4,16 +4,7 @@
             {{ __('View Room Category') }}
         </h2>
     </x-slot>
-    @if ($roomCategory->isEmpty())
-        <!-- Empty Page Message -->
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
-            <x-button class="mt-4" href="{{ route('admin.create-room') }}" icon="fas fa-plus">
-                Create Room
-            </x-button>
-        </div>
-    @else
-        <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md">
+        <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md mt-4 mb-4">
             <!-- Room Category Name -->
             <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">
                 {{ $roomCategory->name }}
@@ -61,5 +52,4 @@
                 </x-button>
             </div>
         </div>
-    @endif
 </div>

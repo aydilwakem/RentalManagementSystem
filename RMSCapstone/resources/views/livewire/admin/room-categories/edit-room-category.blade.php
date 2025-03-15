@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
     <!-- Form container -->
-    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-bwhite">
+    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Category</h2>
         <form wire:submit.prevent="updateCategory">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -69,7 +69,7 @@
                     Cancel
                 </x-button>
                 <x-button type="button" class="mt-3" @click="showConfirm = true">
-                    Update Category
+                    Save Changes
                 </x-button>
             </div>
         </form>

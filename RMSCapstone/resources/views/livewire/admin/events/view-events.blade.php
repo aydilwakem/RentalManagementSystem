@@ -13,7 +13,7 @@
         @can('event-create')
         <div class="flex items-center justify-between p-4">
             <x-button icon="fas fa-plus" href="{{ route('admin.create-event') }}">
-                Create Event
+                New Event
             </x-button>
         </div>
         @endcan
@@ -27,7 +27,7 @@
             </div>
         @endif
         <!-- Table -->
-        <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto border">
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Header-->
             <div class="flex items-center justify-between d p-4">
                 <div class="flex">
@@ -245,14 +245,14 @@
                         <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>
                         <td class="px-4 py-3">
                             @if ($eventItem->status === 'confirmed')
-                                <span class="px-2 py-1 bg-green-500 text-white rounded">Confirmed</span>
+                                <span class="px-2 py-1 bg-green-700 text-white rounded">Confirmed</span>
                             @elseif($eventItem->status === 'on-going')
-                                <span class="px-2 py-1 bg-blue-500 text-white rounded">On-going</span>
+                                <span class="px-2 py-1 bg-blue-600 text-white rounded">On-going</span>
                             @elseif($eventItem->status === 'cancelled')
-                                <span class="px-2 py-1 bg-red-500 text-white rounded">Cancelled</span>
+                                <span class="px-2 py-1 bg-red-600 text-white rounded">Cancelled</span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                        <td class="px-4 py-3 flex items-center justify-center space-x-3">
                             <!-- View Icon -->
                             @can('event-view')
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate

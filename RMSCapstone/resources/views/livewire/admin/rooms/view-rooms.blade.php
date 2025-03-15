@@ -19,11 +19,11 @@
         <div>
             <!-- Label and Confirm Button -->
             @can('room-create')
-            <div class="flex justify-between items-center mb-4">
-                <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
-                    Create Room
-                </x-button>
-            </div>
+                <div class="flex justify-between items-center mb-4">
+                    <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
+                        New Room
+                    </x-button>
+                </div>
             @endcan
 
             <!-- Table -->
@@ -301,23 +301,23 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('room-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
-                                        wire:navigate href="{{ route('admin.view-room', ['room' => $room->id]) }}">
-                                    </i>
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                            wire:navigate href="{{ route('admin.view-room', ['room' => $room->id]) }}">
+                                        </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('room-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
-                                        wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
-                                    </i>
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                            wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
+                                        </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('room-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="deleteRoom({{ $room->id }})">
-                                    </i>
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="deleteRoom({{ $room->id }})">
+                                        </i>
                                     @endcan
                                 </td>
                             </tr>

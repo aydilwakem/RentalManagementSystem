@@ -1,27 +1,36 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
-    @if ($roomCategories->isNotEmpty())
-        <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Room Categories') }}
-            </h2>
-        </x-slot>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Room Categories') }}
+        </h2>
+    </x-slot>
+    @if ($roomCategories->isEmpty())
+        <!-- Empty Page Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-room-category') }}" icon="fas fa-plus">
+                Create Room
+            </x-button>
+        </div>
+    @else
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <!-- Create Room Button -->
             @can('room-category-create')
-            <div class="flex items-center justify-between p-4">
-                <x-button type="button" icon="fas fa-plus" href="{{ route('admin.create-room-category') }}">
-                    Create Category
-                </x-button>
-            </div>
+                <div class="flex items-center justify-between p-4">
+                    <x-button type="button" icon="fas fa-plus" href="{{ route('admin.create-room-category') }}">
+                        New Category
+                    </x-button>
+                </div>
             @endcan
             <div class=" bg-white-500 relative  sm:rounded-lg overflow-hidden border shadow-md">
 
                 {{-- Display Session Message --}}
                 @if (session('message'))
-                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                            {{ session('message') }}
-                        </div>
+                        {{ session('message') }}
+                    </div>
                 @endif
 
                 <div class="flex items-center justify-between d p-4">
@@ -169,25 +178,25 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('room-category-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                            wire:navigate
+                                            href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('room-category-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                            wire:navigate
+                                            href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('room-category-delete')
-                                    <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="deleteCategory({{ $roomCategory->id }})">
-                                    </i>
+                                        <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="deleteCategory({{ $roomCategory->id }})">
+                                        </i>
                                     @endcan
 
                                 </td>
@@ -214,15 +223,6 @@
                     {{ $roomCategories->links() }}
                 </div>
             </div>
-        </div>
-    @else
-        <!-- Empty Table Message -->
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
-            <x-button class="mt-4" href="{{ route('admin.create-room-category') }}" icon="fas fa-plus">
-                Create Room
-            </x-button>
-
         </div>
     @endif
 
