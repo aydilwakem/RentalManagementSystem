@@ -1,32 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sidebar</title>
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- hide elements while page load -->
-    <style>
-        [x-cloak] {
-            display: none;
-        }
-    </style>
-</head>
-
 <div class="h-full flex flex-col">
 
-    <body x-data="{ store: $store.sidebar }" class="h-screen mx-auto antialiased flex justify-between">
+    <div x-data="{ store: $store.sidebar }" class="h-screen mx-auto antialiased flex justify-between">
         <!-- Mobile Menu Toggle -->
         <button @click="$store.sidebar.navOpen = !$store.sidebar.navOpen"
             class="sm:hidden absolute top-5 right-5 focus:outline-none">
             <!-- Menu Icons -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
 
@@ -237,40 +217,45 @@
                 </div>
 
                 <!-- Activities -->
-                <div @click="$store.sidebar.active = 'activities' "
-                    class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
-                    x-bind:class="{
-                        'justify-start': $store.sidebar.full,
-                        'sm:justify-center': !$store.sidebar
-                            .full,
-                        'text-gray-200 bg-green-600': $store.sidebar.active == 'activities',
-                        'text-gray-400 ': $store
-                            .sidebar.active != 'activities'
-                    }">
-                    <div class="flex  items-center space-x-2">
-                        <i class="fa-solid fa-person-swimming"></i>
-                        <h1 x-cloak x-show="$store.sidebar.full">
-                            Activities</h1>
+                <a href="{{ route('admin.activities') }}" wire:navigate>
+
+                    <div @click="$store.sidebar.active = 'activities' "
+                        class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-gray-200 bg-green-600': $store.sidebar.active == 'activities',
+                            'text-gray-400 ': $store
+                                .sidebar.active != 'activities'
+                        }">
+                        <div class="flex  items-center space-x-2">
+                            <i class="fa-solid fa-person-swimming"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Activities</h1>
+                        </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Maintenance -->
-                <div @click="$store.sidebar.active = 'maintenance' "
-                    class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
-                    x-bind:class="{
-                        'justify-start': $store.sidebar.full,
-                        'sm:justify-center': !$store.sidebar
-                            .full,
-                        'text-gray-200 bg-green-600': $store.sidebar.active == 'maintenance',
-                        'text-gray-400 ': $store
-                            .sidebar.active != 'maintenance'
-                    }">
-                    <div class="flex  items-center space-x-2">
-                        <i class="fa-solid fa-broom"></i>
-                        <h1 x-cloak x-show="$store.sidebar.full">
-                            Maintenance</h1>
+                <a href="{{ route('admin.maintenances') }}" wire:navigate>
+                    <div @click="$store.sidebar.active = 'maintenance' "
+                        class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                        x-bind:class="{
+                            'justify-start': $store.sidebar.full,
+                            'sm:justify-center': !$store.sidebar
+                                .full,
+                            'text-gray-200 bg-green-600': $store.sidebar.active == 'maintenance',
+                            'text-gray-400 ': $store
+                                .sidebar.active != 'maintenance'
+                        }">
+                        <div class="flex  items-center space-x-2">
+                            <i class="fa-solid fa-broom"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Maintenance</h1>
+                        </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Account Management -->
                 <div>
@@ -360,9 +345,6 @@
                 </div>
             </div>
         </div>
-        <script src="./js/app.js"></script>
-    </body>
+
+    </div>
 </div>
-
-
-</html>

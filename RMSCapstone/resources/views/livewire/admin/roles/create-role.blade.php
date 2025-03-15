@@ -39,14 +39,11 @@
                             @endforeach
                         </div>
                     </div>
-
-
-
                 </div>
 
                 <button type="submit"
                     class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-blue-300 hover:bg-blue-700"
-                    wire:loading.attr="disabled" wire:target="image">
+                    wire:loading.attr="disabled" wire:target="image"> meron,
                     Add Role
                 </button>
 

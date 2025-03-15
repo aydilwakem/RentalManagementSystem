@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Roles;
 
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -19,10 +20,12 @@ class CreateRole extends Component
 
     public function saveRole()
     {
+
         $this->validate([
             'name' => 'required|string|min:3|unique:roles,name',
             'selectedPermissions' => 'array|min:1',
         ]);
+
 
         // Create role with correct guard
         $role = Role::create([
