@@ -69,6 +69,12 @@ class PermissionSeeder extends Seeder
             // "user-create",
             // "user-edit",
             // "user-delete",
+            // Setting Payment Method
+            "payment-method-view",
+            "payment-method-list",
+            "payment-method-create",
+            "payment-method-edit",
+            "payment-method-delete",
 
             // // Dashboard
             // "dashboard-view"

@@ -10,11 +10,13 @@
     @else
     <div>
         <!-- Create Room Button -->
+        @can('event-create')
         <div class="flex items-center justify-between p-4">
             <x-button icon="fas fa-plus" href="{{ route('admin.create-event') }}">
                 Create Event
             </x-button>
         </div>
+        @endcan
 
         {{-- Display Session Message --}}
         @if (session('message'))
@@ -252,18 +254,26 @@
                         </td>
                         <td class="px-4 py-3 flex items-center justify-center space-x-4">
                             <!-- View Icon -->
+                            @can('event-view')
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                 href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
                             </i>
+                            @endcan
 
                             <!-- Edit Icon -->
+                            @can('event-edit')
                             <i class=" fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                 href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
                             </i>
+                            @endcan
+
                             <!-- Delete Icon -->
+                            @can('event-delete')
                             <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
                                 wire:click="deleteEvent({{ $eventItem->id }})">
                             </i>
+                            @endcan
+
                         </td>
                     </tr>
                 @endforeach

@@ -11,11 +11,13 @@
     @else
         <div>
             <!-- Create Room Rate Button -->
+            @can('room-rate-create')
             <div class="flex items-center justify-between p-4">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-room-rate') }}">
                     Create Room Rate
                 </x-button>
             </div>
+            @endcan
 
             <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
@@ -386,17 +388,25 @@
 
                             <td class="px-4 py-3 flex items-center justify-center space-x-4">
                                 <!-- View Icon -->
+                                @can('room-rate-view')
                                 <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                     href="{{ route('admin.view-room-rate', ['roomRate' => $roomRate->id]) }}">
                                 </i>
+                                @endcan
+
                                 <!-- Edit Icon -->
+                                @can('room-rate-edit')
                                 <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                     href="{{ route('admin.edit-room-rate', ['roomRate' => $roomRate->id]) }}">
                                 </i>
+                                @endcan
+
                                 <!-- Delete Icon -->
+                                @can('room-rate-delete')
                                 <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
                                     wire:click="deleteRoomRate({{ $roomRate->id }})">
                                 </i>
+                                @endcan
 
                             </td>
                         </tr>

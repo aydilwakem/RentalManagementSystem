@@ -10,11 +10,13 @@
     @else
     <div>
         <!-- Create Room Button -->
+        @can('event-hall-create')
         <div class="flex items-center justify-between p-4">
             <x-button icon="fas fa-plus" href="{{ route('admin.create-event-hall') }}">
                 Create Event Hall
             </x-button>
         </div>
+        @endcan
         <!-- Table -->
         <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
             {{-- Display Session Message --}}
@@ -187,36 +189,44 @@
                     </tr>
                 </thead>
 
-                @foreach ($eventHall as $hall)
-                    <tr class="border-b">
-                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                            {{ $hall->id }}
-                        </th>
-                        <td class="px-4 py-3"> {{ $hall->name }} </td>
-                        <td class="px-4 py-3"> {{ $hall->description }}</td>
-                        <td class="px-4 py-3"> {{ $hall->capacity }}</td>
-                        <td class="px-4 py-3"> {{ $hall->amount }} </td>
-                        <td class="px-4 py-3"> {{ $hall->extra_charge_per_hr }} </td>
-                        <td class="px-4 py-3 flex items-center justify-center space-x-4">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
-                                href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
-                            </i>
+                        @foreach ($eventHall as $hall)
+                            <tr class="border-b">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $hall->id }}
+                                </th>
+                                <td class="px-4 py-3"> {{ $hall->name }} </td>
+                                <td class="px-4 py-3"> {{ $hall->description }}</td>
+                                <td class="px-4 py-3"> {{ $hall->capacity }}</td>
+                                <td class="px-4 py-3"> {{ $hall->amount }} </td>
+                                <td class="px-4 py-3"> {{ $hall->extra_charge_per_hr }} </td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
-                            <!-- Edit Icon -->
-                            <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
-                                href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
+                                    <!-- View Icon -->
+                                    @can('event-hall-view')
+                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
+                                        </i>
+                                    @endcan
 
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                wire:click="deleteEventHall({{ $hall->id }})">
-                            </i>
+                                    <!-- Edit Icon -->
+                                    @can('event-hall-edit')
+                                        <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
+                                        </i>
+                                    @endcan
 
-                        </td>
-                    </tr>
-                @endforeach
-            </table>
+                                    <!-- Delete Icon -->
+                                    @can('event-hall-delete')
+                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                            wire:click="deleteEventHall({{ $hall->id }})">
+                                        </i>
+                                    @endcan
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                </div>
 
             {{-- Pagination --}}
             <div class="py-4 px-3">

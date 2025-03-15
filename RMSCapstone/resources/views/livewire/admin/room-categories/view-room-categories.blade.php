@@ -7,11 +7,13 @@
         </x-slot>
         <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
             <!-- Create Room Button -->
+            @can('room-category-create')
             <div class="flex items-center justify-between p-4">
                 <x-button type="button" icon="fas fa-plus" href="{{ route('admin.create-room-category') }}">
                     Create Category
                 </x-button>
             </div>
+            @endcan
             <div class=" bg-white-500 relative  sm:rounded-lg overflow-hidden border shadow-md">
 
                 {{-- Display Session Message --}}
@@ -166,20 +168,27 @@
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
+                                    @can('room-category-view')
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
                                         wire:navigate
                                         href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
+                                    @endcan
 
                                     <!-- Edit Icon -->
+                                    @can('room-category-edit')
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
                                         wire:navigate
                                         href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                     </i>
+                                    @endcan
+
                                     <!-- Delete Icon -->
+                                    @can('room-category-delete')
                                     <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
                                         wire:click="deleteCategory({{ $roomCategory->id }})">
                                     </i>
+                                    @endcan
 
                                 </td>
                             </tr>

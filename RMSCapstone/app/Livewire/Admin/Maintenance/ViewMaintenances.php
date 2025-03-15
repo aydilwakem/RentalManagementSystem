@@ -11,21 +11,21 @@ class ViewMaintenances extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
 
     #[Url()]
     public $perPage = 5;
 
-    #[Url(history:true)]
-    public $sortBy='created_at';
+    #[Url(history: true)]
+    public $sortBy = 'created_at';
 
-    #[Url(history:true)]
-    public $sortDir='DESC';
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
 
-    public $priorityStatus = ''; 
+    public $priorityStatus = '';
 
-   public function deleteMaintenances($id)
+    public function deleteMaintenances($id)
     {
         // Find the event hall by ID
         $maintenance = Maintenance::find($id);
@@ -39,11 +39,12 @@ class ViewMaintenances extends Component
         }
     }
 
-    public function setSortBy($sortByField){
+    public function setSortBy($sortByField)
+    {
 
-        if($this->sortBy == $sortByField){
+        if ($this->sortBy == $sortByField) {
             $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
-            return ;
+            return;
         }
         $this->sortBy = $sortByField;
         $this->sortDir = "ASC";
@@ -54,13 +55,12 @@ class ViewMaintenances extends Component
     {
         $maintenance = Maintenance::query()
             ->search($this->search)
-            ->when($this->priorityStatus !== '', function($query){
+            ->when($this->priorityStatus !== '', function ($query) {
                 $query->where('priority_status', $this->priorityStatus);
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         return view('livewire.admin.maintenance.view-maintenances', compact('maintenance'));
-        
     }
 }

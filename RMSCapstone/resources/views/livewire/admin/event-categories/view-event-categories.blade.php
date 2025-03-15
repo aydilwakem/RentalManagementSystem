@@ -11,21 +11,23 @@
     @else
         <div>
             <!-- Create Room Button -->
+            @can('event-category-create')
             <div class="flex items-center justify-between p-4">
                 <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
                     onclick="window.location.href='{{ route('admin.create-event-category') }}'">
                     + Create Event Category
                 </button>
             </div>
+            @endcan
 
-            {{-- Display Session Message --}}
-            @if (session('message'))
-                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                    {{ session('message') }}
-                </div>
-            @endif
+                {{-- Display Session Message --}}
+                @if (session('message'))
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        {{ session('message') }}
+                    </div>
+                @endif
 
             {{-- Search Bar --}}
             <div class="flex items-center justify-between d p-4">
@@ -143,20 +145,32 @@
                                     href="{{ route('admin.view-event-category', ['eventCategory' => $eventCategory->id]) }}">
                                 </i>
 
-                                <!-- Edit Icon -->
-                                <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
-                                    href="{{ route('admin.edit-event-category', ['eventCategory' => $eventCategory->id]) }}">
-                                </i>
-                                <!-- Delete Icon -->
-                                <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                    wire:click="deleteEventCategory({{ $eventCategory->id }})">
-                                </i>
+                                    <!-- View Icon -->
+                                    @can('event-category-view')
+                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-event-category', ['eventCategory' => $eventCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
-                            </td>
-                        </tr>
-                    @endforeach
-                </table>
-            </div>
+                                    <!-- Edit Icon -->
+                                    @can('event-category-edit')
+                                        <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-event-category', ['eventCategory' => $eventCategory->id]) }}">
+                                        </i>
+                                    @endcan
+
+                                    <!-- Delete Icon -->
+                                    @can('event-category-delete')
+                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                            wire:click="deleteEventCategory({{ $eventCategory->id }})">
+                                        </i>
+                                    @endcan
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                </div>
 
             {{-- Pagination --}}
             <div class="py-4 px-3">
