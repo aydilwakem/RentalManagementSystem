@@ -19,7 +19,7 @@
             </div>
             @endcan
 
-            <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto border">
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
                     <!-- Search Tab -->

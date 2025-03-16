@@ -13,7 +13,7 @@
             </x-button>
         </div>
     @else
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div>
             <!-- Create Room Button -->
             @can('room-category-create')
                 <div class="flex items-center justify-between p-4">

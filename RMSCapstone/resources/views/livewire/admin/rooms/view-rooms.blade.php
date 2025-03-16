@@ -7,6 +7,7 @@
                 Create Room
             </x-button>
         </div>
+    @else
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -15,7 +16,6 @@
                 {{ session('message') }}
             </div>
         @endif
-    @else
         <div>
             <!-- Label and Confirm Button -->
             @can('room-create')
@@ -27,7 +27,7 @@
             @endcan
 
             <!-- Table -->
-            <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto border">
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">

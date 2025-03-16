@@ -1,29 +1,34 @@
-<div>
-    <section class="mt-10">
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-            <!-- Start coding here -->
-            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
-
-                <!-- Create Room Button -->
-                @can('maintenance-create')
-                    <div class="flex items-center justify-between p-4">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                            onclick="window.location.href='{{ route('admin.create-maintenance') }}'">
-                            + Create Maintenance
-                        </button>
-                    </div>
-                @endcan
-
-                {{-- Display Session Message --}}
-                @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                {{-- Search Bar --}}
+<div class="min-h-[550px] container mx-auto p-6 ">
+    @if ($maintenance->isEmpty())
+        <!-- Empty Table Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No maintenances yet.<br> Click "Create Maintenance" to add a
+                new
+                maintenance.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-maintenance') }}" icon="fas fa-plus" wire:navigate>
+                Create Maintenance
+            </x-button>
+        </div>
+    @else
+        <div>
+            <!-- Create Room Button -->
+            @can('maintenance-create')
+                <div class="flex items-center justify-between p-4">
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-maintenance') }}">
+                        New Maintenance
+                    </x-button>
+                </div>
+            @endcan
+            {{-- Display Session Message --}}
+            @if (session('message'))
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('message') }}
+                </div>
+            @endif
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+                <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">
@@ -58,215 +63,221 @@
                 </div>
 
                 {{-- Table --}}
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                    <button class="flex items-center">
-                                        ID
-                                        @if ($sortBy !== 'id')
-                                            {{-- Default icon when sorting is not active --}}
+                <table class="w-full text-left">
+                    <thead class="text-sm text-gray-700 bg-gray-200">
+                        <tr>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
+                                <button class="flex items-center">
+                                    ID
+                                    @if ($sortBy !== 'id')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
-                                        @endif
-                                    </button>
-                                </th>
-                                <th scope="col">Name</th>
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
-                                    <button class="flex items-center">
-                                        DESCRIPTION
-                                        @if ($sortBy !== 'description')
-                                            {{-- Default icon when sorting is not active --}}
+                                            {{-- Down arrow (Descending) --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
-                                        @else
-                                            @if($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
                                         @endif
-                                    </button>
-                                </th>
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('reported_at')">
-                                    <button class="flex items-center">
-                                        REPORTED AT
-                                        @if ($sortBy !== 'reported_at')
-                                            {{-- Default icon when sorting is not active --}}
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
+                                <button class="flex items-center">
+                                    Description
+                                    @if ($sortBy !== 'description')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
-                                        @endif
-                                    </button>
-                                </th>
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('resolved_at')">
-                                    <button class="flex items-center">
-                                        RESOLVED AT
-                                        @if ($sortBy !== 'resolved_at')
-                                            {{-- Default icon when sorting is not active --}}
+                                            {{-- Down arrow (Descending) --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
-                                        @else
-                                            @if($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
                                         @endif
-                                    </button>
-                                </th>
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('priority_status')">
-                                    <button class="flex items-center">
-                                        PRIORITY STATUS
-                                        @if ($sortBy !== 'priority_status')
-                                            {{-- Default icon when sorting is not active --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('reported_at')">
+                                <button class="flex items-center">
+                                    Reported At
+                                    @if ($sortBy !== 'reported_at')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
                                         @endif
-                                    </button>
-                                </th>
-                                <th scope="col" class="px-4 py-3 text-center">Action</th>
-                                {{--<th scope="col" class="px-4 py-3">
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('resolved_at')">
+                                <button class="flex items-center">
+                                    Resolved At
+                                    @if ($sortBy !== 'resolved_at')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('priority_status')">
+                                <button class="flex items-center">
+                                    Priority Status
+                                    @if ($sortBy !== 'priority_status')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-center">Action</th>
+                            {{-- <th scope="col" class="px-4 py-3">
                                     <span class="sr-only">Actions</span>
-                                </th>--}}
+                                </th> --}}
+                        </tr>
+                    </thead>
+                    <tbody class="text-left">
+                        @foreach ($maintenance as $maintenanceItem)
+                            <tr class="border-b">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $maintenanceItem->id }}
+                                </th>
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $maintenanceItem->name }}
+                                </th>
+                                <td class="px-4 py-3"> {{ $maintenanceItem->description }}</td>
+                                <td class="px-4 py-3">
+                                    {{ \Carbon\Carbon::parse($maintenanceItem->reported_at)->format('Y-m-d') }} </td>
+                                <td class="px-4 py-3">
+                                    {{ \Carbon\Carbon::parse($maintenanceItem->resolved_at)->format('Y-m-d') }} </td>
+                                <td class="px-4 py-3">
+                                    @if ($maintenanceItem->priority_status === 'planned')
+                                        <span class="px-2 py-1 bg-green-600 text-white rounded">Planned</span>
+                                    @elseif($maintenanceItem->priority_status === 'routine')
+                                        <span class="px-2 py-1 bg-blue-600 text-white rounded">Routine</span>
+                                    @elseif($maintenanceItem->priority_status === 'urgent')
+                                        <span class="px-2 py-1 bg-yellow-500 text-white rounded">Urgent</span>
+                                    @elseif($maintenanceItem->priority_status === 'emergency')
+                                        <span class="px-2 py-1 bg-red-600 text-white rounded">Emergency</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
+
+                                    <!-- View Icon -->
+                                    @can('maintenance-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
+                                        </i>
+                                    @endcan
+
+                                    <!-- Edit Icon -->
+                                    @can('maintenance-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
+                                        </i>
+                                    @endcan
+
+                                    <!-- Delete Icon -->
+                                    @can('maintenance-delete')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="deleteMaintenances({{ $maintenanceItem->id }})">
+                                        </i>
+                                    @endcan
+
+                                </td>
                             </tr>
-                        </thead>
-
-                        @foreach($maintenance as $maintenanceItem)
-                                            <tr class="border-b">
-                                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                                    {{ $maintenanceItem->id }}
-                                                </th>
-                                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                                    {{ $maintenanceItem->name }}
-                                                </th>
-                                                <td class="px-4 py-3"> {{ $maintenanceItem->description }}</td>
-                                                <td class="px-4 py-3"> {{
-                            \Carbon\Carbon::parse($maintenanceItem->reported_at)->format('Y-m-d')}} </td>
-                                                <td class="px-4 py-3"> {{
-                            \Carbon\Carbon::parse($maintenanceItem->resolved_at)->format('Y-m-d')}} </td>
-                                                <td class="px-4 py-3">
-                                                    @if($maintenanceItem->priority_status === 'planned')
-                                                        <span class="px-2 py-1 bg-green-500 text-white rounded">Planned</span>
-                                                    @elseif($maintenanceItem->priority_status === 'routine')
-                                                        <span class="px-2 py-1 bg-blue-500 text-white rounded">Routine</span>
-                                                    @elseif($maintenanceItem->priority_status === 'urgent')
-                                                        <span class="px-2 py-1 bg-yellow-500 text-white rounded">Urgent</span>
-                                                    @elseif($maintenanceItem->priority_status === 'emergency')
-                                                        <span class="px-2 py-1 bg-red-500 text-white rounded">Emergency</span>
-                                                    @endif
-                                                </td>
-                                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
-
-                                                    <!-- View Icon -->
-                                                    @can('maintenance-view')
-                                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
-                                                            href="{{ route('admin.view-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
-                                                        </i>
-                                                    @endcan
-
-                                                    <!-- Edit Icon -->
-                                                    @can('maintenance-edit')
-                                                        <i class=" fas fa-edit text-blue-500 cursor-pointer" wire:navigate
-                                                            href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenanceItem->id]) }}">
-                                                        </i>
-                                                    @endcan
-
-                                                    <!-- Delete Icon -->
-                                                    @can('maintenance-delete')
-                                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
-                                                            wire:click="deleteMaintenances({{ $maintenanceItem->id }})">
-                                                        </i>
-                                                    @endcan
-
-                                                </td>
-                                            </tr>
                         @endforeach
-                    </table>
-                </div>
+                    </tbody>
+                </table>
+
 
                 {{-- Pagination --}}
                 <div class="py-4 px-3">
@@ -285,8 +296,8 @@
                     </div>
                     {{ $maintenance->links() }}
                 </div>
+
             </div>
         </div>
-    </section>
-
+    @endif
 </div>

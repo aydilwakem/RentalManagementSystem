@@ -12,47 +12,50 @@
         </h2>
 
         <!-- Event Details -->
-<div class="mb-4">
-    <h3 class="text-xl font-semibold text-gray-900">Event Details</h3>
+        <div class="mb-4">
+            <h3 class="text-xl font-semibold text-gray-900">Event Details</h3>
 
-    <div class="grid grid-cols-2 gap-6 py-3">
-        <!-- First Row -->
-        <div>
-            <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Category:</strong> {{ $event->category->name }}</li>
-                <li><strong>Company Name:</strong> {{ $event->company_name }}</li>
-                <li><strong>Email:</strong> {{ $event->email }}</li>
-                <li><strong>Event Date Start:</strong> {{ \Carbon\Carbon::parse($event->event_date_start)->format('Y-m-d') }}</li>
-                <li><strong>Event Time:</strong> {{ \Carbon\Carbon::parse($event->event_time)->format('h:i A') }}</li>
-            </ul>
-        </div>
+            <div class="grid grid-cols-2 gap-6 py-3">
+                <!-- First Row -->
+                <div>
+                    <ul class="list-disc pl-5 text-gray-600">
+                        <li><strong>Category:</strong> {{ $event->category->name }}</li>
+                        <li><strong>Company Name:</strong> {{ $event->company_name }}</li>
+                        <li><strong>Email:</strong> {{ $event->email }}</li>
+                        <li><strong>Event Date Start:</strong>
+                            {{ \Carbon\Carbon::parse($event->event_date_start)->format('Y-m-d') }}</li>
+                        <li><strong>Event Time:</strong>
+                            {{ \Carbon\Carbon::parse($event->event_time)->format('h:i A') }}</li>
+                    </ul>
+                </div>
 
-        <div>
-            <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Event Hall:</strong> {{ $event->eventHall->name }}</li>
-                <li><strong>Contact Person:</strong> {{ $event->contact_person }}</li>
-                <li><strong>Capacity:</strong> {{ $event->capacity }}</li>
-                <li><strong>Event Date End:</strong> {{ \Carbon\Carbon::parse($event->event_date_end)->format('Y-m-d') }}</li>
-                <li><strong>Total Amount:</strong> {{ $event->total_amount }}</li>
-            </ul>
-        </div>
-    </div>
+                <div>
+                    <ul class="list-disc pl-5 text-gray-600">
+                        <li><strong>Event Hall:</strong> {{ $event->eventHall->name }}</li>
+                        <li><strong>Contact Person:</strong> {{ $event->contact_person }}</li>
+                        <li><strong>Capacity:</strong> {{ $event->capacity }}</li>
+                        <li><strong>Event Date End:</strong>
+                            {{ \Carbon\Carbon::parse($event->event_date_end)->format('Y-m-d') }}</li>
+                        <li><strong>Total Amount:</strong> {{ $event->total_amount }}</li>
+                    </ul>
+                </div>
+            </div>
 
-    <!-- Second Row -->
-    <div class="grid grid-cols-2 gap-6 py-3">
-        <div>
-            <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Status:</strong> {{ ucfirst($event->status) }}</li>
-            </ul>
-        </div>
+            <!-- Second Row -->
+            <div class="grid grid-cols-2 gap-6 py-3">
+                <div>
+                    <ul class="list-disc pl-5 text-gray-600">
+                        <li><strong>Status:</strong> {{ ucfirst($event->status) }}</li>
+                    </ul>
+                </div>
 
-        <div>
-            <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Requests:</strong> {{ $event->requests }}</li>
-            </ul>
+                <div>
+                    <ul class="list-disc pl-5 text-gray-600">
+                        <li><strong>Requests:</strong> {{ $event->requests }}</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
 
         <!-- Action Buttons -->

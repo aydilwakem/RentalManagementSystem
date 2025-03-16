@@ -1,27 +1,34 @@
-<div class="mt-10 px-4 lg:px-12 max-w-screen-xl mx-auto">
+<div class="min-h-[550px] container mx-auto p-6 ">
+    @if ($paymentMethod->isEmpty())
+        <!-- Empty Page Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No payment methods yet.<br> Click "Create Payment Methods" to add a new payment method.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
+                Create Payment Method
+            </x-button>
+        </div>
+    @else
     <div class="bg-white overflow-hidden">
-
         <!-- Add Payment Method -->
         @can('payment-method-create')
             <div class="flex justify-between p-4">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                    onclick="window.location.href='{{ route('admin.create-payment') }}'">
-                    + Add Payment Method
-                </button>
+                <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
+                    New Payment Method
+                </x-button>
             </div>
         @endcan
 
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                                                                                                                                                                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
 
         <!-- Search Bar -->
-        <div class="p-4">
+        <div class="p-4 w-48">
             <div class="relative w-full">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                     <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
@@ -63,7 +70,7 @@
 
                                 <!-- Edit Icon -->
                                 @can('payment-method-edit')
-                                    <i class="fas fa-edit text-green-500 p-3 rounded-full border border-green-500 cursor-pointer"
+                                    <i class="fas fa-edit text-yellow-500 p-3 rounded-full border border-yellow-500 cursor-pointer"
                                         wire:navigate
                                         href="{{ route('admin.edit-payment', ['paymentMethod' => $method->id]) }}">
                                     </i>
@@ -102,5 +109,6 @@
             {{ $paymentMethod->links() }}
         </div>
     </div>
+    @endif
 </div>
 </div>

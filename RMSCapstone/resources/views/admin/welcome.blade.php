@@ -1532,7 +1532,7 @@
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}"
+                        <a href="{{ route('dashboard') }}"
                             class="inline-block px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-sm leading-normal">
                             Log in
                         </a>

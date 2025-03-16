@@ -1,29 +1,34 @@
-<div>
-    <section class="mt-10">
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
-            <!-- Start coding here -->
-            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden">
-
-                <!-- Create Role Button -->
-                @can('role-create')
-                    <div class="flex items-center justify-between p-4">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                            onclick="window.location.href='{{ route('admin.create-role') }}'">
-                            + Create Role
-                        </button>
-                    </div>
-                @endcan
-
-                {{-- Display Session Message --}}
-                @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg 
-                                                                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                <div class="flex items-center justify-between d p-4">
+<div class="container mx-auto px-6 ">
+    @if ($roles->isEmpty())
+        <!-- Empty Page Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No roles yet.<br> Click "Create Role" to add a new role.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-role') }}" icon="fas fa-plus">
+                Create Event
+            </x-button>
+        </div>
+        <div>
+        @else
+            <!-- Create Role Button -->
+            @can('role-create')
+                <div class="flex items-center justify-between p-4">
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-role') }}">
+                        New Role
+                    </x-button>
+                </div>
+            @endcan
+            {{-- Display Session Message --}}
+            @if (session('message'))
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('message') }}
+                </div>
+            @endif
+            <!-- Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border mb-10">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4">
                     <div class="flex">
                         <div class="relative w-full">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -56,94 +61,89 @@
                     --}}
 
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
+                <table class="w-full text-left">
+                    <thead class="text-sm text-gray-700 bg-gray-200">
+                        <tr>
 
-
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-
-                                {{-- ID --}}
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                    <button class="flex items-center">
-                                        ID
-                                        @if ($sortBy !== 'id')
+                            {{-- ID --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
+                                <button class="flex items-center">
+                                    ID
+                                    @if ($sortBy !== 'id')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
-                                        @endif
-                                    </button>
-                                </th>
-
-                                {{-- Name --}}
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                    <button class="flex items-center">
-                                        Name
-                                        @if ($sortBy !== 'name')
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
+
+                            {{-- Name --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                <button class="flex items-center">
+                                    Name
+                                    @if ($sortBy !== 'name')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            @if($sortDir == 'ASC')
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
                                         @endif
-                                    </button>
-                                </th>
+                                    @endif
+                                </button>
+                            </th>
 
-                                {{-- Actions --}}
-                                <th scope="col" class="px-4 py-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-
-
-
-                        @foreach($roles as $role)
+                            {{-- Actions --}}
+                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($roles as $role)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $role->id }}
                                 </th>
                                 <td class="px-4 py-3">{{ $role->name }}</td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->
                                     @can('role-view')
-                                        <i class="fas fa-eye text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                             href="{{ route('admin.view-role', ['role' => $role->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('role-edit')
-                                        <i class="fas fa-edit text-blue-500 cursor-pointer" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                             href="{{ route('admin.edit-role', ['role' => $role->id]) }}">
                                         </i>
                                     @endcan
@@ -151,7 +151,7 @@
 
                                     <!-- Delete Icon -->
                                     @can('role-delete')
-                                        <i class="fas fa-trash-alt text-red-500 cursor-pointer"
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                             wire:click="deleteRole('{{ $role->id }}')">
                                         </i>
                                     @endcan
@@ -160,8 +160,8 @@
                                 </td>
                             </tr>
                         @endforeach
-                    </table>
-                </div>
+                    </tbody>
+                </table>
 
                 {{-- Per Page --}}
                 <div class="py-4 px-3">
@@ -183,5 +183,5 @@
 
             </div>
         </div>
-    </section>
+    @endif
 </div>

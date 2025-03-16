@@ -9,7 +9,7 @@
             </x-button>
         </div>
     @else
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div>
             <div class="flex items-center justify-between p-4">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
                     New Amenity

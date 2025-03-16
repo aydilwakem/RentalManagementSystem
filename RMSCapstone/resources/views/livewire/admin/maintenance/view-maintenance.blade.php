@@ -1,80 +1,63 @@
-<div>
+<div class="min-h-[550px] container mx-auto p-8 bg-white rounded-lg">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('View Maintenance') }}
         </h2>
     </x-slot>
 
-    <section class="bg-white">
-        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-            <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl">
-                {{ $maintenance->name }}
-            </h2>
+    <div class="py-6 px-10 mx-auto max-w-3xl border rounded-xl bg-white shadow-lg mt-6 mb-6 space-y-6">
+        <!-- Title -->
+    <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
+        {{ $maintenance->name }}
+    </h2>
 
-            <!-- Reported At -->
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Reported At</h3>
-                <p class="font-light text-gray-500">
-                    {{ $maintenance->description}}
-                </p>
-            </div>
-
-            <!-- Reported At -->
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Reported At</h3>
-                <p class="font-light text-gray-500">
-                    {{\Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d')}}
-                </p>
-            </div>
-
-            <!-- Resolved At -->
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Resolved At</h3>
-                <p class="font-light text-gray-500">
-                    {{\Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d')}}
-                </p>
-            </div>
-
-            <!-- Priority Status -->
-            {{-- Makes status in proper caps --}}
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Priority Status</h3>
-                <p class="font-light text-gray-500">
-                    {{ ucfirst($maintenance->priority_status) }}
-                </p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center space-x-4">
-                {{-- Edit Button --}}
-                <button type="button"
-                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                    wire:navigate href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenance->id]) }}">
-
-                    <svg aria-hidden="true" class="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
-                        <path fill-rule="evenodd"
-                            d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    Edit
-                </button>
-
-                {{-- Delete Button --}}
-                <button type="button"
-                    class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                    wire:click="deleteMaintenanceItem({{ $maintenance->id }})">
-
-                    <svg aria-hidden="true" class="w-5 h-5 mr-1.5 -ml-1" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    Delete
-                </button>
-            </div>
+    <!-- Description -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
+            <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
         </div>
-    </section>
+
+
+
+        <!-- Priority Status -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
+            <p class="text-gray-600">{{ ucfirst($maintenance->priority_status) }}</p>
+        </div>
+
+        <!-- Reported At -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
+            <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d') }}</p>
+        </div>
+
+        <!-- Resolved At -->
+        <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
+            <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d') }}</p>
+        </div>
+
+
+    </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between space-x-4 pt-2">
+            <!-- Edit -->
+            <x-button type="button" icon="fas fa-pen-to-square"
+                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                wire:navigate href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenance->id]) }}">
+                Edit
+            </x-button>
+
+            <!-- Delete -->
+            <x-button type="button" icon="fas fa-trash"
+                class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                wire:click="deleteMaintenanceItem({{ $maintenance->id }})">
+                Delete
+            </x-button>
+        </div>
+
+    </div>
+
 </div>
