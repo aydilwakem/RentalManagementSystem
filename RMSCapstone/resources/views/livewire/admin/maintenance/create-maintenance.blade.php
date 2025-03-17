@@ -2,16 +2,7 @@
     <div class="mx-auto max-w-2xl lg:py-2s">
 
         <h2 class="mb-6 text-xl font-bold text-gray-900 text-center">Add new maintenance</h2>
-        {{-- Display Validation Errors --}}
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li class="py-1">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+
         <form wire:submit.prevent="saveMaintenance">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
@@ -21,6 +12,9 @@
                     <input type="text" wire:model="name" id="name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter maintenance name">
+                    @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Maintenance Description -->
@@ -30,6 +24,9 @@
                     <textarea wire:model="description" id="description" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                         placeholder="Enter maintenance description"></textarea>
+                    @error('description')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Reported At -->
@@ -38,6 +35,9 @@
                         At</label>
                     <input type="date" wire:model="reported_at" id="reported_at"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('reported_at')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Resolved At -->
@@ -46,6 +46,9 @@
                         At</label>
                     <input type="date" wire:model="resolved_at" id="resolved_at"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('resolved_at')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Priority Status -->
@@ -60,6 +63,9 @@
                         <option value="routine">Routine</option>
                         <option value="planned">Planned</option>
                     </select>
+                    @error('priority_status')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
             </div>
