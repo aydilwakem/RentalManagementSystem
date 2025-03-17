@@ -6,7 +6,16 @@
     </x-slot>
 
     <div class="py-6 px-10 mx-auto max-w-3xl border rounded-xl bg-white shadow-lg mt-6 mb-6 space-y-6">
-        <!-- Title -->
+
+    <!-- Back Button -->
+    <div class="mx-auto max-w-2xl flex justify-end items-center">
+        <button onclick="history.back()"
+            class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+            <span class="leading-none translate-y-[-3px]">&times;</span>
+        </button>
+    </div>
+
+    <!-- Title -->
     <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
         {{ $maintenance->name }}
     </h2>

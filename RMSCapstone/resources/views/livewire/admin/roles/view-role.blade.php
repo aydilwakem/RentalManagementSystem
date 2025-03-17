@@ -6,6 +6,15 @@
     </x-slot>
 
     <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md">
+
+        <!-- Back Button -->
+        <div class="mx-auto max-w-2xl flex justify-end items-center">
+            <button onclick="history.back()"
+                class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                <span class="leading-none translate-y-[-3px]">&times;</span>
+            </button>
+        </div>
+
         <!-- Role Name -->
         <div class="flex justify-center items-center space-x-2 mb-4">
             <h3 class="flex text-xl font-semibold text-gray-900">Role:</h3>
@@ -56,6 +65,7 @@
 
 
         <div class="space-y-4">
+            <h1 class="flex font-semibold text-gray-800">Permissions:</h1>
             @foreach ($groupedPermissions as $group => $permissions)
                 @if ($permissions->count())
                     <div class="border p-4 rounded-lg">

@@ -6,6 +6,15 @@
     </x-slot>
 
     <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md">
+
+        <!-- Back Button -->
+        <div class="mx-auto max-w-2xl lg:py-2 flex justify-end items-center">
+            <button onclick="history.back()"
+                class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                <span class="leading-none translate-y-[-3px]">&times;</span>
+            </button>
+        </div>
+
         <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center p-8">
            Amenity: {{ $amenity->name }}
         </h2>

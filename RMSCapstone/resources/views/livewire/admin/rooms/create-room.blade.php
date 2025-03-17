@@ -1,6 +1,6 @@
 <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
     <div class="mx-auto max-w-2xl lg:py-2s">
-        <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Room</h2>
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add New Room</h2>
 
         {{-- Display Validation Errors --}}
         @if ($errors->any())

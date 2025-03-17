@@ -6,7 +6,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
     <!-- Form container -->
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-bwhite">
-        <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Room</h2>
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room</h2>
         <form wire:submit.prevent="updateRoom">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Room Name -->

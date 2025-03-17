@@ -24,7 +24,7 @@
 
                 <!-- Name of Role -->
                 <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Role Name</label>
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter Role" required>
@@ -43,6 +43,27 @@
                         @endforeach
                     </div>
                 </div>
+
+                {{-- <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                    <button type="button" @click="open = !open"
+                        class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                        Rooms
+                        <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" class="p-4 space-y-2">
+                        @foreach ($permissions->filter(fn($p) => preg_match('/^room-(?!rate|category)/', $p->name)) as $permission)
+                            <label class="flex items-center space-x-2 text-sm">
+                                <input type="checkbox" wire:model="selectedPermissions"
+                                    value="{{ $permission->id }}" class="rounded border-gray-300">
+                                <span>{{ $permission->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div> --}}
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
