@@ -63,7 +63,7 @@ class EditEventCategory extends Component
 
         return redirect()->route('admin.event-categories');
     }
-    
+
     public function render()
     {
         return view('livewire.admin.event-categories.edit-event-category');

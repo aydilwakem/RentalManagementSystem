@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Admin\RoomRates;
 
-use App\Models\RoomRate;
-use Livewire\Attributes\Url;
 use Livewire\Component;
+use App\Models\Room;
+use App\Models\RoomRate;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 
-class ViewRoomRates extends Component
+class ViewIndividualRates extends Component
 {
     use WithPagination;
 
@@ -19,25 +20,16 @@ class ViewRoomRates extends Component
 
     #[Url(history: true)]
     public $search = '';
+
     public $perPage = 5;
     public $statusFilter = ''; // Holds the selected room status
+    public Room $room;
 
-    public $confirmItemDelete = false;
-
-    public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-        }
-    
-
-
-    public function mount()
+    public function mount(int $roomId)
     {
-        // Ensure use a separate session key
-        if (!session()->has('fake_ids_roomRate')) {
-            session(['fake_ids_roomRate' => []]);
-        }
+        $this->room = Room::findOrFail($roomId);
     }
+
 
     public function deleteRoomRate($id)
     {
@@ -46,9 +38,7 @@ class ViewRoomRates extends Component
 
         if ($roomRate) {
             // Delete the room rate
-            if ($this->confirmItemDelete) {
-                RoomRate::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+            $roomRate->delete();
 
             // Fetch remaining - sorted by creation date
             $roomRate = RoomRate::orderBy('created_at', 'ASC')->get();
@@ -67,43 +57,53 @@ class ViewRoomRates extends Component
             session()->flash('message', 'Room Rate successfully deleted!');
         }
     }
-    }
 
     public function setSortBy($sortByField)
     {
-
-        if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+        if ($this->sortBy === $sortByField) {
+            $this->sortDir = $this->sortDir === "ASC" ? "DESC" : "ASC";
             return;
         }
         $this->sortBy = $sortByField;
         $this->sortDir = "ASC";
     }
 
+    // Reset pagination when filtering/searching
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $roomRates = RoomRate::query()
+        $roomRates = RoomRate::where('room_id', $this->room->id)
             ->when($this->statusFilter, function ($query) {
                 $query->where('rate_type', $this->statusFilter);
             })
-            ->search($this->search)
+            ->when($this->search, function ($query) {
+                $query->where('rate_type', 'LIKE', '%' . $this->search . '%');
+            })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Retrieve unique session 
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_roomRate', []);
 
         // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== RoomRate::count()) {
+        if (count($fakeIDs) !== RoomRate::where('room_id', $this->room->id)->count()) {
             $fakeIDs = [];
-            foreach (RoomRate::orderBy('created_at', 'ASC')->get() as $index => $rate) {
+            foreach (RoomRate::where('room_id', $this->room->id)->orderBy('created_at', 'ASC')->get() as $index => $rate) {
                 $fakeIDs[$rate->id] = 'RATE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_roomRate' => $fakeIDs]);
         }
 
-
-        return view('livewire.admin.room-rates.view-room-rates', [
+        return view('livewire.admin.room-rates.view-individual-rates', [
             'roomRates' => $roomRates,
             'fakeIDs' => $fakeIDs,
         ]);

@@ -11,14 +11,14 @@ class ViewRooms extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortBy = 'created_at';
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortDir = 'DESC';
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $perPage = 5;
     public $statusFilter = ''; // Holds the selected room status
 
@@ -60,7 +60,7 @@ class ViewRooms extends Component
             }
 
             // Store updated fake IDs in a unique session key
-           session(['fake_ids_rooms' => $fakeIDs]);
+            session(['fake_ids_rooms' => $fakeIDs]);
             session()->flash('message', 'Room successfully deleted!');
         }
     }
@@ -100,7 +100,7 @@ class ViewRooms extends Component
         }
 
         return view('livewire.admin.rooms.view-rooms', [
-            'rooms' => $rooms, 
+            'rooms' => $rooms,
             'fakeIDs' => $fakeIDs,
         ]);
     }

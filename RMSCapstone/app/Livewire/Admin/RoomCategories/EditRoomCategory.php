@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\RoomCategories;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use Livewire\WithFileUploads;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use App\Models\RoomCategory;
 use App\Models\Amenity;
 use Illuminate\Support\Facades\Storage;
@@ -49,11 +49,10 @@ class EditRoomCategory extends Component
 
         // Handle Image Upload
         if ($this->newImage) {
-            // Delete old image if it exists
             if ($this->roomCategory->image) {
                 Storage::disk('public')->delete($this->roomCategory->image);
             }
-            // Save new image
+            // Save the image in public folder
             $this->image = $this->newImage->store('room-categories', 'public');
         }
 

@@ -1,4 +1,3 @@
-<!-- Main container -->
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -39,6 +38,7 @@
                         placeholder="Your description here"></textarea>
 
                 </div>
+
                 <!-- Image Upload -->
                 <div class="sm:col-span-2">
                     <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
@@ -49,26 +49,27 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
-                    <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">
+                    <div wire:loading wire:target="newImage" class="mt-2 text-blue-600">
                         Uploading image...
                     </div>
-                    <!-- Image Preview -->
+
                     <div class="mt-2">
                         @if ($newImage)
                             <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @elseif ($image)
-                            <img src="{{ asset('storage/' . $image) }}"
-                                class="w-32 h-32 object-cover rounded-lg shadow">
+                            <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
                 </div>
+
             </div>
             <!-- Submit Button -->
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-button onclick="history.back()" type="button"
+                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="button" class="mt-3" @click="showConfirm = true">
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage">
                     Save Changes
                 </x-button>
             </div>

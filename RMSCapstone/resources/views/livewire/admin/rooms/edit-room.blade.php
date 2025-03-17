@@ -1,7 +1,3 @@
-<style>
-    [x-cloak] { display: none !important; }
-</style>
-
 <!-- Main container -->
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
     <!-- Form container -->
@@ -100,49 +96,23 @@
                     <!-- Image Preview (Shows New Image if Selected, Otherwise Shows Current Image) -->
                     <div class="mt-2">
                         @if ($newImage)
-                            <img src="{{ $newImage->temporaryUrl() }}"
-                                class="w-32 h-32 object-cover rounded-lg shadow">
+                            <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @elseif ($image)
-                            <img src="{{ asset('storage/' . $image) }}"
-                                class="w-32 h-32 object-cover rounded-lg shadow">
+                            <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
                 </div>
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-button onclick="history.back()" type="button"
+                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="button" class="mt-3" @click="showConfirm = true">
-                    Update Room
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage">
+                    Save Changes
                 </x-button>
             </div>
         </form>
-
-        {{-- <x-confirmation-modal id="confirmUpdateModal" x-show="showConfirm" x-cloak @close-modal.window="showConfirm = false">
-            <x-slot name="title">
-                Confirm Update
-            </x-slot>
-
-            <x-slot name="content">
-                <div class="text-md">
-                    Are you sure you want to update this room?
-                </div>
-            </x-slot>
-
-            <x-slot name="footer">
-                <div class="flex justify-between w-full">
-                    <x-button type="button" class="!bg-gray-400 hover:!bg-gray-500" @click="showConfirm = false">
-                        Cancel
-                    </x-button>
-                    <x-button type="submit" @click="showConfirm = false">
-                        Confirm
-                    </x-button>
-                </div>
-            </x-slot>
-        </x-confirmation-modal> --}}
-
-
     </div>
 </div>

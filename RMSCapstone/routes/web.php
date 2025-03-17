@@ -25,9 +25,8 @@ use App\Livewire\Admin\Users\ViewUser;
 use App\Livewire\Admin\Users\EditUser;
 use App\Livewire\Admin\Roles\ViewRole;
 use App\Livewire\Admin\Roles\EditRole;
-
-
-
+use App\Livewire\Admin\RoomRates\CreateIndividualRate;
+use App\Livewire\Admin\RoomRates\EditIndividualRate;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -134,6 +133,7 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category')->middleware('can:room-category-edit');
 
+
     // Room Rates Route
 
     // List
@@ -153,6 +153,18 @@ Route::middleware([
     // Edit
     Route::get('edit/room-rate/{roomRate}', EditRoomRate::class)
         ->name('admin.edit-room-rate')->middleware('can:room-rate-edit');
+
+    // Individual Room Rates Route
+
+    // Create
+    Route::get('/create/individual-room-rate/{roomId}', CreateIndividualRate::class)
+        ->name('admin.create-individual-rate');
+
+    // Edit
+    Route::get('edit/individual-room-rate/{roomRate}', EditIndividualRate::class)
+        ->name('admin.edit-individual-rate');
+
+
 
 
 

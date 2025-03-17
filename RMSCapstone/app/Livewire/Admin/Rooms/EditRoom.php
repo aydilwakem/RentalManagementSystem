@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\Rooms;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use Livewire\WithFileUploads;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use App\Models\Room;
 use App\Models\RoomCategory;
 use Illuminate\Support\Facades\Storage;
