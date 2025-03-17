@@ -23,6 +23,14 @@ class ViewActivities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
+
     public function mount()
     {
         // Ensure activities use a separate session key
@@ -36,7 +44,11 @@ class ViewActivities extends Component
         $activity = Activity::find($id);
 
         if ($activity) {
-            $activity->delete();
+
+            if ($this->confirmItemDelete) {
+                Activity::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
+            
 
              // Fetch remaining activities - sorted by creation date
              $activities = Activity::orderBy('created_at', 'ASC')->get();
@@ -52,6 +64,7 @@ class ViewActivities extends Component
 
             session()->flash('message', 'Activity successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

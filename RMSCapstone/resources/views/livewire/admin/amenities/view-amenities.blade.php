@@ -138,8 +138,7 @@
 
                                 @can('amenity-delete')
                                 <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                    wire:click="deleteAmenity({{ $amenity->id }})"
-                                    wire:confirm="Are you sure you want to delete this post?">
+                                    wire:click="confirmDelete({{ $amenity->id }})" wire:loading.attr="disabled">
                                 </i>
                                 @endcan
 
@@ -168,6 +167,27 @@
                 </div>
                 {{ $amenities->links() }}
             </div>
+            <!-- Delete Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmItemDelete">
+                <x-slot name="title">
+                    {{ __('Delete Amenity') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('Are you sure you want to delete this item?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-danger-button class="ms-3" wire:click="deleteAmenity({{ $amenity->id }})"
+                        wire:loading.attr="disabled">
+                        {{ __('Delete Amenity') }}
+                    </x-danger-button>
+                </x-slot>
+            </x-dialog-modal>
         </div>
     </div>
     @endif

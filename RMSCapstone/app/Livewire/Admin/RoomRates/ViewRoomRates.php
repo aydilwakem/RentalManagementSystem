@@ -22,6 +22,14 @@ class ViewRoomRates extends Component
     public $perPage = 5;
     public $statusFilter = ''; // Holds the selected room status
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
 
     public function mount()
     {
@@ -37,7 +45,9 @@ class ViewRoomRates extends Component
 
         if ($roomRate) {
             // Delete the room rate
-            $roomRate->delete();
+            if ($this->confirmItemDelete) {
+                RoomRate::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
             // Fetch remaining - sorted by creation date
              $roomRate = RoomRate::orderBy('created_at', 'ASC')->get();
@@ -55,6 +65,7 @@ class ViewRoomRates extends Component
             // Flash success message
             session()->flash('message', 'Room Rate successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

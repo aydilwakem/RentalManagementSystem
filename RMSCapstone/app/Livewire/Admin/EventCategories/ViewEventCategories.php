@@ -23,6 +23,13 @@ class ViewEventCategories extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+
     public function mount()
     {
         // Ensure categories use a separate session key
@@ -38,8 +45,9 @@ class ViewEventCategories extends Component
         $eventCategory = EventCategory::find($id);
 
         if ($eventCategory) {
-            // Delete the room category
-            $eventCategory->delete();
+            if ($this->confirmItemDelete) {
+                EventCategory::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
             // Fetch remaining - sorted by creation date
             $eventCategory = EventCategory::orderBy('created_at', 'ASC')->get();
@@ -58,6 +66,7 @@ class ViewEventCategories extends Component
             // Flash success message
             session()->flash('message', 'Event Category successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField){

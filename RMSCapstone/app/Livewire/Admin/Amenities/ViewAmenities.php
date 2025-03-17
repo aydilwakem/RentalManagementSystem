@@ -23,6 +23,13 @@ class ViewAmenities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+            $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         // Ensure use a separate session key
@@ -36,7 +43,9 @@ class ViewAmenities extends Component
         $amenity = Amenity::find($id);
 
         if ($amenity) {
-            $amenity->delete();
+            if ($this->confirmItemDelete) {
+                Amenity::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
              // Fetch remaining - sorted by creation date
              $amenity = Amenity::orderBy('created_at', 'ASC')->get();
@@ -52,6 +61,7 @@ class ViewAmenities extends Component
 
             session()->flash('message', 'Amenity successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

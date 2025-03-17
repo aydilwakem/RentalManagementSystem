@@ -26,6 +26,14 @@ class ViewEvents extends Component
 
     public $eventStatus = ''; 
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
     public function mount()
     {
         // Ensure activities use a separate session key
@@ -39,7 +47,11 @@ class ViewEvents extends Component
     {
         $event = Event::find($id);
         if ($event) {
-            $event->delete();
+            
+            
+            if ($this->confirmItemDelete) {
+                Event::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
              // Fetch remaining - sorted by creation date
              $event = Event::orderBy('created_at', 'ASC')->get();
@@ -54,6 +66,7 @@ class ViewEvents extends Component
             session(['fake_ids_events' => $fakeIDs]);
             session()->flash('message', 'Event successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

@@ -269,8 +269,8 @@
 
                         <!-- Delete Icon -->
                         @can('event-delete')
-                        <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
-                            wire:click="deleteEvent({{ $eventItem->id }})">
+                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                            wire:click="confirmDelete({{ $eventItem->id }})" wire:loading.attr="disabled">
                         </i>
                         @endcan
 
@@ -296,6 +296,28 @@
                 </div>
                 {{ $event->links() }}
             </div>
+
+            <!-- Delete Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmItemDelete">
+                <x-slot name="title">
+                    {{ __('Delete Event') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('Are you sure you want to delete this item?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-danger-button class="ms-3" wire:click="deleteEvent({{ $eventItem->id }})"
+                        wire:loading.attr="disabled">
+                        {{ __('Delete Event') }}
+                    </x-danger-button>
+                </x-slot>
+            </x-dialog-modal>
         </div>
         @endif
     </div>

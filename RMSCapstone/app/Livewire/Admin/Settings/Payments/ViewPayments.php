@@ -23,18 +23,29 @@ class ViewPayments extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
    public function deletePaymentMethod($id)
     {
-        // Find the event hall by ID
+        // Find the method by ID
         $paymentMethod = PaymentMethod::find($id);
 
         if ($paymentMethod) {
-            // Delete the event hall
-            $paymentMethod->delete();
+            // Delete the payment method
+            if ($this->confirmItemDelete) {
+                PaymentMethod::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
             // Flash success message
             session()->flash('message', 'Payment Method successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField){

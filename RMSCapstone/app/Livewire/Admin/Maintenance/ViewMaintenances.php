@@ -25,12 +25,19 @@ class ViewMaintenances extends Component
 
     public $priorityStatus = '';
 
+    public $confirmItemDelete = false;
+
     public function mount()
     {
         // Ensure maintenance use a separate session key
         if (!session()->has('fake_ids_maintenances')) {
             session(['fake_ids_maintenances' => []]);
         }
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
     }
 
 
@@ -40,9 +47,10 @@ class ViewMaintenances extends Component
         $maintenances = Maintenance::find($id);
 
             if ($maintenances) {
-                // Delete the maintenance
-                $maintenances->delete();
-
+                if ($this->confirmItemDelete) {
+                    Maintenance::find($this->confirmItemDelete)?->delete();
+                    $this->confirmItemDelete = false;
+               
             // Fetch remaining maintenance - sorted by creation date
              $maintenances = Maintenance::orderBy('created_at', 'ASC')->get();
 
@@ -59,6 +67,7 @@ class ViewMaintenances extends Component
             // Flash success message
             session()->flash('message', 'Maintenance successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

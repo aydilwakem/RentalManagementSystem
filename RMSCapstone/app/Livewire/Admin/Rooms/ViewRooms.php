@@ -22,6 +22,13 @@ class ViewRooms extends Component
     public $perPage = 5;
     public $statusFilter = ''; // Holds the selected room status
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         // Ensure it use a separate session key
@@ -35,7 +42,11 @@ class ViewRooms extends Component
     {
         $room = Room::find($id);
         if ($room) {
-            $room->delete();
+        
+            if ($this->confirmItemDelete) {
+                Room::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
+
             // Fetch remaining rooms - sorted by creation date
             $room = Room::orderBy('created_at', 'ASC')->get();
 
@@ -52,6 +63,7 @@ class ViewRooms extends Component
            session(['fake_ids_rooms' => $fakeIDs]);
             session()->flash('message', 'Room successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

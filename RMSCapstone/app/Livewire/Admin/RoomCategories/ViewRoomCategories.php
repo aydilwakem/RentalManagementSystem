@@ -22,6 +22,14 @@ class ViewRoomCategories extends Component
     public $search = '';
     public $perPage = 5;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
+
     public function mount()
     {
         // Ensure it use a separate session key
@@ -40,7 +48,9 @@ class ViewRoomCategories extends Component
             $roomCategory->amenities()->detach();
 
             // Delete the room category
-            $roomCategory->delete();
+            if ($this->confirmItemDelete) {
+                RoomCategory::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
             // Fetch remaining - sorted by creation date
             $roomCategory = RoomCategory::orderBy('created_at', 'ASC')->get();
@@ -58,6 +68,7 @@ class ViewRoomCategories extends Component
             // Flash success message
             session()->flash('message', 'Room Category successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)

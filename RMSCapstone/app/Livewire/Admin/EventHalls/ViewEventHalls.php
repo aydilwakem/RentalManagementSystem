@@ -24,9 +24,17 @@ class ViewEventHalls extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
     public function mount()
     {
-        // Ensureit use a separate session key
+        // Ensure it use a separate session key
         if (!session()->has('fake_ids_eventHalls')) {
             session(['fake_ids_eventHalls' => []]);
         }
@@ -40,7 +48,9 @@ class ViewEventHalls extends Component
 
         if ($eventHall) {
             // Delete the event hall
-            $eventHall->delete();
+            if ($this->confirmItemDelete) {
+                EventHall::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
             // Fetch remaining - sorted by creation date
             $eventHall = EventHall::orderBy('created_at', 'ASC')->get();
@@ -58,6 +68,7 @@ class ViewEventHalls extends Component
             // Flash success message
             session()->flash('message', 'Event Hall successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField){
