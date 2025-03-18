@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('extra_person_charge', 10, 2)->default(0);
             $table->decimal('extended_stay_charge_per_hr', 10, 2)->default(0);
             $table->text('description')->nullable();
-            $table->enum('rate_type', ['Weekend', 'Weekdays']);
+            $table->enum('rate_type', ['Weekend', 'Weekdays', 'Holiday', 'Peak']);
             $table->timestamps();
 
             $table->foreign('room_id')->references('id')->on('prd_rooms');

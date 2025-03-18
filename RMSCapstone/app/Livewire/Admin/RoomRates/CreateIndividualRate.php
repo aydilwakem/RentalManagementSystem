@@ -3,16 +3,17 @@
 namespace App\Livewire\Admin\RoomRates;
 
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use App\Models\Room;
 use App\Models\RoomRate;
+use Livewire\Attributes\Layout;
 
-class CreateRoomRate extends Component
+#[Layout('layouts.app')]
+class CreateIndividualRate extends Component
 {
-    use WithFileUploads;
+    public int $roomId;
+    public $room;
 
     public $name;
-    public $room_id;
     public $start_date;
     public $end_date;
     public $amount;
@@ -21,54 +22,53 @@ class CreateRoomRate extends Component
     public $description;
     public $rate_type = 'Weekdays';
 
-    public $rooms;
-
-    public function mount()
+    public function mount($roomId)
     {
-        $this->rooms = Room::all();
+        $this->roomId = (int) $roomId;
+        $this->room = Room::findOrFail($this->roomId);
     }
 
-    public function saveRoomRate()
+    public function saveIndividualRoomRate()
     {
         // Validate the form input
         $this->validate([
             'name' => 'required|string|max:255',
-            'room_id' => 'required|exists:prd_rooms,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'amount' => 'required|integer|min:0',
+            'amount' => 'required|numeric|min:0',
             'extra_person_charge' => 'required|numeric|min:100|max:50000.00',
             'extended_stay_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
             'description' => 'nullable|string',
-            'rate_type' => 'nullable|in:Weekdays,Weekend,Holiday,Peak',
+            'rate_type' => 'required|in:Weekdays,Weekend,Holiday,Peak',
         ]);
 
-
-        // Create new room
+        // Create new room rate
         RoomRate::create([
             'name' => $this->name,
-            'room_id' => $this->room_id,
+            'room_id' => $this->roomId,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'amount' => $this->amount,
             'extra_person_charge' => $this->extra_person_charge,
             'extended_stay_charge_per_hr' => $this->extended_stay_charge_per_hr,
             'rate_type' => $this->rate_type,
+            'description' => $this->description,
         ]);
 
-        // Reset form fields
-        $this->reset(['name', 'room_id', 'start_date', 'end_date', 'amount', 'extra_person_charge', 'extended_stay_charge_per_hr', 'rate_type']);
+        // Reset form fields (excluding `roomId`)
+        $this->reset(['name', 'start_date', 'end_date', 'amount', 'extra_person_charge', 'extended_stay_charge_per_hr', 'description', 'rate_type']);
 
         // Flash success message
         session()->flash('message', 'Room Rate successfully created!');
 
-        // Redirect back to rooms list
-        return redirect()->route('admin.room-rates');
+        // Redirect to the room view page
+        return redirect()->route('admin.view-room', ['room' => $this->roomId]);
     }
-
 
     public function render()
     {
-        return view('livewire.admin.room-rates.create-room-rate');
+        return view('livewire.admin.room-rates.create-individual-rate', [
+            'room' => $this->room,
+        ]);
     }
 }

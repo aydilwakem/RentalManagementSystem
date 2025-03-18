@@ -12,19 +12,30 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
         <div>
-            <!-- Label and Confirm Button -->
-            @can('room-create')
-                <div class="flex justify-between items-center mb-4">
-                    <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
-                        New Room
-                    </x-button>
-                </div>
-            @endcan
+            <div class="flex items-center justify-between">
+                <!-- Label and Confirm Button -->
+                @can('room-create')
+                    <div class="flex justify-between items-center mb-4">
+                        <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
+                            New Room
+                        </x-button>
+                    </div>
+                @endcan
+                <!-- Deleted Rooms (Restore and Delete Forever -->
+                <x-button class="!bg-gray-700" icon="fas fa-trash"
+                    onclick="window.location.href='{{ route('admin.deleted-rooms') }}'">
+                    Deleted Rooms
+                </x-button>
+
+            </div>
+
+
+
 
             <!-- Table -->
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
@@ -133,16 +144,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -163,16 +172,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -192,16 +199,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -222,16 +227,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -252,16 +255,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -281,7 +282,7 @@
                         @foreach ($rooms as $room)
                             <tr class="border-b">
                                 <th scope="row" class="font-medium text-gray-900 text-center ">
-                                    {{ $room->id }}
+                                    {{ $fakeIDs[$room->id] ?? 'RM-???' }}
                                 </th>
                                 <td class="p-2">{{ $room->name }}</td>
                                 <td class="p-2">{{ $room->category->name ?? 'N/A' }}</td>
@@ -301,22 +302,22 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('room-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
-                                            wire:navigate href="{{ route('admin.view-room', ['room' => $room->id]) }}">
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-room', ['room' => $room->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('room-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
-                                            wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('room-delete')
                                         <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                            wire:click="deleteRoom({{ $room->id }})">
+                                            wire:click="confirmDelete({{ $room->id }})" wire:loading.attr="disabled">
                                         </i>
                                     @endcan
                                 </td>
@@ -342,7 +343,26 @@
                     {{ $rooms->links() }}
                 </div>
             </div>
+            <!-- Delete Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmItemDelete">
+                <x-slot name="title">
+                    {{ __('Delete Room') }}
+                </x-slot>
 
+                <x-slot name="content">
+                    {{ __('Are you sure you want to delete this item?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
+                        {{ __('Delete Room') }}
+                    </x-danger-button>
+                </x-slot>
+            </x-dialog-modal>
     @endif
-</div>
+    </div>
 </div>

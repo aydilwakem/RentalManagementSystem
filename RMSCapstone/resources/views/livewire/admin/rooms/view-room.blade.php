@@ -65,4 +65,8 @@
 
         </div>
     </div>
+
+    <!-- Pass the id of the room to the livewire -->
+    @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id])
+
 </div>

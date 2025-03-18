@@ -2,17 +2,6 @@
     <div class="mx-auto max-w-2xl lg:py-2s">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add New Room</h2>
 
-        {{-- Display Validation Errors --}}
-        @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li class="py-1">{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <form wire:submit.prevent="saveRoom">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Room Name -->
@@ -21,6 +10,9 @@
                     <input type="text" wire:model="name" id="name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter room name">
+                    @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Room Category -->
@@ -34,6 +26,9 @@
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    @error('room_category_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Ideal Guest -->
@@ -42,6 +37,9 @@
                         Guest</label>
                     <input type="number" wire:model="ideal_guest" id="ideal_guest"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('ideal_guest')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Max Adults -->
@@ -49,6 +47,9 @@
                     <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max Adults</label>
                     <input type="number" wire:model="max_adults" id="max_adults" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('max_adults')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Max Kids -->
@@ -56,6 +57,9 @@
                     <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
                     <input type="number" wire:model="max_kids" id="max_kids" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('max_kids')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Turnover Duration -->
@@ -64,6 +68,9 @@
                         Duration (Hours)</label>
                     <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('turnover_duration')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Room Status -->
@@ -76,6 +83,9 @@
                         <option value="Booked">Booked</option>
                         <option value="Out of Service">Out of Service</option>
                     </select>
+                    @error('room_status')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Image Upload -->
@@ -101,7 +111,8 @@
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-button onclick="history.back()" type="button"
+                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
                 <x-button wire:loading.attr="disabled" wire:target="image">

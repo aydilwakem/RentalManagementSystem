@@ -26,13 +26,47 @@ class ViewEvents extends Component
 
     public $eventStatus = ''; 
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
+    public function mount()
+    {
+        // Ensure activities use a separate session key
+        if (!session()->has('fake_ids_events')) {
+            session(['fake_ids_events' => []]);
+        }
+    }
+
+
     public function deleteEvent($id)
     {
         $event = Event::find($id);
         if ($event) {
-            $event->delete();
+            
+            
+            if ($this->confirmItemDelete) {
+                Event::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
+
+             // Fetch remaining - sorted by creation date
+             $event = Event::orderBy('created_at', 'ASC')->get();
+
+             // Reset fake IDs
+             $fakeIDs = [];
+             foreach ($event as $index => $eventItem) {
+                 $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+             }
+ 
+             // Store updated fake IDs in a unique session key
+            session(['fake_ids_events' => $fakeIDs]);
             session()->flash('message', 'Event successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)
@@ -57,6 +91,21 @@ class ViewEvents extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.admin.events.view-events', compact('event'));
+            // Retrieve unique session 
+        $fakeIDs = session('fake_ids_events', []);
+
+        // Recalculate fake IDs if count mismatches
+        if (count($fakeIDs) !== Event::count()) {
+            $fakeIDs = [];
+            foreach (Event::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+                $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+            session(['fake_ids_events' => $fakeIDs]);
+        }
+
+        return view('livewire.admin.events.view-events', [
+            'event' => $event, 
+            'fakeIDs' => $fakeIDs,
+        ]);
     }
 }

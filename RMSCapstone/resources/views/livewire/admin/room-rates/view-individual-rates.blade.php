@@ -2,9 +2,11 @@
     @if ($roomRates->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No rooms rates yet.<br> Click "Create Room Rate" to add a new
+            <p class="text-gray-500 text-lg font-semibold">No rooms rates for {{ $room->name}}. <br> Click "Create Room
+                Rate" to add a new
                 room rate.</p>
-            <x-button class="mt-4" href="{{ route('admin.create-room-rate') }}" icon="fas fa-plus" wire:navigate>
+            <x-button class="mt-4" href="{{ route('admin.create-individual-rate', ['roomId' => $room->id]) }}"
+                icon="fas fa-plus" wire:navigate>
                 Create Room Rate
             </x-button>
         </div>
@@ -13,8 +15,8 @@
             <!-- Create Room Rate Button -->
             @can('room-rate-create')
                 <div class="flex items-center justify-between p-4">
-                    <x-button icon="fas fa-plus" href="{{ route('admin.create-room-rate') }}">
-                        New Room Rate
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-individual-rate', ['roomId' => $room->id]) }}">
+                        Add Room Rate
                     </x-button>
                 </div>
             @endcan
@@ -53,7 +55,6 @@
                         </div>
                     </div>
                 </div>
-
                 <table class="w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         {{-- ID --}}
@@ -62,34 +63,6 @@
                                 <button class="flex items-center">
                                     ID
                                     @if ($sortBy !== 'id')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            {{-- Room ID --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('room_id')">
-                                <button class="flex items-center">
-                                    Room Name
-                                    @if ($sortBy !== 'room_id')
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -281,6 +254,7 @@
                                 </button>
                             </th>
 
+
                             {{-- Rate Type --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('rate_type')">
                                 <button class="flex items-center">
@@ -319,8 +293,6 @@
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $fakeIDs[$roomRate->id] ?? 'RATE-???' }}
                             </th>
-                            {{-- Room ID --}}
-                            <td class="px-4 py-3">{{ $roomRate->room->name ?? 'N/A' }}</td>
                             {{-- Room Rate Name --}}
                             <td class="px-4 py-3">{{ $roomRate->name }}</td>
                             {{-- Start Date --}}
@@ -357,14 +329,16 @@
                                 <!-- Edit Icon -->
                                 @can('room-rate-edit')
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-room-rate', ['roomRate' => $roomRate->id]) }}">
+                                        href="{{ route('admin.edit-individual-rate', ['roomRate' => $roomRate->id]) }}">
                                     </i>
                                 @endcan
 
+
+
                                 <!-- Delete Icon -->
                                 @can('room-rate-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $roomRate->id }})" wire:loading.attr="disabled">
+                                    <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer"
+                                        wire:click="deleteRoomRate({{ $roomRate->id }})">
                                     </i>
                                 @endcan
 
@@ -391,29 +365,10 @@
                     </div>
                     {{ $roomRates->links() }}
                 </div>
-                <!-- Delete Confirmation Modal -->
-                <x-dialog-modal wire:model.live="confirmItemDelete">
-                    <x-slot name="title">
-                        {{ __('Delete Room Rate') }}
-                    </x-slot>
-
-                    <x-slot name="content">
-                        {{ __('Are you sure you want to delete this item?') }}
-                    </x-slot>
-
-                    <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
-                            {{ __('Cancel') }}
-                        </x-secondary-button>
-
-                        <x-danger-button class="ms-3" wire:click="deleteRoomRate({{ $roomRate->id }})"
-                            wire:loading.attr="disabled">
-                            {{ __('Delete Room Rate') }}
-                        </x-danger-button>
-                    </x-slot>
-                </x-dialog-modal>
             </div>
         </div>
 
     @endif
+
+
 </div>

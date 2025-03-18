@@ -24,6 +24,23 @@ class ViewEventHalls extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+        {
+            $this->confirmItemDelete = $id;
+        }
+    
+
+    public function mount()
+    {
+        // Ensure it use a separate session key
+        if (!session()->has('fake_ids_eventHalls')) {
+            session(['fake_ids_eventHalls' => []]);
+        }
+    }
+
+
    public function deleteEventHall($id)
     {
         // Find the event hall by ID
@@ -31,11 +48,27 @@ class ViewEventHalls extends Component
 
         if ($eventHall) {
             // Delete the event hall
-            $eventHall->delete();
+            if ($this->confirmItemDelete) {
+                EventHall::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
+
+            // Fetch remaining - sorted by creation date
+            $eventHall = EventHall::orderBy('created_at', 'ASC')->get();
+
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($eventHall as $index => $hall) {
+                $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store updated fake IDs in a unique session key
+           session(['fake_ids_eventHalls' => $fakeIDs]);
+
 
             // Flash success message
             session()->flash('message', 'Event Hall successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField){
@@ -54,6 +87,25 @@ class ViewEventHalls extends Component
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
-        return view('livewire.admin.event-halls.view-event-halls', compact('eventHall'));
+
+             // Retrieve unique session for halls
+            $fakeIDs = session('fake_ids_eventHalls', []);
+
+            // Recalculate fake IDs if count mismatches
+            if (count($fakeIDs) !== EventHall::count()) {
+                $fakeIDs = [];
+                foreach (EventHall::orderBy('created_at', 'ASC')->get() as $index => $hall) {
+                    $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+                session(['fake_ids_eventHalls' => $fakeIDs]);
+            }
+
+            
+
+        return view('livewire.admin.event-halls.view-event-halls', [
+            'eventHall' => $eventHall,
+            'fakeIDs' => $fakeIDs,
+
+        ]); 
     }
 }

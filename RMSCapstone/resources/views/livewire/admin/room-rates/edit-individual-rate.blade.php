@@ -1,8 +1,8 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room Rate</h2>
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room Rate for {{$room->name}}</h2>
 
-        <form wire:submit.prevent="updateRoomRate">
+        <form wire:submit.prevent="updateIndividualRoomRate">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Room Rate Name -->
@@ -15,20 +15,18 @@
                     @enderror
                 </div>
 
+
                 <!-- Room Name -->
                 <div class="sm:col-span-2">
-                    <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">Room Name</label>
-                    <select wire:model="room_id" id="room_id"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
-                        <option value="">Select Room</option>
-                        @foreach ($rooms as $room)
-                            <option value="{{ $room->id }}">{{ $room->name }}</option>
-                        @endforeach
+                    <label for="room_name" class="block mb-2 text-sm font-medium text-gray-900">Room Name</label>
+                    <select id="room_name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                        disabled>
+                        <option selected>{{ $room->name }}</option>
                     </select>
-                    @error('room_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
                 </div>
+
+
 
                 <!-- Start Date -->
                 <div>

@@ -1,30 +1,31 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
     @if ($paymentMethod->isEmpty())
-        <!-- Empty Page Message -->
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No payment methods yet.<br> Click "Create Payment Methods" to add a new payment method.</p>
-            <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
-                Create Payment Method
-            </x-button>
-        </div>
+    <!-- Empty Page Message -->
+    <div class="text-center py-10">
+        <p class="text-gray-500 text-lg font-semibold">No payment methods yet.<br> Click "Create Payment Methods" to add
+            a new payment method.</p>
+        <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
+            Create Payment Method
+        </x-button>
+    </div>
     @else
     <div class="bg-white overflow-hidden">
         <!-- Add Payment Method -->
         @can('payment-method-create')
-            <div class="flex justify-between p-4">
-                <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
-                    New Payment Method
-                </x-button>
-            </div>
+        <div class="flex justify-between p-4">
+            <x-button class="mt-4" href="{{ route('admin.create-payment') }}" icon="fas fa-plus">
+                New Payment Method
+            </x-button>
+        </div>
         @endcan
 
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                                                                                                                                                                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                {{ session('message') }}
-            </div>
+            {{ session('message') }}
+        </div>
         @endif
 
         <!-- Search Bar -->
@@ -47,44 +48,45 @@
         <div class="p-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($paymentMethod as $method)
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto">
+                    <a href="#">
+                        <img class="w-full h-56 object-cover"
+                            src="{{ asset('storage/' . $method->mode_of_payment_qr_image) }}"
+                            alt="{{ $method->mode_of_payment_name }}" />
+                    </a>
+                    <div class="p-6 text-center">
                         <a href="#">
-                            <img class="w-full h-56 object-cover"
-                                src="{{ asset('storage/' . $method->mode_of_payment_qr_image) }}"
-                                alt="{{ $method->mode_of_payment_name }}" />
+                            <h5 class="mb-3 text-2xl font-bold text-gray-900">{{ $method->mode_of_payment_name }}</h5>
                         </a>
-                        <div class="p-6 text-center">
-                            <a href="#">
-                                <h5 class="mb-3 text-2xl font-bold text-gray-900">{{ $method->mode_of_payment_name }}</h5>
-                            </a>
-                            <p class="text-gray-700">{{ $method->account_name }}</p>
-                            <p class="text-gray-700">{{ $method->account_number }}</p>
-                            <div class="mt-5 flex justify-center space-x-4">
+                        <p class="text-gray-700">{{ $method->account_name }}</p>
+                        <p class="text-gray-700">{{ $method->account_number }}</p>
+                        <div class="mt-5 flex justify-center space-x-4">
 
-                                <!-- View Icon -->
-                                @can('payment-method-view')
-                                    <i class="fas fa-eye text-blue-500 p-3 rounded-full border border-blue-500 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.view-payment', ['paymentMethod' => $method->id]) }}"></i>
-                                @endcan
+                            <!-- View Icon -->
+                            @can('payment-method-view')
+                            <i class="fas fa-eye text-blue-500 p-3 rounded-full border border-blue-500 cursor-pointer"
+                                wire:navigate
+                                href="{{ route('admin.view-payment', ['paymentMethod' => $method->id]) }}"></i>
+                            @endcan
 
-                                <!-- Edit Icon -->
-                                @can('payment-method-edit')
-                                    <i class="fas fa-edit text-yellow-500 p-3 rounded-full border border-yellow-500 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.edit-payment', ['paymentMethod' => $method->id]) }}">
-                                    </i>
-                                @endcan
+                            <!-- Edit Icon -->
+                            @can('payment-method-edit')
+                            <i class="fas fa-edit text-yellow-500 p-3 rounded-full border border-yellow-500 cursor-pointer"
+                                wire:navigate
+                                href="{{ route('admin.edit-payment', ['paymentMethod' => $method->id]) }}">
+                            </i>
+                            @endcan
 
-                                <!-- Delete Icon -->
-                                @can('payment-method-delete')
-                                    <i class="fas fa-trash-alt text-red-500 p-3 rounded-full border border-red-500 cursor-pointer"
-                                        wire:click="deletePaymentMethod({{ $method->id }})"></i>
-                                @endcan
+                            <!-- Delete Icon -->
+                            @can('payment-method-delete')
+                            <i class="fas fa-trash-alt text-red-500 p-3 rounded-full border border-red-500 cursor-pointer"
+                                wire:click="confirmDelete({{ $method->id }})" wire:loading.attr="disabled">
+                            </i>
+                            @endcan
 
-                            </div>
                         </div>
                     </div>
+                </div>
                 @endforeach
             </div>
         </div>
@@ -108,6 +110,28 @@
             </div>
             {{ $paymentMethod->links() }}
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-slot name="title">
+                {{ __('Delete Payment Method') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deletePaymentMethod({{ $method->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Delete Payment Method') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
     @endif
 </div>

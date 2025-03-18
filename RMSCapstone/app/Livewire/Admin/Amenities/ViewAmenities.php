@@ -21,16 +21,47 @@ class ViewAmenities extends Component
     public $sortBy = 'created_at';
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
+
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+            $this->confirmItemDelete = $id;
+    }
+
+    public function mount()
+    {
+        // Ensure use a separate session key
+        if (!session()->has('fake_ids_amenities')) {
+            session(['fake_ids_amenities' => []]);
+        }
+    }
 
     public function deleteAmenity($id)
     {
         $amenity = Amenity::find($id);
 
         if ($amenity) {
-            $amenity->delete();
+            if ($this->confirmItemDelete) {
+                Amenity::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
+
+             // Fetch remaining - sorted by creation date
+             $amenity = Amenity::orderBy('created_at', 'ASC')->get();
+
+             // Reset fake IDs
+             $fakeIDs = [];
+             foreach ($amenity as $index => $amenityItem) {
+                 $fakeIDs[$amenityItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+             }
+ 
+             // Store updated fake IDs in a unique session key
+            session(['fake_ids_amenities' => $fakeIDs]);
+
             session()->flash('message', 'Amenity successfully deleted!');
         }
+    }
     }
 
     public function setSortBy($sortByField)
@@ -50,6 +81,21 @@ class ViewAmenities extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.admin.amenities.view-amenities', compact('amenities'));
+            // Retrieve unique session 
+        $fakeIDs = session('fake_ids_amenities', []);
+
+        // Recalculate fake IDs if count mismatches
+        if (count($fakeIDs) !== Amenity::count()) {
+            $fakeIDs = [];
+            foreach (Amenity::orderBy('created_at', 'ASC')->get() as $index => $amenityItem) {
+                $fakeIDs[$amenityItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+            session(['fake_ids_amenities' => $fakeIDs]);
+        }
+
+        return view('livewire.admin.amenities.view-amenities', [
+            'amenities' => $amenities, 
+            'fakeIDs' => $fakeIDs, 
+        ]);
     }
 }
