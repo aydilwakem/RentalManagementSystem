@@ -29,6 +29,14 @@ class EditEvent extends Component
     public $eventCategories = [];
     public $eventHalls = []; // To store fetched event categories
 
+    public $confirmEditItem = false;
+    
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
     //To fetch data for display
     public function mount(Event $event)
     {
@@ -53,6 +61,7 @@ class EditEvent extends Component
 
     public function updateEvent()
     {
+        try{
         // Validate form input 
         $this->validate([   
             'name' => 'required|string|max:255',
@@ -69,6 +78,11 @@ class EditEvent extends Component
             'status' => 'required|in:confirmed,on-going,cancelled',
             'requests' => 'required|string',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
 
         // Update Event Hall

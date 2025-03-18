@@ -26,6 +26,14 @@ class EditRoom extends Component
     public $newImage;
     public $roomCategories; // Store room categories for dropdown
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
     public function mount(Room $room)
     {
         $this->room = $room;
@@ -42,16 +50,22 @@ class EditRoom extends Component
 
     public function updateRoom()
     {
+        try{
         $this->validate([
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'room_category_id' => 'nullable|exists:prd_room_categories,id',
-            'ideal_guest' => 'nullable|integer|min:1',
-            'max_adults' => 'nullable|integer|min:1',
-            'max_kids' => 'nullable|integer|min:0',
-            'turnover_duration' => 'nullable|integer|min:1',
-            'room_status' => 'nullable|in:Available,Booked,Out of Service',
+            'ideal_guest' => 'required|integer|min:1',
+            'max_adults' => 'required|integer|min:1',
+            'max_kids' => 'required|integer|min:0',
+            'turnover_duration' => 'required|integer|min:1',
+            'room_status' => 'required|in:Available,Booked,Out of Service',
             'newImage' => 'nullable|image|max:2048',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         // Handle image upload if a new one is selected
         if ($this->newImage) {
