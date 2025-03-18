@@ -14,8 +14,17 @@ class CreateMaintenance extends Component
     public $resolved_at;
     public $priority_status;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
+
     public function saveMaintenance()
     {
+        try{
         // Validate form input 
         $this->validate([  
             'name' =>  'required|string',
@@ -24,6 +33,12 @@ class CreateMaintenance extends Component
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
             'priority_status' => 'required|in:emergency,urgent,routine,planned',
         ]);
+    }
+    catch (\Illuminate\Validation\ValidationException $e) {
+                // If validation fails, close the modal
+                $this->confirmCreateItem = false;
+                throw $e;
+            }
 
 
         // Create Maintenance

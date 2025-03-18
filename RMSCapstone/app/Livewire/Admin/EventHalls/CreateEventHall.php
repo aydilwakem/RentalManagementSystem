@@ -17,8 +17,16 @@ class CreateEventHall extends Component
     public $extra_charge_per_hr;
     public $image;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function saveEventHall()
     {
+        try{
         // Validate form input (including image)
         $this->validate([
             'name' => 'required|string|max:255',
@@ -28,6 +36,11 @@ class CreateEventHall extends Component
             'extra_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Ensure image upload is complete before storing
         if ($this->image && !$this->image->isValid()) {

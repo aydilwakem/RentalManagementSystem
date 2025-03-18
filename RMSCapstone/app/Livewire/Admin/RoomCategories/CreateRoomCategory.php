@@ -19,6 +19,13 @@ class CreateRoomCategory extends Component
     public $selectedAmenities = [];
     public $amenities;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function mount()
     {
         $this->amenities = Amenity::all(); // Fetch all amenities
@@ -26,6 +33,7 @@ class CreateRoomCategory extends Component
 
     public function saveCategory()
     {
+        try{
         // Validate form input (including image)
         $this->validate([
             'name' => 'required|string|max:255',
@@ -33,6 +41,11 @@ class CreateRoomCategory extends Component
             'image' => 'nullable|image|max:1024', // Max 1MB image
             'selectedAmenities' => 'array',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+                // If validation fails, close the modal
+                $this->confirmCreateItem = false;
+                throw $e;
+            }
 
         // Ensure image upload is complete before storing
         if ($this->image && !$this->image->isValid()) {

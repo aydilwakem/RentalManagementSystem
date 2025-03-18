@@ -16,8 +16,16 @@ class CreateActivity extends Component
     public $inclusions;
     public $image;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function saveActivity()
     {
+        try{
         // Validate input
         $this->validate([
             'name' => 'required|string|max:255',
@@ -26,6 +34,11 @@ class CreateActivity extends Component
             'inclusions' => 'nullable|string',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Ensure image upload is valid
         if ($this->image && !$this->image->isValid()) {

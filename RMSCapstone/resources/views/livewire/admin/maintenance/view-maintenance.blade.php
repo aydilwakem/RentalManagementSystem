@@ -7,39 +7,45 @@
 
     <div class="py-6 px-10 mx-auto max-w-3xl border rounded-xl bg-white shadow-lg mt-6 mb-6 space-y-6">
         <!-- Title -->
-    <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
-        {{ $maintenance->name }}
-    </h2>
+        <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
+            {{ $maintenance->name }}
+        </h2>
 
-    <!-- Description -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
-            <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
+        <!-- Description -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
+            </div>
+
+
+
+            <!-- Priority Status -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
+                <p class="text-gray-600">{{ ucfirst($maintenance->priority_status) }}</p>
+            </div>
+
+            <!-- Reported At -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
+                <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d') }}</p>
+            </div>
+
+            <!-- Resolved At -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
+                <p class="text-gray-600">
+                    @if ($maintenance->resolved_at)
+                    {{ \Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d') }}
+                    @else
+                    Unresolved Maintenance
+                    @endif </td>
+                </p>
+            </div>
+
+
         </div>
-
-
-
-        <!-- Priority Status -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
-            <p class="text-gray-600">{{ ucfirst($maintenance->priority_status) }}</p>
-        </div>
-
-        <!-- Reported At -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
-            <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d') }}</p>
-        </div>
-
-        <!-- Resolved At -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
-            <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d') }}</p>
-        </div>
-
-
-    </div>
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 pt-2">

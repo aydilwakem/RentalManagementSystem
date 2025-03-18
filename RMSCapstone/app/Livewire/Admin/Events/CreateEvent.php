@@ -26,6 +26,14 @@ class CreateEvent extends Component
     public $eventCategories = [];
     public $eventHalls = []; // To store fetched event categories
     
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
+    
     public function mount()
     {
         // Fetch event categories and halls when the component mounts
@@ -35,7 +43,7 @@ class CreateEvent extends Component
 
     public function saveEvent()
     {
-       
+       try{
         // Validate form input 
         $this->validate([   
             'name' => 'required|string|max:255',
@@ -52,6 +60,11 @@ class CreateEvent extends Component
             'status' => 'required|in:confirmed,on-going,cancelled',
             'requests' => 'required|string',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
 
         // Create Event

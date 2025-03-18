@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-2xl lg:py-2s">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new event hall</h2>
 
-        <form wire:submit.prevent="saveEventHall">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Name of Event Hall -->
                 <div class="sm:col-span-2">
@@ -91,10 +91,31 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" wire:loading.attr="disabled" wire:target="image">
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
                     Add Event Hall
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Create Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmCreateItem">
+        <x-slot name="title">
+            {{ __('Create Event Hall') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to add this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="saveEventHall" wire:loading.attr="disabled">
+                {{ __('Create Event Hall') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
 </div>
