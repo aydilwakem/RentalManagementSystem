@@ -14,21 +14,22 @@ class EditRoomCategory extends Component
 {
     use WithFileUploads;
 
-    public RoomCategory $roomCategory;
+    public RoomCategory $roomCategory; // Store the model received
     public $name;
     public $description;
     public $image;
     public $newImage;
-    public $selectedAmenities = [];
-    public $amenities;
+    public $selectedAmenities = []; // Store the selected amenities
+    public $amenities; // Store all available amenities
 
+    // Mount the fields to pre-fill the edit form
     public function mount(RoomCategory $roomCategory)
     {
         $this->roomCategory = $roomCategory;
         $this->name = $roomCategory->name;
         $this->description = $roomCategory->description;
         $this->image = $roomCategory->image;
-        $this->selectedAmenities = $roomCategory->amenities->pluck('id')->toArray();
+        $this->selectedAmenities = $roomCategory->amenities->pluck('id')->toArray(); // Pluck the associated amenities of the roomCategory using the relationship
         $this->amenities = Amenity::all();
     }
 

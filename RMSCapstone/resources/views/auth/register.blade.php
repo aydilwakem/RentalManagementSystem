@@ -30,6 +30,7 @@
                     @csrf
 
                     <div class="flex flex-col lg:flex-row gap-2">
+                        <!-- First Name -->
                         <div class="w-full">
                             <x-label for="name" value="{{ __('First Name') }}" />
                             <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"
@@ -39,18 +40,41 @@
                             @enderror
                         </div>
 
-                        <!-- Ni-remove ko muna require kasi wala pa 'tong field na 'to sa users table -->
+                        <!-- Middle Name -->
                         <div class="w-full">
-                            <x-label for="lname" value="{{ __('Last Name') }}" />
-                            <x-input id="lname" class="block mt-1 w-full" type="text" name="lname"
-                                :value="old('lname')" />
-                            @error('lname')
+                            <x-label for="middle_name" value="{{ __('Middle Name') }}" />
+                            <x-input id="middle_name" class="block mt-1 w-full" type="text" name="middle_name"
+                                :value="old('middle_name')" />
+                            @error('middle_name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row gap-2">
+                        <!-- Last Name -->
+                        <div class="w-full">
+                            <x-label for="last_name" value="{{ __('Last Name') }}" />
+                            <x-input id="last_name" class="block mt-1 w-full" type="text" name="last_name"
+                                :value="old('last_name')" />
+                            @error('last_name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Suffix -->
+                        <div class="w-full">
+                            <x-label for="suffix" value="{{ __('Suffix') }}" />
+                            <x-input id="suffix" class="block mt-1 w-full" type="text" name="suffix"
+                                :value="old('suffix')" />
+                            @error('suffix')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
                     <div>
+                        <!-- Email -->
                         <x-label for="email" value="{{ __('Email') }}" />
                         <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
                             required />
@@ -60,6 +84,7 @@
                     </div>
 
                     <div>
+                        <!-- Password -->
                         <x-label for="password" value="{{ __('Password') }}" />
                         <x-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                         @error('password')
@@ -68,6 +93,7 @@
                     </div>
 
                     <div>
+                        <!-- Confirm Password -->
                         <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
                         <x-input id="password_confirmation" class="block mt-1 w-full" type="password"
                             name="password_confirmation" required />
@@ -79,6 +105,7 @@
 
 
                     <div class="flex items-center justify-between mt-4">
+                        <!-- After registering,  user is redirected back to the login page -->
                         <a class="text-sm text-gray-600 hover:underline" href="{{ route('admin.welcome') }}">
                             {{ __('Already registered?') }}
                         </a>

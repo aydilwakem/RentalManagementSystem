@@ -110,6 +110,10 @@ Route::middleware([
         ->name('admin.edit-room')->middleware('can:room-edit');
 
 
+    // Deleted Rooms (Soft Deletes)
+    Route::get('deleted-rooms', function () {
+        return view('admin.rooms.deleted-rooms');
+    })->name('admin.deleted-rooms');
 
 
 

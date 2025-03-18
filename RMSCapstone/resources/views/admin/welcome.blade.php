@@ -1521,6 +1521,7 @@
     @endif
 </head>
 <x-guest-layout>
+
     <body
         class="bg-green-800 text-black p-6 lg:p-8 lg:justify-center flex-col flex items-center justify-center bg-opacity-90 min-h-screen">
         <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-3 not-has-[nav]:hidden">
@@ -1531,24 +1532,13 @@
                             class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal">
                             Dashboard
                         </a>
-                    @else
-                        <a href="{{ route('dashboard') }}"
-                            class="inline-block px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-sm leading-normal">
-                            Log in
-                        </a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal">
-                                Register
-                            </a>
-                        @endif
                     @endauth
                 </nav>
             @endif
         </header>
         <div class="p-4">
-            <div class="flex flex-col lg:flex-row w-full max-w-4xl shadow-lg rounded-lg overflow-hidden my-6 lg:my-12 bg-white">
+            <div
+                class="flex flex-col lg:flex-row w-full max-w-4xl shadow-lg rounded-lg overflow-hidden my-6 lg:my-12 bg-white">
 
                 <!--- Left Section - Icon Version
                 <div class="w-1/2 flex items-center justify-center bg-green-600 bg-opacity-10">
@@ -1567,7 +1557,8 @@
 
                 <!-- Right Section - Login Form -->
                 <div class="w-full lg:w-1/2 p-6 lg:p-10 flex flex-col justify-center">
-                    <p class="subheader text-2xl lg:text-4xl font-bold !text-green-700 mb-2 text-center">Welcome back!</p>
+                    <p class="subheader text-2xl lg:text-4xl font-bold !text-green-700 mb-2 text-center">Welcome back!
+                    </p>
 
                     <x-validation-errors class="mb-4" />
 
@@ -1618,6 +1609,7 @@
                         <p>Don't have an account?</p>
                         <a href="{{route('register')}}" class="text-primary font-semibold hover:underline">Sign up</a>
                     </div>
+
                 </div>
             </div>
         </div>
