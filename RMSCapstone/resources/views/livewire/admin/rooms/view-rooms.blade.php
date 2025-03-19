@@ -27,16 +27,11 @@
                     </div>
                 @endcan
                 <!-- Deleted Rooms (Restore and Delete Forever -->
-                <x-button class="!bg-gray-700" icon="fas fa-trash"
-                    onclick="window.location.href='{{ route('admin.deleted-rooms') }}'">
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2" icon="fas fa-trash"
+                    href="{{ route('admin.deleted-rooms') }}">
                     Deleted Rooms
                 </x-button>
-
             </div>
-
-
-
-
             <!-- Table -->
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->

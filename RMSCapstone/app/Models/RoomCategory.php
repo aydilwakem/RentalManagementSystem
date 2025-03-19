@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Room;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RoomCategory extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'prd_room_categories';
 

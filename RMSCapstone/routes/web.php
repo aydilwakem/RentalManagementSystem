@@ -137,6 +137,11 @@ Route::middleware([
     Route::get('edit/room-category/{roomCategory}', EditRoomCategory::class)
         ->name('admin.edit-room-category')->middleware('can:room-category-edit');
 
+    // Deleted Categories (Soft Deletes)
+    Route::get('deleted-room-categories', function () {
+        return view('admin.room-categories.deleted-room-categories');
+    })->name('admin.deleted-room-categories');
+
 
     // Room Rates Route
 
@@ -157,6 +162,11 @@ Route::middleware([
     // Edit
     Route::get('edit/room-rate/{roomRate}', EditRoomRate::class)
         ->name('admin.edit-room-rate')->middleware('can:room-rate-edit');
+
+     // Deleted Room Rate (Soft Deletes)
+     Route::get('deleted-room-rates', function () {
+        return view('admin.room-rates.deleted-room-rates');
+    })->name('admin.deleted-room-rates');
 
     // Individual Room Rates Route
 
@@ -192,7 +202,10 @@ Route::middleware([
     Route::get('edit/amenity/{amenity}', EditAmenity::class)
         ->name('admin.edit-amenity')->middleware('can:amenity-edit');
 
-
+    // Deleted Rooms (Soft Deletes)
+    Route::get('deleted-amenitites', function () {
+        return view('admin.amenities.deleted-amenities');
+    })->name('admin.deleted-amenities');
 
 
     // Activities Route

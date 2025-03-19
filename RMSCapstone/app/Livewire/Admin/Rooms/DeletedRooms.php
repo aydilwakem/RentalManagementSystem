@@ -37,8 +37,23 @@ class DeletedRooms extends Component
 
     public function render()
     {
+        // Generate fake IDs for deleted room rates
+        $fakeIDs = session('fake_ids_rooms', []);
+
+        $deletedIds = $this->deletedRooms->pluck('id')->toArray();
+
+        // Refresh fake IDs if mismatch or count changes
+        if (array_diff($deletedIds, array_keys($fakeIDs)) || count($fakeIDs) !== count($deletedIds)) {
+            $fakeIDs = [];
+            foreach ($this->deletedRooms as $index => $room) {
+                $fakeIDs[$room->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+            session(['fake_ids_rooms' => $fakeIDs]);
+        }
+
         return view('livewire.admin.rooms.deleted-rooms', [
             'deletedRooms' => $this->deletedRooms,
+            'fakeIDs' => $fakeIDs,
         ]);
     }
 }
