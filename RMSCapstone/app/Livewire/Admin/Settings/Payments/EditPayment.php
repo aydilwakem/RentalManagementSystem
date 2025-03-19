@@ -20,6 +20,13 @@ class EditPayment extends Component
     public $mode_of_payment_qr_image;
     public $new_mode_of_payment_qr_image;
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
     //To display info of selected item
     public function mount(PaymentMethod $paymentMethod)
     {
@@ -32,12 +39,18 @@ class EditPayment extends Component
 
     public function updatePaymentMethod()
     {
+        try{
         $this->validate([
             'mode_of_payment_name' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
             'new_mode_of_payment_qr_image' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         // Ensure the image is uploaded properly
         if ($this->new_mode_of_payment_qr_image && !$this->new_mode_of_payment_qr_image->isValid()) {
@@ -67,8 +80,6 @@ class EditPayment extends Component
 
         return redirect()->route('admin.payments');
     }
-
-
 
     public function render()
     {

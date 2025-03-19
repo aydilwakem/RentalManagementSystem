@@ -15,8 +15,16 @@ class CreatePayment extends Component
     public $account_number;
     public $mode_of_payment_qr_image;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function savePaymentMethod()
     {
+        try{
         // Validate form input (including image)
         $this->validate([
             'mode_of_payment_name' => 'required|string|max:255',
@@ -24,6 +32,11 @@ class CreatePayment extends Component
             'account_number' => 'required|string|max:255',
             'mode_of_payment_qr_image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Ensure image upload is complete before storing
         if ($this->mode_of_payment_qr_image && !$this->mode_of_payment_qr_image->isValid()) {
