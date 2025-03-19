@@ -25,7 +25,7 @@ class DeletedRoomRates extends Component
         $roomRate = RoomRate::withTrashed()->find($roomRateId);
         if ($roomRate) {
             $roomRate->restore();
-            session()->flash('message', 'Room restored successfully.');
+            session()->flash('message', 'Room rate restored successfully.');
             $this->fetchDeletedRoomRates();
         }
     }
@@ -35,7 +35,7 @@ class DeletedRoomRates extends Component
         $roomRate = RoomRate::withTrashed()->find($roomRateId);
         if ($roomRate) {
             $roomRate->forceDelete();
-            session()->flash('message', 'Room permanently deleted.');
+            session()->flash('message', 'Room rate permanently deleted.');
             $this->fetchDeletedRoomRates();
         }
     }

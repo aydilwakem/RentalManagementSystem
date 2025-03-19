@@ -27,7 +27,7 @@
                     </div>
                 @endcan
                 <!-- Deleted Rooms (Restore and Delete Forever -->
-                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2" icon="fas fa-trash"
+                <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2" icon="fas fa-trash"
                     href="{{ route('admin.deleted-rooms') }}">
                     Deleted Rooms
                 </x-button>

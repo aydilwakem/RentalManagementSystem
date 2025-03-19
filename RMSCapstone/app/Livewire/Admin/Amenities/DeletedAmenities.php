@@ -24,7 +24,7 @@ class DeletedAmenities extends Component
         $amenity = Amenity::withTrashed()->find($amenityId);
         if ($amenity) {
             $amenity->restore();
-            session()->flash('message', 'Room restored successfully.');
+            session()->flash('message', 'Amenity restored successfully.');
             $this->fetchDeletedAmenities();
         }
     }
@@ -34,7 +34,7 @@ class DeletedAmenities extends Component
         $amenity = Amenity::withTrashed()->find($amenityId);
         if ($amenity) {
             $amenity->forceDelete();
-            session()->flash('message', 'Room permanently deleted.');
+            session()->flash('message', 'Amenity permanently deleted.');
             $this->fetchDeletedAmenities();
         }
     }

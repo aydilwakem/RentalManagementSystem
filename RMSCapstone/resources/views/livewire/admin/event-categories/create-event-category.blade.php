@@ -8,7 +8,7 @@
 
                     <!-- Name of Event Category -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Event Name</label>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category Name</label>
                         <input type="text" wire:model="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Type event category name" required>

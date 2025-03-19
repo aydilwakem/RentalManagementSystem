@@ -53,7 +53,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 9l-7 7-7-7" />
                         </svg>
-                    </button>
+                    </button>s
                     <div x-show="open" class="p-4 space-y-2">
                         @foreach ($permissions->filter(fn($p) => preg_match('/^room-(?!rate|category)/', $p->name)) as $permission)
                             <label class="flex items-center space-x-2 text-sm">

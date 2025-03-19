@@ -1,8 +1,8 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($deletedRooms->isEmpty())
+    @if ($deletedEvents->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No deleted rooms yet.</p>
+            <p class="text-gray-500 text-lg font-semibold">No deleted events yet.</p>
         </div>
     @else
         {{-- Display Session Message --}}
@@ -22,28 +22,28 @@
                             <!-- ID -->
                             <th scope="col" class="px-4 py-3 text-left">ID</th>
 
-                            <!-- Room Name -->
-                            <th scope="col" class="px-4 py-3 text-left">Name</th>
+                            <!-- Event Name -->
+                            <th scope="col" class="px-4 py-3 text-left">Event Name</th>
 
-                            <!-- Room Category -->
-                            <th scope="col" class="px-4 py-3 text-left">Category</th>
+                            <!-- Event Category -->
+                            <th scope="col" class="px-4 py-3 text-left">Event Category</th>
 
                             <!-- Actions -->
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @foreach ($deletedRooms as $room)
+                        @foreach ($deletedEvents as $event)
                             <tr class="border-b">
-                                <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$room->id] ?? 'RM-???' }}</td>
-                                <td class="px-4 py-3 text-left">{{ $room->name }}</td>
-                                <td class="px-4 py-3 text-left">{{ $room->category->name ?? 'N/A' }}</td>
+                                <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$event->id] ?? 'RCT-???' }}</td>
+                                <td class="px-4 py-3 text-left">{{ $event->name }}</td>
+                                <td class="px-4 py-3 text-left">{{ $event->category->name }}</td>
                                 <td class="px-4 py-3 text-center">
-                                    <x-button wire:click="restoreRoom({{ $room->id }})">
+                                    <x-button wire:click="restoreEvent({{ $event->id }})">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
-                                    <x-button wire:click="deleteRoomForever({{ $room->id }})"
+                                    <x-button wire:click="deleteEventForever({{ $event->id }})"
                                         class="!bg-red-500 hover:!bg-red-600 text-white font-semibold px-4 py-2 rounded"
                                         onclick="return confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')">
                                         Delete Forever

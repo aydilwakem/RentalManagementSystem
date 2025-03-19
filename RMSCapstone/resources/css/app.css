@@ -160,14 +160,12 @@ button.fc-today-button.fc-button.fc-button-primary {
     color: #ffffff !important;
     font-weight: bold !important;
     border: 2px solid #198754 !important;
-    z-index: 50 !important;
     position: relative;
 }
 
 button.fc-today-button.fc-button.fc-button-primary * {
     color: #ffffff !important;
     opacity: 1 !important;
-    z-index: 50 !important;
 }
 
 button.fc-today-button.fc-button.fc-button-primary:disabled {
@@ -177,7 +175,6 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     border: 2px solid #198754 !important;
     opacity: 1 !important;
     cursor: default !important;
-    z-index: 50 !important;
 }
 
 

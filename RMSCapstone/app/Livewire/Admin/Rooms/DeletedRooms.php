@@ -11,7 +11,12 @@ class DeletedRooms extends Component
 
     public function mount()
     {
-        $this->deletedRooms = Room::onlyTrashed()->get(); // Fetch only soft deleted rooms
+        $this->fetchDeletedRooms();
+    }
+
+    public function fetchDeletedRooms()
+    {
+        $this->deletedRooms = Room::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
     public function restoreRoom($roomId)
@@ -24,13 +29,13 @@ class DeletedRooms extends Component
         }
     }
 
-    public function deleteForever($roomId)
+    public function deleteRoomForever($roomId)
     {
         $room = Room::withTrashed()->find($roomId);
         if ($room) {
             $room->forceDelete(); // Permanently delete the room
             session()->flash('message', 'Room permanently deleted.');
-            $this->fetchdeletedRooms();
+            $this->fetchDeletedRooms();
         }
     }
 

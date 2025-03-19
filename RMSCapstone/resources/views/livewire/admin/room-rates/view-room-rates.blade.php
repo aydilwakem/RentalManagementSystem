@@ -22,7 +22,7 @@
                 <!-- Deleted Rooms (Restore and Delete Forever -->
                 <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2" icon="fas fa-trash"
                     href="{{ route('admin.deleted-room-rates') }}">
-                    Deleted Rooms
+                    Deleted Room Rates
                 </x-button>
             </div>
 

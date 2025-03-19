@@ -23,7 +23,7 @@
                             <th scope="col" class="px-4 py-3 text-left">ID</th>
 
                             <!-- Room Category Name -->
-                            <th scope="col" class="px-4 py-3 text-left">Category Name</th>
+                            <th scope="col" class="px-4 py-3 text-left">Amenity Name</th>
 
                             <!-- Actions -->
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>

@@ -250,6 +250,10 @@ Route::middleware([
     Route::get('edit/event/{event}', EditEvent::class)
         ->name('admin.edit-event')->middleware('can:event-edit');
 
+    // Deleted Events (Soft Deletes)
+    Route::get('deleted-events', function () {
+        return view('admin.events.deleted-events');
+    })->name('admin.deleted-events');
 
 
     // Event Categories Route
@@ -272,7 +276,10 @@ Route::middleware([
     Route::get('edit/event-category/{eventCategory}', EditEventCategory::class)
         ->name('admin.edit-event-category')->middleware('can:event-category-edit');
 
-
+    // Deleted Event Categories (Soft Deletes)
+    Route::get('deleted-event-categories', function () {
+        return view('admin.event-categories.deleted-event-categories');
+    })->name('admin.deleted-event-categories');
 
 
 
@@ -296,6 +303,10 @@ Route::middleware([
     Route::get('view/event-hall/{eventHall}', ViewEventHall::class)
         ->name('admin.view-event-hall')->middleware('can:event-hall-view');
 
+    // Deleted Event Halls (Soft Deletes)
+    Route::get('deleted-event-halls', function () {
+        return view('admin.event-halls.deleted-event-halls');
+    })->name('admin.deleted-event-halls');
 
 
 
