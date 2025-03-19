@@ -30,7 +30,7 @@ class DeletedRooms extends Component
         if ($room) {
             $room->forceDelete(); // Permanently delete the room
             session()->flash('message', 'Room permanently deleted.');
-            $this->fetchdeletedRooms();
+            $this->deletedRooms = Room::onlyTrashed()->get();
         }
     }
 
