@@ -30,7 +30,7 @@ class CreateActivity extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:100',
             'inclusions' => 'nullable|string',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);

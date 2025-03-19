@@ -229,10 +229,10 @@
                         </th>
                         <td class="px-4 py-3"> {{ $maintenance->description }}</td>
                         <td class="px-4 py-3">
-                            {{ \Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d') }} </td>
+                            {{ $maintenance->reported_at->format('F j, Y') }} </td>
                         <td class="px-4 py-3">
                             @if ($maintenance->resolved_at)
-                            {{ \Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d') }}
+                            {{ $maintenance->resolved_at->format('F j, Y') }}
                             @else
                             Unresolved Maintenance
                             @endif </td>

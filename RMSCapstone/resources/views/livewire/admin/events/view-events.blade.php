@@ -235,11 +235,12 @@
                     <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
                     <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d') }} </td>
+                        {{ $eventItem->event_date_start->format('F j, Y') }}
+                    </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d') }} </td>
+                        {{ $eventItem->event_date_end->format('F j, Y') }} </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->event_time)->format('h:i A') }}
+                        {{$eventItem->event_time->format('h:i A') }}
                     </td>
                     <td class="px-4 py-3"> {{ $eventItem->capacity }} </td>
                     <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>

@@ -29,7 +29,9 @@
             <!-- Reported At -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
-                <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->reported_at)->format('Y-m-d') }}</p>
+                <p class="text-gray-600">{{ $maintenance->reported_at->format('F j, Y') }}
+
+                </p>
             </div>
 
             <!-- Resolved At -->
@@ -37,7 +39,7 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
                 <p class="text-gray-600">
                     @if ($maintenance->resolved_at)
-                    {{ \Carbon\Carbon::parse($maintenance->resolved_at)->format('Y-m-d') }}
+                    {{ $maintenance->resolved_at->format('F j, Y') }}
                     @else
                     Unresolved Maintenance
                     @endif </td>

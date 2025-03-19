@@ -23,9 +23,9 @@
                         <li><strong>Company Name:</strong> {{ $event->company_name }}</li>
                         <li><strong>Email:</strong> {{ $event->email }}</li>
                         <li><strong>Event Date Start:</strong>
-                            {{ \Carbon\Carbon::parse($event->event_date_start)->format('Y-m-d') }}</li>
+                            {{ $event->event_date_start->format('F j, Y') }}</li>
                         <li><strong>Event Time:</strong>
-                            {{ \Carbon\Carbon::parse($event->event_time)->format('h:i A') }}</li>
+                            {{$event->event_time->format('h:i A') }}</li>
                     </ul>
                 </div>
 
@@ -35,7 +35,7 @@
                         <li><strong>Contact Person:</strong> {{ $event->contact_person }}</li>
                         <li><strong>Capacity:</strong> {{ $event->capacity }}</li>
                         <li><strong>Event Date End:</strong>
-                            {{ \Carbon\Carbon::parse($event->event_date_end)->format('Y-m-d') }}</li>
+                            {{ $event->event_date_start->format('F j, Y') }}</li>
                         <li><strong>Total Amount:</strong> {{ $event->total_amount }}</li>
                     </ul>
                 </div>
