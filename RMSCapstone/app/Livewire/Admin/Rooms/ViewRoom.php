@@ -12,6 +12,13 @@ class ViewRoom extends Component
     // Create a public property 
     public Room $room;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     // Function to find the model of the record
     public function mount(Room $room)
     {
@@ -27,14 +34,16 @@ class ViewRoom extends Component
             return;
         }
 
-        // Delete the room
-        $room->delete();
+        if ($this->confirmItemDelete) {
+            $room->delete();
+            $this->confirmItemDelete = false;
 
         // Flash success message
         session()->flash('message', 'Room successfully deleted!');
 
         // Redirect to the admin rooms page
         return redirect()->route('admin.rooms');
+        }
     }
 
     public function render()

@@ -17,6 +17,13 @@ class ViewEvent extends Component
      public $eventCategories = [];
      public $eventHalls = []; // To store fetched event categories
 
+     public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     //To display foreign keys
      public function mount(Event $event)
     {
@@ -35,14 +42,17 @@ class ViewEvent extends Component
             return;
         }
 
-        // Delete the event
-        $event->delete();
+        if ($this->confirmItemDelete) {
+            $event->delete();
+            $this->confirmItemDelete = false;
+    
 
         // Flash success message
         session()->flash('message', 'Event successfully deleted!');
 
         // Redirect to the admin rooms page
         return redirect()->route('admin.events');
+        }
     }
 
     public function render()

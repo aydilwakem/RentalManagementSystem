@@ -12,6 +12,14 @@ class ViewRoomCategory extends Component
     // Create a public property 
     public RoomCategory $roomCategory;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
+
     // Function to find the model of the record
     public function mount(RoomCategory $roomCategory)
     {
@@ -32,7 +40,9 @@ class ViewRoomCategory extends Component
             $roomCategory->amenities()->detach();
 
             // Delete the room category
-            $roomCategory->delete();
+            if ($this->confirmItemDelete) {
+                $roomCategory->delete();
+                $this->confirmItemDelete = false;
 
             // Flash success message
             session()->flash('message', 'Room Category successfully deleted!');
@@ -40,6 +50,7 @@ class ViewRoomCategory extends Component
             // Redirect to the admin room categories page
             return redirect()->route('admin.room-categories');
         }
+    }
     }
 
     public function render()
