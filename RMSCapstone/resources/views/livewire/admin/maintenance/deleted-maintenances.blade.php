@@ -1,14 +1,14 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($deletedEventCategories->isEmpty())
+    @if ($deletedMaintenances->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No deleted event categories yet.</p>
+            <p class="text-gray-500 text-lg font-semibold">No deleted maintenances yet.</p>
         </div>
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -22,24 +22,28 @@
                             <!-- ID -->
                             <th scope="col" class="px-4 py-3 text-left">ID</th>
 
-                            <!-- Event Hall Name -->
-                            <th scope="col" class="px-4 py-3 text-left">Event Category Name</th>
+                            <!-- Maintenance Name -->
+                            <th scope="col" class="px-4 py-3 text-left">Maintenance</th>
+
+                            <!-- Priority Status -->
+                            <th scope="col" class="px-4 py-3 text-left">Priority Status</th>
 
                             <!-- Actions -->
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @foreach ($deletedEventCategories as $eventCategory)
+                        @foreach ($deletedMaintenances as $maintenance)
                             <tr class="border-b">
-                                <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}</td>
-                                <td class="px-4 py-3 text-left">{{ $eventCategory->name }}</td>
+                                <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$maintenance->id] ?? 'MNT-???' }}</td>
+                                <td class="px-4 py-3 text-left">{{ $maintenance->name }}</td>
+                                <td class="px-4 py-3 text-left">{{ $maintenance->priority_status }}</td>
                                 <td class="px-4 py-3 space-x-2 text-center">
-                                    <x-button wire:click="restoreEventCategory({{ $eventCategory->id }})">
+                                    <x-button wire:click="restoreMaintenance({{ $maintenance->id }})">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
-                                    <x-button wire:click="deleteEventCategoryForever({{ $eventCategory->id }})"
+                                    <x-button wire:click="deleteMaintenanceForever({{ $maintenance->id }})"
                                         class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded"
                                         onclick="return confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')">
                                         Delete Forever

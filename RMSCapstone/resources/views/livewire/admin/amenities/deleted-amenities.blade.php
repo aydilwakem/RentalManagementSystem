@@ -34,13 +34,13 @@
                             <tr class="border-b">
                                 <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</td>
                                 <td class="px-4 py-3 text-left">{{ $amenity->name }}</td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-4 py-3 space-x-2 text-center">
                                     <x-button wire:click="restoreAmenity({{ $amenity->id }})">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
                                     <x-button wire:click="deleteAmenityForever({{ $amenity->id }})"
-                                        class="!bg-red-500 hover:!bg-red-600 text-white font-semibold px-4 py-2 rounded"
+                                        class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded"
                                         onclick="return confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')">
                                         Delete Forever
                                     </x-button>

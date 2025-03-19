@@ -228,6 +228,10 @@ Route::middleware([
     Route::get('edit/activity/{activity}', EditActivity::class)
         ->name('admin.edit-activity')->middleware('can:activity-edit');
 
+    // Deleted Activities (Soft Deletes)
+    Route::get('deleted-activities', function () {
+        return view('admin.activities.deleted-activities');
+    })->name('admin.deleted-activities');
 
 
     //Events
@@ -330,6 +334,11 @@ Route::middleware([
     Route::get('view/maintenance/{maintenance}', ViewMaintenance::class)
         ->name('admin.view-maintenance')->middleware('can:maintenance-view');
 
+    // Deleted Maintenances (Soft Deletes)
+    Route::get('deleted-maintenances', function () {
+        return view('admin.maintenance.deleted-maintenances');
+    })->name('admin.deleted-maintenances');
+
 
     // Settings
 
@@ -352,6 +361,11 @@ Route::middleware([
     // View
     Route::get('settings/view/payment-method/{paymentMethod}', ViewPayment::class)
         ->name('admin.view-payment')->middleware('can:payment-method-view');
+
+    // Deleted Payments (Soft Deletes)
+    Route::get('deleted-payments', function () {
+        return view('admin.settings.payments.deleted-payments');
+    })->name('admin.deleted-payments');
 });
 
 

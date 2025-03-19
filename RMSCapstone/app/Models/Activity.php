@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'prd_activities';
 
     protected $fillable = ['name', 'description', 'amount', 'inclusions', 'image'];

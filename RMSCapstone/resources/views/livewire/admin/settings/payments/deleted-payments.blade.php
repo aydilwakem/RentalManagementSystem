@@ -1,8 +1,8 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($deletedEventCategories->isEmpty())
+    @if ($deletedPayments->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No deleted event categories yet.</p>
+            <p class="text-gray-500 text-lg font-semibold">No deleted payment methods yet.</p>
         </div>
     @else
         {{-- Display Session Message --}}
@@ -14,41 +14,38 @@
         @endif
         <div>
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-                <!-- Table Body-->
-                <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
-                        <tr>
-                            <!-- ID -->
-                            <th scope="col" class="px-4 py-3 text-left">ID</th>
-
-                            <!-- Event Hall Name -->
-                            <th scope="col" class="px-4 py-3 text-left">Event Category Name</th>
-
-                            <!-- Actions -->
-                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-center">
-                        @foreach ($deletedEventCategories as $eventCategory)
-                            <tr class="border-b">
-                                <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}</td>
-                                <td class="px-4 py-3 text-left">{{ $eventCategory->name }}</td>
-                                <td class="px-4 py-3 space-x-2 text-center">
-                                    <x-button wire:click="restoreEventCategory({{ $eventCategory->id }})">
+            <div class="p-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach ($deletedPayments as $payment)
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto">
+                            <a href="#">
+                                <img class="w-full h-56 object-cover"
+                                    src="{{ asset('storage/' . $payment->mode_of_payment_qr_image) }}"
+                                    alt="{{ $payment->mode_of_payment_name }}" />
+                            </a>
+                            <div class="p-6 text-center">
+                                <a href="#">
+                                    <h5 class="mb-3 text-2xl font-bold text-gray-900">
+                                        {{ $payment->mode_of_payment_name }}</h5>
+                                </a>
+                                <p class="text-gray-700">{{ $payment->account_name }}</p>
+                                <p class="text-gray-700">{{ $payment->account_number }}</p>
+                                <div class="mt-5 flex justify-center space-x-4">
+                                    <x-button wire:click="restorePayment({{ $payment->id }})">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
-                                    <x-button wire:click="deleteEventCategoryForever({{ $eventCategory->id }})"
+                                    <x-button wire:click="deletePaymentForever({{ $payment->id }})"
                                         class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded"
                                         onclick="return confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')">
                                         Delete Forever
                                     </x-button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     @endif

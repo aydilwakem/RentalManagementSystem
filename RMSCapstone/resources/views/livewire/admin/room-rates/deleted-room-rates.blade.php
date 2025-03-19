@@ -42,13 +42,13 @@
                                 <td class="px-4 py-3 text-left">{{ $roomRate->name }}</td>
                                 <td class="px-4 py-3 text-left">{{ $roomRate->room->name }}</td>
                                 <td class="px-4 py-3 text-left">{{ $roomRate->rate_type ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-4 py-3 space-x-2 text-center">
                                     <x-button wire:click="restoreRoomRate({{ $roomRate->id }})">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
                                     <x-button wire:click="deleteRoomRateForever({{ $roomRate->id }})"
-                                        class="!bg-red-500 hover:!bg-red-600 text-white font-semibold px-4 py-2 rounded"
+                                        class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded"
                                         onclick="return confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')">
                                         Delete Forever
                                     </x-button>
