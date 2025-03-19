@@ -1,4 +1,4 @@
-<div class="lg:flex lg:h-full lg:flex-col">
+{{-- <div class="lg:flex lg:h-full lg:flex-col">
     <header class="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
       <h1 class="text-base font-semibold leading-6 text-gray-900">
         <time datetime="2022-01">January 2022</time>
@@ -28,10 +28,10 @@
                 <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
               </svg>
             </button>
-  
+
             <!--
               Dropdown menu, show/hide based on menu state.
-  
+
               Entering: "transition ease-out duration-100"
                 From: "transform opacity-0 scale-95"
                 To: "transform opacity-100 scale-100"
@@ -59,10 +59,10 @@
               <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
             </svg>
           </button>
-  
+
           <!--
             Dropdown menu, show/hide based on menu state.
-  
+
             Entering: "transition ease-out duration-100"
               From: "transform opacity-0 scale-95"
               To: "transform opacity-100 scale-100"
@@ -513,4 +513,36 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> --}}
+<div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <!-- Reservations Card -->
+        <div
+            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-calendar-check text-secondary text-4xl"></i>
+            <h2 class="text-gray-700 font-semibold">New Reservations</h2>
+            <p class="text-2xl font-bold text-gray-800">12</p>
+        </div>
+
+
+        <!-- Rooms Card -->
+        <div
+            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-bed text-secondary text-4xl"></i>
+            <h2 class="text-gray-700 font-semibold">Rooms Available</h2>
+            <p class="text-2xl font-bold text-gray-800">10</p>
+        </div>
+
+        <!-- Maintenance Card -->
+        <div
+            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-tools text-secondary text-4xl"></i>
+            <h2 class="text-gray-700 font-semibold">Pending Maintenances</h2>
+            <p class="text-2xl font-bold text-gray-800">4</p>
+        </div>
+    </div>
+
+
+    <div id='calendar'></div>
+</div>

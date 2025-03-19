@@ -61,3 +61,37 @@ document.addEventListener('alpine:init', () => {
         sub_shrinkedClass: 'sm:absolute top-0 left-28 sm:shadow-md sm:z-10 sm:bg-gray-900 sm:rounded-md sm:p-4 border-l sm:border-none border-gray-400 ml-4 pl-4 sm:ml-0 w-28'
     }));
 });
+
+
+document.addEventListener('livewire:initialized', () => {
+
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        select: function (info) {
+            console.log(info);
+            var title = prompt("Enter event name: ");
+            console.log(title);
+            Livewire.dispatch("addEvent", {
+                title: title,
+                start: info.startStr,
+                end: info.endStr
+            });
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
+        }
+    });
+    calendar.render();
+
+    Livewire.on('eventLoaded', (events) => {
+        calendar.removeAllEvents();
+        calendar.addEventSource(events);
+        console.log(events);
+    })
+
+});

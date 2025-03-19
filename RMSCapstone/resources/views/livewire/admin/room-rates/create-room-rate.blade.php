@@ -1,6 +1,6 @@
 <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
     <div class="mx-auto max-w-2xl lg:py-2s">
-        <h2 class="mb-4 text-xl font-bold text-gray-900">Add new room rate</h2>
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate</h2>
 
         <form wire:submit.prevent="saveRoomRate">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
