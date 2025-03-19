@@ -36,7 +36,7 @@ class CreateRoomRate extends Component
             'room_id' => 'required|exists:prd_rooms,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'amount' => 'required|integer|min:0',
+            'amount' => 'required|integer|min:1000',
             'extra_person_charge' => 'required|numeric|min:100|max:50000.00',
             'extended_stay_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
             'description' => 'nullable|string',
