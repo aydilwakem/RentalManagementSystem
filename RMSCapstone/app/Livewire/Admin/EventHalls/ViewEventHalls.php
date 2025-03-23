@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\EventHall;
+use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -25,6 +26,8 @@ class ViewEventHalls extends Component
     public $sortDir='DESC';
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
+
 
     public function confirmDelete($id)
         {
@@ -41,35 +44,46 @@ class ViewEventHalls extends Component
     }
 
 
-   public function deleteEventHall($id)
-    {
-        // Find the event hall by ID
-        $eventHall = EventHall::find($id);
+   //Function to delete an item, if there is constraint, modal will appear
+   public function deleteEventHall()
+   {
+       //find id
+   try {
+       $eventHall = EventHall::find($this->confirmItemDelete);
 
-        if ($eventHall) {
-            // Delete the event hall
-            if ($this->confirmItemDelete) {
-                EventHall::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+       if (!$eventHall) {
+           session()->flash('error', 'Event Category not found.');
+           return;
+       }
 
-            // Fetch remaining - sorted by creation date
-            $eventHall = EventHall::orderBy('created_at', 'ASC')->get();
+       $eventHall->delete(); //Attempt deletion
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($eventHall as $index => $hall) {
-                $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
+       // Reset confirmation modal to close it
+       $this->confirmItemDelete = null;
 
-            // Store updated fake IDs in a unique session key
-           session(['fake_ids_eventHalls' => $fakeIDs]);
+       // Refresh event categories
+       $eventHall = EventHall::orderBy('created_at', 'ASC')->get();
 
+       // Reset fake IDs
+       $fakeIDs = [];
+       foreach ($eventHall as $index => $hall) {
+           $fakeIDs[$hall->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+       }
 
-            // Flash success message
-            session()->flash('message', 'Event Hall successfully deleted!');
-        }
-    }
-    }
+       //Store session of the fake ids
+       session(['fake_ids_eventHalls' => $fakeIDs]);
+
+       // Flash success message
+       session()->flash('message', 'Event Category successfully deleted!');
+
+       //Catch for integrity constraint
+   } catch (QueryException $e) {
+       if ($e->getCode() == 23000) { // Foreign key constraint violation code
+           $this->cannotDeleteItem = true; // Show the cannot delete modal
+           $this->confirmItemDelete = null; // Close the confirmation modal
+       }
+   }
+}
 
     public function setSortBy($sortByField){
 

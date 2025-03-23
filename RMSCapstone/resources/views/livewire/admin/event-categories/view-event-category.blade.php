@@ -21,8 +21,8 @@
 
         <!-- Event Category Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $eventCategory->image) }}" alt="{{ $eventCategory->name }}"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img src="{{ asset($eventCategory->image ? 'storage/' . $eventCategory->image : 'images/rms-default.png') }}"
+                alt="{{ $eventCategory->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Description -->
@@ -65,10 +65,26 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteEventCategory({{ $eventCategory->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteEventCategory" wire:loading.attr="disabled">
                     {{ __('Delete Event Category') }}
                 </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
+
+        {{-- Cannot Delete Modal --}}
+        <x-dialog-modal wire:model="cannotDeleteItem">
+            <x-slot name="title">
+                {{ __('Unable to Delete') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('This category is currently in use and cannot be deleted.') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                    {{ __('OK') }}
+                </x-secondary-button>
             </x-slot>
         </x-dialog-modal>
     </div>

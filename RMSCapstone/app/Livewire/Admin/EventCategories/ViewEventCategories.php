@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventCategories;
 
 use App\Models\EventCategory;
+use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -23,7 +24,8 @@ class ViewEventCategories extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
-    public $confirmItemDelete = false;
+    public $confirmItemDelete = false; //Modal for delete confirmation
+    public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
 
     public function confirmDelete($id)
         {
@@ -38,36 +40,46 @@ class ViewEventCategories extends Component
         }
     }
 
-
-   public function deleteEventCategory($id)
+//Function to delete an item, if there is constraint, modal will appear
+    public function deleteEventCategory()
     {
-        // Find the room category by ID
-        $eventCategory = EventCategory::find($id);
+        //find id
+    try {
+        $eventCategory = EventCategory::find($this->confirmItemDelete);
 
-        if ($eventCategory) {
-            if ($this->confirmItemDelete) {
-                EventCategory::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+        if (!$eventCategory) {
+            session()->flash('error', 'Event Category not found.');
+            return;
+        }
 
-            // Fetch remaining - sorted by creation date
-            $eventCategory = EventCategory::orderBy('created_at', 'ASC')->get();
+        $eventCategory->delete(); //Attempt deletion
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($eventCategory as $index => $category) {
-                $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
+        // Reset confirmation modal to close it
+        $this->confirmItemDelete = null;
 
-            // Store updated fake IDs in a unique session key
-           session(['fake_ids_eventCategory' => $fakeIDs]);
+        // Refresh event categories
+        $eventCategories = EventCategory::orderBy('created_at', 'ASC')->get();
 
- 
+        // Reset fake IDs
+        $fakeIDs = [];
+        foreach ($eventCategories as $index => $category) {
+            $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+        }
 
-            // Flash success message
-            session()->flash('message', 'Event Category successfully deleted!');
+        //Store session of the fake ids
+        session(['fake_ids_eventCategory' => $fakeIDs]);
+
+        // Flash success message
+        session()->flash('message', 'Event Category successfully deleted!');
+
+        //Catch for integrity constraint
+    } catch (QueryException $e) {
+        if ($e->getCode() == 23000) { // Foreign key constraint violation code
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
         }
     }
-    }
+}
 
     public function setSortBy($sortByField){
 

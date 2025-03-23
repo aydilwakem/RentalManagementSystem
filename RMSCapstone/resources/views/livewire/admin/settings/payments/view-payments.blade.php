@@ -60,8 +60,8 @@
                         <div class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto">
                             <a href="#">
                                 <img class="w-full h-56 object-cover"
-                                    src="{{ asset('storage/' . $method->mode_of_payment_qr_image) }}"
-                                    alt="{{ $method->mode_of_payment_name }}" />
+                            src="{{ asset($method->mode_of_payment_qr_image ? 'storage/' . $method->mode_of_payment_qr_image : 'images/rms-default.png') }}"
+                            alt="{{ $method->mode_of_payment_name }}" />
                             </a>
                             <div class="p-6 text-center">
                                 <a href="#">

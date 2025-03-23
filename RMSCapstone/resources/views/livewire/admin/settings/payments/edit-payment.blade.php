@@ -47,30 +47,34 @@
                     @enderror
                 </div>
 
-                <!-- QR Image Upload -->
+                <!-- Image Upload -->
                 <div class="sm:col-span-2">
-                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                    <input accept="image/png, image/jpeg" type="file" wire:model="new_mode_of_payment_qr_image"
-                        id="image"
+                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload New Image
+                        (Optional)</label>
+                    <input type="file" wire:model="new_mode_of_payment_qr_image" id="image"
+                        accept="image/png, image/jpeg"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
-                    <!-- Error Message -->
                     @error('new_mode_of_payment_qr_image')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
-                    <!-- Loading Indicator (Shows when file is being uploaded) -->
-                    <div wire:loading wire:target="new_mode_of_payment_qr_image" class="mt-2 text-blue-600">
-                        Uploading image...
-                    </div>
+                    <div wire:loading wire:target="new_mode_of_payment_qr_image" class="mt-2 text-gray-600">Uploading
+                        image...</div>
 
-                    <!-- Image Preview (Shows New Image if Selected, Otherwise Shows Current Image) -->
+                    <!-- Image Preview -->
                     <div class="mt-2">
                         @if ($new_mode_of_payment_qr_image)
+                        <!-- Show new uploaded image -->
                         <img src="{{ $new_mode_of_payment_qr_image->temporaryUrl() }}"
                             class="w-32 h-32 object-cover rounded-lg shadow">
-                        @elseif ($mode_of_payment_qr_image)
-                        <img src="{{ asset('storage/' . $mode_of_payment_qr_image) }}"
+                        @elseif ($paymentMethod->image)
+                        <!-- Show existing image from storage -->
+                        <img src="{{ asset('storage/' . $paymentMethod->image) }}"
+                            class="w-32 h-32 object-cover rounded-lg shadow">
+                        @else
+                        <!-- Show default image if no image exists -->
+                        <img src="{{ asset('images/rms-default.png') }}"
                             class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>

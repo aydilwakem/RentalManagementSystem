@@ -20,7 +20,7 @@
 
         <!-- Room Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $roomCategory->image) }}" alt="{{ $roomCategory->name }}"
+            <img src="{{ asset($roomCategory->image ? 'storage/' . $roomCategory->image : 'images/rms-default.png') }}"
                 class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
@@ -37,10 +37,7 @@
             <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
             <ul class="list-disc pl-5 text-gray-500">
                 @foreach ($roomCategory->amenities as $amenity)
-                    <<<<<<< HEAD <li>{{ $amenity->name }}</li>
-                        =======
-                        <li>{{ $amenity->name }}</li>
-                        >>>>>>> v1-frontend
+                <li>{{ $amenity->name }}</li>
                 @endforeach
             </ul>
         </div>
@@ -58,7 +55,7 @@
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                <<<<<<< HEAD wire:click="confirmDelete({{ $roomCategory->id }})">
+                wire:click="confirmDelete({{ $roomCategory->id }})">
                 Delete
             </x-button>
         </div>
