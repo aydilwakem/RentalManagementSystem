@@ -5,16 +5,16 @@
 
         {{-- Display Validation Errors --}}
         @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li class="py-1">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li class="py-1">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
-        <form wire:submit.prevent="saveUser">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Name -->
                 <div class="sm:col-span-2">
@@ -39,11 +39,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">-- Choose a Role --</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
                     @error('selectedRole')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -63,10 +63,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit">
+                <x-button type="submit" wire:click="confirmCreate" wire:loading.attr="disabled">
                     Add User
                 </x-button>
             </div>
         </form>
     </div>
+
+    <!-- Create Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmCreateItem">
+        <x-slot name="title">
+            {{ __('Create User') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to add this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="saveUser" wire:loading.attr="disabled">
+                {{ __('Create User') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
 </div>

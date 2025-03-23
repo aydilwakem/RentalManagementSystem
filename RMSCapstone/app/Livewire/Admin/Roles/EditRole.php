@@ -16,6 +16,13 @@ class EditRole extends Component
     public $permissions = [];
     public $selectedPermissions = [];
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
     public function mount(Role $role)
     {
         $this->role = $role;
@@ -28,9 +35,15 @@ class EditRole extends Component
 
     public function updateRole()
     {
+        try{
         $this->validate([
             'name' => 'nullable|string|min:3|unique:roles,name,' . $this->role->id,
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         // Update role details
         $this->role->update([

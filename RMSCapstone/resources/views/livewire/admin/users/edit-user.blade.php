@@ -6,7 +6,7 @@
     </x-slot>
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mb-6 mt-4 bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit User</h2>
-        <form wire:submit.prevent="updateUser">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Name -->
@@ -40,7 +40,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="" disabled {{ is_null($selectedRole) ? 'selected' : '' }}>Select a role</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -52,10 +52,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit">
+                <x-button type="submit" wire:click="confirmEdit({{ $user->id }})" wire:loading.attr="disabled">
                     Update User
                 </x-button>
             </div>
         </form>
     </div>
+
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Update User') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes in this user?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateUser({{ $user->id }})">
+                {{ __('Update User') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
 </div>

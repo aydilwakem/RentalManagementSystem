@@ -13,6 +13,13 @@ class ViewRole extends Component
 {
     public role $role;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function deleteRole($id)
     {
         $role = Role::find($id);
@@ -27,14 +34,16 @@ class ViewRole extends Component
             $role->permissions()->detach();
         }
 
-        // Delete the role
-        $role->delete();
+        if ($this->confirmItemDelete) {
+            $role->delete();
+            $this->confirmItemDelete = false;
 
         session()->flash('message', 'Role successfully deleted!');
 
 
         // Redirect to the admin room categories page
         return redirect()->route('admin.manage-users');
+        }
     }
 
     public function render()

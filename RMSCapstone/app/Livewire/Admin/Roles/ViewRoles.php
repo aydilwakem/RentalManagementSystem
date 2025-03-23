@@ -16,6 +16,13 @@ class ViewRoles extends Component
     public $search = '';
     public $perPage = 5;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function deleteRole($id)
     {
         $role = Role::find($id);
@@ -31,9 +38,14 @@ class ViewRoles extends Component
         }
 
         // Delete the role
-        $role->delete();
+        if ($role) {
+            if ($this->confirmItemDelete) {
+                Role::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
 
         session()->flash('message', 'Role successfully deleted!');
+            }
+        }
     }
 
 

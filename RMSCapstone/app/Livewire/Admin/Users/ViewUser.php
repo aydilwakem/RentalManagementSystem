@@ -15,6 +15,13 @@ class ViewUser extends Component
     public $userRoles = [];
     public $userPermissions = [];
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount(User $user)
     {
         $this->user = $user;
@@ -29,11 +36,14 @@ class ViewUser extends Component
             return;
         }
 
-        $user->delete();
+        if ($this->confirmItemDelete) {
+            $user->delete();
+            $this->confirmItemDelete = false;
 
         session()->flash('message', 'User successfully deleted!');
 
         return redirect()->route('admin.manage-users');
+        }
     }
 
     public function render()

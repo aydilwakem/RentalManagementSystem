@@ -23,43 +23,43 @@
 
 
         @php
-            $groups = [
-                'Room' => 'room-',
-                'Room Rate' => 'room-rate-',
-                'Room Category' => 'room-category-',
-                'Event' => 'event-',
-                'Event Hall' => 'event-hall-',
-                'Event Category' => 'event-category-',
-                'Activity' => 'activity-',
-                'Maintenance' => 'maintenance-',
-                'Role' => 'role-',
-                'Payment Method' => 'payment-method-',
-                'User' => 'user-',
-                'Dashboard' => 'dashboard-',
-            ];
+        $groups = [
+        'Room' => 'room-',
+        'Room Rate' => 'room-rate-',
+        'Room Category' => 'room-category-',
+        'Event' => 'event-',
+        'Event Hall' => 'event-hall-',
+        'Event Category' => 'event-category-',
+        'Activity' => 'activity-',
+        'Maintenance' => 'maintenance-',
+        'Role' => 'role-',
+        'Payment Method' => 'payment-method-',
+        'User' => 'user-',
+        'Dashboard' => 'dashboard-',
+        ];
 
-            $groupedPermissions = [];
+        $groupedPermissions = [];
 
-            foreach ($groups as $label => $prefix) {
-                $groupedPermissions[$label] = $role->permissions->filter(function ($permission) use ($prefix) {
-                    // Only match exact prefix and not submodules
-                    $subPrefixes = [
-                        'room-' => ['room-rate-', 'room-category-'],
-                        'event-' => ['event-hall-', 'event-category-'],
-                    ];
+        foreach ($groups as $label => $prefix) {
+        $groupedPermissions[$label] = $role->permissions->filter(function ($permission) use ($prefix) {
+        // Only match exact prefix and not submodules
+        $subPrefixes = [
+        'room-' => ['room-rate-', 'room-category-'],
+        'event-' => ['event-hall-', 'event-category-'],
+        ];
 
-                    // If prefix has exclusions
-                    if (array_key_exists($prefix, $subPrefixes)) {
-                        foreach ($subPrefixes[$prefix] as $exclude) {
-                            if (str_starts_with($permission->name, $exclude)) {
-                                return false;
-                            }
-                        }
-                    }
+        // If prefix has exclusions
+        if (array_key_exists($prefix, $subPrefixes)) {
+        foreach ($subPrefixes[$prefix] as $exclude) {
+        if (str_starts_with($permission->name, $exclude)) {
+        return false;
+        }
+        }
+        }
 
-                    return str_starts_with($permission->name, $prefix);
-                });
-            }
+        return str_starts_with($permission->name, $prefix);
+        });
+        }
         @endphp
 
 
@@ -67,16 +67,16 @@
         <div class="space-y-4">
             <h1 class="flex font-semibold text-gray-800">Permissions:</h1>
             @foreach ($groupedPermissions as $group => $permissions)
-                @if ($permissions->count())
-                    <div class="border p-4 rounded-lg">
-                        <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
-                        <ul class="list-disc list-inside space-y-1 text-gray-700">
-                            @foreach ($permissions as $perm)
-                                <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+            @if ($permissions->count())
+            <div class="border p-4 rounded-lg">
+                <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    @foreach ($permissions as $perm)
+                    <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             @endforeach
         </div>
 
@@ -95,10 +95,31 @@
             <!-- Delete Button -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="deleteRole({{ $role->id }})">
+                wire:click="confirmDelete({{ $role->id }})">
                 Delete
             </x-button>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-slot name="title">
+                {{ __('Delete Role') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this role?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})" wire:loading.attr="disabled">
+                    {{ __('Delete Role') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
 
     </div>
 </div>
