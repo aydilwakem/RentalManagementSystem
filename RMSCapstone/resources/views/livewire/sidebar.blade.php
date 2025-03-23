@@ -106,21 +106,19 @@
                 @endcan
 
                 <!-- Reservations -->
-                <div @click="$store.sidebar.active = 'reservations'"
-                    class="relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
-                    x-bind:class="{
-                        'justify-start': $store.sidebar.full,
-                        'sm:justify-center': !$store.sidebar.full,
-                        'text-gray-200 bg-green-600': $store.sidebar.active == 'schedules',
-                        'text-gray-400': $store.sidebar.active != 'schedules'
-                    }">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-calendar"></i>
-                        <h1 x-cloak x-show="$store.sidebar.full">
-                            Reservations
-                        </h1>
-                    </div>
+                <div>
+                    <a href="#">
+                        <div
+                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                                {{ Route::is('#') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            <i class="fa-solid fa-calendar"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Reservations
+                            </h1>
+                        </div>
+                    </a>
                 </div>
+
 
                 <!-- Rooms -->
                 <div x-data="dropdown" class="relative">

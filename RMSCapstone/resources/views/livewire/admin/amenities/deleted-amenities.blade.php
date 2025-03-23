@@ -1,4 +1,15 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <button onclick="window.history.back();"
+            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+            Back to Amenities
+        </button>
+    </div>
     @if ($deletedAmenities->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
@@ -32,7 +43,8 @@
                     <tbody class="text-center">
                         @foreach ($deletedAmenities as $amenity)
                             <tr class="border-b">
-                                <td class="px-4 py-3 font-medium text-gray-900 text-left">{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</td>
+                                <td class="px-4 py-3 font-medium text-gray-900 text-left">
+                                    {{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</td>
                                 <td class="px-4 py-3 text-left">{{ $amenity->name }}</td>
                                 <td class="px-4 py-3 space-x-2 text-center">
                                     <x-button wire:click="restoreAmenity({{ $amenity->id }})">

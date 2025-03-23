@@ -87,7 +87,7 @@
                 </div>
 
                 <!-- Rate Type -->
-                <div class="sm:col-span-2 mb-3">
+                <div>
                     <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900">Rate Type</label>
                     <select wire:model="rate_type" id="rate_type"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
@@ -103,7 +103,7 @@
             </div>
 
             <!-- Description -->
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-2 mt-4">
                 <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
                 <textarea wire:model="description" id="description"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"

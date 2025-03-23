@@ -519,25 +519,25 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <!-- Reservations Card -->
         <div
-            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-calendar-check text-secondary text-4xl"></i>
-            <h2 class="text-gray-700 font-semibold">New Reservations</h2>
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-calendar-check text-primary text-4xl"></i>
+            <h2 class="text-gray-800 font-semibold">New Reservations</h2>
             <p class="text-2xl font-bold text-gray-800">12</p>
         </div>
 
 
         <!-- Rooms Card -->
         <div
-            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-bed text-secondary text-4xl"></i>
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-bed text-primary text-4xl"></i>
             <h2 class="text-gray-700 font-semibold">Rooms Available</h2>
             <p class="text-2xl font-bold text-gray-800">10</p>
         </div>
 
         <!-- Maintenance Card -->
         <div
-            class="bg-light rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-tools text-secondary text-4xl"></i>
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-tools text-primary text-4xl"></i>
             <h2 class="text-gray-700 font-semibold">Pending Maintenances</h2>
             <p class="text-2xl font-bold text-gray-800">4</p>
         </div>
