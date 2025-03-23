@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\EventHall;
+use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -13,6 +14,7 @@ class ViewEventHall extends Component
     public EventHall $eventHall;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
 
     public function confirmDelete($id)
     {
@@ -20,22 +22,30 @@ class ViewEventHall extends Component
     }
  
     // Function for deleting a record
-    public function deleteEventHall(EventHall $eventHall)
+    public function deleteEventHall()
     {
-        if (!$eventHall) {
-            session()->flash('error', 'Event Hall not found!');
-            return;
-        }
+        try {
+            $eventHall = EventHall::find($this->confirmItemDelete);
 
-        if ($this->confirmItemDelete) {
-            $eventHall->delete();
-            $this->confirmItemDelete = false;
+            if (!$eventHall) {
+                session()->flash('error', 'Event Category not found.');
+                return;
+            }
+
+            $eventHall->delete(); // Attempt deletion
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
 
             // Flash success message
-            session()->flash('message', 'Event hall successfully deleted!');
-
-            // Redirect to the admin event categories page
+            session()->flash('message', 'Event Category successfully deleted!');
             return redirect()->route('admin.event-halls');
+
+        } catch (QueryException $e) {
+            if ($e->getCode() == 23000) { // Foreign key constraint violation
+                $this->cannotDeleteItem = true; // Show the "Cannot Delete" modal
+                $this->confirmItemDelete = null; // Close the confirmation modal
+            }
         }
     }
 
