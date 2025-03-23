@@ -5,25 +5,23 @@
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No transactions yet.<br> Click "Create Transaction" to add a
                 new transaction.</p>
-            <x-button class="mt-4" href="" icon="fas fa-plus" wire:navigate>
+            <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
                 Create Transaction
             </x-button>
         </div>
     @else
         <div>
             <!-- Create Room Button -->
-            @can('maintenance-create')
-                <div class="flex items-center justify-between p-4">
-                    <x-button icon="fas fa-plus" href="">
-                        New Transaction
-                    </x-button>
-                </div>
-            @endcan
+            <div class="flex items-center justify-between p-4">
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
+                    New Transaction
+                </x-button>
+            </div>
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -154,17 +152,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -186,17 +182,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -219,17 +213,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -251,17 +243,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -291,10 +281,9 @@
                                 <td class="px-4 py-3 text-center">
                                     <span
                                         class="cursor-pointer font-semibold
-                                               {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
-                                               hover:underline"
-                                        wire:click="confirmReceipt({{ $transaction->id }})"
-                                        wire:loading.attr="disabled">
+                                                                                                                                                               {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
+                                                                                                                                                               hover:underline"
+                                        wire:click="confirmReceipt({{ $transaction->id }})" wire:loading.attr="disabled">
                                         {{ $transaction->isPaid ? 'Confirmed' : 'Confirm Receipt' }}
                                     </span>
                                 </td>
@@ -305,26 +294,25 @@
 
                                     <!-- View Icon -->
 
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
-                                        wire:navigate href="">
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.view-new-transaction', $transaction->id) }}">
                                     </i>
 
 
                                     <!-- Edit Icon -->
-
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
-                                        wire:navigate href="">
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                        href="">
                                     </i>
+
 
                                     <!-- Delete Icon -->
                                     <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $transaction->id }})"
-                                        wire:loading.attr="disabled">
+                                        wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
                                     </i>
 
                                     <!-- Confirm Reservation Icon -->
                                     <i class="fa-solid fa-circle-check
-                                                                                                                                                        {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
+                                                                                                                                                                                                                                                                        {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
                                         @if (!$transaction->isPaid) disabled @endif
                                         wire:click.prevent="{{ $transaction->isPaid ? "confirmReservation($transaction->id)" : '' }}"
                                         wire:loading.attr="disabled">
@@ -366,8 +354,7 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
-                            wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
@@ -397,9 +384,11 @@
                                 <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
                                 </p>
                                 <p class="text-lg font-semibold">Payment Method:
-                                    {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}</p>
+                                    {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                                </p>
                                 <p class="text-lg font-semibold">Payment Reference:
-                                    {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}</p>
+                                    {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
+                                </p>
                             </div>
                         @else
                             {{ __('No payment screenshot available.') }}
@@ -408,8 +397,7 @@
                     <p></p>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemReceipt', false)"
-                            wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemReceipt', false)" wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 

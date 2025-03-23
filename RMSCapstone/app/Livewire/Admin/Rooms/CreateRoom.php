@@ -36,23 +36,23 @@ class CreateRoom extends Component
 
     public function saveRoom()
     {
-        try{
-        // Validate the form input
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'room_category_id' => 'required|exists:prd_room_categories,id',
-            'ideal_guest' => 'required|integer|min:1',
-            'max_adults' => 'required|integer|min:1',
-            'max_kids' => 'required|integer|min:0',
-            'turnover_duration' => 'required|string',
-            'room_status' => 'required|in:Available,Booked,Out of Service',
-            'image' => 'nullable|image|max:1024', // Max 1MB image
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+        try {
+            // Validate the form input
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'room_category_id' => 'required|exists:prd_room_categories,id',
+                'ideal_guest' => 'required|integer|min:1',
+                'max_adults' => 'required|integer|min:1',
+                'max_kids' => 'required|integer|min:0',
+                'turnover_duration' => 'required|string',
+                'room_status' => 'required|in:Available,Booked,Out of Service',
+                'image' => 'nullable|image|max:1024', // Max 1MB image
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         // Ensure image upload is complete before storing
         $imagePath = null;

@@ -27,6 +27,7 @@ use App\Livewire\Admin\Roles\ViewRole;
 use App\Livewire\Admin\Roles\EditRole;
 use App\Livewire\Admin\RoomRates\CreateIndividualRate;
 use App\Livewire\Admin\RoomRates\EditIndividualRate;
+use App\Livewire\Admin\Transactions\NewTransaction\ViewTransaction;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -366,6 +367,7 @@ Route::middleware([
     Route::get('deleted-payments', function () {
         return view('admin.settings.payments.deleted-payments');
     })->name('admin.deleted-payments');
+
     /**
      * Reservations
      */
@@ -375,6 +377,16 @@ Route::middleware([
     Route::get('/new-reservations', function () {
         return view('admin.transactions.new.view-transactions');
     })->name('admin.view-new-transactions');
+
+    //Create
+    Route::get('create/new-reservation', function () {
+        return view('admin.transactions.new.create-transaction');
+    })->name('admin.create-new-transaction');
+
+    // View
+    Route::get('view/new-reservation/{transactionId}', ViewTransaction::class)
+        ->name('admin.view-new-transaction');
+
 
     // Confirmed Reservations
     Route::get('/confirmed-reservations', function () {
