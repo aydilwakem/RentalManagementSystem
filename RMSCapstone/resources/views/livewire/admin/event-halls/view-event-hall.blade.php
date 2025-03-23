@@ -22,8 +22,8 @@
 
         <!-- Event Hall Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $eventHall->image) }}" alt="{{ $eventHall->name }}"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img src="{{ asset($eventHall->image ? 'storage/' . $eventHall->image : 'images/rms-default.png') }}"
+                alt="{{ $eventHall->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Event Hall Details -->

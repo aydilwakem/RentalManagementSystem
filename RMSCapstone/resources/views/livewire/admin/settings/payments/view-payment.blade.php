@@ -21,8 +21,8 @@
 
         <!-- QR Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $paymentMethod->mode_of_payment_qr_image) }}" alt="Method Image"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img src="{{ asset($paymentMethod->image ? 'storage/' . $paymentMethod->image : 'images/rms-default.png') }}"
+                alt="Method Image" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Account Name -->

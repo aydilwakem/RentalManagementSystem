@@ -21,8 +21,8 @@
 
         <!-- Room Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $room->image) }}" alt="{{ $room->name }}"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img src="{{ asset($room->image ? 'storage/' . $room->image : 'images/rms-default.png') }}"
+                alt="{{ $room->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Room Category -->

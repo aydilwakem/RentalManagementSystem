@@ -21,8 +21,8 @@
 
         <!-- Activity Image -->
         <div>
-            <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->name }}"
-                class="w-full h-72 object-cover rounded-xl shadow-md">
+            <img src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
+                alt="{{ $activity->name }}" class="w-full h-72 object-cover rounded-xl shadow-md">
         </div>
 
         <!-- Description -->

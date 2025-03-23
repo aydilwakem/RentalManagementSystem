@@ -21,8 +21,8 @@
 
         <!-- Event Category Image -->
         <div class="mb-4">
-            <img src="{{ asset('storage/' . $eventCategory->image) }}" alt="{{ $eventCategory->name }}"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img src="{{ asset($eventCategory->image ? 'storage/' . $eventCategory->image : 'images/rms-default.png') }}"
+                alt="{{ $eventCategory->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Description -->
