@@ -32,7 +32,7 @@ use App\Livewire\Admin\RoomRates\EditIndividualRate;
 
 // Welcome page
 Route::get('/', function () {
-    return view('admin.welcome');
+    return view('admin.welcome'); // index file
 })->name('admin.welcome');
 
 
@@ -163,8 +163,8 @@ Route::middleware([
     Route::get('edit/room-rate/{roomRate}', EditRoomRate::class)
         ->name('admin.edit-room-rate')->middleware('can:room-rate-edit');
 
-     // Deleted Room Rate (Soft Deletes)
-     Route::get('deleted-room-rates', function () {
+    // Deleted Room Rate (Soft Deletes)
+    Route::get('deleted-room-rates', function () {
         return view('admin.room-rates.deleted-room-rates');
     })->name('admin.deleted-room-rates');
 
@@ -341,6 +341,31 @@ Route::middleware([
     // View
     Route::get('settings/view/payment-method/{paymentMethod}', ViewPayment::class)
         ->name('admin.view-payment')->middleware('can:payment-method-view');
+
+    /**
+     * Reservations
+     */
+
+    // New Reservations
+
+    Route::get('/new-reservations', function () {
+        return view('admin.transactions.new.view-transactions');
+    })->name('admin.view-new-transactions');
+
+    // Confirmed Reservations
+    Route::get('/confirmed-reservations', function () {
+        return view('admin.transactions.confirmed.view-transactions');
+    })->name('admin.view-confirmed-transactions');
+
+    // On-going Bookings
+    Route::get('/on-going-bookings', function () {
+        return view('admin.transactions.ongoing.view-transactions');
+    })->name('admin.view-ongoing-transactions');
+
+    // Old bookings
+    Route::get('/old-bookings', function () {
+        return view('admin.transactions.old.view-transactions');
+    })->name('admin.view-old-transactions');
 });
 
 
