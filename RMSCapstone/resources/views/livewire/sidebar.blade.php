@@ -110,7 +110,7 @@
                 <div x-data="dropdown" class="relative">
                     <div @click="toggle('rooms')"
                         class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                        {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                        {{ Route::is('admin.view-new-transactions*') || Route::is('admin.view-confirmed-transactions*') || Route::is('admin.view-ongoing-transactions*') || Route::is('admin.view-old-transactions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-calendar"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">

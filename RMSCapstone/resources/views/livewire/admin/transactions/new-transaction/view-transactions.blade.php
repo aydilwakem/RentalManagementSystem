@@ -1,4 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
+
     @if ($transactions->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
@@ -26,7 +27,34 @@
                     {{ session('message') }}
                 </div>
             @endif
-            
+            <!-- Navigation Tabs -->
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
+                <li class="me-2">
+                    <a href="{{ route('admin.view-new-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        New Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-confirmed-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        Confirmed Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-ongoing-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        On-Going Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-old-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        Old Reservations
+                    </a>
+                </li>
+            </ul>
+
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
@@ -126,15 +154,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -156,15 +186,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -187,15 +219,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -217,15 +251,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -243,50 +279,53 @@
                         @foreach ($transactions as $transaction)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $transaction->id}}
+                                    {{ $transaction->id }}
                                 </th>
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $transaction->first_name}} {{ $transaction->last_name }}
+                                    {{ $transaction->first_name }} {{ $transaction->last_name }}
                                 </th>
                                 <td class="px-4 py-3"> {{ $transaction->pax }}</td>
                                 <td class="px-4 py-3"> {{ $transaction->room->name }}</td>
                                 <td class="px-4 py-3"> {{ $transaction->check_in_date }}</td>
                                 <td class="px-4 py-3"> {{ $transaction->check_out_date }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     <span
-                                        class="cursor-pointer 
-                                                                                                                                                                                                                 {{ $transaction->isPaid ? 'text-green-600' : 'text-blue-600' }} 
-                                                                                                                                                                    hover:underline"
-                                        wire:click="confirmReceipt({{ $transaction->id }})" wire:loading.attr="disabled">
+                                        class="cursor-pointer font-semibold
+                                               {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
+                                               hover:underline"
+                                        wire:click="confirmReceipt({{ $transaction->id }})"
+                                        wire:loading.attr="disabled">
                                         {{ $transaction->isPaid ? 'Confirmed' : 'Confirm Receipt' }}
                                     </span>
                                 </td>
+
 
 
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->
 
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="">
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        wire:navigate href="">
                                     </i>
 
 
                                     <!-- Edit Icon -->
 
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="">
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                        wire:navigate href="">
                                     </i>
 
                                     <!-- Delete Icon -->
                                     <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
+                                        wire:click="confirmDelete({{ $transaction->id }})"
+                                        wire:loading.attr="disabled">
                                     </i>
 
                                     <!-- Confirm Reservation Icon -->
-                                    <i class="fa-solid fa-circle-check 
+                                    <i class="fa-solid fa-circle-check
                                                                                                                                                         {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
-                                        @if(!$transaction->isPaid) disabled @endif
+                                        @if (!$transaction->isPaid) disabled @endif
                                         wire:click.prevent="{{ $transaction->isPaid ? "confirmReservation($transaction->id)" : '' }}"
                                         wire:loading.attr="disabled">
                                     </i>
@@ -327,7 +366,8 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
+                            wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
@@ -354,7 +394,8 @@
 
                             <!-- Payment Details Below -->
                             <div class="text-left">
-                                <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}</p>
+                                <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
+                                </p>
                                 <p class="text-lg font-semibold">Payment Method:
                                     {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}</p>
                                 <p class="text-lg font-semibold">Payment Reference:
@@ -367,7 +408,8 @@
                     <p></p>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemReceipt', false)" wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemReceipt', false)"
+                            wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 

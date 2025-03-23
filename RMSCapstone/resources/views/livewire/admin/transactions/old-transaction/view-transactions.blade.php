@@ -14,6 +14,33 @@
                     {{ session('message') }}
                 </div>
             @endif
+            <!-- Navigation Tabs -->
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
+                <li class="me-2">
+                    <a href="{{ route('admin.view-new-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        New Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-confirmed-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        Confirmed Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-ongoing-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        On-Going Reservations
+                    </a>
+                </li>
+                <li class="me-2">
+                    <a href="{{ route('admin.view-old-transactions') }}"
+                        class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                        Old Reservations
+                    </a>
+                </li>
+            </ul>
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
 
                 <!-- Header-->
