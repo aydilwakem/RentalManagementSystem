@@ -18,6 +18,13 @@ class EditUser extends Component
     public $selectedRole;
     public $roles = []; // List of available roles
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
     public function mount(User $user)
     {
         $this->user = $user;
@@ -29,12 +36,18 @@ class EditUser extends Component
 
     public function updateUser()
     {
+        try{
         $this->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $this->user->id,
             'password' => 'nullable|min:8',
             'selectedRole' => 'nullable|exists:roles,name',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         $this->user->update([
             'name' => $this->name,

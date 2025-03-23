@@ -15,14 +15,23 @@ class ViewUsers extends Component
     public $search = '';
     public $perPage = 5;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function deleteUser($id)
     {
-        $user = User::find($id);
 
-        if ($user) {
-            $user->delete();
+        if ($id) {
+            if ($this->confirmItemDelete) {
+                User::find($this->confirmItemDelete)?->delete();
+                $this->confirmItemDelete = false;
             session()->flash('message', 'User successfully deleted!');
-        }
+            }
+        }   
     }
 
     public function setSortBy($sortByField)

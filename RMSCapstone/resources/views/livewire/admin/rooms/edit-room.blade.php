@@ -109,10 +109,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage">
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage"
+                    wire:click="confirmEdit({{ $room->id }})">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Room') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateRoom({{ $room->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Room') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

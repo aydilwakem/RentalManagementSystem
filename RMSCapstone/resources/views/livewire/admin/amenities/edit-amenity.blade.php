@@ -8,16 +8,16 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Amenity</h2>
 
         @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li class="py-1">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li class="py-1">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
-        <form wire:submit.prevent="updateAmenity">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Name of Amenity -->
@@ -30,13 +30,36 @@
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button" class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-button onclick="history.back()" type="button"
+                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" class="mt-4">
+                <x-button type="submit" class="mt-4" wire:click="confirmEdit({{ $amenity->id }})">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Amenity') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateAmenity({{ $amenity->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Amenity') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

@@ -21,6 +21,15 @@ class EditActivity extends Component
     public $image;
     public $newImage;
 
+
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
     // To display info of the selected activity
     public function mount(Activity $activity)
     {
@@ -34,13 +43,19 @@ class EditActivity extends Component
 
     public function updateActivity()
     {
+        try{
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:100',
             'inclusions' => 'nullable|string',
             'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         // Ensure the image is uploaded properly
         if ($this->newImage && !$this->newImage->isValid()) {

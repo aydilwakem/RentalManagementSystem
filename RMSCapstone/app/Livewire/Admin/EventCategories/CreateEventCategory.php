@@ -14,14 +14,27 @@ class CreateEventCategory extends Component
     public $description;
     public $image;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function saveEventCategory()
     {
+        try{
         // Validate form input (including image)
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Ensure image upload is complete before storing
         if ($this->image && !$this->image->isValid()) {

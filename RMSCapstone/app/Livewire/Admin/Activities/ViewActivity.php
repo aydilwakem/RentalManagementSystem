@@ -12,25 +12,30 @@ class ViewActivity extends Component
     // Create a public property 
     public Activity $activity;
 
-    // Function for deleting a record
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
+    //For deleting the record
     public function deleteActivity(Activity $activity)
     {
-        if (!$activity) {
-            session()->flash('error', 'Activity not found!');
-            return;
-        }
-
-        if ($activity) {
-            // Delete the activity
-            $activity->delete();
-
-            // Flash success message
-            session()->flash('message', 'Activity successfully deleted!');
-
-            // Redirect to the admin activities page
-            return redirect()->route('admin.activities');
-        }
+    if (!$activity) {
+        session()->flash('error', 'Activity not found!');
+        return;
     }
+
+    if ($this->confirmItemDelete) {
+        $activity->delete();
+        $this->confirmItemDelete = false;
+
+        session()->flash('message', 'Activity successfully deleted!');
+        return redirect()->route('admin.activities');
+    }
+    }
+
 
     public function render()
     {

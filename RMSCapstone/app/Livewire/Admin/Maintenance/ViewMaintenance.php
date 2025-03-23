@@ -11,25 +11,29 @@ class ViewMaintenance extends Component
 {
     // Create a public property 
     public Maintenance $maintenance;
+
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
  
     // Function for deleting a record
     public function deleteMaintenanceItem(Maintenance $maintenance)
     {
-        if (!$maintenance) {
-            session()->flash('error', 'Maintenance item not found!');
-            return;
-        }
+    if (!$maintenance) {
+        session()->flash('error', 'Maintenance not found!');
+        return;
+    }
 
-        if ($maintenance) {
-            // Delete the event hall
-            $maintenance->delete();
+    if ($this->confirmItemDelete) {
+        $maintenance->delete();
+        $this->confirmItemDelete = false;
 
-            // Flash success message
-            session()->flash('message', 'Maintenance item successfully deleted!');
-
-            // Redirect to the admin event categories page
-            return redirect()->route('admin.maintenances');
-        }
+        session()->flash('message', 'Maintenance successfully deleted!');
+        return redirect()->route('admin.maintenances');
+    }
     }
 
     public function render()

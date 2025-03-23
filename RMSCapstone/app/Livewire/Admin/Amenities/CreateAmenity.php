@@ -9,12 +9,26 @@ class CreateAmenity extends Component
 {
     public $name;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
+
     public function saveAmenity()
     {
+        try{
         // Validate form input
         $this->validate([
             'name' => 'required|string|max:255',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Create Amenity
         Amenity::create([

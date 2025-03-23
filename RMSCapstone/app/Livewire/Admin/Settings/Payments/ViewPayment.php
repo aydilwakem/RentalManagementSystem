@@ -11,6 +11,13 @@ class ViewPayment extends Component
 {
     // Create a public property 
     public PaymentMethod $paymentMethod;
+
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
  
     // Function for deleting a record
     public function deletePaymentMethod(PaymentMethod $paymentMethod)
@@ -20,9 +27,9 @@ class ViewPayment extends Component
             return;
         }
 
-        if ($paymentMethod) {
-            // Delete the method
+        if ($this->confirmItemDelete) {
             $paymentMethod->delete();
+            $this->confirmItemDelete = false;
 
             // Flash success message
             session()->flash('message', 'Payment Method successfully deleted!');
@@ -31,6 +38,7 @@ class ViewPayment extends Component
             return redirect()->route('admin.payments');
         }
     }
+
 
 
     public function render()

@@ -20,6 +20,13 @@ class CreateRoom extends Component
     public $room_status = 'Available'; // Default value
     public $image;
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public $roomCategories; // To store fetched room categories
 
     public function mount()
@@ -29,6 +36,7 @@ class CreateRoom extends Component
 
     public function saveRoom()
     {
+        try{
         // Validate the form input
         $this->validate([
             'name' => 'required|string|max:255',
@@ -40,6 +48,11 @@ class CreateRoom extends Component
             'room_status' => 'required|in:Available,Booked,Out of Service',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Ensure image upload is complete before storing
         $imagePath = null;

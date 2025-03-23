@@ -22,6 +22,13 @@ class EditEventHall extends Component
     public $image;
     public $newImage;
 
+    public $confirmEditItem = false;
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
     //To display info of selected item
     public function mount(EventHall $eventHall)
     {
@@ -36,14 +43,20 @@ class EditEventHall extends Component
 
     public function updateEventHall()
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:100|max:50000.00',
-            'capacity' => 'required|numeric|min:10|max:200',
-            'extra_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
-            'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
-        ]);
+        try {
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'amount' => 'required|numeric|min:100|max:50000.00',
+                'capacity' => 'required|numeric|min:10|max:200',
+                'extra_charge_per_hr' => 'required|numeric|min:100|max:50000.00',
+                'newImage' => 'nullable|image|max:2048',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         // Ensure the image is uploaded properly
         if ($this->newImage && !$this->newImage->isValid()) {
@@ -72,7 +85,7 @@ class EditEventHall extends Component
         ]);
 
         session()->flash('message', 'Event Hall successfully updated!');
-
+        $this->confirmEditItem = false;
         return redirect()->route('admin.event-halls');
     }
 

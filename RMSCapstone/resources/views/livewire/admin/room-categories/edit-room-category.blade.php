@@ -7,7 +7,7 @@
     <!-- Form container -->
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Category</h2>
-        <form wire:submit.prevent="updateCategory">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Name of Category -->
                 <div class="sm:col-span-2">
@@ -20,13 +20,13 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                     <div class="grid grid-cols-2 gap-2">
                         @foreach ($amenities as $amenity)
-                            <div class="flex items-center">
-                                <input type="checkbox" wire:model="selectedAmenities" value="{{ $amenity->id }}"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                                <label class="ms-2 text-sm font-medium text-gray-900">
-                                    {{ $amenity->name }}
-                                </label>
-                            </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" wire:model="selectedAmenities" value="{{ $amenity->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                            <label class="ms-2 text-sm font-medium text-gray-900">
+                                {{ $amenity->name }}
+                            </label>
+                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('newImage')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <div wire:loading wire:target="newImage" class="mt-2 text-blue-600">
@@ -55,9 +55,9 @@
 
                     <div class="mt-2">
                         @if ($newImage)
-                            <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @elseif ($image)
-                            <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        <img src="{{ asset('storage/' . $image) }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
                 </div>
@@ -69,10 +69,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage">
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage"
+                    wire:click="confirmEdit({{ $roomCategory->id }})">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Room Category') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateCategory({{ $roomCategory->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Room Category') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

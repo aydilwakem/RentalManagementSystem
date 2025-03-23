@@ -46,11 +46,30 @@
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="deleteEventCategory({{ $eventCategory->id }})">
+                wire:click="confirmDelete({{ $eventCategory->id }})">
                 Delete
             </x-button>
-
         </div>
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-slot name="title">
+                {{ __('Delete Event Category') }}
+            </x-slot>
 
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteEventCategory({{ $eventCategory->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Delete Event Category') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
 </div>

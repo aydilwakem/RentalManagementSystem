@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-2xl lg:py-2s">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add New Room</h2>
 
-        <form wire:submit.prevent="saveRoom">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Room Name -->
                 <div class="sm:col-span-2">
@@ -11,7 +11,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter room name">
                     @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -23,11 +23,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Category</option>
                         @foreach ($roomCategories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                     @error('room_category_id')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -38,7 +38,7 @@
                     <input type="number" wire:model="ideal_guest" id="ideal_guest"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('ideal_guest')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -48,7 +48,7 @@
                     <input type="number" wire:model="max_adults" id="max_adults" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_adults')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -58,7 +58,7 @@
                     <input type="number" wire:model="max_kids" id="max_kids" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_kids')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -69,7 +69,7 @@
                     <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('turnover_duration')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -84,7 +84,7 @@
                         <option value="Out of Service">Out of Service</option>
                     </select>
                     @error('room_status')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -95,7 +95,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('image')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <div wire:loading wire:target="image" class="mt-2 text-gray-600">
@@ -103,9 +103,9 @@
                     </div>
 
                     @if ($image && method_exists($image, 'temporaryUrl'))
-                    <div class="mt-2">
-                        <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                    </div>
+                        <div class="mt-2">
+                            <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        </div>
                     @endif
                 </div>
             </div>
@@ -115,10 +115,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button wire:loading.attr="disabled" wire:target="image">
+                <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
                     Add Room
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Create Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmCreateItem">
+        <x-slot name="title">
+            {{ __('Create Room') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to add this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="saveRoom" wire:loading.attr="disabled">
+                {{ __('Create Room') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
 </div>
+</div> <!-- Try to delete this -->

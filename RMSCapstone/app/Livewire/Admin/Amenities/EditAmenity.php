@@ -16,6 +16,13 @@ class EditAmenity extends Component
     public Amenity $amenity;
     public $name;
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
     public function mount(Amenity $amenity)
     {
         $this->amenity = $amenity;
@@ -24,9 +31,15 @@ class EditAmenity extends Component
 
     public function updateAmenity()
     {
+        try{
         $this->validate([
             'name' => 'required|string|max:255',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+                // If validation fails, close the modal
+                $this->confirmEditItem = false;
+                throw $e;
+            }
 
         // Update Amenity
         $this->amenity->update([

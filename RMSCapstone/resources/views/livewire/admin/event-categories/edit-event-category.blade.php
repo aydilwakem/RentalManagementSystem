@@ -7,7 +7,7 @@
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Event Category</h2>
 
-        <form wire:submit.prevent="updateEventCategory">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Name of Event Category -->
@@ -64,11 +64,32 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" class="mt-4" wire:loading.attr="disabled" wire:target="newImage">
+                <x-button type="submit" class="mt-4" wire:loading.attr="disabled" wire:target="newImage"
+                    wire:click="confirmEdit({{ $eventCategory->id }})">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Event Category') }}
+        </x-slot>
 
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateEventCategory({{ $eventCategory->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Event Category') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

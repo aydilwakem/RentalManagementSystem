@@ -11,6 +11,14 @@ class ViewEventCategory extends Component
 {
      // Create a public property 
      public EventCategory $eventCategory;
+
+     
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
  
      // Function for deleting a record
      public function deleteEventCategory(EventCategory $eventCategory)
@@ -20,9 +28,9 @@ class ViewEventCategory extends Component
              return;
          }
  
-         if ($eventCategory) {
-             // Delete the event category
-             $eventCategory->delete();
+         if ($this->confirmItemDelete) {
+            $eventCategory->delete();
+            $this->confirmItemDelete = false;
  
              // Flash success message
              session()->flash('message', 'Event Category successfully deleted!');
@@ -30,8 +38,8 @@ class ViewEventCategory extends Component
              // Redirect to the admin event categories page
              return redirect()->route('admin.event-categories');
          }
-     }
-
+        }
+         
 
     public function render()
     {

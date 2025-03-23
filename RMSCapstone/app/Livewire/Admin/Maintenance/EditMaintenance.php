@@ -17,6 +17,17 @@ class EditMaintenance extends Component
     public $resolved_at;
     public $priority_status;
 
+
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
+
+
     //To display info of selected item
     public function mount(Maintenance $maintenance)
     {
@@ -29,6 +40,7 @@ class EditMaintenance extends Component
 
     public function updateMaintenance()
     {
+        try{
         // Validate form input 
         $this->validate([   
             'name' => 'required|string',
@@ -37,6 +49,11 @@ class EditMaintenance extends Component
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
             'priority_status' => 'required|in:emergency,urgent,routine,planned',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
 
         // Update Event Hall

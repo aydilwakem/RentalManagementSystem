@@ -8,7 +8,7 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Maintenance</h2>
 
 
-        <form wire:submit.prevent="updateMaintenance">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Maintenance Name -->
@@ -81,11 +81,31 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit">
+                <x-button type="submit" wire:click="confirmEdit({{ $maintenance->id }})" wire:loading.attr="disabled">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Maintenance') }}
+        </x-slot>
 
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateMaintenance({{ $maintenance->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Maintenance') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

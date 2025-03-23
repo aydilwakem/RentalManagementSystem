@@ -9,7 +9,7 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Payment Method</h2>
 
 
-        <form wire:submit.prevent="updatePaymentMethod">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 {{-- Payment Method Name --}}
@@ -83,14 +83,33 @@
                         Cancel
                     </x-button>
 
-                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image">
+                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
+                        wire:click="confirmEdit({{ $paymentMethod->id }})">
                         Save Changes
                     </x-button>
                 </div>
-
             </div>
-
         </form>
+        <!-- Edit Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmEditItem">
+            <x-slot name="title">
+                {{ __('Edit Payment Method') }}
+            </x-slot>
 
+            <x-slot name="content">
+                {{ __('Are you sure you want to save changes on this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-button class="ms-3 bg-green text-white" wire:click="updatePaymentMethod({{ $paymentMethod->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Edit Payment Method') }}
+                </x-button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
 </div>

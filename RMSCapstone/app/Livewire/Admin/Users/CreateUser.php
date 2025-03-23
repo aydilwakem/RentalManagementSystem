@@ -18,6 +18,13 @@ class CreateUser extends Component
     public $selectedRole;
     public $roles = []; // List of available roles
 
+    public $confirmCreateItem = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     // Mount method runs when the component is initialized
     public function mount()
     {
@@ -27,6 +34,7 @@ class CreateUser extends Component
 
     public function saveUser()
     {
+        try{
         // Validate input fields to ensure correct data is entered
         $this->validate([
             'name' => 'required|string|max:255', // Name is required and must be a string
@@ -34,6 +42,11 @@ class CreateUser extends Component
             'password' => ['required', 'string', Rules\Password::defaults()], // Enforce password rules
             'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
         // Create a new user in the database with a hashed password
         $user = User::create([

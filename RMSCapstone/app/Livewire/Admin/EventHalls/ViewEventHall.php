@@ -11,6 +11,13 @@ class ViewEventHall extends Component
 {
     // Create a public property 
     public EventHall $eventHall;
+
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
  
     // Function for deleting a record
     public function deleteEventHall(EventHall $eventHall)
@@ -20,9 +27,9 @@ class ViewEventHall extends Component
             return;
         }
 
-        if ($eventHall) {
-            // Delete the event hall
+        if ($this->confirmItemDelete) {
             $eventHall->delete();
+            $this->confirmItemDelete = false;
 
             // Flash success message
             session()->flash('message', 'Event hall successfully deleted!');

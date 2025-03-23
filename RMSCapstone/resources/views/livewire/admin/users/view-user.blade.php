@@ -34,9 +34,9 @@
                 <h3 class="text-lg font-semibold text-gray-900">Role</h3>
                 <ul>
                     @forelse($userRoles as $role)
-                        <li>{{ $role }}</li>
+                    <li>{{ $role }}</li>
                     @empty
-                        <li class="text-gray-500">No roles assigned.</li>
+                    <li class="text-gray-500">No roles assigned.</li>
                     @endforelse
                 </ul>
 
@@ -64,9 +64,9 @@
                 <div class="max-h-60 overflow-y-auto border rounded p-3 space-y-1 bg-gray-50">
                     <ul class="space-y-1">
                         @forelse($userPermissions as $permission)
-                            <li>{{ $permission }}</li>
+                        <li>{{ $permission }}</li>
                         @empty
-                            <li class="text-gray-500">No permissions assigned.</li>
+                        <li class="text-gray-500">No permissions assigned.</li>
                         @endforelse
                     </ul>
                 </div>
@@ -86,10 +86,30 @@
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="deleteUser({{ $user->id }})">
+                wire:click="confirmDelete({{ $user->id }})">
                 Delete
             </x-button>
-
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-slot name="title">
+                {{ __('Delete User') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this user?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteUser({{ $user->id }})" wire:loading.attr="disabled">
+                    {{ __('Delete User') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
 </div>

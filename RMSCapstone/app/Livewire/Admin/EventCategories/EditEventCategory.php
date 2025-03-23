@@ -19,6 +19,14 @@ class EditEventCategory extends Component
     public $image;
     public $newImage;
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
+
     //To display info of selected item
     public function mount(EventCategory $eventCategory)
     {
@@ -30,11 +38,17 @@ class EditEventCategory extends Component
 
     public function updateEventCategory()
     {
+        try{
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         // Ensure the image is uploaded properly
         if ($this->newImage && !$this->newImage->isValid()) {
