@@ -94,4 +94,6 @@ document.addEventListener('livewire:initialized', () => {
         console.log(events);
     })
 
+
+
 });

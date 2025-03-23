@@ -42,28 +42,28 @@ class ViewRooms extends Component
     {
         $room = Room::find($id);
         if ($room) {
-        
+
             if ($this->confirmItemDelete) {
                 Room::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
-            // Fetch remaining rooms - sorted by creation date
-            $room = Room::orderBy('created_at', 'ASC')->get();
+                // Fetch remaining rooms - sorted by creation date
+                $room = Room::orderBy('created_at', 'ASC')->get();
 
-            // Fetch remaining - sorted by creation date
-            $room = Room::orderBy('created_at', 'ASC')->get();
+                // Fetch remaining - sorted by creation date
+                $room = Room::orderBy('created_at', 'ASC')->get();
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($room as $index => $roomItem) {
-                $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($room as $index => $roomItem) {
+                    $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_rooms' => $fakeIDs]);
+                session()->flash('message', 'Room successfully deleted!');
             }
-
-            // Store updated fake IDs in a unique session key
-            session(['fake_ids_rooms' => $fakeIDs]);
-            session()->flash('message', 'Room successfully deleted!');
         }
-    }
     }
 
     public function setSortBy($sortByField)
