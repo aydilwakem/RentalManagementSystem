@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\PaymentMethod;
 use App\Models\Room;
 use App\Models\Activity;
+use App\Models\TransactionResident;
 
 class CreateTransaction extends Component
 {
@@ -19,7 +20,8 @@ class CreateTransaction extends Component
     public $check_out_date;
     public $total_adults;
     public $total_kids;
-    public $pax;
+    public $pax = 1;
+    public $residents = [];
     public $activity_id;
     public $total_amount;
     public $first_name;
@@ -36,10 +38,6 @@ class CreateTransaction extends Component
     public $region;
     public $postal_code;
     public $country;
-    public $total_females;
-    public $total_males;
-    public $total_infants;
-    public $total_people;
     public $pets;
     public $terms;
     public $payment_method_id;
@@ -65,6 +63,30 @@ class CreateTransaction extends Component
         $this->paymentMethods = PaymentMethod::all();
         $this->rooms = Room::all();
         $this->activities = Activity::all();
+        $this->updateResidents();
+    }
+
+    public function updatedPax()
+    {
+        $this->updateResidents();
+    }
+
+    private function updateResidents()
+    {
+        $currentCount = count($this->residents);
+
+        if ($this->pax > $currentCount) {
+            for ($i = $currentCount; $i < $this->pax; $i++) {
+                $this->residents[] = [
+                    'name' => '',
+                    'residency_status' => 'Local', // Default value
+                    'origin' => '',
+                    'demographic' => '',
+                ];
+            }
+        } else {
+            $this->residents = array_slice($this->residents, 0, $this->pax);
+        }
     }
 
     public function saveTransaction()
@@ -80,6 +102,10 @@ class CreateTransaction extends Component
                 'total_adults' => 'required|integer|min:1',
                 'total_kids' => 'nullable|integer|min:0',
                 'pax' => 'required|integer|min:1',
+                'residents.*.name' => 'required|string',
+                'residents.*.residency_status' => 'required|in:Local,Foreigner',
+                'residents.*.origin' => 'required|string',
+                'residents.*.demographic' => 'required|in:female,male,infant',
                 'activity_id' => 'nullable|integer|exists:prd_activities,id',
                 'total_amount' => 'required|numeric|min:0',
                 'first_name' => 'required|string',
@@ -96,10 +122,6 @@ class CreateTransaction extends Component
                 'region' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
-                'total_females' => 'nullable|integer|min:0',
-                'total_males' => 'nullable|integer|min:0',
-                'total_infants' => 'nullable|integer|min:0',
-                'total_people' => 'required|integer|min:1',
                 'pets' => 'nullable|string',
                 'terms' => 'accepted',
                 'payment_method_id' => 'required|integer|exists:pm_payment_methods,id',
@@ -124,8 +146,8 @@ class CreateTransaction extends Component
             $imagePath = $this->payment_screenshot->store('transactions', 'public'); // Saves in storage/app/public/transactions
         }
 
-        // Create Reservation
-        Transaction::create([
+        // Create Transaction and retrieve its ID
+        $transaction = Transaction::create([
             'room_id' => $this->room_id,
             'check_in_time' => $this->check_in_time,
             'check_out_time' => $this->check_out_time,
@@ -150,10 +172,6 @@ class CreateTransaction extends Component
             'region' => $this->region,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
-            'total_females' => $this->total_females,
-            'total_males' => $this->total_males,
-            'total_infants' => $this->total_infants,
-            'total_people' => $this->total_people,
             'pets' => $this->pets,
             'terms' => $this->terms,
             'payment_method_id' => $this->payment_method_id,
@@ -164,6 +182,17 @@ class CreateTransaction extends Component
             'isConfirmed' => false, // Initially set to false
         ]);
 
+        // Insert residents into trn_residents
+        foreach ($this->residents as $resident) {
+            TransactionResident::create([
+                'transaction_id' => $transaction->id,
+                'name' => $resident['name'],
+                'residency_status' => $resident['residency_status'],
+                'origin' => $resident['origin'],
+                'demographic' => $resident['demographic'],
+            ]);
+        }
+
         // Reset form fields
         $this->reset();
 
@@ -173,6 +202,7 @@ class CreateTransaction extends Component
         // Redirect back to reservations list
         return redirect()->route('admin.view-new-transactions');
     }
+
     public function render()
     {
         return view('livewire.admin.transactions.new-transaction.create-transaction', [

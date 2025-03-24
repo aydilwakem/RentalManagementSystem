@@ -7,9 +7,6 @@
         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
             <!----------------- GUEST DETAILS ------------------------------------------------------------>
-
-            <h3 class="text-lg font-semibold text-gray-900">Guest Details</h3>
-
             <!-- First Name -->
             <div>
                 <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
@@ -81,8 +78,6 @@
             </div>
 
             <!----------------- ADDRESS ------------------------------------------------------------>
-
-            <h3 class="text-lg font-semibold text-gray-900">Address</h3>
 
             <!-- House Number -->
             <div class="sm:col-span-2">
@@ -179,8 +174,6 @@
 
             <!----------------- RESERVATION DETAILS ------------------------------------------------------------>
 
-            <h3 class="text-lg font-semibold text-gray-900">Reservation Details</h3>
-
             <!-- Room Selection -->
             <div class="sm:col-span-2">
                 <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">
@@ -245,7 +238,6 @@
                 @enderror
             </div>
 
-
             <!-- Total Amount -->
             <div>
                 <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900">Total Amount</label>
@@ -303,45 +295,6 @@
 
             <!-- Other Details -->
 
-            <!-- Total Males -->
-            <div>
-                <label for="total_males" class="block mb-2 text-sm font-medium text-gray-900">Total Males</label>
-                <input type="number" wire:model="total_males" id="total_males" required min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('total_males')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Total Females -->
-            <div>
-                <label for="total_females" class="block mb-2 text-sm font-medium text-gray-900">Total Females</label>
-                <input type="number" wire:model="total_females" id="total_females" required min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('total_females')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Total Infants -->
-            <div>
-                <label for="total_infants" class="block mb-2 text-sm font-medium text-gray-900">Total Infants</label>
-                <input type="number" wire:model="total_infants" id="total_infants" required min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('total_infants')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Total People // Residency-->
-            <div>
-                <label for="total_people" class="block mb-2 text-sm font-medium text-gray-900">Total People</label>
-                <input type="number" wire:model="total_people" id="total_people" required min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('total_people')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
 
             <!-- Pets -->
             <div>
@@ -354,8 +307,6 @@
             </div>
 
             <!----------------- PAYMENT INFORMATION ------------------------------------------------------------>
-
-            <h3 class="text-lg font-semibold text-gray-900">Payment Information</h3>
 
             <!-- Payment Method-->
             <div class="sm:col-span-2">
@@ -424,6 +375,63 @@
                 @enderror
             </div>
         </div>
+
+        <!-- Residents Section -->
+        <div>
+            @foreach($residents as $index => $resident)
+                <div>
+                    <h4 class="text-lg font-semibold">Guest {{ $index + 1 }}</h4> <!-- Adding Guest 1, Guest 2, etc. -->
+
+                    <label for="residents.{{ $index }}.name" class="block mb-2 text-sm font-medium text-gray-900">Resident
+                        Name</label>
+                    <input type="text" wire:model="residents.{{ $index }}.name" id="residents.{{ $index }}.name" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error("residents.$index.name") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="residents.{{ $index }}.residency_status"
+                        class="block mb-2 text-sm font-medium text-gray-900">Residency Status</label>
+                    <select wire:model="residents.{{ $index }}.residency_status"
+                        id="residents.{{ $index }}.residency_status" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Residency Status</option>
+                        <option value="Local">Local</option>
+                        <option value="Foreigner">Foreigner</option>
+                    </select>
+                    @error("residents.$index.residency_status") <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="residents.{{ $index }}.origin" class="block mb-2 text-sm font-medium text-gray-900">
+                        Origin
+                    </label>
+                    <input type="text" wire:model="residents.{{ $index }}.origin" id="residents.{{ $index }}.origin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                                               focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error("residents.$index.origin")
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+
+                <div>
+                    <label for="residents.{{ $index }}.demographic"
+                        class="block mb-2 text-sm font-medium text-gray-900">Demographic</label>
+                    <select wire:model="residents.{{ $index }}.demographic" id="residents.{{ $index }}.demographic" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Demographic</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                        <option value="infant">Infant</option>
+                    </select>
+                    @error("residents.$index.demographic") <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            @endforeach
+        </div>
+
+
 
         <div class="flex justify-between items-center space-y-2 mt-6">
             <x-button onclick="history.back()" type="button"

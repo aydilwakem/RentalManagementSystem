@@ -21,7 +21,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -281,8 +281,8 @@
                                 <td class="px-4 py-3 text-center">
                                     <span
                                         class="cursor-pointer font-semibold
-                                                                                                                                                               {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
-                                                                                                                                                               hover:underline"
+                                                                                                                                                                                                       {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
+                                                                                                                                                                                                       hover:underline"
                                         wire:click="confirmReceipt({{ $transaction->id }})" wire:loading.attr="disabled">
                                         {{ $transaction->isPaid ? 'Confirmed' : 'Confirm Receipt' }}
                                     </span>
@@ -298,10 +298,9 @@
                                         href="{{ route('admin.view-new-transaction', $transaction->id) }}">
                                     </i>
 
-
                                     <!-- Edit Icon -->
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="">
+                                        href="{{ route('admin.edit-new-transaction', $transaction->id) }}">
                                     </i>
 
 
@@ -312,7 +311,7 @@
 
                                     <!-- Confirm Reservation Icon -->
                                     <i class="fa-solid fa-circle-check
-                                                                                                                                                                                                                                                                        {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
+                                                                                                                                                                                                                                                                                                                {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
                                         @if (!$transaction->isPaid) disabled @endif
                                         wire:click.prevent="{{ $transaction->isPaid ? "confirmReservation($transaction->id)" : '' }}"
                                         wire:loading.attr="disabled">

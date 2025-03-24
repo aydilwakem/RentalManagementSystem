@@ -13,7 +13,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -265,7 +265,9 @@
                                     {{ $transaction->first_name}} {{ $transaction->last_name }}
                                 </th>
                                 <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-                                <td class="px-4 py-3"> {{ $transaction->room->name }}</td>
+                                <td class="px-4 py-3">
+                                    {{ optional($transaction->room)->name ?? 'No room assigned' }}
+                                </td>
                                 <td class="px-4 py-3"> {{ $transaction->check_in_date }}</td>
                                 <td class="px-4 py-3"> {{ $transaction->check_out_date }}</td>
 

@@ -28,6 +28,7 @@ use App\Livewire\Admin\Roles\EditRole;
 use App\Livewire\Admin\RoomRates\CreateIndividualRate;
 use App\Livewire\Admin\RoomRates\EditIndividualRate;
 use App\Livewire\Admin\Transactions\NewTransaction\ViewTransaction;
+use App\Livewire\Admin\Transactions\NewTransaction\EditTransaction;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -386,6 +387,11 @@ Route::middleware([
     // View
     Route::get('view/new-reservation/{transactionId}', ViewTransaction::class)
         ->name('admin.view-new-transaction');
+
+    // Edit
+    Route::get('edit/new-reservation/{transactionId}', EditTransaction::class)
+        ->name('admin.edit-new-transaction');
+
 
 
     // Confirmed Reservations

@@ -12,8 +12,7 @@ class TransactionResident extends Model
         'transaction_id',
         'name',
         'residency_status',
-        'residency',
-        'country',
+        'origin',
         'demographic',
     ];
 

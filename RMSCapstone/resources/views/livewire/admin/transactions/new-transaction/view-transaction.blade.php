@@ -16,74 +16,145 @@
         </div>
 
         <!-- transactions ID -->
-        <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">
+        <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">Transaction ID:
             {{ $transactions->id }}
         </h2>
 
-        <!-- Guest Information -->
+        <!-- Guest Information Table -->
         <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Guest Information</h3>
-            <p class="text-gray-600"><strong>Name:</strong> {{ $transactions->first_name }}
-                {{ $transactions->middle_name }} {{ $transactions->last_name }} {{ $transactions->suffix }}
-            </p>
-            <p class="text-gray-600"><strong>Email:</strong> {{ $transactions->email }}</p>
-            <p class="text-gray-600"><strong>Contact Number:</strong> {{ $transactions->contact_number }}</p>
+            <h3 class="text-lg font-semibold text-gray-900">Reservation Holder</h3>
+
+            <div class="relative overflow-x-auto mt-4">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Name</th>
+                            <th scope="col" class="px-6 py-3">Email</th>
+                            <th scope="col" class="px-6 py-3">Contact Number</th>
+                            <th scope="col" class="px-6 py-3">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b border-gray-200">
+                            <td class="px-6 py-4">
+                                {{ $transactions->first_name }} {{ $transactions->middle_name }}
+                                {{ $transactions->last_name }} {{ $transactions->suffix }}
+                            </td>
+                            <td class="px-6 py-4">{{ $transactions->email }}</td>
+                            <td class="px-6 py-4">{{ $transactions->contact_number }}</td>
+                            <td class="px-6 py-4">
+                                {{ $transactions->house_number }} {{ $transactions->street }},
+                                {{ $transactions->barangay }}, {{ $transactions->city_municipality }},
+                                {{ $transactions->province }}, {{ $transactions->region }},
+                                {{ $transactions->postal_code }}, {{ $transactions->country }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Address -->
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Address</h3>
-            <p class="text-gray-600">{{ $transactions->house_number }} {{ $transactions->street }},
-                {{ $transactions->barangay }}, {{ $transactions->city_municipality }}, {{ $transactions->province }},
-                {{ $transactions->region }}, {{ $transactions->postal_code }}, {{ $transactions->country }}
-            </p>
-        </div>
 
-        <!-- Transaction Details -->
+        <!-- Transaction Details Table -->
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Reservation Details</h3>
-            <p class="text-gray-600"><strong>Room:</strong> {{ $transactions->room->name ?? 'No Room Assigned' }}</p>
-            <p class="text-gray-600"><strong>Activity:</strong>
-                {{ $transactions->activity->name ?? 'No Activity' }}</p>
-            <ul class="list-disc pl-5 text-gray-600">
 
-                <li><strong>Check-in Date:</strong>
-                    {{ \Carbon\Carbon::parse($transactions->check_in_date)->format('Y-m-d') }}</li>
-                <li><strong>Check-in Time:</strong>
-                    {{ \Carbon\Carbon::parse($transactions->check_in_time)->format('h:i A') }}</li>
-                <li><strong>Check-out Date:</strong>
-                    {{ \Carbon\Carbon::parse($transactions->check_out_date)->format('Y-m-d') }}</li>
-                <li><strong>Check-out Time:</strong>
-                    {{ \Carbon\Carbon::parse($transactions->check_out_time)->format('h:i A') }}</li>
-
-                <li><strong>Total Adults:</strong> {{ $transactions->total_adults }}</li>
-                <li><strong>Total Kids:</strong> {{ $transactions->total_kids }}</li>
-                <li><strong>Total Pax:</strong> {{ $transactions->pax }}</li>
-
-                <li><strong>Total Males:</strong> {{ $transactions->total_males }}</li>
-                <li><strong>Total Females:</strong> {{ $transactions->total_females }}</li>
-                <li><strong>Total Infants:</strong> {{ $transactions->total_infants }}</li>
-                <li><strong>Total People:</strong> {{ $transactions->total_people }}</li>
-                <li><strong>Pets:</strong> {{ $transactions->pets}}</li>
-            </ul>
+            <div class="relative overflow-x-auto mt-4">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Room</th>
+                            <th scope="col" class="px-6 py-3">Activity</th>
+                            <th scope="col" class="px-6 py-3">Check-in Date</th>
+                            <th scope="col" class="px-6 py-3">Check-in Time</th>
+                            <th scope="col" class="px-6 py-3">Check-out Date</th>
+                            <th scope="col" class="px-6 py-3">Check-out Time</th>
+                            <th scope="col" class="px-6 py-3">Adults</th>
+                            <th scope="col" class="px-6 py-3">Kids</th>
+                            <th scope="col" class="px-6 py-3">Total Pax</th>
+                            <th scope="col" class="px-6 py-3">Pets</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b border-gray-200">
+                            <td class="px-6 py-4">{{ $transactions->room->name ?? 'No Room Assigned' }}</td>
+                            <td class="px-6 py-4">{{ $transactions->activity->name ?? 'No Activity' }}</td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($transactions->check_in_date)->format('Y-m-d') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($transactions->check_in_time)->format('h:i A') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($transactions->check_out_date)->format('Y-m-d') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($transactions->check_out_time)->format('h:i A') }}
+                            </td>
+                            <td class="px-6 py-4">{{ $transactions->total_adults }}</td>
+                            <td class="px-6 py-4">{{ $transactions->total_kids }}</td>
+                            <td class="px-6 py-4">{{ $transactions->pax }}</td>
+                            <td class="px-6 py-4">{{ $transactions->pets }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Payment Details -->
+        <h3 class="text-lg font-semibold text-gray-900">Guest Details</h3>
+        <!-- Residents Table -->
+        @if ($residents && $residents->isNotEmpty())
+            <div class="relative overflow-x-auto mt-6">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Name</th>
+                            <th scope="col" class="px-6 py-3">Residency Status</th>
+                            <th scope="col" class="px-6 py-3">Origin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($residents as $resident)
+                            <tr class="bg-white border-b border-gray-200">
+                                <td class="px-6 py-4">{{ $resident->name }}</td>
+                                <td class="px-6 py-4">{{ $resident->residency_status }}</td>
+                                <td class="px-6 py-4">{{ $resident->origin }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p class="text-gray-700 mt-4">No residents found for this transaction.</p>
+        @endif
+
+        <!-- Payment Information Table -->
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Payment Information</h3>
-            <p class="text-gray-600"><strong>Payment Method:</strong>
-                {{ $transactions->paymentMethod->name ?? 'Not Provided' }}</p>
-            <p class="text-gray-600"><strong>Total Amount:</strong>
-                ₱{{ number_format($transactions->total_amount, 2) }}
-            </p>
-            <p class="text-gray-600"><strong>Payment Reference Number:</strong>
-                {{ $transactions->payment_reference_number ?? 'N/A' }}</p>
-            @if($transactions->payment_screenshot)
-                <p class="text-gray-600"><strong>Payment Screenshot:</strong></p>
-                <img src="{{ asset('storage/' . $transactions->payment_screenshot) }}" alt="Payment Proof"
-                    class="w-full h-40 object-cover rounded-lg shadow-md">
-            @endif
+
+            <div class="relative overflow-x-auto mt-4">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
+                    <tbody>
+                        <tr class="bg-white border-b border-gray-200">
+                            <th class="px-6 py-4 text-gray-700 bg-gray-50">Payment Method</th>
+                            <td class="px-6 py-4">
+                                {{ $transactions->paymentMethod->mode_of_payment_name ?? 'Not Provided' }}
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b border-gray-200">
+                            <th class="px-6 py-4 text-gray-700 bg-gray-50">Reference Number</th>
+                            <td class="px-6 py-4">{{ $transactions->payment_reference_number ?? 'Not Provided' }}</td>
+                        </tr>
+                        <tr class="bg-white border-b border-gray-200">
+                            <th class="px-6 py-4 text-gray-700 bg-gray-50">Total Amount</th>
+                            <td class="px-6 py-4">₱{{ number_format($transactions->total_amount, 2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">
@@ -91,7 +162,7 @@
             <!-- Edit -->
             <x-button type="button" icon="fas fa-pen-to-square"
                 class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:navigate href="">
+                wire:navigate href="{{ route('admin.edit-new-transaction', $transactions->id) }}">
                 Edit
             </x-button>
 

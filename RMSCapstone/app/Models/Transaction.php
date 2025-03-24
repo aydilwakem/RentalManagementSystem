@@ -58,7 +58,7 @@ class Transaction extends Model
 
     // Automatically convert attributes to specific data types when retrieving or setting them
     protected $casts = [
-        'check_in_date' => 'date',
+        'check_in_date' => 'date', // Ensure it's stored/displayed correctly
         'check_out_date' => 'date',
         'actual_check_in_date' => 'date',
         'actual_check_out_date' => 'date',
@@ -90,6 +90,11 @@ class Transaction extends Model
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+    }
+
+    public function residents()
+    {
+        return $this->hasMany(TransactionResident::class, 'transaction_id');
     }
 
     public function scopeSearch($query, $search)
