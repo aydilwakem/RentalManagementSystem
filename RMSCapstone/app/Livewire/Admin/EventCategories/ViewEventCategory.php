@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\EventCategories;
 
+use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
@@ -25,13 +26,19 @@ class ViewEventCategory extends Component
      // Function for deleting a record
     public function deleteEventCategory()
     {
-        try {
             $eventCategory = EventCategory::find($this->confirmItemDelete);
 
             if (!$eventCategory) {
                 session()->flash('error', 'Event Category not found.');
                 return;
             }
+
+            // Check if the category is referenced in another table
+        if (Event::where('event_category_id', $eventCategory->id)->exists()) { // Change 'Event' to your actual related model
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
 
             $eventCategory->delete(); // Attempt deletion
 
@@ -42,13 +49,7 @@ class ViewEventCategory extends Component
             session()->flash('message', 'Event Category successfully deleted!');
             return redirect()->route('admin.event-categories');
 
-        } catch (QueryException $e) {
-            if ($e->getCode() == 23000) { // Foreign key constraint violation
-                $this->cannotDeleteItem = true; // Show the "Cannot Delete" modal
-                $this->confirmItemDelete = null; // Close the confirmation modal
-            }
         }
-    }
          
 
     public function render()

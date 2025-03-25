@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\RoomCategories;
 
+use App\Models\Room;
 use Livewire\Component;
 use App\Models\RoomCategory;
 use Livewire\Attributes\Url;
@@ -23,6 +24,7 @@ class ViewRoomCategories extends Component
     public $perPage = 5;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
 
     public function confirmDelete($id)
     {
@@ -38,19 +40,26 @@ class ViewRoomCategories extends Component
         }
     }
 
-    public function deleteCategory($id)
+    public function deleteCategory()
     {
         // Find the room category by ID
-        $roomCategory = RoomCategory::find($id);
+        $roomCategory = RoomCategory::find($this->confirmItemDelete);
 
         if ($roomCategory) {
             // Detach related amenities before deleting
             $roomCategory->amenities()->detach();
 
-            // Delete the room category
-            if ($this->confirmItemDelete) {
-                RoomCategory::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+            // Check if the category is referenced in another table
+        if (Room::where('room_category_id', $roomCategory->id)->exists()) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
+
+        $roomCategory->delete(); // Attempt soft deletion
+
+         // Reset confirmation modal
+         $this->confirmItemDelete = null;
 
             // Fetch remaining - sorted by creation date
             $roomCategory = RoomCategory::orderBy('created_at', 'ASC')->get();
@@ -67,7 +76,7 @@ class ViewRoomCategories extends Component
 
             // Flash success message
             session()->flash('message', 'Room Category successfully deleted!');
-        }
+        
     }
     }
 

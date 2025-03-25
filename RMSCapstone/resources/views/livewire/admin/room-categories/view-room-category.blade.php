@@ -76,10 +76,26 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteCategory({{ $roomCategory->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteCategory" wire:loading.attr="disabled">
                     {{ __('Delete Room Category') }}
                 </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
+
+        {{-- Cannot Delete Modal --}}
+        <x-dialog-modal wire:model="cannotDeleteItem">
+            <x-slot name="title">
+                {{ __('Unable to Delete') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('This category is currently in use and cannot be deleted.') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                    {{ __('OK') }}
+                </x-secondary-button>
             </x-slot>
         </x-dialog-modal>
 

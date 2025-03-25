@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\EventCategories;
 
+use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
@@ -41,10 +42,8 @@ class ViewEventCategories extends Component
     }
 
 //Function to delete an item, if there is constraint, modal will appear
-    public function deleteEventCategory()
-    {
-        //find id
-    try {
+public function deleteEventCategory()
+{
         $eventCategory = EventCategory::find($this->confirmItemDelete);
 
         if (!$eventCategory) {
@@ -52,10 +51,17 @@ class ViewEventCategories extends Component
             return;
         }
 
-        $eventCategory->delete(); //Attempt deletion
+        // Check if the category is referenced in another table
+        if (Event::where('event_category_id', $eventCategory->id)->exists()) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
 
-        // Reset confirmation modal to close it
-        $this->confirmItemDelete = null;
+        $eventCategory->delete(); // Attempt soft deletion
+
+         // Reset confirmation modal
+         $this->confirmItemDelete = null;
 
         // Refresh event categories
         $eventCategories = EventCategory::orderBy('created_at', 'ASC')->get();
@@ -66,20 +72,12 @@ class ViewEventCategories extends Component
             $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
 
-        //Store session of the fake ids
+        // Store session of the fake IDs
         session(['fake_ids_eventCategory' => $fakeIDs]);
 
         // Flash success message
         session()->flash('message', 'Event Category successfully deleted!');
-
-        //Catch for integrity constraint
-    } catch (QueryException $e) {
-        if ($e->getCode() == 23000) { // Foreign key constraint violation code
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = null; // Close the confirmation modal
-        }
-    }
-}
+    } 
 
     public function setSortBy($sortByField){
 

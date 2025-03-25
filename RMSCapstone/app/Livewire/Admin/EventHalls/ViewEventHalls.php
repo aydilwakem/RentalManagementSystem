@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\EventHalls;
 
+use App\Models\Event;
 use App\Models\EventHall;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
@@ -55,6 +56,13 @@ class ViewEventHalls extends Component
            session()->flash('error', 'Event Category not found.');
            return;
        }
+
+       // Check if the category is referenced in another table
+       if (Event::where('event_hall_id', $eventHall->id)->exists()) { // Change 'Event' to your actual related model
+        $this->cannotDeleteItem = true; // Show the cannot delete modal
+        $this->confirmItemDelete = null; // Close the confirmation modal
+        return;
+    }
 
        $eventHall->delete(); //Attempt deletion
 

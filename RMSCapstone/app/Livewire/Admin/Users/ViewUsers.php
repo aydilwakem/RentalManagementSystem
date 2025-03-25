@@ -15,7 +15,17 @@ class ViewUsers extends Component
     public $search = '';
     public $perPage = 5;
 
+    public User $user;
+    public $userRoles = [];
+    public $roleFilter = ''; 
+
     public $confirmItemDelete = false;
+
+    //mount function to fetch role names
+    public function mount(User $user){
+        $this->user = $user;
+        $this->userRoles = $user->getRoleNames()->toArray();
+    }
 
     public function confirmDelete($id)
     {
@@ -46,12 +56,29 @@ class ViewUsers extends Component
     }
 
     public function render()
-    {
-        $users = User::where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('email', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+{
+    $users = User::where(function ($query) {
+            $query->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('email', 'like', '%' . $this->search . '%');
+        })
+        ->when($this->roleFilter === 'Super Admin', function ($query) {
+            $query->whereHas('roles', function ($roleQuery) {
+                $roleQuery->where('name', 'Super Admin');
+            });
+        })
+        ->when($this->roleFilter === 'Admin', function ($query) {
+            $query->whereHas('roles', function ($roleQuery) {
+                $roleQuery->where('name', 'Admin');
+            });
+        })
+        ->when($this->roleFilter === 'Staff', function ($query) {
+            $query->whereDoesntHave('roles', function ($roleQuery) {
+                $roleQuery->whereIn('name', ['Super Admin', 'Admin']);
+            });
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        return view('livewire.admin.users.view-users', compact('users'));
-    }
+    return view('livewire.admin.users.view-users', compact('users'));
+}
 }
