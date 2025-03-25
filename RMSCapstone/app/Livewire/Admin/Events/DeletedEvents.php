@@ -9,6 +9,13 @@ class DeletedEvents extends Component
 {
     public $deletedEvents;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedEvents();
@@ -31,12 +38,13 @@ class DeletedEvents extends Component
 
     public function deleteEventForever($eventId)
     {
-        $event = Event::withTrashed()->find($eventId);
+        $event = Event::withTrashed()->find($this->confirmItemDelete);
         if ($event) {
             $event->forceDelete();
             session()->flash('message', 'Event permanently deleted.');
             $this->fetchDeletedEvents();
         }
+        $this->confirmItemDelete = false;
     }
 
     public function render()

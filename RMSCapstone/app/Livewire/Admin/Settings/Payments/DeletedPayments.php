@@ -10,6 +10,13 @@ class DeletedPayments extends Component
 
     public $deletedPayments;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedPayments();
@@ -32,12 +39,13 @@ class DeletedPayments extends Component
 
     public function deletePaymentForever($paymentId)
     {
-        $payment = PaymentMethod::withTrashed()->find($paymentId);
+        $payment = PaymentMethod::withTrashed()->find($this->confirmItemDelete);
         if ($payment) {
             $payment->forceDelete();
             session()->flash('message', 'Payment method permanently deleted.');
             $this->fetchDeletedPayments();
         }
+        $this->confirmItemDelete = false;
     }
 
     public function render()

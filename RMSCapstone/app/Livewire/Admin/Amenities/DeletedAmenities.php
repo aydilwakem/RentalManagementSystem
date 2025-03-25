@@ -9,6 +9,13 @@ class DeletedAmenities extends Component
 {
     public $deletedAmenities;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedAmenities();
@@ -31,12 +38,14 @@ class DeletedAmenities extends Component
 
     public function deleteAmenityForever($amenityId)
     {
-        $amenity = Amenity::withTrashed()->find($amenityId);
+        $amenity = Amenity::withTrashed()->find($this->confirmItemDelete);
         if ($amenity) {
             $amenity->forceDelete();
             session()->flash('message', 'Amenity permanently deleted.');
             $this->fetchDeletedAmenities();
         }
+
+        $this->confirmItemDelete = false;
     }
 
     public function render()

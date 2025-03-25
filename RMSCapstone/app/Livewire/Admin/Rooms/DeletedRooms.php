@@ -9,6 +9,13 @@ class DeletedRooms extends Component
 {
     public $deletedRooms;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedRooms();
@@ -31,12 +38,13 @@ class DeletedRooms extends Component
 
     public function deleteRoomForever($roomId)
     {
-        $room = Room::withTrashed()->find($roomId);
+        $room = Room::withTrashed()->find($this->confirmItemDelete);
         if ($room) {
             $room->forceDelete(); // Permanently delete the room
             session()->flash('message', 'Room permanently deleted.');
             $this->fetchDeletedRooms();
         }
+        $this->confirmItemDelete = false;
     }
 
 

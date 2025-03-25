@@ -9,6 +9,13 @@ class DeletedEventHalls extends Component
 {
     public $deletedEventHalls;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedEventHalls();
@@ -31,12 +38,13 @@ class DeletedEventHalls extends Component
 
     public function deleteEventHallForever($eventHallId)
     {
-        $eventHall = EventHall::withTrashed()->find($eventHallId);
+        $eventHall = EventHall::withTrashed()->find($this->confirmItemDelete);
         if ($eventHall) {
             $eventHall->forceDelete();
             session()->flash('message', 'Event hall permanently deleted.');
             $this->fetchDeletedEventHalls();
         }
+        $this->confirmItemDelete = false;
     }
 
     public function render()

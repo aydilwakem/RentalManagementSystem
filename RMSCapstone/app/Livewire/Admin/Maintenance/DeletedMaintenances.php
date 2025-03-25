@@ -8,6 +8,12 @@ use Livewire\Component;
 class DeletedMaintenances extends Component
 {
     public $deletedMaintenances;
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
 
     public function mount()
     {
@@ -31,12 +37,13 @@ class DeletedMaintenances extends Component
 
     public function deleteMaintenanceForever($maintenanceId)
     {
-        $maintenance = Maintenance::withTrashed()->find($maintenanceId);
+        $maintenance = Maintenance::withTrashed()->find($this->confirmItemDelete);
         if ($maintenance) {
             $maintenance->forceDelete();
             session()->flash('message', 'Event permanently deleted.');
             $this->fetchDeletedMaintenances();
         }
+        $this->confirmItemDelete = false;
     }
 
     public function render()

@@ -9,6 +9,13 @@ class DeletedActivities extends Component
 {
     public $deletedActivities;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedActivities();
@@ -31,12 +38,13 @@ class DeletedActivities extends Component
 
     public function deleteActivityForever($activityId)
     {
-        $activity = Activity::withTrashed()->find($activityId);
+        $activity = Activity::withTrashed()->find($this->confirmItemDelete);
         if ($activity) {
             $activity->forceDelete();
             session()->flash('message', 'Amenity permanently deleted.');
             $this->fetchDeletedActivities();
         }
+        $this->confirmItemDelete = false;
     }
 
     public function render()
