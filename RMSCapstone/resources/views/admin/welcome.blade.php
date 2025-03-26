@@ -12,6 +12,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="{{ asset('images/canopy-logo.png') }}">
+
 
     <!-- Styles / Scripts -->
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -1524,18 +1526,7 @@
 
     <body
         class="bg-green-800 text-black p-6 lg:p-8 lg:justify-center flex-col flex items-center justify-center bg-opacity-90 min-h-screen">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-3 not-has-[nav]:hidden">
-            @if (Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @auth
-                        <a href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal">
-                            Dashboard
-                        </a>
-                    @endauth
-                </nav>
-            @endif
-        </header>
+
         <div class="p-4">
             <div
                 class="flex flex-col lg:flex-row w-full max-w-4xl shadow-lg rounded-lg overflow-hidden my-6 lg:my-12 bg-white">
@@ -1550,7 +1541,7 @@
                 <!-- Left Section - Image -->
                 <!-- to flush image to corners / remove spacing: remove p-4 and rounded tags. di ako maka decide ano mas okay xD -->
                 <div class="w-full lg:w-1/2 flex items-center justify-center p-4 rounded-3xl">
-                    <img src="{{ asset('images/pool-house1.jpg') }}" alt="Image"
+                    <img src="{{ asset('images/CanopyLogin.png') }}" alt="Image"
                         class="w-full h-[300px] lg:h-full object-cover object-center rounded-xl">
                 </div>
 
