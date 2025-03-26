@@ -1,38 +1,25 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
+
     @if ($rooms->isEmpty())
-    <!-- Empty Page Message -->
-    <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
-        <x-button class="mt-4" href="{{ route('admin.create-room') }}" icon="fas fa-plus">
-            Create Room
-        </x-button>
-    </div>
+        <!-- Empty Page Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-room') }}" icon="fas fa-plus">
+                Create Room
+            </x-button>
+        </div>
+
     @else
-<<<<<<< Updated upstream
-    {{-- Display Session Message --}}
-    @if (session('message'))
-    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-        {{ session('message') }}
-    </div>
-    @endif
-    <div>
-        <div class="flex items-center justify-between">
-            <!-- Label and Confirm Button -->
-            @can('room-create')
-            <div class="flex justify-between items-center mb-4">
-                <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
-                    New Room
-=======
+
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
+
         <div>
             <div class="flex items-center justify-between">
                 <!-- Label and Confirm Button -->
@@ -47,16 +34,10 @@
                 <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                     icon="fas fa-trash" href="{{ route('admin.deleted-rooms') }}">
                     Deleted Rooms
->>>>>>> Stashed changes
                 </x-button>
             </div>
-            @endcan
-            <!-- Deleted Rooms (Restore and Delete Forever -->
-            <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                icon="fas fa-trash" href="{{ route('admin.deleted-rooms') }}">
-                Deleted Rooms
-            </x-button>
         </div>
+
         <!-- Table -->
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Header-->
@@ -64,8 +45,8 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
@@ -92,6 +73,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Table Body-->
             <table class="w-full text-left">
                 <thead class="text-sm text-gray-700 bg-gray-200">
@@ -101,25 +83,23 @@
                             <button class="flex items-center">
                                 ID
                                 @if ($sortBy !== 'id')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -129,25 +109,23 @@
                             <button class="flex items-center">
                                 Name
                                 @if ($sortBy !== 'name')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -157,25 +135,23 @@
                             <button class="flex items-center">
                                 Room Category
                                 @if ($sortBy !== 'room_category_id')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -185,25 +161,23 @@
                             <button class="flex items-center">
                                 Ideal Guest
                                 @if ($sortBy !== 'ideal_guest')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -212,25 +186,23 @@
                             <button class="flex items-center">
                                 Max Adults
                                 @if ($sortBy !== 'max_adults')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -240,25 +212,23 @@
                             <button class="flex items-center">
                                 Max Kids
                                 @if ($sortBy !== 'max_kids')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -268,25 +238,23 @@
                             <button class="flex items-center">
                                 Turnover Duration
                                 @if ($sortBy !== 'turnover_duration')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor" class="size-4 ml-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                    </svg>
                                 @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
+                                    @if ($sortDir == 'ASC')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    @else
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    @endif
                                 @endif
                             </button>
                         </th>
@@ -300,48 +268,48 @@
                 </thead>
                 <tbody class="text-center">
                     @foreach ($rooms as $room)
-                    <tr class="border-b">
-                        <th scope="row" class="font-medium text-gray-900 text-center ">
-                            {{ $fakeIDs[$room->id] ?? 'RM-???' }}
-                        </th>
-                        <td class="p-2">{{ $room->name }}</td>
-                        <td class="p-2">{{ $room->category->name }}</td>
-                        <td class="p-2">{{ $room->ideal_guest }}</td>
-                        <td class="p-2">{{ $room->max_adults }}</td>
-                        <td class="p-2">{{ $room->max_kids }}</td>
-                        <td class="p-2">{{ $room->turnover_duration }}</td>
-                        <td class="p-2">
-                            @if ($room->room_status === 'Available')
-                            <span class="px-2 py-1 bg-green-700 text-white rounded-md">Available</span>
-                            @elseif($room->room_status === 'Booked')
-                            <span class="px-2 py-1 bg-yellow-500 text-white rounded">Booked</span>
-                            @elseif($room->room_status === 'Out of Service')
-                            <span class="px-2 py-1 bg-red-500 text-white rounded">Out of Service</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 flex items-center justify-center space-x-3">
-                            <!-- View Icon -->
-                            @can('room-view')
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="{{ route('admin.view-room', ['room' => $room->id]) }}">
-                            </i>
-                            @endcan
+                        <tr class="border-b">
+                            <th scope="row" class="font-medium text-gray-900 text-center ">
+                                {{ $fakeIDs[$room->id] ?? 'RM-???' }}
+                            </th>
+                            <td class="p-2">{{ $room->name }}</td>
+                            <td class="p-2">{{ $room->category->name }}</td>
+                            <td class="p-2">{{ $room->ideal_guest }}</td>
+                            <td class="p-2">{{ $room->max_adults }}</td>
+                            <td class="p-2">{{ $room->max_kids }}</td>
+                            <td class="p-2">{{ $room->turnover_duration }}</td>
+                            <td class="p-2">
+                                @if ($room->room_status === 'Available')
+                                    <span class="px-2 py-1 bg-green-700 text-white rounded-md">Available</span>
+                                @elseif($room->room_status === 'Booked')
+                                    <span class="px-2 py-1 bg-yellow-500 text-white rounded">Booked</span>
+                                @elseif($room->room_status === 'Out of Service')
+                                    <span class="px-2 py-1 bg-red-500 text-white rounded">Out of Service</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                                <!-- View Icon -->
+                                @can('room-view')
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.view-room', ['room' => $room->id]) }}">
+                                    </i>
+                                @endcan
 
-                            <!-- Edit Icon -->
-                            @can('room-edit')
-                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
-                            </i>
-                            @endcan
+                                <!-- Edit Icon -->
+                                @can('room-edit')
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
+                                    </i>
+                                @endcan
 
-                            <!-- Delete Icon -->
-                            @can('room-delete')
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                wire:click="confirmDelete({{ $room->id }})" wire:loading.attr="disabled">
-                            </i>
-                            @endcan
-                        </td>
-                    </tr>
+                                <!-- Delete Icon -->
+                                @can('room-delete')
+                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                        wire:click="confirmDelete({{ $room->id }})" wire:loading.attr="disabled">
+                                    </i>
+                                @endcan
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -363,6 +331,8 @@
                 {{ $rooms->links() }}
             </div>
         </div>
+
+
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
@@ -383,6 +353,7 @@
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
-        @endif
-    </div>
+    @endif
+</div>
+
 </div>

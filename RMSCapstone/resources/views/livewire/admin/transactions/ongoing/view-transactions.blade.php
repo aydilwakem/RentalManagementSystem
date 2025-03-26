@@ -31,13 +31,11 @@
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Empty Table Message -->
             <div class="text-center py-10">
-                <p class="text-gray-500 text-lg font-semibold">No on-going bookings yet.<br> Click "Confirm New
-                    Transaction"
-                    to
-                    add a
-                    new transaction.</p>
+                <p class="text-gray-500 text-lg font-semibold">
+                    No on-going bookings found. <br> Please review and confirm new reservations.
+                </p>
                 <x-button class="mt-4" href="{{ route('admin.view-new-transactions') }}" icon="fas fa-eye" wire:navigate>
-                    Confirm New Transaction
+                    Confirm New Reservation
                 </x-button>
             </div>
         </div>
@@ -47,7 +45,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
