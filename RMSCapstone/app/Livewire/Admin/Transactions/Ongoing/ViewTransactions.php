@@ -74,6 +74,7 @@ class ViewTransactions extends Component
             ->where('isPaid', true) // Only fetch unconfirmed transactions
             ->where('isReserved', true) // Only fetch unreserved transactions
             ->where('isConfirmed', true) // Only fetch unconfirmed transactions
+            ->where('transaction_status', 'pending')
             ->where('first_name', 'like', '%' . $this->search . '%')
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter);

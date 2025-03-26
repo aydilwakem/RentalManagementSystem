@@ -22,7 +22,7 @@ class ViewTransactions extends Component
     public $sortBy = 'check_in_date';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     public $statusFilter = '';
 
@@ -75,6 +75,7 @@ class ViewTransactions extends Component
             ->where('isPaid', true)
             ->where('isReserved', true)
             ->where('isConfirmed', false)
+            ->where('transaction_status', 'pending')
             ->where('first_name', 'like', '%' . $this->search . '%')
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter);

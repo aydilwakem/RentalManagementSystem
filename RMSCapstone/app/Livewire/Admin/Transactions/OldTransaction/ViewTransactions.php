@@ -69,6 +69,9 @@ class ViewTransactions extends Component
     {
         $transactions = Transaction::query()
             ->where('isPaid', true) // Filter only paid transaction
+            ->where('isReserved', true) // Filter only paid transaction
+            ->where('isConfirmed', true) // Filter only paid transaction
+            ->where('transaction_status', 'completed')
             ->where('first_name', 'like', '%' . $this->search . '%')
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter);
