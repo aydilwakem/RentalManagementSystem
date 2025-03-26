@@ -41,8 +41,8 @@ class Transaction extends Model
         'total_males',
         'total_infants',
         'total_people',
-        'pets',
         'terms',
+        'pets',
         'payment_method_id',
         'payment_screenshot',
         'payment_reference_number',
@@ -58,12 +58,12 @@ class Transaction extends Model
 
     // Automatically convert attributes to specific data types when retrieving or setting them
     protected $casts = [
-        'check_in_date' => 'date', // Ensure it's stored/displayed correctly
-        'check_out_date' => 'date',
-        'actual_check_in_date' => 'date',
-        'actual_check_out_date' => 'date',
-        'check_in_time' => 'datetime:H:i:s',
-        'check_out_time' => 'datetime:H:i:s',
+        'check_in_date' => 'date:Y-m-d', // Ensure it's stored/displayed correctly
+        'check_out_date' => 'date:Y-m-d',
+        'actual_check_in_date' => 'date:Y-m-d',
+        'actual_check_out_date' => 'date:Y-m-d',
+        'check_in_time' => 'datetime:H:i',
+        'check_out_time' => 'datetime:H:i',
         'actual_check_in_time' => 'datetime:H:i:s',
         'actual_check_out_time' => 'datetime:H:i:s',
         'total_amount' => 'decimal:2',

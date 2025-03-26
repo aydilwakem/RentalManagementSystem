@@ -1,19 +1,54 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
     @if ($transactions->isEmpty())
-        <!-- Empty Table Message -->
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No confirmed reservations yet.</p>
-            <x-button class="mt-4" href="{{ route('admin.view-new-transactions') }}" icon="fas fa-check" wire:navigate>
-                Confirm New Reservations
-            </x-button>
+        <!-- Navigation Tabs -->
+        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
+            <li class="me-2">
+                <a href="{{ route('admin.view-new-transactions') }}"
+                    class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    New Reservations
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="{{ route('admin.view-confirmed-transactions') }}"
+                    class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    Confirmed Reservations
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="{{ route('admin.view-ongoing-transactions') }}"
+                    class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    On-Going Bookings
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="{{ route('admin.view-old-transactions') }}"
+                    class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    Old Bookings
+                </a>
+            </li>
+        </ul>
+
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <!-- Empty Table Message -->
+            <div class="text-center py-10">
+                <p class="text-gray-500 text-lg font-semibold">No confirmed reservations yet.<br> Click "Confirm New
+                    Transaction"
+                    to
+                    add a
+                    new transaction.</p>
+                <x-button class="mt-4" href="{{ route('admin.view-new-transactions') }}" icon="fas fa-eye" wire:navigate>
+                    Confirm New Transaction
+                </x-button>
+            </div>
         </div>
+
     @else
         <div>
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -34,13 +69,13 @@
                 <li class="me-2">
                     <a href="{{ route('admin.view-ongoing-transactions') }}"
                         class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        On-Going Reservations
+                        On-Going Bookings
                     </a>
                 </li>
                 <li class="me-2">
                     <a href="{{ route('admin.view-old-transactions') }}"
                         class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        Old Reservations
+                        Old Bookings
                     </a>
                 </li>
             </ul>
@@ -279,7 +314,6 @@
                                         href="">
                                     </i>
 
-
                                     <!-- Edit Icon -->
 
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
@@ -287,13 +321,13 @@
                                     </i>
 
                                     <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
+                                    <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer" wire:navigate
+                                        href="">
                                     </i>
 
                                     <!-- Confirm Reservation Icon -->
-                                    <i class="fa-solid fa-circle-check text-gray-700 hover:text-green-600 cursor-pointer"
-                                        wire:click="confirmReservation({{ $transaction->id }})" wire:loading.attr="disabled">
+                                    <i class="fas fa-circle-check text-gray-700 hover:text-green-600 cursor-pointer"
+                                        wire:navigate href="">
                                     </i>
 
                                 </td>

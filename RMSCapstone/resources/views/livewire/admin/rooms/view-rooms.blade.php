@@ -8,6 +8,7 @@
         </x-button>
     </div>
     @else
+<<<<<<< Updated upstream
     {{-- Display Session Message --}}
     @if (session('message'))
     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -23,6 +24,30 @@
             <div class="flex justify-between items-center mb-4">
                 <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
                     New Room
+=======
+        {{-- Display Session Message --}}
+        @if (session('message'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('message') }}
+            </div>
+        @endif
+        <div>
+            <div class="flex items-center justify-between">
+                <!-- Label and Confirm Button -->
+                @can('room-create')
+                    <div class="flex justify-between items-center mb-4">
+                        <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-room') }}'">
+                            New Room
+                        </x-button>
+                    </div>
+                @endcan
+                <!-- Deleted Rooms (Restore and Delete Forever -->
+                <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-rooms') }}">
+                    Deleted Rooms
+>>>>>>> Stashed changes
                 </x-button>
             </div>
             @endcan

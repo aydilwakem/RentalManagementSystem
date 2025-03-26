@@ -1,86 +1,39 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($transactions->isEmpty())
-        <!-- Navigation Tabs -->
-        <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
-            <li class="me-2">
-                <a href="{{ route('admin.view-new-transactions') }}"
-                    class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                    New Reservations
-                </a>
-            </li>
-            <li class="me-2">
-                <a href="{{ route('admin.view-confirmed-transactions') }}"
-                    class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                    Confirmed Reservations
-                </a>
-            </li>
-            <li class="me-2">
-                <a href="{{ route('admin.view-ongoing-transactions') }}"
-                    class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                    On-Going Bookings
-                </a>
-            </li>
-            <li class="me-2">
-                <a href="{{ route('admin.view-old-transactions') }}"
-                    class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                    Old Bookings
-                </a>
-            </li>
-        </ul>
-
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-            <!-- Empty Table Message -->
-            <div class="text-center py-10">
-                <p class="text-gray-500 text-lg font-semibold">No old bookings yet.<br> Click "Confirm New
-                    Transaction"
-                    to
-                    add a
-                    new transaction.</p>
-                <x-button class="mt-4" href="{{ route('admin.view-new-transactions') }}" icon="fas fa-plus" wire:navigate>
-                    Confirm New Transaction
-                </x-button>
-            </div>
+    @if ($properties->isEmpty())
+        <!-- Empty Table Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No houses yet.<br> Click "Create house" to add a
+                new
+                house.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-property') }}" icon="fas fa-plus" wire:navigate>
+                Create House
+            </x-button>
         </div>
-
     @else
         <div>
+            <div class="flex items-center justify-between">
+                <!-- Create Room Button -->
+                <div class="flex items-center justify-between p-4">
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-property') }}">
+                        New house
+                    </x-button>
+                </div>
+
+                {{-- <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-properties') }}">
+                    Deleted properties
+                </x-button> --}}
+
+            </div>
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
-            <!-- Navigation Tabs -->
-            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
-                <li class="me-2">
-                    <a href="{{ route('admin.view-new-transactions') }}"
-                        class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        New Reservations
-                    </a>
-                </li>
-                <li class="me-2">
-                    <a href="{{ route('admin.view-confirmed-transactions') }}"
-                        class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        Confirmed Reservations
-                    </a>
-                </li>
-                <li class="me-2">
-                    <a href="{{ route('admin.view-ongoing-transactions') }}"
-                        class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        On-Going Bookings
-                    </a>
-                </li>
-                <li class="me-2">
-                    <a href="{{ route('admin.view-old-transactions') }}"
-                        class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
-                        Old Bookings
-                    </a>
-                </li>
-            </ul>
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-
                 <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
@@ -99,7 +52,18 @@
                         </div>
                     </div>
 
-
+                    {{-- property Type Sort --}}
+                    <div class="flex space-x-3">
+                        <div class="flex space-x-3 items-center">
+                            <label class="w-40 text-sm font-medium text-gray-900">Availability :</label>
+                            <select wire:model.live="availability"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                <option value="">All</option>
+                                <option value="available">Available</option>
+                                <option value="unavailable">Unavailable</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Table --}}
@@ -136,10 +100,10 @@
                                 </button>
                             </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
                                 <button class="flex items-center">
-                                    Guest Name
-                                    @if ($sortBy !== 'first_name')
+                                    Name
+                                    @if ($sortBy !== 'name')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -166,10 +130,39 @@
                                 </button>
                             </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('house_category_id')">
                                 <button class="flex items-center">
-                                    Pax
-                                    @if ($sortBy !== 'pax')
+                                    Category
+                                    @if ($sortBy !== 'house_category_id')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('monthly_rent')">
+                                <button class="flex items-center">
+                                    Monthly Rent
+                                    @if ($sortBy !== 'monthly_rent')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -196,10 +189,10 @@
                                 </button>
                             </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('room_id')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('availability')">
                                 <button class="flex items-center">
-                                    Room Name
-                                    @if ($sortBy !== 'room_id')
+                                    Availability
+                                    @if ($sortBy !== 'availability')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -225,100 +218,47 @@
                                     @endif
                                 </button>
                             </th>
-
-
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('check_in_date')">
-                                <button class="flex items-center">
-                                    Check-in
-                                    @if ($sortBy !== 'check_in_date')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('check_out_date')">
-                                <button class="flex items-center">
-                                    Check-out
-                                    @if ($sortBy !== 'check_out_date')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
-
+                            {{-- <th scope="col" class="px-4 py-3">
+                                <span class="sr-only">Actions</span>
+                            </th> --}}
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        @foreach ($transactions as $transaction)
+                        @foreach ($properties as $property)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $fakeIDs[$transaction->id] ?? 'MNT-???' }}
+                                    {{ $fakeIDs[$property->id] ?? 'PRT-???' }}
                                 </th>
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $transaction->first_name}} {{ $transaction->last_name }}
+                                    {{ $property->name }}
                                 </th>
-                                <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-                                <td class="px-4 py-3"> {{ $transaction->room->name }}</td>
+                                <td class="p-2">{{ $property->category->name ?? 'N/A' }}</td>
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $property->monthly_rent }}
+                                </th>
                                 <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('M d, Y') }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('M d, Y') }}
+                                    @if ($property->availability === 'available')
+                                        <span class="px-2 py-1 bg-green-600 text-white rounded">Available</span>
+                                    @elseif($property->availability === 'unavailable')
+                                        <span class="px-2 py-1 bg-red-600 text-white rounded">Unavailable</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
-
                                     <!-- View Icon -->
-
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="">
+                                        href="{{ route('admin.view-property', ['property' => $property->id]) }}">
                                     </i>
+
+                                    <!-- Edit Icon -->
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                        href="{{ route('admin.edit-property', ['property' => $property->id]) }}">
+                                    </i>
+
 
                                     <!-- Delete Icon -->
                                     <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
+                                        wire:click="confirmDelete({{ $property->id }})" wire:loading.attr="disabled">
                                     </i>
 
                                 </td>
@@ -343,13 +283,13 @@
                             </select>
                         </div>
                     </div>
-                    {{ $transactions->links() }}
+                    {{ $properties->links() }}
                 </div>
 
                 <!-- Delete Confirmation Modal -->
                 <x-dialog-modal wire:model.live="confirmItemDelete">
                     <x-slot name="title">
-                        {{ __('Delete Transaction') }}
+                        {{ __('Delete House') }}
                     </x-slot>
 
                     <x-slot name="content">
@@ -361,9 +301,9 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteTransaction({{ $transaction->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteProperty({{ $property->id }})"
                             wire:loading.attr="disabled">
-                            {{ __('Delete Transaction') }}
+                            {{ __('Delete House') }}
                         </x-danger-button>
                     </x-slot>
                 </x-dialog-modal>

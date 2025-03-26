@@ -29,6 +29,8 @@ use App\Livewire\Admin\RoomRates\CreateIndividualRate;
 use App\Livewire\Admin\RoomRates\EditIndividualRate;
 use App\Livewire\Admin\Transactions\NewTransaction\ViewTransaction;
 use App\Livewire\Admin\Transactions\NewTransaction\EditTransaction;
+use App\Livewire\Admin\Properties\EditProperty;
+use App\Livewire\Admin\Properties\ViewProperty;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -111,11 +113,39 @@ Route::middleware([
     Route::get('edit/room/{room}', EditRoom::class)
         ->name('admin.edit-room')->middleware('can:room-edit');
 
-
     // Deleted Rooms (Soft Deletes)
     Route::get('deleted-rooms', function () {
         return view('admin.rooms.deleted-rooms');
     })->name('admin.deleted-rooms');
+
+
+    // Long-term - Properties
+
+    // List
+    Route::get('/properties', function () {
+        return view('admin.rentals.properties.view-properties');
+    })->name('admin.properties');
+
+    // Create
+    Route::get('create/property', function () {
+        return view('admin.rentals.properties.create-property');
+    })->name('admin.create-property');
+
+    // View
+    Route::get('view/property/{property}', ViewProperty::class)
+        ->name('admin.view-property');
+
+    // Edit
+    Route::get('edit/property/{property}', EditProperty::class)
+        ->name('admin.edit-property');
+
+
+
+
+    // Long-term - Leases
+    Route::get('/leases', function () {
+        return view('admin.rentals.leases.view-leases');
+    })->name('admin.leases');
 
 
 
@@ -385,11 +415,11 @@ Route::middleware([
     })->name('admin.create-new-transaction');
 
     // View
-    Route::get('view/new-reservation/{transactionId}', ViewTransaction::class)
+    Route::get('view/new-reservation/{transaction}', ViewTransaction::class)
         ->name('admin.view-new-transaction');
 
     // Edit
-    Route::get('edit/new-reservation/{transactionId}', EditTransaction::class)
+    Route::get('edit/new-reservation/{transaction}', EditTransaction::class)
         ->name('admin.edit-new-transaction');
 
 

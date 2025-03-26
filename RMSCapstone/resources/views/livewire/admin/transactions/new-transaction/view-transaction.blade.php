@@ -111,6 +111,7 @@
                             <th scope="col" class="px-6 py-3">Name</th>
                             <th scope="col" class="px-6 py-3">Residency Status</th>
                             <th scope="col" class="px-6 py-3">Origin</th>
+                            <th scope="col" class="px-6 py-3">Demographic</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,6 +120,7 @@
                                 <td class="px-6 py-4">{{ $resident->name }}</td>
                                 <td class="px-6 py-4">{{ $resident->residency_status }}</td>
                                 <td class="px-6 py-4">{{ $resident->origin }}</td>
+                                <td class="px-6 py-4">{{ $resident->demographic }}</td>
                             </tr>
                         @endforeach
                     </tbody>

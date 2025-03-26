@@ -15,14 +15,6 @@
                     @enderror
                 </div>
 
-                <!-- Room Name -->
-                <div class="sm:col-span-2">
-                    <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">{{$room->name}}</label>
-                    @error('room_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
                 <!-- Start Date -->
                 <div>
                     <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start Date</label>

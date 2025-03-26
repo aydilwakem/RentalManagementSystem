@@ -3,6 +3,7 @@
     <!-- Form container -->
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-bwhite">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room</h2>
+
         <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Room Name -->
@@ -11,7 +12,7 @@
                     <input type="text" wire:model="name" id="name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Room Category -->
@@ -22,11 +23,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Category</option>
                         @foreach ($roomCategories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                     @error('room_category_id')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Ideal Guest -->
@@ -36,7 +37,7 @@
                     <input type="number" wire:model="ideal_guest" id="ideal_guest"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('ideal_guest')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Max Adults -->
@@ -45,7 +46,7 @@
                     <input type="number" wire:model="max_adults" id="max_adults" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_adults')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Max Kids -->
@@ -54,7 +55,7 @@
                     <input type="number" wire:model="max_kids" id="max_kids" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_kids')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Turnover Duration -->
@@ -64,7 +65,7 @@
                     <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('turnover_duration')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Room Status -->
@@ -78,7 +79,7 @@
                         <option value="Out of Service">Out of Service</option>
                     </select>
                     @error('room_status')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Image Upload -->
@@ -89,7 +90,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('newImage')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
@@ -97,16 +98,16 @@
                     <!-- Image Preview -->
                     <div class="mt-2">
                         @if ($newImage)
-                        <!-- Show new uploaded image -->
-                        <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show new uploaded image -->
+                            <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @elseif ($room->image)
-                        <!-- Show existing image from storage -->
-                        <img src="{{ asset('storage/' . $room->image) }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show existing image from storage -->
+                            <img src="{{ asset('storage/' . $room->image) }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                         @else
-                        <!-- Show default image if no image exists -->
-                        <img src="{{ asset('images/rms-default.png') }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show default image if no image exists -->
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
                 </div>

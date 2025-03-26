@@ -14,7 +14,7 @@ class ViewRooms extends Component
     #[Url(history: true)]
     public $sortBy = 'created_at';
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     #[Url(history: true)]
     public $search = '';
