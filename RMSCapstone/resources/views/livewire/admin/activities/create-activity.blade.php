@@ -10,7 +10,7 @@
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name</label>
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type event category name" required>
+                        placeholder="Type activity name" required>
 
                     @error('name')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -22,7 +22,7 @@
                     <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
                     <textarea wire:model="description" id="description" rows="4"
                         class="block p-2.5 max-h-30 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                        placeholder="Your event category description here"></textarea>
+                        placeholder="Your activity description here"></textarea>
                     @error('description')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
