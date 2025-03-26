@@ -1,0 +1,33 @@
+
+
+VIEW TRANSACTION
+
+  <h3 class="text-lg font-semibold text-gray-900">Guest Details</h3>
+        <!-- Residents Table -->
+        @if ($residents && $residents->isNotEmpty())
+            <div class="relative overflow-x-auto mt-6">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Name</th>
+                            <th scope="col" class="px-6 py-3">Residency Status</th>
+                            <th scope="col" class="px-6 py-3">Origin</th>
+                            <th scope="col" class="px-6 py-3">Demographic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($residents as $resident)
+                            <tr class="bg-white border-b border-gray-200">
+                                <td class="px-6 py-4">{{ $resident->name }}</td>
+                                <td class="px-6 py-4">{{ $resident->residency_status }}</td>
+                                <td class="px-6 py-4">{{ $resident->origin }}</td>
+                                <td class="px-6 py-4">{{ $resident->demographic }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p class="text-gray-700 mt-4">No residents found for this transaction.</p>
+        @endif
+
