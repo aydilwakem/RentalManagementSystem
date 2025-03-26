@@ -39,6 +39,7 @@ class ViewEventHall extends Component
             return;
         }
 
+        try{
             $eventHall->delete(); // Attempt deletion
 
             // Reset confirmation modal
@@ -48,7 +49,15 @@ class ViewEventHall extends Component
             session()->flash('message', 'Event Category successfully deleted!');
             return redirect()->route('admin.event-halls');
 
+        }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
+    }
 
     public function render()
     {

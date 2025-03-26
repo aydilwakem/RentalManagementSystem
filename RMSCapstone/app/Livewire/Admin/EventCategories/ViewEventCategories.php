@@ -58,25 +58,34 @@ public function deleteEventCategory()
             return;
         }
 
-        $eventCategory->delete(); // Attempt soft deletion
+        try{
+            $eventCategory->delete(); // Attempt soft deletion
 
-         // Reset confirmation modal
-         $this->confirmItemDelete = null;
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
 
-        // Refresh event categories
-        $eventCategories = EventCategory::orderBy('created_at', 'ASC')->get();
+            // Refresh event categories
+            $eventCategories = EventCategory::orderBy('created_at', 'ASC')->get();
 
-        // Reset fake IDs
-        $fakeIDs = [];
-        foreach ($eventCategories as $index => $category) {
-            $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($eventCategories as $index => $category) {
+                $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store session of the fake IDs
+            session(['fake_ids_eventCategory' => $fakeIDs]);
+
+            // Flash success message
+            session()->flash('message', 'Event Category successfully deleted!');
+        }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
-
-        // Store session of the fake IDs
-        session(['fake_ids_eventCategory' => $fakeIDs]);
-
-        // Flash success message
-        session()->flash('message', 'Event Category successfully deleted!');
     } 
 
     public function setSortBy($sortByField){

@@ -34,12 +34,13 @@ class ViewEventCategory extends Component
             }
 
             // Check if the category is referenced in another table
-        if (Event::where('event_category_id', $eventCategory->id)->exists()) { // Change 'Event' to your actual related model
+        if (Event::where('event_category_id', $eventCategory->id)->exists()) { 
             $this->cannotDeleteItem = true; // Show the cannot delete modal
             $this->confirmItemDelete = null; // Close the confirmation modal
             return;
         }
 
+        try{
             $eventCategory->delete(); // Attempt deletion
 
             // Reset confirmation modal
@@ -49,7 +50,15 @@ class ViewEventCategory extends Component
             session()->flash('message', 'Event Category successfully deleted!');
             return redirect()->route('admin.event-categories');
 
+        }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
+    }
          
 
     public function render()

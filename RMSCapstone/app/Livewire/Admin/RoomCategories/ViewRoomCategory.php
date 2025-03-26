@@ -6,6 +6,7 @@ use App\Models\Room;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\RoomCategory;
+use Illuminate\Database\QueryException;
 
 #[Layout('layouts.app')]
 class ViewRoomCategory extends Component
@@ -51,6 +52,7 @@ class ViewRoomCategory extends Component
             return;
             }
 
+            try{
             $roomCategory->delete(); // Attempt soft deletion
 
             // Reset confirmation modal
@@ -61,7 +63,15 @@ class ViewRoomCategory extends Component
 
             // Redirect to the admin room categories page
             return redirect()->route('admin.room-categories');
+        }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
+    }
     }
     
 

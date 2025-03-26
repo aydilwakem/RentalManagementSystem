@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\RoomCategories;
 use App\Models\Room;
 use Livewire\Component;
 use App\Models\RoomCategory;
+use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
@@ -56,10 +57,11 @@ class ViewRoomCategories extends Component
             return;
         }
 
-        $roomCategory->delete(); // Attempt soft deletion
+        try{
+            $roomCategory->delete(); // Attempt soft deletion
 
-         // Reset confirmation modal
-         $this->confirmItemDelete = null;
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
 
             // Fetch remaining - sorted by creation date
             $roomCategory = RoomCategory::orderBy('created_at', 'ASC')->get();
@@ -73,12 +75,19 @@ class ViewRoomCategories extends Component
             // Store updated fake IDs in a unique session key
            session(['fake_ids_roomCategory' => $fakeIDs]);
 
-
             // Flash success message
             session()->flash('message', 'Room Category successfully deleted!');
-        
+    }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
+        }
     }
-    }
+}
+
 
     public function setSortBy($sortByField)
     {

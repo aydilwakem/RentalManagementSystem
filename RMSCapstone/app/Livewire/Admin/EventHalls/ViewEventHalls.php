@@ -58,12 +58,12 @@ class ViewEventHalls extends Component
        }
 
        // Check if the category is referenced in another table
-       if (Event::where('event_hall_id', $eventHall->id)->exists()) { // Change 'Event' to your actual related model
+       if (Event::where('event_hall_id', $eventHall->id)->exists()) { 
         $this->cannotDeleteItem = true; // Show the cannot delete modal
         $this->confirmItemDelete = null; // Close the confirmation modal
         return;
-    }
-
+        }
+        
        $eventHall->delete(); //Attempt deletion
 
        // Reset confirmation modal to close it
