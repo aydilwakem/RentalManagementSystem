@@ -42,11 +42,7 @@
                             </td>
                             <td class="px-6 py-4">{{ $transactions->email }}</td>
                             <td class="px-6 py-4">{{ $transactions->contact_number }}</td>
-                            <td class="px-6 py-4">
-                                {{ $transactions->house_number }} {{ $transactions->street }},
-                                {{ $transactions->barangay }}, {{ $transactions->city_municipality }},
-                                {{ $transactions->province }}, {{ $transactions->region }},
-                                {{ $transactions->postal_code }}, {{ $transactions->country }}
+                            <td class="px-6 py-4"> {{ $transactions->city_municipality }},{{ $transactions->country }}
                             </td>
                         </tr>
                     </tbody>
@@ -79,14 +75,14 @@
                         <tr class="bg-white border-b border-gray-200">
                             <td class="px-6 py-4">{{ $transactions->room->name ?? 'No Room Assigned' }}</td>
                             <td class="px-6 py-4">{{ $transactions->activity->name ?? 'No Activity' }}</td>
-                            <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($transactions->check_in_date)->format('Y-m-d') }}
+                            <td class="px-4 py-3">
+                                {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ \Carbon\Carbon::parse($transactions->check_in_time)->format('h:i A') }}
                             </td>
-                            <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($transactions->check_out_date)->format('Y-m-d') }}
+                            <td class="px-4 py-3">
+                                {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('F j, Y') }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ \Carbon\Carbon::parse($transactions->check_out_time)->format('h:i A') }}
@@ -101,34 +97,6 @@
             </div>
         </div>
 
-        <h3 class="text-lg font-semibold text-gray-900">Guest Details</h3>
-        <!-- Residents Table -->
-        @if ($residents && $residents->isNotEmpty())
-            <div class="relative overflow-x-auto mt-6">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-200">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Name</th>
-                            <th scope="col" class="px-6 py-3">Residency Status</th>
-                            <th scope="col" class="px-6 py-3">Origin</th>
-                            <th scope="col" class="px-6 py-3">Demographic</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($residents as $resident)
-                            <tr class="bg-white border-b border-gray-200">
-                                <td class="px-6 py-4">{{ $resident->name }}</td>
-                                <td class="px-6 py-4">{{ $resident->residency_status }}</td>
-                                <td class="px-6 py-4">{{ $resident->origin }}</td>
-                                <td class="px-6 py-4">{{ $resident->demographic }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <p class="text-gray-700 mt-4">No residents found for this transaction.</p>
-        @endif
 
         <!-- Payment Information Table -->
         <div class="mb-4">
@@ -180,11 +148,11 @@
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
-                {{ __('Delete transactions') }}
+                {{ __('Delete Transaction') }}
             </x-slot>
 
             <x-slot name="content">
-                {{ __('Are you sure you want to delete this transactions?') }}
+                {{ __('Are you sure you want to delete this transaction?') }}
             </x-slot>
 
             <x-slot name="footer">
@@ -192,9 +160,9 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deletetransactions({{ $transactions->id }})"
+                <x-danger-button class="ms-3" wire:click="deleteTransaction({{ $transactions->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Delete transactions') }}
+                    {{ __('Delete Transaction') }}
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>

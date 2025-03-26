@@ -1,0 +1,631 @@
+CREATE TRANSACTION OLD CODE:
+
+
+<?php
+
+namespace App\Livewire\Admin\Transactions\NewTransaction;
+
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use App\Models\Transaction;
+use App\Models\PaymentMethod;
+use App\Models\Room;
+use App\Models\Activity;
+use App\Models\TransactionResident;
+
+class CreateTransaction extends Component
+{
+    use WithFileUploads;
+
+    // Reservation Holder Details
+    public $first_name;
+    public $middle_name;
+    public $last_name;
+    public $suffix;
+    public $email;
+    public $contact_number;
+    public $city_municipality;
+    public $country;
+
+    // Transaction Details
+    public $room_id;
+    public $activity_id;
+    public $total_amount = 0;
+    public $check_in_time;
+    public $check_out_time;
+    public $check_in_date;
+    public $check_out_date;
+    public $total_adults = 0;
+    public $total_kids = 0;
+    public $pax = 0;
+    public $residents = []; // Stores the list of residents
+    public $pets;
+
+    // Payment Details
+    public $payment_method_id;
+    public $payment_screenshot; // Stores uploaded proof of payment
+    public $payment_reference_number;
+    public $terms = true;
+    public $isPaid = false;
+    public $isReserved = false;
+    public $isConfirmed = false;
+
+    public $confirmCreateItem = false; // Flag for confirmation before creating a transaction
+
+    // Dropdown data
+    public $paymentMethods;
+    public $rooms;
+    public $activities;
+
+    /**
+     * Sets the confirmation flag when a transaction creation is initiated.
+     */
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
+    /**
+     * Loads initial data when the component is mounted.
+     * Retrieves available payment methods, rooms, and activities.
+     */
+    public function mount()
+    {
+        $this->paymentMethods = PaymentMethod::all(); // Fetch all payment methods
+        $this->rooms = Room::all(); // Fetch all available rooms
+        $this->activities = Activity::all(); // Fetch all activities
+        $this->updateResidents(); // Ensure resident list matches pax count
+    }
+
+    /**
+     * Listens for changes in total_adults or total_kids and updates pax accordingly.
+     */
+
+    public function updated($propertyName)
+    {
+        // Update Pax when total_adults or total_kids change
+        if (in_array($propertyName, ['total_adults', 'total_kids'])) {
+            $this->pax = max(1, $this->total_adults + $this->total_kids);
+            $this->updateResidents();
+        }
+
+        // Fetch Activity Amount when activity_id changes
+        if ($propertyName === 'activity_id') {
+            $activity = Activity::find($this->activity_id);
+            $this->total_amount = $activity ? $activity->amount : 0;
+        }
+    }
+
+
+    /**
+     * Updates the list of residents whenever the pax (number of residents) changes.
+     */
+    public function updatedPax()
+    {
+        $this->updateResidents();
+    }
+
+    /**
+     * Updates the resident array to match the specified pax count.
+     * Ensures new residents are initialized with default values.
+     */
+    private function updateResidents()
+    {
+        $currentCount = count($this->residents);
+
+        // If pax is increased, add new residents with default values
+        if ($this->pax > $currentCount) {
+            for ($i = $currentCount; $i < $this->pax; $i++) {
+                $this->residents[] = [
+                    'name' => '',
+                    'residency_status' => 'Local', // Default residency status
+                    'origin' => '',
+                    'demographic' => '',
+                ];
+            }
+        }
+        // If pax is decreased, remove excess residents
+        else {
+            $this->residents = array_slice($this->residents, 0, $this->pax);
+        }
+    }
+
+    /**
+     * This method validates user input, handles image uploads, creates a new 
+     * transaction, and associates residents with it. It also manages errors 
+     * and redirects the user upon success or failure.
+     */
+    public function saveTransaction()
+    {
+        try {
+            // Validate form input
+            $this->validate([
+                'room_id' => 'required|exists:prd_rooms,id',
+                'check_in_time' => 'required',
+                'check_out_time' => 'required',
+                'check_in_date' => 'required|date',
+                'check_out_date' => 'required|date|after_or_equal:check_in_date',
+                'total_adults' => 'required|integer|min:1',
+                'total_kids' => 'nullable|integer|min:0',
+                'pax' => 'required|integer|min:1',
+                'residents.*.name' => 'required|string',
+                'residents.*.residency_status' => 'required|in:Local,Foreigner',
+                'residents.*.origin' => 'required|string',
+                'residents.*.demographic' => 'required|in:female,male,infant',
+                'activity_id' => 'nullable|integer|exists:prd_activities,id',
+                'total_amount' => 'required|numeric|min:0',
+                'first_name' => 'required|string',
+                'middle_name' => 'nullable|string',
+                'last_name' => 'required|string',
+                'suffix' => 'nullable|string',
+                'email' => 'required|email',
+                'contact_number' => 'required|string',
+                'city_municipality' => 'required|string',
+                'country' => 'required|string',
+                'pets' => 'nullable|integer|min:0',
+                'payment_method_id' => 'required|integer|exists:pm_payment_methods,id',
+                'payment_screenshot' => 'nullable|image|max:1024',
+                'payment_reference_number' => 'nullable|string',
+                'terms' => 'boolean',
+                'isPaid' => 'boolean',
+                'isReserved' => 'boolean',
+                'isConfirmed' => 'boolean',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
+
+        // Ensure image upload is complete before storing
+        $imagePath = null;
+        if ($this->payment_screenshot) {
+            if (!$this->payment_screenshot->isValid()) {
+                session()->flash('error', 'Image upload failed. Please try again.');
+                return;
+            }
+            $imagePath = $this->payment_screenshot->store('transactions', 'public'); // Saves in storage/app/public/transactions
+        }
+
+        // Create Transaction and retrieve its ID
+        $transaction = Transaction::create([
+            'room_id' => $this->room_id,
+            'check_in_time' => $this->check_in_time,
+            'check_out_time' => $this->check_out_time,
+            'check_in_date' => $this->check_in_date,
+            'check_out_date' => $this->check_out_date,
+            'total_adults' => $this->total_adults,
+            'total_kids' => $this->total_kids,
+            'pax' => $this->pax,
+            'activity_id' => $this->activity_id,
+            'total_amount' => $this->total_amount,
+            'first_name' => $this->first_name,
+            'middle_name' => $this->middle_name,
+            'last_name' => $this->last_name,
+            'suffix' => $this->suffix,
+            'email' => $this->email,
+            'contact_number' => $this->contact_number,
+            'city_municipality' => $this->city_municipality,
+            'country' => $this->country,
+            'pets' => $this->pets,
+            'payment_method_id' => $this->payment_method_id,
+            'payment_screenshot' => $imagePath,
+            'payment_reference_number' => $this->payment_reference_number,
+            'terms' => true, // Initially set to true
+            'isPaid' => false, // Initially set to false
+            'isReserved' => false, // Initially set to false
+            'isConfirmed' => false, // Initially set to false
+        ]);
+
+        // Insert residents into trn_residents
+        foreach ($this->residents as $resident) {
+            TransactionResident::create([
+                'transaction_id' => $transaction->id,
+                'name' => $resident['name'],
+                'residency_status' => $resident['residency_status'],
+                'origin' => $resident['origin'],
+                'demographic' => $resident['demographic'],
+            ]);
+        }
+
+        // Reset form fields
+        $this->reset();
+
+        // Flash message for success
+        session()->flash('message', 'Reservation successfully created!');
+
+        // Redirect back to reservations list
+        return redirect()->route('admin.view-new-transactions');
+    }
+
+    /**
+     * Renders the Create Transaction component.
+     *
+     * This method returns the Livewire view responsible for displaying
+     * the transaction creation form, including available payment methods, 
+     * rooms, and activities.
+     */
+    public function render()
+    {
+        return view('livewire.admin.transactions.new-transaction.create-transaction', [
+            'paymentMethods' => $this->paymentMethods,
+            'rooms' => $this->rooms,
+            'activities' => $this->activities,
+        ]);
+    }
+}
+
+
+
+
+
+
+
+
+<div class="border rounded-lg p-6 max-w-2xl mx-auto mb-8 mt-8">
+
+
+    <h2 class="mb-6 text-xl font-bold text-gray-900 text-center">Add New Reservation</h2>
+
+    <form wire:submit.prevent="saveTransaction">
+        <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
+            <!----------------- GUEST DETAILS ------------------------------------------------------------>
+            <!-- First Name -->
+            <div>
+                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
+                <input type="text" wire:model="first_name" id="first_name" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter first name">
+                @error('first_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Middle Name -->
+            <div>
+                <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle Name</label>
+                <input type="text" wire:model="middle_name" id="middle_name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter middle name">
+                @error('middle_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Last Name -->
+            <div>
+                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
+                <input type="text" wire:model="last_name" id="last_name" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter last name">
+                @error('last_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Suffix -->
+            <div>
+                <label for="suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix (e.g., Jr., Sr.,
+                    III)</label>
+                <input type="text" wire:model="suffix" id="suffix"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter suffix (if applicable)">
+                @error('suffix')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!----------------- CONTACT DETAILS ------------------------------------------------------------>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
+                <input type="email" wire:model="email" id="email" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter email">
+                @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Contact Number -->
+            <div>
+                <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900">Contact
+                    Number</label>
+                <input type="tel" wire:model="contact_number" id="contact_number" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter contact number">
+                @error('contact_number')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!----------------- ADDRESS ------------------------------------------------------------>
+
+            <!-- City / Municipality -->
+            <div>
+                <label for="city_municipality" class="block mb-2 text-sm font-medium text-gray-900">City /
+                    Municipality</label>
+                <input type="text" wire:model="city_municipality" id="city_municipality" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter city or municipality">
+                @error('city_municipality')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Country -->
+            <div>
+                <label for="country" class="block mb-2 text-sm font-medium text-gray-900">Country</label>
+                <input type="text" wire:model="country" id="country" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter country">
+                @error('country')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+
+            <!----------------- RESERVATION DETAILS ------------------------------------------------------------>
+
+            <!-- Room Selection -->
+            <div class="sm:col-span-2">
+                <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">
+                    Room
+                </label>
+                <select wire:model.defer="room_id" id="room_id" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <option value="">-- Select Room --</option>
+                    @foreach($rooms as $room)
+                        <option value="{{ $room->id }}">{{ $room->name }}</option>
+                    @endforeach
+                </select>
+                @error('room_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Activities Selection -->
+            <div class="sm:col-span-2">
+                <label for="activity_id" class="block mb-2 text-sm font-medium text-gray-900">
+                    Activities
+                </label>
+                <select wire:model.defer="activity_id" id="activity_id" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <option value="">-- Select Activity --</option>
+                    @foreach($activities as $activity)
+                        <option value="{{ $activity->id }}">{{ $activity->name }} - {{$activity->amount}}</option>
+                    @endforeach
+                </select>
+                @error('activity_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Total Adults -->
+            <div>
+                <label for="total_adults" class="block mb-2 text-sm font-medium text-gray-900">Total Adults</label>
+                <input type="number" wire:model="total_adults" id="total_adults" required min="0"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('total_adults')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Total Kids -->
+            <div>
+                <label for="total_kids" class="block mb-2 text-sm font-medium text-gray-900">Total Kids</label>
+                <input type="number" wire:model="total_kids" id="total_kids" required min="0"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('total_kids')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Pax (Non-Editable) -->
+            <div>
+                <label for="pax" class="block mb-2 text-sm font-medium text-gray-900">Pax</label>
+                <input type="number" id="pax" value="{{ $pax }}" disabled
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+            </div>
+
+
+            <!-- Total Amount (Non-Editable) -->
+            <div>
+                <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900">Total Amount</label>
+                <input type="number" id="total_amount" value="{{ $total_amount }}" disabled
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+            </div>
+
+            <!-- Check-in Date -->
+            <div>
+                <label for="check_in_date" class="block mb-2 text-sm font-medium text-gray-900">Check-in
+                    Date</label>
+                <input type="date" wire:model="check_in_date" id="check_in_date" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('check_in_date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Check-in Time -->
+            <div>
+                <label for="check_in_time" class="block mb-2 text-sm font-medium text-gray-900">Check-in
+                    Time</label>
+                <input type="time" wire:model="check_in_time" id="check_in_time" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('check_in_time')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Check-out Date -->
+            <div>
+                <label for="check_out_date" class="block mb-2 text-sm font-medium text-gray-900">Check-out
+                    Date</label>
+                <input type="date" wire:model="check_out_date" id="check_out_date" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('check_out_date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Check-out Time -->
+            <div>
+                <label for="check_out_time" class="block mb-2 text-sm font-medium text-gray-900">Check-out
+                    Time</label>
+                <input type="time" wire:model="check_out_time" id="check_out_time" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('check_out_time')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Other Details -->
+
+
+            <!-- Pets -->
+            <div>
+                <label for="pets" class="block mb-2 text-sm font-medium text-gray-900">Pets</label>
+                <input type="number" wire:model="pets" id="pets" required min="0"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('pets')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!----------------- PAYMENT INFORMATION ------------------------------------------------------------>
+
+            <!-- Payment Method-->
+            <div class="sm:col-span-2">
+                <label for="payment_method_id" class="block mb-2 text-sm font-medium text-gray-900">
+                    Payment Method
+                </label>
+                <select wire:model.defer="payment_method_id" id="payment_method_id" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <option value="">-- Select Payment Method --</option>
+                    @foreach($paymentMethods as $method)
+                        <option value="{{ $method->id }}">{{ $method->mode_of_payment_name }}</option>
+                    @endforeach
+                </select>
+                @error('payment_method_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Payment Reference Number -->
+            <div>
+                <label for="payment_reference_number" class="block mb-2 text-sm font-medium text-gray-900">Payment
+                    Reference Number</label>
+                <input type="text" wire:model.defer="payment_reference_number" id="payment_reference_number" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter payment reference number">
+                @error('payment_reference_number')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Payment Screenshot -->
+            <div class="sm:col-span-2">
+                <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Upload
+                    Payment Screenshot</label>
+                <input type="file" wire:model="payment_screenshot" id="image" accept="image/png, image/jpeg"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+
+                @error('payment_screenshot')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+
+                <div wire:loading wire:target="payment_screenshot" class="mt-2 text-gray-600">
+                    Uploading image...
+                </div>
+
+                @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
+                    <div class="mt-2">
+                        <img src="{{ $payment_screenshot->temporaryUrl() }}"
+                            class="w-32 h-32 object-cover rounded-lg shadow">
+                    </div>
+                @endif
+            </div>
+
+            <!----------------- END OF PAYMENT INFORMATION ------------------------------------------------------------>
+        </div>
+
+        <!-- Transaction Breakdown -->
+
+        <!-- Residents Section -->
+        <div>
+            @foreach($residents as $index => $resident)
+                <div>
+                    <h4 class="text-lg font-semibold">Guest {{ $index + 1 }}</h4> <!-- Adding Guest 1, Guest 2, etc. -->
+
+                    <label for="residents.{{ $index }}.name" class="block mb-2 text-sm font-medium text-gray-900">Resident
+                        Name</label>
+                    <input type="text" wire:model="residents.{{ $index }}.name" id="residents.{{ $index }}.name" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error("residents.$index.name") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label for="residents.{{ $index }}.residency_status"
+                        class="block mb-2 text-sm font-medium text-gray-900">Residency Status</label>
+                    <select wire:model="residents.{{ $index }}.residency_status"
+                        id="residents.{{ $index }}.residency_status" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Residency Status</option>
+                        <option value="Local">Local</option>
+                        <option value="Foreigner">Foreigner</option>
+                    </select>
+                    @error("residents.$index.residency_status") <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="residents.{{ $index }}.origin" class="block mb-2 text-sm font-medium text-gray-900">
+                        Origin
+                    </label>
+                    <input type="text" wire:model="residents.{{ $index }}.origin" id="residents.{{ $index }}.origin"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                                                           focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error("residents.$index.origin")
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+
+                <div>
+                    <label for="residents.{{ $index }}.demographic"
+                        class="block mb-2 text-sm font-medium text-gray-900">Demographic</label>
+                    <select wire:model="residents.{{ $index }}.demographic" id="residents.{{ $index }}.demographic" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Demographic</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                        <option value="infant">Infant</option>
+                    </select>
+                    @error("residents.$index.demographic") <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            @endforeach
+        </div>
+
+
+
+        <div class="flex justify-between items-center space-y-2 mt-6">
+            <x-button onclick="history.back()" type="button"
+                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                Cancel
+            </x-button>
+            <x-button wire:loading.attr="disabled" wire:target="payment_screenshot" wire:click="confirmCreate">
+                Add Reservation
+            </x-button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+

@@ -8,7 +8,6 @@ use App\Models\Transaction;
 use App\Models\PaymentMethod;
 use App\Models\Room;
 use App\Models\Activity;
-use App\Models\TransactionResident;
 
 class CreateTransaction extends Component
 {
@@ -21,34 +20,27 @@ class CreateTransaction extends Component
     public $suffix;
     public $email;
     public $contact_number;
-    public $house_number;
-    public $street;
-    public $barangay;
     public $city_municipality;
-    public $province;
-    public $region;
-    public $postal_code;
     public $country;
 
     // Transaction Details
     public $room_id;
     public $activity_id;
-    public $total_amount = 0;
+    public $total_amount;
     public $check_in_time;
     public $check_out_time;
     public $check_in_date;
     public $check_out_date;
-    public $total_adults = 0;
-    public $total_kids = 0;
-    public $pax = 0;
-    public $residents = []; // Stores the list of residents
+    public $total_adults;
+    public $total_kids;
+    public $pax;
     public $pets;
-    public $terms; // Stores whether the terms are accepted
 
     // Payment Details
     public $payment_method_id;
     public $payment_screenshot; // Stores uploaded proof of payment
     public $payment_reference_number;
+    public $terms = true;
     public $isPaid = false;
     public $isReserved = false;
     public $isConfirmed = false;
@@ -77,60 +69,6 @@ class CreateTransaction extends Component
         $this->paymentMethods = PaymentMethod::all(); // Fetch all payment methods
         $this->rooms = Room::all(); // Fetch all available rooms
         $this->activities = Activity::all(); // Fetch all activities
-        $this->updateResidents(); // Ensure resident list matches pax count
-    }
-
-    /**
-     * Listens for changes in total_adults or total_kids and updates pax accordingly.
-     */
-
-    public function updated($propertyName)
-    {
-        // Update Pax when total_adults or total_kids change
-        if (in_array($propertyName, ['total_adults', 'total_kids'])) {
-            $this->pax = max(1, $this->total_adults + $this->total_kids);
-            $this->updateResidents();
-        }
-
-        // Fetch Activity Amount when activity_id changes
-        if ($propertyName === 'activity_id') {
-            $activity = Activity::find($this->activity_id);
-            $this->total_amount = $activity ? $activity->amount : 0;
-        }
-    }
-
-
-    /**
-     * Updates the list of residents whenever the pax (number of residents) changes.
-     */
-    public function updatedPax()
-    {
-        $this->updateResidents();
-    }
-
-    /**
-     * Updates the resident array to match the specified pax count.
-     * Ensures new residents are initialized with default values.
-     */
-    private function updateResidents()
-    {
-        $currentCount = count($this->residents);
-
-        // If pax is increased, add new residents with default values
-        if ($this->pax > $currentCount) {
-            for ($i = $currentCount; $i < $this->pax; $i++) {
-                $this->residents[] = [
-                    'name' => '',
-                    'residency_status' => 'Local', // Default residency status
-                    'origin' => '',
-                    'demographic' => '',
-                ];
-            }
-        }
-        // If pax is decreased, remove excess residents
-        else {
-            $this->residents = array_slice($this->residents, 0, $this->pax);
-        }
     }
 
     /**
@@ -144,17 +82,13 @@ class CreateTransaction extends Component
             // Validate form input
             $this->validate([
                 'room_id' => 'required|exists:prd_rooms,id',
-                'check_in_time' => 'required',
-                'check_out_time' => 'required',
+                'check_in_time' => 'required|date_format:H:i',
+                'check_out_time' => 'required|date_format:H:i',
                 'check_in_date' => 'required|date',
                 'check_out_date' => 'required|date|after_or_equal:check_in_date',
                 'total_adults' => 'required|integer|min:1',
                 'total_kids' => 'nullable|integer|min:0',
                 'pax' => 'required|integer|min:1',
-                'residents.*.name' => 'required|string',
-                'residents.*.residency_status' => 'required|in:Local,Foreigner',
-                'residents.*.origin' => 'required|string',
-                'residents.*.demographic' => 'required|in:female,male,infant',
                 'activity_id' => 'nullable|integer|exists:prd_activities,id',
                 'total_amount' => 'required|numeric|min:0',
                 'first_name' => 'required|string',
@@ -163,19 +97,13 @@ class CreateTransaction extends Component
                 'suffix' => 'nullable|string',
                 'email' => 'required|email',
                 'contact_number' => 'required|string',
-                'house_number' => 'nullable|string',
-                'street' => 'nullable|string',
-                'barangay' => 'nullable|string',
                 'city_municipality' => 'required|string',
-                'province' => 'required|string',
-                'region' => 'required|string',
-                'postal_code' => 'required|string',
                 'country' => 'required|string',
-                'pets' => 'nullable|string',
-                'terms' => 'accepted',
+                'pets' => 'nullable|integer|min:0',
                 'payment_method_id' => 'required|integer|exists:pm_payment_methods,id',
                 'payment_screenshot' => 'nullable|image|max:1024',
                 'payment_reference_number' => 'nullable|string',
+                'terms' => 'boolean',
                 'isPaid' => 'boolean',
                 'isReserved' => 'boolean',
                 'isConfirmed' => 'boolean',
@@ -213,34 +141,17 @@ class CreateTransaction extends Component
             'suffix' => $this->suffix,
             'email' => $this->email,
             'contact_number' => $this->contact_number,
-            'house_number' => $this->house_number,
-            'street' => $this->street,
-            'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
-            'region' => $this->region,
-            'postal_code' => $this->postal_code,
             'country' => $this->country,
             'pets' => $this->pets,
-            'terms' => $this->terms,
             'payment_method_id' => $this->payment_method_id,
             'payment_screenshot' => $imagePath,
             'payment_reference_number' => $this->payment_reference_number,
+            'terms' => true, // Initially set to true
             'isPaid' => false, // Initially set to false
             'isReserved' => false, // Initially set to false
             'isConfirmed' => false, // Initially set to false
         ]);
-
-        // Insert residents into trn_residents
-        foreach ($this->residents as $resident) {
-            TransactionResident::create([
-                'transaction_id' => $transaction->id,
-                'name' => $resident['name'],
-                'residency_status' => $resident['residency_status'],
-                'origin' => $resident['origin'],
-                'demographic' => $resident['demographic'],
-            ]);
-        }
 
         // Reset form fields
         $this->reset();

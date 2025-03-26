@@ -374,6 +374,11 @@ Route::middleware([
 
     // Settings
 
+    //Appearance
+    Route::get('/settings/appearance', function () {
+        return view('admin.settings.appearance.view-appearance');
+    })->name('admin.appearance');
+
     //Payment Methods
 
     //List
