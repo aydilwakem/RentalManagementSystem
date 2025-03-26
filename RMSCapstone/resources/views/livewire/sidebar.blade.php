@@ -5,9 +5,8 @@
         <button @click="$store.sidebar.navOpen = !$store.sidebar.navOpen"
             class="sm:hidden absolute top-5 right-5 focus:outline-none">
             <!-- Menu Icons -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
 
@@ -205,27 +204,41 @@
                 </div>
 
                 <!-------------------- Rentals ------------------------->
-                <div>
-                    <a href="{{ route('admin.properties') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                          {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                <!-- Houses -->
+                <div x-data="dropdown" class="relative">
+                    <div @click="toggle('houses')"
+                        class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        {{ Route::is('admin.properties*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                        <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-house"></i>
-                            <h1 x-cloak x-show="$store.sidebar.full">Houses</h1>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Houses
+                            </h1>
                         </div>
-                    </a>
-                </div>
-
-
-                <div>
-                    <a href="{{ route('admin.properties') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                          {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
-                            <i class="fa-solid fa-house"></i>
-                            <h1 x-cloak x-show="$store.sidebar.full">House Categories</h1>
-                        </div>
-                    </a>
+                        <svg x-cloak x-bind:class="$store.sidebar.full ? '' : 'sm:hidden'"
+                            xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <!-- Dropdown content -->
+                    <div x-cloak x-show="open" @click.outside="open = false"
+                        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        <a href="{{ route('admin.properties') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.properties') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Houses</h1>
+                        </a>
+                        <a href="#" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('#') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">House Categories</h1>
+                        </a>
+                        <a href="#" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('#') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Tenants</h1>
+                        </a>
+                    </div>
                 </div>
 
 
@@ -345,7 +358,8 @@
                 <!-- Account Management -->
                 <div class="relative">
                     <a href="{{ route('profile.show') }}" wire:navigate>
-                        <div class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div
+                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('profile.show') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-user"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Profile</h1>
@@ -386,9 +400,9 @@
                             <div @click="$store.sidebar.active = 'team-settings'"
                                 class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                                 x-bind:class="{
-                                                                                                                                                                                                                                                                                                                            'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
-                                                                                                                                                                                                                                                                                                                            'text-gray-400 ': $store.sidebar.active != 'team-settings'
-                                                                                                                                                                                                                                                                                                                        }">
+                                    'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
+                                    'text-gray-400 ': $store.sidebar.active != 'team-settings'
+                                }">
                                 <i class="fa-solid fa-users"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Team Settings</h1>
                             </div>
@@ -399,9 +413,9 @@
                                 <div @click="$store.sidebar.active = 'create-team'"
                                     class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-400 ': $store.sidebar.active != 'create-team'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
+                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                        'text-gray-400 ': $store.sidebar.active != 'create-team'
+                                    }">
                                     <i class="fa-solid fa-plus"></i>
                                     <h1 x-cloak x-show="$store.sidebar.full">Create New Team</h1>
                                 </div>

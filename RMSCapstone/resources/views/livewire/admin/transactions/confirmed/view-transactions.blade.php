@@ -28,7 +28,7 @@
             </li>
         </ul>
 
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+        <div class="bg-white rounded-lg overflow-x-auto">
             <!-- Empty Table Message -->
             <div class="text-center py-10">
                 <p class="text-gray-500 text-lg font-semibold">No confirmed reservations yet.<br> Click "Confirm New

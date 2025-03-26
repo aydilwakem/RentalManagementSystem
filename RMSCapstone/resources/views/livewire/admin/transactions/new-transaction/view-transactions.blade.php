@@ -32,11 +32,11 @@
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Empty Table Message -->
             <div class="text-center py-10">
-                <p class="text-gray-500 text-lg font-semibold">No new transactions yet.<br> Click "Create Transaction" to
+                <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation" to
                     add a
-                    new transaction.</p>
+                    new reservation.</p>
                 <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
-                    Create Transaction
+                    Create Reservation
                 </x-button>
             </div>
         </div>
