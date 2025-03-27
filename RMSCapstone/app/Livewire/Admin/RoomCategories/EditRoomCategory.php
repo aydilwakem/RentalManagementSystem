@@ -9,6 +9,8 @@ use App\Models\RoomCategory;
 use App\Models\Amenity;
 use Illuminate\Support\Facades\Storage;
 
+
+
 #[Layout('layouts.app')]
 class EditRoomCategory extends Component
 {

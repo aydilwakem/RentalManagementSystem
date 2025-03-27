@@ -36,7 +36,8 @@
                 <li><strong>End Date:</strong> {{ $roomRate->end_date }}</li>
                 <li><strong>Amount:</strong> ₱{{ number_format($roomRate->amount, 2) }}</li>
                 <li><strong>Extra Person Charge:</strong> ₱{{ number_format($roomRate->extra_person_charge, 2) }}</li>
-                <li><strong>Extended Stay Charge Per Hour:</strong> ₱{{ number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li>
+                <li><strong>Extended Stay Charge Per Hour:</strong> ₱{{
+                    number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li>
             </ul>
         </div>
 
@@ -62,9 +63,46 @@
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="deleteRoomRate({{ $roomRate->id }})">
+                wire:click="confirmDelete({{ $roomRate->id }})">
                 Delete
             </x-button>
         </div>
     </div>
+    <!-- Delete Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmItemDelete">
+        <x-slot name="title">
+            {{ __('Delete Room Rate') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to delete this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-danger-button class="ms-3" wire:click="deleteRoomRate({{ $roomRate->id }})" wire:loading.attr="disabled">
+                {{ __('Delete Room Rate') }}
+            </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('This room rate is currently in use and cannot be deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

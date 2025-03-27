@@ -9,6 +9,13 @@ class DeletedRoomRates extends Component
 {
     public $deletedRoomRates;
 
+    public $confirmItemDelete = false;
+
+    public function confirmDeleteForever($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public function mount()
     {
         $this->fetchDeletedRoomRates();
@@ -28,16 +35,18 @@ class DeletedRoomRates extends Component
             session()->flash('message', 'Room rate restored successfully.');
             $this->fetchDeletedRoomRates();
         }
+        
     }
 
     public function deleteRoomRateForever($roomRateId)
     {
-        $roomRate = RoomRate::withTrashed()->find($roomRateId);
+        $roomRate = RoomRate::withTrashed()->find($this->confirmItemDelete);
         if ($roomRate) {
             $roomRate->forceDelete();
             session()->flash('message', 'Room rate permanently deleted.');
             $this->fetchDeletedRoomRates();
         }
+        $this->confirmItemDelete = false;
     }
 
 
