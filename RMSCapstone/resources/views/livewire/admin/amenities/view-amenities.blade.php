@@ -3,7 +3,7 @@
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No amenities yet.<br> Click "Create Amenity" to add a new
-                ramenity.</p>
+                amenity.</p>
             <x-button class="mt-4" href="{{ route('admin.create-amenity') }}" icon="fas fa-plus" wire:navigate>
                 Create Amenity
             </x-button>

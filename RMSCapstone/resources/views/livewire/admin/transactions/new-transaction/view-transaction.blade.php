@@ -73,24 +73,24 @@
                     </thead>
                     <tbody>
                         <tr class="bg-white border-b border-gray-200">
-                            <td class="px-6 py-4">{{ $transactions->room->name ?? 'No Room Assigned' }}</td>
-                            <td class="px-6 py-4">{{ $transactions->activity->name ?? 'No Activity' }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->room->name ?? 'No Room Assigned' }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->activity->name ?? 'No Activity' }}</td>
+                            <td class="px-4 py-3 text-gray-800">
                                 {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-gray-800">
                                 {{ \Carbon\Carbon::parse($transactions->check_in_time)->format('h:i A') }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-gray-800">
                                 {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('F j, Y') }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-gray-800">
                                 {{ \Carbon\Carbon::parse($transactions->check_out_time)->format('h:i A') }}
                             </td>
-                            <td class="px-6 py-4">{{ $transactions->total_adults }}</td>
-                            <td class="px-6 py-4">{{ $transactions->total_kids }}</td>
-                            <td class="px-6 py-4">{{ $transactions->pax }}</td>
-                            <td class="px-6 py-4">{{ $transactions->pets }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->total_adults }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->total_kids }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->pax }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->pets }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -107,17 +107,17 @@
                     <tbody>
                         <tr class="bg-white border-b border-gray-200">
                             <th class="px-6 py-4 text-gray-700 bg-gray-50">Payment Method</th>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-gray-800">
                                 {{ $transactions->paymentMethod->mode_of_payment_name ?? 'Not Provided' }}
                             </td>
                         </tr>
                         <tr class="bg-white border-b border-gray-200">
                             <th class="px-6 py-4 text-gray-700 bg-gray-50">Reference Number</th>
-                            <td class="px-6 py-4">{{ $transactions->payment_reference_number ?? 'Not Provided' }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->payment_reference_number ?? 'Not Provided' }}</td>
                         </tr>
                         <tr class="bg-white border-b border-gray-200">
                             <th class="px-6 py-4 text-gray-700 bg-gray-50">Total Amount</th>
-                            <td class="px-6 py-4">₱{{ number_format($transactions->total_amount, 2) }}</td>
+                            <td class="px-6 py-4 text-gray-800">₱{{ number_format($transactions->total_amount, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

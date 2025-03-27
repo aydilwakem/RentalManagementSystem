@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($event->isEmpty())
+    @if ($allEvents->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No events yet.<br> Click "Create Event" to add a new event.
@@ -238,7 +238,7 @@
                         </tr>
                     </thead>
 
-                    @foreach ($event as $eventItem)
+                    @forelse ($event as $eventItem)
                         <tr class="border-b">
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $fakeIDs[$eventItem->id] ?? 'EVT-???' }}
@@ -290,7 +290,14 @@
 
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No events found matching this status.
+                            </td>
+                        </tr>
+                    @endforelse
+
                 </table>
 
                 {{-- Pagination --}}
@@ -322,18 +329,18 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
-                            wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteEvent({{ $eventItem->id }})"
-                            wire:loading.attr="disabled">
+                        <x-danger-button class="ms-3" wire:click="deleteEvent" wire:loading.attr="disabled">
                             {{ __('Delete Event') }}
                         </x-danger-button>
                     </x-slot>
                 </x-dialog-modal>
+
             </div>
+        </div>
+
     @endif
-</div>
 </div>

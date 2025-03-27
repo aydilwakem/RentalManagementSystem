@@ -9,28 +9,26 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class ViewAmenity extends Component
 {
-    // Create a public property
-    public Amenity $amenity;
-
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
     {
-        $this->confirmItemDelete = $id;
+        $this->confirmItemDelete = $id; // Store ID
     }
 
-    // Function for deleting a record
-    public function deleteAmenity(Amenity $amenity)
+    public function deleteAmenity()
     {
+        // Ensure existing ID before deleting
+        $amenity = Amenity::find($this->confirmItemDelete);
+
         if (!$amenity) {
             session()->flash('error', 'Amenity not found!');
             return;
         }
 
-        // Delete the amenity
-        if ($this->confirmItemDelete) {
-            $amenity->delete();
-            $this->confirmItemDelete = false;
+        // Delete amenity
+        $amenity->delete();
+        $this->confirmItemDelete = false;
 
         // Flash success message
         session()->flash('message', 'Amenity successfully deleted!');
@@ -38,7 +36,6 @@ class ViewAmenity extends Component
         // Redirect to the admin amenities page
         return redirect()->route('admin.amenities');
     }
-}
 
     public function render()
     {
