@@ -14,7 +14,7 @@ class ViewMaintenances extends Component
     #[Url(history: true)]
     public $search = '';
 
-    #[Url()]
+    #[Url]
     public $perPage = 5;
 
     #[Url(history: true)]
@@ -40,50 +40,43 @@ class ViewMaintenances extends Component
         $this->confirmItemDelete = $id;
     }
 
-
-    public function deleteMaintenances($id)
+    public function deleteMaintenances()
     {
-        // Find the maintenance by ID
-        $maintenances = Maintenance::find($id);
+        if ($this->confirmItemDelete) {
+            Maintenance::find($this->confirmItemDelete)?->delete();
+            $this->confirmItemDelete = false;
 
-            if ($maintenances) {
-                if ($this->confirmItemDelete) {
-                    Maintenance::find($this->confirmItemDelete)?->delete();
-                    $this->confirmItemDelete = false;
-               
             // Fetch remaining maintenance - sorted by creation date
-             $maintenances = Maintenance::orderBy('created_at', 'ASC')->get();
+            $maintenances = Maintenance::orderBy('created_at', 'ASC')->get();
 
-             // Reset fake IDs
-             $fakeIDs = [];
-             foreach ($maintenances as $index => $maintenance) {
-                 $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-             }
- 
-             // Store updated fake IDs in a unique session key
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($maintenances as $index => $maintenance) {
+                $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store updated fake IDs in a unique session key
             session(['fake_ids_maintenances' => $fakeIDs]);
-
 
             // Flash success message
             session()->flash('message', 'Maintenance successfully deleted!');
         }
     }
-    }
 
     public function setSortBy($sortByField)
     {
-
         if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
-
 
     public function render()
     {
+        $allMaintenances = Maintenance::all();
+
         $maintenances = Maintenance::query()
             ->search($this->search)
             ->when($this->priorityStatus !== '', function ($query) {
@@ -92,7 +85,7 @@ class ViewMaintenances extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-            // Retrieve unique session for activities
+        // Retrieve unique session for activities
         $fakeIDs = session('fake_ids_maintenances', []);
 
         // Recalculate fake IDs if count mismatches
@@ -104,10 +97,10 @@ class ViewMaintenances extends Component
             session(['fake_ids_maintenances' => $fakeIDs]);
         }
 
-
         return view('livewire.admin.maintenance.view-maintenances', [
             'maintenances' => $maintenances,
             'fakeIDs' => $fakeIDs,
+            'allMaintenances' => $allMaintenances,
         ]);
     }
 }

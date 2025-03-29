@@ -12,25 +12,23 @@ class ViewEvents extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
 
-    #[Url()]
+    #[Url]
     public $perPage = 5;
 
-    #[Url(history:true)]
-    public $sortBy='created_at';
-    #[Url(history:true)]
-    public $sortDir='DESC';
+    #[Url(history: true)]
+    public $sortBy = 'created_at';
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
     public $eventStatus = '';
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-
-        }
-
+    {
+        $this->confirmItemDelete = $id;
+    }
 
     public function mount()
     {
@@ -39,7 +37,6 @@ class ViewEvents extends Component
             session(['fake_ids_events' => []]);
         }
     }
-
 
     public function deleteEvent()
     {
@@ -64,18 +61,16 @@ class ViewEvents extends Component
         }
     }
 
-
     public function setSortBy($sortByField)
     {
         if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
 
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
-
 
     public function render()
     {
@@ -83,13 +78,13 @@ class ViewEvents extends Component
 
         $event = Event::query()
             ->search($this->search)
-            ->when($this->eventStatus !== '', function($query){
+            ->when($this->eventStatus !== '', function ($query) {
                 $query->where('status', $this->eventStatus);
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-            // Retrieve unique session
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_events', []);
 
         // Recalculate fake IDs if count mismatches

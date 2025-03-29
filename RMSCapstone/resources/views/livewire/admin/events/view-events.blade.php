@@ -232,9 +232,6 @@
                             <th scope="col" class="px-4 py-3">Total Amount</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
-                            {{-- <th scope="col" class="px-4 py-3">
-                            <span class="sr-only">Actions</span>
-                        </th> --}}
                         </tr>
                     </thead>
 

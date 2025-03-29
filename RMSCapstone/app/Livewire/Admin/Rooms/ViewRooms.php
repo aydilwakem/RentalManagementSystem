@@ -37,48 +37,48 @@ class ViewRooms extends Component
         }
     }
 
-
-    public function deleteRoom($id)
+    public function deleteRoom()
     {
-        $room = Room::find($id);
-        if ($room) {
+        if ($this->confirmItemDelete) {
+            // Find and delete the room
+            Room::find($this->confirmItemDelete)?->delete();
 
-            if ($this->confirmItemDelete) {
-                Room::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+            // Reset confirmation state
+            $this->confirmItemDelete = false;
 
-                // Fetch remaining rooms - sorted by creation date
-                $room = Room::orderBy('created_at', 'ASC')->get();
+            // Fetch remaining rooms - sorted by creation date
+            $room = Room::orderBy('created_at', 'ASC')->get();
 
-                // Fetch remaining - sorted by creation date
-                $room = Room::orderBy('created_at', 'ASC')->get();
+            // Fetch remaining - sorted by creation date
+            $room = Room::orderBy('created_at', 'ASC')->get();
 
-                // Reset fake IDs
-                $fakeIDs = [];
-                foreach ($room as $index => $roomItem) {
-                    $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-
-                // Store updated fake IDs in a unique session key
-                session(['fake_ids_rooms' => $fakeIDs]);
-                session()->flash('message', 'Room successfully deleted!');
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($room as $index => $roomItem) {
+                $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+
+            // Store updated fake IDs in a unique session key
+            session(['fake_ids_rooms' => $fakeIDs]);
+            session()->flash('message', 'Room successfully deleted!');
         }
     }
 
     public function setSortBy($sortByField)
     {
         if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
 
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
 
     public function render()
     {
+        $allRooms = Room::all();
+
         $rooms = Room::query()
             ->when($this->statusFilter, function ($query) {
                 $query->where('room_status', $this->statusFilter);
@@ -87,7 +87,7 @@ class ViewRooms extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Retrieve unique session 
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_rooms', []);
 
         // Recalculate fake IDs if count mismatches
@@ -102,6 +102,7 @@ class ViewRooms extends Component
         return view('livewire.admin.rooms.view-rooms', [
             'rooms' => $rooms,
             'fakeIDs' => $fakeIDs,
+            'allRooms' => $allRooms,
         ]);
     }
 }
