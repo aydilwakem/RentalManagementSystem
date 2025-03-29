@@ -2,7 +2,7 @@
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room Rate</h2>
 
-        <form wire:submit.prevent="updateRoomRate">
+        <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Room Rate Name -->
@@ -11,7 +11,7 @@
                     <input type="text" wire:model="name" id="name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -22,11 +22,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                         <option value="">Select Room</option>
                         @foreach ($rooms as $room)
-                            <option value="{{ $room->id }}">{{ $room->name }}</option>
+                        <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
                     </select>
                     @error('room_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -36,7 +36,7 @@
                     <input type="date" wire:model="start_date" id="start_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('start_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -46,7 +46,7 @@
                     <input type="date" wire:model="end_date" id="end_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('end_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -56,7 +56,7 @@
                     <input type="number" wire:model="amount" id="amount"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -67,7 +67,7 @@
                     <input type="number" wire:model="extra_person_charge" id="extra_person_charge"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('extra_person_charge')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -78,7 +78,7 @@
                     <input type="number" wire:model="extended_stay_charge_per_hr" id="extended_stay_charge_per_hr"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('extended_stay_charge_per_hr')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -93,7 +93,7 @@
                         <option value="Peak">Peak</option>
                     </select>
                     @error('rate_type')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -104,7 +104,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 resize-none"
                         rows="5"></textarea>
                     @error('description')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
@@ -114,10 +114,31 @@
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" wire:loading.attr="disabled">
+                <x-button type="submit" wire:click="confirmEdit({{ $roomRate->id }})" wire:loading.attr="disabled">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
+    <!-- Edit Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-slot name="title">
+            {{ __('Edit Room Rate') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to save changes on this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="updateRoomRate({{ $roomRate->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Edit Room Rate') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

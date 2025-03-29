@@ -22,6 +22,13 @@ class EditRoomRate extends Component
     public $rate_type;
     public $rooms;
 
+    public $confirmEditItem = false;
+
+    public function confirmEdit($id)
+    {
+        $this->confirmEditItem = $id;
+    }
+
     public function mount(RoomRate $roomRate)
     {
         $this->roomRate = $roomRate;
@@ -39,6 +46,7 @@ class EditRoomRate extends Component
 
     public function updateRoomRate()
     {
+        try{
         $this->validate([
             'room_id' => 'required|exists:prd_rooms,id',
             'name' => 'required|string|max:255',
@@ -50,6 +58,11 @@ class EditRoomRate extends Component
             'description' => 'nullable|string',
             'rate_type' => 'required|string|max:50',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmEditItem = false;
+        throw $e;
+    }
 
         $this->roomRate->update([
             'room_id' => $this->room_id,

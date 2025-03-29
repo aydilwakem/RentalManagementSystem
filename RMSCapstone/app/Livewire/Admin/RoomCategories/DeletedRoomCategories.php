@@ -26,9 +26,9 @@ class DeletedRoomCategories extends Component
         $this->deletedRoomCategories = RoomCategory::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
-    public function restoreRoomCategory($roomRateId)
+    public function restoreRoomCategory($roomCategoryId)
     {
-        $roomRate = RoomCategory::withTrashed()->find($roomRateId);
+        $roomRate = RoomCategory::withTrashed()->find($roomCategoryId);
         if ($roomRate) {
             $roomRate->restore();
             session()->flash('message', 'Room category restored successfully.');
