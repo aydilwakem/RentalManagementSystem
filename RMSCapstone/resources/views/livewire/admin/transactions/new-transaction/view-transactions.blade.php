@@ -431,7 +431,7 @@
                             <div class="text-left">
                                 <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
                                 </p>
-                                <p class="text-lg font-semibold">Payment Method:
+                             <p class="text-lg font-semibold">Payment Method:
                                     {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
                                 </p>
                                 <p class="text-lg font-semibold">Payment Reference:

@@ -12,7 +12,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter first name">
                         @error('first_name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -23,7 +23,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter middle name">
                         @error('middle_name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -33,7 +33,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter last name">
                         @error('last_name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -43,7 +43,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter suffix (if any)">
                         @error('suffix')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -55,7 +55,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter email">
                         @error('email')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -66,7 +66,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter contact number">
                         @error('contact_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -79,7 +79,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter city or municipality">
                         @error('city_municipality')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -89,7 +89,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Enter country">
                         @error('country')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -102,11 +102,11 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Room</option>
                             @foreach ($rooms as $room)
-                            <option value="{{ $room->id }}">{{ $room->name }}</option>
+                                <option value="{{ $room->id }}">{{ $room->name }} - {{$room->base_rate}}</option>
                             @endforeach
                         </select>
                         @error('room_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -117,23 +117,12 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Activity</option>
                             @foreach ($activities as $activity)
-                            <option value="{{ $activity->id }}">{{ $activity->name }}</option>
+                                <option value="{{ $activity->id }}">{{ $activity->name }} - {{$activity->amount}}
+                                </option>
                             @endforeach
                         </select>
                         @error('activity_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    {{-- Total Amount --}}
-                    <div>
-                        <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900">Total
-                            Amount</label>
-                        <input type="number" wire:model="total_amount" id="total_amount" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Enter total amount"></input>
-                        @error('total_amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -147,7 +136,7 @@
                             min="{{ now()->toDateString() }}" x-data
                             x-on:change="$refs.check_out_date.min = $event.target.value">
                         @error('check_in_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -159,7 +148,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             min="{{ now()->addDay()->toDateString() }}" x-ref="check_out_date">
                         @error('check_out_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -171,7 +160,7 @@
                         <input type="time" wire:model="check_in_time" id="check_in_time"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         @error('check_in_time')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -182,7 +171,7 @@
                         <input type="time" wire:model="check_out_time" id="check_out_time"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         @error('check_out_time')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -195,7 +184,7 @@
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Enter number of adults">
                         @error('total_adults')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -206,20 +195,10 @@
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Enter number of kids">
                         @error('total_kids')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    {{-- Pax --}}
-                    <div>
-                        <label for="pax" class="block mb-2 text-sm font-medium text-gray-900">Total Pax</label>
-                        <input type="number" wire:model="pax" id="pax"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Enter total pax">
-                        @error('pax')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
 
                     {{-- Pets --}}
                     <div>
@@ -229,7 +208,7 @@
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Enter number of pets">
                         @error('pets')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -243,11 +222,11 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Payment Method</option>
                             @foreach ($paymentMethods as $method)
-                            <option value="{{ $method->id }}">{{ $method->mode_of_payment_name }}</option>
+                                <option value="{{ $method->id }}">{{ $method->mode_of_payment_name }}</option>
                             @endforeach
                         </select>
                         @error('payment_method_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -259,7 +238,7 @@
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Enter payment reference number">
                         @error('payment_reference_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -272,7 +251,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                         @error('payment_screenshot')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
                         <div wire:loading wire:target="payment_screenshot" class="mt-2 text-gray-600">
@@ -280,10 +259,10 @@
                         </div>
 
                         @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
-                        <div class="mt-2">
-                            <img src="{{ $payment_screenshot->temporaryUrl() }}"
-                                class="w-32 h-32 object-cover rounded-lg shadow">
-                        </div>
+                            <div class="mt-2">
+                                <img src="{{ $payment_screenshot->temporaryUrl() }}"
+                                    class="w-32 h-32 object-cover rounded-lg shadow">
+                            </div>
                         @endif
                     </div>
 

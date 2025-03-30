@@ -23,43 +23,52 @@
 
 
         @php
-        $groups = [
-        'Room' => 'room-',
-        'Room Rate' => 'room-rate-',
-        'Room Category' => 'room-category-',
-        'Event' => 'event-',
-        'Event Hall' => 'event-hall-',
-        'Event Category' => 'event-category-',
-        'Activity' => 'activity-',
-        'Maintenance' => 'maintenance-',
-        'Role' => 'role-',
-        'Payment Method' => 'payment-method-',
-        'User' => 'user-',
-        'Dashboard' => 'dashboard-',
-        ];
+            $groups = [
+                'Room' => 'room-',
+                'Room Rate' => 'room-rate-',
+                'Room Category' => 'room-category-',
+                'Event' => 'event-',
+                'Event Hall' => 'event-hall-',
+                'Event Category' => 'event-category-',
+                'Activity' => 'activity-',
+                'Maintenance' => 'maintenance-',
+                'Role' => 'role-',
+                'Payment Method' => 'payment-method-',
+                'User' => 'user-',
+                'Dashboard' => 'dashboard-',
+                'New Reservation' => 'new-reservation-',
+                'Confirm Reservation' => 'confirmed-reservation-',
+                'On-going Booking' => 'on-going-booking-',
+                'Old Booking' => 'old-booking-',
+                'House' => 'house-',
+                'House Category' => 'house-category-',
+                'Tenant' => 'tenant-',
+                'Appearance' => 'appearance-',
 
-        $groupedPermissions = [];
+            ];
 
-        foreach ($groups as $label => $prefix) {
-        $groupedPermissions[$label] = $role->permissions->filter(function ($permission) use ($prefix) {
-        // Only match exact prefix and not submodules
-        $subPrefixes = [
-        'room-' => ['room-rate-', 'room-category-'],
-        'event-' => ['event-hall-', 'event-category-'],
-        ];
+            $groupedPermissions = [];
 
-        // If prefix has exclusions
-        if (array_key_exists($prefix, $subPrefixes)) {
-        foreach ($subPrefixes[$prefix] as $exclude) {
-        if (str_starts_with($permission->name, $exclude)) {
-        return false;
-        }
-        }
-        }
+            foreach ($groups as $label => $prefix) {
+                $groupedPermissions[$label] = $role->permissions->filter(function ($permission) use ($prefix) {
+                    // Only match exact prefix and not submodules
+                    $subPrefixes = [
+                        'room-' => ['room-rate-', 'room-category-'],
+                        'event-' => ['event-hall-', 'event-category-'],
+                    ];
 
-        return str_starts_with($permission->name, $prefix);
-        });
-        }
+                    // If prefix has exclusions
+                    if (array_key_exists($prefix, $subPrefixes)) {
+                        foreach ($subPrefixes[$prefix] as $exclude) {
+                            if (str_starts_with($permission->name, $exclude)) {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return str_starts_with($permission->name, $prefix);
+                });
+            }
         @endphp
 
 
@@ -67,16 +76,16 @@
         <div class="space-y-4">
             <h1 class="flex font-semibold text-gray-800">Permissions:</h1>
             @foreach ($groupedPermissions as $group => $permissions)
-            @if ($permissions->count())
-            <div class="border p-4 rounded-lg">
-                <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
-                <ul class="list-disc list-inside space-y-1 text-gray-700">
-                    @foreach ($permissions as $perm)
-                    <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+                @if ($permissions->count())
+                    <div class="border p-4 rounded-lg">
+                        <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700">
+                            @foreach ($permissions as $perm)
+                                <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             @endforeach
         </div>
 

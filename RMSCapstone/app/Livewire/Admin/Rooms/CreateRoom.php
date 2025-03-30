@@ -18,6 +18,7 @@ class CreateRoom extends Component
     public $max_kids;
     public $turnover_duration;
     public $room_status = 'Available'; // Default value
+    public $base_rate;
     public $image;
 
     public $confirmCreateItem = false;
@@ -46,6 +47,7 @@ class CreateRoom extends Component
                 'max_kids' => 'required|integer|min:0',
                 'turnover_duration' => 'required|string',
                 'room_status' => 'required|in:Available,Booked,Out of Service',
+                'base_rate' => 'required|numeric|min:100|max:1000000.00',
                 'image' => 'nullable|image|max:1024', // Max 1MB image
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -73,11 +75,12 @@ class CreateRoom extends Component
             'max_kids' => $this->max_kids,
             'turnover_duration' => $this->turnover_duration,
             'room_status' => $this->room_status,
+            'base_rate' => $this->base_rate,
             'image' => $imagePath, // Store image path in DB
         ]);
 
         // Reset form fields
-        $this->reset(['name', 'room_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'turnover_duration', 'room_status', 'image']);
+        $this->reset(['name', 'room_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'turnover_duration', 'room_status', 'base_rate', 'image']);
 
         // Flash success message
         session()->flash('message', 'Room successfully created!');

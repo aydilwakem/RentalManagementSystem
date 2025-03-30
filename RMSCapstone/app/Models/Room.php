@@ -20,6 +20,7 @@ class Room extends Model
         'max_kids',
         'turnover_duration',
         'room_status',
+        'base_rate',
         'image'
     ];
 
@@ -36,5 +37,10 @@ class Room extends Model
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%");
+    }
+
+    public function scopeAvailableRooms($query)
+    {
+        return $query->whereRaw('LOWER(room_status) = ?', ['available']);
     }
 }

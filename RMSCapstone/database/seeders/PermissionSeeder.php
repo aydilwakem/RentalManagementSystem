@@ -14,94 +14,63 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            // // Activity
-            // "activity-view",
-            // "activity-list",
-            // "activity-create",
-            // "activity-edit",
-            // "activity-delete",
 
-            // // Event Category
-            // "event-category-view",
-            // "event-category-list",
-            // "event-category-create",
-            // "event-category-edit",
-            // "event-category-delete",
+            // New Reservations
+            "new-reservation-list",
+            "new-reservation-create",
+            "new-reservation-edit",
+            "new-reservation-view",
+            "new-reservation-delete",
+            "new-reservation-confirm-receipt",
+            "new-reservation-confirm",
+            "new-reservation-soft-delete",
 
-            // // Event Hall
-            // "event-hall-view",
-            // "event-hall-list",
-            // "event-hall-create",
-            // "event-hall-edit",
-            // "event-hall-delete",
+            // Confirmed Reservations
+            "confirmed-reservation-list",
+            "confirmed-reservation-view",
+            "confirmed-reservation-edit",
+            "confirmed-reservation-delete",
 
-            // // Event
-            // "event-view",
-            // "event-list",
-            // "event-create",
-            // "event-edit",
-            // "event-delete",
+            // On-Going Bookings
+            "on-going-booking-list",
+            "on-going-booking-view",
+            "on-going-booking-edit",
+            "on-going-booking-delete",
 
-            // // Maintenance
-            // "maintenance-view",
-            // "maintenance-list",
-            // "maintenance-create",
-            // "maintenance-edit",
-            // "maintenance-delete",
+            // Old Bookings
+            "old-booking-list",
+            "old-booking-view",
+            "old-booking-delete",
+            "old-booking-soft-delete",
 
-            // // Role
-            // "role-view",
-            // "role-list",
-            // "role-create",
-            // "role-edit",
-            // "role-delete",
+            // Houses
+            "house-list",
+            "house-create",
+            "house-view",
+            "house-edit",
+            "house-delete",
+            "house-soft-delete",
 
-            // // Setting Payment Method
-            // "payment-method-view",
-            // "payment-method-list",
-            // "payment-method-create",
-            // "payment-method-edit",
-            // "payment-method-delete",
+            // House Categories
+            "house-category-list",
+            "house-category-create",
+            "house-category-view",
+            "house-category-edit",
+            "house-category-delete",
+            "house-category-soft-delete",
 
-            // // User
-            // "user-view",
-            // "user-list",
-            // "user-create",
-            // "user-edit",
-            // "user-delete",
-            // Setting Payment Method
-            "payment-method-view",
-            "payment-method-list",
-            "payment-method-create",
-            "payment-method-edit",
-            "payment-method-delete",
+            // Tenants
+            "tenant-list",
+            "tenant-create",
+            "tenant-view",
+            "tenant-edit",
+            "tenant-delete",
+            "tenant-soft-delete",
 
-            // // Dashboard
-            // "dashboard-view"
+            // Appearance
+            "appearance-view",
 
-            'room-list',
-            'room-view',
-            'room-create',
-            'room-edit',
-            'room-delete',
 
-            'amenity-list',
-            'amenity-view',
-            'amenity-create',
-            'amenity-edit',
-            'amenity-delete',
-
-            'room-rate-list',
-            'room-rate-view',
-            'room-rate-create',
-            'room-rate-edit',
-            'room-rate-delete',
-
-            'room-category-list',
-            'room-category-view',
-            'room-category-create',
-            'room-category-edit',
-            'room-category-delete',
         ];
 
         foreach ($permissions as $key => $permission) {

@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Room Status -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="room_status" class="block mb-2 text-sm font-medium text-gray-900">Room
                         Status</label>
                     <select wire:model="room_status" id="room_status"
@@ -87,6 +87,18 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+
+                <!-- Base Rate -->
+                <div>
+                    <label for="base_rate" class="block mb-2 text-sm font-medium text-gray-900">Base Rate</label>
+                    <input type="base_rate" wire:model="base_rate" id="base_rate"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter base_rate">
+                    @error('base_rate')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
 
                 <!-- Image Upload -->
                 <div class="sm:col-span-2">

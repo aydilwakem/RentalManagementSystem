@@ -43,6 +43,7 @@
                 <li><strong>Max Kids:</strong> {{ $room->max_kids }}</li>
                 <li><strong>Turnover Duration:</strong> {{ $room->turnover_duration }} hours</li>
                 <li><strong>Room Status:</strong> {{ ucfirst($room->room_status) }}</li>
+                <li><strong>Base Rate:</strong> {{ $room->base_rate }}</li>
             </ul>
         </div>
 

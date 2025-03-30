@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-8 bg-white rounded-lg">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('View transactions') }}
+            {{ __('View Transaction') }}
         </h2>
     </x-slot>
 
@@ -73,8 +73,10 @@
                     </thead>
                     <tbody>
                         <tr class="bg-white border-b border-gray-200">
-                            <td class="px-6 py-4 text-gray-800">{{ $transactions->room->name ?? 'No Room Assigned' }}</td>
-                            <td class="px-6 py-4 text-gray-800">{{ $transactions->activity->name ?? 'No Activity' }}</td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->room->name ?? 'No Room Assigned' }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-800">{{ $transactions->activity->name ?? 'No Activity' }}
+                            </td>
                             <td class="px-4 py-3 text-gray-800">
                                 {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
                             </td>
@@ -113,11 +115,27 @@
                         </tr>
                         <tr class="bg-white border-b border-gray-200">
                             <th class="px-6 py-4 text-gray-700 bg-gray-50">Reference Number</th>
-                            <td class="px-6 py-4 text-gray-800">{{ $transactions->payment_reference_number ?? 'Not Provided' }}</td>
+                            <td class="px-6 py-4 text-gray-800">
+                                {{ $transactions->payment_reference_number ?? 'Not Provided' }}
+                            </td>
                         </tr>
                         <tr class="bg-white border-b border-gray-200">
+                            <th class="px-6 py-4 text-gray-700 bg-gray-50">Payment Screenshot</th>
+                            <td class="px-6 py-4 text-left">
+                                <span
+                                    class="cursor-pointer font-semibold
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           {{ $transaction->isPaid ? 'text-green-600' : 'text-yellow-500' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            hover:underline"
+                                    wire:click="confirmReceipt({{ $transaction->id }})" wire:loading.attr="disabled">
+                                    {{ $transaction->isPaid ? 'View Screenshot' : 'Confirm Receipt' }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr class="bg-white border-b border-gray-200">
                             <th class="px-6 py-4 text-gray-700 bg-gray-50">Total Amount</th>
-                            <td class="px-6 py-4 text-gray-800">₱{{ number_format($transactions->total_amount, 2) }}</td>
+                            <td class="px-6 py-4 text-gray-800">₱{{ number_format($transactions->total_amount, 2) }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -166,5 +184,51 @@
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
+        <!-- End of Delete Confirmation Modal -->
+
+        <!-- Receipt Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemReceipt">
+            <x-slot name="title">
+                {{ __('Confirm Receipt') }}
+            </x-slot>
+
+            <x-slot name="content">
+                @if ($selectedTransaction)
+                    <!-- Payment Screenshot at the Top -->
+                    <div class="flex flex-col items-center">
+                        <img src="{{ asset('storage/' . $selectedTransaction->payment_screenshot) }}"
+                            alt="Payment Screenshot" class="w-64 h-auto mb-4">
+                    </div>
+
+                    <!-- Payment Details Below -->
+                    <div class="text-left">
+                        <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
+                        </p>
+                        <p class="text-lg font-semibold">Payment Method:
+                            {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                        </p>
+                        <p class="text-lg font-semibold">Payment Reference:
+                            {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
+                        </p>
+                    </div>
+                @else
+                    {{ __('No payment screenshot available.') }}
+                @endif
+            </x-slot>
+            <p></p>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemReceipt', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-button class="ms-3" wire:click="confirmPaymentReceipt({{ $transaction?->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Confirm Receipt') }}
+                </x-button>
+            </x-slot>
+        </x-dialog-modal>
+        <!-- End of Receipt Confirmation Modal -->
+
     </div>
 </div>

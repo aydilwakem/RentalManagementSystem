@@ -22,6 +22,7 @@ class EditRoom extends Component
     public $max_kids;
     public $turnover_duration;
     public $room_status;
+    public $base_rate;
     public $image;
     public $newImage;
     public $roomCategories; // Store room categories for dropdown
@@ -44,28 +45,30 @@ class EditRoom extends Component
         $this->max_kids = $room->max_kids;
         $this->turnover_duration = $room->turnover_duration;
         $this->room_status = $room->room_status;
+        $this->base_rate = $room->base_rate;
         $this->image = $room->image;
         $this->roomCategories = RoomCategory::all();
     }
 
     public function updateRoom()
     {
-        try{
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'room_category_id' => 'nullable|exists:prd_room_categories,id',
-            'ideal_guest' => 'required|integer|min:1',
-            'max_adults' => 'required|integer|min:1',
-            'max_kids' => 'required|integer|min:0',
-            'turnover_duration' => 'required|integer|min:1',
-            'room_status' => 'required|in:Available,Booked,Out of Service',
-            'newImage' => 'nullable|image|max:2048',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmEditItem = false;
-        throw $e;
-    }
+        try {
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'room_category_id' => 'nullable|exists:prd_room_categories,id',
+                'ideal_guest' => 'required|integer|min:1',
+                'max_adults' => 'required|integer|min:1',
+                'max_kids' => 'required|integer|min:0',
+                'turnover_duration' => 'required|integer|min:1',
+                'room_status' => 'required|in:Available,Booked,Out of Service',
+                'base_rate' => 'required|numeric|min:100|max:1000000.00',
+                'newImage' => 'nullable|image|max:2048',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         // Handle image upload if a new one is selected
         if ($this->newImage) {
@@ -84,6 +87,7 @@ class EditRoom extends Component
             'max_kids' => $this->max_kids,
             'turnover_duration' => $this->turnover_duration,
             'room_status' => $this->room_status,
+            'base_rate' => $this->base_rate,
             'image' => $this->image,
         ]);
 

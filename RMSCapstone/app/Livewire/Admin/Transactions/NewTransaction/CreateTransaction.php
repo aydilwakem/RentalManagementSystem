@@ -22,6 +22,7 @@ class CreateTransaction extends Component
     public $contact_number;
     public $city_municipality;
     public $country;
+    public $available;
 
     // Transaction Details
     public $room_id;
@@ -67,8 +68,33 @@ class CreateTransaction extends Component
     public function mount()
     {
         $this->paymentMethods = PaymentMethod::all(); // Fetch all payment methods
-        $this->rooms = Room::all(); // Fetch all available rooms
+        $this->rooms = Room::availableRooms()->get(); // ✅ Fetch only available rooms
         $this->activities = Activity::all(); // Fetch all activities
+    }
+
+
+    public function updated($property)
+    {
+        if ($property === 'room_id' || $property === 'activity_id') {
+            $this->calculateTotalAmount();
+        }
+
+        if ($property === 'total_adults' || $property === 'total_kids') {
+            $this->calculateTotalPax();
+        }
+    }
+
+    public function calculateTotalAmount()
+    {
+        $roomRate = $this->room_id ? Room::find($this->room_id)?->base_rate ?? 0 : 0;
+        $activityRate = $this->activity_id ? Activity::find($this->activity_id)?->amount ?? 0 : 0;
+
+        $this->total_amount = $roomRate + $activityRate;
+    }
+
+    public function calculateTotalPax()
+    {
+        $this->pax = ($this->total_adults ?? 0) + ($this->total_kids ?? 0);
     }
 
     /**
@@ -174,7 +200,7 @@ class CreateTransaction extends Component
     {
         return view('livewire.admin.transactions.new-transaction.create-transaction', [
             'paymentMethods' => $this->paymentMethods,
-            'rooms' => $this->rooms,
+            'rooms' =>  $this->rooms,
             'activities' => $this->activities,
         ]);
     }

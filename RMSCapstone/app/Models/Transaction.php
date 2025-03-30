@@ -101,4 +101,12 @@ class Transaction extends Model
     {
         $query->where('first_name', 'like', "%{$search}%")->where('last_name', 'like', "%{$search}%");
     }
+
+
+    public function scopeNewReservations($query)
+    {
+        return $query
+            ->where('isReserved', false)
+            ->where('isConfirmed', false);
+    }
 }
