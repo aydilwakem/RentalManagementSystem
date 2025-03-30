@@ -41,7 +41,7 @@ use App\Livewire\Admin\Tenants\ViewTenant;
 
 // Welcome page
 Route::get('/', function () {
-    return view('admin.welcome'); // index file
+    return redirect()->route('login'); // index file
 })->name('admin.welcome');
 
 
@@ -53,7 +53,7 @@ Route::middleware([
 ])->group(function () {
 
     // Dashboard Route
-    Route::get('/dashboard', function () {
+    Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 

@@ -12,27 +12,23 @@ class ViewEvents extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
 
-    #[Url()]
+    #[Url]
     public $perPage = 5;
 
-    #[Url(history:true)]
-    public $sortBy='created_at';
-
-    #[Url(history:true)]
-    public $sortDir='DESC';
-
-    public $eventStatus = ''; 
-
+    #[Url(history: true)]
+    public $sortBy = 'created_at';
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
+    public $eventStatus = '';
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-        }
-    
+    {
+        $this->confirmItemDelete = $id;
+    }
 
     public function mount()
     {
@@ -42,56 +38,53 @@ class ViewEvents extends Component
         }
     }
 
-
-    public function deleteEvent($id)
+    public function deleteEvent()
     {
-        $event = Event::find($id);
-        if ($event) {
-            
-            
-            if ($this->confirmItemDelete) {
-                Event::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+        if ($this->confirmItemDelete) {
+            // Find and delete the event
+            Event::find($this->confirmItemDelete)?->delete();
 
-             // Fetch remaining - sorted by creation date
-             $event = Event::orderBy('created_at', 'ASC')->get();
+            // Reset confirmation state
+            $this->confirmItemDelete = false;
 
-             // Reset fake IDs
-             $fakeIDs = [];
-             foreach ($event as $index => $eventItem) {
-                 $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-             }
- 
-             // Store updated fake IDs in a unique session key
+            // Recalculate fake IDs
+            $fakeIDs = [];
+            foreach (Event::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+                $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store updated fake IDs in session
             session(['fake_ids_events' => $fakeIDs]);
+
+            // Flash message for user feedback
             session()->flash('message', 'Event successfully deleted!');
         }
-    }
     }
 
     public function setSortBy($sortByField)
     {
         if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
 
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
 
-    
     public function render()
     {
+        $allEvents = Event::all();
+
         $event = Event::query()
             ->search($this->search)
-            ->when($this->eventStatus !== '', function($query){
+            ->when($this->eventStatus !== '', function ($query) {
                 $query->where('status', $this->eventStatus);
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-            // Retrieve unique session 
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_events', []);
 
         // Recalculate fake IDs if count mismatches
@@ -104,7 +97,8 @@ class ViewEvents extends Component
         }
 
         return view('livewire.admin.events.view-events', [
-            'event' => $event, 
+            'event' => $event,
+            'allEvents' => $allEvents,
             'fakeIDs' => $fakeIDs,
         ]);
     }

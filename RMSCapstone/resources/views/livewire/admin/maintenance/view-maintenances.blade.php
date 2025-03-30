@@ -1,6 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-
-    @if ($maintenances->isEmpty())
+    @if ($allMaintenances->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No maintenances yet.<br> Click "Create Maintenance" to add a
@@ -232,7 +231,7 @@
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        @foreach ($maintenances as $maintenance)
+                        @forelse ($maintenances as $maintenance)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $fakeIDs[$maintenance->id] ?? 'MNT-???' }}
@@ -289,7 +288,13 @@
 
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No maintenances found matching this status.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
 
@@ -328,7 +333,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteMaintenances({{ $maintenance->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteMaintenances"
                             wire:loading.attr="disabled">
                             {{ __('Delete Maintenance') }}
                         </x-danger-button>

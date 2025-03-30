@@ -25,11 +25,9 @@ class ViewRoomRates extends Component
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-        }
-    
-
+    {
+        $this->confirmItemDelete = $id;
+    }
 
     public function mount()
     {
@@ -39,16 +37,15 @@ class ViewRoomRates extends Component
         }
     }
 
-    public function deleteRoomRate($id)
+    public function deleteRoomRate()
     {
-        // Find the room rate by ID
-        $roomRate = RoomRate::find($id);
+        if ($this->confirmItemDelete) {
 
-        if ($roomRate) {
-            // Delete the room rate
-            if ($this->confirmItemDelete) {
-                RoomRate::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+            // Find and delete the room rate
+            RoomRate::find($this->confirmItemDelete)?->delete();
+
+            // Reset confirmation state
+            $this->confirmItemDelete = false;
 
             // Fetch remaining - sorted by creation date
             $roomRate = RoomRate::orderBy('created_at', 'ASC')->get();
@@ -62,26 +59,25 @@ class ViewRoomRates extends Component
             // Store updated fake IDs in a unique session key
             session(['fake_ids_roomRate' => $fakeIDs]);
 
-
             // Flash success message
             session()->flash('message', 'Room Rate successfully deleted!');
         }
     }
-    }
 
     public function setSortBy($sortByField)
     {
-
         if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
 
     public function render()
     {
+        $allRoomRates = RoomRate::all();
+
         $roomRates = RoomRate::query()
             ->when($this->statusFilter, function ($query) {
                 $query->where('rate_type', $this->statusFilter);
@@ -90,7 +86,7 @@ class ViewRoomRates extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Retrieve unique session 
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_roomRate', []);
 
         // Recalculate fake IDs if count mismatches
@@ -102,10 +98,10 @@ class ViewRoomRates extends Component
             session(['fake_ids_roomRate' => $fakeIDs]);
         }
 
-
         return view('livewire.admin.room-rates.view-room-rates', [
             'roomRates' => $roomRates,
             'fakeIDs' => $fakeIDs,
+            'allRoomRates' => $allRoomRates,
         ]);
     }
 }

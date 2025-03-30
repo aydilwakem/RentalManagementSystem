@@ -1,8 +1,9 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($roomRates->isEmpty())
+    @if ($allRoomRates->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No rooms rates yet.<br> Click "Create Room Rate" to add a new
+            <p class="text-gray-500 text-lg font-semibold">No rooms rates yet.<br> Click "Create Room Rate" to add a
+                new
                 room rate.</p>
             <x-button class="mt-4" href="{{ route('admin.create-room-rate') }}" icon="fas fa-plus" wire:navigate>
                 Create Room Rate
@@ -20,8 +21,8 @@
                     </div>
                 @endcan
                 <!-- Deleted Rooms (Restore and Delete Forever -->
-                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2" icon="fas fa-trash"
-                    href="{{ route('admin.deleted-room-rates') }}">
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-room-rates') }}">
                     Deleted Room Rates
                 </x-button>
             </div>
@@ -335,7 +336,7 @@
                     </thead>
 
 
-                    @foreach ($roomRates as $roomRate)
+                    @forelse ($roomRates as $roomRate)
                         <tr class="border-b">
                             {{-- Room Rate ID --}}
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
@@ -392,7 +393,13 @@
 
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No room rates found matching this type.
+                            </td>
+                        </tr>
+                    @endforelse
                 </table>
 
 
@@ -429,7 +436,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteRoomRate({{ $roomRate->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteRoomRate"
                             wire:loading.attr="disabled">
                             {{ __('Delete Room Rate') }}
                         </x-danger-button>
@@ -437,6 +444,5 @@
                 </x-dialog-modal>
             </div>
         </div>
-
     @endif
 </div>
