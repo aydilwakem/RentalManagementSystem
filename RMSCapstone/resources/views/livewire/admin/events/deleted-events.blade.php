@@ -49,7 +49,7 @@
                         <td class="px-4 py-3 font-medium text-gray-900 text-left">
                             {{ $fakeIDs[$event->id] ?? 'RCT-???' }}</td>
                         <td class="px-4 py-3 text-left">{{ $event->name }}</td>
-                        <td class="px-4 py-3 text-left">{{ $event->category->name }}</td>
+                        <td class="px-4 py-3 text-left">{{ $event->category->name ?? 'N/A'}}</td>
                         <td class="px-4 py-3 space-x-2 text-center">
                             <x-button wire:click="restoreEvent({{ $event->id }})">
                                 Restore

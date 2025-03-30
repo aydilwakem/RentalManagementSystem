@@ -268,7 +268,7 @@
                         {{ $fakeIDs[$room->id] ?? 'RM-???' }}
                     </th>
                     <td class="px-4 py-3">{{ $room->name }}</td>
-                    <td class="px-4 py-3">{{ $room->category->name }}</td>
+                    <td class="px-4 py-3">{{ $room->category->name ?? 'N/A'}}</td>
                     <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
                     <td class="px-4 py-3">{{ $room->max_adults }}</td>
                     <td class="px-4 py-3">{{ $room->max_kids }}</td>

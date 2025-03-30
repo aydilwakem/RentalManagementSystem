@@ -157,7 +157,7 @@
 
             <x-button class="ms-3 bg-green text-white" wire:click="updateTenant({{ $tenant->id }})"
                 wire:loading.attr="disabled">
-                {{ __('Edit Room') }}
+                {{ __('Edit Tenant') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>
