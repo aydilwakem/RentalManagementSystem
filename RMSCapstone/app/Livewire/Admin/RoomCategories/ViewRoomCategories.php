@@ -22,7 +22,7 @@ class ViewRoomCategories extends Component
 
     #[Url(history:true)]
     public $search = '';
-    public $perPage = 5;
+    public $perPage = 10;
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint

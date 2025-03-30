@@ -23,9 +23,9 @@
             <x-button icon="fas fa-plus" href="{{ route('admin.create-house-category') }}">
                 New House Category
             </x-button>
-            <!-- Deleted Rooms (Restore and Delete Forever -->
+            <!-- Deleted Categories (Restore and Delete Forever -->
             <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                icon="fas fa-trash" href="">
+                icon="fas fa-trash" href="{{ route('admin.deleted-house-categories') }}">
                 Deleted Categories
             </x-button>
         </div>
@@ -154,7 +154,7 @@
                     @foreach ($houseCategories as $houseCategory)
                     <tr class="border-b">
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                            {{ $fakeIDs[$houseCategory->id] ?? 'AMY-???' }}
+                            {{ $fakeIDs[$houseCategory->id] ?? 'HCT-???' }}
                         </th>
                         <td class="px-4 py-3 font-semibold text-gray-900">{{ $houseCategory->name }}</td>
                         <td class="px-4 py-3 font-semibold text-gray-900">{{ $houseCategory->description }}</td>
@@ -217,6 +217,23 @@
                         wire:loading.attr="disabled">
                         {{ __('Delete House Category') }}
                     </x-danger-button>
+                </x-slot>
+            </x-dialog-modal>
+
+            {{-- Cannot Delete Modal --}}
+            <x-dialog-modal wire:model="cannotDeleteItem">
+                <x-slot name="title">
+                    {{ __('Unable to Delete') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('This category is currently in use and cannot be deleted.') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                        {{ __('OK') }}
+                    </x-secondary-button>
                 </x-slot>
             </x-dialog-modal>
         </div>

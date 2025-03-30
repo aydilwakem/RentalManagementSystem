@@ -15,7 +15,7 @@ class ViewMaintenances extends Component
     public $search = '';
 
     #[Url]
-    public $perPage = 5;
+    public $perPage = 10;
 
     #[Url(history: true)]
     public $sortBy = 'created_at';

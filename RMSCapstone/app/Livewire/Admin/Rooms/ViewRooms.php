@@ -19,7 +19,7 @@ class ViewRooms extends Component
     #[Url(history: true)]
     public $search = '';
     #[Url(history: true)]
-    public $perPage = 5;
+    public $perPage = 10;
     public $statusFilter = ''; // Holds the selected room status
 
     public $confirmItemDelete = false;

@@ -47,7 +47,7 @@ class EditProperty extends Component
             // Validate form input 
             $this->validate([
                 'name' => 'required|string',
-                'house_category_id' => 'nullable|exists:lt_house_categories,id',
+                'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
                 'monthly_rent' => 'required|numeric|min:0',
                 'availability' => 'required|in:available,unavailable',

@@ -5,7 +5,7 @@
     <div class="text-center py-10">
         <p class="text-gray-500 text-lg font-semibold">No tenants yet.<br> Click "Create Tenant" to add a new tenant.
         </p>
-        <x-button class="mt-4" href="{{ route('admin.create-room') }}" icon="fas fa-plus">
+        <x-button class="mt-4" href="{{ route('admin.create-tenant') }}" icon="fas fa-plus">
             Create Tenant
         </x-button>
     </div>
@@ -178,7 +178,7 @@
                         {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}
                     </th>
                     <td class="px-4 py-3 font-semibold text-gray-900">
-                        {{ $tenant->first_name }}{{ $tenant->last_name }}
+                        {{ $tenant->first_name }} {{ $tenant->last_name }}
                     </td>
                     <td class="px-4 py-3">{{ $tenant->email }}</td>
                     <td class="px-4 py-3">{{ $tenant->phone }}</td>

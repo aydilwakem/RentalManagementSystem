@@ -15,13 +15,13 @@ class ViewProperties extends Component
     public $search = '';
 
     #[Url()]
-    public $perPage = 5;
+    public $perPage = 10;
 
     #[Url(history: true)]
     public $sortBy = 'created_at';
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
 
     public $availability = '';
 

@@ -6,6 +6,8 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\HouseCategory;
+use App\Models\Property;
+use Illuminate\Database\QueryException;
 
 class ViewHouseCategories extends Component
 {
@@ -15,15 +17,16 @@ class ViewHouseCategories extends Component
     public $search = '';
 
     #[Url()]
-    public $perPage = 5;
+    public $perPage = 10;
 
     #[Url(history: true)]
     public $sortBy = 'created_at';
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -38,28 +41,44 @@ class ViewHouseCategories extends Component
         }
     }
 
-    public function deleteHouseCategory($id)
+    public function deleteHouseCategory()
     {
-        $houseCategory = HouseCategory::find($id);
+        // Find the category by ID
+        $houseCategory = HouseCategory::find($this->confirmItemDelete);
 
-        if ($houseCategory) {
-            if ($this->confirmItemDelete) {
-                HouseCategory::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+            // Check if the category is referenced in another table
+        if (Property::where('house_category_id', $houseCategory->id)->exists()) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
 
-                // Fetch remaining - sorted by creation date
-                $houseCategory = HouseCategory::orderBy('created_at', 'ASC')->get();
+        try{
+            $houseCategory->delete(); // Attempt soft deletion
 
-                // Reset fake IDs
-                $fakeIDs = [];
-                foreach ($houseCategory as $index => $houseCategoryItem) {
-                    $fakeIDs[$houseCategoryItem->id] = 'HCY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
 
-                // Store updated fake IDs in a unique session key
-                session(['fake_ids_houseCategories' => $fakeIDs]);
+            // Fetch remaining - sorted by creation date
+            $houseCategory = HouseCategory::orderBy('created_at', 'ASC')->get();
 
-                session()->flash('message', 'House Category successfully deleted!');
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($houseCategory as $index => $category) {
+                $fakeIDs[$category->id] = 'HCT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store updated fake IDs in a unique session key
+           session(['fake_ids_houseCategory' => $fakeIDs]);
+
+            // Flash success message
+            session()->flash('message', 'House Category successfully deleted!');
+    }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
             }
         }
     }
@@ -89,7 +108,7 @@ class ViewHouseCategories extends Component
         if (count($fakeIDs) !== HouseCategory::count()) {
             $fakeIDs = [];
             foreach (HouseCategory::orderBy('created_at', 'ASC')->get() as $index => $houseCategoryItem) {
-                $fakeIDs[$houseCategoryItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                $fakeIDs[$houseCategoryItem->id] = 'HCT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_houseCategories' => $fakeIDs]);
         }

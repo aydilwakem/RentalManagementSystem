@@ -19,10 +19,10 @@
                 </x-button>
             </div>
 
-            {{-- <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                 icon="fas fa-trash" href="{{ route('admin.deleted-properties') }}">
-                Deleted properties
-            </x-button> --}}
+                Deleted Houses
+            </x-button>
 
         </div>
         {{-- Display Session Message --}}
