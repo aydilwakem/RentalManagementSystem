@@ -15,28 +15,20 @@ return new class extends Migration {
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('suffix')->nullable(); // e.g., Jr., Sr., III
-
+            $table->unsignedBigInteger('house_id')->nullable(); // Foreign key
             // Contact Information
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-
-            // Address Information
-            $table->string('house_number')->nullable();
-            $table->string('street')->nullable();
-            $table->string('barangay')->nullable();
-            $table->string('city_municipality');
-            $table->string('province');
-            $table->string('region')->nullable();
-            $table->string('postal_code');
-            $table->string('country')->default('Philippines');
-
             // Additional Information
             $table->date('birthdate')->nullable();
             $table->string('gender')->nullable(); // Male, Female, Other
             $table->string('occupation')->nullable();
             $table->text('notes')->nullable(); // Additional remarks
-
+            $table->softDeletes();
             $table->timestamps();
+
+            // Foreign Key Constraint
+            $table->foreign('house_id')->references('id')->on('lt_houses');
         });
     }
 

@@ -1,33 +1,28 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Transaction') }}
+            {{ __('Edit Reservation') }}
         </h2>
     </x-slot>
-    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mb-4 mt-4 bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Transaction</h2>
-
-        <!----------------------------- Form ------------------------------------------>
+    <!-- Form container -->
+    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
+        <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Reservation</h2>
         <form wire:submit.prevent="">
-            <!----------------------------- Start of Form Card ------------------------------------------>
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-
-                <!----------------------------- Reservation Holder Details ------------------------------------------------->
-
-                <!-- First Name -->
+                <!-- Guest Name -->
                 <div>
                     <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
-                    <input type="text" wire:model="first_name" id="first_name"
+                    <input type="text" wire:model="first_name" id="first_name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter first name" required>
+                        placeholder="Enter first name">
                     @error('first_name')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Middle Name -->
                 <div>
-                    <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle Name</label>
+                    <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle
+                        Name</label>
                     <input type="text" wire:model="middle_name" id="middle_name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter middle name">
@@ -36,137 +31,65 @@
                     @enderror
                 </div>
 
-                <!-- Last Name -->
                 <div>
                     <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
-                    <input type="text" wire:model="last_name" id="last_name"
+                    <input type="text" wire:model="last_name" id="last_name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter last name" required>
+                        placeholder="Enter last name">
                     @error('last_name')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Suffix -->
                 <div>
                     <label for="suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix</label>
                     <input type="text" wire:model="suffix" id="suffix"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter suffix (e.g., Jr., Sr., III)">
+                        placeholder="Enter suffix (if any)">
                     @error('suffix')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!----------------------------- Contact Information ------------------------------->
+                <!-- Contact Information -->
 
-                <!-- Email -->
                 <div>
                     <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                    <input type="email" wire:model="email" id="email"
+                    <input type="email" wire:model="email" id="email" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter email" required>
+                        placeholder="Enter email">
                     @error('email')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Contact Number -->
                 <div>
                     <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900">Contact
                         Number</label>
-                    <input type="text" wire:model="contact_number" id="contact_number"
+                    <input type="text" wire:model="contact_number" id="contact_number" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter contact number" required>
+                        placeholder="Enter contact number">
                     @error('contact_number')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!----------------------------- Address ------------------------------------------->
+                <!-- Address -->
 
-                <!-- House Number -->
                 <div>
-                    <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900">House Number</label>
-                    <input type="text" wire:model="house_number" id="house_number"
+                    <label for="city_municipality"
+                        class="block mb-2 text-sm font-medium text-gray-900">City/Municipality</label>
+                    <input type="text" wire:model="city_municipality" id="city_municipality" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter house number">
-                    @error('house_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Street -->
-                <div>
-                    <label for="street" class="block mb-2 text-sm font-medium text-gray-900">Street</label>
-                    <input type="text" wire:model="street" id="street"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter street">
-                    @error('street')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Barangay -->
-                <div>
-                    <label for="barangay" class="block mb-2 text-sm font-medium text-gray-900">Barangay</label>
-                    <input type="text" wire:model="barangay" id="barangay"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter barangay">
-                    @error('barangay')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- City / Municipality -->
-                <div>
-                    <label for="city_municipality" class="block mb-2 text-sm font-medium text-gray-900">City /
-                        Municipality</label>
-                    <input type="text" wire:model="city_municipality" id="city_municipality"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter city/municipality">
+                        placeholder="Enter city or municipality">
                     @error('city_municipality')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Province -->
-                <div>
-                    <label for="province" class="block mb-2 text-sm font-medium text-gray-900">Province</label>
-                    <input type="text" wire:model="province" id="province"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter province">
-                    @error('province')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Region -->
-                <div>
-                    <label for="region" class="block mb-2 text-sm font-medium text-gray-900">Region</label>
-                    <input type="text" wire:model="region" id="region"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter region">
-                    @error('region')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Postal Code -->
-                <div>
-                    <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900">Postal Code</label>
-                    <input type="text" wire:model="postal_code" id="postal_code"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter postal code">
-                    @error('postal_code')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Country -->
                 <div>
                     <label for="country" class="block mb-2 text-sm font-medium text-gray-900">Country</label>
-                    <input type="text" wire:model="country" id="country"
+                    <input type="text" wire:model="country" id="country" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter country">
                     @error('country')
@@ -174,17 +97,15 @@
                     @enderror
                 </div>
 
+                <!-- Transaction Details ---------------------------------------------------------->
 
-
-                <!----------------------------- Reservation Details ------------------------------------------------->
-
-                <!-- Room Selection -->
+                <!-- Rooms -->
                 <div>
                     <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">Room</label>
                     <select wire:model="room_id" id="room_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                        <option value="">Select a Room</option>
-                        @foreach($rooms as $room)
+                        <option value="">Select Room</option>
+                        @foreach ($rooms as $room)
                             <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
                     </select>
@@ -193,13 +114,13 @@
                     @enderror
                 </div>
 
-                <!-- Activity Selection -->
+                <!-- Activities -->
                 <div>
                     <label for="activity_id" class="block mb-2 text-sm font-medium text-gray-900">Activity</label>
                     <select wire:model="activity_id" id="activity_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                        <option value="">Select an Activity</option>
-                        @foreach($activities as $activity)
+                        <option value="">Select Activity</option>
+                        @foreach ($activities as $activity)
                             <option value="{{ $activity->id }}">{{ $activity->name }}</option>
                         @endforeach
                     </select>
@@ -208,7 +129,20 @@
                     @enderror
                 </div>
 
-                <!-- Check-in date -->
+                {{-- Total Amount --}}
+                <div>
+                    <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900">Total
+                        Amount</label>
+                    <input type="number" wire:model="total_amount" id="total_amount" rows="8"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter total amount"></input>
+                    @error('total_amount')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+
+                {{-- Check-in Date --}}
                 <div>
                     <label for="check_in_date" class="block mb-2 text-sm font-medium text-gray-900">Check-in
                         Date</label>
@@ -219,7 +153,7 @@
                     @enderror
                 </div>
 
-                <!-- Check-out date -->
+                {{-- Check-out Date --}}
                 <div>
                     <label for="check_out_date" class="block mb-2 text-sm font-medium text-gray-900">Check-out
                         Date</label>
@@ -230,7 +164,7 @@
                     @enderror
                 </div>
 
-                <!-- Check-in Time -->
+                {{-- Check-in Time --}}
                 <div>
                     <label for="check_in_time" class="block mb-2 text-sm font-medium text-gray-900">Check-in
                         Time</label>
@@ -241,7 +175,7 @@
                     @enderror
                 </div>
 
-                <!-- Check-out Time -->
+                {{-- Check-out Time --}}
                 <div>
                     <label for="check_out_time" class="block mb-2 text-sm font-medium text-gray-900">Check-out
                         Time</label>
@@ -252,72 +186,64 @@
                     @enderror
                 </div>
 
-                <!-- Total Adults -->
+
+                {{-- Total Adults --}}
                 <div>
-                    <label for="total_adults" class="block mb-2 text-sm font-medium text-gray-900">Total Adults</label>
+                    <label for="total_adults" class="block mb-2 text-sm font-medium text-gray-900">Total
+                        Adults</label>
                     <input type="number" wire:model="total_adults" id="total_adults"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        min="1">
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter number of adults">
                     @error('total_adults')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Total Kids -->
+                {{-- Total Kids --}}
                 <div>
                     <label for="total_kids" class="block mb-2 text-sm font-medium text-gray-900">Total Kids</label>
                     <input type="number" wire:model="total_kids" id="total_kids"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        min="0">
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter number of kids">
                     @error('total_kids')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Pax -->
+                {{-- Pax --}}
                 <div>
                     <label for="pax" class="block mb-2 text-sm font-medium text-gray-900">Total Pax</label>
                     <input type="number" wire:model="pax" id="pax"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        min="1">
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter total pax">
                     @error('pax')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Total Amount -->
+                {{-- Pets --}}
                 <div>
-                    <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900">Total Amount</label>
-                    <input type="text" wire:model="total_amount" id="total_amount"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter total amount">
-                    @error('total_amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Pets Allowed -->
-                <div>
-                    <label for="pets" class="block mb-2 text-sm font-medium text-gray-900">Pets</label>
-                    <input type="text" wire:model="pets" id="pets"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter pet details">
+                    <label for="pets" class="block mb-2 text-sm font-medium text-gray-900">Are there any pets? If
+                        yes, how many?</label>
+                    <input type="number" wire:model="pets" id="pets"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter number of pets">
                     @error('pets')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!----------------------------- Payment Details ------------------------------------------------->
+                <!-- Payment Information ------------------------------------------->
 
-                <!-- Payment Method -->
+                <!-- Payment Methods -->
                 <div>
                     <label for="payment_method_id" class="block mb-2 text-sm font-medium text-gray-900">Payment
                         Method</label>
                     <select wire:model="payment_method_id" id="payment_method_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Payment Method</option>
-                        @foreach($paymentMethods as $method)
-                            <option value="{{ $method->id }}">{{ $method->mode_of_payment_name}}</option>
+                        @foreach ($paymentMethods as $method)
+                            <option value="{{ $method->id }}">{{ $method->mode_of_payment_name }}</option>
                         @endforeach
                     </select>
                     @error('payment_method_id')
@@ -330,19 +256,18 @@
                     <label for="payment_reference_number" class="block mb-2 text-sm font-medium text-gray-900">Payment
                         Reference Number</label>
                     <input type="text" wire:model="payment_reference_number" id="payment_reference_number"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter payment reference number">
                     @error('payment_reference_number')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Payment Screenshot Upload -->
+                <!-- Image Upload -->
                 <div class="sm:col-span-2">
-                    <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Upload New
-                        Image
+                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload New Screenshot
                         (Optional)</label>
-                    <input type="file" wire:model="newImage" id="payment_screenshot" accept="image/png, image/jpeg"
+                    <input type="file" wire:model="newImage" id="image" accept="image/png, image/jpeg"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('newImage')
@@ -368,37 +293,24 @@
                     </div>
                 </div>
 
-                <!-- Terms and Conditions Checkbox -->
-                <div class="flex items-center mt-2">
-                    <input type="checkbox" wire:model="terms" id="terms"
-                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                    <label for="terms" class="ml-2 text-sm font-medium text-gray-900">I agree to the Terms and
-                        Conditions</label>
-                    @error('terms')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
             </div>
-            <!----------------------------- End of Form Card ------------------------------------------>
-
             <!-- Submit Button -->
             <div class="flex justify-between items-center space-y-2 mt-6">
                 <x-button onclick="history.back()" type="button"
                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                     Cancel
                 </x-button>
-                <x-button type="submit" wire:click="confirmEdit({{ $transaction->id }})" wire:loading.attr="disabled">
+                <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage"
+                    wire:click="confirmEdit({{ $transaction->id }})">
                     Save Changes
                 </x-button>
             </div>
         </form>
     </div>
-
     <!-- Edit Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmEditItem">
         <x-slot name="title">
-            {{ __('Edit Transaction') }}
+            {{ __('Edit Reservation') }}
         </x-slot>
 
         <x-slot name="content">
@@ -412,10 +324,8 @@
 
             <x-button class="ms-3 bg-green text-white" wire:click="updateTransaction({{ $transaction->id }})"
                 wire:loading.attr="disabled">
-                {{ __('Edit Transaction') }}
+                {{ __('Edit Reservation') }}
             </x-button>
-
         </x-slot>
     </x-dialog-modal>
-
 </div>

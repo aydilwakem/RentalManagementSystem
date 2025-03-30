@@ -44,18 +44,18 @@ class EditRoomCategory extends Component
 
     public function updateCategory()
     {
-        try{
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
-            'selectedAmenities' => 'array',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-                // If validation fails, close the modal
-                $this->confirmEditItem = false;
-                throw $e;
-            }
+        try {
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
+                'selectedAmenities' => 'array',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         // Ensure the image is uploaded properly
         if ($this->newImage && !$this->newImage->isValid()) {

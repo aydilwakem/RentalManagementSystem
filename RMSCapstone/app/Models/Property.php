@@ -34,6 +34,10 @@ class Property extends Model
         return $this->belongsTo(HouseCategory::class, 'house_category_id');
     }
 
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class, 'house_id');
+    }
     public function scopeSearch($query, $search)
     {
         $query->where('name', 'like', "%{$search}%");

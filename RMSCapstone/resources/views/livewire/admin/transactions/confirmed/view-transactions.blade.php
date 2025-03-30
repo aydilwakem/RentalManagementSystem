@@ -303,8 +303,10 @@
                                 <td class="px-4 py-3">
                                     {{ optional($transaction->room)->name ?? 'No room assigned' }}
                                 </td>
-                                <td class="px-4 py-3"> {{ $transaction->check_in_date }}</td>
-                                <td class="px-4 py-3"> {{ $transaction->check_out_date }}</td>
+                                <td class="px-4 py-3">
+                                    {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}</td>
+                                <td class="px-4 py-3">
+                                    {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('F j, Y') }}</td>
 
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
 

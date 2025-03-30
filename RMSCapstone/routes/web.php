@@ -31,6 +31,11 @@ use App\Livewire\Admin\Transactions\NewTransaction\ViewTransaction;
 use App\Livewire\Admin\Transactions\NewTransaction\EditTransaction;
 use App\Livewire\Admin\Properties\EditProperty;
 use App\Livewire\Admin\Properties\ViewProperty;
+use App\Livewire\Admin\HouseCategories\EditHouseCategory;
+use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
+use App\Livewire\Admin\Tenants\EditTenant;
+use App\Livewire\Admin\Tenants\ViewTenant;
+
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -119,37 +124,9 @@ Route::middleware([
     })->name('admin.deleted-rooms');
 
 
-    // Long-term - Properties
-
-    // List
-    Route::get('/properties', function () {
-        return view('admin.rentals.properties.view-properties');
-    })->name('admin.properties');
-
-    // Create
-    Route::get('create/property', function () {
-        return view('admin.rentals.properties.create-property');
-    })->name('admin.create-property');
-
-    // View
-    Route::get('view/property/{property}', ViewProperty::class)
-        ->name('admin.view-property');
-
-    // Edit
-    Route::get('edit/property/{property}', EditProperty::class)
-        ->name('admin.edit-property');
 
 
 
-
-    // Long-term - Leases
-    Route::get('/leases', function () {
-        return view('admin.rentals.leases.view-leases');
-    })->name('admin.leases');
-
-
-
-    // Room Categories Route
 
     // List
     Route::get('/room-categories', function () {
@@ -443,6 +420,100 @@ Route::middleware([
     Route::get('/old-bookings', function () {
         return view('admin.transactions.old.view-transactions');
     })->name('admin.view-old-transactions');
+
+
+
+    /***
+     * These routes are for Long-Term Rentals.
+     * 
+     * Route list: 
+     * - Houses
+     * - Tenants
+     * - House Categories
+     * - Payments
+     * - Invoices
+     */
+
+
+    // ----------------- Houses
+
+    // List
+    Route::get('/properties', function () {
+        return view('admin.rentals.properties.view-properties');
+    })->name('admin.properties');
+
+    // Create
+    Route::get('create/property', function () {
+        return view('admin.rentals.properties.create-property');
+    })->name('admin.create-property');
+
+    // View
+    Route::get('view/property/{property}', ViewProperty::class)
+        ->name('admin.view-property');
+
+    // Edit
+    Route::get('edit/property/{property}', EditProperty::class)
+        ->name('admin.edit-property');
+
+    // Deleted Houses (Soft Deletes)
+    Route::get('deleted-houses', function () {
+        return view('admin.rentals.properties.deleted-properties');
+    })->name('admin.deleted-properties');
+
+
+
+
+    // ------------------ House Categories
+
+    // List
+    Route::get('/house-categories', function () {
+        return view('admin.rentals.house-categories.view-house-categories');
+    })->name('admin.house-categories');
+
+    // Create
+    Route::get('create/house-category', function () {
+        return view('admin.rentals.house-categories.create-house-category');
+    })->name('admin.create-house-category');
+
+    // View
+    Route::get('view/house-category/{houseCategory}', ViewHouseCategory::class)
+        ->name('admin.view-house-category');
+
+    // Edit
+    Route::get('edit/house-category/{houseCategory}', EditHouseCategory::class)
+        ->name('admin.edit-house-category');
+
+    // Deleted House Categories (Soft Deletes)
+    Route::get('deleted-house-categories', function () {
+        return view('admin.rentals.house-categories.deleted-house-categories');
+    })->name('admin.deleted-house-categories');
+
+
+
+    // ------------------ Tenants
+
+    // List
+    Route::get('/tenants', function () {
+        return view('admin.rentals.tenants.view-tenants');
+    })->name('admin.tenants');
+
+    // Create
+    Route::get('create/tenant', function () {
+        return view('admin.rentals.tenants.create-tenant');
+    })->name('admin.create-tenant');
+
+    // View
+    Route::get('view/tenant/{tenant}', ViewTenant::class)
+        ->name('admin.view-tenant');
+
+    // Edit
+    Route::get('edit/tenant/{tenant}', EditTenant::class)
+        ->name('admin.edit-tenant');
+
+    // Deleted Tenants (Soft Deletes)
+    Route::get('deleted-tenants', function () {
+        return view('admin.rentals.tenants.deleted-tenants');
+    })->name('admin.deleted-tenants');
 });
 
 

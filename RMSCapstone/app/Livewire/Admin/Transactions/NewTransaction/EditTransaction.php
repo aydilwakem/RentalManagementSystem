@@ -1,21 +1,23 @@
 <?php
 
+
 namespace App\Livewire\Admin\Transactions\NewTransaction;
 
-use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Transaction;
 use App\Models\Room;
 use App\Models\Activity;
-use App\Models\Transaction;
 use App\Models\PaymentMethod;
 
 #[Layout('layouts.app')]
 class EditTransaction extends Component
 {
-
     use WithFileUploads;
-    public Transaction $transaction;
+
+    public Transaction $transaction; // Store the model received
 
     // Reservation Holder Details
     public $first_name;
@@ -24,45 +26,39 @@ class EditTransaction extends Component
     public $suffix;
     public $email;
     public $contact_number;
-    public $house_number;
-    public $street;
-    public $barangay;
     public $city_municipality;
-    public $province;
-    public $region;
-    public $postal_code;
     public $country;
 
     // Transaction Details
-    public $room_id;
     public $check_in_time;
     public $check_out_time;
     public $check_in_date;
     public $check_out_date;
     public $total_adults;
     public $total_kids;
-    public $pax; // Default number of residents
-    public $activity_id;
-    public $total_amount;
+    public $pax;
     public $pets;
-
+    public $total_amount;
 
     // Payment Details
-    public $payment_method_id;
-    public $payment_screenshot; // Stores uploaded proof of payment
+    public $payment_screenshot; // Stores new proof of payment
     public $newImage;
     public $payment_reference_number;
-    public $isPaid = false;
-    public $isReserved = false;
-    public $isConfirmed = false;
+    public $terms = true;
+    public $isPaid;
+    public $isReserved;
+    public $isConfirmed;
 
-    public $terms;
-    public $confirmCreateItem = false; // Flag for confirmation before creating a transaction
+    // Foreign keys
+    public $room_id;
+    public $activity_id;
+    public $payment_method_id;
 
     // Dropdown data
-    public $paymentMethods;
     public $rooms;
     public $activities;
+    public $paymentMethods;
+
 
     public $confirmEditItem = false;
 
@@ -71,56 +67,47 @@ class EditTransaction extends Component
         $this->confirmEditItem = $id;
     }
 
+    // Mount the fields to pre-fill the edit form
     public function mount(Transaction $transaction)
     {
-        // Reservation Holder Details
+        $this->transaction = $transaction;
         $this->first_name = $transaction->first_name;
         $this->middle_name = $transaction->middle_name;
         $this->last_name = $transaction->last_name;
         $this->suffix = $transaction->suffix;
         $this->email = $transaction->email;
         $this->contact_number = $transaction->contact_number;
-        $this->house_number = $transaction->house_number;
-        $this->street = $transaction->street;
-        $this->barangay = $transaction->barangay;
         $this->city_municipality = $transaction->city_municipality;
-        $this->province = $transaction->province;
-        $this->region = $transaction->region;
-        $this->postal_code = $transaction->postal_code;
         $this->country = $transaction->country;
 
-        // Transaction Details
-        $this->room_id = $transaction->room_id;
-        $this->activity_id = $transaction->activity_id;
+        // Reservation Details
         $this->check_in_date = optional($transaction->check_in_date)->format('Y-m-d');
         $this->check_out_date = optional($transaction->check_out_date)->format('Y-m-d');
         $this->check_in_time = optional($transaction->check_in_time)->format('H:i');
         $this->check_out_time = optional($transaction->check_out_time)->format('H:i');
-        $this->total_adults = $transaction->total_adults;
+
         $this->total_kids = $transaction->total_kids;
-        $this->pax = $transaction->pax ?? 1; // Default to 1 if null
-        $this->total_amount = $transaction->total_amount;
+        $this->total_adults = $transaction->total_adults;
+        $this->pax = $transaction->pax;
         $this->pets = $transaction->pets;
-        $this->terms = $transaction->terms;
+        $this->total_amount = $transaction->total_amount;
 
         // Payment Details
-        $this->payment_method_id = $transaction->payment_method_id;
-        $this->payment_screenshot = $transaction->payment_screenshot;
         $this->payment_reference_number = $transaction->payment_reference_number;
-        $this->isPaid = $transaction->isPaid ?? false;
-        $this->isReserved = $transaction->isReserved ?? false;
-        $this->isConfirmed = $transaction->isConfirmed ?? false;
+        $this->payment_screenshot = $transaction->payment_screenshot;
 
-        // Dropdown Data (Ensure these are populated in the component)
-        $this->paymentMethods = PaymentMethod::all(); // Assuming PaymentMethod model
-        $this->rooms = Room::all(); // Assuming Room model
-        $this->activities = Activity::all(); // Assuming Activity model
+        // Foreign Keys
+        $this->room_id = $transaction->room_id;
+        $this->activity_id = $transaction->room_id;
+        $this->payment_method_id = $transaction->payment_method_id;
+        $this->rooms = Room::all();
+        $this->activities = Activity::all();
+        $this->paymentMethods = PaymentMethod::all();
     }
 
     public function updateTransaction()
     {
         try {
-            // Validate form input
             $this->validate([
                 'room_id' => 'required|exists:prd_rooms,id',
                 'check_in_time' => 'required|date_format:H:i',
@@ -130,6 +117,7 @@ class EditTransaction extends Component
                 'total_adults' => 'required|integer|min:1',
                 'total_kids' => 'nullable|integer|min:0',
                 'pax' => 'required|integer|min:1',
+                'activity_id' => 'nullable|integer|exists:prd_activities,id',
                 'total_amount' => 'required|numeric|min:0',
                 'first_name' => 'required|string',
                 'middle_name' => 'nullable|string',
@@ -137,41 +125,30 @@ class EditTransaction extends Component
                 'suffix' => 'nullable|string',
                 'email' => 'required|email',
                 'contact_number' => 'required|string',
-                'house_number' => 'nullable|string',
-                'street' => 'nullable|string',
-                'barangay' => 'nullable|string',
                 'city_municipality' => 'required|string',
-                'province' => 'required|string',
-                'region' => 'required|string',
-                'postal_code' => 'required|string',
                 'country' => 'required|string',
-                'pets' => 'integer|min:1',
-                'terms' => 'boolean',
+                'pets' => 'nullable|integer|min:0',
                 'payment_method_id' => 'required|integer|exists:pm_payment_methods,id',
-                'payment_screenshot' => 'nullable|image|max:1024',
+                'newImage' => 'nullable|image|max:2048',
                 'payment_reference_number' => 'nullable|string',
-                'isPaid' => 'boolean',
-                'isReserved' => 'boolean',
-                'isConfirmed' => 'boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
             $this->confirmEditItem = false;
-            session()->flash('error', 'Validation failed. Please check your input.');
-            return;
-        }
-        // Ensure image upload is complete before storing
-        $imagePath = $this->payment_screenshot ? $this->payment_screenshot->store('transactions', 'public') : null;
-
-        // Find transaction
-        $transaction = Transaction::find($this->transaction_id);
-
-        if (!$transaction) {
-            session()->flash('error', 'Transaction not found.');
-            return;
+            throw $e;
         }
 
-        // Update transaction
-        $transaction->update([
+        // Handle Image Upload
+        if ($this->newImage) {
+            if ($this->transaction->payment_screenshot) {
+                Storage::disk('public')->delete($this->transaction->payment_screenshot);
+            }
+            // Save the image in public folder
+            $this->payment_screenshot = $this->newImage->store('transactions', 'public');
+        }
+
+        // Update Room Category
+        $this->transaction->update([
             'room_id' => $this->room_id,
             'check_in_time' => $this->check_in_time,
             'check_out_time' => $this->check_out_time,
@@ -188,34 +165,18 @@ class EditTransaction extends Component
             'suffix' => $this->suffix,
             'email' => $this->email,
             'contact_number' => $this->contact_number,
-            'house_number' => $this->house_number,
-            'street' => $this->street,
-            'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
-            'region' => $this->region,
-            'postal_code' => $this->postal_code,
             'country' => $this->country,
             'pets' => $this->pets,
-            'terms' => true, // Ensure it's stored as true'
             'payment_method_id' => $this->payment_method_id,
-            'payment_screenshot' => $imagePath ?? $transaction->payment_screenshot,
+            'payment_screenshot' => $this->payment_screenshot,
             'payment_reference_number' => $this->payment_reference_number,
-            'isPaid' => $this->isPaid ?? false,
-            'isReserved' => $this->isReserved ?? false,
-            'isConfirmed' => $this->isConfirmed ?? false,
         ]);
 
-        // Reset form fields
-        $this->reset();
+        session()->flash('message', 'Room Category successfully updated!');
 
-        // Flash message for success
-        session()->flash('message', 'Transaction successfully updated!');
-
-        // Redirect back to transactions list
         return redirect()->route('admin.view-new-transactions');
     }
-
 
 
     public function render()
