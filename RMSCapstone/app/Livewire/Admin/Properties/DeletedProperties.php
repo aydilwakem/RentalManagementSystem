@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Properties;
 
 use App\Models\Property;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 
 class DeletedProperties extends Component
@@ -10,6 +11,7 @@ class DeletedProperties extends Component
     public $deletedProperties;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Will appear if parent table item is still in soft delete
 
     public function confirmDeleteForever($id)
     {
@@ -38,6 +40,7 @@ class DeletedProperties extends Component
 
     public function deletePropertyForever($propertyId)
     {
+        try{
         $property = Property::withTrashed()->find($this->confirmItemDelete);
         if ($property) {
             $property->forceDelete(); // Permanently delete the room
@@ -45,6 +48,15 @@ class DeletedProperties extends Component
             $this->fetchDeletedProperties();
         }
         $this->confirmItemDelete = false;
+    }catch (QueryException $e) {
+        // Check if the error is an integrity constraint violation
+        if ($e->getCode() == 23000) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = false;
+        } else {
+            throw $e; // Re-throw other exceptions
+        }
+    }
     }
 
     public function render()

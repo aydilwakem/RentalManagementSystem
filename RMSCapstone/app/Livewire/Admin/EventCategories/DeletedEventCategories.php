@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventCategories;
 
 use App\Models\EventCategory;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 
 class DeletedEventCategories extends Component
@@ -10,6 +11,7 @@ class DeletedEventCategories extends Component
     public $deletedEventCategories;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Will appear if parent table item is still in soft delete
 
     public function confirmDeleteForever($id)
     {
@@ -38,6 +40,7 @@ class DeletedEventCategories extends Component
 
     public function deleteEventCategoryForever($eventCategoryId)
     {
+        try{
         $eventCategory = EventCategory::withTrashed()->find($this->confirmItemDelete);
         if ($eventCategory) {
             $eventCategory->forceDelete();
@@ -45,6 +48,16 @@ class DeletedEventCategories extends Component
             $this->fetchDeletedEventCategories();
         }
         $this->confirmItemDelete = false;
+    }catch (QueryException $e) {
+        // Check if the error is an integrity constraint violation
+        if ($e->getCode() == 23000) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = false;
+        } else {
+            throw $e; // Re-throw other exceptions
+        }
+    }
+
     }
 
     public function render()

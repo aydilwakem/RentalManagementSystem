@@ -1,4 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
+
     <!-- Back Button -->
     <div class="mb-4">
         <button onclick="window.history.back();"
@@ -7,13 +8,14 @@
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />
             </svg>
-            Back to Event Categories
+            Back to New Reservations
         </button>
     </div>
-    @if ($deletedEventCategories->isEmpty())
+
+    @if ($deletedNewTransactions->isEmpty())
     <!-- Empty Page Message -->
     <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">No deleted event categories yet.</p>
+        <p class="text-gray-500 text-lg font-semibold">No deleted rooms yet.</p>
     </div>
     @else
     {{-- Display Session Message --}}
@@ -33,27 +35,32 @@
                         <!-- ID -->
                         <th scope="col" class="px-4 py-3 text-left">ID</th>
 
-                        <!-- Event Hall Name -->
-                        <th scope="col" class="px-4 py-3 text-left">Event Category Name</th>
+                        <!-- Guest Name -->
+                        <th scope="col" class="px-4 py-3 text-left">Guest Name</th>
+
+                        <!-- Room Name -->
+                        <th scope="col" class="px-4 py-3 text-left">Room Name</th>
 
                         <!-- Actions -->
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="text-center">
-                    @foreach ($deletedEventCategories as $eventCategory)
+                    @foreach ($deletedNewTransactions as $transaction)
                     <tr class="border-b">
-                        <td class="px-4 py-3 font-medium text-gray-900 text-left">
-                            {{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}</td>
-                        <td class="px-4 py-3 text-left">{{ $eventCategory->name }}</td>
+                        <td class="px-4 py-3 text-left font-medium text-gray-900">
+                            {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
+                        </td>
+                        <td class="px-4 py-3 text-left"> {{ $transaction->first_name }} {{ $transaction->last_name }}
+                        </td>
+                        <td class="px-4 py-3 text-left">{{ $transaction->room->name }}</td>
                         <td class="px-4 py-3 space-x-2 text-center">
-                            <x-button wire:click="restoreEventCategory({{ $eventCategory->id }})">
+                            <x-button wire:click="restoreTransaction({{ $transaction->id }})">
                                 Restore
                             </x-button>
                             <!-- Delete Forever Button -->
-                            <x-button
-                                class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded"
-                                wire:click="confirmDeleteForever({{ $eventCategory->id }})">
+                            <x-button wire:click="confirmDeleteForever({{ $transaction->id }})"
+                                class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded">
                                 Delete Forever
                             </x-button>
                         </td>
@@ -65,7 +72,7 @@
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
-                {{ __('Delete Event Category Forever') }}
+                {{ __('Delete New Reservation Forever') }}
             </x-slot>
 
             <x-slot name="content">
@@ -77,31 +84,12 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteEventCategoryForever({{ $eventCategory->id }})"
+                <x-danger-button class="ms-3" wire:click="deleteTransactionForever({{ $transaction->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Delete Event Category') }}
+                    {{ __('Delete Reservation') }}
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
-
-        {{-- Cannot Delete Modal --}}
-        <x-dialog-modal wire:model="cannotDeleteItem">
-            <x-slot name="title">
-                {{ __('Unable to Delete') }}
-            </x-slot>
-
-            <x-slot name="content">
-                {{ __('Unable to delete item yet because the related event is only temporarily removed. To proceed,
-                please permanently delete the related event first.') }}
-            </x-slot>
-
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
-                    {{ __('OK') }}
-                </x-secondary-button>
-            </x-slot>
-        </x-dialog-modal>
-
     </div>
     @endif
 </div>

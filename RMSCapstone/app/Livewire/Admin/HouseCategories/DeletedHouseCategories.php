@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\HouseCategories;
 
 use App\Models\HouseCategory;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 
 class DeletedHouseCategories extends Component
@@ -10,6 +11,7 @@ class DeletedHouseCategories extends Component
     public $deletedHouseCategories;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Will appear if parent table item is still in soft delete
 
     public function confirmDeleteForever($id)
     {
@@ -38,6 +40,7 @@ class DeletedHouseCategories extends Component
 
     public function deleteHouseCategoryForever($houseCategoryId)
     {
+        try{
         $houseCategory = HouseCategory::withTrashed()->find($this->confirmItemDelete);
         if ($houseCategory) {
             $houseCategory->forceDelete();
@@ -45,7 +48,17 @@ class DeletedHouseCategories extends Component
             $this->fetchDeletedHouseCategories();
         }
         $this->confirmItemDelete = false;
+    }catch (QueryException $e) {
+        // Check if the error is an integrity constraint violation
+        if ($e->getCode() == 23000) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = false;
+        } else {
+            throw $e; // Re-throw other exceptions
+        }
     }
+
+}
 
 
     public function render()

@@ -404,6 +404,11 @@ Route::middleware([
     Route::get('edit/new-reservation/{transaction}', EditTransaction::class)
         ->name('admin.edit-new-transaction');
 
+    // Deleted New Transactions (Soft Deletes)
+    Route::get('deleted-new-reservations', function () {
+        return view('admin.transactions.new.deleted-new-transactions');
+    })->name('admin.deleted-new-transactions');
+
 
 
     // Confirmed Reservations

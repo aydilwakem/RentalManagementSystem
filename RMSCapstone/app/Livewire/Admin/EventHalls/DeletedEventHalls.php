@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\EventHall;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 
 class DeletedEventHalls extends Component
@@ -10,6 +11,7 @@ class DeletedEventHalls extends Component
     public $deletedEventHalls;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Will appear if parent table item is still in soft delete
 
     public function confirmDeleteForever($id)
     {
@@ -38,6 +40,7 @@ class DeletedEventHalls extends Component
 
     public function deleteEventHallForever($eventHallId)
     {
+        try{
         $eventHall = EventHall::withTrashed()->find($this->confirmItemDelete);
         if ($eventHall) {
             $eventHall->forceDelete();
@@ -45,6 +48,15 @@ class DeletedEventHalls extends Component
             $this->fetchDeletedEventHalls();
         }
         $this->confirmItemDelete = false;
+    }catch (QueryException $e) {
+        // Check if the error is an integrity constraint violation
+        if ($e->getCode() == 23000) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = false;
+        } else {
+            throw $e; // Re-throw other exceptions
+        }
+    }
     }
 
     public function render()
