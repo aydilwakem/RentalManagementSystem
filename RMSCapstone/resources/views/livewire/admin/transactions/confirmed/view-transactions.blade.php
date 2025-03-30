@@ -311,27 +311,32 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->
-
+                                    @can('confirmed-reservation-view')
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                         href="">
                                     </i>
+                                    @endcan
 
                                     <!-- Edit Icon -->
-
+                                    @can('confirmed-reservation-edit')
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                         href="">
                                     </i>
+                                    @endcan
 
                                     <!-- Delete Icon -->
+                                    @can('confirmed-reservation-delete')
                                     <i class="fas fa-trash text-gray-700 hover:text-red-600 cursor-pointer" wire:navigate
-                                        href="">
-                                    </i>
-
+                                    href="">
+                                     </i>
+                                    @endcan
+                                    
                                     <!-- Confirm Reservation Icon -->
-                                    <i class="fas fa-circle-check text-gray-700 hover:text-green-600 cursor-pointer"
+                               {{--  <i class="fas fa-circle-check text-gray-700 hover:text-green-600 cursor-pointer"
                                         wire:navigate href="">
-                                    </i>
-
+                                    </i>--}}
+                                    
+       
                                 </td>
                             </tr>
                         @endforeach
