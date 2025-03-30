@@ -46,7 +46,7 @@ class CreateTenant extends Component
                 'house_id' => 'required|integer|exists:lt_houses,id',
                 'email' => 'required|email|unique:lt_tenants,email',
                 'phone' => 'required|string|max:20',
-                'birthdate' => 'required|date',
+                'birthdate' => 'required|date|before:-18 years',
                 'gender' => 'required|string|in:Male,Female,Other',
                 'occupation' => 'nullable|string|max:255',
                 'notes' => 'nullable|string',
