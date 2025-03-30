@@ -6,7 +6,8 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Property;
 use App\Models\HouseCategory;
-
+use App\Models\Tenant;
+use Illuminate\Database\QueryException;
 
 #[Layout('layouts.app')]
 class ViewProperty extends Component
@@ -19,6 +20,7 @@ class ViewProperty extends Component
     public $house_category_id;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Modal will appear if house is being used by a Tenant
 
     public function confirmDelete($id)
     {
@@ -34,19 +36,42 @@ class ViewProperty extends Component
 
 
     // Function for deleting a record
-    public function deletePropertyItem(Property $property)
+    public function deletePropertyItem()
     {
+        //find id
+        $property = Property::find($this->confirmItemDelete);
+
         if (!$property) {
             session()->flash('error', 'Property not found!');
             return;
         }
 
-        if ($this->confirmItemDelete) {
-            $property->delete();
-            $this->confirmItemDelete = false;
+        // Check if the house is referenced in tenant table
+        if (Tenant::where('house_id', $property->id)->exists()) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+            }
 
-            session()->flash('message', 'Property successfully deleted!');
+            try{
+            $property->delete(); // Attempt soft deletion
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
+
+            // Flash success message
+            session()->flash('message', 'House successfully deleted!');
+
+            // Redirect to the admin room categories page
             return redirect()->route('admin.properties');
+
+        }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
     }
 

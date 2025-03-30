@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\Properties;
 
 use App\Models\Property;
+use App\Models\Tenant;
+use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -26,6 +28,7 @@ class ViewProperties extends Component
     public $availability = '';
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false; //Modal will appear if house is being used by a Tenant
 
     public function mount()
     {
@@ -39,24 +42,49 @@ class ViewProperties extends Component
         $this->confirmItemDelete = $id;
     }
 
-    public function deleteProperty($id)
+    public function deleteProperty()
     {
-        $property = Property::find($id);
-        if ($property && $this->confirmItemDelete) {
-            $property->delete();
-            $this->confirmItemDelete = false;
+        // Find the room category by ID
+        $property = Property::find($this->confirmItemDelete);
 
-            // Refresh fake IDs
-            $properties = Property::orderBy('created_at', 'ASC')->get();
+            // Check if the category is referenced in another table
+        if (Tenant::where('house_id', $property->id)->exists()) { 
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
+
+        try{
+            $property->delete(); // Attempt soft deletion
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
+
+            // Fetch remaining - sorted by creation date
+            $property = Property::orderBy('created_at', 'ASC')->get();
+
+            // Reset fake IDs
             $fakeIDs = [];
-            foreach ($properties as $index => $property) {
-                $fakeIDs[$property->id] = 'PRP-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            foreach ($property as $index => $propertyItem) {
+                $fakeIDs[$propertyItem->id] = 'PRT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
-            session(['fake_ids_properties' => $fakeIDs]);
 
-            session()->flash('message', 'Property successfully deleted!');
+            // Store updated fake IDs in a unique session key
+           session(['fake_ids_properties' => $fakeIDs]);
+
+            // Flash success message
+            session()->flash('message', 'House successfully deleted!');
+    }catch (QueryException $e) {
+            // Check if the error is an integrity constraint violation
+            if ($e->getCode() == 23000) { 
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+            } else {
+                throw $e; // Re-throw other exceptions
+            }
         }
     }
+
+
 
     public function setSortBy($sortByField)
     {
