@@ -294,8 +294,197 @@
                                 </div>
                             </div>
 
+                              <!-- House -->
+                              <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    Houses
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'house-') && !str_starts_with($p->name, 'house-category')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
 
 
+                              <!-- House Categories -->
+                              <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    House Category
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'house-category')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                              <!-- Tenants -->
+                              <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    Tenants
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'tenant')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                             <!-- Dashboard -->
+                             <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    Dashboard
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'dashboard')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- New Reservations -->
+                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    New Reservations
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'new-reservation-')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Confirmed Reservations -->
+                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    Confirmed Reservations
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'confirmed-reservation')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- On-going Bookings -->
+                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    On-going Bookings
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'on-going')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Old Bookings -->
+                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    Old Bookings
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'old')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                              <!-- Settings -->
+                              <div x-data="{ open: false }" class="border rounded-lg bg-gray-50">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                 Settings
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open" class="p-4 space-y-2">
+                                    @foreach ($permissions->filter(fn($p) => str_starts_with($p->name, 'appearance-view')) as $permission)
+                                        <label class="flex items-center space-x-2 text-sm">
+                                            <input type="checkbox" wire:model="selectedPermissions"
+                                                value="{{ $permission->id }}" class="rounded border-gray-300">
+                                            <span>{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
 
                         </div>
 

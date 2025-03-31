@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\Room;
 use App\Models\Maintenance;
+use Illuminate\Support\Facades\Auth;
 
 
 class Dashboard extends Component
@@ -16,8 +17,15 @@ class Dashboard extends Component
     public $reservations;
     public $events = [];
 
+
     public function mount()
     {
+
+        // Checks if the user has a role
+        if (!Auth::user()->AnyRoles()->exists()) {
+            return redirect()->route('no-access'); // Redirect to 'no-access' page
+        }
+
         $this->newReservations = Transaction::newReservations()->count();
         $this->availableRooms = Room::availableRooms()->count();
         $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();

@@ -34,19 +34,19 @@ class CreateUser extends Component
 
     public function saveUser()
     {
-        try{
-        // Validate input fields to ensure correct data is entered
-        $this->validate([
-            'name' => 'required|string|max:255', // Name is required and must be a string
-            'email' => 'required|string|email|max:255|unique:users,email', // Email must be unique
-            'password' => ['required', 'string', Rules\Password::defaults()], // Enforce password rules
-            'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+        try {
+            // Validate input fields to ensure correct data is entered
+            $this->validate([
+                'name' => 'required|string|max:255', // Name is required and must be a string
+                'email' => 'required|string|email|max:255|unique:users,email', // Email must be unique
+                'password' => ['required', 'string', Rules\Password::defaults()], // Enforce password rules
+                'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         // Create a new user in the database with a hashed password
         $user = User::create([
