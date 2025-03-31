@@ -98,7 +98,7 @@ class EditTransaction extends Component
 
         // Foreign Keys
         $this->room_id = $transaction->room_id;
-        $this->activity_id = $transaction->room_id;
+        $this->activity_id = $transaction->activity_id;
         $this->payment_method_id = $transaction->payment_method_id;
         $this->rooms = Room::all();
         $this->activities = Activity::all();

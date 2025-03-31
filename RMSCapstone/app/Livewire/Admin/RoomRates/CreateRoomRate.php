@@ -21,7 +21,14 @@ class CreateRoomRate extends Component
     public $description;
     public $rate_type = 'Weekdays';
 
+    public $confirmCreateItem = false;
+
     public $rooms;
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
 
     public function mount()
     {
@@ -30,6 +37,7 @@ class CreateRoomRate extends Component
 
     public function saveRoomRate()
     {
+        try{
         // Validate the form input
         $this->validate([
             'name' => 'required|string|max:255',
@@ -42,6 +50,11 @@ class CreateRoomRate extends Component
             'description' => 'nullable|string',
             'rate_type' => 'nullable|in:Weekdays,Weekend,Holiday,Peak',
         ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        // If validation fails, close the modal
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
 
 
         // Create new room

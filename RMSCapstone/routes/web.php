@@ -58,6 +58,9 @@ Route::middleware([
         return view('admin.dashboard');
     })->name('dashboard');
 
+    Route::get('/no-access', function () {
+        return view('admin.no-access');
+    })->name('no-access');
 
     // Users Route
 
@@ -356,6 +359,11 @@ Route::middleware([
     Route::get('/settings/appearance', function () {
         return view('admin.settings.appearance.view-appearance');
     })->name('admin.appearance');
+
+    // Branding
+    Route::get('/settings/branding', function () {
+        return view('admin.settings.branding.view-branding');
+    })->name('admin.branding');
 
     //Payment Methods
 

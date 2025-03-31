@@ -55,6 +55,7 @@
                     $subPrefixes = [
                         'room-' => ['room-rate-', 'room-category-'],
                         'event-' => ['event-hall-', 'event-category-'],
+                        'house-' => ['house-', 'event-house-category-'],
                     ];
 
                     // If prefix has exclusions

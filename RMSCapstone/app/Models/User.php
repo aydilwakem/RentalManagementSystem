@@ -29,6 +29,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'middle_name',
+        'last_name',
+        'suffix',
         'email',
         'password',
         // Add fields
@@ -66,6 +69,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function AnyRoles()
+    {
+        return $this->belongsToMany(
+            \Spatie\Permission\Models\Role::class,
+            'model_has_roles', // Pivot table
+            'model_id', // Foreign key for User in model_has_roles
+            'role_id'  // Foreign key for Role in model_has_roles
+        );
     }
 
     public function scopeSearch($query, $value)
