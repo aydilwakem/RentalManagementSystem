@@ -40,7 +40,7 @@ class EditEventCategory extends Component
     {
         try{
         $this->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:prd_event_categories,name',
             'description' => 'nullable|string',
             'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);

@@ -453,11 +453,11 @@ Route::middleware([
 
     // View
     Route::get('view/property/{property}', ViewProperty::class)
-        ->name('admin.view-property')->middleware('can:house-list-view');
+        ->name('admin.view-property')->middleware('can:house-view');
 
     // Edit
     Route::get('edit/property/{property}', EditProperty::class)
-        ->name('admin.edit-property')->middleware('can:house-list-edit');
+        ->name('admin.edit-property')->middleware('can:house-edit');
 
     // Deleted Houses (Soft Deletes)
     Route::get('deleted-houses', function () {

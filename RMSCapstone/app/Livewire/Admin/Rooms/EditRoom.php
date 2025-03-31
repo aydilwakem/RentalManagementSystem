@@ -54,7 +54,7 @@ class EditRoom extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:prd_rooms,name',
                 'room_category_id' => 'nullable|exists:prd_room_categories,id',
                 'ideal_guest' => 'required|integer|min:1',
                 'max_adults' => 'required|integer|min:1',

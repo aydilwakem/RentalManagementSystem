@@ -26,7 +26,7 @@ class CreateEventCategory extends Component
         try{
         // Validate form input (including image)
         $this->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:prd_event_categories,name',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);

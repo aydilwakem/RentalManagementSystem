@@ -41,7 +41,7 @@ class EditPayment extends Component
     {
         try{
         $this->validate([
-            'mode_of_payment_name' => 'required|string|max:255',
+            'mode_of_payment_name' => 'required|string|max:255|unique:pm_payment_methods,mode_of_payment_name',
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
             'new_mode_of_payment_qr_image' => 'nullable|image|max:2048', // Ensure image size is within limit

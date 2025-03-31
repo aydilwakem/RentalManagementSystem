@@ -47,7 +47,7 @@ class CreateProperty extends Component
         try {
             // Validate form input 
             $this->validate([
-                'name' => 'required|string',
+                'name' => 'required|string|unique:lt_houses,name',
                 'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
                 'monthly_rent' => 'required|numeric|min:0',
