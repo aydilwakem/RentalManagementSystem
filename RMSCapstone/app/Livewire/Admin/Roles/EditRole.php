@@ -23,6 +23,12 @@ class EditRole extends Component
         $this->confirmEditItem = $id;
     }
 
+    public function isSuperAdmin()
+    {
+        return $this->role->name === 'Super Admin' 
+        || $this->role->name === 'superadmin'; 
+    }
+
     public function mount(Role $role)
     {
         $this->role = $role;

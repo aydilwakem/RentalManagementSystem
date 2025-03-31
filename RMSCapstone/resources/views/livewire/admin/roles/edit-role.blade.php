@@ -72,7 +72,7 @@
                     Cancel
                 </x-button>
                 <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
-                    wire:click="confirmEdit({{ $role->id }})">
+                    wire:click="confirmEdit({{ $role->id }})" :disabled="$this->isSuperAdmin() ? 'disabled' : null">
                     Update Role
                 </x-button>
             </div>
