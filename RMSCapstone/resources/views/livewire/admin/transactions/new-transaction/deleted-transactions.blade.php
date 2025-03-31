@@ -15,7 +15,7 @@
     @if ($deletedNewTransactions->isEmpty())
     <!-- Empty Page Message -->
     <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">No deleted rooms yet.</p>
+        <p class="text-gray-500 text-lg font-semibold">No deleted transactions yet.</p>
     </div>
     @else
     {{-- Display Session Message --}}
@@ -53,7 +53,7 @@
                         </td>
                         <td class="px-4 py-3 text-left"> {{ $transaction->first_name }} {{ $transaction->last_name }}
                         </td>
-                        <td class="px-4 py-3 text-left">{{ $transaction->room->name }}</td>
+                        <td class="px-4 py-3 text-left">{{ $transaction->room->name ?? 'N/A'}}</td>
                         <td class="px-4 py-3 space-x-2 text-center">
                             <x-button wire:click="restoreTransaction({{ $transaction->id }})">
                                 Restore

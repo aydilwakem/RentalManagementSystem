@@ -45,7 +45,7 @@ class EditEventHall extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:prd_event_halls,name',
                 'description' => 'nullable|string',
                 'amount' => 'required|numeric|min:100|max:50000.00',
                 'capacity' => 'required|numeric|min:10|max:200',

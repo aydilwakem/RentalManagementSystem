@@ -227,18 +227,28 @@
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+
+                        @can('house-list')
                         <a href="{{ route('admin.properties') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.properties') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Houses</h1>
                         </a>
+                        @endcan
+
+                        @can('house-category-list')
                         <a href="{{ route('admin.house-categories') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('#') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">House Categories</h1>
                         </a>
+                        @endcan
+
+                        @can('tenant-list')
                         <a href="{{ route('admin.tenants') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('#') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Tenants</h1>
                         </a>
+                        @endcan
+
                     </div>
                 </div>
 
@@ -337,20 +347,26 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
 
+                        @can('user-list')
                         <a href="{{ route('admin.manage-users') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">User Management</h1>
                         </a>
+                        @endcan
 
+                        @can('payment-method-list')
                         <a href="{{ route('admin.payments') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Payment Methods</h1>
                         </a>
+                        @endcan
 
+                        @can('appearance-view')
                         <a href="{{ route('admin.appearance') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Appearance</h1>
                         </a>
+                        @endcan
                     </div>
                 </div>
 

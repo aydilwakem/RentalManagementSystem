@@ -28,7 +28,7 @@
                 <!-- First Row -->
                 <div>
                     <ul class="list-disc pl-5 text-gray-600">
-                        <li><strong>Category:</strong> {{ $event->category->name }}</li>
+                        <li><strong>Category:</strong> {{ $event->category->name ?? 'N/A'}}</li>
                         <li><strong>Company Name:</strong> {{ $event->company_name }}</li>
                         <li><strong>Email:</strong> {{ $event->email }}</li>
                         <li><strong>Event Date Start:</strong>
@@ -40,7 +40,7 @@
 
                 <div>
                     <ul class="list-disc pl-5 text-gray-600">
-                        <li><strong>Event Hall:</strong> {{ $event->eventHall->name }}</li>
+                        <li><strong>Event Hall:</strong> {{ $event->eventHall->name ?? 'N/A'}}</li>
                         <li><strong>Contact Person:</strong> {{ $event->contact_person }}</li>
                         <li><strong>Capacity:</strong> {{ $event->capacity }}</li>
                         <li><strong>Event Date End:</strong>

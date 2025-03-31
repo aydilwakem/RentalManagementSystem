@@ -28,7 +28,7 @@ class CreateActivity extends Component
         try{
         // Validate input
         $this->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:prd_activities,name',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:100',
             'inclusions' => 'nullable|string',

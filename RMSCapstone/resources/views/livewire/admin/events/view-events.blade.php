@@ -235,8 +235,8 @@
                         {{ $fakeIDs[$eventItem->id] ?? 'EVT-???' }}
                     </th>
                     <td class="px-4 py-3"> {{ $eventItem->name }} </td>
-                    <td class="px-4 py-3"> {{ $eventItem->category->name }} </td>
-                    <td class="px-4 py-3"> {{ $eventItem->eventHall->name }} </td>
+                    <td class="px-4 py-3"> {{ $eventItem->category->name ?? 'N/A'}} </td>
+                    <td class="px-4 py-3"> {{ $eventItem->eventHall->name ?? 'N/A'}} </td>
                     <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
                     <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
                     <td class="px-4 py-3">

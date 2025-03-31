@@ -52,7 +52,7 @@ class CreateEvent extends Component
             'company_name' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'event_date_start' => 'required|date',
+            'event_date_start' => 'required|date|after_or_equal:today',
             'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
             'event_time' => 'required|date_format:H:i',
             'capacity' => 'required|numeric|min:10|max:200',

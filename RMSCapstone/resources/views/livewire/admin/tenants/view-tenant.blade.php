@@ -23,7 +23,7 @@
         <div class="mb-2 mt-3 flex items-center gap-2">
             <h3 class="text-lg font-semibold text-gray-900 leading-none">House:</h3>
             <p class="font-semibold text-gray-600 leading-none">
-                {{ $tenant->house->name}}
+                {{ $tenant->house->name ?? 'N/A'}}
             </p>
         </div>
 
@@ -32,7 +32,7 @@
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Room Details</h3>
             <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Name:</strong> {{ $tenant->fist_name }} {{ $tenant->middle_name }} {{
+                <li><strong>Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }} {{
                     $tenant->last_name }} {{ $tenant->suffix }}</li>
                 <li><strong>Email:</strong> {{ $tenant->email }}</li>
                 <li><strong>Phone Number:</strong> {{ $tenant->phone }}</li>

@@ -29,7 +29,7 @@ class CreateMaintenance extends Component
         $this->validate([  
             'name' =>  'required|string',
             'description' => 'required|string',
-            'reported_at' => 'required|date',
+            'reported_at' => 'required|date|after_or_equal:today', 
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
             'priority_status' => 'required|in:emergency,urgent,routine,planned',
         ]);

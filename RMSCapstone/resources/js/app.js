@@ -63,13 +63,15 @@ document.addEventListener('alpine:init', () => {
 });
 
 
-document.addEventListener('livewire:initialized', () => {
+/**
+ * document.addEventListener('livewire:initialized', () => {
 
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         selectable: true,
+          events: @json($events),
         select: function (info) {
             console.log(info);
             var title = prompt("Enter event name: ");
@@ -86,6 +88,7 @@ document.addEventListener('livewire:initialized', () => {
             right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
         }
     });
+    
     calendar.render();
 
     Livewire.on('eventLoaded', (events) => {
@@ -97,3 +100,5 @@ document.addEventListener('livewire:initialized', () => {
 
 
 });
+ */
+

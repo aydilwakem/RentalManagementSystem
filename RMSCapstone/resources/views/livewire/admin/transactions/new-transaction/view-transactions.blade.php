@@ -48,36 +48,47 @@
         @if (session('message'))
         <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
             class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
             {{ session('message') }}
         </div>
         @endif
         <!-- Navigation Tabs -->
         <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
+
             <li class="me-2">
                 <a href="{{ route('admin.view-new-transactions') }}" wire:navigate
                     class="inline-block p-4 {{ Route::is('admin.view-new-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
                     New Reservations
                 </a>
             </li>
+
+            @can('confirmed-reservation-list')
             <li class="me-2">
                 <a href="{{ route('admin.view-confirmed-transactions') }}" wire:navigate
                     class="inline-block p-4 {{ Route::is('admin.view-confirmed-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
                     Confirmed Reservations
                 </a>
             </li>
+            @endcan
+
+            @can('on-going-booking-list')
             <li class="me-2">
                 <a href="{{ route('admin.view-ongoing-transactions') }}" wire:navigate
                     class="inline-block p-4 {{ Route::is('admin.view-ongoing-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
                     On-Going Bookings
                 </a>
             </li>
+            @endcan
+
+            @can('old-booking-list')
             <li class="me-2">
                 <a href="{{ route('admin.view-old-transactions') }}" wire:navigate
                     class="inline-block p-4 {{ Route::is('admin.view-old-transactions') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
                     Old Bookings
                 </a>
             </li>
+            @endcan
+
         </ul>
 
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
@@ -100,15 +111,20 @@
                 </div>
                 <!-- Create Room Button -->
                 <div class="flex space-x-4">
+
+                    @can('new-reservation-create')
                     <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
                         New Transaction
                     </x-button>
+                    @endcan
 
+                    @can('new-reservation-soft-delete')
                     <x-button
                         class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                         icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
                         Deleted New Reservations
                     </x-button>
+                    @endcan
                 </div>
 
             </div>
@@ -313,11 +329,14 @@
                             {{ $transaction->first_name }} {{ $transaction->last_name }}
                         </th>
                         <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-                        <td class="px-4 py-3"> {{ $transaction->room->name }}</td>
+                        <td class="px-4 py-3"> {{ $transaction->room->name ?? 'N/A'}}</td>
                         <td class="px-4 py-3">
-                            {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}</td>
+                            {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
+                        </td>
                         <td class="px-4 py-3">
-                            {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('F j, Y') }}</td>
+                            {{ \Carbon\Carbon::parse($transaction->check_out_date)->format('F j, Y') }}
+                        </td>
+                        @can('new-reservation-confirm-receipt')
                         <td class="px-4 py-3 text-center">
                             <span
                                 class="cursor-pointer font-semibold
@@ -326,36 +345,44 @@
                                 {{ $transaction->isPaid ? 'Confirmed' : 'Confirm Receipt' }}
                             </span>
                         </td>
+                        @endcan
 
 
 
                         <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                             <!-- View Icon -->
-
+                            @can('new-reservation-view')
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                 href="{{ route('admin.view-new-transaction', ['transaction' => $transaction->id]) }}">
                             </i>
+                            @endcan
 
                             <!-- Edit Icon -->
+                            @can('new-reservation-edit')
                             <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                 href="{{ route('admin.edit-new-transaction', ['transaction' => $transaction->id]) }}">
                             </i>
+                            @endcan
 
-
+                            @can('new-reservation-delete')
                             <!-- Delete Icon -->
                             <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                 wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
                             </i>
+                            @endcan
+
 
                             <!-- Confirm Reservation Icon -->
+                            @can('new-reservation-confirm')
                             <i class="fa-solid fa-circle-check
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
-                                @if (!$transaction->isPaid) disabled @endif
-                                wire:click.prevent="{{ $transaction->isPaid ? "confirmReservation($transaction->id)" :
-                                '' }}"
-                                wire:loading.attr="disabled">
+                            {{ $transaction->isPaid ? 'text-green-600 cursor-pointer hover:text-green-700' : 'text-gray-400 cursor-not-allowed' }}"
+                                @if (!$transaction->isPaid) disabled @endif wire:click.prevent="{{ $transaction->isPaid
+                                ? "confirmReservation($transaction->id)" :
+                                '' }}" wire:loading.attr="disabled">
                             </i>
+                            @endcan
+
 
                         </td>
                     </tr>
@@ -414,7 +441,7 @@
                     @if ($selectedTransaction)
                     <!-- Payment Screenshot at the Top -->
                     <div class="flex flex-col items-center">
-                        <img src="{{ asset('storage/' . $selectedTransaction->payment_screenshot) }}"
+                        <img src="{{ asset($selectedTransaction->payment_screenshot ? 'storage/' . $selectedTransaction->payment_screenshot : 'images/rms-default.png') }}"
                             alt="Payment Screenshot" class="w-64 h-auto mb-4">
                     </div>
 

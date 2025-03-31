@@ -29,7 +29,7 @@
         <div class="mb-2 mt-3 flex items-center gap-2">
             <h3 class="text-lg font-semibold text-gray-900 leading-none">Room Category:</h3>
             <p class="font-semibold text-gray-600 leading-none">
-                {{ $room->category->name}}
+                {{ $room->category->name ?? 'N/A'}}
             </p>
         </div>
 

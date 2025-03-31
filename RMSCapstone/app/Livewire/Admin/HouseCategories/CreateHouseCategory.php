@@ -22,7 +22,7 @@ class CreateHouseCategory extends Component
         try {
             // Validate form input
             $this->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:lt_house_categories,name',
                 'description' => 'nullable|string|max:500',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

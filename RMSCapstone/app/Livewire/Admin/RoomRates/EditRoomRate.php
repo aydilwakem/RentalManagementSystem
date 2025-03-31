@@ -50,8 +50,8 @@ class EditRoomRate extends Component
         $this->validate([
             'room_id' => 'required|exists:prd_rooms,id',
             'name' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
             'amount' => 'required|numeric|min:0',
             'extra_person_charge' => 'nullable|numeric|min:0',
             'extended_stay_charge_per_hr' => 'nullable|numeric|min:0',

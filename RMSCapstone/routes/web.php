@@ -390,42 +390,41 @@ Route::middleware([
 
     Route::get('/new-reservations', function () {
         return view('admin.transactions.new.view-transactions');
-    })->name('admin.view-new-transactions');
+    })->name('admin.view-new-transactions')->middleware('can:new-reservation-list');
 
     //Create
     Route::get('create/new-reservation', function () {
         return view('admin.transactions.new.create-transaction');
-    })->name('admin.create-new-transaction');
+    })->name('admin.create-new-transaction')->middleware('can:new-reservation-create');
 
     // View
     Route::get('view/new-reservation/{transaction}', ViewTransaction::class)
-        ->name('admin.view-new-transaction');
+        ->name('admin.view-new-transaction')->middleware('can:new-reservation-view');
 
     // Edit
     Route::get('edit/new-reservation/{transaction}', EditTransaction::class)
-        ->name('admin.edit-new-transaction');
+        ->name('admin.edit-new-transaction')->middleware('can:new-reservation-edit');
 
     // Deleted New Transactions (Soft Deletes)
-    Route::get('deleted-new-reservations', function () {
+    Route::get('/deleted-new-reservations', function () {
         return view('admin.transactions.new.deleted-new-transactions');
-    })->name('admin.deleted-new-transactions');
-
+    })->name('admin.deleted-new-transactions')->middleware('can:new-reservation-soft-delete');
 
 
     // Confirmed Reservations
     Route::get('/confirmed-reservations', function () {
         return view('admin.transactions.confirmed.view-transactions');
-    })->name('admin.view-confirmed-transactions');
+    })->name('admin.view-confirmed-transactions')->middleware('can:confirmed-reservation-list');
 
     // On-going Bookings
     Route::get('/on-going-bookings', function () {
         return view('admin.transactions.ongoing.view-transactions');
-    })->name('admin.view-ongoing-transactions');
+    })->name('admin.view-ongoing-transactions')->middleware('can:on-going-booking-list');
 
     // Old bookings
     Route::get('/old-bookings', function () {
         return view('admin.transactions.old.view-transactions');
-    })->name('admin.view-old-transactions');
+    })->name('admin.view-old-transactions')->middleware('can:old-booking-list');
 
 
 
@@ -446,25 +445,25 @@ Route::middleware([
     // List
     Route::get('/properties', function () {
         return view('admin.rentals.properties.view-properties');
-    })->name('admin.properties');
+    })->name('admin.properties')->middleware('can:house-list');
 
     // Create
     Route::get('create/property', function () {
         return view('admin.rentals.properties.create-property');
-    })->name('admin.create-property');
+    })->name('admin.create-property')->middleware('can:house-create');
 
     // View
     Route::get('view/property/{property}', ViewProperty::class)
-        ->name('admin.view-property');
+        ->name('admin.view-property')->middleware('can:house-view');
 
     // Edit
     Route::get('edit/property/{property}', EditProperty::class)
-        ->name('admin.edit-property');
+        ->name('admin.edit-property')->middleware('can:house-edit');
 
     // Deleted Houses (Soft Deletes)
     Route::get('deleted-houses', function () {
         return view('admin.rentals.properties.deleted-properties');
-    })->name('admin.deleted-properties');
+    })->name('admin.deleted-properties')->middleware('can:house-soft-delete');
 
 
 
@@ -474,25 +473,25 @@ Route::middleware([
     // List
     Route::get('/house-categories', function () {
         return view('admin.rentals.house-categories.view-house-categories');
-    })->name('admin.house-categories');
+    })->name('admin.house-categories')->middleware('can:house-category-list');
 
     // Create
     Route::get('create/house-category', function () {
         return view('admin.rentals.house-categories.create-house-category');
-    })->name('admin.create-house-category');
+    })->name('admin.create-house-category')->middleware('can:house-category-create');
 
     // View
     Route::get('view/house-category/{houseCategory}', ViewHouseCategory::class)
-        ->name('admin.view-house-category');
+        ->name('admin.view-house-category')->middleware('can:house-category-view');
 
     // Edit
     Route::get('edit/house-category/{houseCategory}', EditHouseCategory::class)
-        ->name('admin.edit-house-category');
+        ->name('admin.edit-house-category')->middleware('can:house-category-edit');
 
     // Deleted House Categories (Soft Deletes)
     Route::get('deleted-house-categories', function () {
         return view('admin.rentals.house-categories.deleted-house-categories');
-    })->name('admin.deleted-house-categories');
+    })->name('admin.deleted-house-categories')->middleware('can:house-category-soft-delete');
 
 
 
@@ -501,25 +500,25 @@ Route::middleware([
     // List
     Route::get('/tenants', function () {
         return view('admin.rentals.tenants.view-tenants');
-    })->name('admin.tenants');
+    })->name('admin.tenants')->middleware('can:tenant-list');
 
     // Create
     Route::get('create/tenant', function () {
         return view('admin.rentals.tenants.create-tenant');
-    })->name('admin.create-tenant');
+    })->name('admin.create-tenant')->middleware('can:tenant-create');
 
     // View
     Route::get('view/tenant/{tenant}', ViewTenant::class)
-        ->name('admin.view-tenant');
+        ->name('admin.view-tenant')->middleware('can:tenant-view');
 
     // Edit
     Route::get('edit/tenant/{tenant}', EditTenant::class)
-        ->name('admin.edit-tenant');
+        ->name('admin.edit-tenant')->middleware('can:tenant-edit');
 
     // Deleted Tenants (Soft Deletes)
     Route::get('deleted-tenants', function () {
         return view('admin.rentals.tenants.deleted-tenants');
-    })->name('admin.deleted-tenants');
+    })->name('admin.deleted-tenants')->middleware('can:tenant-soft-delete');
 });
 
 
