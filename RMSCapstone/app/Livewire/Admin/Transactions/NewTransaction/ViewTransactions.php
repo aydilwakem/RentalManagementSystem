@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Transactions\NewTransaction;
 
+use App\Mail\ConfirmationEmail;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -76,6 +78,7 @@ class ViewTransactions extends Component
 
         if ($transaction) {
             $transaction->update(['isPaid' => true]); // Updates only the 'isPaid' field
+
             session()->flash('message', 'Payment Receipt confirmed successfully.'); // Success message
         } else {
             session()->flash('error', 'Payment Receipt confirmation failed.'); // Error message if transaction not found
@@ -106,6 +109,9 @@ class ViewTransactions extends Component
 
         if ($transaction) {
             $transaction->update(['isReserved' => true]); // Updates only the 'isReserved' field
+
+            //Mail::to($transaction->email)->send(new ConfirmationEmail());
+
             session()->flash('message', 'Reservation confirmed successfully.'); // Success message
         } else {
             session()->flash('error', 'Reservation not found.'); // Error message if transaction not found
