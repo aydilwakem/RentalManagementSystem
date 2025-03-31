@@ -194,25 +194,25 @@
 
             <x-slot name="content">
                 @if ($selectedTransaction)
-                    <!-- Payment Screenshot at the Top -->
-                    <div class="flex flex-col items-center">
-                        <img src="{{ asset('storage/' . $selectedTransaction->payment_screenshot) }}"
-                            alt="Payment Screenshot" class="w-64 h-auto mb-4">
-                    </div>
+                <!-- Payment Screenshot at the Top -->
+                <div class="flex flex-col items-center">
+                    <img src="{{ asset($selectedTransaction->payment_screenshot ? 'storage/' . $selectedTransaction->payment_screenshot : 'images/rms-default.png') }}"
+                        alt="Payment Screenshot" class="w-64 h-auto mb-4">
+                </div>
 
-                    <!-- Payment Details Below -->
-                    <div class="text-left">
-                        <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
-                        </p>
-                        <p class="text-lg font-semibold">Payment Method:
-                            {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
-                        </p>
-                        <p class="text-lg font-semibold">Payment Reference:
-                            {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
-                        </p>
-                    </div>
+                <!-- Payment Details Below -->
+                <div class="text-left">
+                    <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
+                    </p>
+                    <p class="text-lg font-semibold">Payment Method:
+                        {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                    </p>
+                    <p class="text-lg font-semibold">Payment Reference:
+                        {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
+                    </p>
+                </div>
                 @else
-                    {{ __('No payment screenshot available.') }}
+                {{ __('No payment screenshot available.') }}
                 @endif
             </x-slot>
             <p></p>

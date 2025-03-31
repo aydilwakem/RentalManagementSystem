@@ -113,7 +113,7 @@ class EditTransaction extends Component
                 'check_in_time' => 'required|date_format:H:i',
                 'check_out_time' => 'required|date_format:H:i',
                 'check_in_date' => 'required|date',
-                'check_out_date' => 'required|date|after_or_equal:check_in_date',
+                'check_out_date' => 'required|date|after:check_in_date',
                 'total_adults' => 'required|integer|min:1',
                 'total_kids' => 'nullable|integer|min:0',
                 'pax' => 'required|integer|min:1',
