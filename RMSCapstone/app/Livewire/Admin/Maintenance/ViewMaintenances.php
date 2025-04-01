@@ -30,8 +30,8 @@ class ViewMaintenances extends Component
     public function mount()
     {
         // Ensure maintenance use a separate session key
-        if (!session()->has('fake_ids_maintenances')) {
-            session(['fake_ids_maintenances' => []]);
+        if (!session()->has('fake_ids_pending_maintenances')) {
+            session(['fake_ids_pending_maintenances' => []]);
         }
     }
 
@@ -56,7 +56,7 @@ class ViewMaintenances extends Component
             }
 
             // Store updated fake IDs in a unique session key
-            session(['fake_ids_maintenances' => $fakeIDs]);
+            session(['fake_ids_pending_maintenances' => $fakeIDs]);
 
             // Flash success message
             session()->flash('message', 'Maintenance successfully deleted!');
@@ -74,34 +74,40 @@ class ViewMaintenances extends Component
     }
 
     public function render()
-    {
-        $allMaintenances = Maintenance::all();
+{
+    $allMaintenances = Maintenance::all();
 
-        $maintenances = Maintenance::query()
-            ->whereNull('resolved_at')
-            ->search($this->search)
-            ->when($this->priorityStatus !== '', function ($query) {
-                $query->where('priority_status', $this->priorityStatus);
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+    //checks if the resolved at field is null
+    $maintenances = Maintenance::query()
+        ->whereNull('resolved_at')
+        ->search($this->search)
+        ->when($this->priorityStatus !== '', function ($query) {
+            $query->where('priority_status', $this->priorityStatus);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        // Retrieve unique session for activities
-        $fakeIDs = session('fake_ids_maintenances', []);
+    // Retrieve unique session for pending maintenances
+    $fakeIDs = session('fake_ids_pending_maintenances', []);
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Maintenance::count()) {
-            $fakeIDs = [];
-            foreach (Maintenance::orderBy('created_at', 'ASC')->get() as $index => $maintenance) {
-                $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_maintenances' => $fakeIDs]);
+    // Get only pending maintenances where field is null
+    $pendingMaintenances = Maintenance::whereNull('resolved_at')->orderBy('created_at', 'ASC')->get();
+
+    // recalculation
+    if (count($fakeIDs) !== $pendingMaintenances->count()) {
+        $fakeIDs = [];
+        foreach ($pendingMaintenances as $index => $maintenance) {
+            $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
-
-        return view('livewire.admin.maintenance.view-maintenances', [
-            'maintenances' => $maintenances,
-            'fakeIDs' => $fakeIDs,
-            'allMaintenances' => $allMaintenances,
-        ]);
+        session(['fake_ids_pending_maintenances' => $fakeIDs]);
     }
+
+    return view('livewire.admin.maintenance.view-maintenances', [
+        'maintenances' => $maintenances,
+        'fakeIDs' => $fakeIDs,
+        'allMaintenances' => $allMaintenances,
+    ]);
+}
+
+
 }
