@@ -7,16 +7,6 @@
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mt-16 bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Amenity</h2>
 
-        @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li class="py-1">{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
@@ -26,6 +16,9 @@
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Type amenity name" required>
+                    @error('name')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 

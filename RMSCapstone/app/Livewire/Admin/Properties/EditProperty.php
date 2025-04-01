@@ -25,6 +25,8 @@ class EditProperty extends Component
     public $country;
     public $houseCategories;
     public $house_category_id;
+    public $propertyId;
+
 
     public $confirmEditItem = false;
 
@@ -36,6 +38,7 @@ class EditProperty extends Component
 
     public function mount(Property $property)
     {
+        $this->propertyId = $property->id; 
         $this->houseCategories = HouseCategory::all();
         $this->property = $property;
         $this->fill($property->toArray());
@@ -46,7 +49,7 @@ class EditProperty extends Component
         try {
             // Validate form input 
             $this->validate([
-               'name' => 'required|string|unique:lt_houses,name',
+               'name' => "required|string|unique:lt_houses,name,{$this->propertyId},id",
                 'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
                 'monthly_rent' => 'required|numeric|min:0',

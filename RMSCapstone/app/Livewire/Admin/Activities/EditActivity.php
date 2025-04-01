@@ -20,6 +20,7 @@ class EditActivity extends Component
     public $inclusions;
     public $image;
     public $newImage;
+    public $activityId; 
 
 
     public $confirmEditItem = false;
@@ -34,6 +35,7 @@ class EditActivity extends Component
     public function mount(Activity $activity)
     {
         $this->activity = $activity;
+        $this->activityId = $activity->id; 
         $this->name = $activity->name;
         $this->description = $activity->description;
         $this->amount = $activity->amount;
@@ -45,7 +47,7 @@ class EditActivity extends Component
     {
         try{
         $this->validate([
-            'name' => 'required|string|max:255|unique:prd_activities,name',
+            'name' => "required|string|max:255|unique:prd_activities,name,{$this->activityId},id",
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:100',
             'inclusions' => 'nullable|string',

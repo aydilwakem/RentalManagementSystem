@@ -15,6 +15,8 @@ class EditAmenity extends Component
 
     public Amenity $amenity;
     public $name;
+    public $amenityId;
+
 
     public $confirmEditItem = false;
 
@@ -26,6 +28,7 @@ class EditAmenity extends Component
     public function mount(Amenity $amenity)
     {
         $this->amenity = $amenity;
+        $this->amenityId = $amenity->id;
         $this->name = $amenity->name;
     }
 
@@ -33,7 +36,7 @@ class EditAmenity extends Component
     {
         try{
         $this->validate([
-            'name' => 'required|string|max:255',
+            'name' => "required|string|max:255|unique:prd_amenities,name,{$this->amenityId},id",
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
                 // If validation fails, close the modal

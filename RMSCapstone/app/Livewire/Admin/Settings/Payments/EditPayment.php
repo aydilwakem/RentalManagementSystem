@@ -19,6 +19,8 @@ class EditPayment extends Component
     public $account_number;
     public $mode_of_payment_qr_image;
     public $new_mode_of_payment_qr_image;
+    public $paymentMethodId;
+
 
     public $confirmEditItem = false;
 
@@ -30,6 +32,7 @@ class EditPayment extends Component
     //To display info of selected item
     public function mount(PaymentMethod $paymentMethod)
     {
+        $this->paymentMethodId = $paymentMethod->id;
         $this->paymentMethod = $paymentMethod;
         $this->mode_of_payment_name = $paymentMethod->mode_of_payment_name;
         $this->account_name = $paymentMethod->account_name;
@@ -41,7 +44,7 @@ class EditPayment extends Component
     {
         try{
         $this->validate([
-            'mode_of_payment_name' => 'required|string|max:255|unique:pm_payment_methods,mode_of_payment_name',
+            'mode_of_payment_name' => "required|string|max:255|unique:pm_payment_methods,mode_of_payment_name,{$this->paymentMethodId},id",
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
             'new_mode_of_payment_qr_image' => 'nullable|image|max:2048', // Ensure image size is within limit

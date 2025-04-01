@@ -21,6 +21,7 @@ class EditRoomRate extends Component
     public $description;
     public $rate_type;
     public $rooms;
+    public $roomRateId;
 
     public $confirmEditItem = false;
 
@@ -32,6 +33,7 @@ class EditRoomRate extends Component
     public function mount(RoomRate $roomRate)
     {
         $this->roomRate = $roomRate;
+        $this->roomRateId = $roomRate->id; 
         $this->room_id = $roomRate->room_id;
         $this->name = $roomRate->name;
         $this->start_date = $roomRate->start_date;
@@ -49,7 +51,7 @@ class EditRoomRate extends Component
         try{
         $this->validate([
             'room_id' => 'required|exists:prd_rooms,id',
-            'name' => 'required|string|max:255',
+            'name' => "required|string|max:255|unique:prd_room_rates,name,{$this->roomRateId},id",
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
             'amount' => 'required|numeric|min:0',

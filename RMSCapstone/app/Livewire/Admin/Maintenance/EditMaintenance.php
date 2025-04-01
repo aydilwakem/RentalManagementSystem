@@ -16,7 +16,7 @@ class EditMaintenance extends Component
     public $reported_at;
     public $resolved_at;
     public $priority_status;
-
+    public $maintenanceId;
 
     public $confirmEditItem = false;
 
@@ -32,6 +32,7 @@ class EditMaintenance extends Component
     public function mount(Maintenance $maintenance)
     {
         $this->name = $maintenance->name;
+        $this->maintenanceId = $maintenance->id; 
         $this->description = $maintenance->description;
         $this->reported_at = optional($maintenance->reported_at)->format('Y-m-d');
         $this->resolved_at = optional($maintenance->resolved_at)->format('Y-m-d');
@@ -43,7 +44,7 @@ class EditMaintenance extends Component
         try{
         // Validate form input 
         $this->validate([   
-            'name' => 'required|string',
+            'name' => "required|string|unique:mnt_maintenance,name,{$this->maintenanceId},id",
             'description' => 'required|string',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',

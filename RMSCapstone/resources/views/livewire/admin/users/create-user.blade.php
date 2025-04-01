@@ -3,17 +3,6 @@
 
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new user</h2>
 
-        {{-- Display Validation Errors --}}
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li class="py-1">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Name -->
@@ -22,6 +11,9 @@
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter full name" required>
+                    @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Email -->
@@ -30,6 +22,9 @@
                     <input type="email" wire:model="email" id="email"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter email" required>
+                    @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Role Dropdown -->
@@ -39,11 +34,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">-- Choose a Role --</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
                     @error('selectedRole')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -53,6 +48,9 @@
                     <input type="password" wire:model="password" id="password"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter password" required>
+                    @error('password')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
 

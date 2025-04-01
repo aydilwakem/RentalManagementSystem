@@ -26,6 +26,8 @@ class EditRoom extends Component
     public $image;
     public $newImage;
     public $roomCategories; // Store room categories for dropdown
+    public $roomId;
+
 
     public $confirmEditItem = false;
 
@@ -37,6 +39,7 @@ class EditRoom extends Component
 
     public function mount(Room $room)
     {
+        $this->roomId = $room->id;
         $this->room = $room;
         $this->name = $room->name;
         $this->room_category_id = $room->room_category_id;
@@ -54,7 +57,7 @@ class EditRoom extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255|unique:prd_rooms,name',
+                'name' => "required|string|max:255|unique:prd_rooms,name,{$this->roomId},id",
                 'room_category_id' => 'nullable|exists:prd_room_categories,id',
                 'ideal_guest' => 'required|integer|min:1',
                 'max_adults' => 'required|integer|min:1',

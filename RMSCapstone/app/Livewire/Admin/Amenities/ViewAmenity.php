@@ -9,6 +9,7 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class ViewAmenity extends Component
 {
+    public Amenity $amenity;
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
