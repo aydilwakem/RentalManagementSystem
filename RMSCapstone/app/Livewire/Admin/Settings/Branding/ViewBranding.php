@@ -14,6 +14,7 @@ class ViewBranding extends Component
     public $confirmEditItem = false;
     public $company_name;
     public $logo;
+    public $image;
     public $newImage;
     public $email;
     public $contact_number;
@@ -30,22 +31,25 @@ class ViewBranding extends Component
 
     public function mount()
     {
-        $settings = Setting::first();
+        $this->settings = Setting::first(); // Store in $this->settings
 
-        if ($settings) {
-            $this->company_name = $settings->company_name;
-            $this->logo = $settings->logo;
-            $this->email = $settings->email;
-            $this->contact_number = $settings->contact_number;
-            $this->address = $settings->address;
-            $this->facebook = $settings->facebook;
-            $this->instagram = $settings->instagram;
-            $this->terms_and_conditions = $settings->terms_and_conditions;
-            $this->privacy_policy = $settings->privacy_policy;
-            $this->refund_policy = $settings->refund_policy;
-            $this->rental_agreement = $settings->rental_agreement;
-            $this->custom_css = $settings->custom_css;
-            $this->custom_js = $settings->custom_js;
+        if ($this->settings) {
+            $this->company_name = $this->settings->company_name;
+            $this->image = $this->settings->logo;
+            $this->email = $this->settings->email;
+            $this->contact_number = $this->settings->contact_number;
+            $this->address = $this->settings->address;
+            $this->facebook = $this->settings->facebook;
+            $this->instagram = $this->settings->instagram;
+            $this->terms_and_conditions = $this->settings->terms_and_conditions;
+            $this->privacy_policy = $this->settings->privacy_policy;
+            $this->refund_policy = $this->settings->refund_policy;
+            $this->rental_agreement = $this->settings->rental_agreement;
+            $this->custom_css = $this->settings->custom_css;
+            $this->custom_js = $this->settings->custom_js;
+        } else {
+            // If no settings exist, create an empty settings instance
+            $this->settings = new Setting();
         }
     }
 
@@ -77,33 +81,26 @@ class ViewBranding extends Component
             throw $e;
         }
 
-        // Use firstOrCreate to ensure settings exist
-        $settings = Setting::firstOrCreate([]);  // Creates an entry if none exists
-
-        // Ensure the image is uploaded properly
-        if ($this->newImage && !$this->newImage->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
+        // Ensure settings exist
+        if (!$this->settings->exists) {
+            $this->settings = Setting::firstOrCreate([]);
         }
 
         // Handle Image Upload
         if ($this->newImage) {
-            // Delete the old image if it exists
-            if ($settings->logo) {
-                Storage::disk('public')->delete($settings->logo);
+            if ($this->settings->logo) { // Use correct column name
+                Storage::disk('public')->delete($this->settings->logo);
             }
 
-            // Save the new image in the public folder
-            $logoPath = $this->newImage->store('logos', 'public');
-        } else {
-            // Retain the old logo if no new image is uploaded
-            $logoPath = $settings->logo;
+            // Save the image in public folder
+            $imagePath = $this->newImage->store('room-categories', 'public');
+            $this->settings->logo = $imagePath;
         }
 
-        // Update settings
-        $settings->update([
+        // Update settings in database
+        $this->settings->update([
             'company_name' => $this->company_name,
-            'logo' => $logoPath,  // Use $logoPath instead of $this->logo
+            'logo' => $this->settings->logo, // Ensure the new logo path is stored
             'email' => $this->email,
             'contact_number' => $this->contact_number,
             'address' => $this->address,
@@ -118,9 +115,9 @@ class ViewBranding extends Component
         ]);
 
         session()->flash('message', 'Branding successfully updated!');
-
         return redirect()->route('admin.branding');
     }
+
 
 
     public function render()

@@ -30,7 +30,7 @@ class EditEvent extends Component
     public $eventHalls = []; // To store fetched event categories
 
     public $confirmEditItem = false;
-    
+
     public function confirmEdit($id)
     {
         $this->confirmEditItem = $id;
@@ -61,28 +61,28 @@ class EditEvent extends Component
 
     public function updateEvent()
     {
-        try{
-        // Validate form input 
-        $this->validate([   
-            'name' => 'required|string|max:255',
-            'event_category_id' => 'required|exists:prd_event_categories,id',
-            'event_hall_id' => 'required|exists:prd_event_halls,id',
-            'company_name' => 'required|string|max:255',
-            'contact_person' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'event_date_start' => 'required|date',
-            'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
-            'event_time' => 'required|date_format:H:i',
-            'capacity' => 'required|numeric|min:10|max:200',
-            'total_amount' => 'required|numeric|min:100|max:1000000.00',
-            'status' => 'required|in:confirmed,on-going,cancelled',
-            'requests' => 'required|string',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmEditItem = false;
-        throw $e;
-    }
+        try {
+            // Validate form input 
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'event_category_id' => 'required|exists:prd_event_categories,id',
+                'event_hall_id' => 'required|exists:prd_event_halls,id',
+                'company_name' => 'required|string|max:255',
+                'contact_person' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'event_date_start' => 'required|date',
+                'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
+                'event_time' => 'required|date_format:H:i',
+                'capacity' => 'required|numeric|min:10|max:200',
+                'total_amount' => 'required|numeric|min:100|max:1000000.00',
+                'status' => 'required|in:confirmed,on-going,completed,cancelled',
+                'requests' => 'required|string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
 
         // Update Event Hall
@@ -107,7 +107,7 @@ class EditEvent extends Component
         return redirect()->route('admin.events');
     }
 
-    
+
     public function render()
     {
         return view('livewire.admin.events.edit-event', [

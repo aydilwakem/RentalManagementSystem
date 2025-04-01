@@ -153,6 +153,7 @@
                         <option value="">--Select Status--</option>
                         <option value="confirmed">Confirmed</option>
                         <option value="on-going">On-Going</option>
+                        <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
                     </select>
                     @error('status')

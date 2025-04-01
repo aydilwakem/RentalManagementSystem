@@ -25,7 +25,7 @@ class CreateEvent extends Component
 
     public $eventCategories = [];
     public $eventHalls = []; // To store fetched event categories
-    
+
     public $confirmCreateItem = false;
 
     public function confirmCreate()
@@ -33,7 +33,7 @@ class CreateEvent extends Component
         $this->confirmCreateItem = true;
     }
 
-    
+
     public function mount()
     {
         // Fetch event categories and halls when the component mounts
@@ -43,28 +43,28 @@ class CreateEvent extends Component
 
     public function saveEvent()
     {
-       try{
-        // Validate form input 
-        $this->validate([   
-            'name' => 'required|string|max:255',
-            'event_category_id' => 'required|exists:prd_event_categories,id',
-            'event_hall_id' => 'required|exists:prd_event_halls,id',
-            'company_name' => 'required|string|max:255',
-            'contact_person' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'event_date_start' => 'required|date|after_or_equal:today',
-            'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
-            'event_time' => 'required|date_format:H:i',
-            'capacity' => 'required|numeric|min:10|max:200',
-            'total_amount' => 'required|numeric|min:100|max:1000000.00',
-            'status' => 'required|in:confirmed,on-going,cancelled',
-            'requests' => 'required|string',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+        try {
+            // Validate form input 
+            $this->validate([
+                'name' => 'required|string|max:255',
+                'event_category_id' => 'required|exists:prd_event_categories,id',
+                'event_hall_id' => 'required|exists:prd_event_halls,id',
+                'company_name' => 'required|string|max:255',
+                'contact_person' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'event_date_start' => 'required|date|after_or_equal:today',
+                'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
+                'event_time' => 'required|date_format:H:i',
+                'capacity' => 'required|numeric|min:10|max:200',
+                'total_amount' => 'required|numeric|min:100|max:1000000.00',
+                'status' => 'required|in:confirmed,on-going,completed,cancelled',
+                'requests' => 'required|string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
 
         // Create Event
@@ -85,17 +85,18 @@ class CreateEvent extends Component
         ]);
 
         // Reset form fields
-        $this->reset(['name', 
-            'event_category_id', 
-            'event_hall_id', 
-            'company_name', 
-            'contact_person', 
-            'email', 
+        $this->reset([
+            'name',
+            'event_category_id',
+            'event_hall_id',
+            'company_name',
+            'contact_person',
+            'email',
             'event_date_start',
-            'event_date_end', 
-            'event_time', 
-            'capacity', 
-            'total_amount', 
+            'event_date_end',
+            'event_time',
+            'capacity',
+            'total_amount',
             'status',
             'requests',
         ]);

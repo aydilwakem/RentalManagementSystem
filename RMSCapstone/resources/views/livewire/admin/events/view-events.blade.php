@@ -66,6 +66,7 @@
                                 <option value="">All</option>
                                 <option value="confirmed">Confirmed</option>
                                 <option value="on-going">On-going</option>
+                                <option value="completed">Completed</option>
                                 <option value="cancelled">Cancelled</option>
                             </select>
                         </div>
@@ -257,6 +258,8 @@
                                     <span class="px-2 py-1 bg-green-700 text-white rounded">Confirmed</span>
                                 @elseif($eventItem->status === 'on-going')
                                     <span class="px-2 py-1 bg-blue-600 text-white rounded">On-going</span>
+                                @elseif($eventItem->status === 'completed')
+                                    <span class="px-2 py-1 bg-yellow-600 text-white rounded">Completed</span>
                                 @elseif($eventItem->status === 'cancelled')
                                     <span class="px-2 py-1 bg-red-600 text-white rounded">Cancelled</span>
                                 @endif

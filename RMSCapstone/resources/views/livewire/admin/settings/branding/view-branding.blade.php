@@ -27,15 +27,16 @@
                         @if ($newImage)
                             <!-- Show new uploaded image -->
                             <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        @elseif ($settings && $settings->logoPath)
+                        @elseif ($settings && $settings->logo) <!-- Use $settings->logo instead of $settings->image -->
                             <!-- Show existing image from storage -->
-                            <img src="{{ asset('storage/' . $settings->logoPath) }}"
+                            <img src="{{ asset('storage/' . $settings->logo) }}"
                                 class="w-32 h-32 object-cover rounded-lg shadow">
                         @else
                             <!-- Show default image if no image exists -->
                             <img src="{{ asset('images/rms-default.png') }}"
                                 class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
+
                     </div>
                 </div>
 
