@@ -7,7 +7,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ViewMaintenances extends Component
+class OldMaintenances extends Component
 {
     use WithPagination;
 
@@ -78,7 +78,7 @@ class ViewMaintenances extends Component
         $allMaintenances = Maintenance::all();
 
         $maintenances = Maintenance::query()
-            ->whereNull('resolved_at')
+            ->whereNotNull('resolved_at')
             ->search($this->search)
             ->when($this->priorityStatus !== '', function ($query) {
                 $query->where('priority_status', $this->priorityStatus);
@@ -98,7 +98,7 @@ class ViewMaintenances extends Component
             session(['fake_ids_maintenances' => $fakeIDs]);
         }
 
-        return view('livewire.admin.maintenance.view-maintenances', [
+        return view('livewire.admin.maintenance.old-maintenances', [
             'maintenances' => $maintenances,
             'fakeIDs' => $fakeIDs,
             'allMaintenances' => $allMaintenances,

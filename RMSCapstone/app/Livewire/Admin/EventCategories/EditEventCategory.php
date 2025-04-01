@@ -18,6 +18,7 @@ class EditEventCategory extends Component
     public $description;
     public $image;
     public $newImage;
+    public $eventCategoryId; 
 
     public $confirmEditItem = false;
 
@@ -31,6 +32,7 @@ class EditEventCategory extends Component
     public function mount(EventCategory $eventCategory)
     {
         $this->eventCategory = $eventCategory;
+        $this->eventCategoryId = $eventCategory->id; 
         $this->name = $eventCategory->name;
         $this->description = $eventCategory->description;
         $this->image = $eventCategory->image;
@@ -40,7 +42,7 @@ class EditEventCategory extends Component
     {
         try{
         $this->validate([
-            'name' => 'required|string|max:255|unique:prd_event_categories,name',
+            'name' => "required|string|max:255|unique:prd_event_categories,name,{$this->eventCategoryId},id",
             'description' => 'nullable|string',
             'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);

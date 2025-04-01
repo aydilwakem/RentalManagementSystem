@@ -21,6 +21,7 @@ class EditEventHall extends Component
     public $extra_charge_per_hr;
     public $image;
     public $newImage;
+    public $eventHallId;
 
     public $confirmEditItem = false;
     public function confirmEdit($id)
@@ -33,6 +34,7 @@ class EditEventHall extends Component
     public function mount(EventHall $eventHall)
     {
         $this->eventHall = $eventHall;
+        $this->eventHallId = $eventHall->id;
         $this->name = $eventHall->name;
         $this->description = $eventHall->description;
         $this->amount = $eventHall->amount;
@@ -45,7 +47,7 @@ class EditEventHall extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255|unique:prd_event_halls,name',
+                'name' => "required|string|max:255|unique:prd_event_halls,name,{$this->eventHallId},id",
                 'description' => 'nullable|string',
                 'amount' => 'required|numeric|min:100|max:50000.00',
                 'capacity' => 'required|numeric|min:10|max:200',

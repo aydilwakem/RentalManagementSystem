@@ -125,6 +125,8 @@ class ViewBranding extends Component
 
     public function render()
     {
-        return view('livewire.admin.settings.branding.view-branding');
+        return view('livewire.admin.settings.branding.view-branding', [
+            'settings' => $this->settings,
+        ]);
     }
 }

@@ -23,6 +23,8 @@ class EditRoomCategory extends Component
     public $newImage;
     public $selectedAmenities = []; // Store the selected amenities
     public $amenities; // Store all available amenities
+    public $roomCategoryId;
+
 
     public $confirmEditItem = false;
 
@@ -34,6 +36,7 @@ class EditRoomCategory extends Component
     // Mount the fields to pre-fill the edit form
     public function mount(RoomCategory $roomCategory)
     {
+        $this->roomCategoryId = $roomCategory->id;
         $this->roomCategory = $roomCategory;
         $this->name = $roomCategory->name;
         $this->description = $roomCategory->description;
@@ -46,7 +49,7 @@ class EditRoomCategory extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255|unique:prd_room_categories,name',
+                'name' => "required|string|max:255|unique:prd_room_categories,name,{$this->roomCategoryId},id",
                 'description' => 'nullable|string',
                 'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
                 'selectedAmenities' => 'array',

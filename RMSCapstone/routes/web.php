@@ -62,6 +62,7 @@ Route::middleware([
         return view('admin.no-access');
     })->name('no-access');
 
+
     // Users Route
 
     // List
@@ -125,7 +126,7 @@ Route::middleware([
     // Deleted Rooms (Soft Deletes)
     Route::get('deleted-rooms', function () {
         return view('admin.rooms.deleted-rooms');
-    })->name('admin.deleted-rooms');
+    })->name('admin.deleted-rooms')->middleware('can:room-soft-delete');
 
 
 
@@ -153,7 +154,7 @@ Route::middleware([
     // Deleted Categories (Soft Deletes)
     Route::get('deleted-room-categories', function () {
         return view('admin.room-categories.deleted-room-categories');
-    })->name('admin.deleted-room-categories');
+    })->name('admin.deleted-room-categories')->middleware('can:room-category-soft-delete');
 
 
     // Room Rates Route
@@ -179,17 +180,17 @@ Route::middleware([
     // Deleted Room Rate (Soft Deletes)
     Route::get('deleted-room-rates', function () {
         return view('admin.room-rates.deleted-room-rates');
-    })->name('admin.deleted-room-rates');
+    })->name('admin.deleted-room-rates')->middleware('can:room-rate-soft-delete');
 
     // Individual Room Rates Route
 
     // Create
     Route::get('/create/individual-room-rate/{roomId}', CreateIndividualRate::class)
-        ->name('admin.create-individual-rate');
+        ->name('admin.create-individual-rate')->middleware('can:individual-room-rate-create');
 
     // Edit
     Route::get('edit/individual-room-rate/{roomRate}', EditIndividualRate::class)
-        ->name('admin.edit-individual-rate');
+        ->name('admin.edit-individual-rate')->middleware('can:individual-room-rate-edit');
 
 
 
@@ -218,7 +219,7 @@ Route::middleware([
     // Deleted Rooms (Soft Deletes)
     Route::get('deleted-amenitites', function () {
         return view('admin.amenities.deleted-amenities');
-    })->name('admin.deleted-amenities');
+    })->name('admin.deleted-amenities')->middleware('can:amenity-soft-delete');
 
 
     // Activities Route
@@ -244,7 +245,7 @@ Route::middleware([
     // Deleted Activities (Soft Deletes)
     Route::get('deleted-activities', function () {
         return view('admin.activities.deleted-activities');
-    })->name('admin.deleted-activities');
+    })->name('admin.deleted-activities')->middleware('can:activity-soft-delete');
 
 
     //Events
@@ -270,7 +271,7 @@ Route::middleware([
     // Deleted Events (Soft Deletes)
     Route::get('deleted-events', function () {
         return view('admin.events.deleted-events');
-    })->name('admin.deleted-events');
+    })->name('admin.deleted-events')->middleware('can:event-soft-delete');
 
 
     // Event Categories Route
@@ -296,7 +297,7 @@ Route::middleware([
     // Deleted Event Categories (Soft Deletes)
     Route::get('deleted-event-categories', function () {
         return view('admin.event-categories.deleted-event-categories');
-    })->name('admin.deleted-event-categories');
+    })->name('admin.deleted-event-categories')->middleware('can:event-category-soft-delete');
 
 
 
@@ -323,11 +324,13 @@ Route::middleware([
     // Deleted Event Halls (Soft Deletes)
     Route::get('deleted-event-halls', function () {
         return view('admin.event-halls.deleted-event-halls');
-    })->name('admin.deleted-event-halls');
+    })->name('admin.deleted-event-halls')->middleware('can:event-hall-soft-delete');
 
 
 
-    // Maintenance
+    // --------------------- Maintenance ---------------------------------------     
+
+    // New Maintenance
 
     //List
     Route::get('/maintenance', function () {
@@ -350,8 +353,12 @@ Route::middleware([
     // Deleted Maintenances (Soft Deletes)
     Route::get('deleted-maintenances', function () {
         return view('admin.maintenance.deleted-maintenances');
-    })->name('admin.deleted-maintenances');
+    })->name('admin.deleted-maintenances')->middleware('can:maintenance-soft-delete');
 
+    // Old Maintenance
+    Route::get('/old-maintenances', function () {
+        return view('admin.maintenance.old-maintenances');
+    })->name('admin.old-maintenances');
 
     // Settings
 
@@ -363,7 +370,7 @@ Route::middleware([
     // Branding
     Route::get('/settings/branding', function () {
         return view('admin.settings.branding.view-branding');
-    })->name('admin.branding');
+    })->name('admin.branding')->middleware('can:branding-view');
 
     //Payment Methods
 
@@ -388,7 +395,7 @@ Route::middleware([
     // Deleted Payments (Soft Deletes)
     Route::get('deleted-payments', function () {
         return view('admin.settings.payments.deleted-payments');
-    })->name('admin.deleted-payments');
+    })->name('admin.deleted-payments')->middleware('can:payment-method-soft-delete');
 
     /**
      * Reservations

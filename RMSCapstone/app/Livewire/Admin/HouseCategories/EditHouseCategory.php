@@ -16,6 +16,8 @@ class EditHouseCategory extends Component
     public HouseCategory $houseCategory;
     public $name;
     public $description;
+    public $houseCategoryId;
+
 
     public $confirmEditItem = false;
 
@@ -27,6 +29,7 @@ class EditHouseCategory extends Component
     public function mount(HouseCategory $houseCategory)
     {
         $this->houseCategory = $houseCategory;
+        $this->houseCategoryId = $houseCategory->id;
         $this->name = $houseCategory->name;
         $this->description = $houseCategory->description;
     }
@@ -35,7 +38,7 @@ class EditHouseCategory extends Component
     {
         try {
             $this->validate([
-                'name' => 'required|string|max:255|unique:lt_house_categories,name',
+                'name' => "required|string|max:255|unique:lt_house_categories,name,{$this->houseCategoryId},id",
                 'description' => 'nullable|string|max:500',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
