@@ -1,9 +1,24 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg flex flex-col items-center">
-    <img src="{{ asset('storage/carl.jpg') }}" alt="No Roles Assigned" class="w-40 h-40 mb-4">
-    <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">
-            You don't have any roles assigned yet.<br>
-            This is why you can't access any pages. Please contact the admin.
+<div class="min-h-screen flex flex-col items-center justify-center px-6">
+    <div class="bg-white shadow-lg rounded-lg p-8 max-w-lg text-center border">
+        <!-- Title -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">No Access Yet</h2>
+
+        <!-- Icon -->
+        <div class="text-red-500 text-6xl mb-4">
+            <i class="fas fa-user-lock"></i>
+        </div>
+
+        <!-- Description -->
+        <p class="text-gray-600 mb-4">
+            You haven't been assigned a role yet. Until then, you won't be able to access any pages.
+            Please wait for the admin to grant you access.
         </p>
+
+        <!-- Contact Admin -->
+
+        <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+            icon="fas fa-envelope mr-2" href="mailto:rmscapstone26@gmail.com">
+            Contact Admin
+        </x-button>
     </div>
 </div>

@@ -11,7 +11,6 @@ class ViewAmenity extends Component
 {
     public Amenity $amenity;
     public $confirmItemDelete = false;
-    public Amenity $amenity;
 
     public function confirmDelete($id)
     {

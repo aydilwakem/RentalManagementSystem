@@ -29,22 +29,7 @@
         </div>
     @else
         <div>
-            <div class="flex items-center justify-between">
-                <!-- Create Room Button -->
-                @can('maintenance-create')
-                    <div class="flex items-center justify-between p-4">
-                        <x-button icon="fas fa-plus" href="{{ route('admin.create-maintenance') }}">
-                            New Maintenance
-                        </x-button>
-                    </div>
-                @endcan
-                @can('maintenance-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
-                        Deleted Maintenances
-                    </x-button>
-                @endcan
-            </div>
+
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -72,6 +57,22 @@
 
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
+                <div class="flex items-center justify-between">
+                    <!-- Create Room Button -->
+                    @can('maintenance-create')
+                        <div class="flex items-center justify-between p-4">
+                            <x-button icon="fas fa-plus" href="{{ route('admin.create-maintenance') }}">
+                                New Maintenance
+                            </x-button>
+                        </div>
+                    @endcan
+                    @can('maintenance-soft-delete')
+                        <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2 me-4"
+                            icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
+                            Deleted Maintenances
+                        </x-button>
+                    @endcan
+                </div>
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">

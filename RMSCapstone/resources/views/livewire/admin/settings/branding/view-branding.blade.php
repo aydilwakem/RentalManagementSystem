@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Maam Almi kung nababasa mo man to ') }}
+            {{ __('Edit brand details') }}
         </h2>
     </x-slot>
     <!-- Form container -->
