@@ -17,7 +17,7 @@
     </div>
     @endif
     <div>
-        <div class="flex items-center justify-between p-4">
+        <div class="flex items-center justify-between px-4 mb-3">
             <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
                 New Amenity
             </x-button>

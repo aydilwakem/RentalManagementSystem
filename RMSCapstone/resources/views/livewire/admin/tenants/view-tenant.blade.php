@@ -16,13 +16,13 @@
 
         <!-- Name -->
         <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">
-            {{ $tenant->name }}
+            {{ $tenant->first_name }} {{ $tenant->last_name }}
         </h2>
 
         <!-- House -->
         <div class="mb-2 mt-3 flex items-center gap-2">
-            <h3 class="text-lg font-semibold text-gray-900 leading-none">House:</h3>
-            <p class="font-semibold text-gray-600 leading-none">
+            <h3 class="text-lg font-semibold text-gray-900 leading-none">Assigned House:</h3>
+            <p class=" text-lg font-semibold text-gray-600 leading-none">
                 {{ $tenant->house->name ?? 'N/A'}}
             </p>
         </div>
@@ -30,13 +30,13 @@
 
         <!-- Room Details -->
         <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Room Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Tenant Details</h3>
             <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }} {{
+                <li><strong>Full Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }} {{
                     $tenant->last_name }} {{ $tenant->suffix }}</li>
                 <li><strong>Email:</strong> {{ $tenant->email }}</li>
                 <li><strong>Phone Number:</strong> {{ $tenant->phone }}</li>
-                <li><strong>Birthdate:</strong> {{ $tenant->birthdate }} hours</li>
+                <li><strong>Birthdate:</strong> {{ $tenant->birthdate }}</li>
                 <li><strong>Gender:</strong> {{ $tenant->gender }}</li>
                 <li><strong>Occupation:</strong> {{ $tenant->occupation }}</li>
                 <li><strong>Notes:</strong> {{ $tenant->notes }}</li>

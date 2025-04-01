@@ -76,7 +76,7 @@
                 </h1>
             </div>
 
-            <div class="px-4 space-y-2 flex flex-col overflow-y-auto">
+            <div class="px-4 space-y-1 flex flex-col overflow-y-auto">
                 <!-- SideBar Toggle -->
                 <button @click="$store.sidebar.full = !$store.sidebar.full"
                     class="hidden sm:block focus:outline-none absolute p-1 -right-3 top-10 bg-green-700 border rounded-full shadow-md">
@@ -355,7 +355,7 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
 
-                        
+
                         @can('user-list')
                         <a href="{{ route('admin.manage-users') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
