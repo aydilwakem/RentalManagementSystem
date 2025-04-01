@@ -33,6 +33,16 @@ class DeletedRoomCategories extends Component
         $roomCategory = RoomCategory::withTrashed()->find($roomCategoryId);
         if ($roomCategory) {
             $roomCategory->restore();
+            
+            // Check if there are any detached amenities stored in the session
+        $detachedAmenities = session()->get('detached_amenities', []);
+
+        // If detached amenities exist, re-attach them
+        if (!empty($detachedAmenities)) {
+            $roomCategory->amenities()->attach($detachedAmenities);
+            // Clear the session after reattaching
+            session()->forget('detached_amenities');
+        }
             session()->flash('message', 'Room category restored successfully.');
             $this->fetchDeletedRoomCategories();
         }

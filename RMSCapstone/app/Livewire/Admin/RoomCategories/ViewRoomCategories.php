@@ -47,6 +47,8 @@ class ViewRoomCategories extends Component
         $roomCategory = RoomCategory::find($this->confirmItemDelete);
 
         if ($roomCategory) {
+            // Store the detached amenities IDs in session before deleting
+        session()->put('detached_amenities', $roomCategory->amenities->pluck('id')->toArray());
             // Detach related amenities before deleting
             $roomCategory->amenities()->detach();
 
