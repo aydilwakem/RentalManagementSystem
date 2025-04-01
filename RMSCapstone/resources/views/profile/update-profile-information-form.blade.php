@@ -10,7 +10,7 @@
     <x-slot name="form">
         <!-- Profile Photo -->
         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-            <div x-data="{photoName: null, photoPreview: null}" class="col-span-6 sm:col-span-4">
+            <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
                 <!-- Profile Photo File Input -->
                 <input type="file" id="photo" class="hidden" wire:model.live="photo" x-ref="photo"
                     x-on:change="
@@ -52,75 +52,35 @@
         @endif
 
         <!-- Name -->
-        <div class="col-span-6 sm:col-span-4">
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
             <x-label for="name" value="{{ __('Name') }}" />
             <x-input id="name" type="text" class="mt-1 block w-full" wire:model="state.name" required
                 autocomplete="name" />
             <x-input-error for="name" class="mt-2" />
+        </div>
 
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
             <x-label for="middle_name" value="{{ __('Middle Name') }}" />
             <x-input id="middle_name" type="text" class="mt-1 block w-full" wire:model="state.middle_name"
                 autocomplete="middle_name" />
             <x-input-error for="middle_name" class="mt-2" />
         </div>
 
-        <div class="col-span-6 sm:col-span-4">
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
             <x-label for="last_name" value="{{ __('Last Name') }}" />
             <x-input id="last_name" type="text" class="mt-1 block w-full" wire:model="state.last_name" required
                 autocomplete="last_name" />
             <x-input-error for="last_name" class="mt-2" />
+        </div>
 
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
             <x-label for="suffix" value="{{ __('Suffix') }}" />
             <x-input id="suffix" type="text" class="mt-1 block w-full" wire:model="state.suffix"
                 autocomplete="suffix" />
             <x-input-error for="suffix" class="mt-2" />
         </div>
 
-        <!-- Address -->
-        <div class="col-span-6 sm:col-span-4">
-            <x-label for="house_number" value="{{ __('House Number') }}" />
-            <x-input id="house_number" type="text" class="mt-1 block w-full" wire:model="state.house_number"
-                autocomplete="house_number" />
-            <x-input-error for="house_number" class="mt-2" />
-
-            <x-label for="street" value="{{ __('Street') }}" />
-            <x-input id="street" type="text" class="mt-1 block w-full" wire:model="state.street"
-                autocomplete="street" />
-            <x-input-error for="street" class="mt-2" />
-
-            <x-label for="barangay" value="{{ __('Barangay') }}" />
-            <x-input id="barangay" type="text" class="mt-1 block w-full" wire:model="state.barangay"
-                autocomplete="barangay" />
-            <x-input-error for="barangay" class="mt-2" />
-
-            <x-label for="city_municipality" value="{{ __('City/Municipality') }}" />
-            <x-input id="city_municipality" type="text" class="mt-1 block w-full" wire:model="state.city_municipality"
-                autocomplete="city_municipality" />
-            <x-input-error for="city_municipality" class="mt-2" />
-
-            <x-label for="province" value="{{ __('Province') }}" />
-            <x-input id="province" type="text" class="mt-1 block w-full" wire:model="state.province"
-                autocomplete="province" />
-            <x-input-error for="province" class="mt-2" />
-
-            <x-label for="region" value="{{ __('Region') }}" />
-            <x-input id="region" type="text" class="mt-1 block w-full" wire:model="state.region"
-                autocomplete="region" />
-            <x-input-error for="region" class="mt-2" />
-
-            <x-label for="postal_code" value="{{ __('Postal Code') }}" />
-            <x-input id="postal_code" type="text" class="mt-1 block w-full" wire:model="state.postal_code"
-                autocomplete="postal_code" />
-            <x-input-error for="postal_code" class="mt-2" />
-
-            <x-label for="country" value="{{ __('Country') }}" />
-            <x-input id="country" type="text" class="mt-1 block w-full" wire:model="state.country"
-                autocomplete="country" />
-            <x-input-error for="country" class="mt-2" />
-        </div>
-
-
-        <!-- Contact Information - Email and Contact Number -->
+         <!-- Contact Information - Email and Contact Number -->
 
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
@@ -129,7 +89,8 @@
                 autocomplete="username" />
             <x-input-error for="email" class="mt-2" />
 
-            @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::emailVerification()) && !$this->user->hasVerifiedEmail())
+            @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::emailVerification()) &&
+                    !$this->user->hasVerifiedEmail())
                 <p class="text-sm mt-2">
                     {{ __('Your email address is unverified.') }}
 
@@ -147,6 +108,63 @@
                 @endif
             @endif
         </div>
+
+        <!-- Address -->
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="house_number" value="{{ __('House Number') }}" />
+            <x-input id="house_number" type="text" class="mt-1 block w-full" wire:model="state.house_number"
+                autocomplete="house_number" />
+            <x-input-error for="house_number" class="mt-2" />
+        </div>
+
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="street" value="{{ __('Street') }}" />
+            <x-input id="street" type="text" class="mt-1 block w-full" wire:model="state.street"
+                autocomplete="street" />
+            <x-input-error for="street" class="mt-2" />
+        </div>
+
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="barangay" value="{{ __('Barangay') }}" />
+            <x-input id="barangay" type="text" class="mt-1 block w-full" wire:model="state.barangay"
+                autocomplete="barangay" />
+            <x-input-error for="barangay" class="mt-2" />
+        </div>
+
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="city_municipality" value="{{ __('City/Municipality') }}" />
+            <x-input id="city_municipality" type="text" class="mt-1 block w-full"
+                wire:model="state.city_municipality" autocomplete="city_municipality" />
+            <x-input-error for="city_municipality" class="mt-2" />
+        </div>
+
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="province" value="{{ __('Province') }}" />
+            <x-input id="province" type="text" class="mt-1 block w-full" wire:model="state.province"
+                autocomplete="province" />
+            <x-input-error for="province" class="mt-2" />
+        </div>
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="region" value="{{ __('Region') }}" />
+            <x-input id="region" type="text" class="mt-1 block w-full" wire:model="state.region"
+                autocomplete="region" />
+            <x-input-error for="region" class="mt-2" />
+        </div>
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="postal_code" value="{{ __('Postal Code') }}" />
+            <x-input id="postal_code" type="text" class="mt-1 block w-full" wire:model="state.postal_code"
+                autocomplete="postal_code" />
+            <x-input-error for="postal_code" class="mt-2" />
+        </div>
+        <div class="col-span-6 sm:col-span-6 lg:col-span-3">
+            <x-label for="country" value="{{ __('Country') }}" />
+            <x-input id="country" type="text" class="mt-1 block w-full" wire:model="state.country"
+                autocomplete="country" />
+            <x-input-error for="country" class="mt-2" />
+        </div>
+
+
+
     </x-slot>
 
     <x-slot name="actions">

@@ -18,32 +18,23 @@
     @endif
     <div>
         <div class="flex items-center justify-between px-4 mb-3">
-            <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
-                New Amenity
-            </x-button>
+            @can('amenity-create')
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
+                    New Amenity
+                </x-button>
+            @endcan
             <!-- Deleted Rooms (Restore and Delete Forever -->
-            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                icon="fas fa-trash" href="{{ route('admin.deleted-amenities') }}">
-                Deleted Amenities
-            </x-button>
+            @can('amenity-soft-delete')
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-amenities') }}">
+                    Deleted Amenities
+                </x-button>
+            @endcan
         </div>
         <!-- Table -->
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4">
-                @can('amenity-create')
-                    <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
-                        New Amenity
-                    </x-button>
-                @endcan
-                <!-- Deleted Rooms (Restore and Delete Forever -->
-                @can('amenity-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-amenities') }}">
-                        Deleted Amenities
-                    </x-button>
-                @endcan
-            </div>
+
             <!-- Table -->
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->

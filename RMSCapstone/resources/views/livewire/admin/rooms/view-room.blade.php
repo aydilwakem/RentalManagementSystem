@@ -29,7 +29,7 @@
         <div class="mb-2 mt-3 flex items-center gap-2">
             <h3 class="text-lg font-semibold text-gray-900 leading-none">Room Category:</h3>
             <p class="font-semibold text-gray-600 leading-none">
-                {{ $room->category->name ?? 'N/A'}}
+                {{ $room->category->name ?? 'N/A' }}
             </p>
         </div>
 
@@ -52,15 +52,15 @@
 
             <!-- Edit -->
             <x-button type="button" icon="fas fa-pen-to-square"
-                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none"
                 wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
                 Edit
             </x-button>
 
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
-                class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="confirmDelete({{ $room->id }})">
+            class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
+            wire:click="confirmDelete({{ $room->id }})">
                 Delete
             </x-button>
 
@@ -80,7 +80,8 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
+                    wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
                 </x-danger-button>
             </x-slot>
