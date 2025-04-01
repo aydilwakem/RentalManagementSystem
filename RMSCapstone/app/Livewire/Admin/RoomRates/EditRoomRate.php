@@ -33,7 +33,7 @@ class EditRoomRate extends Component
     public function mount(RoomRate $roomRate)
     {
         $this->roomRate = $roomRate;
-        $this->roomRateId = $roomRate->id; 
+        $this->roomRateId = $roomRate->id;
         $this->room_id = $roomRate->room_id;
         $this->name = $roomRate->name;
         $this->start_date = $roomRate->start_date;
@@ -48,23 +48,23 @@ class EditRoomRate extends Component
 
     public function updateRoomRate()
     {
-        try{
-        $this->validate([
-            'room_id' => 'required|exists:prd_rooms,id',
-            'name' => "required|string|max:255|unique:prd_room_rates,name,{$this->roomRateId},id",
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'amount' => 'required|numeric|min:0',
-            'extra_person_charge' => 'nullable|numeric|min:0',
-            'extended_stay_charge_per_hr' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'rate_type' => 'required|string|max:50',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmEditItem = false;
-        throw $e;
-    }
+        try {
+            $this->validate([
+                'room_id' => 'required|exists:prd_rooms,id',
+                'name' => "required|string|max:255|unique:prd_room_rates,name,{$this->roomRateId},id",
+                'start_date' => 'required|date|after_or_equal:today',
+                'end_date' => 'required|date|after:start_date',
+                'amount' => 'required|numeric|min:0',
+                'extra_person_charge' => 'nullable|numeric|min:0',
+                'extended_stay_charge_per_hr' => 'nullable|numeric|min:0',
+                'description' => 'nullable|string',
+                'rate_type' => 'required|string|max:50',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         $this->roomRate->update([
             'room_id' => $this->room_id,

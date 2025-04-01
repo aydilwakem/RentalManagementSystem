@@ -363,10 +363,12 @@
                         </a>
                         @endcan
 
+                        @can('branding-view')
                         <a href="{{ route('admin.branding') }}" wire:navigate
                         class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                         <h1 class="cursor-pointer">Branding</h1>
                         </a>
+                        @endcan
 
                         @can('payment-method-list')
                         <a href="{{ route('admin.payments') }}" wire:navigate

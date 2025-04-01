@@ -20,6 +20,7 @@
             </div>
             @endcan
             <!-- Deleted Items (Restore and Delete Forever) -->
+            @can('event-hall-soft-delete')
             <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                 icon="fas fa-trash" href="{{ route('admin.deleted-event-halls') }}">
                 Deleted Event Halls
