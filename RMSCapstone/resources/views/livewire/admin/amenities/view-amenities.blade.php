@@ -9,29 +9,32 @@
             </x-button>
         </div>
     @else
-        {{-- Display Session Message --}}
-        @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                {{ session('message') }}
-            </div>
-        @endif
-        <div>
-            <div class="flex items-center justify-between p-4">
-                @can('amenity-create')
-                    <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
-                        New Amenity
-                    </x-button>
-                @endcan
-                <!-- Deleted Rooms (Restore and Delete Forever -->
-                @can('amenity-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-amenities') }}">
-                        Deleted Amenities
-                    </x-button>
-                @endcan
-            </div>
+    {{-- Display Session Message --}}
+    @if (session('message'))
+    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+        {{ session('message') }}
+    </div>
+    @endif
+    <div>
+        <div class="flex items-center justify-between px-4 mb-3">
+            @can('amenity-create')
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
+                    New Amenity
+                </x-button>
+            @endcan
+            <!-- Deleted Rooms (Restore and Delete Forever -->
+            @can('amenity-soft-delete')
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-amenities') }}">
+                    Deleted Amenities
+                </x-button>
+            @endcan
+        </div>
+        <!-- Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <!-- Header-->
+
             <!-- Table -->
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->

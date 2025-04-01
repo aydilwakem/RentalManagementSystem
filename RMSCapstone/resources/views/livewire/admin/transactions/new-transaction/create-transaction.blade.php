@@ -202,8 +202,7 @@
 
                     {{-- Pets --}}
                     <div>
-                        <label for="pets" class="block mb-2 text-sm font-medium text-gray-900">Are there any pets? If
-                            yes, how many?</label>
+                        <label for="pets" class="block mb-2 text-sm font-medium text-gray-900">Number of pets (if applicable)</label>
                         <input type="number" wire:model="pets" id="pets"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Enter number of pets">

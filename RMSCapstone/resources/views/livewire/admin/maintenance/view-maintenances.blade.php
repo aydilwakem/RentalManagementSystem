@@ -19,37 +19,22 @@
         <div class="bg-white rounded-lg overflow-x-auto">
             <!-- Empty Table Message -->
             <div class="text-center py-10">
-                <p class="text-gray-500 text-lg font-semibold">No maintenances yet.<br> Click "View Maintenances"
+                <p class="text-gray-500 text-lg font-semibold">No maintenances yet.<br> Click "Create Maintenances"
                     to
-                    view maintenance.</p>
-                <x-button class="mt-4" href="{{ route('admin.maintenances') }}" icon="fas fa-eye" wire:navigate>
-                    View New Maintenances
+                    add a new maintenance.</p>
+                <x-button class="mt-4" href="{{ route('admin.create-maintenance') }}" icon="fas fa-plus" wire:navigate>
+                    Create Maintenance
                 </x-button>
             </div>
         </div>
     @else
         <div>
-            <div class="flex items-center justify-between">
-                <!-- Create Room Button -->
-                @can('maintenance-create')
-                    <div class="flex items-center justify-between p-4">
-                        <x-button icon="fas fa-plus" href="{{ route('admin.create-maintenance') }}">
-                            New Maintenance
-                        </x-button>
-                    </div>
-                @endcan
-                @can('maintenance-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
-                        Deleted Maintenances
-                    </x-button>
-                @endcan
-            </div>
+
             {{-- Display Session Message --}}
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -72,6 +57,22 @@
 
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
+                <div class="flex items-center justify-between">
+                    <!-- Create Room Button -->
+                    @can('maintenance-create')
+                        <div class="flex items-center justify-between p-4">
+                            <x-button icon="fas fa-plus" href="{{ route('admin.create-maintenance') }}">
+                                New Maintenance
+                            </x-button>
+                        </div>
+                    @endcan
+                    @can('maintenance-soft-delete')
+                        <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2 me-4"
+                            icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
+                            Deleted Maintenances
+                        </x-button>
+                    @endcan
+                </div>
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">

@@ -5,10 +5,10 @@
         </h2>
     </x-slot>
 
-    <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md">
+    <div class="py-3 px-8 mx-auto w-full border rounded-lg bg-white shadow-md">
 
         <!-- Back Button -->
-        <div class="mx-auto max-w-2xl lg:py-2 flex justify-end items-center">
+        <div class="mx-auto w-full lg:py-2 flex justify-end items-center">
             <button onclick="history.back()"
                 class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                 <span class="leading-none translate-y-[-3px]">&times;</span>
@@ -34,7 +34,7 @@
                             <th scope="col" class="px-6 py-3">Address</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-gray-800">
                         <tr class="bg-white border-b border-gray-200">
                             <td class="px-6 py-4">
                                 {{ $transactions->first_name }} {{ $transactions->middle_name }}

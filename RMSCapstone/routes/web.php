@@ -6,6 +6,7 @@ use App\Livewire\Admin\EventHalls\EditEventHall;
 use App\Livewire\Admin\EventHalls\ViewEventHall;
 use App\Livewire\Admin\Maintenance\EditMaintenance;
 use App\Livewire\Admin\Maintenance\ViewMaintenance;
+use App\Mail\ConfirmationEmail;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\RoomCategories\ViewRoomCategory;
 use App\Livewire\Admin\RoomCategories\EditRoomCategory;
@@ -35,7 +36,7 @@ use App\Livewire\Admin\HouseCategories\EditHouseCategory;
 use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
-
+use Illuminate\Support\Facades\Mail;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -444,8 +445,8 @@ Route::middleware([
 
     /***
      * These routes are for Long-Term Rentals.
-     * 
-     * Route list: 
+     *
+     * Route list:
      * - Houses
      * - Tenants
      * - House Categories
@@ -536,8 +537,9 @@ Route::middleware([
 });
 
 
-
-
+Route::get('email', function(){
+    Mail::to('arasdump@gmail.com')->send(new ConfirmationEmail());
+});
 
 
 

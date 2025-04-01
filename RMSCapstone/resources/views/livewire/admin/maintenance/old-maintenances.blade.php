@@ -29,12 +29,7 @@
     </div>
     @else
     <div>
-        <div class="flex items-center justify-end">
-            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
-                Deleted Maintenances
-            </x-button>
-        </div>
+
         {{-- Display Session Message --}}
         @if (session('message'))
         <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -62,6 +57,12 @@
 
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Header-->
+            <div class="flex items-center justify-end p-4">
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
+                    Deleted Maintenances
+                </x-button>
+            </div>
             <div class="flex items-center justify-between d p-4">
                 <div class="flex">
                     <div class="relative w-full">
@@ -82,7 +83,7 @@
                 {{-- Maintenance Type Sort --}}
                 <div class="flex space-x-3">
                     <div class="flex space-x-3 items-center">
-                        <label class="w-40 text-sm font-medium text-gray-900">Staus :</label>
+                        <label class="w-40 text-sm font-medium text-gray-900">Status :</label>
                         <select wire:model.live="priorityStatus"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                             <option value="">All</option>
@@ -380,4 +381,4 @@
         </div>
     </div>
     @endif
-</div>s
+</div>
