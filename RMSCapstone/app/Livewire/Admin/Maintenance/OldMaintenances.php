@@ -30,8 +30,8 @@ class OldMaintenances extends Component
     public function mount()
     {
         // Ensure maintenance use a separate session key
-        if (!session()->has('fake_ids_maintenances')) {
-            session(['fake_ids_maintenances' => []]);
+        if (!session()->has('fake_ids_old_maintenances')) {
+            session(['fake_ids_old_maintenances' => []]);
         }
     }
 
@@ -56,7 +56,7 @@ class OldMaintenances extends Component
             }
 
             // Store updated fake IDs in a unique session key
-            session(['fake_ids_maintenances' => $fakeIDs]);
+            session(['fake_ids_old_maintenances' => $fakeIDs]);
 
             // Flash success message
             session()->flash('message', 'Maintenance successfully deleted!');
@@ -74,34 +74,38 @@ class OldMaintenances extends Component
     }
 
     public function render()
-    {
-        $allMaintenances = Maintenance::all();
+{
+    $allMaintenances = Maintenance::all();
 
-        $maintenances = Maintenance::query()
-            ->whereNotNull('resolved_at')
-            ->search($this->search)
-            ->when($this->priorityStatus !== '', function ($query) {
-                $query->where('priority_status', $this->priorityStatus);
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+    $maintenances = Maintenance::query()
+        ->whereNotNull('resolved_at')
+        ->search($this->search)
+        ->when($this->priorityStatus !== '', function ($query) {
+            $query->where('priority_status', $this->priorityStatus);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        // Retrieve unique session for activities
-        $fakeIDs = session('fake_ids_maintenances', []);
+    // Retrieve unique session for old maintenances
+    $fakeIDs = session('fake_ids_old_maintenances', []);
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Maintenance::count()) {
-            $fakeIDs = [];
-            foreach (Maintenance::orderBy('created_at', 'ASC')->get() as $index => $maintenance) {
-                $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_maintenances' => $fakeIDs]);
+    // Get only resolved maintenances
+    $resolvedMaintenances = Maintenance::whereNotNull('resolved_at')->orderBy('created_at', 'ASC')->get();
+
+    // Recalculate fake IDs if count mismatches
+    if (count($fakeIDs) !== $resolvedMaintenances->count()) {
+        $fakeIDs = [];
+        foreach ($resolvedMaintenances as $index => $maintenance) {
+            $fakeIDs[$maintenance->id] = 'MNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
-
-        return view('livewire.admin.maintenance.old-maintenances', [
-            'maintenances' => $maintenances,
-            'fakeIDs' => $fakeIDs,
-            'allMaintenances' => $allMaintenances,
-        ]);
+        session(['fake_ids_old_maintenances' => $fakeIDs]);
     }
+
+    return view('livewire.admin.maintenance.old-maintenances', [
+        'maintenances' => $maintenances,
+        'fakeIDs' => $fakeIDs,
+        'allMaintenances' => $allMaintenances,
+    ]);
+}
+
 }
