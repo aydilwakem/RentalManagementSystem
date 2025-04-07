@@ -5,8 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="bg-white overflow-x-auto shadow-xl sm:rounded-lg">
         @livewire('admin.rooms.view-rooms')
     </div>
-
 </x-app-layout>

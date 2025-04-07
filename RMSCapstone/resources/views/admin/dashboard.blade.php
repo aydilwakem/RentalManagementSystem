@@ -7,26 +7,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard</title>
     <link rel="icon" type="image/png" href="{{ asset('images/canopy-logo.png') }}">
-
 </head>
 
 <body>
-
     <x-app-layout>
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
                 {{ __('Dashboard') }}
             </h2>
         </x-slot>
 
         <div class="py-18">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <div class="bg-white dark:bg-[#2A2A2A] overflow-hidden shadow-xl sm:rounded-lg p-6">
                     @livewire('admin.dashboard')
                 </div>
             </div>
         </div>
     </x-app-layout>
-</body>
 
+</body>
 </html>

@@ -1,56 +1,55 @@
 <div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <!-- Reservations Card -->
+        <div
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-calendar-check text-primary text-4xl"></i>
+            <h2 class="text-gray-800 font-semibold">New Reservations</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ $newReservations }}</p>
+        </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-    <!-- Reservations Card -->
-    <div
-      class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-      <i class="fas fa-calendar-check text-primary text-4xl"></i>
-      <h2 class="text-gray-800 font-semibold">New Reservations</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$newReservations}}</p>
+
+        <!-- Rooms Card -->
+        <div
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-bed text-primary text-4xl"></i>
+            <h2 class="text-gray-800 font-semibold">Rooms Available</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ $availableRooms }}</p>
+        </div>
+
+        <!-- Maintenance Card -->
+        <div
+            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-tools text-primary text-4xl"></i>
+            <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
+            <p class="text-2xl font-bold text-gray-800">{{ $pendingMaintenances }}</p>
+        </div>
     </div>
 
+    <div id='calendar'></div>
 
-    <!-- Rooms Card -->
-    <div
-      class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-      <i class="fas fa-bed text-primary text-4xl"></i>
-      <h2 class="text-gray-700 font-semibold">Rooms Available</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$availableRooms}}</p>
-    </div>
+    @script
+        <script type="text/javascript">
+            document.addEventListener('livewire:initialized', () => {
+                var calendarEl = document.getElementById('calendar');
 
-    <!-- Maintenance Card -->
-    <div
-      class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-      <i class="fas fa-tools text-primary text-4xl"></i>
-      <h2 class="text-gray-700 font-semibold">Pending Maintenances</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$pendingMaintenances}}</p>
-    </div>
-  </div>
+                var events = @json($events);
 
-  <div id='calendar'></div>
+                console.log("Events Data: ", events); // ✅ Debugging outpu
 
-  @script
-  <script type="text/javascript">
-    document.addEventListener('livewire:initialized', () => {
-      var calendarEl = document.getElementById('calendar');
-
-      var events = @json($events);
-
-      console.log("Events Data: ", events); // ✅ Debugging outpu
-
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        selectable: true,
-        events: @json($events),
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
-        }
-      });
-      calendar.render();
-    });
-  </script>
-  @endscript
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    selectable: true,
+                    events: @json($events),
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
+                    }
+                });
+                calendar.render();
+            });
+        </script>
+    @endscript
 
 </div>

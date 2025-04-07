@@ -62,6 +62,60 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const textSizeSlider = document.getElementById('text-size');
+    const fontReset = document.getElementById('font-reset');
+    const settingsContent = document.getElementById('settings-content');
+    const webSettingsBtn = document.getElementById('web-settings');
+
+    // Load saved settings from localStorage
+    const savedFontSize = localStorage.getItem('font-size');
+    const savedDarkMode = localStorage.getItem('dark-mode');
+
+    // Apply saved font size if available
+    if (savedFontSize) {
+        document.body.style.fontSize = savedFontSize;
+        textSizeSlider.value = (parseFloat(savedFontSize) - 1) * 10; // Convert to slider value
+    }
+
+    // Apply saved dark mode state if available
+    if (savedDarkMode === 'true') {
+        document.documentElement.classList.add('dark');
+        darkModeToggle.checked = true;
+    }
+
+    // Toggle settings panel visibility
+    webSettingsBtn.addEventListener('click', () => {
+        settingsContent.classList.toggle('hidden');
+    });
+
+    // Adjust font size dynamically
+    textSizeSlider.addEventListener('input', () => {
+        const scale = 1 + (textSizeSlider.value / 10);
+        document.body.style.fontSize = `${scale}em`;
+        localStorage.setItem('font-size', `${scale}em`); // Save font size to localStorage
+    });
+
+    // Reset font size to default
+    fontReset.addEventListener('click', () => {
+        textSizeSlider.value = 0;
+        document.body.style.fontSize = '';
+        localStorage.removeItem('font-size'); // Remove font size from localStorage
+    });
+
+    // Toggle dark mode and save the state
+    darkModeToggle.addEventListener('change', () => {
+        if (darkModeToggle.checked) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('dark-mode', 'true'); // Save dark mode state to localStorage
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('dark-mode', 'false'); // Save dark mode state to localStorage
+        }
+    });
+});
+
 
 /**
  * document.addEventListener('livewire:initialized', () => {
@@ -88,7 +142,7 @@ document.addEventListener('alpine:init', () => {
             right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
         }
     });
-    
+
     calendar.render();
 
     Livewire.on('eventLoaded', (events) => {
