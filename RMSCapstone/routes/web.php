@@ -323,7 +323,7 @@ Route::middleware([
 
 
 
-    // --------------------- Maintenance ---------------------------------------     
+    // --------------------- Maintenance ---------------------------------------
 
     // New Maintenance
 
@@ -535,10 +535,6 @@ Route::middleware([
 Route::get('email', function () {
     Mail::to('arasdump@gmail.com')->send(new ConfirmationEmail());
 });
-
-
-
-
 
 
 // ----------------------------- GUEST PAGES ----------------------------------------- //

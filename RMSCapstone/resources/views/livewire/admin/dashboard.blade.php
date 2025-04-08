@@ -1,6 +1,6 @@
 <div>
-
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
     <!-- Greeting -->
     <div class="sm:col-span-3">
       <h1 class="text-xl font-semibold">
@@ -8,13 +8,13 @@
       </h1>
     </div>
 
-    <!-- Reservations Card -->
 
+    <!-- Reservations Card -->
     <div
       class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
       <i class="fas fa-calendar-check text-primary text-4xl"></i>
       <h2 class="text-gray-800 font-semibold">New Reservations</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$newReservations}}</p>
+      <p class="text-2xl font-bold text-gray-800">{{ $newReservations }}</p>
     </div>
 
 
@@ -22,19 +22,18 @@
     <div
       class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
       <i class="fas fa-bed text-primary text-4xl"></i>
-      <h2 class="text-gray-700 font-semibold">Rooms Available</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$availableRooms}}</p>
+      <h2 class="text-gray-800 font-semibold">Rooms Available</h2>
+      <p class="text-2xl font-bold text-gray-800">{{ $availableRooms }}</p>
     </div>
 
     <!-- Maintenance Card -->
     <div
       class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
       <i class="fas fa-tools text-primary text-4xl"></i>
-      <h2 class="text-gray-700 font-semibold">Pending Maintenances</h2>
-      <p class="text-2xl font-bold text-gray-800">{{$pendingMaintenances}}</p>
+      <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
+      <p class="text-2xl font-bold text-gray-800">{{ $pendingMaintenances }}</p>
     </div>
   </div>
-
 
   <div id='calendar'></div>
 
