@@ -539,5 +539,32 @@ Route::get('email', function () {
 
 // ----------------------------- GUEST PAGES ----------------------------------------- //
 
+Route::prefix('guest')->group(function () {
+
+    Route::get('/homepage', function () {
+        return view('guest.homepage');
+    })->name('guest.homepage');
+
+    Route::get('/activities', function () {
+        return view('guest.activities');
+    })->name('guest.activities');
+
+    Route::get('/rooms', function () {
+        return view('guest.rooms');
+    })->name('guest.rooms');
+
+    Route::get('/houses', function () {
+        return view('guest.houses');
+    })->name('guest.houses');
+
+    Route::get('/event-halls', function () {
+        return view('guest.event-halls');
+    })->name('guest.houses');
+
+    Route::get('/request-a-quote', function () {
+        return view('guest.request-a-quote');
+    })->name('guest.request-a-quote');
+});
+
 
 // ----------------------------- TENANT PAGES ----------------------------------------- //

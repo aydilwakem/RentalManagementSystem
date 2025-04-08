@@ -1,3 +1,3 @@
 <div>
-    {{-- The whole world belongs to you. --}}
+    dito mo lagay si homepage na ginawa mue
 </div>
