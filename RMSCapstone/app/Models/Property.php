@@ -12,6 +12,7 @@ class Property extends Model
 
     protected $fillable = [
         'name',
+        'image',
         'house_category_id',
         'description',
         'monthly_rent',

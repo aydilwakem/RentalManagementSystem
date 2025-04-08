@@ -4,11 +4,14 @@ namespace App\Livewire\Admin\Properties;
 
 use App\Models\Property;
 use App\Models\HouseCategory;
+use Livewire\WithFileUploads;
 use Livewire\Component;
 
 class CreateProperty extends Component
 {
+    use WithFileUploads;
     public $name;
+    public $image;
     public $description;
     public $monthly_rent;
     public $availability;
@@ -48,6 +51,7 @@ class CreateProperty extends Component
             // Validate form input 
             $this->validate([
                 'name' => 'required|string|unique:lt_houses,name',
+                'image' => 'nullable|image|max:1024',
                 'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
                 'monthly_rent' => 'required|numeric|min:0',
@@ -67,9 +71,22 @@ class CreateProperty extends Component
             throw $e;
         }
 
+        // Ensure image upload is complete before storing
+        if ($this->image && !$this->image->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
+
+        // Store Image (if uploaded)
+        $imagePath = null;
+        if ($this->image) {
+            $imagePath = $this->image->store('houses', 'public'); // Saves in storage/app/public/room-categories
+        }
+
         // Create Property
         Property::create([
             'name' => $this->name,
+            'image' => $imagePath, // Save path in DB
             'house_category_id' => $this->house_category_id,
             'description' => $this->description,
             'monthly_rent' => $this->monthly_rent,
@@ -90,6 +107,7 @@ class CreateProperty extends Component
         // Reset form fields
         $this->reset([
             'name',
+            'image',
             'house_category_id',
             'description',
             'monthly_rent',

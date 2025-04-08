@@ -14,13 +14,13 @@ class ViewRoomCategories extends Component
 
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortBy = 'created_at';
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortDir = 'DESC';
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
     public $perPage = 10;
 
@@ -48,47 +48,47 @@ class ViewRoomCategories extends Component
 
         if ($roomCategory) {
             // Store the detached amenities IDs in session before deleting
-        session()->put('detached_amenities', $roomCategory->amenities->pluck('id')->toArray());
+            session()->put('detached_amenities', $roomCategory->amenities->pluck('id')->toArray());
             // Detach related amenities before deleting
             $roomCategory->amenities()->detach();
 
             // Check if the category is referenced in another table
-        if (Room::where('room_category_id', $roomCategory->id)->exists()) { 
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = null; // Close the confirmation modal
-            return;
-        }
-
-        try{
-            $roomCategory->delete(); // Attempt soft deletion
-
-            // Reset confirmation modal
-            $this->confirmItemDelete = null;
-
-            // Fetch remaining - sorted by creation date
-            $roomCategory = RoomCategory::orderBy('created_at', 'ASC')->get();
-
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($roomCategory as $index => $category) {
-                $fakeIDs[$category->id] = 'RCT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            if (Room::where('room_category_id', $roomCategory->id)->exists()) {
+                $this->cannotDeleteItem = true; // Show the cannot delete modal
+                $this->confirmItemDelete = null; // Close the confirmation modal
+                return;
             }
 
-            // Store updated fake IDs in a unique session key
-           session(['fake_ids_roomCategory' => $fakeIDs]);
+            try {
+                $roomCategory->delete(); // Attempt soft deletion
 
-            // Flash success message
-            session()->flash('message', 'Room Category successfully deleted!');
-    }catch (QueryException $e) {
-            // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
-            } else {
-                throw $e; // Re-throw other exceptions
+                // Reset confirmation modal
+                $this->confirmItemDelete = null;
+
+                // Fetch remaining - sorted by creation date
+                $roomCategory = RoomCategory::orderBy('created_at', 'ASC')->get();
+
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($roomCategory as $index => $category) {
+                    $fakeIDs[$category->id] = 'RCT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_roomCategory' => $fakeIDs]);
+
+                // Flash success message
+                session()->flash('message', 'Room Category successfully deleted!');
+            } catch (QueryException $e) {
+                // Check if the error is an integrity constraint violation
+                if ($e->getCode() == 23000) {
+                    $this->cannotDeleteItem = true; // Show the cannot delete modal
+                } else {
+                    throw $e; // Re-throw other exceptions
+                }
             }
         }
     }
-}
 
 
     public function setSortBy($sortByField)
@@ -109,7 +109,7 @@ class ViewRoomCategories extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-             // Retrieve unique session 
+        // Retrieve unique session 
         $fakeIDs = session('fake_ids_roomCategory', []);
 
         // Recalculate fake IDs if count mismatches
@@ -120,9 +120,9 @@ class ViewRoomCategories extends Component
             }
             session(['fake_ids_roomCategory' => $fakeIDs]);
         }
-        
-            return view('livewire.admin.room-categories.view-room-categories', [
-            'roomCategories' => $roomCategories, 
+
+        return view('livewire.admin.room-categories.view-room-categories', [
+            'roomCategories' => $roomCategories,
             'fakeIDs' => $fakeIDs,
         ]);
     }

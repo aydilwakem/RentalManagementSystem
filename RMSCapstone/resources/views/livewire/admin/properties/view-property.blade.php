@@ -19,6 +19,12 @@
             {{ $property->name }}
         </h2>
 
+        <!-- Room Image -->
+        <div class="mb-4">
+            <img src="{{ asset($property->image ? 'storage/' . $property->image : 'images/rms-default.png') }}"
+                class="w-full h-64 object-cover rounded-lg shadow-md">
+        </div>
+
         <!-- House Category Name -->
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">House Category</h3>

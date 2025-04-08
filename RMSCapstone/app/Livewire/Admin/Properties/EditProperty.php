@@ -6,10 +6,14 @@ use App\Models\Property;
 use App\Models\HouseCategory;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 #[Layout('layouts.app')]
 class EditProperty extends Component
 {
+    use WithFileUploads;
+
     public $property;
     public $name;
     public $description;
@@ -26,6 +30,8 @@ class EditProperty extends Component
     public $houseCategories;
     public $house_category_id;
     public $propertyId;
+    public $image;
+    public $newImage;
 
 
     public $confirmEditItem = false;
@@ -38,9 +44,10 @@ class EditProperty extends Component
 
     public function mount(Property $property)
     {
-        $this->propertyId = $property->id; 
+        $this->propertyId = $property->id;
         $this->houseCategories = HouseCategory::all();
         $this->property = $property;
+        $this->image = $property->image;
         $this->fill($property->toArray());
     }
 
@@ -49,7 +56,7 @@ class EditProperty extends Component
         try {
             // Validate form input 
             $this->validate([
-               'name' => "required|string|unique:lt_houses,name,{$this->propertyId},id",
+                'name' => "required|string|unique:lt_houses,name,{$this->propertyId},id",
                 'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
                 'monthly_rent' => 'required|numeric|min:0',
@@ -62,11 +69,27 @@ class EditProperty extends Component
                 'region' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
+                'newImage' => 'nullable|image|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
             $this->confirmEditItem = false;
             throw $e;
+        }
+
+        // Ensure the image is uploaded properly
+        if ($this->newImage && !$this->newImage->isValid()) {
+            session()->flash('error', 'Image upload failed. Please try again.');
+            return;
+        }
+
+        // Handle Image Upload
+        if ($this->newImage) {
+            if ($this->property->image) {
+                Storage::disk('public')->delete($this->property->image);
+            }
+            // Save the image in public folder
+            $this->image = $this->newImage->store('houses', 'public');
         }
 
         $this->property->update([
@@ -83,7 +106,7 @@ class EditProperty extends Component
             'region' => $this->region,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
-            'updated_at' => now(),
+            'image' => $this->image,
         ]);
 
         session()->flash('message', 'Property successfully updated!');

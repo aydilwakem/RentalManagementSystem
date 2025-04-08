@@ -34,9 +34,9 @@
                 <h3 class="text-lg font-semibold text-gray-900">Role</h3>
                 <ul>
                     @forelse($userRoles as $role)
-                    <li>{{ $role }}</li>
+                        <li>{{ $role }}</li>
                     @empty
-                    <li class="text-gray-500">No roles assigned.</li>
+                        <li class="text-gray-500">No roles assigned.</li>
                     @endforelse
                 </ul>
 
@@ -64,9 +64,9 @@
                 <div class="max-h-60 overflow-y-auto border rounded p-3 space-y-1 bg-gray-50">
                     <ul class="space-y-1">
                         @forelse($userPermissions as $permission)
-                        <li>{{ $permission }}</li>
+                            <li>{{ $permission }}</li>
                         @empty
-                        <li class="text-gray-500">No permissions assigned.</li>
+                            <li class="text-gray-500">No permissions assigned.</li>
                         @endforelse
                     </ul>
                 </div>
@@ -75,14 +75,6 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-6 mb-3">
-
-            <!-- Edit -->
-            <x-button type="button" icon="fas fa-pen-to-square"
-                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:navigate href="{{ route('admin.edit-user', ['user' => $user->id]) }}">
-                Edit
-            </x-button>
-
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"

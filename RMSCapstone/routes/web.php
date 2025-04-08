@@ -79,11 +79,6 @@ Route::middleware([
     Route::get('view/user/{user}', ViewUser::class)
         ->name('admin.view-user')->middleware('can:user-view');
 
-    // Edit
-    Route::get('edit/user/{user}', EditUser::class)
-        ->name('admin.edit-user')->middleware('can:user-edit');
-
-
 
     // Roles Route
 
@@ -537,7 +532,7 @@ Route::middleware([
 });
 
 
-Route::get('email', function(){
+Route::get('email', function () {
     Mail::to('arasdump@gmail.com')->send(new ConfirmationEmail());
 });
 
