@@ -30,6 +30,7 @@ class CreateUser extends Component
     {
         // Fetch all role names from the database and store them in $roles
         $this->roles = Role::pluck('name')->toArray();
+       
     }
 
     public function saveUser()
@@ -37,7 +38,7 @@ class CreateUser extends Component
         try {
             // Validate input fields to ensure correct data is entered
             $this->validate([
-                'name' => 'required|string|max:255', // Name is required and must be a string
+                'name' => 'required|string|max:255|unique:users,name', // Name is required and must be a string, with unique name
                 'email' => 'required|string|email|max:255|unique:users,email', // Email must be unique
                 'password' => ['required', 'string', Rules\Password::defaults()], // Enforce password rules
                 'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table

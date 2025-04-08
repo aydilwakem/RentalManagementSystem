@@ -13,7 +13,7 @@ class ViewUsers extends Component
     public $sortBy = 'id';
     public $sortDir = 'ASC';
     public $search = '';
-    public $perPage = 5;
+    public $perPage = 10;
 
     public User $user;
     public $userRoles = [];

@@ -1,7 +1,15 @@
 <div>
 
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <!-- Greeting -->
+    <div class="sm:col-span-3">
+      <h1 class="text-xl font-semibold">
+        Hello, {{ $userName }}!
+      </h1>
+    </div>
+
     <!-- Reservations Card -->
+
     <div
       class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
       <i class="fas fa-calendar-check text-primary text-4xl"></i>
@@ -26,6 +34,7 @@
       <p class="text-2xl font-bold text-gray-800">{{$pendingMaintenances}}</p>
     </div>
   </div>
+
 
   <div id='calendar'></div>
 

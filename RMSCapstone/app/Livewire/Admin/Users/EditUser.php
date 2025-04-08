@@ -17,6 +17,7 @@ class EditUser extends Component
     public $password;
     public $selectedRole;
     public $roles = []; // List of available roles
+    public $userId;
 
     public $confirmEditItem = false;
 
@@ -32,13 +33,14 @@ class EditUser extends Component
         $this->email = $user->email;
         $this->selectedRole = $user->roles->first()?->name; // Get the first assigned role
         $this->roles = Role::pluck('name')->toArray(); // Fetch all roles
+        $this->userId = $user->id;
     }
 
     public function updateUser()
     {
         try{
         $this->validate([
-            'name' => 'nullable|string|max:255',
+            'name' => "nullable|string|max:255|unique:users,name,{$this->userId},id",
             'email' => 'nullable|email|unique:users,email,' . $this->user->id,
             'password' => 'nullable|min:8',
             'selectedRole' => 'nullable|exists:roles,name',

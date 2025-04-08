@@ -15,6 +15,9 @@
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Type user name" required>
+                    @error('name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Email -->
@@ -23,6 +26,9 @@
                     <input type="email" wire:model="email" id="email"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Type user email" required>
+                    @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Password -->
@@ -31,6 +37,9 @@
                     <input type="password" wire:model="password" id="password"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="">
+                    @error('password')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Role Selection -->
@@ -43,6 +52,9 @@
                         <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
+                    @error('selectedRole')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 

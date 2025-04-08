@@ -27,7 +27,7 @@ class CreateMaintenance extends Component
         try{
         // Validate form input 
         $this->validate([  
-            'name' =>  'required|string',
+            'name' =>  'required|string|unique:mnt_maintenance,name',
             'description' => 'required|string',
             'reported_at' => 'required|date|after_or_equal:today', 
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
