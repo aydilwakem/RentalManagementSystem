@@ -14,7 +14,7 @@ class ViewRoles extends Component
     public $sortBy = 'id';
     public $sortDir = 'ASC';
     public $search = '';
-    public $perPage = 5;
+    public $perPage = 10;
 
     public $confirmItemDelete = false;
 
