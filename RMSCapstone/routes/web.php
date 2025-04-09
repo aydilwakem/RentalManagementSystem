@@ -559,7 +559,7 @@ Route::prefix('guest')->group(function () {
 
     Route::get('/event-halls', function () {
         return view('guest.event-halls');
-    })->name('guest.houses');
+    })->name('guest.event-halls');
 
     Route::get('/request-a-quote', function () {
         return view('guest.request-a-quote');
