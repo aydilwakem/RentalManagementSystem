@@ -564,6 +564,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/request-a-quote', function () {
         return view('guest.request-a-quote');
     })->name('guest.request-a-quote');
+
+    Route::get('/reservation-form', function () {
+        return view('guest.reservation-form');
+    })->name('guest.reservation-form');
 });
 
 
