@@ -1,6 +1,6 @@
-<x-guest-layout>
+<div>
 
-    @include('guest.guest-navigation-menu')
+
 
     <!-- HERO -->
     <section class="h-screen bg-cover bg-center relative pt-20"
@@ -47,7 +47,7 @@
                                         for a restful night surrounded by nature.
                                     </p>
                                     <div class="flex justify-center">
-                                        <x-button href="#">
+                                        <x-button href="{{ route('guest.rooms') }}">
                                             Book Now
                                         </x-button>
                                     </div>
@@ -70,7 +70,7 @@
                                         halls—ideal for weddings, parties, corporate gatherings, and celebrations of all
                                         kinds.</p>
                                     <div class="flex justify-center">
-                                        <x-button href="#">
+                                        <x-button href="{{ route('guest.event-halls') }}">
                                             Request a Quote
                                         </x-button>
                                     </div>
@@ -92,7 +92,7 @@
                                         a truly immersive countryside experience.
                                     </p>
                                     <div class="flex justify-center">
-                                        <x-button href="#">
+                                        <x-button href="{{ route('guest.houses') }}">
                                             Rent House
                                         </x-button>
                                     </div>
@@ -115,7 +115,7 @@
                                         wellness offerings, our services are designed to refresh your body, mind, and
                                         soul.</p>
                                     <div class="flex justify-center">
-                                        <x-button href="#">
+                                        <x-button href="{{ route('guest.activities') }}">
                                             View Activities
                                         </x-button>
                                     </div>
@@ -250,7 +250,7 @@
 
                     <!-- Button -->
                     <div>
-                        <x-button href="{{ route('guest.request-a-quote') }}">
+                        <x-button href="{{ route('guest.event-halls') }}">
                             Request a Quote
                         </x-button>
                     </div>
@@ -304,6 +304,4 @@
 
     </section>
 
-    @include('guest.footer')
-
-</x-guest-layout>
+</div>

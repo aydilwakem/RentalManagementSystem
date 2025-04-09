@@ -1,7 +1,4 @@
-<x-guest-layout>
-
-    @include('guest.guest-navigation-menu')
-
+<div>
     <div class="max-w-7xl mx-auto px-4 py-7 mb-8">
         <div class="text-center">
             <h1 class="text-3xl font-bold text-green-700 mb-3 text-center">Our Activities</h1>
@@ -9,7 +6,7 @@
                 These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at Canopy
                 Farm.<br> Book a room now and enjoy a variety of exciting experiences!
             </p>
-            <x-button class="mb-8">
+            <x-button class="mb-8" href="{{ route('guest.rooms') }}">
                 Book Room Now
             </x-button>
         </div>
@@ -118,7 +115,5 @@
 
         </div>
     </div>
+</div>
 
-    @include('guest.footer')
-
-</x-guest-layout>

@@ -130,6 +130,16 @@ html {
     scroll-behavior: smooth;
 }
 
+/* SwiperJS styling */
+.swiper-pagination-bullet-active {
+    background-color: #fff;
+    outline: 2px solid #198754
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #fff;
+}
 
 /* Dashboard Calendar styling */
 .fc-button {
