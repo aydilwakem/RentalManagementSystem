@@ -95,9 +95,9 @@
                                 name="password" required autocomplete="current-password" />
 
                             <button type="button"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600"
+                                class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
                                 @click="show = !show">
-                                <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                <span x-text="show ? 'Hide' : 'View'"></span>
                             </button>
                         </div>
                         @error('password')
@@ -105,16 +105,17 @@
                         @enderror
 
                         <!-- Confirm Password -->
-                        <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" class="mt-4 text-gray-700" />
+                        <x-label for="password_confirmation" value="{{ __('Confirm Password') }}"
+                            class="mt-4 text-gray-700" />
                         <div class="relative">
                             <x-input id="password_confirmation" x-bind:type="show ? 'text' : 'password'"
                                 class="block mt-1 w-full rounded-full border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-300 focus:outline-none pr-10"
                                 name="password_confirmation" required />
 
-                            <button type="button"
-                                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600"
+                                <button type="button"
+                                class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
                                 @click="show = !show">
-                                <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                <span x-text="show ? 'Hide' : 'View'"></span>
                             </button>
                         </div>
                         @error('password_confirmation')

@@ -34,18 +34,25 @@
 </head>
 
 <body>
-    @if (isset($header))
+    {{-- @if (isset($header))
         <header class="bg-white white:bg-[#2A2A2A] shadow w-full px-6">
             <div class="py-6">
                 {{ $header }}
             </div>
         </header>
-    @endif
-    @livewire('guest.navbar')
+    @endif --}}
+    @auth
+        @livewire('guest.navbar')
+    @endauth
+
     <div class="font-sans text-gray-900 antialiased">
         {{ $slot }}
     </div>
-    @livewire('guest.footer')
+
+    @auth
+        @livewire('guest.footer')
+    @endauth
+
     @livewireScripts
 </body>
 
