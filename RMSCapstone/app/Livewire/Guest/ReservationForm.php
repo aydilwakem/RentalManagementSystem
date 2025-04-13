@@ -38,6 +38,11 @@ class ReservationForm extends Component
         $this->currentStep = 1;
     }
 
+    public function selectRoom($roomId)
+    {
+        $this->room_id = $roomId; // Set the room_id to the selected room's ID
+    }
+
     public function increaseStep()
     {
         $this->resetErrorBag(); // Clears previous validation error messages stored in the component
@@ -121,8 +126,6 @@ class ReservationForm extends Component
             return redirect()->route('guest.reservation-form');
         }
     }
-
-
 
     public function render()
     {

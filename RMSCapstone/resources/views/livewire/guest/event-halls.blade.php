@@ -1,8 +1,8 @@
 <div class="max-w-5xl mx-auto px-4 py-7 mb-8">
     <h1 class="text-3xl font-bold text-green-700 text-center">Our Event Halls</h1>
 
-    <!-- Event Hall Cards (One per line) -->
-    <div class="space-y-8">
+    <!-- Event Hall Cards -->
+    <div class="space-y-3">
 
         <!-- Event Hall Card 1 -->
         <div class="mx-auto px-4 py-3">

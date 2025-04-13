@@ -112,7 +112,7 @@
                                 class="block mt-1 w-full rounded-full border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-300 focus:outline-none pr-10"
                                 name="password_confirmation" required />
 
-                                <button type="button"
+                            <button type="button"
                                 class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
                                 @click="show = !show">
                                 <span x-text="show ? 'Hide' : 'View'"></span>
