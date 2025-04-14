@@ -1,11 +1,10 @@
 <div class="min-h-screen p-10 bg-white">
-
     <form wire:submit.prevent="register">
 
         <!-- STEP 1: Choose Room -->
         @if ($currentStep == 1)
             <div class="w-full flex justify-center">
-                <div class="step-one w-full max-w-7xl px-4 py-2">
+                <div class="step-one w-full max-w-7xl px-4">
                     <div class="header">
                         <!-- Title -->
                         <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
@@ -31,7 +30,7 @@
                                 <div class="bg-white border rounded-xl overflow-hidden shadow-sm">
                                     <div class="md:flex">
                                         <!-- Image -->
-                                        <img src="{{ $room->image_url ?? 'images/rms-default.png' }}"
+                                        <img src="{{ asset($room->image ? 'storage/' . $room->image : 'images/rms-default.png') }}"
                                             alt="{{ $room->name }}" class="w-full md:w-1/3 h-60 object-cover">
 
                                         <!-- Room Card -->
@@ -82,7 +81,8 @@
                                                         <select wire:model="adults"
                                                             class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                             @for ($i = 0; $i <= 4; $i++)
-                                                                <option value="{{ $i }}">{{ $i }}
+                                                                <option value="{{ $i }}">
+                                                                    {{ $i }}
                                                                 </option>
                                                             @endfor
                                                         </select>
@@ -135,19 +135,16 @@
                             @endforeach
                         </div>
 
-                        <!-- Booking Summary -->
+                        <!-- Reservation Summary -->
                         <div class="w-96 h-full bg-white dark:bg-gray-800 dark:border-gray-700">
-                            <!-- Card Header -->
                             <div
                                 class="text-lg bg-gray-100 border-l border-r border-t dark:bg-gray-700 text-center font-semibold text-green-700 dark:text-gray-400 rounded-t-lg p-2">
                                 Reservation Summary
                             </div>
+
                             <!-- Card Body -->
                             <div class="p-4 border-l border-r border-b border-gray-200 shadow-sm rounded-b-lg">
                                 <div class="flex flex-col items-center text-md text-gray-800 mb-2">
-                                    <!-- Label -->
-                                    {{-- <span class="text-md font-semibold text-gray-700 mb-1">Stay Period</span> --}}
-
                                     <!-- Dates -->
                                     <div class="flex items-center">
                                         Apr 14, 2025
@@ -156,30 +153,163 @@
                                     </div>
                                 </div>
 
-                                <!-- Room Selected -->
-                                <div class="flex justify-between items-center">
-                                    <!-- Always show the title -->
-                                    <div>
-                                        <strong>Room:</strong>
-                                        <!-- Show name only if a room is selected -->
-                                        @if ($room_id)
-                                            {{ $rooms->firstWhere('id', $room_id)?->name }}
-                                        @endif
+                                <hr class="my-2 border-gray-200 py-1">
+                                @if ($room_id)
+                                    <!-- Room Selected -->
+                                    <div class="flex items-start gap-2 mb-2 py-2">
+                                        <div
+                                            class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div class="text-gray-900">
+                                                    <strong class="text-gray-900">Room:</strong>
+                                                    {{ $rooms->firstWhere('id', $room_id)?->name }}
+                                                </div>
+
+                                                <div class="text-md font-semibold text-green-700">
+                                                    ₱{{ $rooms->firstWhere('id', $room_id)?->base_rate }}
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="flex justify-between items-center font-semibold text-gray-900 mt-1">
+                                                <div>Pax: </div>
+                                                {{-- <i class="fa-solid fa-user me-1"></i> --}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Delete Button -->
+                                        <button wire:click="removeRoom({{ $room->id }})"
+                                            class="text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full w-4 h-4 flex items-center justify-center transition"
+                                            title="Remove Room">
+                                            <span class="text-xl leading-none">&times;</span>
+                                        </button>
                                     </div>
 
-                                    <!-- Optional: show the price only when selected -->
-                                    @if ($room_id)
-                                        <div class="text-md font-semibold text-gray-800">
+                                    <!-- Price Breakdown -->
+                                    <hr class="my-2 border-gray-200">
+
+                                    <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
+                                        <div>Subtotal</div>
+                                        <div>₱ </div>
+                                    </div>
+                                    <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
+                                        <div>Total</div>
+                                        <div class="text-lg">₱ </div>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                                        <div>Deposit</div>
+                                        <div class="font-semibold">₱ </div>
+                                    </div>
+
+                                    <!-- Next Button -->
+                                    @if (($currentStep == 1) | ($currentStep == 2) | ($currentStep == 3))
+                                        <button type="button"
+                                            class="mt-4 block w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                            wire:click="increaseStep()">Next</button>
+                                    @endif
+                                @else
+                                    <!-- Show when no room is selected -->
+                                    <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
+                                        <i class="fa-solid fa-bed text-3xl mb-2"></i>
+                                        <span>No rooms added yet</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- STEP 2: Choose Activity -->
+        @if ($currentStep == 2)
+            <div class="w-full flex justify-center">
+                <div class="step-three w-full max-w-7xl px-4">
+                    <div class="header">
+                        <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Add Exciting Activities</h1>
+                        <p class="text-center text-gray-600 text-md mb-4">
+                            Want to make your stay even more memorable? Choose from our exciting range of activities
+                            designed to enhance your experience. <br>These are completely optional—join in only if it
+                            feels right for you!
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Activities -->
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            @foreach ($activities as $activity)
+                                <div
+                                    class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-4">
+                                    <img class="w-full h-48 object-cover"
+                                        src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
+                                        alt="{{ $activity->name }}">
+
+                                    <div class="p-5 pb-3">
+                                        <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ $activity->name }}</h2>
+                                        <p class="text-gray-600 text-sm mb-4 text-justify">
+                                            {{ $activity->description }}
+                                        </p>
+                                        <p class="text-gray-600 text-sm text-justify"> Inclusions:
+                                            {{ $activity->inclusions }}
+                                        </p>
+                                        <div class="flex items-center justify-between">
+                                            <span
+                                                class="text-green-600 font-bold text-lg">₱{{ number_format($activity->amount, 2) }}</span>
+                                            <!-- Add to Cart Button -->
+                                            <div>
+                                                <button wire:click="addActivity({{ $activity->id }})"
+                                                    class="px-4 py-2 mt-3 w-full bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                                                    Add Activity
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Reservation Summary -->
+                        <div class="w-96 h-full bg-white dark:bg-gray-800 dark:border-gray-700">
+                            <div
+                                class="text-lg bg-gray-100 border-l border-r border-t dark:bg-gray-700 text-center font-semibold text-green-700 dark:text-gray-400 rounded-t-lg p-2">
+                                Reservation Summary
+                            </div>
+                            <div class="p-4 border-l border-r border-b border-gray-200 shadow-sm rounded-b-lg">
+                                <div class="flex flex-col items-center text-md text-gray-800 mb-2">
+                                    <div class="flex items-center">
+                                        Apr 14, 2025
+                                        <i class="fa-solid fa-arrow-right px-4"></i>
+                                        Apr 16, 2025
+                                    </div>
+                                </div>
+                                <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <div class="text-gray-900">
+                                            <strong class="text-gray-900">Room:</strong>
+                                            {{ $rooms->firstWhere('id', $room_id)?->name }}
+                                        </div>
+
+                                        <div class="text-md font-semibold text-green-700">
                                             ₱{{ $rooms->firstWhere('id', $room_id)?->base_rate }}
                                         </div>
-                                    @endif
+                                    </div>
+                                    <div class="flex justify-between items-center font-semibold text-gray-900 mt-1">
+                                        <div>Pax: </div>
+                                        {{-- <i class="fa-solid fa-user me-1"></i> --}}
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div><strong>Activity:</strong>
+                                            @if ($room_id)
+                                                {{ $activity->firstWhere('id', $activity_id)?->name }}
+                                            @endif
+                                        </div>
+                                        @if ($room_id)
+                                            <div class="text-md font-semibold text-green-700">
+                                                ₱{{ $activity->firstWhere('id', $activity_id)?->amount }}</div>
+                                        @endif
+                                    </div>
                                 </div>
 
-                                <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
-                                    <div>Pax: </div>
-                                </div>
-
-                                <!-- Price Breakdown -->
                                 <hr class="my-2 border-gray-200">
                                 <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
                                     <div>Subtotal</div>
@@ -193,65 +323,39 @@
                                     <div>Deposit</div>
                                     <div class="font-semibold">₱ </div>
                                 </div>
-                                @if (($currentStep == 1) | ($currentStep == 2) | ($currentStep == 3))
+                                @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
                                     <button type="button"
                                         class="mt-4 block w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                         wire:click="increaseStep()">Next</button>
                                 @endif
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-
-        <!-- STEP 2: Choose Activity -->
-        @if ($currentStep == 2)
-            <div class="step-two">
-                <div class="rounded-xl shadow bg-white">
-                    <div class="bg-green-600 text-white text-lg font-semibold px-4 py-2 rounded-t-xl">STEP 2 - Choose
-                        an
-                        Activity</div>
-                    <div class="p-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="activity_id"
-                                        class="block mb-2 text-sm font-medium text-gray-900">Activity</label>
-                                    <select wire:model="activity_id" id="activity_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                                        <option value="">Select Activity</option>
-                                        @foreach ($activities as $activity)
-                                            <option value="{{ $activity->id }}">{{ $activity->name }} -
-                                                {{ $activity->amount }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('activity_id')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
+                            <div class="flex justify-end mt-4">
+                                {{-- Back Button --}}
+                                @if (($currentStep == 2) | ($currentStep == 3) | ($currentStep == 4))
+                                    <button type="button"
+                                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md text-sm"
+                                        wire:click="decreaseStep()">Back</button>
+                                @endif
                             </div>
                         </div>
                     </div>
-                </div>
 
+
+                </div>
             </div>
         @endif
+
 
         <!-- STEP 3: Guest Info -->
         @if ($currentStep == 3)
             <div class="w-full flex justify-center">
-                <div class="step-one w-full max-w-7xl px-4 py-2">
+                <div class="step-three w-full max-w-7xl px-4">
                     <div class="header">
                         <!-- Title -->
                         <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Confirm Your Reservation</h1>
                     </div>
                     <!-- Main Content Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Room Listings -->
                         <div class="lg:col-span-2 space-y-6">
                             <div class="rounded-xl shadow bg-white overflow-hidden">
                                 <!-- Header -->
@@ -375,13 +479,11 @@
                                     <!-- Always show the title -->
                                     <div>
                                         <strong>Room:</strong>
-                                        <!-- Show name only if a room is selected -->
                                         @if ($room_id)
                                             {{ $rooms->firstWhere('id', $room_id)?->name }}
                                         @endif
                                     </div>
 
-                                    <!-- Optional: show the price only when selected -->
                                     @if ($room_id)
                                         <div class="text-md font-semibold text-gray-800">
                                             ₱{{ $rooms->firstWhere('id', $room_id)?->base_rate }}
@@ -413,7 +515,16 @@
                                         wire:click="increaseStep()">Next</button>
                                 @endif
                             </div>
+                            <div class="flex justify-end mt-4">
+                                {{-- Back Button --}}
+                                @if (($currentStep == 2) | ($currentStep == 3) | ($currentStep == 4))
+                                    <button type="button"
+                                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md text-sm"
+                                        wire:click="decreaseStep()">Back</button>
+                                @endif
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -421,62 +532,207 @@
 
         <!-- STEP 4: Payment Receipt -->
         @if ($currentStep == 4)
-            <div class="step-four">
-                <div class="rounded-xl shadow bg-white">
-                    <div class="bg-green-600 text-white text-lg font-semibold px-4 py-2 rounded-t-xl">STEP 4 - Payment
-                        Details</div>
-                    <div class="p-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="w-full flex justify-center">
+                <div class="step-four w-full max-w-7xl px-4">
+                    <div class="header">
+                        <!-- Title -->
+                        <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Payment Details</h1>
+                    </div>
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="rounded-xl shadow bg-white overflow-hidden">
+                                <!-- Header -->
+                                <div class="bg-green-700 text-white text-lg font-semibold px-4 py-3 rounded-t-xl">
+                                    Complete payment to reserve your room
+                                </div>
+                                <!-- Form Body -->
+                                <div class="p-6 lg:col-span-2 space-y-6">
+                                    <div class="space-y-6">
 
-                            <!-- Payment Reference Number -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Payment Reference Number</label>
-                                <input type="text" class="w-full border rounded-md px-3 py-2" placeholder=""
-                                    wire:model="payment_reference_number">
+                                        <div x-data="{ selected: '' }" class="space-y-4">
+                                            @foreach ($paymentMethod as $index => $method)
+                                                @php
+                                                    $optionId = 'option' . $index;
+                                                @endphp
 
-                                @error('payment_reference_number')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                                <label
+                                                    class="block border rounded-lg p-4 cursor-pointer transition duration-300 w-full"
+                                                    :class="selected === '{{ $optionId }}' ?
+                                                        'border-green-600 bg-green-50' : 'border-gray-300'"
+                                                    @click="selected = '{{ $optionId }}'">
 
-                            <!-- Payment Screenshot -->
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Payment Screenshot</label>
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center space-x-3">
+                                                            <input type="radio" name="option"
+                                                                value="{{ $optionId }}" x-model="selected"
+                                                                class="text-green-600" />
+                                                            <span
+                                                                class="font-medium text-gray-800">{{ $method->mode_of_payment_name }}</span>
+                                                        </div>
+                                                        <svg x-show="selected === '{{ $optionId }}'"
+                                                            class="w-5 h-5 text-green-600" fill="currentColor"
+                                                            viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd"
+                                                                d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586
+                                                            4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
 
-                                @if ($this->payment_screenshot)
-                                    <div>
-                                        <label>Uploaded Screenshot:</label>
-                                        <img src="{{ asset('storage/' . $this->payment_screenshot) }}"
-                                            alt="Payment Screenshot" width="200">
+                                                    <!-- Payment Details -->
+                                                    <div x-show="selected === '{{ $optionId }}'" x-transition
+                                                        class="mt-4 px-2 pt-2 text-center">
+                                                        @if ($method->account_number)
+                                                            <div class="text-md font-semibold text-gray-700">
+                                                                {{ $method->account_name }}
+                                                            </div>
+                                                            <div class="text-md font-semibold text-gray-700 mb-2">
+                                                                {{ $method->account_number }}
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- QR Code -->
+                                                        <img src="{{ asset($method->mode_of_payment_qr_image ? 'storage/' . $method->mode_of_payment_qr_image : 'images/rms-default.png') }}"
+                                                            alt="{{ $method->mode_of_payment_name }}"
+                                                            class="w-48 h-auto mx-auto rounded-md shadow-sm border border-gray-200 object-contain">
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+
+
+
+                                        <!-- Payment Reference Number -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Payment Reference
+                                                Number</label>
+                                            <input type="text" class="w-full border rounded-md px-3 py-2"
+                                                placeholder="" wire:model="payment_reference_number">
+
+                                            @error('payment_reference_number')
+                                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Payment Screenshot -->
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Payment Screenshot</label>
+
+                                            @if ($this->payment_screenshot)
+                                                <div class="mb-2">
+                                                    <label class="block text-sm font-medium">Uploaded
+                                                        Screenshot:</label>
+                                                    <img src="{{ asset('storage/' . $this->payment_screenshot) }}"
+                                                        alt="Payment Screenshot" class="w-48 border rounded">
+                                                </div>
+                                            @endif
+
+                                            <input type="file" class="w-full border rounded-md px-3 py-2"
+                                                wire:model="payment_screenshot">
+
+                                            @error('payment_screenshot')
+                                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Terms -->
+                                        <div>
+                                            <label class="flex items-start space-x-2">
+                                                <input type="checkbox" id="terms" wire:model="terms"
+                                                    class="mt-1 border-gray-300 rounded">
+                                                <span class="text-sm leading-5">By checking this box, you confirm that you have read and agree to our <a
+                                                        href="#" class="text-blue-600 underline">Terms and
+                                                        Condition</a></span>
+                                            </label>
+
+                                            @error('terms')
+                                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
                                     </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- Booking Summary -->
+                        <div class="w-96 h-full bg-white dark:bg-gray-800 dark:border-gray-700">
+                            <!-- Card Header -->
+                            <div
+                                class="text-lg bg-gray-100 border-l border-r border-t dark:bg-gray-700 text-center font-semibold text-green-700 dark:text-gray-400 rounded-t-lg p-2">
+                                Reservation Summary
+                            </div>
+                            <!-- Card Body -->
+                            <div class="p-4 border-l border-r border-b border-gray-200 shadow-sm rounded-b-lg">
+                                <div class="flex flex-col items-center text-md text-gray-800 mb-2">
+                                    <!-- Label -->
+                                    {{-- <span class="text-md font-semibold text-gray-700 mb-1">Stay Period</span> --}}
+
+                                    <!-- Dates -->
+                                    <div class="flex items-center">
+                                        Apr 14, 2025
+                                        <i class="fa-solid fa-arrow-right px-4"></i>
+                                        Apr 16, 2025
+                                    </div>
+                                </div>
+
+                                <!-- Room Selected -->
+                                <div class="flex justify-between items-center">
+                                    <!-- Always show the title -->
+                                    <div>
+                                        <strong>Room:</strong>
+                                        @if ($room_id)
+                                            {{ $rooms->firstWhere('id', $room_id)?->name }}
+                                        @endif
+                                    </div>
+
+                                    @if ($room_id)
+                                        <div class="text-md font-semibold text-gray-800">
+                                            ₱{{ $rooms->firstWhere('id', $room_id)?->base_rate }}
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
+                                    <div>Pax: </div>
+                                </div>
+
+                                <!-- Price Breakdown -->
+                                <hr class="my-2 border-gray-200">
+                                <div class="flex justify-between items-center text-sm text-gray-600 mb-1">
+                                    <div>Subtotal</div>
+                                    <div>₱ 4,950.00</div>
+                                </div>
+                                <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
+                                    <div>Total</div>
+                                    <div class="text-lg">₱ 5,544.00</div>
+                                </div>
+                                <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                                    <div>Deposit</div>
+                                    <div class="font-semibold">₱ 2,772.00</div>
+                                </div>
+                                @if (($currentStep == 1) | ($currentStep == 2) | ($currentStep == 3))
+                                    <button type="button"
+                                        class="mt-4 block w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                        wire:click="increaseStep()">Next</button>
                                 @endif
-
-                                <input type="file" class="w-full border rounded-md px-3 py-2"
-                                    wire:model="payment_screenshot">
-
-                                @error('payment_screenshot')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
-
-                            <!-- Terms -->
-                            <div class="col-span-2">
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" id="terms" wire:model="terms"
-                                        class="border-gray-300 rounded">
-                                    <span class="text-sm">You must agree with our <a href="#"
-                                            class="text-blue-600 underline">Terms and Condition</a></span>
-
-                                    @error('terms')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </label>
+                            <div class="flex justify-between items-center mt-4">
+                                {{-- Back Button --}}
+                                @if (($currentStep == 2) | ($currentStep == 3) | ($currentStep == 4))
+                                    <button type="button"
+                                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md text-sm"
+                                        wire:click="decreaseStep()">Back</button>
+                                @endif
+                                {{-- Submit Button --}}
+                                @if ($currentStep == 4)
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-green-500 text-white rounded-md text-sm">Submit</button>
+                                @endif
                             </div>
-
                         </div>
                     </div>
-                </div>
-            </div>
         @endif
 
         <!-- Action Buttons -->
@@ -487,21 +743,21 @@
             @endif
 
             {{-- Back Button --}}
-            @if (($currentStep == 2) | ($currentStep == 3) | ($currentStep == 4))
+            {{-- @if (($currentStep == 2) | ($currentStep == 3) | ($currentStep == 4))
                 <button type="button" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md text-sm"
                     wire:click="decreaseStep()">Back</button>
-            @endif
+            @endif --}}
 
             {{-- Next Button --}}
-            @if (($currentStep == 1) | ($currentStep == 2) | ($currentStep == 3))
+            {{-- @if (($currentStep == 1) | ($currentStep == 2) | ($currentStep == 3))
                 <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm"
                     wire:click="increaseStep()">Next</button>
-            @endif
+            @endif --}}
 
             {{-- Submit Button --}}
-            @if ($currentStep == 4)
+            {{-- @if ($currentStep == 4)
                 <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md text-sm">Submit</button>
-            @endif
+            @endif --}}
 
         </div>
 
