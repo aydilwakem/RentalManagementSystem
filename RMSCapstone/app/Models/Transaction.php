@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ReservationType;
+use App\Models\GuestDetail;
+use App\Models\TransactionUser;
+
 
 class Transaction extends Model
 {
@@ -13,6 +17,10 @@ class Transaction extends Model
     protected $table = 'trn_transactions';
 
     protected $fillable = [
+        'reservation_type_id',
+        'reservation_id',
+        'created_by',
+
         'room_id',
         'check_in_time',
         'check_out_time',
@@ -77,16 +85,56 @@ class Transaction extends Model
      * Relationships
      */
 
-    public function room()
+
+    // One Transaction belongs to One Reservation Type
+    public function reservationType()
     {
-        return $this->belongsTo(Room::class, 'room_id');
+        return $this->belongsTo(ReservationType::class, 'reservation_type_id');
     }
 
+    // One Transaction belongs to One Activity - revise this to one to many
     public function activity()
     {
         return $this->belongsTo(Activity::class, 'activity_id');
     }
 
+    // One transaction belongs to one Transaction User
+    public function transactionUser()
+    {
+        return $this->belongsTo(TransactionUser::class, 'created_by');
+    }
+
+    // One transaction has many Guest Details
+    public function guestDetails()
+    {
+        return $this->hasMany(GuestDetail::class, 'transaction_id');
+    }
+
+    public function reservation()
+    {
+        return $this->morphTo(); // Polymorphic relation to Room, House, or Event
+    }
+
+    // Polymorphic Relationships
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'reservation_id');
+    }
+
+    public function house()
+    {
+        return $this->belongsTo(Property::class, 'reservation_id');
+    }
+
+    public function event_halls()
+    {
+        return $this->belongsTo(EventHall::class, 'reservation_id');
+    }
+
+
+
+
+    // To be removed
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
@@ -96,6 +144,9 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionResident::class, 'transaction_id');
     }
+
+
+
 
     public function scopeSearch($query, $search)
     {

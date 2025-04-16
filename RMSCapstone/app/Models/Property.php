@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Transaction;
 
 class Property extends Model
 {
     use SoftDeletes;
-    protected $table = 'lt_houses';
+    protected $table = 'prd_houses';
 
     protected $fillable = [
         'name',
@@ -35,10 +36,11 @@ class Property extends Model
         return $this->belongsTo(HouseCategory::class, 'house_category_id');
     }
 
-    public function tenants()
+    public function transactions()
     {
-        return $this->hasMany(Tenant::class, 'house_id');
+        return $this->morphMany(Transaction::class, 'reservation');
     }
+
     public function scopeSearch($query, $search)
     {
         $query->where('name', 'like', "%{$search}%");

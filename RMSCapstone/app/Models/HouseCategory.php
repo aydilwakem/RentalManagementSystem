@@ -10,7 +10,7 @@ class HouseCategory extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'lt_house_categories';
+    protected $table = 'house_categories';
     protected $fillable = ['name', 'description'];
 
     public function properties()

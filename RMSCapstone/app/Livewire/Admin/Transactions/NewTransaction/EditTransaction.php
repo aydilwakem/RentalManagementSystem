@@ -11,6 +11,8 @@ use App\Models\Transaction;
 use App\Models\Room;
 use App\Models\Activity;
 use App\Models\PaymentMethod;
+use App\Models\TransactionUser;
+use App\Models\ReservationType;
 
 #[Layout('layouts.app')]
 class EditTransaction extends Component
@@ -49,8 +51,10 @@ class EditTransaction extends Component
     public $isReserved;
     public $isConfirmed;
 
-    // Foreign keys
-    public $room_id;
+    public $reservation_id;
+    public $reservation_type_id = 2;
+    public $created_by = 1;
+
     public $activity_id;
     public $payment_method_id;
 
@@ -97,10 +101,10 @@ class EditTransaction extends Component
         $this->payment_screenshot = $transaction->payment_screenshot;
 
         // Foreign Keys
-        $this->room_id = $transaction->room_id;
+        $this->reservation_id = $transaction->reservation_id;
         $this->activity_id = $transaction->activity_id;
         $this->payment_method_id = $transaction->payment_method_id;
-        $this->rooms = Room::all();
+        $this->rooms = Room::availableRooms()->get();
         $this->activities = Activity::all();
         $this->paymentMethods = PaymentMethod::all();
     }
@@ -109,7 +113,9 @@ class EditTransaction extends Component
     {
         try {
             $this->validate([
-                'room_id' => 'required|exists:prd_rooms,id',
+                'reservation_id' => 'required|exists:prd_rooms,id',
+                'reservation_type_id' => 'required|exists:trn_reservation_type,id',
+                'created_by' => 'required|exists:trn_users,id',
                 'check_in_time' => 'required|date_format:H:i',
                 'check_out_time' => 'required|date_format:H:i',
                 'check_in_date' => 'required|date',
@@ -149,7 +155,9 @@ class EditTransaction extends Component
 
         // Update Room Category
         $this->transaction->update([
-            'room_id' => $this->room_id,
+            'reservation_id' => $this->reservation_id, // stores the room
+            'reservation_type_id' => $this->reservation_type_id,
+            'created_by' => $this->created_by,
             'check_in_time' => $this->check_in_time,
             'check_out_time' => $this->check_out_time,
             'check_in_date' => $this->check_in_date,

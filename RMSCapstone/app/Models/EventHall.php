@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EventCategory;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EventHall extends Model
@@ -21,7 +23,19 @@ class EventHall extends Model
         return $this->hasOne(Event::class, 'event_hall_id');
     }
 
-    public function scopeSearch($query, $search){
+    public function eventCategories()
+    {
+        return $this->belongsToMany(EventCategory::class, 'event_hall_categories');
+    }
+
+    public function transactions()
+    {
+        return $this->morphMany(Transaction::class, 'reservation');
+    }
+
+
+    public function scopeSearch($query, $search)
+    {
         $query->where('name', 'like', "%{$search}%")->orWhere('description', 'like', "%{$search}%");
     }
 }

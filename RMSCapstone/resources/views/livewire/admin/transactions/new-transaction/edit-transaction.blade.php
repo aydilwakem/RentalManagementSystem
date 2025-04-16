@@ -101,15 +101,15 @@
 
                 <!-- Rooms -->
                 <div>
-                    <label for="room_id" class="block mb-2 text-sm font-medium text-gray-900">Room</label>
-                    <select wire:model="room_id" id="room_id"
+                    <label for="reservation_id" class="block mb-2 text-sm font-medium text-gray-900">Room</label>
+                    <select wire:model="reservation_id" id="reservation_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Room</option>
                         @foreach ($rooms as $room)
                             <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
                     </select>
-                    @error('room_id')
+                    @error('reservation_id')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>

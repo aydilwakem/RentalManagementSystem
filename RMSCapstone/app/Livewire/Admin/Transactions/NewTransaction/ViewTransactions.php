@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Transactions\NewTransaction;
 
 use App\Mail\ConfirmationEmail;
 use App\Models\Transaction;
+use App\Models\ReservationType;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -27,6 +28,8 @@ class ViewTransactions extends Component
     public $sortDir = 'ASC'; // Sorting direction (ascending/descending)
 
     public $statusFilter = ''; // Filter transactions by status
+    public $reservation_type_id = 2;
+
     public $selectedTransaction; // Stores the selected transaction for confirmation
     public $confirmItemDelete = false; // Flag to track delete confirmation modal
     public $confirmItemReceipt = false; // Flag to track receipt confirmation modal
@@ -124,6 +127,7 @@ class ViewTransactions extends Component
     public function render()
     {
         $transactions = Transaction::query()
+            ->where('reservation_type_id', 2) // Only show transactions for Rooms
             ->where('isConfirmed', false) // Only fetch unconfirmed transactions
             ->where('isReserved', false) // Only fetch unreserved transactions
             ->where('transaction_status', 'pending')
@@ -131,6 +135,7 @@ class ViewTransactions extends Component
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter); // Apply status filter if set
             })
+            ->with('reservation') // Load room data
             ->orderBy($this->sortBy, $this->sortDir) // Apply sorting
             ->paginate($this->perPage); // Paginate results
 

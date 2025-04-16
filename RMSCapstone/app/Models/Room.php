@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RoomCategory;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
@@ -32,6 +33,11 @@ class Room extends Model
     public function roomRates()
     {
         return $this->hasMany(RoomRate::class, 'room_id');
+    }
+
+    public function transactions()
+    {
+        return $this->morphMany(Transaction::class, 'reservation');
     }
 
     public function scopeSearch($query, $value)
