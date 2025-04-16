@@ -1,5 +1,6 @@
 import './bootstrap';
 
+
 document.addEventListener('alpine:init', () => {
     // Load sidebar state from localStorage (default to true if not set)
     const savedSidebarState = JSON.parse(localStorage.getItem('sidebar')) || {

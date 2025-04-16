@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use App\Models\Transaction;
 use App\Models\Room;
 use App\Models\Activity;
+use App\Models\PaymentMethod;
 
 class ReservationForm extends Component
 {
@@ -23,6 +24,7 @@ class ReservationForm extends Component
     public $contact_number;
     public $payment_reference_number;
     public $payment_screenshot;
+    public $paymentMethod;
     public $terms;
 
     public $totalSteps = 4;
@@ -35,8 +37,25 @@ class ReservationForm extends Component
         // Fetch all Activities
         $this->activities = Activity::all();
 
+        $this->paymentMethod = PaymentMethod::all();
+
         $this->currentStep = 1;
     }
+
+    public function selectRoom($roomId)
+    {
+        $this->room_id = $roomId; // Set the room_id to the selected room's ID
+    }
+
+    public function removeRoom()
+    {
+        $this->room_id = null; // Clear the selected room ID
+    }
+
+    public function addActivity($activityId)
+{
+    $this->activity_id = $activityId;
+}
 
     public function increaseStep()
     {
@@ -121,8 +140,6 @@ class ReservationForm extends Component
             return redirect()->route('guest.reservation-form');
         }
     }
-
-
 
     public function render()
     {

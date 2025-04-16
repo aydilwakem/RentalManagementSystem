@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,9 +63,10 @@
                                     class="block mt-1 w-full rounded-full border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-300 focus:outline-none pr-10"
                                     name="password" required autocomplete="current-password" />
 
-                                <button type="button" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600"
+                                <button type="button"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
                                     @click="show = !show">
-                                    <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                    <span x-text="show ? 'Hide' : 'View'"></span>
                                 </button>
                             </div>
                         </div>
@@ -92,7 +94,7 @@
 
                     <div class="mt-4 text-sm text-gray-600 flex justify-center space-x-1">
                         <p>Don't have an account?</p>
-                        <a href="{{route('register')}}" class="text-primary font-semibold hover:underline">Sign up</a>
+                        <a href="{{ route('register') }}" class="text-primary font-semibold hover:underline">Sign up</a>
                     </div>
 
                 </div>
@@ -106,4 +108,5 @@
         @endif
     </body>
 </x-guest-layout>
+
 </html>
