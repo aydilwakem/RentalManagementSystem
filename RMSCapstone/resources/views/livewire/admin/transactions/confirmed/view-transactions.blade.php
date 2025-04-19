@@ -195,10 +195,10 @@
                                 </button>
                             </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('room_id')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('property_id')">
                                 <button class="flex items-center">
                                     Room Name
-                                    @if ($sortBy !== 'room_id')
+                                    @if ($sortBy !== 'property_id')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -301,7 +301,7 @@
                                 </th>
                                 <td class="px-4 py-3"> {{ $transaction->pax }}</td>
                                 <td class="px-4 py-3">
-                                    {{ optional($transaction->room)->name ?? 'No room assigned' }}
+                                    {{ $transaction->property->name_number}}
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}</td>

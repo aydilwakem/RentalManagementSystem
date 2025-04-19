@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Amenities;
 
-use App\Models\Amenity;
+use App\Models\PropertyFeature;
 use Livewire\Component;
 
 class DeletedAmenities extends Component
@@ -23,12 +23,12 @@ class DeletedAmenities extends Component
 
     public function fetchDeletedAmenities()
     {
-        $this->deletedAmenities = Amenity::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedAmenities = PropertyFeature::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
     public function restoreAmenity($amenityId)
     {
-        $amenity = Amenity::withTrashed()->find($amenityId);
+        $amenity = PropertyFeature::withTrashed()->find($amenityId);
         if ($amenity) {
             $amenity->restore();
             session()->flash('message', 'Amenity restored successfully.');
@@ -38,7 +38,7 @@ class DeletedAmenities extends Component
 
     public function deleteAmenityForever($amenityId)
     {
-        $amenity = Amenity::withTrashed()->find($this->confirmItemDelete);
+        $amenity = PropertyFeature::withTrashed()->find($this->confirmItemDelete);
         if ($amenity) {
             $amenity->forceDelete();
             session()->flash('message', 'Amenity permanently deleted.');

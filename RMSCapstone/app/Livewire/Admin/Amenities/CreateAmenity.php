@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Amenities;
 
-use App\Models\Amenity;
+use App\Models\PropertyFeature;
 use Livewire\Component;
 
 class CreateAmenity extends Component
@@ -19,19 +19,19 @@ class CreateAmenity extends Component
 
     public function saveAmenity()
     {
-        try{
-        // Validate form input
-        $this->validate([
-            'name' => 'required|string|max:255|unique:prd_amenities,name',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+        try {
+            // Validate form input
+            $this->validate([
+                'name' => 'required|string|max:255|unique:prd_amenities,name',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         // Create Amenity
-        Amenity::create([
+        PropertyFeature::create([
             'name' => $this->name,
         ]);
 

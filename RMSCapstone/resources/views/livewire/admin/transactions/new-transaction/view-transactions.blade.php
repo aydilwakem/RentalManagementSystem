@@ -329,7 +329,7 @@
                             {{ $transaction->first_name }} {{ $transaction->last_name }}
                         </th>
                         <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-                        <td class="px-4 py-3"> {{ $transaction->room->name ?? 'N/A' }}</td>
+                        <td class="px-4 py-3"> {{ $transaction->property->name_number ?? 'N/A' }}</td>
                         <td class="px-4 py-3">
                             {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
                         </td>

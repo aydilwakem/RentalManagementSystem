@@ -6,10 +6,8 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Transaction;
 use App\Models\PaymentMethod;
-use App\Models\Room;
 use App\Models\Activity;
-use App\Models\ReservationType;
-use App\Models\TransactionUser;
+use App\Models\Property;
 
 class CreateTransaction extends Component
 {
@@ -27,20 +25,19 @@ class CreateTransaction extends Component
     public $available;
 
     // Transaction Details
-    public $room_id;
+    public $property_id;
     public $reservation_type_id = 2;
-    public $reservation_id;
     public $created_by = 1;
 
     public $activity_id;
-    public $total_amount;
+    public $total_amount = 0;
+    public $pax = 0;
     public $check_in_time;
     public $check_out_time;
     public $check_in_date;
     public $check_out_date;
     public $total_adults;
     public $total_kids;
-    public $pax;
     public $pets;
 
     // Payment Details
@@ -74,34 +71,57 @@ class CreateTransaction extends Component
     public function mount()
     {
         $this->paymentMethods = PaymentMethod::all(); // Fetch all payment methods
-        $this->rooms = Room::availableRooms()->get(); // ✅ Fetch only available rooms
         $this->activities = Activity::all(); // Fetch all activities
     }
 
+    // --------------------------- Logic ---------------------------------------------//
 
+    // Automatically triggered whenever any property is updated
     public function updated($property)
     {
-        if ($property === 'room_id' || $property === 'activity_id') {
+
+        $this->handleAmountUpdates($property); // Check if the updated property affects the total amount
+        $this->handlePaxUpdates($property); // Check if the updated property affects the total number of people (pax)
+    }
+
+    // Handles updates related to computing total amount
+    protected function handleAmountUpdates($property)
+    {
+        // If either the selected property or activity changes, recalculate the amount
+        if (in_array($property, ['property_id', 'activity_id'])) {
             $this->calculateTotalAmount();
         }
+    }
 
-        if ($property === 'total_adults' || $property === 'total_kids') {
+    // Handles updates related to computing total number of people (pax)
+    protected function handlePaxUpdates($property)
+    {
+        // If either total adults or kids changes, recalculate the total pax
+        if (in_array($property, ['total_adults', 'total_kids'])) {
             $this->calculateTotalPax();
         }
     }
 
+    // Calculates the total amount based on selected room and activity
     public function calculateTotalAmount()
     {
-        $roomRate = $this->room_id ? Room::find($this->room_id)?->base_rate ?? 0 : 0;
+        // Get the room rate if a property is selected, otherwise default to 0
+        $roomRate = $this->property_id ? Property::find($this->property_id)?->amount ?? 0 : 0;
+
+        // Get the activity rate if an activity is selected, otherwise default to 0
         $activityRate = $this->activity_id ? Activity::find($this->activity_id)?->amount ?? 0 : 0;
 
+        // Set the total amount as the sum of room and activity rates
         $this->total_amount = $roomRate + $activityRate;
     }
 
+    // Calculates the total number of people (pax) from adults and kids
     public function calculateTotalPax()
     {
+        // Default to 0 if values are null
         $this->pax = ($this->total_adults ?? 0) + ($this->total_kids ?? 0);
     }
+
 
     /**
      * This method validates user input, handles image uploads, creates a new 
@@ -114,7 +134,7 @@ class CreateTransaction extends Component
             // Validate form input
             $this->validate([
                 // 'room_id' => 'required|exists:prd_rooms,id',
-                'reservation_id' => 'required|exists:prd_rooms,id',
+                'property_id' => 'required|exists:properties,id',
                 'reservation_type_id' => 'required|exists:trn_reservation_type,id',
                 'created_by' => 'required|exists:trn_users,id',
                 'check_in_time' => 'required|date_format:H:i',
@@ -160,7 +180,7 @@ class CreateTransaction extends Component
 
         // Create Transaction and retrieve its ID
         $transaction = Transaction::create([
-            'reservation_id' => $this->reservation_id, // stores the room
+            'property_id' => $this->property_id, // stores the room
             'reservation_type_id' => $this->reservation_type_id,
             'created_by' => $this->created_by,
             'check_in_time' => $this->check_in_time,
@@ -209,6 +229,8 @@ class CreateTransaction extends Component
      */
     public function render()
     {
+        $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
+
         return view('livewire.admin.transactions.new-transaction.create-transaction', [
             'paymentMethods' => $this->paymentMethods,
             'rooms' =>  $this->rooms,

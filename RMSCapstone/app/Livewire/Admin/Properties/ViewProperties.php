@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Properties;
 
 use App\Models\Property;
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -14,109 +14,95 @@ class ViewProperties extends Component
     use WithPagination;
 
     #[Url(history: true)]
-    public $search = '';
-
-    #[Url()]
-    public $perPage = 10;
-
-    #[Url(history: true)]
     public $sortBy = 'created_at';
+    #[Url(history: true)]
+    public $sortDir = 'ASC';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
-
-    public $availability = '';
+    public $search = '';
+    #[Url(history: true)]
+    public $perPage = 10;
+    public $statusFilter = '';
 
     public $confirmItemDelete = false;
-    public $cannotDeleteItem = false; //Modal will appear if house is being used by a Tenant
-
-    public function mount()
-    {
-        if (!session()->has('fake_ids_properties')) {
-            session(['fake_ids_properties' => []]);
-        }
-    }
 
     public function confirmDelete($id)
     {
         $this->confirmItemDelete = $id;
     }
 
-    public function deleteProperty()
+    public function mount()
     {
-        // Find the room category by ID
-        $property = Property::find($this->confirmItemDelete);
-
-            // Check if the category is referenced in another table
-        if (Tenant::where('house_id', $property->id)->exists()) { 
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = null; // Close the confirmation modal
-            return;
+        if (!session()->has('fake_ids_houses')) {
+            session(['fake_ids_houses' => []]);
         }
+    }
 
-        try{
-            $property->delete(); // Attempt soft deletion
+    public function deleteHouse()
+    {
+        if ($this->confirmItemDelete) {
+            $house = Property::find($this->confirmItemDelete);
 
-            // Reset confirmation modal
-            $this->confirmItemDelete = null;
+            if ($house) {
+                $house->features()->detach();
 
-            // Fetch remaining - sorted by creation date
-            $property = Property::orderBy('created_at', 'ASC')->get();
+                $house->delete();
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($property as $index => $propertyItem) {
-                $fakeIDs[$propertyItem->id] = 'PRT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
+                $this->confirmItemDelete = false;
 
-            // Store updated fake IDs in a unique session key
-           session(['fake_ids_properties' => $fakeIDs]);
+                $houses = Property::ofType('House')->orderBy('created_at', 'ASC')->get();
 
-            // Flash success message
-            session()->flash('message', 'House successfully deleted!');
-    }catch (QueryException $e) {
-            // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
+                $fakeIDs = [];
+                foreach ($houses as $index => $houseItem) {
+                    $fakeIDs[$houseItem->id] = 'HS-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                session(['fake_ids_houses' => $fakeIDs]);
+
+                session()->flash('message', 'House successfully deleted!');
             } else {
-                throw $e; // Re-throw other exceptions
+                session()->flash('error', 'House not found!');
             }
         }
     }
 
-
-
     public function setSortBy($sortByField)
     {
-        if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+        if ($this->sortBy === $sortByField) {
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
+
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
 
     public function render()
     {
-        $properties = Property::query()
-            ->where('name', 'like', "%{$this->search}%")
-            ->when($this->availability !== '', function ($query) {
-                $query->where('availability', $this->availability);
+        $allHouses = Property::ofType('House')->get();
+
+        $houses = Property::query()
+            ->ofType('House')
+            ->when($this->statusFilter, function ($query) {
+                $query->where('property_status', $this->statusFilter);
             })
+            ->where('name_number', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        $fakeIDs = session('fake_ids_properties', []);
-        if (count($fakeIDs) !== Property::count()) {
+        $fakeIDs = session('fake_ids_houses', []);
+
+        if (count($fakeIDs) !== Property::ofType('House')->count()) {
             $fakeIDs = [];
-            foreach (Property::orderBy('created_at', 'ASC')->get() as $index => $property) {
-                $fakeIDs[$property->id] = 'PRT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            foreach (Property::ofType('House')->orderBy('created_at', 'ASC')->get() as $index => $houseItem) {
+                $fakeIDs[$houseItem->id] = 'HS-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
-            session(['fake_ids_properties' => $fakeIDs]);
+            session(['fake_ids_houses' => $fakeIDs]);
         }
 
         return view('livewire.admin.properties.view-properties', [
-            'properties' => $properties,
+            'allHouses' => $allHouses,
+            'houses' => $houses,
             'fakeIDs' => $fakeIDs,
         ]);
     }

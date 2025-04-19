@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Amenities;
 
-use App\Models\Amenity;
+use App\Models\PropertyFeature;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -40,15 +40,15 @@ class ViewAmenities extends Component
 
     public function deleteAmenity($id)
     {
-        $amenity = Amenity::find($id);
+        $amenity = PropertyFeature::find($id);
 
         if ($amenity) {
             if ($this->confirmItemDelete) {
-                Amenity::find($this->confirmItemDelete)?->delete();
+                PropertyFeature::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
                 // Fetch remaining - sorted by creation date
-                $amenity = Amenity::orderBy('created_at', 'ASC')->get();
+                $amenity = PropertyFeature::orderBy('created_at', 'ASC')->get();
 
                 // Reset fake IDs
                 $fakeIDs = [];
@@ -76,7 +76,7 @@ class ViewAmenities extends Component
 
     public function render()
     {
-        $amenities = Amenity::query()
+        $amenities = PropertyFeature::query()
             ->where('name', 'like', "%{$this->search}%")
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
@@ -85,9 +85,9 @@ class ViewAmenities extends Component
         $fakeIDs = session('fake_ids_amenities', []);
 
         // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Amenity::count()) {
+        if (count($fakeIDs) !== PropertyFeature::count()) {
             $fakeIDs = [];
-            foreach (Amenity::orderBy('created_at', 'ASC')->get() as $index => $amenityItem) {
+            foreach (PropertyFeature::orderBy('created_at', 'ASC')->get() as $index => $amenityItem) {
                 $fakeIDs[$amenityItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_amenities' => $fakeIDs]);

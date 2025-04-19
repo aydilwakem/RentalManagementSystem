@@ -42,7 +42,7 @@
                             </td>
                             <td class="px-6 py-4">{{ $transactions->email }}</td>
                             <td class="px-6 py-4">{{ $transactions->contact_number }}</td>
-                            <td class="px-6 py-4"> {{ $transactions->city_municipality }},{{ $transactions->country }}
+                            <td class="px-6 py-4"> {{ $transactions->city_municipality }}, {{ $transactions->country }}
                             </td>
                         </tr>
                     </tbody>
@@ -73,7 +73,8 @@
                     </thead>
                     <tbody>
                         <tr class="bg-white border-b border-gray-200">
-                            <td class="px-6 py-4 text-gray-800">{{ $transactions->room->name ?? 'No Room Assigned' }}
+                            <td class="px-6 py-4 text-gray-800">
+                                {{ $transactions->property->name_number ?? 'No Room Assigned' }}
                             </td>
                             <td class="px-6 py-4 text-gray-800">{{ $transactions->activity->name ?? 'No Activity' }}
                             </td>
@@ -194,25 +195,25 @@
 
             <x-slot name="content">
                 @if ($selectedTransaction)
-                <!-- Payment Screenshot at the Top -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset($selectedTransaction->payment_screenshot ? 'storage/' . $selectedTransaction->payment_screenshot : 'images/rms-default.png') }}"
-                        alt="Payment Screenshot" class="w-64 h-auto mb-4">
-                </div>
+                    <!-- Payment Screenshot at the Top -->
+                    <div class="flex flex-col items-center">
+                        <img src="{{ asset($selectedTransaction->payment_screenshot ? 'storage/' . $selectedTransaction->payment_screenshot : 'images/rms-default.png') }}"
+                            alt="Payment Screenshot" class="w-64 h-auto mb-4">
+                    </div>
 
-                <!-- Payment Details Below -->
-                <div class="text-left">
-                    <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
-                    </p>
-                    <p class="text-lg font-semibold">Payment Method:
-                        {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
-                    </p>
-                    <p class="text-lg font-semibold">Payment Reference:
-                        {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
-                    </p>
-                </div>
+                    <!-- Payment Details Below -->
+                    <div class="text-left">
+                        <p class="text-lg font-semibold">Name: {{ $selectedTransaction->first_name ?? 'N/A' }}
+                        </p>
+                        <p class="text-lg font-semibold">Payment Method:
+                            {{ $selectedTransaction->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                        </p>
+                        <p class="text-lg font-semibold">Payment Reference:
+                            {{ $selectedTransaction->payment_reference_number ?? 'N/A' }}
+                        </p>
+                    </div>
                 @else
-                {{ __('No payment screenshot available.') }}
+                    {{ __('No payment screenshot available.') }}
                 @endif
             </x-slot>
             <p></p>

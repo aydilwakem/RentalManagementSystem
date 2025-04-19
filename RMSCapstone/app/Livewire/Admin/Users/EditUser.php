@@ -13,6 +13,8 @@ class EditUser extends Component
 {
     public User $user;
     public $name;
+    public $middle_name;
+    public $last_name;
     public $email;
     public $password;
     public $selectedRole;
@@ -30,6 +32,8 @@ class EditUser extends Component
     {
         $this->user = $user;
         $this->name = $user->name;
+        $this->middle_name = $user->middle_name;
+        $this->last_name = $user->last_name;
         $this->email = $user->email;
         $this->selectedRole = $user->roles->first()?->name; // Get the first assigned role
         $this->roles = Role::pluck('name')->toArray(); // Fetch all roles
@@ -38,21 +42,19 @@ class EditUser extends Component
 
     public function updateUser()
     {
-        try{
-        $this->validate([
-            'name' => "nullable|string|max:255|unique:users,name,{$this->userId},id",
-            'email' => 'nullable|email|unique:users,email,' . $this->user->id,
-            'password' => 'nullable|min:8',
-            'selectedRole' => 'nullable|exists:roles,name',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmEditItem = false;
-        throw $e;
-    }
+        try {
+            $this->validate([
+                'email' => 'nullable|email|unique:users,email,' . $this->user->id,
+                'password' => 'nullable|min:8',
+                'selectedRole' => 'nullable|exists:roles,name',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         $this->user->update([
-            'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password ? Hash::make($this->password) : $this->user->password,
         ]);

@@ -53,10 +53,10 @@
             <!-- Page Content -->
             <main class="p-6 flex-1 overflow-auto">
                 {{ $slot }}
-                @livewire('web-controller')
+                {{-- @livewire('web-controller')
                 <button @click="darkMode = !darkMode">
                     Toggle Dark Mode
-                </button>
+                </button> --}}
             </main>
         </div>
     </div>

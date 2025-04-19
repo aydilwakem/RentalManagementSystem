@@ -14,7 +14,7 @@ class EditProperty extends Component
 {
     use WithFileUploads;
 
-    public $property;
+    public Property $property;
     public $name;
     public $description;
     public $monthly_rent;
@@ -44,6 +44,8 @@ class EditProperty extends Component
 
     public function mount(Property $property)
     {
+
+        dd($property);
         $this->propertyId = $property->id;
         $this->houseCategories = HouseCategory::all();
         $this->property = $property;

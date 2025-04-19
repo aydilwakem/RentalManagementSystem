@@ -72,6 +72,7 @@ class ViewTransactions extends Component
     public function render()
     {
         $transactions = Transaction::query()
+            ->where('reservation_type_id', 2) // Only show transactions for Rooms
             ->where('isPaid', true)
             ->where('isReserved', true)
             ->where('isConfirmed', false)

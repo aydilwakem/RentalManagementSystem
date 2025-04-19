@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Rooms;
 
 use Livewire\Component;
-use App\Models\Room;
+use App\Models\Property;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
@@ -14,7 +14,7 @@ class ViewRooms extends Component
     #[Url(history: true)]
     public $sortBy = 'created_at';
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     #[Url(history: true)]
     public $search = '';
@@ -40,29 +40,39 @@ class ViewRooms extends Component
     public function deleteRoom()
     {
         if ($this->confirmItemDelete) {
-            // Find and delete the room
-            Room::find($this->confirmItemDelete)?->delete();
+            // Find the room to be deleted
+            $room = Property::find($this->confirmItemDelete);
 
-            // Reset confirmation state
-            $this->confirmItemDelete = false;
+            if ($room) {
+                // Detach all amenities associated with this room
+                $room->features()->detach();
 
-            // Fetch remaining rooms - sorted by creation date
-            $room = Room::orderBy('created_at', 'ASC')->get();
+                $room->delete();
 
-            // Fetch remaining - sorted by creation date
-            $room = Room::orderBy('created_at', 'ASC')->get();
+                // Reset confirmation state
+                $this->confirmItemDelete = false;
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($room as $index => $roomItem) {
-                $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                // Fetch remaining rooms - sorted by creation date
+                $rooms = Property::orderBy('created_at', 'ASC')->get();
+
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($rooms as $index => $roomItem) {
+                    $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_rooms' => $fakeIDs]);
+
+                // Flash success message
+                session()->flash('message', 'Room successfully deleted!');
+            } else {
+                // If room not found, flash an error message
+                session()->flash('error', 'Room not found!');
             }
-
-            // Store updated fake IDs in a unique session key
-            session(['fake_ids_rooms' => $fakeIDs]);
-            session()->flash('message', 'Room successfully deleted!');
         }
     }
+
 
     public function setSortBy($sortByField)
     {
@@ -77,13 +87,14 @@ class ViewRooms extends Component
 
     public function render()
     {
-        $allRooms = Room::all();
+        $allRooms = Property::ofType('Room')->get();
 
-        $rooms = Room::query()
+        $rooms = Property::query()
+            ->ofType('Room') // Retrieves properties that has has a property type of Room
             ->when($this->statusFilter, function ($query) {
-                $query->where('room_status', $this->statusFilter);
+                $query->where('property_status', $this->statusFilter);
             })
-            ->where('name', 'like', '%' . $this->search . '%')
+            ->where('name_number', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
@@ -91,18 +102,18 @@ class ViewRooms extends Component
         $fakeIDs = session('fake_ids_rooms', []);
 
         // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Room::count()) {
+        if (count($fakeIDs) !== Property::count()) {
             $fakeIDs = [];
-            foreach (Room::orderBy('created_at', 'ASC')->get() as $index => $roomItem) {
+            foreach (Property::orderBy('created_at', 'ASC')->get() as $index => $roomItem) {
                 $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_rooms' => $fakeIDs]);
         }
 
         return view('livewire.admin.rooms.view-rooms', [
+            'allRooms' => $allRooms,
             'rooms' => $rooms,
             'fakeIDs' => $fakeIDs,
-            'allRooms' => $allRooms,
         ]);
     }
 }

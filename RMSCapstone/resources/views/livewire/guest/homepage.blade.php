@@ -10,7 +10,8 @@
                 <h1 class="text-yellow-50 text-4xl md:text-6xl font-bold mb-2"
                     style="text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);">Canopy Farm
                 </h1>
-                <p class="text-yellow-50 text-lg md:text-2xl font-light mb-6 drop-shadow-2xl">Where nature meets elegance
+                <p class="text-yellow-50 text-lg md:text-2xl font-light mb-6 drop-shadow-2xl">Where nature meets
+                    elegance
                 </p>
                 <x-button class="px-10 py-4 !bg-yellow-50 hover:!bg-yellow-100 !text-green-700 !font-bold"
                     href="#services">
@@ -47,7 +48,7 @@
                                         for a restful night surrounded by nature.
                                     </p>
                                     <div class="flex justify-center">
-                                        <x-button href="{{ route('guest.rooms') }}">
+                                        <x-button href="{{ route('guest.reservation-form') }}">
                                             Book Now
                                         </x-button>
                                     </div>
@@ -192,8 +193,10 @@
 
                     <!-- Event Description -->
                     <p class="text-base font-normal text-gray-700 dark:text-gray-400 mb-4" style="text-align: justify;">
-                        Take your stay to the next level with our thoughtfully curated activities—available as <b>add-ons
-                        to your room bookings.</b> Whether you're looking to unwind, explore, or simply make the most of
+                        Take your stay to the next level with our thoughtfully curated activities—available as
+                        <b>add-ons
+                            to your room bookings.</b> Whether you're looking to unwind, explore, or simply make the
+                        most of
                         your time in nature, we offer a variety of choices to suit your mood and interests. From
                         hands-on coffee tours and nature walks to farm experiences and local craft sessions, each
                         activity is designed to enrich your visit and create lasting memories. </p>

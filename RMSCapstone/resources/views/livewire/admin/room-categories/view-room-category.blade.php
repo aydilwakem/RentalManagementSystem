@@ -37,7 +37,7 @@
             <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
             <ul class="list-disc pl-5 text-gray-500">
                 @foreach ($roomCategory->amenities as $amenity)
-                <li>{{ $amenity->name }}</li>
+                    <li>{{ $amenity->name }}</li>
                 @endforeach
             </ul>
         </div>

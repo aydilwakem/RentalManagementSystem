@@ -79,6 +79,10 @@ Route::middleware([
     Route::get('view/user/{user}', ViewUser::class)
         ->name('admin.view-user')->middleware('can:user-view');
 
+    // View
+    Route::get('edit/user/{user}', EditUser::class)
+        ->name('admin.edit-user')->middleware('can:user-edit');
+
 
     // Roles Route
 
@@ -112,7 +116,7 @@ Route::middleware([
 
     // View
     Route::get('view/room/{room}', ViewRoom::class)
-        ->name('admin.view-room')->middleware('can:room-view');
+        ->name('admin.view-room');
 
     // Edit
     Route::get('edit/room/{room}', EditRoom::class)
@@ -453,21 +457,21 @@ Route::middleware([
     // ----------------- Houses
 
     // List
-    Route::get('/properties', function () {
+    Route::get('/houses', function () {
         return view('admin.rentals.properties.view-properties');
     })->name('admin.properties')->middleware('can:house-list');
 
     // Create
-    Route::get('create/property', function () {
+    Route::get('create/house', function () {
         return view('admin.rentals.properties.create-property');
     })->name('admin.create-property')->middleware('can:house-create');
 
     // View
-    Route::get('view/property/{property}', ViewProperty::class)
+    Route::get('view/house/{property}', ViewProperty::class)
         ->name('admin.view-property')->middleware('can:house-view');
 
     // Edit
-    Route::get('edit/property/{property}', EditProperty::class)
+    Route::get('edit/house/{property}', EditProperty::class)
         ->name('admin.edit-property')->middleware('can:house-edit');
 
     // Deleted Houses (Soft Deletes)

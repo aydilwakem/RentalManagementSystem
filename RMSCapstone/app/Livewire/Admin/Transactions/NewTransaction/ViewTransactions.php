@@ -135,7 +135,6 @@ class ViewTransactions extends Component
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('status', $this->statusFilter); // Apply status filter if set
             })
-            ->with('reservation') // Load room data
             ->orderBy($this->sortBy, $this->sortDir) // Apply sorting
             ->paginate($this->perPage); // Paginate results
 

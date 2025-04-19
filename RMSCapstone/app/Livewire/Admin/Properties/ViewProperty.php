@@ -5,8 +5,6 @@ namespace App\Livewire\Admin\Properties;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Property;
-use App\Models\HouseCategory;
-use App\Models\Tenant;
 use Illuminate\Database\QueryException;
 
 #[Layout('layouts.app')]
@@ -29,6 +27,7 @@ class ViewProperty extends Component
 
     public function mount(Property $property)
     {
+        dd($property);
         // Load the room with its related category
         $this->property = $property->load('category');
     }
@@ -47,13 +46,13 @@ class ViewProperty extends Component
         }
 
         // Check if the house is referenced in tenant table
-        if (Tenant::where('house_id', $property->id)->exists()) { 
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = null; // Close the confirmation modal
-            return;
-            }
+        // if (Tenant::where('house_id', $property->id)->exists()) { 
+        //     $this->cannotDeleteItem = true; // Show the cannot delete modal
+        //     $this->confirmItemDelete = null; // Close the confirmation modal
+        //     return;
+        //     }
 
-            try{
+        try {
             $property->delete(); // Attempt soft deletion
 
             // Reset confirmation modal
@@ -64,10 +63,9 @@ class ViewProperty extends Component
 
             // Redirect to the admin room categories page
             return redirect()->route('admin.properties');
-
-        }catch (QueryException $e) {
+        } catch (QueryException $e) {
             // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
+            if ($e->getCode() == 23000) {
                 $this->cannotDeleteItem = true; // Show the cannot delete modal
             } else {
                 throw $e; // Re-throw other exceptions

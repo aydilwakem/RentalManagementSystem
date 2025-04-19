@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\ReservationType;
 use App\Models\GuestDetail;
 use App\Models\TransactionUser;
+use App\Models\Property;
+use App\Models\Invoice;
+
 
 
 class Transaction extends Model
@@ -18,9 +21,8 @@ class Transaction extends Model
 
     protected $fillable = [
         'reservation_type_id',
-        'reservation_id',
+        'property_id',
         'created_by',
-
         'room_id',
         'check_in_time',
         'check_out_time',
@@ -92,6 +94,12 @@ class Transaction extends Model
         return $this->belongsTo(ReservationType::class, 'reservation_type_id');
     }
 
+    // One Transaction belongs to One Property
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
+    }
+
     // One Transaction belongs to One Activity - revise this to one to many
     public function activity()
     {
@@ -104,34 +112,17 @@ class Transaction extends Model
         return $this->belongsTo(TransactionUser::class, 'created_by');
     }
 
+    // One transaction has many Invoices
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'invoice_id');
+    }
+
     // One transaction has many Guest Details
     public function guestDetails()
     {
         return $this->hasMany(GuestDetail::class, 'transaction_id');
     }
-
-    public function reservation()
-    {
-        return $this->morphTo(); // Polymorphic relation to Room, House, or Event
-    }
-
-    // Polymorphic Relationships
-    public function room()
-    {
-        return $this->belongsTo(Room::class, 'reservation_id');
-    }
-
-    public function house()
-    {
-        return $this->belongsTo(Property::class, 'reservation_id');
-    }
-
-    public function event_halls()
-    {
-        return $this->belongsTo(EventHall::class, 'reservation_id');
-    }
-
-
 
 
     // To be removed

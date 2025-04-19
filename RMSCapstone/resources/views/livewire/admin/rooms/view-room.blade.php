@@ -16,13 +16,13 @@
 
         <!-- Room Name -->
         <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">
-            {{ $room->name }}
+            {{ $room->name_number }}
         </h2>
 
         <!-- Room Image -->
         <div class="mb-4">
             <img src="{{ asset($room->image ? 'storage/' . $room->image : 'images/rms-default.png') }}"
-                alt="{{ $room->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
+                alt="{{ $room->name_number }}" class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
         <!-- Room Category -->
@@ -42,9 +42,21 @@
                 <li><strong>Max Adults:</strong> {{ $room->max_adults }}</li>
                 <li><strong>Max Kids:</strong> {{ $room->max_kids }}</li>
                 <li><strong>Turnover Duration:</strong> {{ $room->turnover_duration }} hours</li>
-                <li><strong>Room Status:</strong> {{ ucfirst($room->room_status) }}</li>
-                <li><strong>Base Rate:</strong> {{ $room->base_rate }}</li>
+                <li><strong>Room Status:</strong> {{ ucfirst($room->property_status) }}</li>
+                <li><strong>Base Rate:</strong> {{ $room->amount }}</li>
             </ul>
+
+            <!-- Room Amenities -->
+            <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
+            @if ($room->features->isNotEmpty())
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    @foreach ($room->features as $feature)
+                        <li>{{ $feature->name }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="text-gray-500 mt-2">No features selected for this room.</p>
+            @endif
         </div>
 
         <!-- Action Buttons -->
@@ -59,8 +71,8 @@
 
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
-            class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
-            wire:click="confirmDelete({{ $room->id }})">
+                class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
+                wire:click="confirmDelete({{ $room->id }})">
                 Delete
             </x-button>
 
@@ -80,8 +92,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
                 </x-danger-button>
             </x-slot>
@@ -90,6 +101,5 @@
     </div>
 
     <!-- Pass the id of the room to the livewire -->
-    @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id])
-
+    {{-- @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id]) --}}
 </div>

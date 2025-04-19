@@ -11,24 +11,14 @@
 
                 <!-- Name -->
                 <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
-                    <input type="text" wire:model="name" id="name"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type user name" required>
-                    @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Full Name</label>
+                    <p class="text-gray-900 text-sm">{{ $name }} {{ $middle_name }} {{ $last_name }}</p>
                 </div>
 
                 <!-- Email -->
                 <div class="sm:col-span-2">
                     <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                    <input type="email" wire:model="email" id="email"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type user email" required>
-                    @error('email')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <p class="text-gray-900 text-sm">{{ $email }}</p>
                 </div>
 
                 <!-- Password -->
@@ -38,7 +28,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="">
                     @error('password')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -49,11 +39,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="" disabled {{ is_null($selectedRole) ? 'selected' : '' }}>Select a role</option>
                         @foreach ($roles as $role)
-                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
                     @error('selectedRole')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
             </div>

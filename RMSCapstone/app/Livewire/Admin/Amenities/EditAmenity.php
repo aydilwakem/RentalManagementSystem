@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Amenities;
 
-use App\Models\Amenity;
+use App\Models\PropertyFeature;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -13,7 +13,7 @@ class EditAmenity extends Component
 {
     use WithFileUploads;
 
-    public Amenity $amenity;
+    public PropertyFeature $amenity;
     public $name;
     public $amenityId;
 
@@ -25,7 +25,7 @@ class EditAmenity extends Component
         $this->confirmEditItem = $id;
     }
 
-    public function mount(Amenity $amenity)
+    public function mount(PropertyFeature $amenity)
     {
         $this->amenity = $amenity;
         $this->amenityId = $amenity->id;
@@ -34,15 +34,15 @@ class EditAmenity extends Component
 
     public function updateAmenity()
     {
-        try{
-        $this->validate([
-            'name' => "required|string|max:255|unique:prd_amenities,name,{$this->amenityId},id",
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-                // If validation fails, close the modal
-                $this->confirmEditItem = false;
-                throw $e;
-            }
+        try {
+            $this->validate([
+                'name' => "required|string|max:255|unique:prd_amenities,name,{$this->amenityId},id",
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmEditItem = false;
+            throw $e;
+        }
 
         // Update Amenity
         $this->amenity->update([

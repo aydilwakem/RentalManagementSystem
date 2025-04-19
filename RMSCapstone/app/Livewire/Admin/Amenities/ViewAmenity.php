@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Admin\Amenities;
 
-use App\Models\Amenity;
+use App\Models\PropertyFeature;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('layouts.app')]
 class ViewAmenity extends Component
 {
-    public Amenity $amenity;
+    public PropertyFeature $amenity;
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
@@ -20,7 +20,7 @@ class ViewAmenity extends Component
     public function deleteAmenity()
     {
         // Ensure existing ID before deleting
-        $amenity = Amenity::find($this->confirmItemDelete);
+        $amenity = PropertyFeature::find($this->confirmItemDelete);
 
         if (!$amenity) {
             session()->flash('error', 'Amenity not found!');

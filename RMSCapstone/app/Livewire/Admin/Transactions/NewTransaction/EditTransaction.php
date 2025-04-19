@@ -8,11 +8,10 @@ use Livewire\Attributes\Layout;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Transaction;
-use App\Models\Room;
+use App\Models\Property;
 use App\Models\Activity;
 use App\Models\PaymentMethod;
-use App\Models\TransactionUser;
-use App\Models\ReservationType;
+
 
 #[Layout('layouts.app')]
 class EditTransaction extends Component
@@ -51,7 +50,7 @@ class EditTransaction extends Component
     public $isReserved;
     public $isConfirmed;
 
-    public $reservation_id;
+    public $property_id;
     public $reservation_type_id = 2;
     public $created_by = 1;
 
@@ -101,10 +100,10 @@ class EditTransaction extends Component
         $this->payment_screenshot = $transaction->payment_screenshot;
 
         // Foreign Keys
-        $this->reservation_id = $transaction->reservation_id;
+        $this->property_id = $transaction->property_id;
         $this->activity_id = $transaction->activity_id;
         $this->payment_method_id = $transaction->payment_method_id;
-        $this->rooms = Room::availableRooms()->get();
+        $this->rooms = Property::ofType('Room')->get();
         $this->activities = Activity::all();
         $this->paymentMethods = PaymentMethod::all();
     }
@@ -113,7 +112,7 @@ class EditTransaction extends Component
     {
         try {
             $this->validate([
-                'reservation_id' => 'required|exists:prd_rooms,id',
+                'property_id' => 'required|exists:properties,id',
                 'reservation_type_id' => 'required|exists:trn_reservation_type,id',
                 'created_by' => 'required|exists:trn_users,id',
                 'check_in_time' => 'required|date_format:H:i',
@@ -155,7 +154,7 @@ class EditTransaction extends Component
 
         // Update Room Category
         $this->transaction->update([
-            'reservation_id' => $this->reservation_id, // stores the room
+            'property_id' => $this->property_id, // stores the room
             'reservation_type_id' => $this->reservation_type_id,
             'created_by' => $this->created_by,
             'check_in_time' => $this->check_in_time,

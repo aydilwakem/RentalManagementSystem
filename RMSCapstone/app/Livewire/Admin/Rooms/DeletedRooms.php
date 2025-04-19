@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Rooms;
 
 use Livewire\Component;
-use App\Models\Room;
+use App\Models\Property;
 
 class DeletedRooms extends Component
 {
@@ -23,22 +23,22 @@ class DeletedRooms extends Component
 
     public function fetchDeletedRooms()
     {
-        $this->deletedRooms = Room::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedRooms = Property::onlyTrashed()->ofType('Room')->orderBy('created_at', 'ASC')->get();
     }
 
     public function restoreRoom($roomId)
     {
-        $room = Room::withTrashed()->find($roomId);
+        $room = Property::withTrashed()->find($roomId);
         if ($room) {
             $room->restore(); // Restore the room
             session()->flash('message', 'Room restored successfully.');
-            $this->deletedRooms = Room::onlyTrashed()->get();
+            $this->deletedRooms = Property::onlyTrashed()->get();
         }
     }
 
     public function deleteRoomForever($roomId)
     {
-        $room = Room::withTrashed()->find($this->confirmItemDelete);
+        $room = Property::withTrashed()->find($this->confirmItemDelete);
         if ($room) {
             $room->forceDelete(); // Permanently delete the room
             session()->flash('message', 'Room permanently deleted.');
