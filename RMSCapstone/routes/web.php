@@ -36,7 +36,9 @@ use App\Livewire\Admin\HouseCategories\EditHouseCategory;
 use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -61,6 +63,7 @@ Route::middleware([
     Route::get('/no-access', function () {
         return view('admin.no-access');
     })->name('no-access');
+
 
 
     // Users Route
