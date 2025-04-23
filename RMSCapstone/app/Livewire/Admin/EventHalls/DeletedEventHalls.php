@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\EventHall;
+use App\Models\Property;
 use Illuminate\Database\QueryException;
 use Livewire\Component;
 
@@ -25,12 +26,12 @@ class DeletedEventHalls extends Component
 
     public function fetchDeletedEventHalls()
     {
-        $this->deletedEventHalls = EventHall::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedEventHalls = Property::onlyTrashed()->ofType('Event Hall')->orderBy('created_at', 'ASC')->get();    
     }
 
     public function restoreEventHall($eventHallId)
     {
-        $eventHall = EventHall::withTrashed()->find($eventHallId);
+        $eventHall = Property::withTrashed()->ofType('Event Hall')->find($eventHallId);        
         if ($eventHall) {
             $eventHall->restore();
             session()->flash('message', 'Event hall restored successfully.');
@@ -41,12 +42,12 @@ class DeletedEventHalls extends Component
     public function deleteEventHallForever($eventHallId)
     {
         try{
-        $eventHall = EventHall::withTrashed()->find($this->confirmItemDelete);
-        if ($eventHall) {
-            $eventHall->forceDelete();
-            session()->flash('message', 'Event hall permanently deleted.');
-            $this->fetchDeletedEventHalls();
-        }
+            $eventHall = Property::withTrashed()->find($this->confirmItemDelete);
+            if ($eventHall) {
+                $eventHall->forceDelete(); // Permanently delete the room
+                session()->flash('message', 'Event Hall permanently deleted.');
+                $this->fetchDeletedEventHalls();
+            }
         $this->confirmItemDelete = false;
     }catch (QueryException $e) {
         // Check if the error is an integrity constraint violation

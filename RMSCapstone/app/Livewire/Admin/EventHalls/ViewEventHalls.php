@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\Event;
 use App\Models\EventHall;
+use App\Models\Property;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -13,6 +14,8 @@ use Livewire\WithPagination;
 class ViewEventHalls extends Component
 {
     use WithPagination;
+
+    public $eventHall; 
 
     #[Url(history: true)]
     public $search = '';
@@ -25,6 +28,8 @@ class ViewEventHalls extends Component
 
     #[Url(history: true)]
     public $sortDir = 'DESC';
+
+    public $statusFilter = ''; // Holds the selected hall status
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
@@ -45,50 +50,37 @@ class ViewEventHalls extends Component
     }
 
 
-    //Function to delete an item, if there is constraint, modal will appear
     public function deleteEventHall()
     {
-        //find id
-        try {
-            $eventHall = EventHall::find($this->confirmItemDelete);
+        if ($this->confirmItemDelete) {
+            // Find the hall to be deleted
+            $halls = Property::find($this->confirmItemDelete);
 
-            if (!$eventHall) {
-                session()->flash('error', 'Event Category not found.');
-                return;
-            }
+            if ($halls) {
+                // Detach all amenities associated with this hall
+                $halls->features()->detach();
+                $halls->delete();
 
-            // Check if the category is referenced in another table
-            if (Event::where('event_hall_id', $eventHall->id)->exists()) {
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
-                $this->confirmItemDelete = null; // Close the confirmation modal
-                return;
-            }
+                // Reset confirmation state
+                $this->confirmItemDelete = false;
 
-            $eventHall->delete(); //Attempt deletion
+                // Fetch remaining halls - sorted by creation date
+                $halls = Property::orderBy('created_at', 'ASC')->get();
 
-            // Reset confirmation modal to close it
-            $this->confirmItemDelete = null;
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($halls as $index => $hall) {
+                    $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
 
-            // Refresh event categories
-            $eventHall = EventHall::orderBy('created_at', 'ASC')->get();
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_eventHalls' => $fakeIDs]);
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($eventHall as $index => $hall) {
-                $fakeIDs[$hall->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-
-            //Store session of the fake ids
-            session(['fake_ids_eventHalls' => $fakeIDs]);
-
-            // Flash success message
-            session()->flash('message', 'Event Category successfully deleted!');
-
-            //Catch for integrity constraint
-        } catch (QueryException $e) {
-            if ($e->getCode() == 23000) { // Foreign key constraint violation code
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
-                $this->confirmItemDelete = null; // Close the confirmation modal
+                // Flash success message
+                session()->flash('message', 'Event Hall successfully deleted!');
+            } else {
+                // If room not found, flash an error message
+                session()->flash('error', 'Event Hall not found!');
             }
         }
     }
@@ -105,30 +97,36 @@ class ViewEventHalls extends Component
     }
 
     public function render()
-    {
-        $eventHall = EventHall::query()
-            ->search($this->search)
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+{
+    //select all halls from property model
+    $allHalls = Property::ofType('Event Hall')->get();
 
-        // Retrieve unique session for halls
-        $fakeIDs = session('fake_ids_eventHalls', []);
+    //query all halls with the property status (available, booked, out)
+    $halls = Property::query()
+        ->ofType('Event Hall')
+        ->when($this->statusFilter, function ($query) {
+            $query->where('property_status', $this->statusFilter);
+        })
+        ->where('name_number', 'like', '%' . $this->search . '%') //mount name
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== EventHall::count()) {
-            $fakeIDs = [];
-            foreach (EventHall::orderBy('created_at', 'ASC')->get() as $index => $hall) {
-                $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_eventHalls' => $fakeIDs]);
-        }
+    //Calculate fake IDs based on rooms sorted by created_at ASC
+    $allSortedHalls = Property::ofType('Event Hall')
+        ->orderBy('created_at', 'ASC')
+        ->get();
 
-
-
-        return view('livewire.admin.event-halls.view-event-halls', [
-            'eventHall' => $eventHall,
-            'fakeIDs' => $fakeIDs,
-
-        ]);
+    $fakeIDs = [];
+    foreach ($allSortedHalls as $index => $hall) {
+        $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
     }
+
+    session(['fake_ids_eventHalls' => $fakeIDs]);
+
+    return view('livewire.admin.event-halls.view-event-halls', [
+        'allHalls' => $allHalls,
+        'halls' => $halls,
+        'fakeIDs' => $fakeIDs,
+    ]);
+}
 }

@@ -45,7 +45,7 @@
                     <tr class="border-b">
                         <td class="px-4 py-3 font-medium text-gray-900 text-left">
                             {{ $fakeIDs[$eventHall->id] ?? 'RCT-???' }}</td>
-                        <td class="px-4 py-3 text-left">{{ $eventHall->name }}</td>
+                        <td class="px-4 py-3 text-left">{{ $eventHall->name_number }}</td>
                         <td class="px-4 py-3 space-x-2 text-center">
                             <x-button wire:click="restoreEventHall({{ $eventHall->id }})">
                                 Restore

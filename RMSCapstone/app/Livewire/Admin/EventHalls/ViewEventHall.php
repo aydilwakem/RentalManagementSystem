@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\EventHalls;
 
 use App\Models\Event;
 use App\Models\EventHall;
+use App\Models\Property;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Livewire\Component;
 class ViewEventHall extends Component
 {
     // Create a public property 
-    public EventHall $eventHall;
+    public Property $eventHall;
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
@@ -25,38 +26,24 @@ class ViewEventHall extends Component
     // Function for deleting a record
     public function deleteEventHall()
     {
-            $eventHall = EventHall::find($this->confirmItemDelete);
+        if ($this->confirmItemDelete) {
+            $eventHall = Property::find($this->confirmItemDelete);
 
-            if (!$eventHall) {
-                session()->flash('error', 'Event Category not found.');
-                return;
-            }
+            if ($eventHall) {
+                $eventHall->features()->detach();
 
-            // Check if the category is referenced in another table
-            if (Event::where('event_hall_id', $eventHall->id)->exists()) { // Change 'Event' to your actual related model
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = null; // Close the confirmation modal
-            return;
-        }
+                $eventHall->delete();
 
-        try{
-            $eventHall->delete(); // Attempt deletion
+                $this->confirmItemDelete = false;
 
-            // Reset confirmation modal
-            $this->confirmItemDelete = null;
-
-            // Flash success message
-            session()->flash('message', 'Event Category successfully deleted!');
-            return redirect()->route('admin.event-halls');
-
-        }catch (QueryException $e) {
-            // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
+                session()->flash('message', 'Hall successfully deleted!');
             } else {
-                throw $e; // Re-throw other exceptions
+                session()->flash('error', 'Hall not found!');
             }
         }
+
+        // Redirect to the admin houses page
+        return redirect()->route('admin.event-halls');
     }
 
     public function render()

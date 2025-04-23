@@ -12,11 +12,12 @@
 
                 <!-- Name of Event Hall -->
                 <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Event Hall Name</label>
-                    <input type="text" wire:model="name" id="name"
+                    <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Event Hall
+                        Name</label>
+                    <input type="text" wire:model="name_number" id="name_number"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type event category name" required>
-                    @error('name')
+                        placeholder="Type event hall name" required>
+                    @error('name_number')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
@@ -56,12 +57,46 @@
 
                 <!-- Extra Charge Per Hour -->
                 <div class="sm:col-span-2">
-                    <label for="extra_charge_per_hr" class="block mb-2 text-sm font-medium text-gray-900">Extra
+                    <label for="extra_charge_per_hour" class="block mb-2 text-sm font-medium text-gray-900">Extra
                         Charge Per Hour</label>
-                    <input type="number" wire:model="extra_charge_per_hr" id="extra_charge_per_hr" rows="8"
+                    <input type="number" wire:model="extra_charge_per_hour" id="extra_charge_per_hour" rows="8"
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Event hall extra charge"></input>
-                    @error('extra_charge_per_hr')
+                    @error('extra_charge_per_hour')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Hall Status -->
+                <div class="sm:col-span-2">
+                    <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Hall
+                        Status</label>
+                    <select wire:model="property_status" id="property_status"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="available">Available</option>
+                        <option value="booked">Booked</option>
+                        <option value="out_of_service">Out of Service</option>
+                    </select>
+                    @error('property_status')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Available Amenities (Dynamic) -->
+                <div class="sm:col-span-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        @foreach ($features as $feature)
+                        <div class="flex items-center">
+                            <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                            <label class="ms-2 text-sm font-medium text-gray-900">
+                                {{ $feature->name }}
+                            </label>
+                        </div>
+                        @endforeach
+                    </div>
+                    @error('selectedFeatures')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>

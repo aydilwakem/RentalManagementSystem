@@ -30,11 +30,30 @@
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Event Hall Details</h3>
             <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Description:</strong> {{ $eventHall->description }}</li>
+                <li><strong>Description:</strong>
+                    @if(!empty($eventHall->description))
+                    {{ $eventHall->description }}
+                    @else
+                    <em>No description provided.</em>
+                    @endif
+                </li>
                 <li><strong>Amount:</strong> {{ $eventHall->amount }}</li>
                 <li><strong>Capacity:</strong> {{ $eventHall->capacity }}</li>
-                <li><strong>Extra Charge Per Hour:</strong> {{ $eventHall->extra_charge_per_hr }}</li>
+                <li><strong>Extra Charge Per Hour:</strong> {{ $eventHall->extra_charge_per_hour }}</li>
+                <li><strong>Hall Status:</strong> {{ ucfirst($eventHall->property_status) }}</li>
             </ul>
+
+            <!-- Room Amenities -->
+            <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
+            @if ($eventHall->features->isNotEmpty())
+            <ul class="list-disc list-inside mt-2 text-gray-700">
+                @foreach ($eventHall->features as $feature)
+                <li>{{ $feature->name }}</li>
+                @endforeach
+            </ul>
+            @else
+            <p class="text-gray-500 mt-2">No features selected for this room.</p>
+            @endif
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 mt-8 mb-3">

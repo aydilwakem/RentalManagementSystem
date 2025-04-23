@@ -14,7 +14,7 @@ class ViewRooms extends Component
     #[Url(history: true)]
     public $sortBy = 'created_at';
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
 
     #[Url(history: true)]
     public $search = '';
@@ -86,34 +86,36 @@ class ViewRooms extends Component
     }
 
     public function render()
-    {
-        $allRooms = Property::ofType('Room')->get();
+{
+    //select all rooms from property model
+    $allRooms = Property::ofType('Room')->get();
 
-        $rooms = Property::query()
-            ->ofType('Room') // Retrieves properties that has has a property type of Room
-            ->when($this->statusFilter, function ($query) {
-                $query->where('property_status', $this->statusFilter);
-            })
-            ->where('name_number', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+    //query all rooms with the property status (available, booked, out)
+    $rooms = Property::query()
+        ->ofType('Room')
+        ->when($this->statusFilter, function ($query) {
+            $query->where('property_status', $this->statusFilter);
+        })
+        ->where('name_number', 'like', '%' . $this->search . '%') //mount name
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        // Retrieve unique session
-        $fakeIDs = session('fake_ids_rooms', []);
+    //Calculate fake IDs based on rooms sorted by created_at ASC
+    $allSortedRooms = Property::ofType('Room')
+        ->orderBy('created_at', 'ASC')
+        ->get();
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Property::count()) {
-            $fakeIDs = [];
-            foreach (Property::orderBy('created_at', 'ASC')->get() as $index => $roomItem) {
-                $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_rooms' => $fakeIDs]);
-        }
-
-        return view('livewire.admin.rooms.view-rooms', [
-            'allRooms' => $allRooms,
-            'rooms' => $rooms,
-            'fakeIDs' => $fakeIDs,
-        ]);
+    $fakeIDs = [];
+    foreach ($allSortedRooms as $index => $roomItem) {
+        $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
     }
+
+    session(['fake_ids_rooms' => $fakeIDs]);
+
+    return view('livewire.admin.rooms.view-rooms', [
+        'allRooms' => $allRooms,
+        'rooms' => $rooms,
+        'fakeIDs' => $fakeIDs,
+    ]);
+}
 }

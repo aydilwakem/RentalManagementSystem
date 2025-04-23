@@ -13,22 +13,22 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter House name">
                     @error('name_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Availability Status -->
                 <div>
-                    <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Select
-                        Availability</label>
-                    <select wire:model.defer="property_status" id="property_status"
+                    <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Property
+                        Status</label>
+                    <select wire:model="property_status" id="property_status"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="available">Available</option>
-                        <option value="booked">Occupied</option>
+                        <option value="booked">Booked</option>
                         <option value="out_of_service">Out of Service</option>
                     </select>
                     @error('property_status')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -40,7 +40,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Monthly Rent">
                     @error('amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -50,7 +50,7 @@
                     <input type="number" wire:model="capacity" id="capacity"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('capacity')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -60,7 +60,7 @@
                     <input type="number" wire:model="max_adults" id="max_adults" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_adults')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -70,7 +70,7 @@
                     <input type="number" wire:model="max_kids" id="max_kids" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_kids')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -81,7 +81,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter House Number">
                     @error('house_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -92,7 +92,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Street">
                     @error('street')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -103,7 +103,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Barangay">
                     @error('barangay')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -115,7 +115,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter City/Municipality">
                     @error('city_municipality')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -126,7 +126,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Region">
                     @error('region')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -137,7 +137,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Postal Code">
                     @error('postal_code')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -148,7 +148,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                         placeholder="Enter Country">
                     @error('country')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -160,7 +160,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                         placeholder="Enter Property description"></textarea>
                     @error('description')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -169,17 +169,17 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                     <div class="grid grid-cols-2 gap-2">
                         @foreach ($features as $feature)
-                            <div class="flex items-center">
-                                <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                                <label class="ms-2 text-sm font-medium text-gray-900">
-                                    {{ $feature->name }}
-                                </label>
-                            </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                            <label class="ms-2 text-sm font-medium text-gray-900">
+                                {{ $feature->name }}
+                            </label>
+                        </div>
                         @endforeach
                     </div>
                     @error('selectedFeatures')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -191,7 +191,7 @@
 
                     <!-- Error Message -->
                     @error('image')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <!-- Loading Indicator (Shows when file is being uploaded) -->
@@ -201,9 +201,9 @@
 
                     <!-- Image Preview (Only if an image is selected and processed) -->
                     @if ($image && method_exists($image, 'temporaryUrl'))
-                        <div class="mt-2">
-                            <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        </div>
+                    <div class="mt-2">
+                        <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                    </div>
                     @endif
                 </div>
 
