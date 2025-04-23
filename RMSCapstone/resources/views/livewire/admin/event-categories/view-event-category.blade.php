@@ -29,7 +29,11 @@
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Description</h3>
             <p class="text-md text-gray-700">
+                @if (!empty($eventCategory->description))
                 {{ $eventCategory->description }}
+                @else
+                <em class="text-gray-600 leading-relaxed">No description provided.</em>
+                @endif
             </p>
         </div>
 

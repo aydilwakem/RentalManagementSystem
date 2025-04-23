@@ -19,7 +19,12 @@
             House Category: {{ $houseCategory->name }}
         </h2>
 
-        <p class="text-gray-700 text-center mb-6">Description: {{ $houseCategory->description }}</p>
+        <p class="text-gray-700 text-center mb-6">Description: @if (!empty($houseCategory->description))
+            {{ $houseCategory->description }}
+            @else
+            <em class="text-gray-600 leading-relaxed">No description provided.</em>
+            @endif
+        </p>
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">

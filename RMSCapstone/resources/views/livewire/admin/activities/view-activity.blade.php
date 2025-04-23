@@ -29,7 +29,11 @@
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
             <p class="text-gray-600 leading-relaxed">
+                @if (!empty($activity->description))
                 {{ $activity->description }}
+                @else
+                <em class="text-gray-600 leading-relaxed">No description provided.</em>
+                @endif
             </p>
         </div>
 

@@ -210,7 +210,7 @@
                     <td class="px-4 py-3"> @if(!empty($hall->description))
                         {{ $hall->description }}
                         @else
-                        <em>No description provided.</em>
+                        <em class="text-gray-600 leading-relaxed">No description provided.</em>
                         @endif
                     </td>
                     <td class="px-4 py-3"> {{ $hall->capacity }}</td>

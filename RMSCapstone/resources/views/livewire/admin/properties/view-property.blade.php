@@ -25,17 +25,18 @@
                 class="w-full h-64 object-cover rounded-lg shadow-md">
         </div>
 
+        {{--
         <!-- Description -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
                 @if (!empty($house->description))
-                    <p class="text-gray-600 leading-relaxed">{{ $house->description }}</p>
+                <p class="text-gray-600 leading-relaxed">{{ $house->description }}</p>
                 @else
-                    <p class="text-gray-500 italic">No description provided.</p>
+                <p class="text-gray-500 italic">No description provided.</p>
                 @endif
             </div>
-        </div>
+        </div> --}}
 
 
         <!-- House Details -->
@@ -52,13 +53,13 @@
             <!-- Room Amenities -->
             <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
             @if ($house->features->isNotEmpty())
-                <ul class="list-disc list-inside mt-2 text-gray-700">
-                    @foreach ($house->features as $feature)
-                        <li>{{ $feature->name }}</li>
-                    @endforeach
-                </ul>
+            <ul class="list-disc list-inside mt-2 text-gray-700">
+                @foreach ($house->features as $feature)
+                <li>{{ $feature->name }}</li>
+                @endforeach
+            </ul>
             @else
-                <p class="text-gray-500 mt-2">No features selected for this house.</p>
+            <p class="text-gray-500 mt-2">No features selected for this house.</p>
             @endif
         </div>
 

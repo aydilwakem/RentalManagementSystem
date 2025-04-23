@@ -34,7 +34,7 @@
                     @if(!empty($eventHall->description))
                     {{ $eventHall->description }}
                     @else
-                    <em>No description provided.</em>
+                    <em class="text-gray-600 leading-relaxed">No description provided.</em>
                     @endif
                 </li>
                 <li><strong>Amount:</strong> {{ $eventHall->amount }}</li>
