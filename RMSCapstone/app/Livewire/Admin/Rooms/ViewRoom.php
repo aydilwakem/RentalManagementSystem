@@ -27,30 +27,27 @@ class ViewRoom extends Component
     }
 
     // Function for deleting a record
-    public function deleteRoom(Property $room)
+    public function deleteRoom()
     {
-        if (!$room) {
-            session()->flash('error', 'Room not found!');
-            return;
-        }
-
         if ($this->confirmItemDelete) {
+            $room = Property::find($this->confirmItemDelete);
 
-            // Detach the amenities (features) associated with the room
-            $room->features()->detach();
+            if ($room) {
+                $room->features()->detach();
 
-            $room->delete();
+                $room->delete();
 
-            $this->confirmItemDelete = false;
+                $this->confirmItemDelete = false;
 
-            // Flash success message
-            session()->flash('message', 'Room successfully deleted!');
-
-            // Redirect to the admin rooms page
-            return redirect()->route('admin.rooms');
+                session()->flash('message', 'House successfully deleted!');
+            } else {
+                session()->flash('error', 'House not found!');
+            }
         }
-    }
 
+        // Redirect to the admin houses page
+        return redirect()->route('admin.rooms');
+    }
 
 
     public function render()

@@ -34,7 +34,7 @@ class DeletedProperties extends Component
         if ($property) {
             $property->restore(); // Restore the property
             session()->flash('message', 'House restored successfully.');
-            $this->deletedProperties = Property::onlyTrashed()->get();
+            $this->fetchDeletedProperties();
         }
     }
 

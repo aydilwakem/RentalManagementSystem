@@ -12,6 +12,7 @@ class TransactionUser extends Model
     protected $table = 'trn_users';
 
     protected $fillable = [
+        'trn_user_type',
         'first_name',
         'middle_name',
         'last_name',

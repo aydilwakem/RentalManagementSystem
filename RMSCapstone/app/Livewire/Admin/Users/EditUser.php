@@ -45,7 +45,7 @@ class EditUser extends Component
         try {
             $this->validate([
                 'email' => 'nullable|email|unique:users,email,' . $this->user->id,
-                'password' => 'nullable|min:8',
+                // 'password' => 'nullable|min:8',
                 'selectedRole' => 'nullable|exists:roles,name',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

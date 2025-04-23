@@ -326,7 +326,7 @@
                             {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
                         </th>
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                            {{ $transaction->first_name }} {{ $transaction->last_name }}
+                            {{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
                         </th>
                         <td class="px-4 py-3"> {{ $transaction->pax }}</td>
                         <td class="px-4 py-3"> {{ $transaction->property->name_number ?? 'N/A' }}</td>

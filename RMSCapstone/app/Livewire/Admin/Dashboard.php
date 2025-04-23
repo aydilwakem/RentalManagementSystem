@@ -16,14 +16,16 @@ class Dashboard extends Component
     public $pendingMaintenances;
     public $reservations;
     public $events = [];
-    public $userName;
+    public $first_name;
+    public $last_name;
 
 
     public function mount()
     {
 
         // Name of the user logged in
-        $this->userName = Auth::user()->name;
+        $this->first_name = Auth::user()->name;
+        $this->last_name = Auth::user()->last_name;
 
         // Checks if the user has a role
         if (!Auth::user()->AnyRoles()->exists()) {

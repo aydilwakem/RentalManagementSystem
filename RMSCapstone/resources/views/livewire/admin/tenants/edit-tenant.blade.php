@@ -7,121 +7,135 @@
         <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
-                <!-- Tenant Name -->
+                <!-- First Name -->
+                <div>
+                    <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
+                    <input type="text" wire:model="first_name" id="first_name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        required>
+                    @error('first_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Middle Name -->
+                <div>
+                    <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle
+                        Name</label>
+                    <input type="text" wire:model="middle_name" id="middle_name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('middle_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Last Name -->
+                <div>
+                    <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
+                    <input type="text" wire:model="last_name" id="last_name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        required>
+                    @error('last_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Suffix -->
+                <div>
+                    <label for="suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix</label>
+                    <input type="text" wire:model="suffix" id="suffix"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('suffix') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
+                    <input type="email" wire:model="email" id="email"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        required>
+                    @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Contact Number -->
+                <div>
+                    <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900">Contact
+                        Number</label>
+                    <input type="text" wire:model="contact_number" id="contact_number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        required>
+                    @error('contact_number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- House Number -->
+                <div>
+                    <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900">House
+                        Number</label>
+                    <input type="text" wire:model="house_number" id="house_number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('house_number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Street -->
+                <div>
+                    <label for="street" class="block mb-2 text-sm font-medium text-gray-900">Street</label>
+                    <input type="text" wire:model="street" id="street"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('street') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Barangay -->
+                <div>
+                    <label for="barangay" class="block mb-2 text-sm font-medium text-gray-900">Barangay</label>
+                    <input type="text" wire:model="barangay" id="barangay"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('barangay') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- City/Municipality -->
+                <div>
+                    <label for="city_municipality"
+                        class="block mb-2 text-sm font-medium text-gray-900">City/Municipality</label>
+                    <input type="text" wire:model="city_municipality" id="city_municipality"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('city_municipality') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Province -->
+                <div>
+                    <label for="province" class="block mb-2 text-sm font-medium text-gray-900">Province</label>
+                    <input type="text" wire:model="province" id="province"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('province') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Region -->
+                <div>
+                    <label for="region" class="block mb-2 text-sm font-medium text-gray-900">Region</label>
+                    <input type="text" wire:model="region" id="region"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('region') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Postal Code -->
+                <div>
+                    <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900">Postal
+                        Code</label>
+                    <input type="text" wire:model="postal_code" id="postal_code"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('postal_code') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Country -->
+                <div>
+                    <label for="country" class="block mb-2 text-sm font-medium text-gray-900">Country</label>
+                    <input type="text" wire:model="country" id="country"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('country') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div> <!-- Tenant Name -->
                 <div class="sm:col-span-2">
                     <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
                     <input type="text" wire:model="first_name" id="first_name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('first_name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="sm:col-span-2">
-                    <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle Name</label>
-                    <input type="text" wire:model="middle_name" id="middle_name" required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('middle_name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="sm:col-span-2">
-                    <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
-                    <input type="text" wire:model="last_name" id="last_name" required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('last_name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="sm:col-span-2">
-                    <label for="suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix</label>
-                    <input type="text" wire:model="suffix" id="suffix" required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('suffix')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- House -->
-                <div class="sm:col-span-2">
-                    <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">House Name</label>
-                    <select wire:model="house_id" id="house_id"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                        <option value="">Select House</option>
-                        @foreach ($houses as $house)
-                        <option value="{{ $house->id }}">{{ $house->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('house_id')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-                <!-- Email -->
-                <div>
-                    <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                    <input type="email" wire:model="email" id="email"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('email')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Phone -->
-                <div>
-                    <label for="phone" class="block mb-2 text-sm font-medium text-gray-900">Phone</label>
-                    <input type="tel" wire:model="phone" id="phone"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('phone')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Birthdate -->
-                <div>
-                    <label for="birthdate" class="block mb-2 text-sm font-medium text-gray-900">Birthdate</label>
-                    <input type="date" wire:model="birthdate" id="birthdate"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('birthdate')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Gender -->
-                <div>
-                    <label for="gender" class="block mb-2 text-sm font-medium text-gray-900">Gender</label>
-                    <select wire:model="gender" id="gender"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                    @error('gender')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Occupation -->
-                <div>
-                    <label for="occupation" class="block mb-2 text-sm font-medium text-gray-900">Occupation</label>
-                    <input type="text" wire:model="occupation" id="occupation"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    @error('occupation')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Notes -->
-                <div>
-                    <label for="notes" class="block mb-2 text-sm font-medium text-gray-900">Notes</label>
-                    <textarea wire:model="notes" id="notes"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
-                    @error('notes')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
 
 
             </div>

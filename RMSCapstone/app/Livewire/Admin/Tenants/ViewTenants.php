@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -39,14 +39,14 @@ class ViewTenants extends Component
 
     public function deleteTenant($id)
     {
-        $tenant = Tenant::find($id);
+        $tenant = TransactionUser::find($id);
 
         if ($tenant) {
             if ($this->confirmItemDelete) {
-                Tenant::find($this->confirmItemDelete)?->delete();
+                TransactionUser::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
-                $tenants = Tenant::orderBy('created_at', 'ASC')->get();
+                $tenants = TransactionUser::orderBy('created_at', 'ASC')->get();
 
                 $fakeIDs = [];
                 foreach ($tenants as $index => $tenantItem) {
@@ -72,18 +72,21 @@ class ViewTenants extends Component
 
     public function render()
     {
-        $tenants = Tenant::query()
-            ->where('first_name', 'like', "%{$this->search}%")
-            ->orWhere('last_name', 'like', "%{$this->search}%")
-            ->orWhere('email', 'like', "%{$this->search}%")
+        $tenants = TransactionUser::query()
+            ->where(function ($query) {
+                $query->where('first_name', 'like', "%{$this->search}%")
+                    ->orWhere('last_name', 'like', "%{$this->search}%")
+                    ->orWhere('email', 'like', "%{$this->search}%");
+            })
+            ->where('trn_user_type', 'tenant')
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         $fakeIDs = session('fake_ids_tenants', []);
 
-        if (count($fakeIDs) !== Tenant::count()) {
+        if (count($fakeIDs) !== TransactionUser::count()) {
             $fakeIDs = [];
-            foreach (Tenant::orderBy('created_at', 'ASC')->get() as $index => $tenantItem) {
+            foreach (TransactionUser::orderBy('created_at', 'ASC')->get() as $index => $tenantItem) {
                 $fakeIDs[$tenantItem->id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_tenants' => $fakeIDs]);

@@ -74,14 +74,14 @@ class EditTransaction extends Component
     public function mount(Transaction $transaction)
     {
         $this->transaction = $transaction;
-        $this->first_name = $transaction->first_name;
-        $this->middle_name = $transaction->middle_name;
-        $this->last_name = $transaction->last_name;
-        $this->suffix = $transaction->suffix;
-        $this->email = $transaction->email;
-        $this->contact_number = $transaction->contact_number;
-        $this->city_municipality = $transaction->city_municipality;
-        $this->country = $transaction->country;
+        $this->first_name = $transaction->transactionUser->first_name;
+        $this->middle_name = $transaction->transactionUser->middle_name;
+        $this->last_name = $transaction->transactionUser->last_name;
+        $this->suffix = $transaction->transactionUser->suffix;
+        $this->email = $transaction->transactionUser->email;
+        $this->contact_number = $transaction->transactionUser->contact_number;
+        $this->city_municipality = $transaction->transactionUser->city_municipality;
+        $this->country = $transaction->transactionUser->country;
 
         // Reservation Details
         $this->check_in_date = optional($transaction->check_in_date)->format('Y-m-d');

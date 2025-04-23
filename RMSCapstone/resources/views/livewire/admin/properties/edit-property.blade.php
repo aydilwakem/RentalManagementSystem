@@ -6,61 +6,75 @@
             <form wire:submit.prevent="">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
+
                     <!-- Property Name -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">House Name</label>
-                        <input type="text" wire:model="name" id="name" required
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">House Name</label>
+                        <input type="text" wire:model="name_number" id="name_number" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                            placeholder="Enter Property name">
-                        @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            placeholder="Enter House name">
+                        @error('name_number')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- House Category -->
+                    <!-- Availability Status -->
                     <div>
-                        <label for="house_category_id" class="block mb-2 text-sm font-medium text-gray-900">House
-                            Category</label>
-                        <select wire:model="house_category_id" id="house_category_id"
+                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Select
+                            Availability</label>
+                        <select wire:model.defer="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                            <option value="">Select Category</option>
-                            @foreach ($houseCategories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('house_category_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Availability -->
-                    <div>
-                        <label for="availability"
-                            class="block mb-2 text-sm font-medium text-gray-900">Availability</label>
-                        <select wire:model.defer="availability" id="availability"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                            <option value="">-- Select Availability --</option>
                             <option value="available">Available</option>
-                            <option value="unavailable">Unavailable</option>
+                            <option value="booked">Occupied</option>
+                            <option value="out_of_service">Out of Service</option>
                         </select>
-                        @error('availability')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @error('property_status')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
 
                     <!-- Monthly Rent -->
                     <div>
-                        <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900">Monthly
-                            Rent</label>
-                        <input type="number" wire:model="monthly_rent" id="monthly_rent" required
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Monthly Rent</label>
+                        <input type="number" wire:model="amount" id="amount" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Monthly Rent">
-                        @error('monthly_rent')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @error('amount')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Address Fields -->
+                    <!-- Capacity -->
+                    <div>
+                        <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900">Capacity</label>
+                        <input type="number" wire:model="capacity" id="capacity"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('capacity')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Max Adults -->
+                    <div>
+                        <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max Adults</label>
+                        <input type="number" wire:model="max_adults" id="max_adults" min="0"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('max_adults')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Max Kids -->
+                    <div>
+                        <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
+                        <input type="number" wire:model="max_kids" id="max_kids" min="0"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('max_kids')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
                     <!-- House Number -->
                     <div>
                         <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900">House
@@ -69,7 +83,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter House Number">
                         @error('house_number')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -80,7 +94,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Street">
                         @error('street')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -91,7 +105,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Barangay">
                         @error('barangay')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -103,18 +117,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter City/Municipality">
                         @error('city_municipality')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Province -->
-                    <div>
-                        <label for="province" class="block mb-2 text-sm font-medium text-gray-900">Province</label>
-                        <input type="text" wire:model="province" id="province" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                            placeholder="Enter Province">
-                        @error('province')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -125,7 +128,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Region">
                         @error('region')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -137,7 +140,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Postal Code">
                         @error('postal_code')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -148,21 +151,41 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             placeholder="Enter Country">
                         @error('country')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Property Description -->
                     <div class="sm:col-span-2">
-                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900">House
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Property
                             Description</label>
                         <textarea wire:model="description" id="description" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                             placeholder="Enter Property description"></textarea>
                         @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+                    <!-- Available Amenities (Dynamic) -->
+                    <div class="sm:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            @foreach ($features as $feature)
+                            <div class="flex items-center">
+                                <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                                <label class="ms-2 text-sm font-medium text-gray-900">
+                                    {{ $feature->name }}
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                        @error('selectedFeatures')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
 
                     <!-- Image Upload -->
                     <div class="sm:col-span-2">
@@ -172,7 +195,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                         @error('newImage')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
                         <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
@@ -180,20 +203,19 @@
                         <!-- Image Preview -->
                         <div class="mt-2">
                             @if ($newImage)
-                                <!-- Show new uploaded image -->
-                                <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show new uploaded image -->
+                            <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                             @elseif ($property->image)
-                                <!-- Show existing image from storage -->
-                                <img src="{{ asset('storage/' . $property->image) }}"
-                                    class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show existing image from storage -->
+                            <img src="{{ asset('storage/' . $property->image) }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                             @else
-                                <!-- Show default image if no image exists -->
-                                <img src="{{ asset('images/rms-default.png') }}"
-                                    class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show default image if no image exists -->
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                             @endif
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Submit Button -->

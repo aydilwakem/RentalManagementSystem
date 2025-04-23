@@ -2,34 +2,45 @@
 
 namespace App\Livewire\Admin\Properties;
 
-use App\Models\Property;
-use App\Models\HouseCategory;
 use Livewire\WithFileUploads;
 use Livewire\Component;
+use App\Models\Property;
+use App\Models\PropertyCategory;
+use App\Models\PropertyFeature;
 
 class CreateProperty extends Component
 {
+
     use WithFileUploads;
-    public $name;
+
+    public $property_type_id = 2; // Property Type = House
+
+    // ----------------------------- House Details ---------------------------------------//
+
+
+    public $name_number;
+    public $capacity;
+    public $max_adults;
+    public $max_kids;
     public $image;
     public $description;
-    public $monthly_rent;
-    public $availability;
+    public $amount; // Monthly Rent
+    public $property_status = 'available';
+
+    // ----------------------------- House Address Details ------------------------------//
     public $house_number;
     public $street;
     public $barangay;
     public $city_municipality;
-    public $province;
     public $region;
     public $postal_code;
     public $country;
-    public $deleted_at;
-    public $created_at;
-    public $updated_at;
 
-    public $houseCategory;
-    public $house_category_id;
+    // ----------------------- House Features (Amenities) -------------------------------//
+    public $selectedFeatures = [];
+    public $features = [];
 
+    // ----------------------------- Modals ---------------------------------------------//
     public $confirmCreateItem = false;
 
     public function confirmCreate()
@@ -37,11 +48,9 @@ class CreateProperty extends Component
         $this->confirmCreateItem = true;
     }
 
-
-
     public function mount()
     {
-        $this->houseCategory = HouseCategory::all(); // Fetch all categories
+        $this->features = PropertyFeature::all();        // Load features
     }
 
 
@@ -50,20 +59,24 @@ class CreateProperty extends Component
         try {
             // Validate form input 
             $this->validate([
-                'name' => 'required|string|unique:lt_houses,name',
+                'name_number' => 'required|string|max:255|unique:properties,name_number',
+                'property_type_id' => 'required|exists:property_types,id',
+                'capacity' => 'required|integer|min:1',
+                'max_adults' => 'required|integer|min:1',
+                'max_kids' => 'required|integer|min:0',
+                'property_status' => 'required|in:available,booked,out_of_service',
+                'amount' => 'required|numeric|min:100|max:1000000.00',
                 'image' => 'nullable|image|max:1024',
-                'house_category_id' => 'required|exists:lt_house_categories,id',
                 'description' => 'nullable|string',
-                'monthly_rent' => 'required|numeric|min:0',
-                'availability' => 'required|in:available,unavailable',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
                 'barangay' => 'required|string',
                 'city_municipality' => 'required|string',
-                'province' => 'required|string',
                 'region' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
+                'selectedFeatures' => 'nullable|array',
+                'selectedFeatures.*' => 'exists:property_features,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -80,49 +93,51 @@ class CreateProperty extends Component
         // Store Image (if uploaded)
         $imagePath = null;
         if ($this->image) {
-            $imagePath = $this->image->store('houses', 'public'); // Saves in storage/app/public/room-categories
+            $imagePath = $this->image->store('houses', 'public');
         }
 
         // Create Property
-        Property::create([
-            'name' => $this->name,
-            'image' => $imagePath, // Save path in DB
-            'house_category_id' => $this->house_category_id,
-            'description' => $this->description,
-            'monthly_rent' => $this->monthly_rent,
-            'availability' => $this->availability,
+        $house = Property::create([
+            'property_type_id' => $this->property_type_id,
+            'name_number' => $this->name_number,
+            'capacity' => $this->capacity,
+            'max_adults' => $this->max_adults,
+            'max_kids' => $this->max_kids,
+            'amount' => $this->amount,
             'house_number' => $this->house_number,
             'street' => $this->street,
             'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
             'region' => $this->region,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
-            'deleted_at' => $this->deleted_at,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'property_status' => $this->property_status,
+            'description' => $this->description,
+            'image' => $imagePath, // Save path in DB
         ]);
+
+        // Attach selected features to pivot
+        if (!empty($this->features)) {
+            $house->features()->attach($this->features);
+        }
 
         // Reset form fields
         $this->reset([
-            'name',
-            'image',
-            'house_category_id',
-            'description',
-            'monthly_rent',
-            'availability',
+            'name_number',
+            'capacity',
+            'max_adults',
+            'max_kids',
+            'amount',
             'house_number',
             'street',
             'barangay',
             'city_municipality',
-            'province',
-            'region',
             'postal_code',
             'country',
-            'deleted_at',
-            'created_at',
-            'updated_at'
+            'property_status',
+            'description',
+            'image',
+            'selectedFeatures',
         ]);
 
         // Flash message for success
@@ -134,8 +149,22 @@ class CreateProperty extends Component
 
     public function render()
     {
-        return view('livewire.admin.properties.create-property', [
-            'houseCategories' => $this->houseCategory,
-        ]);
+        return view('livewire.admin.properties.create-property');
     }
 }
+
+
+
+
+
+
+
+
+// public $property_category_id;
+
+// public $houseCategories;
+
+// $this->houseCategories = PropertyCategory::all();   // Load categories
+// 'property_category_id' => 'required|exists:property_categories,id',
+// 'property_category_id',
+// 'property_category_id' => $this->property_category_id,

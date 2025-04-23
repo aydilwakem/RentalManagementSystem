@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use App\Models\Property;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -11,21 +11,22 @@ use Livewire\Component;
 class EditTenant extends Component
 {
 
-    public Tenant $tenant;
-    public $name;
+    public TransactionUser $tenant;
     public $first_name;
     public $middle_name;
     public $last_name;
     public $suffix;
-    public $house_id;
     public $email;
-    public $phone;
-    public $birthdate;
-    public $gender;
-    public $occupation;
-    public $notes;
-
-    public $houses;
+    public $contact_number;
+    public $company_name;
+    public $house_number;
+    public $street;
+    public $barangay;
+    public $city_municipality;
+    public $province;
+    public $region;
+    public $postal_code;
+    public $country;
 
     public $confirmEditItem = false;
 
@@ -34,21 +35,24 @@ class EditTenant extends Component
         $this->confirmEditItem = $id;
     }
 
-    public function mount(Tenant $tenant)
+    public function mount(TransactionUser $tenant)
     {
-        $this->houses = Property::all();
         $this->tenant = $tenant;
         $this->first_name = $tenant->first_name;
         $this->middle_name = $tenant->middle_name;
         $this->last_name = $tenant->last_name;
         $this->suffix = $tenant->suffix;
-        $this->house_id = $tenant->house_id;
         $this->email = $tenant->email;
-        $this->phone = $tenant->phone;
-        $this->birthdate = $tenant->birthdate;
-        $this->gender = $tenant->gender;
-        $this->occupation = $tenant->occupation;
-        $this->notes = $tenant->notes;
+        $this->contact_number = $tenant->contact_number;
+        $this->company_name = $tenant->company_name;
+        $this->house_number = $tenant->house_number;
+        $this->street = $tenant->street;
+        $this->barangay = $tenant->barangay;
+        $this->city_municipality = $tenant->city_municipality;
+        $this->province = $tenant->province;
+        $this->region = $tenant->region;
+        $this->postal_code = $tenant->postal_code;
+        $this->country = $tenant->country;
     }
 
     public function updateTenant()
@@ -58,14 +62,18 @@ class EditTenant extends Component
                 'first_name' => 'required|string|max:255',
                 'middle_name' => 'nullable|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'suffix' => 'nullable|string|max:10',
-                'house_id' => 'required|integer|exists:lt_houses,id',
-                'email' => 'required|email|unique:lt_tenants,email,' . $this->tenant->id,
-                'phone' => 'required|string|max:20',
-                'birthdate' => 'required|date',
-                'gender' => 'required|string|in:Male,Female,Other',
-                'occupation' => 'nullable|string|max:255',
-                'notes' => 'nullable|string',
+                'suffix' => 'nullable|string|max:255',
+                'email' => 'required|email|unique:trn_users,email,' . $this->tenant->id, // Exclude the current tenant's email
+                'contact_number' => 'nullable|string|max:100',
+                'company_name' => 'nullable|string|max:255',
+                'house_number' => 'nullable|string|max:255',
+                'street' => 'nullable|string|max:255',
+                'barangay' => 'nullable|string|max:255',
+                'city_municipality' => 'nullable|string|max:255',
+                'province' => 'nullable|string|max:255',
+                'region' => 'nullable|string|max:255',
+                'postal_code' => 'nullable|string|max:255',
+                'country' => 'required|string|max:255',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -79,13 +87,17 @@ class EditTenant extends Component
             'middle_name' => $this->middle_name,
             'last_name' => $this->last_name,
             'suffix' => $this->suffix,
-            'house_id' => $this->house_id,
             'email' => $this->email,
-            'phone' => $this->phone,
-            'birthdate' => $this->birthdate,
-            'gender' => $this->gender,
-            'occupation' => $this->occupation,
-            'notes' => $this->notes,
+            'contact_number' => $this->contact_number,
+            'company_name' => $this->company_name,
+            'house_number' => $this->house_number,
+            'street' => $this->street,
+            'barangay' => $this->barangay,
+            'city_municipality' => $this->city_municipality,
+            'province' => $this->province,
+            'region' => $this->region,
+            'postal_code' => $this->postal_code,
+            'country' => $this->country,
         ]);
 
         session()->flash('message', 'Tenant successfully updated!');
@@ -95,8 +107,6 @@ class EditTenant extends Component
 
     public function render()
     {
-        return view('livewire.admin.tenants.edit-tenant', [
-            'houses' => $this->houses,
-        ]);
+        return view('livewire.admin.tenants.edit-tenant');
     }
 }

@@ -2,36 +2,37 @@
 
 namespace App\Livewire\Admin\Tenants;
 
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use Livewire\Component;
 use App\Models\Property;
 
 class CreateTenant extends Component
 {
+
+    public $trn_user_type = 'tenant'; // Default value set to 'tenant'
     public $first_name;
     public $middle_name;
     public $last_name;
     public $suffix;
-    public $house_id;
     public $email;
-    public $phone;
-    public $birthdate;
-    public $gender;
-    public $occupation;
-    public $notes;
+    public $contact_number;
+    public $company_name;
+    public $house_number;
+    public $street;
+    public $barangay;
+    public $city_municipality;
+    public $province;
+    public $region;
+    public $postal_code;
+    public $country;
 
-    public $houses;
+
 
     public $confirmCreateItem = false;
 
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
-    }
-
-    public function mount()
-    {
-        $this->houses = Property::all();
     }
 
     public function saveTenant()
@@ -42,14 +43,18 @@ class CreateTenant extends Component
                 'first_name' => 'required|string|max:255',
                 'middle_name' => 'nullable|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'suffix' => 'nullable|string|max:10',
-                'house_id' => 'required|integer|exists:lt_houses,id',
-                'email' => 'required|email|unique:lt_tenants,email',
-                'phone' => 'required|string|max:20',
-                'birthdate' => 'required|date|before:-18 years',
-                'gender' => 'required|string|in:Male,Female,Other',
-                'occupation' => 'nullable|string|max:255',
-                'notes' => 'nullable|string',
+                'suffix' => 'nullable|string|max:255',
+                'email' => 'required|email|unique:trn_users,email',
+                'contact_number' => 'nullable|string|max:100',
+                'company_name' => 'nullable|string|max:255',
+                'house_number' => 'nullable|string|max:255',
+                'street' => 'nullable|string|max:255',
+                'barangay' => 'nullable|string|max:255',
+                'city_municipality' => 'nullable|string|max:255',
+                'province' => 'nullable|string|max:255',
+                'region' => 'nullable|string|max:255',
+                'postal_code' => 'nullable|string|max:255',
+                'country' => 'required|string|max:255',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -58,22 +63,27 @@ class CreateTenant extends Component
         }
 
         // Create Tenant
-        Tenant::create([
+        TransactionUser::create([
+            'trn_user_type' => $this->trn_user_type,
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,
             'last_name' => $this->last_name,
             'suffix' => $this->suffix,
-            'house_id' => $this->house_id,
             'email' => $this->email,
-            'phone' => $this->phone,
-            'birthdate' => $this->birthdate,
-            'gender' => $this->gender,
-            'occupation' => $this->occupation,
-            'notes' => $this->notes,
+            'company_name' => $this->company_name,
+            'contact_number' => $this->contact_number,
+            'house_number' => $this->house_number,
+            'street' => $this->street,
+            'barangay' => $this->barangay,
+            'city_municipality' => $this->city_municipality,
+            'province' => $this->province,
+            'region' => $this->region,
+            'postal_code' => $this->postal_code,
+            'country' => $this->country,
         ]);
 
         // Reset form fields
-        $this->reset(['first_name', 'middle_name', 'last_name', 'suffix', 'house_id', 'email', 'phone', 'birthdate', 'gender', 'occupation', 'notes']);
+        $this->reset(['trn_user_type', 'first_name', 'middle_name', 'last_name', 'suffix',  'contact_number', 'company_name', 'email', 'house_number', 'street', 'barangay', 'city_municipality', 'province', 'region', 'postal_code', 'country']);
 
         // Flash message for success
         session()->flash('message', 'Tenant successfully created!');
@@ -84,8 +94,6 @@ class CreateTenant extends Component
 
     public function render()
     {
-        return view('livewire.admin.tenants.create-tenant', [
-            'houses' => $this->houses,
-        ]);
+        return view('livewire.admin.tenants.create-tenant');
     }
 }

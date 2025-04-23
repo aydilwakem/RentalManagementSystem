@@ -12,6 +12,8 @@
 
             <form wire:submit.prevent="">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
+                    <!-- First Name -->
                     <div>
                         <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First Name</label>
                         <input type="text" wire:model="first_name" id="first_name"
@@ -20,13 +22,16 @@
                         @error('first_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Middle Name -->
                     <div>
                         <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900">Middle
                             Name</label>
                         <input type="text" wire:model="middle_name" id="middle_name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('middle_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Last Name -->
                     <div>
                         <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last Name</label>
                         <input type="text" wire:model="last_name" id="last_name"
@@ -35,27 +40,15 @@
                         @error('last_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Suffix -->
                     <div>
                         <label for="suffix" class="block mb-2 text-sm font-medium text-gray-900">Suffix</label>
                         <input type="text" wire:model="suffix" id="suffix"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('suffix') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="sm:col-span-2">
-                        <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">House Name</label>
-                        <select wire:model="house_id" id="house_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                            <option value="">Select House</option>
-                            @foreach ($houses as $house)
-                                <option value="{{ $house->id }}">{{ $house->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('house_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-
+                    <!-- Email -->
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
                         <input type="email" wire:model="email" id="email"
@@ -64,45 +57,86 @@
                         @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Contact Number -->
                     <div>
-                        <label for="phone" class="block mb-2 text-sm font-medium text-gray-900">Phone</label>
-                        <input type="text" wire:model="phone" id="phone"
+                        <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900">Contact
+                            Number</label>
+                        <input type="text" wire:model="contact_number" id="contact_number"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             required>
-                        @error('phone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        @error('contact_number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- House Number -->
                     <div>
-                        <label for="birthdate" class="block mb-2 text-sm font-medium text-gray-900">Birthdate</label>
-                        <input type="date" wire:model="birthdate" id="birthdate"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                            required>
-                        @error('birthdate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label for="gender" class="block mb-2 text-sm font-medium text-gray-900">Gender</label>
-                        <select wire:model="gender" id="gender"
+                        <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900">House
+                            Number</label>
+                        <input type="text" wire:model="house_number" id="house_number"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
+                        @error('house_number') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Street -->
                     <div>
-                        <label for="occupation" class="block mb-2 text-sm font-medium text-gray-900">Occupation</label>
-                        <input type="text" wire:model="occupation" id="occupation"
+                        <label for="street" class="block mb-2 text-sm font-medium text-gray-900">Street</label>
+                        <input type="text" wire:model="street" id="street"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('street') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="sm:col-span-2">
-                        <label for="notes" class="block mb-2 text-sm font-medium text-gray-900">Notes</label>
-                        <textarea wire:model="notes" id="notes" rows="3"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                    <!-- Barangay -->
+                    <div>
+                        <label for="barangay" class="block mb-2 text-sm font-medium text-gray-900">Barangay</label>
+                        <input type="text" wire:model="barangay" id="barangay"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('barangay') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
+
+                    <!-- City/Municipality -->
+                    <div>
+                        <label for="city_municipality"
+                            class="block mb-2 text-sm font-medium text-gray-900">City/Municipality</label>
+                        <input type="text" wire:model="city_municipality" id="city_municipality"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('city_municipality') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Province -->
+                    <div>
+                        <label for="province" class="block mb-2 text-sm font-medium text-gray-900">Province</label>
+                        <input type="text" wire:model="province" id="province"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('province') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Region -->
+                    <div>
+                        <label for="region" class="block mb-2 text-sm font-medium text-gray-900">Region</label>
+                        <input type="text" wire:model="region" id="region"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('region') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Postal Code -->
+                    <div>
+                        <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900">Postal
+                            Code</label>
+                        <input type="text" wire:model="postal_code" id="postal_code"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('postal_code') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Country -->
+                    <div>
+                        <label for="country" class="block mb-2 text-sm font-medium text-gray-900">Country</label>
+                        <input type="text" wire:model="country" id="country"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('country') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
                 </div>
 
+                <!-- Buttons -->
                 <div class="flex justify-between items-center space-y-2 mt-6">
                     <x-button onclick="history.back()" type="button"
                         class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
@@ -113,6 +147,8 @@
                     </x-button>
                 </div>
             </form>
+
+
         </div>
 
         <!-- Create Confirmation Modal -->

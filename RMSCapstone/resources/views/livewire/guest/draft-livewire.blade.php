@@ -3,36 +3,30 @@
 namespace App\Livewire\Guest;
 
 use Livewire\Component;
-use Livewire\WithFileUploads;
-use App\Models\Property;
 use App\Models\Transaction;
-use App\Models\TransactionUser;
+use App\Models\Property;
 use App\Models\Activity;
+use App\Models\TransactionUser;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
 {
-    use WithFileUploads;
-    public $reservation_type_id = 2; // Room
-    public $trn_user_type = 'guest';
-
     //-------------------------- Step 1 --------------------------------- //
 
-    public $room_id; // room_id
+    public $reservation_type_id = 2; // Room
+    public $trn_user_type = 'guest';
+    public $property_id; // room_id
     public $check_in_date = '';
     public $check_out_date = '';
-    public $total_adults_by_room = [];
-    public $total_kids_by_room = [];
-    public $pax = 0; // Total Pax
+    public $pax = 0;
     public $total_amount = 0;
-    public $total_adults = 0; // Default value
-    public $total_kids = 0;    // Default value
-    public $selectedRoom; // Declare the selectedRoom property
+    public $total_kids;
+    public $total_adults;
+
     //-------------------------- Step 2 --------------------------------- //
     public $activity_id;
-    public $selectedActivity;
 
     //-------------------------- Step 3 --------------------------------- //
     public $first_name;
@@ -45,21 +39,25 @@ class ReservationForm extends Component
 
     public $debug;
 
+
+
     public $totalSteps = 3;
     public $currentStep = 1;
 
-
-
     public function mount()
     {
-        $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
+        // Fetch all Activities
         $this->activities = Activity::all();
+        $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
         $this->currentStep = 1;
     }
 
     public function increaseStep()
     {
-        $this->resetErrorBag();
+        $this->resetErrorBag(); // Clears previous validation error messages stored in the component
+
+        $this->validateData(); // Runs the validateData function before proceeding to the next step
+
         $this->currentStep++;
         if ($this->currentStep > $this->totalSteps) {
             $this->currentStep = $this->totalSteps;
@@ -76,18 +74,16 @@ class ReservationForm extends Component
 
     public function updated($property)
     {
-        // Trigger the calculation of pax whenever the number of adults or kids changes
-        if (strpos($property, 'total_adults_by_room') !== false || strpos($property, 'total_kids_by_room') !== false) {
-            $this->calculateTotalPax();
-        }
-
-        // Other update logic
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
             $this->getAvailableRooms();
         }
 
-        if (in_array($property, ['room_id', 'activity_id'])) {
+        if (in_array($property, ['property_id', 'activity_id'])) {
             $this->calculateTotalAmount();
+        }
+
+        if (in_array($property, ['total_adults', 'total_kids'])) {
+            $this->calculateTotalPax();
         }
     }
 
@@ -112,76 +108,37 @@ class ReservationForm extends Component
             ->get();
     }
 
-
-    // Modified function to calculate pax based on the selected room
-    public function calculateTotalPax()
-    {
-        // Loop through the rooms and calculate the total adults and kids for the updated room
-        $totalAdults = 0;
-        $totalKids = 0;
-
-        // Check if the update was for a specific room
-        foreach ($this->total_adults_by_room as $roomId => $adults) {
-            // Get the number of adults for this room
-            $totalAdults = (int) ($adults);
-        }
-
-        foreach ($this->total_kids_by_room as $roomId => $kids) {
-            // Get the number of kids for this room
-            $totalKids = (int) ($kids);
-        }
-
-        // Calculate the total pax (adults + kids) for the updated room
-        $this->pax = $totalAdults + $totalKids;
-    }
-
-
-
-    public function addToCart($roomId)
-    {
-
-        $this->selectedRoom = Property::find($roomId);
-        $this->calculateTotalAmount();
-        $this->calculateTotalPax();
-    }
-
-    public function addActivity($activityId)
-    {
-        $this->selectedActivity = Activity::find($activityId);
-        $this->calculateTotalAmount();
-    }
-
-
-
-
-
+    // Calculates the total amount based on selected room and activity
     public function calculateTotalAmount()
     {
-        $roomRate = $this->selectedRoom ? $this->selectedRoom->amount : 0;
-        $activityRate = $this->selectedActivity ? Activity::find($this->activity_id)?->amount ?? 0 : 0;
+        // Get the room rate if a property is selected, otherwise default to 0
+        $roomRate = $this->property_id ? Property::find($this->property_id)?->amount ?? 0 : 0;
+
+        // Get the activity rate if an activity is selected, otherwise default to 0
+        $activityRate = $this->activity_id ? Activity::find($this->activity_id)?->amount ?? 0 : 0;
+
+        // Set the total amount as the sum of room and activity rates
         $this->total_amount = $roomRate + $activityRate;
     }
 
+    // Calculates the total number of people (pax) from adults and kids
+    public function calculateTotalPax()
+    {
+        $adults = is_numeric($this->total_adults) ? (int) $this->total_adults : 0;
+        $kids = is_numeric($this->total_kids) ? (int) $this->total_kids : 0;
 
+        $this->pax = $adults + $kids;
+    }
 
-
+    public function selectRoom($roomId)
+    {
+        $this->room_id = $roomId; // Set the room_id to the selected room's ID
+    }
 
     public function removeRoom()
     {
-        $this->selectedRoom = null;
-        $this->calculateTotalAmount();
+        $this->room_id = null; // Clear the selected room ID
     }
-
-    public function removeActivity()
-    {
-        $this->selectedActivity = null;
-        $this->calculateTotalAmount();
-    }
-
-
-
-
-
 
 
     public function validateData()
@@ -189,7 +146,7 @@ class ReservationForm extends Component
         // Step 1 - Book a Room
         if ($this->currentStep == 1) {
             $this->validate([
-                'room_' => 'required|exists:properties,id',
+                'property_id' => 'required|exists:properties,id',
                 'check_in_date' => 'required|date|after_or_equal:today',
                 'check_out_date' => 'required|date|after:check_in_date',
                 'total_adults' => 'required|integer|min:1',
@@ -248,10 +205,9 @@ class ReservationForm extends Component
         return redirect()->route('guest.reservation-form');
     }
 
-
     public function render()
     {
-        return view('livewire.guest.rooms', [
+        return view('livewire.guest.reservation-form', [
             'rooms' => $this->rooms,
             'activities' => $this->activities,
         ]);

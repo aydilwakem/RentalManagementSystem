@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\Properties;
 
-use App\Models\Property;
-use App\Models\HouseCategory;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use App\Models\Property;
+use App\Models\PropertyFeature;
 use Illuminate\Support\Facades\Storage;
 
 #[Layout('layouts.app')]
@@ -15,23 +15,35 @@ class EditProperty extends Component
     use WithFileUploads;
 
     public Property $property;
-    public $name;
+
+    // ----------------------------- House Details ---------------------------------------//
+
+    public $name_number;
+    public $capacity;
+    public $max_adults;
+    public $max_kids;
+    public $image;
+    public $newImage;
     public $description;
-    public $monthly_rent;
-    public $availability;
+    public $amount; // Monthly Rent
+    public $property_status;
+
+    // ----------------------------- House Address Details ------------------------------//
     public $house_number;
     public $street;
     public $barangay;
     public $city_municipality;
-    public $province;
     public $region;
     public $postal_code;
     public $country;
-    public $houseCategories;
-    public $house_category_id;
-    public $propertyId;
-    public $image;
-    public $newImage;
+
+    // ----------------------- House Features (Amenities) -------------------------------//
+    public $selectedFeatures = [];
+    public $features = [];
+
+    // ----------------------------- Modals ---------------------------------------------//
+    public $confirmCreateItem = false;
+    public $property_id;
 
 
     public $confirmEditItem = false;
@@ -44,33 +56,49 @@ class EditProperty extends Component
 
     public function mount(Property $property)
     {
+        // House details
+        $this->property_id = $property->id;
+        $this->name_number = $property->name_number;
+        $this->capacity = $property->capacity;
+        $this->max_adults = $property->max_adults;
+        $this->max_kids = $property->max_kids;
+        $this->amount = $property->amount;
 
-        dd($property);
-        $this->propertyId = $property->id;
-        $this->houseCategories = HouseCategory::all();
-        $this->property = $property;
+        // House Address
+        $this->house_number = $property->house_number;
+        $this->street = $property->street;
+        $this->barangay = $property->barangay;
+        $this->city_municipality = $property->city_municipality;
+        $this->region = $property->region;
+        $this->postal_code = $property->postal_code;
+        $this->country = $property->country;
+
+        // Other info
+        $this->description = $property->description;
+        $this->property_status = $property->property_status;
         $this->image = $property->image;
-        $this->fill($property->toArray());
+        $this->features = PropertyFeature::all();
+        $this->selectedFeatures = $property->features()->pluck('property_features.id')->toArray();
     }
 
     public function updateProperty()
     {
         try {
-            // Validate form input 
             $this->validate([
-                'name' => "required|string|unique:lt_houses,name,{$this->propertyId},id",
-                'house_category_id' => 'required|exists:lt_house_categories,id',
-                'description' => 'nullable|string',
-                'monthly_rent' => 'required|numeric|min:0',
-                'availability' => 'required|in:available,unavailable',
+                'name_number' => "required|string|max:255|unique:properties,name_number,{$this->property_id},id",
+                'capacity' => 'required|integer|min:1',
+                'max_adults' => 'required|integer|min:1',
+                'max_kids' => 'required|integer|min:0',
+                'property_status' => 'required|in:available,booked,out_of_service',
+                'amount' => 'required|numeric|min:100|max:1000000.00',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
                 'barangay' => 'required|string',
                 'city_municipality' => 'required|string',
-                'province' => 'required|string',
                 'region' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
+                'description' => 'nullable|string',
                 'newImage' => 'nullable|image|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -79,46 +107,41 @@ class EditProperty extends Component
             throw $e;
         }
 
-        // Ensure the image is uploaded properly
-        if ($this->newImage && !$this->newImage->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Handle Image Upload
+        // Handle image upload if a new one is selected
         if ($this->newImage) {
             if ($this->property->image) {
                 Storage::disk('public')->delete($this->property->image);
             }
-            // Save the image in public folder
             $this->image = $this->newImage->store('houses', 'public');
         }
-
+        // Update property details
         $this->property->update([
-            'name' => $this->name,
-            'house_category_id' => $this->house_category_id,
-            'description' => $this->description,
-            'monthly_rent' => $this->monthly_rent,
-            'availability' => $this->availability,
+            'name_number' => $this->name_number,
+            'capacity' => $this->capacity,
+            'max_adults' => $this->max_adults,
+            'max_kids' => $this->max_kids,
+            'amount' => $this->amount,
             'house_number' => $this->house_number,
             'street' => $this->street,
             'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
             'region' => $this->region,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
+            'property_status' => $this->property_status,
+            'description' => $this->description,
             'image' => $this->image,
         ]);
 
-        session()->flash('message', 'Property successfully updated!');
+        $this->property->features()->sync($this->selectedFeatures);
+
+        session()->flash('message', 'House successfully updated!');
+
         return redirect()->route('admin.properties');
     }
 
     public function render()
     {
-        return view('livewire.admin.properties.edit-property', [
-            'houseCategories' => $this->houseCategories,
-        ]);
+        return view('livewire.admin.properties.edit-property', data: []);
     }
 }

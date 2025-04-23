@@ -127,19 +127,21 @@ class ViewTransactions extends Component
     public function render()
     {
         $transactions = Transaction::query()
-            ->where('reservation_type_id', 2) // Only show transactions for Rooms
-            ->where('isConfirmed', false) // Only fetch unconfirmed transactions
-            ->where('isReserved', false) // Only fetch unreserved transactions
+            ->where('reservation_type_id', 2)
+            ->where('isConfirmed', 0)
+            ->where('isReserved', 0)
             ->where('transaction_status', 'pending')
-            ->where('first_name', 'like', '%' . $this->search . '%') // Apply search filter
-            ->when($this->statusFilter !== '', function ($query) {
-                $query->where('status', $this->statusFilter); // Apply status filter if set
+            ->when($this->search !== '', function ($query) {
+                $query->where('first_name', 'like', '%' . $this->search . '%');
             })
-            ->orderBy($this->sortBy, $this->sortDir) // Apply sorting
-            ->paginate($this->perPage); // Paginate results
+            ->when($this->statusFilter !== '', function ($query) {
+                $query->where('transaction_status', $this->statusFilter);
+            })
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
 
         return view('livewire.admin.transactions.new-transaction.view-transactions', [
-            'transactions' => $transactions, // Pass transactions data to the view
+            'transactions' => $transactions,
         ]);
     }
 }

@@ -16,49 +16,59 @@
 
         <!-- Property Name -->
         <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
-            {{ $property->name }}
+            {{ $house->name_number }}
         </h2>
 
-        <!-- Room Image -->
+        <!-- House Image -->
         <div class="mb-4">
-            <img src="{{ asset($property->image ? 'storage/' . $property->image : 'images/rms-default.png') }}"
+            <img src="{{ asset($house->image ? 'storage/' . $house->image : 'images/rms-default.png') }}"
                 class="w-full h-64 object-cover rounded-lg shadow-md">
-        </div>
-
-        <!-- House Category Name -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">House Category</h3>
-            <p class="text-gray-600">{{($property->category->name) }}</p>
         </div>
 
         <!-- Description -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
-                <p class="text-gray-600 leading-relaxed">{{ $property->description }}</p>
+                @if (!empty($house->description))
+                    <p class="text-gray-600 leading-relaxed">{{ $house->description }}</p>
+                @else
+                    <p class="text-gray-500 italic">No description provided.</p>
+                @endif
             </div>
         </div>
 
-        <!-- Monthly Rent -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Monthly Rent</h3>
-            <p class="text-gray-600">₱{{ number_format($property->monthly_rent, 2) }}</p>
-        </div>
 
-        <!-- Availability -->
-        <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">Availability</h3>
-            <p class="text-gray-600">{{ ucfirst($property->availability) }}</p>
+        <!-- House Details -->
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">House Details</h3>
+            <ul class="list-disc pl-5 text-gray-600">
+                <li><strong>Capacity:</strong> {{ $house->capacity }}</li>
+                <li><strong>Max Adults:</strong> {{ $house->max_adults }}</li>
+                <li><strong>Max Kids:</strong> {{ $house->max_kids }}</li>
+                <li><strong>Availability:</strong> {{ ucfirst($house->property_status) }}</li>
+                <li><strong>Monthly Rent:</strong> {{ $house->amount }}</li>
+            </ul>
+
+            <!-- Room Amenities -->
+            <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
+            @if ($house->features->isNotEmpty())
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    @foreach ($house->features as $feature)
+                        <li>{{ $feature->name }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="text-gray-500 mt-2">No features selected for this house.</p>
+            @endif
         </div>
 
         <!-- Address -->
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Address</h3>
             <p class="text-gray-600">
-                {{ $property->house_number }}, {{ $property->street }},
-                {{ $property->barangay }}, {{ $property->city_municipality }},
-                {{ $property->province }}, {{ $property->region }},
-                {{ $property->postal_code }}, {{ $property->country }}
+                {{ $house->house_number }}, {{ $house->street }},
+                {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
+                {{ $house->postal_code }}, {{ $house->country }}
             </p>
         </div>
 
@@ -68,14 +78,14 @@
             <!-- Edit -->
             <x-button type="button" icon="fas fa-pen-to-square"
                 class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
-                wire:navigate href="{{ route('admin.edit-property', ['property' => $property->id]) }}">
+                wire:navigate href="{{ route('admin.edit-property', ['property' => $house->id]) }}">
                 Edit
             </x-button>
 
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
-                wire:click="confirmDelete({{ $property->id }})" wire:loading.attr="disabled">
+                wire:click="confirmDelete({{ $house->id }})" wire:loading.attr="disabled">
                 Delete
             </x-button>
         </div>
@@ -96,8 +106,7 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deletePropertyItem({{ $property->id }})"
-                wire:loading.attr="disabled">
+            <x-danger-button class="ms-3" wire:click="deleteHouse({{ $house->id }})" wire:loading.attr="disabled">
                 {{ __('Delete Property') }}
             </x-danger-button>
         </x-slot>

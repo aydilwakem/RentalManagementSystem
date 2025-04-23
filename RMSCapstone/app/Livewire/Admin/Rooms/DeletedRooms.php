@@ -28,11 +28,11 @@ class DeletedRooms extends Component
 
     public function restoreRoom($roomId)
     {
-        $room = Property::withTrashed()->find($roomId);
+        $room = Property::withTrashed()->ofType('Room')->find($roomId);
         if ($room) {
             $room->restore(); // Restore the room
             session()->flash('message', 'Room restored successfully.');
-            $this->deletedRooms = Property::onlyTrashed()->get();
+            $this->fetchDeletedRooms();
         }
     }
 

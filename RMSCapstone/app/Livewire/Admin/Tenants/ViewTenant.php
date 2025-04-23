@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -10,7 +10,7 @@ use Livewire\Component;
 class ViewTenant extends Component
 {
     // Public property to hold the tenant record
-    public Tenant $tenant;
+    public TransactionUser $tenant;
 
     public $confirmItemDelete = false;
 
@@ -20,7 +20,7 @@ class ViewTenant extends Component
     }
 
     // Function to delete a tenant
-    public function deleteTenant(Tenant $tenant)
+    public function deleteTenant(TransactionUser $tenant)
     {
         if (!$tenant) {
             session()->flash('error', 'Tenant not found!');

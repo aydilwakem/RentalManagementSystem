@@ -3,8 +3,6 @@
 namespace App\Livewire\Admin\Properties;
 
 use App\Models\Property;
-use App\Models\TransactionUser;
-use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;

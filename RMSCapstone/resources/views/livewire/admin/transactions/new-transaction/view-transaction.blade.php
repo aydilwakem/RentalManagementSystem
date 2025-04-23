@@ -37,12 +37,15 @@
                     <tbody class="text-gray-800">
                         <tr class="bg-white border-b border-gray-200">
                             <td class="px-6 py-4">
-                                {{ $transactions->first_name }} {{ $transactions->middle_name }}
-                                {{ $transactions->last_name }} {{ $transactions->suffix }}
+                                {{ $transactions->transactionUser->first_name }}
+                                {{ $transactions->transactionUser->middle_name }}
+                                {{ $transactions->transactionUser->last_name }}
+                                {{ $transactions->transactionUser->suffix }}
                             </td>
-                            <td class="px-6 py-4">{{ $transactions->email }}</td>
-                            <td class="px-6 py-4">{{ $transactions->contact_number }}</td>
-                            <td class="px-6 py-4"> {{ $transactions->city_municipality }}, {{ $transactions->country }}
+                            <td class="px-6 py-4">{{ $transactions->transactionUser->email }}</td>
+                            <td class="px-6 py-4">{{ $transactions->transactionUser->contact_number }}</td>
+                            <td class="px-6 py-4"> {{ $transactions->transactionUser->city_municipality }}
+                                {{ $transactions->transactionUser->country }}
                             </td>
                         </tr>
                     </tbody>

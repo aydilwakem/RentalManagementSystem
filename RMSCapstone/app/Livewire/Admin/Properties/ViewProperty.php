@@ -10,67 +10,43 @@ use Illuminate\Database\QueryException;
 #[Layout('layouts.app')]
 class ViewProperty extends Component
 {
-
     // Create a public property 
     public Property $property;
-    public $houseCategories;
-
-    public $house_category_id;
+    public $house;
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false; //Modal will appear if house is being used by a Tenant
+
+    public function mount(Property $property)
+    {
+        $this->house = $property->load('category', 'features');
+    }
 
     public function confirmDelete($id)
     {
         $this->confirmItemDelete = $id;
     }
 
-    public function mount(Property $property)
+    public function deleteHouse()
     {
-        dd($property);
-        // Load the room with its related category
-        $this->property = $property->load('category');
-    }
+        if ($this->confirmItemDelete) {
+            $property = Property::find($this->confirmItemDelete);
 
+            if ($property) {
+                $property->features()->detach();
 
+                $property->delete();
 
-    // Function for deleting a record
-    public function deletePropertyItem()
-    {
-        //find id
-        $property = Property::find($this->confirmItemDelete);
+                $this->confirmItemDelete = false;
 
-        if (!$property) {
-            session()->flash('error', 'Property not found!');
-            return;
-        }
-
-        // Check if the house is referenced in tenant table
-        // if (Tenant::where('house_id', $property->id)->exists()) { 
-        //     $this->cannotDeleteItem = true; // Show the cannot delete modal
-        //     $this->confirmItemDelete = null; // Close the confirmation modal
-        //     return;
-        //     }
-
-        try {
-            $property->delete(); // Attempt soft deletion
-
-            // Reset confirmation modal
-            $this->confirmItemDelete = null;
-
-            // Flash success message
-            session()->flash('message', 'House successfully deleted!');
-
-            // Redirect to the admin room categories page
-            return redirect()->route('admin.properties');
-        } catch (QueryException $e) {
-            // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) {
-                $this->cannotDeleteItem = true; // Show the cannot delete modal
+                session()->flash('message', 'House successfully deleted!');
             } else {
-                throw $e; // Re-throw other exceptions
+                session()->flash('error', 'House not found!');
             }
         }
+
+        // Redirect to the admin houses page
+        return redirect()->route('admin.properties');
     }
 
     public function render()

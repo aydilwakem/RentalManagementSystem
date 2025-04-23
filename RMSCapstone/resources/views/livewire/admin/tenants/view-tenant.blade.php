@@ -14,34 +14,23 @@
             </button>
         </div>
 
-        <!-- Name -->
-        <h2 class="mb-2 text-xl text-center font-semibold leading-none text-gray-900 md:text-2xl">
-            {{ $tenant->first_name }} {{ $tenant->last_name }}
-        </h2>
-
-        <!-- House -->
-        <div class="mb-2 mt-3 flex items-center gap-2">
-            <h3 class="text-lg font-semibold text-gray-900 leading-none">Assigned House:</h3>
-            <p class=" text-lg font-semibold text-gray-600 leading-none">
-                {{ $tenant->house->name ?? 'N/A'}}
-            </p>
-        </div>
-
-
-        <!-- Room Details -->
+        <!-- Tenant Details -->
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Tenant Details</h3>
             <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Full Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }} {{
-                    $tenant->last_name }} {{ $tenant->suffix }}</li>
+                <li><strong>Full Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }}
+                    {{ $tenant->last_name }} {{ $tenant->suffix }}
+                </li>
                 <li><strong>Email:</strong> {{ $tenant->email }}</li>
-                <li><strong>Phone Number:</strong> {{ $tenant->phone }}</li>
-                <li><strong>Birthdate:</strong> {{ $tenant->birthdate }}</li>
-                <li><strong>Gender:</strong> {{ $tenant->gender }}</li>
-                <li><strong>Occupation:</strong> {{ $tenant->occupation }}</li>
-                <li><strong>Notes:</strong> {{ $tenant->notes }}</li>
+                <li><strong>Phone Number:</strong> {{ $tenant->contact_number }}</li>
+                <li><strong>Company Name:</strong> {{ $tenant->company_name }}</li>
+                <li><strong>Address:</strong> {{ $tenant->house_number }}, {{ $tenant->street }},
+                    {{ $tenant->barangay }}, {{ $tenant->city_municipality }}, {{ $tenant->province }},
+                    {{ $tenant->region }}, {{ $tenant->postal_code }}, {{ $tenant->country }}
+                </li>
             </ul>
         </div>
+
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">

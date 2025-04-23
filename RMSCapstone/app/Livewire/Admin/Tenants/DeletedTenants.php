@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
-use App\Models\Tenant;
+use App\Models\TransactionUser;
 use Livewire\Component;
 
 class DeletedTenants extends Component
@@ -23,22 +23,25 @@ class DeletedTenants extends Component
 
     public function fetchDeletedTenants()
     {
-        $this->deletedTenants = Tenant::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedTenants = TransactionUser::onlyTrashed()
+            ->where('trn_user_type', 'tenant')
+            ->orderBy('created_at', 'ASC')
+            ->get();
     }
 
     public function restoreTenant($tenantId)
     {
-        $tenant = Tenant::withTrashed()->find($tenantId);
+        $tenant = TransactionUser::withTrashed()->find($tenantId);
         if ($tenant) {
             $tenant->restore(); // Restore 
             session()->flash('message', 'Tenant restored successfully.');
-            $this->deletedTenants = Tenant::onlyTrashed()->get();
+            $this->fetchDeletedTenants();
         }
     }
 
     public function deleteTenantForever($tenantId)
     {
-        $tenant = Tenant::withTrashed()->find($this->confirmItemDelete);
+        $tenant = TransactionUser::withTrashed()->find($this->confirmItemDelete);
         if ($tenant) {
             $tenant->forceDelete(); // Permanently delete the tenant
             session()->flash('message', 'Tenant permanently deleted.');
