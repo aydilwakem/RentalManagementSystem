@@ -32,7 +32,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -50,10 +50,10 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            {{-- Search Bar --}}
+                            {{-- Search Bar
                             <input wire:model.live.debounce.300ms="search" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
-                                placeholder="Search" required="">
+                                placeholder="Search" required=""> --}}
                         </div>
                     </div>
 
@@ -237,11 +237,11 @@
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $fakeIDs[$eventItem->id] ?? 'EVT-???' }}
                             </th>
-                            <td class="px-4 py-3"> {{ $eventItem->name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->category->name ?? 'N/A'}} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->eventHall->name ?? 'N/A'}} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->company_name }} </td>
-                            <td class="px-4 py-3"> {{ $eventItem->contact_person }} </td>
+                            <td class="px-4 py-3"> Name </td>
+                            <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A'}} </td>
+                            <td class="px-4 py-3"> Event Hall Name </td>
+                            <td class="px-4 py-3"> Company Name </td>
+                            <td class="px-4 py-3"> Contact Person </td>
                             <td class="px-4 py-3">
                                 {{ \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d') }}
                             </td>

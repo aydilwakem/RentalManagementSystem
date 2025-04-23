@@ -10,6 +10,7 @@ use App\Models\GuestDetail;
 use App\Models\TransactionUser;
 use App\Models\Property;
 use App\Models\Invoice;
+use App\Models\EventType;
 
 
 
@@ -57,6 +58,12 @@ class Transaction extends Model
         return $this->belongsTo(ReservationType::class, 'reservation_type_id');
     }
 
+    public function event_type()
+    {
+        return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+
+
     // One transaction belongs to one Transaction User
     public function transactionUser()
     {
@@ -74,6 +81,7 @@ class Transaction extends Model
     {
         return $this->hasMany(GuestDetail::class, 'transaction_id');
     }
+
 
 
     // One transaction can have many properties
@@ -94,10 +102,10 @@ class Transaction extends Model
 
     //  ------------------------------ SCOPES --------------------------------- //
 
-    public function scopeSearch($query, $search)
-    {
-        $query->where('first_name', 'like', "%{$search}%")->where('last_name', 'like', "%{$search}%");
-    }
+    // public function scopeSearch($query, $search)
+    // {
+    //     $query->where('total_adults', 'like', "%{$search}%")->where('total_pax', 'like', "%{$search}%");
+    // }
 
 
     public function scopeNewReservations($query)
