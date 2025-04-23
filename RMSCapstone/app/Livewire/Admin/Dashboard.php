@@ -4,7 +4,6 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\Transaction;
-use App\Models\Room;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +32,6 @@ class Dashboard extends Component
         }
 
         $this->newReservations = Transaction::newReservations()->count();
-        $this->availableRooms = Room::availableRooms()->count();
         $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();
         $this->reservations = Transaction::all();
 
@@ -51,9 +49,7 @@ class Dashboard extends Component
     {
         return view('livewire.admin.dashboard', [
             'newReservations' => $this->newReservations,
-            'availableRooms' => $this->availableRooms,
             'pendingMaintenances' => $this->pendingMaintenances,
-            'events' => $this->events,
         ]);
     }
 }

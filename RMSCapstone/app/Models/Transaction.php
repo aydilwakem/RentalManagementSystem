@@ -21,89 +21,40 @@ class Transaction extends Model
 
     protected $fillable = [
         'reservation_type_id',
-        'property_id',
         'created_by',
-        'room_id',
-        'check_in_time',
-        'check_out_time',
-        'check_in_date',
-        'check_out_date',
+        'event_type_id',
         'total_adults',
         'total_kids',
         'pax',
-        'activity_id',
         'total_amount',
-        'first_name',
-        'middle_name',
-        'last_name',
-        'suffix',
-        'email',
-        'contact_number',
-        'house_number',
-        'street',
-        'barangay',
-        'city_municipality',
-        'province',
-        'region',
-        'postal_code',
-        'country',
-        'total_females',
-        'total_males',
-        'total_infants',
-        'total_people',
         'terms',
-        'pets',
-        'payment_method_id',
-        'payment_screenshot',
-        'payment_reference_number',
-        'isPaid',
-        'isReserved',
-        'isConfirmed',
-        'actual_check_in_time',
-        'actual_check_out_time',
-        'actual_check_in_date',
-        'actual_check_out_date'
+        'heard_from',
+        'reservation_resource',
+        'transaction_status',
+        'actual_start_datetime',
+        'actual_end_datetime',
+        'start_datetime',
+        'end_datetime'
     ];
 
 
     // Automatically convert attributes to specific data types when retrieving or setting them
     protected $casts = [
-        'check_in_date' => 'date:Y-m-d', // Ensure it's stored/displayed correctly
-        'check_out_date' => 'date:Y-m-d',
-        'actual_check_in_date' => 'date:Y-m-d',
-        'actual_check_out_date' => 'date:Y-m-d',
-        'check_in_time' => 'datetime:H:i',
-        'check_out_time' => 'datetime:H:i',
-        'actual_check_in_time' => 'datetime:H:i:s',
-        'actual_check_out_time' => 'datetime:H:i:s',
         'total_amount' => 'decimal:2',
-        'isPaid' => 'boolean',
-        'isReserved' => 'boolean',
-        'isConfirmed' => 'boolean',
-        'terms' => 'boolean',
+        'actual_start_datetime' => 'datetime',
+        'actual_end_datetime' => 'datetime',
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime',
     ];
 
-    /**
-     * Relationships
-     */
 
+
+    //  ------------------------------ RELATIONSHIPS --------------------------------- //
 
     // One Transaction belongs to One Reservation Type
     public function reservationType()
     {
         return $this->belongsTo(ReservationType::class, 'reservation_type_id');
-    }
-
-    // One Transaction belongs to One Property
-    public function property()
-    {
-        return $this->belongsTo(Property::class, 'property_id');
-    }
-
-    // One Transaction belongs to One Activity - revise this to one to many
-    public function activity()
-    {
-        return $this->belongsTo(Activity::class, 'activity_id');
     }
 
     // One transaction belongs to one Transaction User
@@ -125,19 +76,23 @@ class Transaction extends Model
     }
 
 
-    // To be removed
-    public function paymentMethod()
+    // One transaction can have many properties
+    public function properties()
     {
-        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+        return $this->belongsToMany(Property::class, 'transaction_properties');
     }
 
-    public function residents()
+    // One transaction can have many activities
+    public function activities()
     {
-        return $this->hasMany(TransactionResident::class, 'transaction_id');
+        return $this->belongsToMany(Activity::class, 'transaction_activities');
     }
 
 
 
+
+
+    //  ------------------------------ SCOPES --------------------------------- //
 
     public function scopeSearch($query, $search)
     {
@@ -147,8 +102,6 @@ class Transaction extends Model
 
     public function scopeNewReservations($query)
     {
-        return $query
-            ->where('isReserved', false)
-            ->where('isConfirmed', false);
+        return $query->where('transaction_status', 'pending');
     }
 }

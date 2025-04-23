@@ -17,4 +17,9 @@ class Activity extends Model
     {
         $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%{$value}%");
     }
+
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class, 'transaction_activities');
+    }
 }

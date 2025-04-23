@@ -48,9 +48,9 @@ class Property extends Model
         return $this->belongsTo(PropertyType::class, 'property_type_id');
     }
 
-    public function reservations()
+    public function transactions()
     {
-        return $this->hasMany(Transaction::class, 'property_id');
+        return $this->belongsToMany(Transaction::class, 'transaction_properties');
     }
 
     // A property belongs to one property category - (for now, this is applicable for rooms. ex: cozy rooms, canopy retreats, pool house)

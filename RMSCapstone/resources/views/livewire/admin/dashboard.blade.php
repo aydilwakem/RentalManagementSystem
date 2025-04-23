@@ -23,7 +23,7 @@
       class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
       <i class="fas fa-bed text-primary text-4xl"></i>
       <h2 class="text-gray-800 font-semibold">Rooms Available</h2>
-      <p class="text-2xl font-bold text-gray-800">{{ $availableRooms }}</p>
+      <p class="text-2xl font-bold text-gray-800"> 4 </p>
     </div>
 
     <!-- Maintenance Card -->
