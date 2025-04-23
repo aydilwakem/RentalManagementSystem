@@ -75,7 +75,7 @@ class OldMaintenances extends Component
 
     public function render()
 {
-    $allMaintenances = Maintenance::all();
+    $allOldMaintenances = Maintenance::all();
 
     $maintenances = Maintenance::query()
         ->whereNotNull('resolved_at')
@@ -104,7 +104,7 @@ class OldMaintenances extends Component
     return view('livewire.admin.maintenance.old-maintenances', [
         'maintenances' => $maintenances,
         'fakeIDs' => $fakeIDs,
-        'allMaintenances' => $allMaintenances,
+        'allOldMaintenances' => $allOldMaintenances,
     ]);
 }
 

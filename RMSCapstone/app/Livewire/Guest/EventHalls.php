@@ -2,12 +2,17 @@
 
 namespace App\Livewire\Guest;
 
+use App\Models\Property;
 use Livewire\Component;
 
 class EventHalls extends Component
 {
+    public $eventHalls; 
     public function render()
     {
-        return view('livewire.guest.event-halls');
+        $this->eventHalls = Property::ofType('Event Hall')->get();
+        return view('livewire.guest.event-halls', [
+            'eventHalls' => $this->eventHalls, 
+        ]);
     }
 }

@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($maintenances->isEmpty())
+    @if ($allOldMaintenances->count() === 0)
     <!-- Navigation Tabs -->
     <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
         <li class="me-2">
