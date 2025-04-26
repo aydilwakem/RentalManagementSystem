@@ -13,12 +13,23 @@ class Maintenance extends Model
 
     protected $table = 'mnt_maintenance';
 
-    protected $fillable = ['name', 'description', 'reported_at', 'resolved_at', 'priority_status'];
+    protected $fillable = ['name', 
+    'description', 
+    'property_id', 
+    'reported_at', 
+    'resolved_at', 
+    'planned_datetime', 
+    'priority_status'];
 
     protected $casts = [
         'reported_at' => 'date:Y-m-d',
         'resolved_at' => 'date:Y-m-d',
     ];
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
+    }
 
     public function scopeSearch($query, $search)
     {

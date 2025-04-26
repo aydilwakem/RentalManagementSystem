@@ -22,6 +22,22 @@
                     @enderror
                 </div>
 
+                <!-- Property ID -->
+                <div class="sm:col-span-2">
+                    <label for="property_id" class="block mb-2 text-sm font-medium text-gray-900">Assigned
+                        Property</label>
+                    <select wire:model="property_id" id="property_id"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Property</option>
+                        @foreach ($properties as $property)
+                        <option value="{{ $property->id }}">{{ $property->name_number }}</option>
+                        @endforeach
+                    </select>
+                    @error('property_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
                 <!-- Maintenance Description -->
                 <div class="sm:col-span-2">
                     <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Maintenance
@@ -56,21 +72,37 @@
                     @enderror
                 </div>
 
-                <!-- Priority Status -->
-                <div class="sm:col-span-2">
-                    <label for="priority_status" class="block mb-2 text-sm font-medium text-gray-900">Priority
-                        Status</label>
-                    <select wire:model.defer="priority_status" id="priority_status"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                        <option value="">-- Select Priority Status -- </option>
-                        <option value="emergency">Emergency</option>
-                        <option value="urgent">Urgent</option>
-                        <option value="routine">Routine</option>
-                        <option value="planned">Planned</option>
-                    </select>
-                    @error('priority_status')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                <div x-data="{ showPlanned: @entangle('priority_status') }" class="sm:col-span-2">
+                    <!-- Priority Status -->
+                    <div class="mb-4">
+                        <label for="priority_status" class="block mb-2 text-sm font-medium text-gray-900">Priority
+                            Status</label>
+                        <select wire:model="priority_status" x-model="showPlanned" id="priority_status"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            <option value="">-- Select Priority Status -- </option>
+                            <option value="emergency">Emergency</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="routine">Routine</option>
+                            <option value="planned">Planned</option>
+                        </select>
+                        @error('priority_status')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <!-- Planned Date & Time Field -->
+                        <div x-show="showPlanned === 'planned'" x-cloak class="sm:col-span-2">
+                            <label for="planned_datetime" class="block mb-2 text-sm font-medium text-gray-900">Planned
+                                Date
+                                & Time</label>
+                            <input type="datetime-local" wire:model="planned_datetime" id="planned_datetime"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            @error('planned_datetime')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
             </div>

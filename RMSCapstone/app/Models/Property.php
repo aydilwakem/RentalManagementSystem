@@ -48,6 +48,11 @@ class Property extends Model
         return $this->belongsTo(PropertyType::class, 'property_type_id');
     }
 
+    public function maintenance()
+    {
+        return $this->hasMany(Maintenance::class, 'property_id');
+    }
+
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'transaction_properties');
