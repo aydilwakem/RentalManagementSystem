@@ -18,6 +18,14 @@ class ViewRoles extends Component
 
     public $confirmItemDelete = false;
 
+    //mount session for fake IDs
+    public function mount(){
+        // Ensure it use a separate session key
+        if (!session()->has('fake_ids_roles')) {
+            session(['fake_ids_roles' => []]);
+        }
+    }
+
     public function confirmDelete($id)
     {
         $this->confirmItemDelete = $id;
@@ -43,8 +51,20 @@ class ViewRoles extends Component
                 Role::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
-        session()->flash('message', 'Role successfully deleted!');
+            // Fetch remaining roles - sorted by creation date
+            $roles = Role::orderBy('created_at', 'ASC')->get();
+
+            // Reset fake IDs
+            $fakeIDs = [];
+            foreach ($roles as $index => $roleItem) {
+                $fakeIDs[$roleItem->id] = 'ROLE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+
+            // Store updated fake IDs in a unique session key
+            session(['fake_ids_roles' => $fakeIDs]);
+
+            session()->flash('message', 'Role successfully deleted!');
+        }
         }
     }
 
@@ -62,11 +82,25 @@ class ViewRoles extends Component
 
     public function render()
     {
+        // For displaying roles (with search, sort, pagination)
         $roles = Role::query()
             ->where('name', 'like', "%{$this->search}%")
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
-
-        return view('livewire.admin.roles.view-roles', compact('roles'));
+    
+        // For generating fake IDs (always by created_at ASC, static)
+        $allRoles = Role::orderBy('created_at', 'ASC')->get();
+    
+        // Calculate fake IDs
+        $fakeIDs = session('fake_ids_roles', []);
+        if (count($fakeIDs) !== $allRoles->count()) {
+            $fakeIDs = [];
+            foreach ($allRoles as $index => $roleItem) {
+                $fakeIDs[$roleItem->id] = 'ROLE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+            session(['fake_ids_roles' => $fakeIDs]);
+        }
+    
+        return view('livewire.admin.roles.view-roles', compact('roles', 'fakeIDs'));
     }
 }

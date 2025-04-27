@@ -129,7 +129,7 @@
                     @foreach ($roles as $role)
                     <tr class="border-b">
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                            {{ $role->id }}
+                            {{ $fakeIDs[$role->id] ?? 'ROLE-???' }}
                         </th>
                         <td class="px-4 py-3">{{ $role->name }}</td>
                         <td class="px-4 py-3 flex items-center justify-center space-x-3">

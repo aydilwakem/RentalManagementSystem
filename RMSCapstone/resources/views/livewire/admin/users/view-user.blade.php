@@ -16,7 +16,7 @@
         </div>
 
         <h2 class="mb-6 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center">
-            {{ $user->name }}
+            {{ $user->name }} {{ $user->last_name }}
         </h2>
 
         <!-- Profile Photo -->
@@ -34,9 +34,9 @@
                 <h3 class="text-lg font-semibold text-gray-900">Role</h3>
                 <ul>
                     @forelse($userRoles as $role)
-                        <li>{{ $role }}</li>
+                    <li>{{ $role }}</li>
                     @empty
-                        <li class="text-gray-500">No roles assigned.</li>
+                    <li class="text-gray-500">No roles assigned.</li>
                     @endforelse
                 </ul>
 
@@ -64,9 +64,9 @@
                 <div class="max-h-60 overflow-y-auto border rounded p-3 space-y-1 bg-gray-50">
                     <ul class="space-y-1">
                         @forelse($userPermissions as $permission)
-                            <li>{{ $permission }}</li>
+                        <li>{{ $permission }}</li>
                         @empty
-                            <li class="text-gray-500">No permissions assigned.</li>
+                        <li class="text-gray-500">No permissions assigned.</li>
                         @endforelse
                     </ul>
                 </div>

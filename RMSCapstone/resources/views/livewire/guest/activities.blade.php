@@ -21,8 +21,12 @@
                 <img class="w-full h-48 object-cover"
                     src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
                     alt="{{ $activity->name }}">
+
+                {{-- Name --}}
                 <div class="p-5 pb-3">
                     <h2 class="text-xl font-semibold text-gray-800 mb-2"> {{ $activity->name }}</h2>
+
+                    {{-- Description --}}
                     <p class="text-gray-600 text-sm mb-4 text-justify">
                         @if (!empty($activity->description))
                         {{ $activity->description }}
@@ -30,9 +34,15 @@
                         Try this activity only at Canopy Farm!
                         @endif
                     </p>
+
+                    {{-- Amount --}}
                     <div class="text-right">
-                        <span class="text-green-600 font-bold text-lg">₱{{ number_format($activity->amount, 2)
-                            }}</span>
+                        <span class="text-green-600 font-bold text-lg">@if ($activity->amount == 0)
+                            <span class="text-green-600 font-semibold">FREE</span>
+                            @else
+                            {{ number_format($activity->amount, 2) }}
+                            @endif
+                        </span>
                     </div>
                 </div>
             </div>
