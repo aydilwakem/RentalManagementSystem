@@ -30,7 +30,7 @@
 
     <x-banner />
 
-    <div class="h-screen flex bg-gray-100 dark:bg-[#1E1E1E]" x-data="{ sidebarWidth: 256 }" x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
+    <div class="h-screen rounded-2xl flex bg-gray-100 dark:bg-[#1E1E1E]" x-data="{ sidebarWidth: 256 }" x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
 
         <!-- Sidebar -->
         <livewire:sidebar x-ref="sidebar" x-on:resize.window="sidebarWidth = $refs.sidebar.offsetWidth"
@@ -50,14 +50,19 @@
                 </header>
             @endif
 
-            <!-- Page Content -->
-            <main class="p-6 flex-1 overflow-auto">
+            <!-- Page Content
+                <main class="p-6 flex-1 overflow-auto bg-gray-100">
+
+                    {{-- @livewire('web-controller')
+                    <button @click="darkMode = !darkMode">
+                        Toggle Dark Mode
+                    </button> --}}
+                </main>
+            -->
+            <main class="flex-1 overflow-auto px-6 py-6">
                 {{ $slot }}
-                {{-- @livewire('web-controller')
-                <button @click="darkMode = !darkMode">
-                    Toggle Dark Mode
-                </button> --}}
             </main>
+
         </div>
     </div>
 

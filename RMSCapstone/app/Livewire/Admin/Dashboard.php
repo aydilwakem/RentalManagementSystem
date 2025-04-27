@@ -34,11 +34,14 @@ class Dashboard extends Component
         $this->newReservations = Transaction::newReservations()->count();
         $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();
         $this->reservations = Transaction::all();
+        $newReservationsData = Transaction::newReservations()->get();
 
-        foreach ($this->reservations as $reservation) {
+        foreach ($newReservationsData as $reservation) {
             $this->events[] = [
-                'title' => $reservation->first_name,
-                'start' => $reservation->check_in_date,
+                'title' => $reservation->first_name . ' ' . $reservation->last_name,
+                'start' => $reservation->start_datetime,
+                'end' => $reservation->end_datetime,
+                'type' => $reservation->reservationType->name,
             ];
         }
     }

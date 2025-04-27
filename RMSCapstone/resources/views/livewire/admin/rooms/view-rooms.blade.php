@@ -12,7 +12,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -28,7 +28,8 @@
                 @endcan
                 <!-- Deleted Rooms (Restore and Delete Forever -->
                 @can('room-soft-delete')
-                    <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    <x-button
+                        class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                         icon="fas fa-trash" href="{{ route('admin.deleted-rooms') }}">
                         Deleted Rooms
                     </x-button>
@@ -43,21 +44,21 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
+                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        {{-- Search --}}
+                        <!-- Search-->
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
                             placeholder="Search" required="">
                     </div>
                 </div>
 
-                {{-- Status Type --}}
+                <!-- Status-->
                 <div class="flex space-x-3">
                     <div class="flex space-x-3 items-center">
                         <label class="w-40 text-sm font-medium text-gray-900">Room Status:</label>
@@ -77,7 +78,7 @@
                 <table class="min-w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-                            {{-- ID --}}
+                            <!-- ID-->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
                                 <button class="flex items-center">
                                     ID
@@ -105,8 +106,8 @@
                                 </button>
                             </th>
 
-                            {{-- Name --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name_number')">
+                            <!-- Name -->
+                            <th scope="col" class="px-5 py-3 text-right" wire:click="setSortBy('name_number')">
                                 <button class="flex items-center">
                                     Name
                                     @if ($sortBy !== 'name_number')
@@ -133,7 +134,7 @@
                                 </button>
                             </th>
 
-                            {{-- Room Category --}}
+                            <!-- Room Category-->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('room_category_id')">
                                 <button class="flex items-center">
                                     Room Category
@@ -145,14 +146,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -161,7 +164,7 @@
                                 </button>
                             </th>
 
-                            {{-- Ideal Guest --}}
+                            <!-- Ideal Guest-->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('ideal_guest')">
                                 <button class="flex items-center">
                                     Ideal Guest
@@ -173,14 +176,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -188,7 +193,8 @@
                                     @endif
                                 </button>
                             </th>
-                            {{-- Max Adults --}}
+
+                            <!-- Max Adults-->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('max_adults')">
                                 <button class="flex items-center">
                                     Max Adults
@@ -200,14 +206,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -216,7 +224,7 @@
                                 </button>
                             </th>
 
-                            {{-- Max Kids --}}
+                            <!-- Max Kids -->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('max_kids')">
                                 <button class="flex items-center">
                                     Max Kids
@@ -228,14 +236,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -244,7 +254,7 @@
                                 </button>
                             </th>
 
-                            {{-- Turnover Duration --}}
+                            <!-- Turnover Duration -->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('turnover_duration')">
                                 <button class="flex items-center">
                                     Turnover Duration
@@ -256,14 +266,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -272,16 +284,16 @@
                                 </button>
                             </th>
 
-                            {{-- Status --}}
-                            <th scope="col" class="px-4 py-3 ">Status</th>
+                            <!-- Status-->
+                            <th scope="col" class="px-4 py-3 text-center">Status</th>
 
-                            {{-- Actions --}}
+                            <!-- Actions -->
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-center">
                         @forelse ($rooms as $room)
-                            <tr class="border-b">
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" class="font-medium text-gray-900 text-center ">
                                     {{ $fakeIDs[$room->id] ?? 'RM-???' }}
                                 </th>
@@ -303,15 +315,15 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('room-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                            href="{{ route('admin.view-room', ['room' => $room->id]) }}">
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                            wire:navigate href="{{ route('admin.view-room', ['room' => $room->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('room-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                            href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                            wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
                                         </i>
                                     @endcan
 
@@ -333,7 +345,7 @@
                     </tbody>
                 </table>
             </div>
-            {{-- Per Page --}}
+            <!-- Pagination -->
             <div class="py-4 px-3">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center mb-3">
@@ -350,8 +362,6 @@
                 {{ $rooms->links() }}
             </div>
         </div>
-
-
 
 
         <!-- Delete Confirmation Modal -->

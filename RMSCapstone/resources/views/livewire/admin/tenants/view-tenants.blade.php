@@ -16,7 +16,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -183,7 +183,7 @@
                                     {{ $tenant->first_name }} {{ $tenant->last_name }}
                                 </td>
                                 <td class="px-4 py-3">{{ $tenant->email }}</td>
-                                <td class="px-4 py-3">{{ $tenant->phone }}</td>
+                                <td class="px-4 py-3">{{ $tenant->contact_number }}</td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
                                     @can('tenant-view')

@@ -2,7 +2,8 @@
     @if ($allHouses->isEmpty())
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No houses yet.<br> Click "Create House" to add a new house.</p>
+            <p class="text-gray-500 text-lg font-semibold">No houses yet.<br> Click "Create House" to add a new house.
+            </p>
             <x-button class="mt-4" href="{{ route('admin.create-property') }}" icon="fas fa-plus">
                 Create House
             </x-button>
@@ -12,7 +13,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -28,7 +29,8 @@
                 @endcan
                 <!-- Deleted Houses (Restore and Delete Forever -->
                 @can('house-soft-delete')
-                    <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    <x-button
+                        class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                         icon="fas fa-trash" href="{{ route('admin.deleted-properties') }}">
                         Deleted Houses
                     </x-button>
@@ -43,8 +45,8 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
+                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
@@ -161,6 +163,9 @@
                                 </button>
                             </th> --}}
 
+                            <!-- Address -->
+                            <th scope="col" class="px-4 py-3 text-center">Address</th>
+
                             {{-- Monthly Rent --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('amount')">
                                 <button class="flex items-center">
@@ -173,14 +178,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -189,23 +196,23 @@
                                 </button>
                             </th>
 
-
-
                             {{-- Status --}}
-                            <th scope="col" class="px-4 py-3 ">Status</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
 
                             {{-- Actions --}}
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
-
+                    <tbody class="">
                         @forelse ($houses as $house)
                             <tr class="border-b">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $fakeIDs[$house->id] ?? 'RM-???' }}
                                 </th>
                                 <td class="px-4 py-3">{{ $house->name_number }}</td>
+                                <td class="px-4 py-3">
+                                    {{ Str::limit($house->house_number . ' ' . $house->street . ', ' . $house->barangay . ', ' . $house->city_municipality . ', ' . $house->region . ', ' . $house->postal_code . ', ' . $house->country, 50, '...') }}
+                                </td>
                                 <td class="px-4 py-3">{{ $house->amount }}</td>
                                 <td class="px-4 py-3">
                                     @if ($house->property_status === 'available')
@@ -219,14 +226,16 @@
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('house-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                            wire:navigate
                                             href="{{ route('admin.view-property', ['property' => $house->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('house-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                            wire:navigate
                                             href="{{ route('admin.edit-property', ['property' => $house->id]) }}">
                                         </i>
                                     @endcan

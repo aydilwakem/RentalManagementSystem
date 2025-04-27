@@ -48,7 +48,7 @@
                     <tbody class="text-center">
                         @foreach ($deletedRooms as $room)
                             <tr class="border-b">
-                                <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$room->id] ?? 'RM-???' }}
+                                <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$room->id] ?? 'HS-???' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3 text-left">{{ $room->category->name ?? 'N/A' }}</td>
