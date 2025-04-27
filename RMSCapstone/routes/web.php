@@ -86,6 +86,11 @@ Route::middleware([
     Route::get('edit/user/{user}', EditUser::class)
         ->name('admin.edit-user')->middleware('can:user-edit');
 
+    // Deleted Users (Soft Deletes)
+    Route::get('deleted-users', function () {
+        return view('admin.users.deleted-users');
+    })->name('admin.deleted-users');
+
 
     // Roles Route
 

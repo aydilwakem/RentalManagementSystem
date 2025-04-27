@@ -1,13 +1,22 @@
 <div class="container mx-auto px-6 ">
     <div>
-        <!-- Create Room Button -->
-        @can('user-create')
-        <div class="flex items-center justify-between px-1 mb-3">
-            <x-button icon="fas fa-plus" href="{{ route('admin.create-user') }}">
-                New User
+        <!-- Create User Button -->
+        <div class="flex items-center justify-between">
+            @can('user-create')
+            <div class="flex items-center justify-between p-4">
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-user') }}">
+                    New User
+                </x-button>
+            </div>
+            @endcan
+
+
+            {{-- User Soft Delete --}}
+            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                icon="fas fa-trash" href="{{ route('admin.deleted-users') }}">
+                Deleted Users
             </x-button>
         </div>
-        @endcan
 
         {{-- Display Session Message --}}
         @if (session('message'))

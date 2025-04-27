@@ -28,7 +28,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('mnt_maintenance', function (Blueprint $table) {
-            //
+        // Drop the foreign key constraint first
+        $table->dropForeign(['property_id']);
+
+        // Drop the columns added in the up() method
+        $table->dropColumn(['property_id', 'planned_datetime']);
         });
     }
 };
