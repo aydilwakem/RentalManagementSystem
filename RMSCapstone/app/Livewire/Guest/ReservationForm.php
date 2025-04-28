@@ -151,10 +151,6 @@ class ReservationForm extends Component
         $this->calculateTotalAmount();
     }
 
-
-
-
-
     public function calculateTotalAmount()
     {
         $roomRate = $this->selectedRoom ? $this->selectedRoom->amount : 0;

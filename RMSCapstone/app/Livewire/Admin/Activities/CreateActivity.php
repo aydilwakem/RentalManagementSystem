@@ -10,27 +10,39 @@ class CreateActivity extends Component
 {
     use WithFileUploads;
 
+    // Public declarations for fillable fields
     public $name;
     public $description;
     public $amount;
     public $inclusions;
     public $image;
 
+    //Public declaration for add item modal
     public $confirmCreateItem = false;
 
+    //Method to make the modal true
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
     }
 
+    /**
+     * Method to create a new activity
+     * 
+     * Adds a try catch error for handling constraints
+     * Validates the form inputs, uploads the image if provided,
+     * Creates a new Activity record and resets the form, 
+     * Flashes a success message, and redirects back to the activities list.
+     */
+
     public function saveActivity()
     {
-        try{
+    try{
         // Validate input
         $this->validate([
             'name' => 'required|string|max:255|unique:prd_activities,name',
             'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:100',
+            'amount' => 'required|numeric|min:0|max:10000',
             'inclusions' => 'nullable|string',
             'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
@@ -71,6 +83,7 @@ class CreateActivity extends Component
         return redirect()->route('admin.activities');
     }
 
+    //Method to render the page
     public function render()
     {
         return view('livewire.admin.activities.create-activity');

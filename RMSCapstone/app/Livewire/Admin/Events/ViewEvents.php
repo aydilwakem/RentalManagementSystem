@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\Events;
 
-use App\Models\Event;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -42,14 +42,14 @@ class ViewEvents extends Component
     {
         if ($this->confirmItemDelete) {
             // Find and delete the event
-            Event::find($this->confirmItemDelete)?->delete();
+            Transaction::find($this->confirmItemDelete)?->delete();
 
             // Reset confirmation state
             $this->confirmItemDelete = false;
 
             // Recalculate fake IDs
             $fakeIDs = [];
-            foreach (Event::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+            foreach (Transaction::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
                 $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
 
@@ -74,13 +74,11 @@ class ViewEvents extends Component
 
     public function render()
     {
-        $allEvents = Event::all();
+        $allEvents = Transaction::all();
 
-        $event = Event::query()
-            ->search($this->search)
-            ->when($this->eventStatus !== '', function ($query) {
-                $query->where('status', $this->eventStatus);
-            })
+        $event = Transaction::query()
+            // ->search($this->search)
+            ->where('reservation_type_id', 3)
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
@@ -88,9 +86,9 @@ class ViewEvents extends Component
         $fakeIDs = session('fake_ids_events', []);
 
         // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Event::count()) {
+        if (count($fakeIDs) !== Transaction::count()) {
             $fakeIDs = [];
-            foreach (Event::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+            foreach (Transaction::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
                 $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_events' => $fakeIDs]);

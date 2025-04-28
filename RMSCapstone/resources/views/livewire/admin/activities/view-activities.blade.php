@@ -201,7 +201,13 @@
                             <em class="text-gray-600 leading-relaxed">No description provided.</em>
                             @endif
                         </td>
-                        <td class="px-4 py-3"> {{ number_format($activity->amount, 2) }}</td>
+                        <td class="px-4 py-3">
+                            @if ($activity->amount == 0)
+                            <span class="text-green-600 font-semibold">FREE</span>
+                            @else
+                            {{ number_format($activity->amount, 2) }}
+                            @endif
+                        </td>
                         <td class="px-4 py-3"> {{ $activity->inclusions }}</td>
                         <td class="px-4 py-3 flex items-center justify-center space-x-3">
 

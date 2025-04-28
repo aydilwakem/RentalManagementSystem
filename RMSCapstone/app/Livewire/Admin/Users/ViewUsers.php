@@ -21,10 +21,17 @@ class ViewUsers extends Component
 
     public $confirmItemDelete = false;
 
+
     //mount function to fetch role names
+    //mount session for fake IDs
     public function mount(User $user){
         $this->user = $user;
         $this->userRoles = $user->getRoleNames()->toArray();
+
+        // Ensure it use a separate session key
+        if (!session()->has('fake_ids_users')) {
+            session(['fake_ids_users' => []]);
+        }
     }
 
     public function confirmDelete($id)
@@ -39,6 +46,19 @@ class ViewUsers extends Component
             if ($this->confirmItemDelete) {
                 User::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
+
+                // Fetch remaining users - sorted by creation date
+                $users = User::orderBy('created_at', 'ASC')->get();
+
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($users as $index => $userItem) {
+                    $fakeIDs[$userItem->id] = 'USER-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_users' => $fakeIDs]);
+
             session()->flash('message', 'User successfully deleted!');
             }
         }   
@@ -57,6 +77,7 @@ class ViewUsers extends Component
 
     public function render()
 {
+    // Fetch users based on search, filter, sort, and paginate
     $users = User::where(function ($query) {
             $query->where('name', 'like', '%' . $this->search . '%')
                 ->orWhere('email', 'like', '%' . $this->search . '%');
@@ -79,6 +100,19 @@ class ViewUsers extends Component
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
 
-    return view('livewire.admin.users.view-users', compact('users'));
+    // Fetch ALL users to generate static fake IDs (always by created_at ASC)
+    $allUsers = User::orderBy('created_at', 'ASC')->get();
+
+    // Calculate fake IDs
+    $fakeIDs = session('fake_ids_users', []);
+    if (count($fakeIDs) !== $allUsers->count()) {
+        $fakeIDs = [];
+        foreach ($allUsers as $index => $userItem) {
+            $fakeIDs[$userItem->id] = 'USER-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+        }
+        session(['fake_ids_users' => $fakeIDs]);
+    }
+
+    return view('livewire.admin.users.view-users', compact('users', 'fakeIDs'));
 }
 }

@@ -8,11 +8,15 @@ use Livewire\Component;
 
 class DeletedEventCategories extends Component
 {
+    //Public variable declaration for deleted categories
     public $deletedEventCategories;
 
     public $confirmItemDelete = false;
-    public $cannotDeleteItem = false; //Will appear if parent table item is still in soft delete
 
+    //Variable to handle integrity constraints, will appear if parent table item is still in soft delete
+    public $cannotDeleteItem = false; 
+
+    //Method to make modal true by getting item id
     public function confirmDeleteForever($id)
     {
         $this->confirmItemDelete = $id;
@@ -23,11 +27,17 @@ class DeletedEventCategories extends Component
         $this->fetchDeletedEventCategories();
     }
 
+    //Method to fetch all soft deleted items and store it in variable
     public function fetchDeletedEventCategories()
     {
         $this->deletedEventCategories = EventCategory::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
+    /**
+     * Restores a soft-deleted event category.
+     * - Finds the trashed event category by ID.
+     * - Restores it and refreshes the deleted event categories list.
+     */
     public function restoreEventCategory($eventCategoryId)
     {
         $eventCategory = EventCategory::withTrashed()->find($eventCategoryId);
@@ -38,6 +48,12 @@ class DeletedEventCategories extends Component
         }
     }
 
+    /**
+     * Permanently deletes a soft-deleted event category.
+     * - Attempts to force delete the selected event category.
+     * - Catches integrity constraint violations (e.g., if the event category is still linked to other records) and handles them by showing a "cannot delete" modal.
+     * - Refreshes the deleted event categories list after successful deletion.
+     */
     public function deleteEventCategoryForever($eventCategoryId)
     {
         try{

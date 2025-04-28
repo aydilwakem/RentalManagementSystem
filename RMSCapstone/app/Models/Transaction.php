@@ -10,6 +10,7 @@ use App\Models\GuestDetail;
 use App\Models\TransactionUser;
 use App\Models\Property;
 use App\Models\Invoice;
+use App\Models\EventType;
 
 
 
@@ -29,7 +30,7 @@ class Transaction extends Model
         'total_amount',
         'terms',
         'heard_from',
-        'reservation_resource',
+        'reservation_source',
         'transaction_status',
         'actual_start_datetime',
         'actual_end_datetime',
@@ -57,6 +58,12 @@ class Transaction extends Model
         return $this->belongsTo(ReservationType::class, 'reservation_type_id');
     }
 
+    public function event_type()
+    {
+        return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+
+
     // One transaction belongs to one Transaction User
     public function transactionUser()
     {
@@ -76,28 +83,32 @@ class Transaction extends Model
     }
 
 
+
     // One transaction can have many properties
     public function properties()
     {
-        return $this->belongsToMany(Property::class, 'transaction_properties');
+        return $this->belongsToMany(Property::class, 'transaction_properties')
+            ->withPivot('adults', 'kids')
+            ->withTimestamps();
     }
 
     // One transaction can have many activities
     public function activities()
     {
-        return $this->belongsToMany(Activity::class, 'transaction_activities');
+        return $this->belongsToMany(Activity::class, 'transaction_activities')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
-
 
 
 
 
     //  ------------------------------ SCOPES --------------------------------- //
 
-    public function scopeSearch($query, $search)
-    {
-        $query->where('first_name', 'like', "%{$search}%")->where('last_name', 'like', "%{$search}%");
-    }
+    // public function scopeSearch($query, $search)
+    // {
+    //     $query->where('total_adults', 'like', "%{$search}%")->where('total_pax', 'like', "%{$search}%");
+    // }
 
 
     public function scopeNewReservations($query)

@@ -48,9 +48,9 @@ class CreateEventHall extends Component
         $this->validate([
             'name_number' => 'required|string|max:255|unique:properties,name_number',
             'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:5000|max:100000.00',
+            'amount' => 'required|numeric|min:10000|max:100000.00',
             'capacity' => 'required|numeric|min:20|max:200',
-            'extra_charge_per_hour' => 'required|numeric|min:100|max:50000.00',
+            'extra_charge_per_hour' => 'required|numeric|min:1000|max:50000.00',
             'property_status' => 'required|in:available,booked,out_of_service',
             'image' => 'nullable|image|max:1024', // Max 1MB image
             'selectedFeatures' => 'nullable|array',

@@ -9,18 +9,28 @@ use Livewire\Features\SupportFileUploads\WithFileUploads;
 class CreateEventCategory extends Component
 {
     use WithFileUploads;
-
+    
+    //Public declaration of fillable fields
     public $name;
     public $description;
     public $image;
 
+    //Public variable declaration of create confirmation modal
     public $confirmCreateItem = false;
 
+    //Method to make modal true
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
     }
 
+    /**
+     * Creates a new event category with optional image upload.
+     * - Validates input fields and handles failed validation.
+     * - Stores uploaded image if present.
+     * - Saves the event category record and resets form fields.
+     * - Flashes success message and redirects to the event categories list.
+    */
     public function saveEventCategory()
     {
         try{

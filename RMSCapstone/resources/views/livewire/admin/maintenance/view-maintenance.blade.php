@@ -19,83 +19,98 @@
             {{ $maintenance->name }}
         </h2>
 
-        <!-- Description -->
+        <!-- Assigned Property -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
-                <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Assigned Property</h3>
+                <p class="text-gray-600 leading-relaxed">{{ $maintenance->property->name_number ?? 'No Assigned
+                    Property' }}</p>
             </div>
 
+            <!-- Description -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Description</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
+                </div>
 
+                <!-- Priority Status -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
+                    <p class="text-gray-600">{{ ucfirst($maintenance->priority_status) }}</p>
+                </div>
 
-            <!-- Priority Status -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
-                <p class="text-gray-600">{{ ucfirst($maintenance->priority_status) }}</p>
-            </div>
+                <!-- Planned DateTime -->
+                @if ($maintenance->priority_status === 'planned')
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Planned Date and Time</h3>
+                    <p class="text-gray-600">{{ \Carbon\Carbon::parse($maintenance->planned_datetime)->format('F j, Y
+                        g:i A') }}</p>
+                </div>
+                @endif
 
-            <!-- Reported At -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
-                <p class="text-gray-600">{{ $maintenance->reported_at->format('F j, Y') }}
+                <!-- Reported At -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Reported At</h3>
+                    <p class="text-gray-600">{{ $maintenance->reported_at->format('F j, Y') }}
 
-                </p>
-            </div>
+                    </p>
+                </div>
 
-            <!-- Resolved At -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
-                <p class="text-gray-600">
-                    @if ($maintenance->resolved_at)
+                <!-- Resolved At -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Resolved At</h3>
+                    <p class="text-gray-600">
+                        @if ($maintenance->resolved_at)
                         {{ $maintenance->resolved_at->format('F j, Y') }}
-                    @else
+                        @else
                         Unresolved Maintenance
-                    @endif </td>
-                </p>
+                        @endif </td>
+                    </p>
+                </div>
+
+
+
+
             </div>
 
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-between space-x-4 pt-2">
+                <!-- Edit -->
+                <x-button type="button" icon="fas fa-pen-to-square"
+                    class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                    wire:navigate href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenance->id]) }}">
+                    Edit
+                </x-button>
 
-
+                <!-- Delete -->
+                <x-button type="button" icon="fas fa-trash"
+                    class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                    wire:click="confirmDelete({{ $maintenance->id }})" wire:loading.attr="disabled">
+                    Delete
+                </x-button>
+            </div>
 
         </div>
-
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-between space-x-4 pt-2">
-            <!-- Edit -->
-            <x-button type="button" icon="fas fa-pen-to-square"
-                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
-                wire:navigate href="{{ route('admin.edit-maintenance', ['maintenance' => $maintenance->id]) }}">
-                Edit
-            </x-button>
-
-            <!-- Delete -->
-            <x-button type="button" icon="fas fa-trash"
-                class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
-                wire:click="confirmDelete({{ $maintenance->id }})" wire:loading.attr="disabled">
-                Delete
-            </x-button>
-        </div>
-
-    </div>
-    <!-- Delete Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmItemDelete">
-        <x-slot name="title">
-            {{ __('Delete Maintenance') }}
-        </x-slot>
-
-        <x-slot name="content">
-            {{ __('Are you sure you want to delete this item?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-danger-button class="ms-3" wire:click="deleteMaintenanceItem({{ $maintenance->id }})"
-                wire:loading.attr="disabled">
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-slot name="title">
                 {{ __('Delete Maintenance') }}
-            </x-danger-button>
-        </x-slot>
-    </x-dialog-modal>
-</div>
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteMaintenanceItem({{ $maintenance->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Delete Maintenance') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
+    </div>

@@ -18,6 +18,8 @@ use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
 use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
+use App\Livewire\Admin\Features\EditFeature;
+use App\Livewire\Admin\Features\ViewFeature;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
 use App\Livewire\Admin\Settings\Payments\EditPayment;
@@ -34,6 +36,8 @@ use App\Livewire\Admin\Properties\EditProperty;
 use App\Livewire\Admin\Properties\ViewProperty;
 use App\Livewire\Admin\HouseCategories\EditHouseCategory;
 use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
+use App\Livewire\Admin\Inclusions\EditInclusion;
+use App\Livewire\Admin\Inclusions\ViewInclusion;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -85,6 +89,11 @@ Route::middleware([
     // View
     Route::get('edit/user/{user}', EditUser::class)
         ->name('admin.edit-user')->middleware('can:user-edit');
+
+    // Deleted Users (Soft Deletes)
+    Route::get('deleted-users', function () {
+        return view('admin.users.deleted-users');
+    })->name('admin.deleted-users');
 
 
     // Roles Route
@@ -328,6 +337,33 @@ Route::middleware([
         return view('admin.event-halls.deleted-event-halls');
     })->name('admin.deleted-event-halls')->middleware('can:event-hall-soft-delete');
 
+    
+    // ------------------ Event Hall Inclusions
+
+    //List Inclusions
+    Route::get('/inclusions', function () {
+        return view('admin.inclusions.view-inclusions');
+    })->name('admin.inclusions');
+
+    // Create Inclusion
+    Route::get('create/inclusions', function () {
+        return view('admin.inclusions.create-inclusion');
+    })->name('admin.create-inclusion');
+
+    // View Inclusion
+    Route::get('view/inclusion/{inclusion}', ViewInclusion::class)
+        ->name('admin.view-inclusion'); 
+
+    //Edit Inclusions
+    Route::get('edit/inclusion/{inclusion}', EditInclusion::class)
+        ->name('admin.edit-inclusion');
+
+    // Deleted Inclusions (Soft Deletes)
+    Route::get('deleted-inclusions', function () {
+        return view('admin.inclusions.deleted-inclusions');
+    })->name('admin.deleted-inclusions');
+
+
 
 
     // --------------------- Maintenance ---------------------------------------
@@ -484,6 +520,33 @@ Route::middleware([
 
 
 
+    // ------------------ House Features
+
+    //List Features
+    Route::get('/features', function () {
+        return view('admin.features.view-features');
+    })->name('admin.features');
+
+    // Create Feature
+    Route::get('create/features', function () {
+        return view('admin.features.create-feature');
+    })->name('admin.create-feature');
+
+    // View Feature
+    Route::get('view/feature/{feature}', ViewFeature::class)
+        ->name('admin.view-feature'); 
+
+    //Edit Features
+    Route::get('edit/feature/{feature}', EditFeature::class)
+        ->name('admin.edit-feature');
+
+    // Deleted Features (Soft Deletes)
+    Route::get('deleted-features', function () {
+        return view('admin.features.deleted-features');
+    })->name('admin.deleted-features');
+
+
+
 
     // ------------------ House Categories
 
@@ -572,8 +635,12 @@ Route::prefix('guest')->group(function () {
         return view('guest.request-a-quote');
     })->name('guest.request-a-quote');
 
+    // Route::get('/reservation-form', function () {
+    //     return view('guest.reservation-form');
+    // })->name('guest.reservation-form');
+
     Route::get('/reservation-form', function () {
-        return view('guest.reservation-form');
+        return view('guest.reservation.reservation-form');
     })->name('guest.reservation-form');
 });
 

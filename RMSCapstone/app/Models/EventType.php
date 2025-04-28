@@ -10,4 +10,9 @@ class EventType extends Model
     use SoftDeletes;
 
     protected $fillable = ['name', 'description', 'image'];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'event_type_id');
+    }
 }

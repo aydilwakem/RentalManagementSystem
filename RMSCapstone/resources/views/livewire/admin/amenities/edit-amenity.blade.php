@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Room Category') }}
+            {{ __('Edit Amenity') }}
         </h2>
     </x-slot>
     <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mt-16 bg-white">

@@ -30,7 +30,7 @@ class DeletedMaintenances extends Component
         $maintenance = Maintenance::withTrashed()->find($maintenanceId);
         if ($maintenance) {
             $maintenance->restore();
-            session()->flash('message', 'Event restored successfully.');
+            session()->flash('message', 'Maintenance restored successfully.');
             $this->fetchDeletedMaintenances();
         }
     }
@@ -40,7 +40,7 @@ class DeletedMaintenances extends Component
         $maintenance = Maintenance::withTrashed()->find($this->confirmItemDelete);
         if ($maintenance) {
             $maintenance->forceDelete();
-            session()->flash('message', 'Event permanently deleted.');
+            session()->flash('message', 'Maintenance permanently deleted.');
             $this->fetchDeletedMaintenances();
         }
         $this->confirmItemDelete = false;

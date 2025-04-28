@@ -158,6 +158,7 @@
                                 @endif
                             </button>
                         </th>
+                        <th scope="col" class="px-4 py-3">Assigned Property</th>
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
                             <button class="flex items-center">
                                 Description
@@ -288,6 +289,9 @@
                         </th>
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                             {{ $maintenance->name }}
+                        </th>
+                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                            {{ $maintenance->property->name_number ?? 'No Assigned Property'}}
                         </th>
                         <td class="px-4 py-3"> {{ $maintenance->description }}</td>
                         <td class="px-4 py-3">
