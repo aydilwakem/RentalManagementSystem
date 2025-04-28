@@ -18,6 +18,8 @@ use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
 use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
+use App\Livewire\Admin\Features\EditFeature;
+use App\Livewire\Admin\Features\ViewFeature;
 use App\Livewire\Admin\RoomRates\ViewRoomRate;
 use App\Livewire\Admin\RoomRates\EditRoomRate;
 use App\Livewire\Admin\Settings\Payments\EditPayment;
@@ -486,6 +488,33 @@ Route::middleware([
     Route::get('deleted-houses', function () {
         return view('admin.rentals.properties.deleted-properties');
     })->name('admin.deleted-properties')->middleware('can:house-soft-delete');
+
+
+
+    // ------------------ House Features
+
+    //List Features
+    Route::get('/features', function () {
+        return view('admin.features.view-features');
+    })->name('admin.features');
+
+    // Create Feature
+    Route::get('create/features', function () {
+        return view('admin.features.create-feature');
+    })->name('admin.create-feature');
+
+    // View Feature
+    Route::get('view/feature/{feature}', ViewFeature::class)
+        ->name('admin.view-feature'); 
+
+    //Edit Features
+    Route::get('edit/feature/{feature}', EditFeature::class)
+        ->name('admin.edit-feature');
+
+    // Deleted Features (Soft Deletes)
+    Route::get('deleted-features', function () {
+        return view('admin.features.deleted-features');
+    })->name('admin.deleted-features');
 
 
 

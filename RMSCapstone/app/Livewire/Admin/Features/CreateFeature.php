@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Livewire\Admin\Amenities;
+namespace App\Livewire\Admin\Features;
 
 use App\Models\PropertyFeature;
 use Livewire\Component;
 
-class CreateAmenity extends Component
+class CreateFeature extends Component
 {
     //Public declaration of fillable field
     public $name;
@@ -27,7 +27,7 @@ class CreateAmenity extends Component
      * - Resets the form field after saving the amenity.
      * - Displays a success message and redirects to the amenities list page.
      */
-    public function saveAmenity()
+    public function saveFeature()
     {
         try {
             // Validate form input
@@ -43,21 +43,22 @@ class CreateAmenity extends Component
         // Create Amenity
         PropertyFeature::create([
             'name' => $this->name,
-            'property_type_id' => 1, 
+            'property_type_id' => 2, 
         ]);
 
         // Reset form fields
         $this->reset('name');
 
         // Flash message for success
-        session()->flash('message', 'Amenity successfully created!');
+        session()->flash('message', 'Feature successfully created!');
 
         // Redirect back to amenities list
-        return redirect()->route('admin.amenities');
+        return redirect()->route('admin.features'); 
     }
+
 
     public function render()
     {
-        return view('livewire.admin.amenities.create-amenity');
+        return view('livewire.admin.features.create-feature');
     }
 }

@@ -9,10 +9,16 @@ class PropertyFeature extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 
+    'property_type_id'];
 
+    
     public function properties()
     {
         return $this->belongsToMany(Property::class, 'property_features_pivot');
+    }
+
+    public function propertyType(){
+        return $this->belongsTo(PropertyType::class);
     }
 }

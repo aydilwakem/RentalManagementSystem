@@ -28,7 +28,10 @@ class DeletedAmenities extends Component
      //Method to retrieve all soft deleted items and store them in the variable deletedAmenities
     public function fetchDeletedAmenities()
     {
-        $this->deletedAmenities = PropertyFeature::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedAmenities = PropertyFeature::onlyTrashed()
+        ->where('property_type_id', 1) // Filter by property type 1
+        ->orderBy('created_at', 'ASC')
+        ->get();
     }
 
     /**
@@ -85,7 +88,7 @@ class DeletedAmenities extends Component
             foreach ($this->deletedAmenities as $index => $category) {
                 $fakeIDs[$category->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
-            session(['fake_ids_roomCategory' => $fakeIDs]);
+            session(['fake_ids_amenity' => $fakeIDs]);
         }
 
         return view('livewire.admin.amenities.deleted-amenities', [

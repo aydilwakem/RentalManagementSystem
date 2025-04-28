@@ -47,7 +47,7 @@ class EditAmenity extends Component
     {
         try {
             $this->validate([
-                'name' => "required|string|max:255|unique:prd_amenities,name,{$this->amenityId},id",
+                'name' => 'required|string|max:255',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -58,6 +58,7 @@ class EditAmenity extends Component
         // Update Amenity
         $this->amenity->update([
             'name' => $this->name,
+            'property_type_id' => 1, 
         ]);
 
         session()->flash('message', 'Amenity successfully updated!');

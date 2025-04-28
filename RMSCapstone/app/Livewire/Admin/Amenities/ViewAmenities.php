@@ -58,8 +58,11 @@ class ViewAmenities extends Component
                 PropertyFeature::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
-                // Fetch remaining - sorted by creation date
-                $amenity = PropertyFeature::orderBy('created_at', 'ASC')->get();
+                // Fetch remaining amenities - sorted by creation date, only type 1
+                $amenity = PropertyFeature::where('property_type_id', 1)
+                ->orderBy('created_at', 'ASC')
+                ->get();
+
 
                 // Reset fake IDs
                 $fakeIDs = [];
@@ -99,23 +102,35 @@ class ViewAmenities extends Component
      */
     public function render()
     {
+       // Retrieve amenities where property_type_id = 1, 
         $amenities = PropertyFeature::query()
-            ->where('name', 'like', "%{$this->search}%")
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        ->where('property_type_id', 1) // Only amenities with property_type_id = 1
+        ->where('name', 'like', "%{$this->search}%")
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
-        // Retrieve unique session 
+        // Retrieve fake IDs from session
         $fakeIDs = session('fake_ids_amenities', []);
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== PropertyFeature::count()) {
+        // Recalculate fake IDs only if the count mismatches for amenities with property_type_id = 1
+        if (count($fakeIDs) !== $amenities->total()) {
             $fakeIDs = [];
-            foreach (PropertyFeature::orderBy('created_at', 'ASC')->get() as $index => $amenityItem) {
-                $fakeIDs[$amenityItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_amenities' => $fakeIDs]);
+
+        // Fetch only amenities with property_type_id = 1
+        $amenitiesWithPropertyType1 = PropertyFeature::where('property_type_id', 1)
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        // Recalculate fake IDs for amenities with property_type_id = 1
+        foreach ($amenitiesWithPropertyType1 as $index => $amenityItem) {
+            $fakeIDs[$amenityItem->id] = 'AMY-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
 
+        // Store updated fake IDs in session
+        session(['fake_ids_amenities' => $fakeIDs]);
+        }
+
+        // Return the view with amenities and their respective fake IDs
         return view('livewire.admin.amenities.view-amenities', [
             'amenities' => $amenities,
             'fakeIDs' => $fakeIDs,
