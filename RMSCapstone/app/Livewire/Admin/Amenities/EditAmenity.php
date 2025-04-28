@@ -13,18 +13,21 @@ class EditAmenity extends Component
 {
     use WithFileUploads;
 
+    //Public variable declarations of amenity
     public PropertyFeature $amenity;
     public $name;
     public $amenityId;
 
-
+    //Public declaration of modal
     public $confirmEditItem = false;
 
+    //Method to make modal true by getting id
     public function confirmEdit($id)
     {
         $this->confirmEditItem = $id;
     }
 
+    //Method to fetch all amenities
     public function mount(PropertyFeature $amenity)
     {
         $this->amenity = $amenity;
@@ -32,6 +35,14 @@ class EditAmenity extends Component
         $this->name = $amenity->name;
     }
 
+    /**
+     * Updates an existing amenity after validating the form input.
+     * - Validates the amenity name to ensure it is unique and meets the required format, excluding the current amenity.
+     * - If validation fails, the modal is closed and an exception is thrown.
+     * - Updates the amenity with the new name in the `PropertyFeature` model.
+     * - Displays a success message after the update is successful.
+     * - Redirects to the amenities list page after the update.
+     */
     public function updateAmenity()
     {
         try {

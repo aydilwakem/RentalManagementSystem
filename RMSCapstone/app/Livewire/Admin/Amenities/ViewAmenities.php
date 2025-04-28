@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 
 class ViewAmenities extends Component
 {
+    //Declarations for pagination and sorting
     use WithPagination;
 
     #[Url(history: true)]
@@ -23,6 +24,7 @@ class ViewAmenities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
+    //Public declaration for confirmation modal
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
@@ -30,6 +32,7 @@ class ViewAmenities extends Component
         $this->confirmItemDelete = $id;
     }
 
+    //Method for session of fake ids
     public function mount()
     {
         // Ensure use a separate session key
@@ -38,6 +41,14 @@ class ViewAmenities extends Component
         }
     }
 
+    /**
+     * Deletes an amenity and updates the list of remaining amenities.
+     * - Finds the amenity by ID.
+     * - If the amenity exists and deletion is confirmed, it is deleted.
+     * - The list of remaining amenities is fetched and sorted by creation date.
+     * - Fake IDs for the amenities are recalculated and stored in the session.
+     * - Displays a success message after the amenity is successfully deleted.
+     */
     public function deleteAmenity($id)
     {
         $amenity = PropertyFeature::find($id);
@@ -64,6 +75,11 @@ class ViewAmenities extends Component
         }
     }
 
+    /**
+     * Sets the sorting criteria for displaying amenities.
+     * - If the current sorting field matches the selected one, toggle the sort direction between "ASC" and "DESC".
+     * - If it's a new field, set the sorting direction to "ASC" by default.
+     */
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {
@@ -74,6 +90,13 @@ class ViewAmenities extends Component
         $this->sortDir = "ASC";
     }
 
+    /**
+     * Renders the view with a paginated list of amenities, applying search and sorting criteria.
+     * - Filters amenities by name using a search term.
+     * - Applies sorting based on the selected field and direction.
+     * - Recalculates fake IDs for the amenities if the count of fake IDs doesn't match the actual count of amenities.
+     * - Updates the session with the recalculated fake IDs and passes the data to the view.
+     */
     public function render()
     {
         $amenities = PropertyFeature::query()

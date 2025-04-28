@@ -17,6 +17,13 @@ class ViewAmenity extends Component
         $this->confirmItemDelete = $id; // Store ID
     }
 
+    /**
+     * Deletes an amenity and redirects to the admin amenities page.
+     * - Ensures the amenity exists before attempting to delete.
+     * - Deletes the amenity if found.
+     * - Flashes a success message to indicate deletion.
+     * - Resets the confirmation flag and redirects to the amenities list page.
+     */
     public function deleteAmenity()
     {
         // Ensure existing ID before deleting

@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 
 class ViewActivities extends Component
 {
+    //Declarations for pagination and sorting
     use WithPagination;
 
     #[Url(history: true)]
@@ -23,14 +24,16 @@ class ViewActivities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
+    //Public declaration for delete confirmation modal
     public $confirmItemDelete = false;
 
+    //Method to make modal true by getting item id
     public function confirmDelete($id)
     {
         $this->confirmItemDelete = $id;
     }
 
-
+    //Method to mount the sessions of fake ids
     public function mount()
     {
         // Ensure activities use a separate session key
@@ -39,6 +42,10 @@ class ViewActivities extends Component
         }
     }
 
+    /**
+    * Delete an activity record if confirmed, update the list of activities,
+    * reset fake IDs, and store the updated IDs in the session.
+    */
     public function deleteActivity($id)
     {
         $activity = Activity::find($id);
@@ -67,6 +74,11 @@ class ViewActivities extends Component
     }
     }
 
+    /**
+     * Method to set the sorting direction for a given field.
+     * If the field is already selected, the direction (ASC/DESC) will toggle.
+     * If a new field is selected, it defaults to ASC.
+     */
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {
@@ -77,6 +89,14 @@ class ViewActivities extends Component
         $this->sortDir = "ASC";
     }
 
+    /**
+     * Method to retrieve and paginate activities based on search query, with sorting.
+     * - Retrieves activities matching the search term, ordered by the selected field and direction.
+     * - Fetches the session data for fake IDs or recalculates them if the count mismatch.
+     * - Stores the updated fake IDs in session for consistent use across the view.
+     * 
+     * Returns the view with the paginated activities and fake IDs for display.
+     */
     public function render()
     {
         $activities = Activity::query()

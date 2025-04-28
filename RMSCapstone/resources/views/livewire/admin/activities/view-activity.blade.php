@@ -49,7 +49,11 @@
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Inclusions</h3>
             <p class="text-gray-600 leading-relaxed">
+                @if (!empty($activity->inclusions))
                 {{ $activity->inclusions }}
+                @else
+                <em class="text-gray-600 leading-relaxed">No inclusions provided.</em>
+                @endif
             </p>
         </div>
 

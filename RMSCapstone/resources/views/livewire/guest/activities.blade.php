@@ -40,7 +40,7 @@
                         <span class="text-green-600 font-bold text-lg">@if ($activity->amount == 0)
                             <span class="text-green-600 font-semibold">FREE</span>
                             @else
-                            {{ number_format($activity->amount, 2) }}
+                            ₱{{ number_format($activity->amount, 2) }}
                             @endif
                         </span>
                     </div>

@@ -13,7 +13,10 @@ class EditActivity extends Component
 {
     use WithFileUploads;
 
+    //Public declaration of activity variable with model
     public Activity $activity;
+
+    //Public declarations of fillable fields
     public $name;
     public $description;
     public $amount;
@@ -22,9 +25,10 @@ class EditActivity extends Component
     public $newImage;
     public $activityId; 
 
-
+    //Public declaration of edit confirmation modal
     public $confirmEditItem = false;
 
+    //Method to make the modal true
     public function confirmEdit($id)
     {
         $this->confirmEditItem = $id;
@@ -43,8 +47,13 @@ class EditActivity extends Component
         $this->image = $activity->image;
     }
 
+    /**
+     * Validate and update an existing activity record.
+     * Handles optional image replacement, updates fields, and flashes a success message.
+     */
     public function updateActivity()
     {
+        //Validates all required fields
         try{
         $this->validate([
             'name' => "required|string|max:255|unique:prd_activities,name,{$this->activityId},id",
@@ -57,7 +66,7 @@ class EditActivity extends Component
         // If validation fails, close the modal
         $this->confirmEditItem = false;
         throw $e;
-    }
+    } //Handles constraints
 
         // Ensure the image is uploaded properly
         if ($this->newImage && !$this->newImage->isValid()) {
