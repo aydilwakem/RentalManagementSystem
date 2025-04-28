@@ -36,6 +36,8 @@ use App\Livewire\Admin\Properties\EditProperty;
 use App\Livewire\Admin\Properties\ViewProperty;
 use App\Livewire\Admin\HouseCategories\EditHouseCategory;
 use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
+use App\Livewire\Admin\Inclusions\EditInclusion;
+use App\Livewire\Admin\Inclusions\ViewInclusion;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -334,6 +336,33 @@ Route::middleware([
     Route::get('deleted-event-halls', function () {
         return view('admin.event-halls.deleted-event-halls');
     })->name('admin.deleted-event-halls')->middleware('can:event-hall-soft-delete');
+
+    
+    // ------------------ Event Hall Inclusions
+
+    //List Inclusions
+    Route::get('/inclusions', function () {
+        return view('admin.inclusions.view-inclusions');
+    })->name('admin.inclusions');
+
+    // Create Inclusion
+    Route::get('create/inclusions', function () {
+        return view('admin.inclusions.create-inclusion');
+    })->name('admin.create-inclusion');
+
+    // View Inclusion
+    Route::get('view/inclusion/{inclusion}', ViewInclusion::class)
+        ->name('admin.view-inclusion'); 
+
+    //Edit Inclusions
+    Route::get('edit/inclusion/{inclusion}', EditInclusion::class)
+        ->name('admin.edit-inclusion');
+
+    // Deleted Inclusions (Soft Deletes)
+    Route::get('deleted-inclusions', function () {
+        return view('admin.inclusions.deleted-inclusions');
+    })->name('admin.deleted-inclusions');
+
 
 
 

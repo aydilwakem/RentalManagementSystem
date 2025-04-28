@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('View Feature') }}
+            {{ __('View Inclusion') }}
         </h2>
     </x-slot>
 
@@ -16,7 +16,7 @@
         </div>
 
         <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center p-8">
-            Feature: {{ $feature->name }}
+            Inclusion: {{ $inclusion->name }}
         </h2>
 
         <!-- Action Buttons -->
@@ -25,14 +25,14 @@
             <!-- Edit -->
             <x-button type="button" icon="fas fa-pen-to-square"
                 class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:navigate href="{{ route('admin.edit-feature', ['feature' => $feature->id]) }}">
+                wire:navigate href="{{ route('admin.edit-inclusion', ['inclusion' => $inclusion->id]) }}">
                 Edit
             </x-button>
 
             <!-- Delete -->
             <x-button type="button" icon="fas fa-trash"
                 class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="confirmDelete({{ $feature->id }})">
+                wire:click="confirmDelete({{ $inclusion->id }})">
                 Delete
             </x-button>
 
@@ -41,7 +41,7 @@
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
-                {{ __('Delete Feature') }}
+                {{ __('Delete Inclusion') }}
             </x-slot>
 
             <x-slot name="content">
@@ -53,9 +53,9 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteFeature({{ $feature->id }})"
+                <x-danger-button class="ms-3" wire:click="deleteInclusion({{ $inclusion->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Delete Feature') }}
+                    {{ __('Delete Inclusion') }}
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
