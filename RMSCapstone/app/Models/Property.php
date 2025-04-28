@@ -55,7 +55,9 @@ class Property extends Model
 
     public function transactions()
     {
-        return $this->belongsToMany(Transaction::class, 'transaction_properties');
+        return $this->belongsToMany(Transaction::class, 'transaction_properties')
+            ->withPivot('adults', 'kids')
+            ->withTimestamps();
     }
 
     // A property belongs to one property category - (for now, this is applicable for rooms. ex: cozy rooms, canopy retreats, pool house)

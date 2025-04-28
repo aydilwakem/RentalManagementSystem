@@ -20,6 +20,8 @@ class Activity extends Model
 
     public function transactions()
     {
-        return $this->belongsToMany(Transaction::class, 'transaction_activities');
+        return $this->belongsToMany(Transaction::class, 'transaction_activities')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }

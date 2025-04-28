@@ -30,7 +30,7 @@ class Transaction extends Model
         'total_amount',
         'terms',
         'heard_from',
-        'reservation_resource',
+        'reservation_source',
         'transaction_status',
         'actual_start_datetime',
         'actual_end_datetime',
@@ -87,15 +87,18 @@ class Transaction extends Model
     // One transaction can have many properties
     public function properties()
     {
-        return $this->belongsToMany(Property::class, 'transaction_properties');
+        return $this->belongsToMany(Property::class, 'transaction_properties')
+            ->withPivot('adults', 'kids')
+            ->withTimestamps();
     }
 
     // One transaction can have many activities
     public function activities()
     {
-        return $this->belongsToMany(Activity::class, 'transaction_activities');
+        return $this->belongsToMany(Activity::class, 'transaction_activities')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
-
 
 
 

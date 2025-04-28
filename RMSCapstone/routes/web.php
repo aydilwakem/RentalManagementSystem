@@ -577,8 +577,12 @@ Route::prefix('guest')->group(function () {
         return view('guest.request-a-quote');
     })->name('guest.request-a-quote');
 
+    // Route::get('/reservation-form', function () {
+    //     return view('guest.reservation-form');
+    // })->name('guest.reservation-form');
+
     Route::get('/reservation-form', function () {
-        return view('guest.reservation-form');
+        return view('guest.reservation.reservation-form');
     })->name('guest.reservation-form');
 });
 
