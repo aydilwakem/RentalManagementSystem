@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use App\Models\Property;
 use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
+use Livewire\Attributes\Rule;
 
 class CreateRoom extends Component
 {
@@ -21,7 +22,9 @@ class CreateRoom extends Component
     public $turnover_duration;
     public $property_status = 'available'; // Default
     public $amount;
-    public $image;
+
+    #[Rule(['images.*' => 'image|max:2024'])]
+    public $images;
 
     public $selectedFeatures = [];        // Selected feature IDs
     public $features = [];     // All features to show in UI
@@ -31,6 +34,12 @@ class CreateRoom extends Component
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
+    }
+
+    public function removeImage($index)
+    {
+        unset($this->images[$index]);
+        $this->images = array_values($this->images); // reindex array
     }
 
     public function mount()
@@ -52,7 +61,8 @@ class CreateRoom extends Component
                 'turnover_duration' => 'required|string',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
-                'image' => 'nullable|image|max:1024',
+                'images' => 'required|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
                 'selectedFeatures' => 'nullable|array',
                 'selectedFeatures.*' => 'exists:property_features,id',
             ]);
@@ -61,13 +71,16 @@ class CreateRoom extends Component
             throw $e;
         }
 
-        $imagePath = null;
-        if ($this->image) {
-            if (!$this->image->isValid()) {
-                session()->flash('error', 'Image upload failed. Please try again.');
-                return;
+        $imagePaths = [];
+        if (is_array($this->images)) {
+            foreach($this->images as $image) {
+                if (!$image->isValid()) {
+                    session()->flash('error', 'Image upload failed. Please try again.');
+                    return;
+                }
+                $path = $image->store('rooms', 'public');
+                $imagePaths[] = $path;
             }
-            $imagePath = $this->image->store('rooms', 'public');
         }
 
         // Create the room
@@ -81,7 +94,7 @@ class CreateRoom extends Component
             'turnover_duration' => $this->turnover_duration,
             'property_status' => $this->property_status,
             'amount' => $this->amount,
-            'image' => $imagePath,
+            'images' => $imagePaths,
         ]);
 
         // Attach selected features to pivot
@@ -99,7 +112,7 @@ class CreateRoom extends Component
             'turnover_duration',
             'property_status',
             'amount',
-            'image',
+            'images',
             'selectedFeatures',
         ]);
 

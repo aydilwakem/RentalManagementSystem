@@ -120,26 +120,40 @@
 
             <div class="space-y-4">
                 <!-- Image Upload -->
-                <div>
+                <div class="mb-4">
                     <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                    <input type="file" wire:model="image" id="image" accept="image/png, image/jpeg"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <input multiple type="file" wire:model="images" id="image" accept="image/png, image/jpeg"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none">
 
-                    @error('image')
+                    @error('images')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-
-                    <div wire:loading wire:target="image" class="mt-2 text-gray-600">
-                        Uploading image...
-                    </div>
                 </div>
 
-                <!-- Image Preview -->
-                <div>
-                    @if ($image && method_exists($image, 'temporaryUrl'))
-                        <img src="{{ $image->temporaryUrl() }}" class="w-full h-48 object-contain rounded-lg shadow"
-                            alt="Image Preview">
+                <!-- Uploading Spinner -->
+                <div wire:loading wire:target="images" class="flex items-center justify-center px-5">
+                    <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                    </svg>
+                    <span>Uploading...</span>
+                </div>
+
+                <!-- Image Previews -->
+                <div wire:loading.remove wire:target="images">
+                    @if ($images && count($images) > 0)
+                        @foreach ($images as $index => $image)
+                            <div class="relative mb-4">
+                                <img src="{{ $image->temporaryUrl() }}"
+                                    class="w-full h-48 object-contain rounded-lg shadow" alt="Image Preview">
+                                <button type="button" wire:click="removeImage({{ $index }})"
+                                    class="absolute top-2 right-2 bg-gray-300 text-gray-600 rounded-full w-6 h-6 flex items-center justify-center text-sm">
+                                    ×
+                                </button>
+                            </div>
+                        @endforeach
                     @else
+                        <!-- No image placeholder-->
                         <div
                             class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
                             No image selected
@@ -147,6 +161,9 @@
                     @endif
                 </div>
             </div>
+
+
+
 
 
 
