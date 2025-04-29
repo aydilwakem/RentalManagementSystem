@@ -54,12 +54,41 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
                             placeholder="Search Activity" required="">
                     </div>
+
+                    {{-- Bulk Actions Button --}}
+                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <span class="ml-2">Selected 10 activities</span> --}}
                 </div>
+
             </div>
+
             <!-- Table -->
             <table class="w-full text-left">
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
+                        <th scope="col" class="px-4 py-3">
+                            <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                class="accent-blue-600 w-4 h-4">
+                        </th>
                         {{-- ID --}}
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
                             <button class="flex items-center">
@@ -191,6 +220,10 @@
                 <tbody>
                     @foreach ($activities as $activity)
                     <tr class="border-b">
+                        <td class="px-4 py-3">
+                            <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
+                                value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
+                        </td>
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                             {{ $fakeIDs[$activity->id] ?? 'ACT-???' }}
                         </th>
@@ -236,6 +269,7 @@
                     </tr>
                     @endforeach
                 </tbody>
+
             </table>
 
 
@@ -274,6 +308,27 @@
                     <x-danger-button class="ms-3" wire:click="deleteActivity({{ $activity->id }})"
                         wire:loading.attr="disabled">
                         {{ __('Delete Activity') }}
+                    </x-danger-button>
+                </x-slot>
+            </x-dialog-modal>
+
+            <!-- Bulk Delete Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmBulkDelete">
+                <x-slot name="title">
+                    {{ __('Delete Activities') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('Are you sure you want to delete these items?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                        {{ __('Delete Activities') }}
                     </x-danger-button>
                 </x-slot>
             </x-dialog-modal>

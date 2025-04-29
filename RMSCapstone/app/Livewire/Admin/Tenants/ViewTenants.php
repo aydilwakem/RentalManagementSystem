@@ -24,6 +24,44 @@ class ViewTenants extends Component
     public $sortDir = 'DESC';
 
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->tenants->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getTenantsProperty(){
+        return TransactionUser::query()
+        ->where(function ($query) {
+            $query->where('first_name', 'like', "%{$this->search}%")
+                ->orWhere('last_name', 'like', "%{$this->search}%")
+                ->orWhere('email', 'like', "%{$this->search}%");
+        })
+        ->where('trn_user_type', 'tenant')
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        TransactionUser::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected features got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     public function confirmDelete($id)
     {
@@ -72,15 +110,7 @@ class ViewTenants extends Component
 
     public function render()
     {
-        $tenants = TransactionUser::query()
-            ->where(function ($query) {
-                $query->where('first_name', 'like', "%{$this->search}%")
-                    ->orWhere('last_name', 'like', "%{$this->search}%")
-                    ->orWhere('email', 'like', "%{$this->search}%");
-            })
-            ->where('trn_user_type', 'tenant')
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $tenants = $this->tenants;
 
         $fakeIDs = session('fake_ids_tenants', []);
 

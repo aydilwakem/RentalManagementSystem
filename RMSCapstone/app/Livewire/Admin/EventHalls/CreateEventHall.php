@@ -38,7 +38,8 @@ class CreateEventHall extends Component
 
     public function mount()
     {
-        $this->features = PropertyFeature::all();        // Load features
+        //Mount only event hall inclusions
+        $this->features = PropertyFeature::where('property_type_id', 3)->get();
     }
 
     public function saveEventHall()

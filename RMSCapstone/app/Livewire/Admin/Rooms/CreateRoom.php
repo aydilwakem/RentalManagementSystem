@@ -36,7 +36,8 @@ class CreateRoom extends Component
     public function mount()
     {
         $this->roomCategories = PropertyCategory::all();   // Load categories
-        $this->features = PropertyFeature::all();        // Load features
+        //mount only room inclusions
+        $this->features = PropertyFeature::where('property_type_id', 1)->get();
     }
 
     public function saveRoom()
