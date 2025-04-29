@@ -10,28 +10,40 @@ use App\Models\TransactionUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
 {
     public $reservation_type_id = 2; // This reservation is for Rooms
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
-    public $total_pax = 0; //  Running total for the total pax
     public $reservation_source = 'WebApp';
     public $transaction_status = 'pending';
     public $cart = []; // Keeps all the selected rooms and activities
-
-
-    // ----------------------- ROOMS ---------------------------- // 
+    public $total_amount; // Total amount for the reservation
+    public $total_pax = 0; // Total number of guests (adults + kids)
     public $check_in_date;
     public $check_out_date;
+
+    // ----------------------- ROOMS ---------------------------- // 
+
+
+    // rooms - adults - kids - extra-guest - extra-charge - amount
     public $rooms = [];
     public $adults = [];
     public $kids = [];
+    public $extra_guest = [];
+    public $extra_charge = []; // extra_guest * extra_person_charge * days
+    public $roomAmount = []; // base rate * days
+    public $roomsTotalAmount = [];
 
     // --------------------- ACTIVITIES ------------------------- // 
+
+    // activities - quantity - activity_datetime - activityAmount - status
     public $activities = [];
     public $quantity = [];
-    public $activity_id;
+    public $activity_datetime = [];
+    public $activityAmount = [];
+    public $status = [];
 
     // ------------------- GUEST DETAIL ------------------------ // 
     public $first_name;
@@ -40,7 +52,7 @@ class ReservationForm extends Component
     public $email;
     public $contact_number;
     public $country;
-    public $heard_from = 'Facebook';
+    public $heard_from;
 
     // ------------------- NAVIGATION STEPS -------------------- // 
 
@@ -64,10 +76,6 @@ class ReservationForm extends Component
     {
         $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
         $this->activities = Activity::all();
-
-        // Set default check-in to now, and check-out to +1 day
-        $this->check_in_date = Carbon::now('Asia/Manila')->format('Y-m-d\TH:i');
-        $this->check_out_date = Carbon::now('Asia/Manila')->addDay()->format('Y-m-d\TH:i');
 
         $this->currentStep = 1;
     }
@@ -145,6 +153,9 @@ class ReservationForm extends Component
 
     public function updated($property)
     {
+
+        // ---------------------------- ADULTS AND KIDS -------------------------- //
+
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
 
             // adults.2 or kids.2
@@ -155,10 +166,38 @@ class ReservationForm extends Component
             // adults. - seperated by a dot
             // extracted room id = 2
 
-            foreach ($this->cart as $index => $item) { // prints all the item in the cart index - 0 item [ room_id - 1, adults - 2, kids - 3 ] 
-                if ($item['type'] === 'room' && $item['room_id'] == $roomId) { // if item[2] ==(int) 2 then change the adults or kids
-                    $this->cart[$index]['adults'] = $this->adults[$roomId] ?? 0; // change adults or if not make it 0
-                    $this->cart[$index]['kids'] = $this->kids[$roomId] ?? 0; // change kids or if not make it 0
+            // Get the Room model
+            $room = Property::find($roomId);
+            if (!$room) {
+                return; // or handle gracefully
+            }
+
+            foreach ($this->cart as $index => $item) {
+
+                // Change the adult of room id 2 to 2
+                // Change the kid of room id 2 to 1
+
+                // index => $item
+                // 0 - room (type),    room_id 2,     1 adult,     2 kids
+                // 1 - room (type),    room_id 3,     2 adult,     2 kids
+                // 2 - activity(type), activity_3,    3 quantity
+
+                foreach ($this->cart as $index => $item) {
+                    if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
+                        $adults = (int) ($this->adults[$roomId] ?? 0);
+                        $kids = (int) ($this->kids[$roomId] ?? 0);
+                        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
+                        $stayDuration = $this->getStayDurationProperty();
+                        $roomAmount = $room->amount * $stayDuration;
+                        $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
+
+                        $this->cart[$index]['adults'] = $adults;
+                        $this->cart[$index]['kids'] = $kids;
+                        $this->cart[$index]['extra_guest'] = $extraGuests;
+                        $this->cart[$index]['extra_charge'] = $extraCharge;
+                        $this->cart[$index]['roomAmount'] = $roomAmount;
+                        $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
+                    }
                 }
             }
 
@@ -166,19 +205,34 @@ class ReservationForm extends Component
             $this->computeTotalPax();
         }
 
-        // Other update logic
+        // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
             $this->getAvailableRooms();
         }
+
+
+        // ----------------------- QUANTITY ------------------------------ // 
 
         if (Str::startsWith($property, 'quantity.')) {
             // Extract the activity ID from the property name
             $activityId = explode('.', $property)[1];
 
+
+            // Find activities
+            $activity = Activity::find($activityId);
+            if (!$activity) {
+                return;
+            }
+
+
             // Update the cart item's quantity dynamically
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                    $this->cart[$index]['quantity'] = $this->quantity[$activityId] ?? 0;
+                    $quantity = (int) ($this->quantity[$activityId] ?? 0);
+                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity    
+
+                    $this->cart[$index]['quantity'] = $quantity;
+                    $this->cart[$index]['amount'] = $activityAmount; // Update the amount in the cart
                 }
             }
         }
@@ -203,6 +257,8 @@ class ReservationForm extends Component
         }
         return 0;
     }
+
+
 
 
     /**
@@ -243,42 +299,68 @@ class ReservationForm extends Component
      * @return void
      */
 
+
+    // This method calculates the total number of guests (pax) in the cart
     public function computeTotalPax()
     {
-
-        // FIX: This should check the rooms in the cart and then get the sum of adults and kids
-
-        $total = 0; // running total of the pax
-
-        // prints out all the adults as the room_id and count
-        // ex. there are two rooms in the cart
-        // room id | count
-        // 1       | 3
-        // 2       | 2
-
-        foreach ($this->adults as $roomId => $count) {
-            $total += (int) $count;
-        }
-
-        // total + count = total
-        // room 1 - 0 + 3  = 3 
-        // room 2 - 3 + 2  = 5 
-        // total = 5 
+        $total = 0; // this will store the total number of guests // 3
 
 
-        foreach ($this->kids as $roomId => $count) {
-            $total += (int) $count;
+        foreach ($this->cart as $item) {
+
+            // type = room, room_id = 1, adults = 2, kids = 1 // ideal guest = 2
+            // type = room, room_id = 2, adults = 2, kids = 4
+            // type = activity, activity_id = 1, quantity = 2
+
+
+            if ($item['type'] === 'room') {  // Fetch items with type = 'room' ex. room_id 1
+                $adults = (int) ($item['adults'] ?? 0); // extracts the adults of the item - 2
+                $kids = (int) ($item['kids'] ?? 0); // extracts the kids of the item - 1
+
+                // Calculate the total number of guests in the room
+                $guestsInRoom = $adults + $kids; // 2 + 1 = 3
+
+                $total += $guestsInRoom; // here the guestsInRoom will be added
+
+            }
         }
 
         $this->total_pax = $total;
     }
 
 
+    public function computeTotalAmountOfAllRooms()
+    {
+        $total = 0;
 
+        foreach ($this->cart as $item) {
+            if ($item['type'] === 'room') {
+                $total += $item['total_amount'];
+            }
+        }
 
+        return $total;
+    }
 
+    public function computeTotalAmountOfAllActivities()
+    {
+        $total = 0;
 
+        foreach ($this->cart as $item) {
+            if ($item['type'] === 'activity') {
+                $total += $item['amount'];
+            }
+        }
 
+        return $total;
+    }
+
+    public function computeTotalAmount()
+    {
+        $this->total_amount = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+        // dd($this->total_amount);
+        return $this->total_amount;
+    }
 
 
 
@@ -340,27 +422,46 @@ class ReservationForm extends Component
      */
     public function addRoomToCart($roomId)
     {
+        // Check if check-in and check-out dates are provided
+        if (!$this->check_in_date || !$this->check_out_date) {
+            $this->addError('cart', 'Please select check-in and check-out dates before adding a room.');
+            return; // Exit the function if dates are not set
+        }
 
         // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
 
         // Check if the room is already in the cart
         foreach ($this->cart as $item) {
-            // If the room is already in the cart, show an error and return
             if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
                 $this->addError('cart', 'This room is already in the cart.');
                 return; // Exit the function to prevent adding a duplicate room
             }
         }
 
-        // Add the room to the cart if it isn't already there
+        $adults = (int) ($this->adults[$roomId] ?? 0);
+        $kids = (int) ($this->kids[$roomId] ?? 0);
+
+        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
+        $stayDuration = $this->getStayDurationProperty();
+
+        $roomAmount = $room->amount * $stayDuration;
+        $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
+
         $this->cart[] = [
-            'type' => 'room', // Define the type as 'room'
-            'room_id' => $room->id, // Set the room ID from the room object
-            'room_name' => $room->name_number, // Set the room's name or number
-            'adults' => (int) ($this->adults[$roomId] ?? 0),   // Cast the number of adults to an integer (default to 0 if not set) 
-            'kids' => (int) ($this->kids[$roomId] ?? 0),      // Cast the number of kids to an integer (default to 0 if not set)
+            'type' => 'room',
+            'room_id' => $room->id,
+            'room_name' => $room->name_number,
+            'extra_guest' => $extraGuests,
+            'days' => $stayDuration,
+            'adults' => $adults,
+            'kids' => $kids,
+
+            'roomAmount' => $roomAmount, // base rate * days
+            'extra_charge' => $extraCharge,
+            'total_amount' => $roomAmount + $extraCharge,
         ];
+
 
         // Optional debugging line to inspect the cart's content (can be removed in production)
         // dd($this->cart);
@@ -394,13 +495,19 @@ class ReservationForm extends Component
             }
         }
 
+        // Calculate the total amount for the activity based on the quantity
+        $quantity = (int) ($this->quantity[$activityId] ?? 1); // Default to 1 if not set
+        $activityAmount = $activity->amount * $quantity; // Calculate the total amount for the activity
+        $activitystatus = $this->status[$activityId] = 'pending'; // Set the status of the activity to 'pending'
+
         // Add the activity to the cart if it isn't already present
         $this->cart[] = [
             'type' => 'activity',  // Define the type as 'activity'
             'activity_id' => $activity->id,  // Set the activity ID from the activity object
             'activity_name' => $activity->name,  // Set the activity name
-            'quantity' => $this->quantity[$activityId] ?? 1,  // Set the quantity (default to 1 if not set)
-            'amount' => $activity->amount * ($this->quantity[$activityId] ?? 1),  // Calculate the total amount based on the quantity
+            'quantity' => $quantity,  // Set the quantity from the input or default to 1
+            'amount' => $activityAmount,  // Set the calculated amount for the activity
+            'status' => $activitystatus,  // Set the status of the activity
         ];
     }
 
@@ -444,6 +551,9 @@ class ReservationForm extends Component
 
         // Reindex the array after filtering to ensure keys are sequential
         $this->cart = array_values($this->cart);
+
+        // Call a method to compute the total number of people (pax) in the cart after removing the item
+        $this->computeTotalPax();
     }
 
 
@@ -496,7 +606,7 @@ class ReservationForm extends Component
                 'total_adults' => collect($this->cart)->sum('adults'), // goes through each item and adds the value of adults.
                 'total_kids' => collect($this->cart)->sum('kids'), // goes through each item and adds the value of kids.
                 'pax' => $this->total_pax,
-                'total_amount' => 0, // calculate this if needed
+                'total_amount' => $this->computeTotalAmount(),
                 'heard_from' => $this->heard_from,
                 'reservation_source' => $this->reservation_source,
                 'transaction_status' => $this->transaction_status,
@@ -507,12 +617,18 @@ class ReservationForm extends Component
                     $transaction->properties()->attach($item['room_id'], [
                         'adults' => $item['adults'],
                         'kids' => $item['kids'],
+                        'days' => $this->getStayDurationProperty(),
+                        'extra_charge' => $item['extra_charge'],
+                        'amount' => $item['roomAmount'],
+                        'total_amount' => $item['total_amount'],
+                        'extra_guest' => $item['extra_guest'],
                     ]);
                 }
 
                 if ($item['type'] === 'activity') {
                     $transaction->activities()->attach($item['activity_id'], [
                         'quantity' => $item['quantity'],
+                        'amount' => $item['amount'],
                     ]);
                 }
             }

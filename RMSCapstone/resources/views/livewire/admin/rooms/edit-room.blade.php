@@ -12,7 +12,7 @@
                     <input type="text" wire:model="name_number" id="name_number" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('name_number')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Room Category -->
@@ -23,11 +23,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Category</option>
                         @foreach ($roomCategories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                     @error('property_category_id')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Ideal Guest -->
@@ -37,7 +37,7 @@
                     <input type="number" wire:model="ideal_guest" id="ideal_guest"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('ideal_guest')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Max Adults -->
@@ -46,7 +46,7 @@
                     <input type="number" wire:model="max_adults" id="max_adults" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_adults')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
                 <!-- Max Kids -->
@@ -55,9 +55,66 @@
                     <input type="number" wire:model="max_kids" id="max_kids" min="0"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('max_kids')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+
+                <!-- Max Occupancy Rules -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Maximum Occupancy Rules</h3>
+
+                    <!-- Loop through the occupancy rules -->
+                    @foreach ($occupancy_rules as $index => $rule)
+                        <div class="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Adults Field -->
+                                <div>
+                                    <label for="adults_{{ $index }}"
+                                        class="block text-sm font-medium text-gray-700">Adults</label>
+                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
+                                        id="adults_{{ $index }}" min="0"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    @error("occupancy_rules.{$index}.adults")
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Kids Field -->
+                                <div>
+                                    <label for="kids_{{ $index }}"
+                                        class="block text-sm font-medium text-gray-700">Kids</label>
+                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
+                                        id="kids_{{ $index }}" min="0"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    @error("occupancy_rules.{$index}.kids")
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Remove Rule Button -->
+                            <div class="mt-4 flex justify-end">
+                                <button type="button" wire:click="removeRule({{ $index }})"
+                                    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300">
+                                    Remove Rule
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <!-- Add Rule Button -->
+                    <div class="mt-4 flex justify-start">
+                        <button type="button" wire:click="addRule"
+                            class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300">
+                            Add Rule
+                        </button>
+                    </div>
+                </div>
+
+
+
+
                 <!-- Turnover Duration -->
                 <div>
                     <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
@@ -65,7 +122,7 @@
                     <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('turnover_duration')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -80,7 +137,7 @@
                         <option value="out_of_service">Out of Service</option>
                     </select>
                     @error('property_status')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -91,7 +148,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter base_rate">
                     @error('amount')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -100,17 +157,17 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                     <div class="grid grid-cols-2 gap-2">
                         @foreach ($features as $feature)
-                        <div class="flex items-center">
-                            <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
-                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                            <label class="ms-2 text-sm font-medium text-gray-900">
-                                {{ $feature->name }}
-                            </label>
-                        </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                                <label class="ms-2 text-sm font-medium text-gray-900">
+                                    {{ $feature->name }}
+                                </label>
+                            </div>
                         @endforeach
                     </div>
                     @error('selectedFeatures')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -123,7 +180,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     @error('newImage')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
@@ -131,16 +188,16 @@
                     <!-- Image Preview -->
                     <div class="mt-2">
                         @if ($newImage)
-                        <!-- Show new uploaded image -->
-                        <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show new uploaded image -->
+                            <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
                         @elseif ($room->image)
-                        <!-- Show existing image from storage -->
-                        <img src="{{ asset('storage/' . $room->image) }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show existing image from storage -->
+                            <img src="{{ asset('storage/' . $room->image) }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                         @else
-                        <!-- Show default image if no image exists -->
-                        <img src="{{ asset('images/rms-default.png') }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
+                            <!-- Show default image if no image exists -->
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
                 </div>

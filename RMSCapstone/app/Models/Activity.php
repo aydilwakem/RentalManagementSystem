@@ -21,7 +21,12 @@ class Activity extends Model
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'transaction_activities')
-            ->withPivot('quantity')
+            ->withPivot(
+                'quantity',
+                'amount',
+                'activity_datetime',
+                'status',
+            )
             ->withTimestamps();
     }
 }

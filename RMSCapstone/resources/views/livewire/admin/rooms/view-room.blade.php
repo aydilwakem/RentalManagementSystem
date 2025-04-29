@@ -46,6 +46,7 @@
                 <li><strong>Base Rate:</strong> {{ $room->amount }}</li>
             </ul>
 
+
             <!-- Room Amenities -->
             <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
             @if ($room->features->isNotEmpty())
@@ -58,6 +59,26 @@
                 <p class="text-gray-500 mt-2">No features selected for this room.</p>
             @endif
         </div>
+
+        <!-- Display Maximum Occupancy Rules -->
+        <h3 class="text-lg font-semibold">Maximum Occupancy Rules</h3>
+
+        @if($room->occupancy_rules && is_array($room->occupancy_rules))
+            <div class="space-y-4">
+                @foreach ($room->occupancy_rules as $index => $rule)
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p><strong>Adults:</strong> {{ $rule['adults'] }}</p>
+                                <p><strong>Kids:</strong> {{ $rule['kids'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p>No occupancy rules set.</p>
+        @endif
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">

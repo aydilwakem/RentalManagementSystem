@@ -139,6 +139,9 @@
                                                 <strong>Room:</strong> {{ $item['room_name'] }}<br>
                                                 <span class="text-sm">Adults: {{ $item['adults'] }}, Kids:
                                                     {{ $item['kids'] }}</span>
+                                                    <span class="text-sm">Extra Guest: {{ $item['extra_guest'] }}</span>
+                                                    <span class="text-sm">Extra Charge: {{ $item['extra_charge'] }}</span>
+                                                    <span class="text-sm">Total Amount: {{ $item['total_amount'] }}</span>
                                             </div>
                                             <div class="flex items-center gap-2">
                                                 <button type="button"
@@ -189,6 +192,7 @@
                 @endif
 
                 <p class="mt-4">Total Guests: {{ $total_pax }}</p>
+    
             </div>
 
             @error('cart') <span class="text-red-600">{{ $message }}</span> @enderror
@@ -200,13 +204,14 @@
             <!-- Total Amount -->
             <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
                 <div>Total</div>
-                <div class="text-lg">₱3000</div>
+                <div class="text-lg">{{ $this->computeTotalAmount() }}</div>
             </div>
 
             <!-- Deposit -->
             <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
                 <div>Deposit</div>
-                <div class="font-semibold">₱3000</div>
+                <div class="font-semibold">
+                    {{ $total_amount > 0 ? number_format($total_amount * 0.5, 2) : '₱0.00' }}</div>
             </div>
 
             <!-- Navigation Buttons-->

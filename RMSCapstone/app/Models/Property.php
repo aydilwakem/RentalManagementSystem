@@ -25,6 +25,7 @@ class Property extends Model
         'capacity',
         'max_adults',
         'max_kids',
+        'occupancy_rules',
         'turnover_duration',
         'property_status',
         'house_number',
@@ -38,6 +39,10 @@ class Property extends Model
         'extra_charge_per_hour',
         'image',
         'description',
+    ];
+
+    protected $casts = [
+        'occupancy_rules' => 'array',  // Automatically decode JSON to array
     ];
 
     // ----------------------------------------- Relationships -------------------------------------------- //
@@ -56,7 +61,15 @@ class Property extends Model
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'transaction_properties')
-            ->withPivot('adults', 'kids')
+            ->withPivot(
+                'adults',
+                'kids',
+                'extra_guest',
+                'extra_charge',
+                'amount',
+                'days',
+                'total_amount'
+            )
             ->withTimestamps();
     }
 
