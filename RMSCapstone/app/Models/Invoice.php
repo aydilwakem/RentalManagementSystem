@@ -15,12 +15,22 @@ class Invoice extends Model
         'transaction_id',
         'invoice_number',
         'invoice_type',
-        'total_amount',
-        'payment_status',
+        'sub_total',
+        'deposit_paid',
+        'amount_paid',
+        'balance_due',
+        'due_date',
+        'invoice_status',
+        'completed_at',
     ];
 
     protected $casts = [
-        'total_amount' => 'decimal:2',
+        'sub_total'     => 'decimal:2',
+        'deposit_paid'  => 'decimal:2',
+        'amount_paid'   => 'decimal:2',
+        'balance_due'   => 'decimal:2',
+        'due_date'      => 'date',
+        'completed_at'  => 'datetime',
     ];
 
     public function transaction()

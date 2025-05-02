@@ -74,7 +74,7 @@ class ReservationForm extends Component
 
     public function mount()
     {
-        $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
+        $this->rooms = Property::ofType('Room')->get();
         $this->activities = Activity::all();
 
         $this->currentStep = 1;
@@ -158,7 +158,9 @@ class ReservationForm extends Component
 
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
 
-            // adults.2 or kids.2
+            // haystack - adults.2 or kids.2
+            // needle - adults. or kids.
+
 
             $roomId = explode('.', $property)[1];
             // extract the room id from the adults.'room_id'
@@ -169,37 +171,38 @@ class ReservationForm extends Component
             // Get the Room model
             $room = Property::find($roomId);
             if (!$room) {
-                return; // or handle gracefully
+                $this->addError('cart', 'Room not found.');
+                return;
             }
+
+            // Change the adult of room id 2 to 2
+            // Change the kid of room id 2 to 1
+
+            // index => $item
+            // 0 - room (type),    room_id 2,     1 adult,     2 kids
+            // 1 - room (type),    room_id 3,     2 adult,     2 kids
+            // 2 - activity(type), activity_3,    3 quantity
 
             foreach ($this->cart as $index => $item) {
+                if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
 
-                // Change the adult of room id 2 to 2
-                // Change the kid of room id 2 to 1
+                    $adults = (int) ($this->adults[$roomId] ?? 0); // extracts the adults of the item 
+                    $kids = (int) ($this->kids[$roomId] ?? 0); // extracts the kids of the item
 
-                // index => $item
-                // 0 - room (type),    room_id 2,     1 adult,     2 kids
-                // 1 - room (type),    room_id 3,     2 adult,     2 kids
-                // 2 - activity(type), activity_3,    3 quantity
+                    $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
+                    $stayDuration = $this->getStayDurationProperty();
+                    $roomAmount = $room->amount * $stayDuration;
+                    $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
-                foreach ($this->cart as $index => $item) {
-                    if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
-                        $adults = (int) ($this->adults[$roomId] ?? 0);
-                        $kids = (int) ($this->kids[$roomId] ?? 0);
-                        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-                        $stayDuration = $this->getStayDurationProperty();
-                        $roomAmount = $room->amount * $stayDuration;
-                        $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
-
-                        $this->cart[$index]['adults'] = $adults;
-                        $this->cart[$index]['kids'] = $kids;
-                        $this->cart[$index]['extra_guest'] = $extraGuests;
-                        $this->cart[$index]['extra_charge'] = $extraCharge;
-                        $this->cart[$index]['roomAmount'] = $roomAmount;
-                        $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
-                    }
+                    $this->cart[$index]['adults'] = $adults;
+                    $this->cart[$index]['kids'] = $kids;
+                    $this->cart[$index]['extra_guest'] = $extraGuests;
+                    $this->cart[$index]['extra_charge'] = $extraCharge;
+                    $this->cart[$index]['roomAmount'] = $roomAmount;
+                    $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
                 }
             }
+
 
             // Triggers compute total pax method
             $this->computeTotalPax();
@@ -239,8 +242,9 @@ class ReservationForm extends Component
     }
 
 
+
     /**
-     * Compute the number of days between check-in and check-out.
+     * Computes the number of days between check-in and check-out.
      * 
      * Uses Carbon to parse the dates and get the difference in days.
      * Returns 0 if either date is not provided.
@@ -248,7 +252,7 @@ class ReservationForm extends Component
      * @return int Duration of the stay in days.
      */
 
-    public function getStayDurationProperty()
+    public function getStayDurationProperty() // This allows you to access the method as a property
     {
         if ($this->check_in_date && $this->check_out_date) {
             $in = Carbon::parse($this->check_in_date);
@@ -257,6 +261,9 @@ class ReservationForm extends Component
         }
         return 0;
     }
+
+    // you can call this method as a property in the blade file
+    // $this-> getStayDurationProperty() or $this->getStayDuration
 
 
 
@@ -289,6 +296,8 @@ class ReservationForm extends Component
             })
             ->get();
     }
+
+
 
     /**
      * Computes the total number of guests (pax) by summing all adults and kids from the cart.
@@ -420,8 +429,12 @@ class ReservationForm extends Component
      * @param int $roomId The ID of the room to be added to the cart.
      * @return void This method does not return any value but modifies the cart.
      */
+
     public function addRoomToCart($roomId)
     {
+        // Resets any previous error messages
+        $this->resetErrorBag();
+
         // Check if check-in and check-out dates are provided
         if (!$this->check_in_date || !$this->check_out_date) {
             $this->addError('cart', 'Please select check-in and check-out dates before adding a room.');
@@ -441,10 +454,8 @@ class ReservationForm extends Component
 
         $adults = (int) ($this->adults[$roomId] ?? 0);
         $kids = (int) ($this->kids[$roomId] ?? 0);
-
-        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
         $stayDuration = $this->getStayDurationProperty();
-
+        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
         $roomAmount = $room->amount * $stayDuration;
         $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
@@ -456,9 +467,8 @@ class ReservationForm extends Component
             'days' => $stayDuration,
             'adults' => $adults,
             'kids' => $kids,
-
             'roomAmount' => $roomAmount, // base rate * days
-            'extra_charge' => $extraCharge,
+            'extra_charge' => $extraCharge, // extra_guest * extra_person_charge * days
             'total_amount' => $roomAmount + $extraCharge,
         ];
 
@@ -484,6 +494,9 @@ class ReservationForm extends Component
      */
     public function addActivityToCart($activityId)
     {
+        // Resets any previous error messages
+        $this->resetErrorBag();
+
         // Find the activity using the provided activityId, or fail if it doesn't exist
         $activity = Activity::findOrFail($activityId);
 
@@ -509,6 +522,8 @@ class ReservationForm extends Component
             'amount' => $activityAmount,  // Set the calculated amount for the activity
             'status' => $activitystatus,  // Set the status of the activity
         ];
+
+        // $this->computeTotalAmount(); 
     }
 
 
@@ -535,6 +550,7 @@ class ReservationForm extends Component
 
     public function removeFromCart($type, $itemId)
     {
+
         // Filter the cart items to exclude the one with the matching type and ID
         $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
             if ($type === 'activity') {
@@ -552,8 +568,9 @@ class ReservationForm extends Component
         // Reindex the array after filtering to ensure keys are sequential
         $this->cart = array_values($this->cart);
 
-        // Call a method to compute the total number of people (pax) in the cart after removing the item
+        // Only recalculate if necessary
         $this->computeTotalPax();
+        $this->computeTotalAmount();
     }
 
 
@@ -617,7 +634,7 @@ class ReservationForm extends Component
                     $transaction->properties()->attach($item['room_id'], [
                         'adults' => $item['adults'],
                         'kids' => $item['kids'],
-                        'days' => $this->getStayDurationProperty(),
+                        'days' => $item['days'],
                         'extra_charge' => $item['extra_charge'],
                         'amount' => $item['roomAmount'],
                         'total_amount' => $item['total_amount'],

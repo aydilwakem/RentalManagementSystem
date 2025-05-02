@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Transaction;
 use App\Models\PropertyFeature;
 use App\Models\PropertyCategory;
@@ -98,6 +99,7 @@ class Property extends Model
      * @param string $typeName The name of the property type to filter by.
      * @return \Illuminate\Database\Eloquent\Builder
      */
+
 
     public function scopeOfType($query, $typeName)
     {

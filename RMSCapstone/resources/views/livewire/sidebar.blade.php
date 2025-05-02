@@ -113,7 +113,7 @@
                     @can('new-reservation-list')
                     <div @click="toggle('rooms')"
                         class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                            {{ Route::is('admin.view-new-transactions*') || Route::is('admin.view-confirmed-transactions*') || Route::is('admin.view-ongoing-transactions*') || Route::is('admin.view-old-transactions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                            {{ Route::is('admin.reservations-list') || Route::is('admin.view-confirmed-transactions*') || Route::is('admin.view-ongoing-transactions*') || Route::is('admin.view-old-transactions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-calendar"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">
@@ -135,8 +135,8 @@
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
 
                         @can('new-reservation-list')
-                        <a href="{{ route('admin.view-new-transactions') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.view-new-transactions') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                        <a href="{{ route('admin.reservations-list') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.reservations-list') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">New Reservations</h1>
                         </a>
                         @endcan
