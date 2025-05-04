@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-      x-data="{ darkMode: localStorage.getItem('dark-mode') === 'true' }"
-      :class="{ 'dark': darkMode }"
-      x-init="$watch('darkMode', value => localStorage.setItem('dark-mode', value))">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('dark-mode') === 'true' }" :class="{ 'dark': darkMode }"
+    x-init="$watch('darkMode', value => localStorage.setItem('dark-mode', value))">
 
 <head>
     <meta charset="utf-8">
@@ -19,18 +17,28 @@
     <link rel="icon" type="image/png" href="{{ asset('images/canopy-logo.png') }}">
 
     <!-- Scripts -->
+
+    <!-- Calendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <!-- Text Editor -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix/dist/trix.css">
+    <script type="text/javascript" src="https://unpkg.com/trix/dist/trix.umd.min.js"></script>
+
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 
     <!-- Styles -->
     @livewireStyles
 </head>
 
-<body class="h-screen font-sans antialiased bg-gray-100 text-gray-900 dark:bg-[#1E1E1E] dark:text-white transition-colors duration-300">
+<body
+    class="h-screen font-sans antialiased bg-gray-100 text-gray-900 dark:bg-[#1E1E1E] dark:text-white transition-colors duration-300">
 
     <x-banner />
 
-    <div class="h-screen rounded-2xl flex bg-gray-100 dark:bg-[#1E1E1E]" x-data="{ sidebarWidth: 256 }" x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
+    <div class="h-screen rounded-2xl flex bg-gray-100 dark:bg-[#1E1E1E]" x-data="{ sidebarWidth: 256 }"
+        x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
 
         <!-- Sidebar -->
         <livewire:sidebar x-ref="sidebar" x-on:resize.window="sidebarWidth = $refs.sidebar.offsetWidth"

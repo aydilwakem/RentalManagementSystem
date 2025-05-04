@@ -65,7 +65,8 @@
                             Actions
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
 
@@ -101,6 +102,12 @@
                 <table class="min-w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
+                            <!-- Select All Checkbox-->
+                            <th scope="col" class="px-4 py-3">
+                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
+                            </th>
+
                             <!-- ID-->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
                                 <button class="flex items-center">
@@ -130,7 +137,7 @@
                             </th>
 
                             <!-- Name -->
-                            <th scope="col" class="px-5 py-3 text-right" wire:click="setSortBy('name_number')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name_number')">
                                 <button class="flex items-center">
                                     Name
                                     @if ($sortBy !== 'name_number')
@@ -141,14 +148,16 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -308,20 +317,20 @@
                             </th>
 
                             <!-- Status-->
-                            <th scope="col" class="px-4 py-3 text-center">Status</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
 
                             <!-- Actions -->
-                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
+                            <th scope="col" class="px-4 py-3">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody class="">
                         @forelse ($rooms as $room)
                             <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    <input wire:model.live="selectedRows" type="checkbox" name="room[]" value="{{ $room->id }}"
-                                        class="accent-blue-600 w-4 h-4">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="room[]"
+                                        value="{{ $room->id }}" class="accent-blue-600 w-4 h-4">
                                 </th>
-                                <th scope="row" class="font-medium text-gray-900 text-center ">
+                                <th scope="row" class="font-medium text-gray-900">
                                     {{ $fakeIDs[$room->id] ?? 'RM-???' }}
                                 </th>
                                 <td class="px-4 py-3">{{ $room->name_number }}</td>
@@ -339,7 +348,7 @@
                                         <span class="px-2 py-1 bg-red-500 text-white rounded">Out of Service</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
                                     <!-- View Icon -->
                                     @can('room-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"

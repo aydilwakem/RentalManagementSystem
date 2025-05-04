@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-8 bg-white rounded-lg mb-6">
+<div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('View Payment Method') }}
@@ -21,8 +21,9 @@
 
         <!-- QR Image -->
         <div class="mb-4">
-            <img src="{{ asset($paymentMethod->image ? 'storage/' . $paymentMethod->image : 'images/rms-default.png') }}"
-                alt="Method Image" class="w-full h-64 object-cover rounded-lg shadow-md">
+            <img class="w-full h-56 object-contain transition duration-300"
+                src="{{ asset($paymentMethod->mode_of_payment_qr_image ? 'storage/' . $paymentMethod->mode_of_payment_qr_image : 'images/rms-default.png') }}"
+                alt="{{ $paymentMethod->mode_of_payment_name }}" />
         </div>
 
         <!-- Account Name -->

@@ -68,16 +68,13 @@
 
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
-                <div class="flex items-center justify-between">
-
-                    {{-- @can('maintenance-soft-delete')
+                {{-- @can('maintenance-soft-delete')
                 <x-button
                     class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2 me-4"
                     icon="fas fa-trash" href="{{ route('admin.deleted-maintenances') }}">
                     Deleted Maintenances
                 </x-button>
                 @endcan --}}
-                </div>
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">
@@ -93,12 +90,35 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
                                 placeholder="Search" required="">
                         </div>
-                    </div>
 
+                        {{-- Bulk Actions Button --}}
+                        <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                            <button @click="open = !open" type="button"
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Actions
+                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div x-show="open" @click.away="open = false"
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                <div class="py-1">
+                                    <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                        Delete</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
                     {{-- Maintenance Type Sort --}}
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900">Staus :</label>
+                            <label class="w-40 text-sm font-medium text-gray-900">Status:</label>
                             <select wire:model.live="priorityStatus"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
                                 <option value="">All</option>
@@ -110,27 +130,6 @@
                         </div>
                     </div>
 
-                    {{-- Bulk Actions Button --}}
-                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                        <button @click="open = !open" type="button"
-                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Actions
-                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        <div x-show="open" @click.away="open = false"
-                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                            <div class="py-1">
-                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
-                                    Delete</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {{-- Table --}}
@@ -179,8 +178,9 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
@@ -418,27 +418,28 @@
                 </div>
 
 
-            <!-- Bulk Delete Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmBulkDelete">
-                <x-slot name="title">
-                    {{ __('Delete Maintenances') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __('Are you sure you want to delete these items?') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
-                    </x-secondary-button>
-
-                    <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                <!-- Bulk Delete Confirmation Modal -->
+                <x-dialog-modal wire:model.live="confirmBulkDelete">
+                    <x-slot name="title">
                         {{ __('Delete Maintenances') }}
-                    </x-danger-button>
-                </x-slot>
-            </x-dialog-modal>
+                    </x-slot>
 
-        </div>
+                    <x-slot name="content">
+                        {{ __('Are you sure you want to delete these items?') }}
+                    </x-slot>
+
+                    <x-slot name="footer">
+                        <x-secondary-button wire:click="$set('confirmBulkDelete', false)"
+                            wire:loading.attr="disabled">
+                            {{ __('Cancel') }}
+                        </x-secondary-button>
+
+                        <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                            {{ __('Delete Maintenances') }}
+                        </x-danger-button>
+                    </x-slot>
+                </x-dialog-modal>
+
+            </div>
     @endif
 </div>

@@ -39,16 +39,36 @@
 
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Amenities</h3>
                     @if ($room->features->isNotEmpty())
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ($room->features as $feature)
-                            <span
-                                class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-                                {{ $feature->name }}
-                            </span>
-                        @endforeach
-                    </div>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            @foreach ($room->features as $feature)
+                                <span
+                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                                    {{ $feature->name }}
+                                </span>
+                            @endforeach
+                        </div>
                     @else
                         <p class="text-gray-500 mt-2">No amenities selected for this room.</p>
+                    @endif
+
+                    <!-- Display Maximum Occupancy Rules -->
+                    <h3 class="text-lg font-semibold">Maximum Occupancy Rules</h3>
+
+                    @if ($room->occupancy_rules && is_array($room->occupancy_rules))
+                        <div class="space-y-4">
+                            @foreach ($room->occupancy_rules as $index => $rule)
+                                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p><strong>Adults:</strong> {{ $rule['adults'] }}</p>
+                                            <p><strong>Kids:</strong> {{ $rule['kids'] }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>No occupancy rules set.</p>
                     @endif
                 </div>
             </div>
@@ -62,64 +82,13 @@
                 </x-button>
 
                 <x-button type="button" icon="fas fa-trash"
-                class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
-                wire:click="confirmDelete({{ $room->id }})">
-                Delete
-            </x-button>
-        </div>
-
-
-            <!-- Room Amenities -->
-            <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
-            @if ($room->features->isNotEmpty())
-                <ul class="list-disc list-inside mt-2 text-gray-700">
-                    @foreach ($room->features as $feature)
-                        <li>{{ $feature->name }}</li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="text-gray-500 mt-2">No features selected for this room.</p>
-            @endif
-        </div>
-
-        <!-- Display Maximum Occupancy Rules -->
-        <h3 class="text-lg font-semibold">Maximum Occupancy Rules</h3>
-
-        @if($room->occupancy_rules && is_array($room->occupancy_rules))
-            <div class="space-y-4">
-                @foreach ($room->occupancy_rules as $index => $rule)
-                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p><strong>Adults:</strong> {{ $rule['adults'] }}</p>
-                                <p><strong>Kids:</strong> {{ $rule['kids'] }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+                    class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
+                    wire:click="confirmDelete({{ $room->id }})">
+                    Delete
+                </x-button>
             </div>
-        @else
-            <p>No occupancy rules set.</p>
-        @endif
-
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-between space-x-4 mt-3 mb-3">
-
-            <!-- Edit -->
-            <x-button type="button" icon="fas fa-pen-to-square"
-                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none"
-                wire:navigate href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
-                Edit
-            </x-button>
-
-            <!-- Delete -->
-            <x-button type="button" icon="fas fa-trash"
-                class="!bg-red-500 !text-white hover:!bg-red-600 focus:!ring-2 focus:!ring-red-400 focus:!outline-none"
-                wire:click="confirmDelete({{ $room->id }})">
-                Delete
-            </x-button>
-
         </div>
+
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
@@ -130,33 +99,34 @@
                 {{ __('Are you sure you want to delete this item?') }}
             </x-slot>
 
+            {{-- <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Delete Room') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot> --}}
+
             <x-slot name="footer">
                 <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
+                    wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
-                </x-slot>
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
 
-                <x-slot name="content">
-                    {{ __('Are you sure you want to delete this item?') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
-                    </x-secondary-button>
-
-                    <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
-                        wire:loading.attr="disabled">
-                        {{ __('Delete Room') }}
-                    </x-danger-button>
-                </x-slot>
-            </x-dialog-modal>
-
-        </div>
     </div>
+</div>
 
-    {{-- @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id]) --}}
+{{-- @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id]) --}}
 </div>
