@@ -50,7 +50,8 @@ class CreateProperty extends Component
 
     public function mount()
     {
-        $this->features = PropertyFeature::all();        // Load features
+        //only mount house features
+        $this->features = PropertyFeature::where('property_type_id', 2)->get();
     }
 
 

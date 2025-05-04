@@ -23,6 +23,43 @@ class ViewRooms extends Component
     public $statusFilter = ''; // Holds the selected room status
 
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false;
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->rooms->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getRoomsProperty(){
+        return Property::query()
+        ->ofType('Room')
+        ->when($this->statusFilter, function ($query) {
+            $query->where('property_status', $this->statusFilter);
+        })
+        ->where('name_number', 'like', '%' . $this->search . '%') //mount name
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        Property::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected rooms got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     public function confirmDelete($id)
     {
@@ -91,14 +128,7 @@ class ViewRooms extends Component
     $allRooms = Property::ofType('Room')->get();
 
     //query all rooms with the property status (available, booked, out)
-    $rooms = Property::query()
-        ->ofType('Room')
-        ->when($this->statusFilter, function ($query) {
-            $query->where('property_status', $this->statusFilter);
-        })
-        ->where('name_number', 'like', '%' . $this->search . '%') //mount name
-        ->orderBy($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
+    $rooms = $this->rooms;
 
     //Calculate fake IDs based on rooms sorted by created_at ASC
     $allSortedRooms = Property::ofType('Room')

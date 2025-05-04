@@ -23,6 +23,43 @@ class ViewProperties extends Component
     public $statusFilter = '';
 
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->houses->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getHousesProperty(){
+        return Property::query()
+        ->ofType('House')
+        ->when($this->statusFilter, function ($query) {
+            $query->where('property_status', $this->statusFilter);
+        })
+        ->where('name_number', 'like', '%' . $this->search . '%')
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        Property::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected houses got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     public function confirmDelete($id)
     {
@@ -79,14 +116,7 @@ class ViewProperties extends Component
     {
         $allHouses = Property::ofType('House')->get();
 
-        $houses = Property::query()
-            ->ofType('House')
-            ->when($this->statusFilter, function ($query) {
-                $query->where('property_status', $this->statusFilter);
-            })
-            ->where('name_number', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $houses = $this->houses; 
 
         $fakeIDs = session('fake_ids_houses', []);
 

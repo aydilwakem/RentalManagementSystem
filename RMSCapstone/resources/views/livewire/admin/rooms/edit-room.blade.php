@@ -56,6 +56,63 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+
+                <!-- Max Occupancy Rules -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Maximum Occupancy Rules</h3>
+
+                    <!-- Loop through the occupancy rules -->
+                    @foreach ($occupancy_rules as $index => $rule)
+                        <div class="mt-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Adults Field -->
+                                <div>
+                                    <label for="adults_{{ $index }}"
+                                        class="block text-sm font-medium text-gray-700">Adults</label>
+                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
+                                        id="adults_{{ $index }}" min="0"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    @error("occupancy_rules.{$index}.adults")
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Kids Field -->
+                                <div>
+                                    <label for="kids_{{ $index }}"
+                                        class="block text-sm font-medium text-gray-700">Kids</label>
+                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
+                                        id="kids_{{ $index }}" min="0"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    @error("occupancy_rules.{$index}.kids")
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Remove Rule Button -->
+                            <div class="mt-4 flex justify-end">
+                                <button type="button" wire:click="removeRule({{ $index }})"
+                                    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300">
+                                    Remove Rule
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <!-- Add Rule Button -->
+                    <div class="mt-4 flex justify-start">
+                        <button type="button" wire:click="addRule"
+                            class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300">
+                            Add Rule
+                        </button>
+                    </div>
+                </div>
+
+
+
+
                 <!-- Turnover Duration -->
                 <div>
                     <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover

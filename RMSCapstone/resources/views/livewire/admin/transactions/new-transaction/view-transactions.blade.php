@@ -325,11 +325,19 @@
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                             {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
                         </th>
+
                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                             {{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
                         </th>
+
                         <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-                        <td class="px-4 py-3"> {{ $transaction->property->name_number ?? 'N/A' }}</td>
+
+                        <td class="px-4 py-3">
+                            @foreach ($transaction->properties as $property)
+                                {{ $property->name_number ?? 'N/A' }}<br>
+                            @endforeach
+                        </td>
+                        
                         <td class="px-4 py-3">
                             {{ \Carbon\Carbon::parse($transaction->check_in_date)->format('F j, Y') }}
                         </td>

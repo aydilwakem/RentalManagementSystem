@@ -26,7 +26,7 @@
                                 $activity->description }}
                             </p>
                             <p class="text-base font-normal text-gray-700 dark:text-gray-400">
-                                <i class="fas fa-money mr-2"></i> Extra Person Charge:
+                                <i class="fas fa-money mr-2"></i> Amount:
                                 {{ $activity->amount }}
                             </p>
 

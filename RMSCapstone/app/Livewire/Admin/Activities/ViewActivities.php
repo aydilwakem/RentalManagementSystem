@@ -26,6 +26,40 @@ class ViewActivities extends Component
 
     //Public declaration for delete confirmation modal
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->activities->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getActivitiesProperty(){
+        return Activity::query()
+        ->where('name', 'like', "%{$this->search}%")
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        Activity::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected activities got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     //Method to make modal true by getting item id
     public function confirmDelete($id)
@@ -99,11 +133,7 @@ class ViewActivities extends Component
      */
     public function render()
     {
-        $activities = Activity::query()
-            ->where('name', 'like', "%{$this->search}%")
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
-
+        $activities = $this->activities; 
             // Retrieve unique session for activities
         $fakeIDs = session('fake_ids_activities', []);
 

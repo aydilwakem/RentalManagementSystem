@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Transactions\NewTransaction;
+namespace App\Livewire\Admin\Reservations;
 
 use App\Mail\ConfirmationEmail;
 use App\Models\Transaction;
@@ -12,8 +12,9 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ViewTransactions extends Component
+class ReservationList extends Component
 {
+
     use WithPagination; // Enables pagination for Livewire component
 
     // Properties that can be modified via URL parameters
@@ -133,7 +134,7 @@ class ViewTransactions extends Component
     {
         $transactions = Transaction::with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 2) // Room reservation type
-            ->when($this->search !== '', function ($query) {
+            ->when($this->search !== '', callback: function ($query) {
                 $query->where('first_name', 'like', '%' . $this->search . '%');
             })
             ->when($this->statusFilter !== '', function ($query) {
@@ -142,6 +143,6 @@ class ViewTransactions extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.admin.transactions.new-transaction.view-transactions', compact('transactions'));
+        return view('livewire.admin.reservations.reservation-list', compact('transactions'));
     }
 }

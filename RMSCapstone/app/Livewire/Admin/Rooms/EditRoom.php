@@ -21,6 +21,7 @@ class EditRoom extends Component
     public $ideal_guest;
     public $max_adults;
     public $max_kids;
+    public $occupancyRules = [];  // The list of occupancy rules
     public $turnover_duration;
     public $property_status;
     public $amount;
@@ -28,6 +29,7 @@ class EditRoom extends Component
     public $newImage;
     public $features;            // All available features
     public $selectedFeatures = []; // Selected feature IDs
+    public $occupancy_rules = [];
     public $roomCategories; // Store room categories for dropdown
     public $roomId;
 
@@ -54,9 +56,22 @@ class EditRoom extends Component
         $this->amount = $room->amount;
         $this->image = $room->image;
         $this->roomCategories = PropertyCategory::all();
+        $this->occupancy_rules = $room->occupancy_rules ?? []; // If null, fallback to empty array
+
 
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
+    }
+
+    public function addRule()
+    {
+        $this->occupancy_rules[] = ['adults' => 2, 'kids' => 2]; // Default rule
+    }
+
+    public function removeRule($index)
+    {
+        unset($this->occupancy_rules[$index]);
+        $this->occupancy_rules = array_values($this->occupancy_rules); // Re-index array
     }
 
     public function updateRoom()
@@ -72,6 +87,9 @@ class EditRoom extends Component
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
                 'newImage' => 'nullable|image|max:2048',
+                'occupancy_rules' => 'required|array',
+                'occupancy_rules.*.adults' => 'required|integer|min:0',
+                'occupancy_rules.*.kids' => 'required|integer|min:0',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -98,6 +116,7 @@ class EditRoom extends Component
             'property_status' => $this->property_status,
             'amount' => $this->amount,
             'image' => $this->image,
+            'occupancy_rules' => $this->occupancy_rules,
         ]);
 
         $this->room->features()->sync($this->selectedFeatures);

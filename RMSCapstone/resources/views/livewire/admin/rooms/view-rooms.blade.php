@@ -41,6 +41,7 @@
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <!-- Header-->
             <div class="flex items-center justify-between d p-4">
+                {{-- Search Tab --}}
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -55,6 +56,27 @@
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
                             placeholder="Search" required="">
+                    </div>
+
+                    {{-- Bulk Actions Button --}}
+                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    Delete</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -71,6 +93,7 @@
                         </select>
                     </div>
                 </div>
+
             </div>
 
             <!-- Table Body-->
@@ -294,6 +317,10 @@
                     <tbody class="text-center">
                         @forelse ($rooms as $room)
                             <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="room[]" value="{{ $room->id }}"
+                                        class="accent-blue-600 w-4 h-4">
+                                </th>
                                 <th scope="row" class="font-medium text-gray-900 text-center ">
                                     {{ $fakeIDs[$room->id] ?? 'RM-???' }}
                                 </th>
@@ -363,7 +390,6 @@
             </div>
         </div>
 
-
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
@@ -381,6 +407,27 @@
 
                 <x-danger-button class="ms-3" wire:click="deleteRoom" wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
+
+        <!-- Bulk Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmBulkDelete">
+            <x-slot name="title">
+                {{ __('Delete Rooms') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete these items?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                    {{ __('Delete Rooms') }}
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>

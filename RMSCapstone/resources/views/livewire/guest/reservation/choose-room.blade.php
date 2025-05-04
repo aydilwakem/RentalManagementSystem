@@ -8,7 +8,7 @@
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             @foreach ($rooms as $room)
-                    <div class="lg:col-span-2 space-y-6">
+                    <div class="lg:col-span-2 space-y-6" wire:key="room-{{ $room->id }}">
 
                         <div class="bg-white border rounded-xl overflow-hidden shadow-sm">
                             <div class="md:flex">
@@ -28,7 +28,7 @@
                                         <p class="text-base font-normal text-gray-700 dark:text-gray-400">
                                             <i class="fas fa-user mr-2"></i> Ideal Guests:
                                             {{ $room->ideal_guest
-                                                                                                                                                                                                                                                                                                                                                                                        }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                }}
                                         </p>
                                         <p class="text-base font-normal text-gray-700 dark:text-gray-400">
                                             <i class="fas fa-users mr-2"></i> Maximum Capacity: {{
@@ -63,7 +63,7 @@
                                                 <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                 <select wire:model.live="adults.{{ $room->id }}"
                                                     class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                    @for ($i = 0; $i <= $room->ideal_guest; $i++)
+                                                    @for ($i = 0; $i <= $room->max_adults; $i++)
                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                     @endfor
                                                 </select>
@@ -74,7 +74,7 @@
                                                 <label class="block text-sm font-medium text-gray-700">Children</label>
                                                 <select wire:model.live="kids.{{ $room->id }}"
                                                     class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                    @for ($i = 0; $i <= $room->ideal_guest; $i++)
+                                                    @for ($i = 0; $i <= $room->max_kids; $i++)
                                                         <option value="{{ $i }}">{{ $i }}</option>
                                                     @endfor
                                                 </select>

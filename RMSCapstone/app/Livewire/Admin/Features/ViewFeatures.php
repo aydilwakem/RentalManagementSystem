@@ -26,6 +26,40 @@ class ViewFeatures extends Component
 
     //Public declaration for confirmation modal
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->features->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getFeaturesProperty(){
+        return PropertyFeature::query()
+        ->where('property_type_id', 2) // Only features with property_type_id = 2
+        ->where('name', 'like', "%{$this->search}%")
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        PropertyFeature::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected features got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     public function confirmDelete($id)
     {
@@ -96,11 +130,7 @@ class ViewFeatures extends Component
     public function render()
     {
        // Retrieve features where property_type_id = 2, 
-        $features = PropertyFeature::query()
-        ->where('property_type_id', 2) // Only features with property_type_id = 2
-        ->where('name', 'like', "%{$this->search}%")
-        ->orderBy($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
+        $features = $this->features;
 
         // Retrieve fake IDs from session
         $fakeIDs = session('fake_ids_features', []);

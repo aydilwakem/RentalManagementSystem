@@ -19,6 +19,10 @@ class CreateRoom extends Component
     public $ideal_guest;
     public $max_adults;
     public $max_kids;
+    public $occupancy_rules = [
+        ['adults' => 2, 'kids' => 2],
+        ['adults' => 3, 'kids' => 0],
+    ]; // Default values for occupancy rules
     public $turnover_duration;
     public $property_status = 'available'; // Default
     public $amount;
@@ -45,7 +49,19 @@ class CreateRoom extends Component
     public function mount()
     {
         $this->roomCategories = PropertyCategory::all();   // Load categories
-        $this->features = PropertyFeature::all();        // Load features
+        //mount only room inclusions
+        $this->features = PropertyFeature::where('property_type_id', 1)->get();
+    }
+
+    public function addRule()
+    {
+        $this->occupancy_rules[] = ['adults' => 2, 'kids' => 2]; // Default rule
+    }
+
+    public function removeRule($index)
+    {
+        unset($this->occupancy_rules[$index]);
+        $this->occupancy_rules = array_values($this->occupancy_rules); // Re-index array
     }
 
     public function saveRoom()
@@ -58,6 +74,7 @@ class CreateRoom extends Component
                 'ideal_guest' => 'required|integer|min:1',
                 'max_adults' => 'required|integer|min:1',
                 'max_kids' => 'required|integer|min:0',
+                'capacity' => 'required|integer|min:1',
                 'turnover_duration' => 'required|string',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
@@ -65,6 +82,9 @@ class CreateRoom extends Component
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
                 'selectedFeatures' => 'nullable|array',
                 'selectedFeatures.*' => 'exists:property_features,id',
+                'occupancy_rules' => 'required|array',
+                'occupancy_rules.*.adults' => 'required|integer|min:0',
+                'occupancy_rules.*.kids' => 'required|integer|min:0',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmCreateItem = false;
@@ -91,10 +111,12 @@ class CreateRoom extends Component
             'ideal_guest' => $this->ideal_guest,
             'max_adults' => $this->max_adults,
             'max_kids' => $this->max_kids,
+            'capacity' => $this->capacity,
             'turnover_duration' => $this->turnover_duration,
             'property_status' => $this->property_status,
             'amount' => $this->amount,
             'images' => $imagePaths,
+            'occupancy_rules' => $this->occupancy_rules,
         ]);
 
         // Attach selected features to pivot
@@ -109,11 +131,13 @@ class CreateRoom extends Component
             'ideal_guest',
             'max_adults',
             'max_kids',
+            'capacity',
             'turnover_duration',
             'property_status',
             'amount',
             'images',
             'selectedFeatures',
+            'occupancy_rules',
         ]);
 
         session()->flash('message', 'Room successfully created!');

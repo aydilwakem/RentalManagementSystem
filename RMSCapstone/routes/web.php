@@ -337,7 +337,7 @@ Route::middleware([
         return view('admin.event-halls.deleted-event-halls');
     })->name('admin.deleted-event-halls')->middleware('can:event-hall-soft-delete');
 
-    
+
     // ------------------ Event Hall Inclusions
 
     //List Inclusions
@@ -352,7 +352,7 @@ Route::middleware([
 
     // View Inclusion
     Route::get('view/inclusion/{inclusion}', ViewInclusion::class)
-        ->name('admin.view-inclusion'); 
+        ->name('admin.view-inclusion');
 
     //Edit Inclusions
     Route::get('edit/inclusion/{inclusion}', EditInclusion::class)
@@ -439,11 +439,15 @@ Route::middleware([
      * Reservations
      */
 
-    // New Reservations
+    // Reservation Lists
 
-    Route::get('/new-reservations', function () {
-        return view('admin.transactions.new.view-transactions');
-    })->name('admin.view-new-transactions')->middleware('can:new-reservation-list');
+    Route::get('/reservations-list', function () {
+        return view('admin.reservations.reservations-list');
+    })->name('admin.reservations-list');
+
+
+
+
 
     //Create
     Route::get('create/new-reservation', function () {
@@ -534,7 +538,7 @@ Route::middleware([
 
     // View Feature
     Route::get('view/feature/{feature}', ViewFeature::class)
-        ->name('admin.view-feature'); 
+        ->name('admin.view-feature');
 
     //Edit Features
     Route::get('edit/feature/{feature}', EditFeature::class)

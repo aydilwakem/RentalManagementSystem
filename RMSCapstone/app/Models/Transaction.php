@@ -28,6 +28,7 @@ class Transaction extends Model
         'total_kids',
         'pax',
         'total_amount',
+        'deposit_amount',
         'terms',
         'heard_from',
         'reservation_source',
@@ -42,6 +43,7 @@ class Transaction extends Model
     // Automatically convert attributes to specific data types when retrieving or setting them
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'deposit_amount' => 'decimal:2',
         'actual_start_datetime' => 'datetime',
         'actual_end_datetime' => 'datetime',
         'start_datetime' => 'datetime',
@@ -88,7 +90,7 @@ class Transaction extends Model
     public function properties()
     {
         return $this->belongsToMany(Property::class, 'transaction_properties')
-            ->withPivot('adults', 'kids')
+            ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')
             ->withTimestamps();
     }
 

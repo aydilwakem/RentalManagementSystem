@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Transaction;
 use App\Models\PropertyFeature;
 use App\Models\PropertyCategory;
@@ -25,6 +26,7 @@ class Property extends Model
         'capacity',
         'max_adults',
         'max_kids',
+        'occupancy_rules',
         'turnover_duration',
         'property_status',
         'house_number',
@@ -38,6 +40,10 @@ class Property extends Model
         'extra_charge_per_hour',
         'image',
         'description',
+    ];
+
+    protected $casts = [
+        'occupancy_rules' => 'array',  // Automatically decode JSON to array
     ];
 
     // ----------------------------------------- Relationships -------------------------------------------- //
@@ -56,7 +62,15 @@ class Property extends Model
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'transaction_properties')
-            ->withPivot('adults', 'kids')
+            ->withPivot(
+                'adults',
+                'kids',
+                'extra_guest',
+                'extra_charge',
+                'amount',
+                'days',
+                'total_amount'
+            )
             ->withTimestamps();
     }
 
@@ -85,6 +99,7 @@ class Property extends Model
      * @param string $typeName The name of the property type to filter by.
      * @return \Illuminate\Database\Eloquent\Builder
      */
+
 
     public function scopeOfType($query, $typeName)
     {
