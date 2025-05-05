@@ -182,7 +182,15 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
-                        <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
+                        <div wire:loading wire:target="newImage" class="flex items-center justify-center px-5 mt-4">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span>Uploading...</span>
+                        </div>
                     </div>
 
                     <!-- Image Preview -->

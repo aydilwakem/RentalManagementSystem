@@ -1,77 +1,92 @@
-<div>
+<div class=" flex">
+    <div class="w-full px-4">
+        <div class="w-full rounded-xl shadow bg-gray-50 overflow-hidden">
+            <div class="bg-green-700 text-white text-lg font-semibold px-4 py-3 rounded-t-xl text-center">
+                Guest Details
+            </div>
 
-    <!-- First Name -->
-    <div>
-        <label for="first_name" class="block mb-1">First Name</label>
-        <input type="text" wire:model="first_name" id="first_name" class="w-full border p-2 rounded" />
-        @error('first_name')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" wire:model="first_name"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('first_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
+                        <input type="text" wire:model="middle_name"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('middle_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" wire:model="last_name"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('last_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" wire:model="email"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('email')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                        <input type="text" wire:model="contact_number"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('contact_number')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                        <input type="text" wire:model="country"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('country')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">How did you hear about us?</label>
+                        <select wire:model="heard_from"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+                            <option value="">Select an option</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Tiktok">Tiktok</option>
+                            <option value="Youtube">Youtube</option>
+                            <option value="Google">Google</option>
+                        </select>
+                        @error('heard_from')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="flex flex-col space-y-2 w-full">
+                    <div class="font-semibold">
+                        Additional Guests (Optional)
+                    </div>
+                    <button
+                        class="w-32 h-10 px-4 py-2 bg-white text-green-700 outline-green-800 text-sm rounded-md transition">
+                        <i class="fas fa-plus mr-2"></i> Add Guest
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Middle Name -->
-    <div>
-        <label for="middle_name" class="block mb-1">Middle Name</label>
-        <input type="text" wire:model="middle_name" id="middle_name" class="w-full border p-2 rounded" />
-        @error('middle_name')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-
-    <!-- Last Name -->
-    <div>
-        <label for="last_name" class="block mb-1">Last Name</label>
-        <input type="text" wire:model="last_name" id="last_name" class="w-full border p-2 rounded" />
-        @error('last_name')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-    <!-- Email -->
-    <div>
-        <label for="email" class="block mb-1">Email</label>
-        <input type="email" wire:model="email" id="email" class="w-full border p-2 rounded" />
-        @error('email')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-    <!-- Contact Number -->
-    <div>
-        <label for="contact_number" class="block mb-1">Contact Number</label>
-        <input type="text" wire:model="contact_number" id="contact_number" class="w-full border p-2 rounded" />
-        @error('contact_number')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-    <!-- Country -->
-    <div>
-        <label for="country" class="block mb-1">Country</label>
-        <input type="text" wire:model="country" id="country" class="w-full border p-2 rounded" />
-        @error('country')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-    <!-- Heard From -->
-    <div>
-        <label for="heard_from" class="block mb-2 text-sm font-medium text-gray-900">Property
-            Status</label>
-        <select wire:model="heard_from" id="heard_from"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-            <option value="Facebook">Facebook</option>
-            <option value="Instagram">Instagram</option>
-            <option value="Tiktok">Tiktok</option>
-            <option value="Youtube">Youtube</option>
-            <option value="Google">Google</option>
-        </select>
-        @error('heard_from')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
-    </div>
-
-
-
 </div>

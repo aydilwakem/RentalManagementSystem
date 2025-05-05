@@ -1,31 +1,30 @@
-<div class="min-h-screen p-10 bg-white">
-    <div class="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+<div class="min-h-screen p-10">
+    <div class="flex flex-col lg:flex-row gap-4 mx-auto">
 
         {{-- Left Side: Form Steps --}}
-        <div class="w-full flex justify-center">
-            <div class="w-2/3">
+        <div class="w-full flex">
+            <div class="w-full">
 
                 <div class="header">
                     <!-- Title -->
                     <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
                     <!-- Date Picker & Search -->
                     <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
-        
-        
+
                         <input type="date" wire:model.live="check_in_date"
                             class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
                             placeholder="Check-in">
 
-                            {{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
+                        {{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
                             <input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
-        
+
                         <h1><i class="fas fa-arrow-right"></i></h1>
-        
+
                         <input type="date" wire:model.live="check_out_date"
                             class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
                             placeholder="Check-out">
-        
-        
+
+
                         {{-- <button
                             class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
                             Search Availability
@@ -34,12 +33,12 @@
                 </div>
 
                 {{-- <div> --}}
-                    {{-- <label for="checkin">Check-in Date & Time:</label>
+                {{-- <label for="checkin">Check-in Date & Time:</label>
                     <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
 
                     <label for="checkout">Check-out Date & Time:</label>
                     <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
-                    {{--
+                {{--
                 </div> --}}
 
 
@@ -55,7 +54,7 @@
                 @endif
 
                 <!-- Choose an Activity -->
-                @if($currentStep == 2)
+                @if ($currentStep == 2)
                     <div class="step-activity">
                         @include('livewire.guest.reservation.choose-activity')
                     </div>
@@ -63,7 +62,7 @@
 
                 <!-- Enter Guest Details -->
                 @if ($currentStep == 3)
-                    <div class="step-guest-details">
+                    <div class="step-guest-details w-full">
                         @include('livewire.guest.reservation.guest-detail')
                     </div>
                 @endif
@@ -91,68 +90,99 @@
         It also allows the user to remove items (rooms/activities) from the reservation cart.
         --}}
 
-        <div class="w-full lg:w-1/3 bg-gray-50 border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-10">
-
-    
+        <div class="w-full lg:w-1/3 bg-gray-50 border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-0 z-10">
             <!------------------------------ Reservation Date Details --------------------------->
-
             @php
                 use Carbon\Carbon;
             @endphp
 
-            <div class="flex items-center text-md text-gray-800 mb-2">
-                <span>
-                    {{ $check_in_date ? Carbon::parse($check_in_date)->format('F j, Y g:i A') : '' }}
-                </span>
+            @if ($check_in_date)
+                <div class="text-lg flex items-center justify-center font-semibold text-green-700 mb-1">
+                    Reservation Summary
+                </div>
+                <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
+                    <span>
+                        {{ Carbon::parse($check_in_date)->format('F j, Y') }}
+                    </span>
 
-                @error('check_in_date') <span class="text-red-600">{{ $message }}</span> @enderror
+                    @error('check_in_date')
+                        <span class="text-red-600">{{ $message }}</span>
+                    @enderror
 
-                <i class="fa-solid fa-arrow-right px-4"></i>
-                <span>
-                    {{ $check_out_date ? Carbon::parse($check_out_date)->format('F j, Y g:i A') : '' }}
-                </span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                    @if ($check_out_date)
+                        <span>
+                            {{ Carbon::parse($check_out_date)->format('F j, Y') }}
+                        </span>
+                    @endif
+                </div>
+            @endif
 
-                @error('check_out_date') <span class="text-red-600">{{ $message }}</span> @enderror
-            </div>
+            @if ($check_out_date)
+                <div class="flex justify-center items-center text-md text-gray-800 mb-2 space-x-4">
+                    <!-- Stay Duration -->
+                    <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
 
-            <!-- Stay Duration -->
-            <p>Stay Duration: {{ $this->stayDuration }} night(s)</p>
+                </div>
+            @endif
 
-            <hr class="my-2 border-gray-200">
-
+            @if ($check_in_date)
+                <hr class="my-2 border-gray-200">
+            @endif
 
             <!------------------------------ Selected Items ------------------------------------->
             @php
-                $cartCollection = collect($cart);  // Convert array to collection
+                $cartCollection = collect($cart); // Convert array to collection
             @endphp
 
 
             <div>
                 @if ($cartCollection->isNotEmpty())
-
-                    <div class="flex items-start gap-2 mb-2 py-2">
-                        {{-- Selected Rooms --}}
+                    <div class="flex flex-col gap-2 mb-2 py-2">
+                        <!-- Selected Rooms -->
                         @if ($cartCollection->contains('type', 'room'))
                             @foreach ($cart as $item)
                                 @if ($item['type'] === 'room')
-                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1"
+                                    <!-- Room Card -->
+                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
                                         wire:key="cart-item-{{ $item['room_id'] }}">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <div class="text-gray-900">
-                                                <strong>Room:</strong> {{ $item['room_name'] }}<br>
-                                                <span class="text-sm">Adults: {{ $item['adults'] }}, Kids:
-                                                    {{ $item['kids'] }}</span>
-                                                    <span class="text-sm">Extra Guest: {{ $item['extra_guest'] }}</span>
-                                                    <span class="text-sm">Extra Charge: {{ $item['extra_charge'] }}</span>
-                                                    <span class="text-sm">Total Amount: {{ $item['total_amount'] }}</span>
+                                        <!-- Back Button -->
+                                        <button type="button"
+                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
+                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                                            title="Remove Room">
+                                            <span class="leading-none ">&times;</span>
+                                        </button>
+                                        <!-- Room Details -->
+                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                            <!-- Room Name -->
+                                            <div class="text-md">
+                                                <i class="fa-solid fa-bed"></i>
+                                                <strong>Room:</strong> {{ $item['room_name'] }}
                                             </div>
-                                            <div class="flex items-center gap-2">
-                                                <button type="button"
-                                                    wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
-                                                    class="text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center transition"
-                                                    title="Remove Room">
-                                                    <span class="text-xl leading-none">&times;</span>
-                                                </button>
+
+                                            <!-- Guest Info -->
+                                            <div class="text-sm text-gray-600">
+                                                Adults: {{ $item['adults'] }}, Kids: {{ $item['kids'] }}
+                                            </div>
+
+                                            <!-- Charges Breakdown -->
+                                            <div class="flex justify-between items-start gap-2">
+                                                <!-- Labels -->
+                                                <div class="space-y-1">
+                                                    <div class="text-sm text-gray-600">Extra Charge:</div>
+                                                    <div class="text-sm text-gray-600">Subtotal:</div>
+                                                </div>
+
+                                                <!-- Amounts -->
+                                                <div class="text-right space-y-1">
+                                                    <div class="text-sm font-semibold text-gray-800">
+                                                        ₱{{ number_format($item['extra_charge'], 2) }}
+                                                    </div>
+                                                    <div class="text-sm font-semibold text-gray-800">
+                                                        ₱{{ number_format($item['total_amount'], 2) }}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -160,32 +190,41 @@
                             @endforeach
                         @endif
 
-                        {{-- Selected Activities --}}
+                        <!-- Selected Activities -->
                         @if ($cartCollection->contains('type', 'activity'))
                             @foreach ($cart as $item)
                                 @if ($item['type'] === 'activity')
-                                    <div class="flex justify-between items-center mb-2" wire:key="cart-item-{{ $item['activity_id'] }}">
-                                        <div class="text-gray-900">
-                                            <strong>Activity:</strong> {{ $item['activity_name'] }}<br>
-                                            <span class="text-sm">Quantity: {{ $item['quantity'] }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <div class="text-md font-semibold text-green-700">
-                                                ₱{{ number_format($item['amount'], 2) }}
+                                    <!-- Activity Card -->
+                                    <div class="bg-gray-100 py-3 px-2 pr-8 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                                        wire:key="cart-item-{{ $item['activity_id'] }}">
+                                        <!-- back Button -->
+                                        <button type="button"
+                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                                            title="Remove Activity">
+                                            <span class="leading-none ">&times;</span>
+                                        </button>
+                                        <!-- Activity Details -->
+                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                            <div class="text-md">
+                                                <i class="fa-solid fa-square-plus"></i>
+                                                <strong>Activity:</strong> {{ $item['activity_name'] }}
                                             </div>
-                                            <button type="button"
-                                                wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
-                                                class="text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center transition"
-                                                title="Remove Activity">
-                                                <span class="text-xl leading-none">&times;</span>
-                                            </button>
+                                            <div class="flex justify-between items-center">
+                                                <div class="text-sm text-gray-600">
+                                                    Quantity: {{ $item['quantity'] }}
+                                                </div>
+                                                <div class="text-sm font-semibold">
+                                                    ₱{{ number_format($item['amount'], 2) }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
                             @endforeach
                         @endif
+                        <p class="mt-4">Total Guests: {{ $total_pax }}</p>
                     </div>
-
                 @else
                     <!-- Show when no room is selected -->
                     <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
@@ -193,54 +232,64 @@
                         <span>No rooms added yet</span>
                     </div>
                 @endif
-
-                <p class="mt-4">Total Guests: {{ $total_pax }}</p>
-    
             </div>
 
-            @error('cart') <span class="text-red-600">{{ $message }}</span> @enderror
+            @error('cart')
+                <span class="text-red-600">{{ $message }}</span>
+            @enderror
 
 
             <!------------------------------ Price Breakdown ------------------------------------->
-            <hr class="my-2 border-gray-200">
+            @if ($cartCollection->contains('type', 'room'))
+                <div>
+                    <hr class="my-2 border-gray-200">
 
-            <!-- Total Amount -->
-            <div class="flex justify-between items-center font-semibold text-gray-900 mb-3">
-                <div>Total</div>
-                <div class="text-lg">{{ $this->computeTotalAmount() }}</div>
-            </div>
+                    <!-- Total Amount -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Total</div>
+                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
+                    </div>
 
-            <!-- Deposit -->
-            <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
-                <div>Deposit</div>
-                <div class="font-semibold">
-                    {{ $total_amount > 0 ? number_format($total_amount * 0.5, 2) : '₱0.00' }}</div>
-            </div>
+                    <!-- Deposit -->
+                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                        <div>Deposit</div>
+                        <div class="font-semibold">
+                            ₱{{ $total_amount > 0 ? number_format($total_amount * 0.5, 2) : '0.00' }}</div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Navigation Buttons-->
-            <div class="mt-6 flex justify-between">
+            @if ($cartCollection->contains('type', 'room'))
+                <div class="mt-6 flex justify-between">
 
-                @if ($currentStep == 1)
-                    <div> </div>
-                @endif
+                    @if ($currentStep == 1)
+                        <div> </div>
+                    @endif
 
-                <!-- Back button -->
-                @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
-                    <button type="button" class="px-4 py-2 bg-gray-300 rounded" wire:click="decreaseStep()">Back</button>
-                @endif
+                    <!-- Back button -->
+                    @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
+                        <button type="button"
+                            class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
+                            wire:click="decreaseStep()"> Back
+                        </button>
+                    @endif
 
-                <!-- Next button -->
-                @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
-                    <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded" wire:click="increaseStep()">
-                        Next</button>
-                @endif
+                    <!-- Next button -->
+                    @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
+                        <button type="button"
+                            class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                            wire:click="increaseStep()">Next</button>
+                    @endif
 
-                <!-- Confirm Reservation button -->
-                @if ($currentStep == 4)
-                    <button type="button" class="px-4 py-2 bg-green-600 text-white rounded" wire:click="register">Confirm
-                        Reservation</button>
-                @endif
-            </div>
+                    <!-- Confirm Reservation button -->
+                    @if ($currentStep == 4)
+                        <button type="button"
+                            class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                            wire:click="register">Confirm Reservation</button>
+                    @endif
+                </div>
+            @endif
 
         </div>
 

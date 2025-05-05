@@ -1,7 +1,5 @@
 <div class="min-h-screen p-10 bg-white">
     <form wire:submit.prevent="register">
-
-
         <div class="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
 
             <!---------------------------------------------- MAIN STEPS  --------------------------------------------->
@@ -12,8 +10,6 @@
                 <div class="w-full flex justify-center">
 
                     <div class="step-one w-full max-w-7xl px-4">
-
-
                         <div class="header">
                             <!-- Title -->
                             <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
@@ -125,7 +121,7 @@
                                                 <!-- Add to Cart Button -->
                                                 <div>
                                                     <button type="button" wire:click="addToCart({{ $room->id }})"
-                                                        class="px-4 py-2 mt-3 w-full 
+                                                        class="px-4 py-2 mt-3 w-full
                                                             {{ $check_in_date && $check_out_date ? 'bg-green-700 bg-opacity-85 hover:bg-green-800' : 'bg-gray-400 cursor-not-allowed' }}
                                                             border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                                         {{ !$check_in_date || !$check_out_date ? 'disabled' : '' }}>
