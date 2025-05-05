@@ -457,16 +457,31 @@ Route::middleware([
     Route::get('edit/reservation/{transaction}', EditReservation::class)
         ->name('admin.edit-reservation');
 
-    // Confirm Payment Receipt
-    Route::get('view/confirm-receipt/{transaction}', ConfirmReceipt::class)
-        ->name('admin.confirm-receipt');
-
     // Add Transaction 
     Route::get('add/transaction/{transaction}', AddTransaction::class)
         ->name('admin.add-transaction');
 
 
+    /**
+     * Payments
+     */
 
+    Route::get('/payments-list', function () {
+        return view('admin.reservations.payments.payment-list');
+    })->name('admin.payments-list');
+
+    // Confirm Payment Receipt
+    Route::get('view/confirm-receipt/{transaction}', ConfirmReceipt::class)
+        ->name('admin.confirm-receipt');
+
+
+    /**
+     * Invoice
+     */
+
+    Route::get('/invoice-list', function () {
+        return view('admin.reservations.invoices.invoice-list');
+    })->name('admin.invoice-list');
 
 
 

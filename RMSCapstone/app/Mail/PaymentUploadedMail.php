@@ -9,45 +9,47 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+
 class PaymentUploadedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+
+    /**
+     * The payment details.
+     *
+     * @var array
+     */
+    public $paymentDetails;
+
     /**
      * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Payment Uploaded Mail',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @param  array  $paymentDetails
+     * @return void
      */
-    public function attachments(): array
+    public function __construct($paymentDetails)
     {
-        return [];
+        $this->paymentDetails = $paymentDetails;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->view('guest.emails.payment-uploaded')
+            ->subject('Payment Uploaded Successfully')
+            ->with([
+                'full_name' => $this->paymentDetails['full_name'],
+                'email' => $this->paymentDetails['email'],
+                'payment_method_id' => $this->paymentDetails['payment_method_id'],
+                'check_in' => $this->paymentDetails['check_in'],
+                'check_out' => $this->paymentDetails['check_out'],
+                'total_amount' => $this->paymentDetails['total_amount'],
+                'deposit' => $this->paymentDetails['deposit'],
+            ]);
     }
 }

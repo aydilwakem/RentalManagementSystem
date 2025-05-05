@@ -9,18 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-
-class ReservationSubmittedMail extends Mailable
+class ReservationConfirmedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * The reservation details.
+     *
+     * @var array
+     */
     public $reservationData;
+
 
     /**
      * Create a new message instance.
-     *
-     * @param  array  $reservationData
-     * @return void
      */
     public function __construct($reservationData)
     {
@@ -34,8 +36,8 @@ class ReservationSubmittedMail extends Mailable
      */
     public function build()
     {
-        return $this->view('guest.emails.reservation-submitted')
-            ->subject('Reservation Confirmation')
+        return $this->view('guest.emails.reservation-confirmed')
+            ->subject('Reservation Confirmed!')
             ->with([
                 'name' => $this->reservationData['name'],
                 'transaction_number' => $this->reservationData['transaction_number'],

@@ -7,11 +7,12 @@ use App\Models\Transaction;
 use App\Models\TransactionUser;
 use App\Models\Property;
 use App\Models\ReservationType;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
+use App\Mail\ReservationConfirmedMail;
+use Illuminate\Support\Facades\Mail;
 
 
 class ReservationList extends Component
@@ -104,16 +105,50 @@ class ReservationList extends Component
     /**
      * Confirms the selected transaction
      */
+
     public function confirmReservation($id)
     {
-        $transaction = Transaction::find($id);
-        if ($transaction) {
-            $transaction->update(['transaction_status' => 'confirmed']); // Update transaction status to 'confirmed'
-            session()->flash('message', 'Transaction successfully confirmed!');
+        $transaction = Transaction::with(['transactionUser', 'invoice'])->find($id);
+
+        if (!$transaction) {
+            session()->flash('error', 'Transaction not found.');
+            return;
         }
 
-        // Send confirmation email
+        // Update transaction status
+        $transaction->update(['transaction_status' => 'confirmed']);
+        session()->flash('message', 'Transaction successfully confirmed!');
+
+        // Gather user and invoice data
+        $user = $transaction->transactionUser;
+        $invoice = $transaction->invoice;
+
+        if (!$user || !$invoice) {
+            logger()->error('User or invoice not found for transaction ID ' . $id);
+            session()->flash('error', 'Confirmation email could not be sent due to missing data.');
+            return;
+        }
+
+        // Prepare data for email
+        $reservationData = [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'transaction_number' => $transaction->id,
+            'email' => $user->email,
+            'invoice_number' => $invoice->invoice_number,
+            'check_in' => $transaction->start_datetime,
+            'check_out' => $transaction->end_datetime,
+            'total_amount' => $transaction->total_amount,
+            'deposit' => $transaction->deposit_paid,
+        ];
+
+        try {
+            Mail::to($reservationData['email'])->send(new ReservationConfirmedMail($reservationData));
+        } catch (\Exception $e) {
+            logger()->error('Email send failed: ' . $e->getMessage());
+            session()->flash('error', 'Reservation confirmed, but email failed to send.');
+        }
     }
+
 
     /**
      * Starts the selected transaction

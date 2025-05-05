@@ -607,9 +607,9 @@ class ReservationForm extends Component
 
     public function register()
     {
-        $this->resetErrorBag();
+        $this->resetErrorBag(); // Reset any previous error messages
 
-        $reservationData = [];
+        $reservationData = []; // Initialize an empty array to store reservation data for email
 
         DB::transaction(function () use (&$reservationData) {
             // Step 1: Create transaction user
@@ -683,6 +683,7 @@ class ReservationForm extends Component
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
+                'transaction_number' => $transaction->id,
                 'email' => $this->email,
                 'invoice_number' => $invoiceNumber,
                 'check_in' => $this->check_in_date,
