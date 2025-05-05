@@ -1,112 +1,122 @@
-<div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
-    <div class="mx-auto max-w-2xl lg:py-2s">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new Activity</h2>
+<div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
 
-        <form wire:submit.prevent="">
-            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+    <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new Activity</h2>
 
-                <!-- Name of Activity -->
-                <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name</label>
-                    <input type="text" wire:model="name" id="name"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type activity name" required>
+    <form wire:submit.prevent="">
+        <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
-                    @error('name')
+            <!-- Name of Activity -->
+            <div>
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name</label>
+                <input type="text" wire:model="name" id="name"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Type activity name" required>
+
+                @error('name')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
+                @enderror
+            </div>
 
-                <!-- Description -->
-                <div class="sm:col-span-2">
-                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
-                    <textarea wire:model="description" id="description" rows="4"
-                        class="block p-2.5 max-h-30 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                        placeholder="Your activity description here"></textarea>
-                    @error('description')
+
+            <!-- Amount -->
+            <div>
+                <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Amount</label>
+                <input type="number" wire:model="amount" id="amount" step="0.01"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter amount">
+                @error('amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
+                @enderror
+            </div>
 
-                <!-- Amount -->
-                <div class="sm:col-span-2">
-                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Amount</label>
-                    <input type="number" wire:model="amount" id="amount" step="0.01"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Enter amount">
-                    @error('amount')
+            <!-- Description -->
+            <div>
+                <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+                <textarea wire:model="description" id="description" rows="4"
+                    class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                    placeholder="Your activity description here"></textarea>
+                @error('description')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
+                @enderror
+            </div>
 
-                <!-- Inclusions -->
-                <div class="sm:col-span-2">
-                    <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900">Inclusions</label>
-                    <textarea wire:model="inclusions" id="inclusions" rows="3"
-                        class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                        placeholder="List inclusions here"></textarea>
-                    @error('inclusions')
+            <!-- Inclusions -->
+            <div>
+                <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900">Inclusions</label>
+                <textarea wire:model="inclusions" id="inclusions" rows="3"
+                    class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                    placeholder="List inclusions here"></textarea>
+                @error('inclusions')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                @enderror
+            </div>
 
-                </div>
 
-                <!-- Image Upload -->
-                <div class="sm:col-span-2">
+
+
+            <!-- Image Upload -->
+            <div class="space-y-4">
+                <div>
                     <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
                     <input accept="image/png, image/jpeg" type="file" wire:model="image" id="image"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                     <!-- Error Message -->
                     @error('image')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
 
                     <!-- Loading Indicator (Shows when file is being uploaded) -->
                     <div wire:loading wire:target="image" class="mt-2 text-blue-600">
                         Uploading image...
                     </div>
-
+                </div>
+                <div>
                     <!-- Image Preview (Only if an image is selected and processed) -->
                     @if ($image && method_exists($image, 'temporaryUrl'))
-                    <div class="mt-2">
-                        <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                    </div>
+                        <div class="mt-2">
+                            <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
+                        </div>
+                    @else
+                        <div
+                            class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
+                            No image selected
+                        </div>
                     @endif
                 </div>
             </div>
+        </div>
 
-            <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                    Cancel
-                </x-button>
-                <x-button type="submit" wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
-                    Add Activity
-                </x-button>
-            </div>
-
-        </form>
-    </div>
-    <!-- Create Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmCreateItem">
-        <x-slot name="title">
-            {{ __('Create Activity') }}
-        </x-slot>
-
-        <x-slot name="content">
-            {{ __('Are you sure you want to add this item?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-button class="ms-3 bg-green text-white" wire:click="saveActivity" wire:loading.attr="disabled">
-                {{ __('Create Activity') }}
+        <div class="flex justify-between items-center space-y-2 mt-6">
+            <x-button onclick="history.back()" type="button"
+                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                Cancel
             </x-button>
-        </x-slot>
-    </x-dialog-modal>
+            <x-button type="submit" wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+                Add Activity
+            </x-button>
+        </div>
 
+    </form>
+
+<!-- Create Confirmation Modal -->
+<x-dialog-modal wire:model.live="confirmCreateItem">
+    <x-slot name="title">
+        {{ __('Create Activity') }}
+    </x-slot>
+
+    <x-slot name="content">
+        {{ __('Are you sure you want to add this item?') }}
+    </x-slot>
+
+    <x-slot name="footer">
+        <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+            {{ __('Cancel') }}
+        </x-secondary-button>
+
+        <x-button class="ms-3 bg-green text-white" wire:click="saveActivity" wire:loading.attr="disabled">
+            {{ __('Create Activity') }}
+        </x-button>
+    </x-slot>
+</x-dialog-modal>
 </div>

@@ -1,62 +1,50 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg" x-data="{ showConfirm: false }">
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit brand details') }}
-        </h2>
-    </x-slot>
+<div>
     <!-- Form container -->
-    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900">Edit Branding</h2>
+    <div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Branding</h2>
         <form wire:submit.prevent="">
-            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
+            <!-- General Information -->
+            <h3 class="font-semibold text-lg text-gray-900 mb-2">General Information</h3>
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Logo Upload -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="logo" class="block mb-2 text-sm font-medium text-gray-900">Company Logo</label>
                     <input type="file" wire:model="newImage" id="image" accept="image/png, image/jpeg"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-
                     @error('newImage')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-
                     <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
-
-                    <!-- Image Preview -->
                     <div class="mt-2">
                         @if ($newImage)
-                            <!-- Show new uploaded image -->
                             <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        @elseif ($settings && $settings->logo) <!-- Use $settings->logo instead of $settings->image -->
-                            <!-- Show existing image from storage -->
+                        @elseif ($settings && $settings->logo)
                             <img src="{{ asset('storage/' . $settings->logo) }}"
                                 class="w-32 h-32 object-cover rounded-lg shadow">
                         @else
-                            <!-- Show default image if no image exists -->
                             <img src="{{ asset('images/rms-default.png') }}"
                                 class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
-
                     </div>
                 </div>
 
-
                 <!-- Company Name -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="company_name" class="block mb-2 text-sm font-medium text-gray-900">Company Name</label>
                     <input type="company_name" wire:model="company_name" id="company_name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
 
                 <!-- Email -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
                     <input type="email" wire:model="email" id="email" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
 
                 <!-- Contact Number -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900">Contact
                         Number</label>
                     <input type="text" wire:model="contact_number" id="contact_number"
@@ -64,73 +52,85 @@
                 </div>
 
                 <!-- Address -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="address" class="block mb-2 text-sm font-medium text-gray-900">Address</label>
                     <input type="text" wire:model="address" id="address"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
+            </div>
 
+            <!-- Social Media Links -->
+            <h3 class="font-semibold text-lg text-gray-900 mt-8 mb-2">Social Media Links</h3>
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 <!-- Facebook -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="facebook" class="block mb-2 text-sm font-medium text-gray-900">Facebook</label>
                     <input type="text" wire:model="facebook" id="facebook"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
 
                 <!-- Instagram -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="instagram" class="block mb-2 text-sm font-medium text-gray-900">Instagram</label>
                     <input type="text" wire:model="instagram" id="instagram"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
+            </div>
+
+            <!-- Legal Information -->
+            <h3 class="font-semibold text-lg text-gray-900 mt-8 mb-2">Legal Information</h3>
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Terms and Conditions -->
-                <div class="sm:col-span-2">
+                <div wire:ignore>
                     <label for="terms_and_conditions" class="block mb-2 text-sm font-medium text-gray-900">Terms and
                         Conditions</label>
-                    <textarea wire:model="terms_and_conditions" id="terms_and_conditions"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                    <input id="terms_and_conditions" type="hidden" name="terms_and_conditions"
+                        wire:model.lazy="terms_and_conditions">
+                    <trix-editor input="terms_and_conditions"></trix-editor>
                 </div>
 
+
                 <!-- Privacy Policy -->
-                <div class="sm:col-span-2">
+                <div wire:ignore>
                     <label for="privacy_policy" class="block mb-2 text-sm font-medium text-gray-900">Privacy
                         Policy</label>
-                    <textarea wire:model="privacy_policy" id="privacy_policy"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                    <input id="privacy_policy" type="hidden" name="privacy_policy" wire:model.lazy="privacy_policy">
+                    <trix-editor input="privacy_policy"></trix-editor>
                 </div>
 
                 <!-- Refund Policy -->
-                <div class="sm:col-span-2">
+                <div wire:ignore>
                     <label for="refund_policy" class="block mb-2 text-sm font-medium text-gray-900">Refund
                         Policy</label>
-                    <textarea wire:model="refund_policy" id="refund_policy"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                    <input id="refund_policy" type="hidden" name="refund_policy" wire:model.lazy="refund_policy">
+                    <trix-editor input="refund_policy"></trix-editor>
                 </div>
 
                 <!-- Rental Agreement -->
-                <div class="sm:col-span-2">
+                <div wire:ignore>
                     <label for="rental_agreement" class="block mb-2 text-sm font-medium text-gray-900">Rental
                         Agreement</label>
-                    <textarea wire:model="rental_agreement" id="rental_agreement"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                    <input id="rental_agreement" type="hidden" name="rental_agreement"
+                        wire:model.lazy="rental_agreement">
+                    <trix-editor input="rental_agreement"></trix-editor>
                 </div>
 
                 <!-- Custom CSS -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="custom_css" class="block mb-2 text-sm font-medium text-gray-900">Custom CSS</label>
                     <textarea wire:model="custom_css" id="custom_css"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                        class="bg-gray-50 border resize-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
                 </div>
 
                 <!-- Custom JS -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="custom_js" class="block mb-2 text-sm font-medium text-gray-900">Custom JS</label>
                     <textarea wire:model="custom_js" id="custom_js"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
+                        class="bg-gray-50 resize-none border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"></textarea>
                 </div>
-
             </div>
+
             <!-- Submit Button -->
             <div class="flex justify-between items-center space-y-2 mt-6">
                 <x-button onclick="history.back()" type="button"
@@ -144,6 +144,7 @@
             </div>
         </form>
     </div>
+
     <!-- Edit Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmEditItem">
         <x-slot name="title">

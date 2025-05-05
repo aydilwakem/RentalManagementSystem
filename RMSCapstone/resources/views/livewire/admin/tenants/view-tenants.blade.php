@@ -11,14 +11,15 @@
     </div>
 
     @else
-    {{-- Display Session Message --}}
-    @if (session('message'))
-    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-        {{ session('message') }}
-    </div>
-    @endif
+
+            {{-- Display Session Message --}}
+            @if (session('message'))
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('message') }}
+                </div>
+            @endif
 
     <div>
         <div class="flex items-center justify-between">
@@ -81,192 +82,182 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <table class="w-full text-left">
-            <thead class="text-sm text-gray-700 bg-gray-200">
-                <tr>
-                    <th scope="col" class="px-4 py-3"><input wire:model.live="selectPageRows" type="checkbox"
-                            id="checkAll" class="accent-blue-600 w-4 h-4">
-                    </th>
-                    {{-- ID --}}
-                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                        <button class="flex items-center">
-                            ID
-                            @if ($sortBy !== 'id')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                            </svg>
-                            @else
-                            @if ($sortDir == 'ASC')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                            </svg>
-                            @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                            @endif
-                            @endif
-                        </button>
-                    </th>
+                <table class="w-full text-left">
+                    <thead class="text-sm text-gray-700 bg-gray-200">
+                        <tr>
+                            {{-- ID --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
+                                <button class="flex items-center">
+                                    ID
+                                    @if ($sortBy !== 'id')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
-                    {{-- Name --}}
-                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
-                        <button class="flex items-center">
-                            Tenant
-                            @if ($sortBy !== 'first_name')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                            </svg>
-                            @else
-                            @if ($sortDir == 'ASC')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                            </svg>
-                            @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                            @endif
-                            @endif
-                        </button>
-                    </th>
+                            {{-- Name --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
+                                <button class="flex items-center">
+                                    Tenant
+                                    @if ($sortBy !== 'first_name')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
-                    {{-- Email --}}
-                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('email')">
-                        <button class="flex items-center">
-                            Email
-                            @if ($sortBy !== 'email')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                            </svg>
-                            @else
-                            @if ($sortDir == 'ASC')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                            </svg>
-                            @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                            @endif
-                            @endif
-                        </button>
-                    </th>
+                            {{-- Email --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('email')">
+                                <button class="flex items-center">
+                                    Email
+                                    @if ($sortBy !== 'email')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
-                    {{-- Phone Number --}}
-                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('phone')">
-                        <button class="flex items-center">
-                            Phone
-                            @if ($sortBy !== 'phone')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                            </svg>
-                            @else
-                            @if ($sortDir == 'ASC')
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                            </svg>
-                            @else
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                            @endif
-                            @endif
-                        </button>
-                    </th>
+                            {{-- Phone Number --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('phone')">
+                                <button class="flex items-center">
+                                    Phone
+                                    @if ($sortBy !== 'phone')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
-                    <th scope="col" class="px-4 py-3 text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($tenants as $tenant)
-                <tr class="border-b">
-                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                        <input wire:model.live="selectedRows" type="checkbox" name="tenants[]" value="{{ $tenant->id }}"
-                            class="accent-blue-600 w-4 h-4">
-                    </th>
-                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}
-                    </th>
-                    <td class="px-4 py-3 font-semibold text-gray-900">
-                        {{ $tenant->first_name }} {{ $tenant->last_name }}
-                    </td>
-                    <td class="px-4 py-3">{{ $tenant->email }}</td>
-                    <td class="px-4 py-3">{{ $tenant->contact_number ?? 'No contact number provided.' }}</td>
-                    <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                            <th scope="col" class="px-4 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tenants as $tenant)
+                            <tr class="border-b">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}
+                                </th>
+                                <td class="px-4 py-3 font-semibold text-gray-900">
+                                    {{ $tenant->first_name }} {{ $tenant->last_name }}
+                                </td>
+                                <td class="px-4 py-3">{{ $tenant->email }}</td>
+                                <td class="px-4 py-3">{{ $tenant->contact_number }}</td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
-                        @can('tenant-view')
-                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                            href="{{ route('admin.view-tenant', ['tenant' => $tenant->id]) }}">
-                        </i>
-                        @endcan
+                                    @can('tenant-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-tenant', ['tenant' => $tenant->id]) }}">
+                                        </i>
+                                    @endcan
 
 
-                        @can('tenant-edit')
-                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                            href="{{ route('admin.edit-tenant', ['tenant' => $tenant->id]) }}">
-                        </i>
-                        @endcan
+                                    @can('tenant-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-tenant', ['tenant' => $tenant->id]) }}">
+                                        </i>
+                                    @endcan
 
 
-                        @can('tenant-create')
-                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                            wire:click="confirmDelete({{ $tenant->id }})">
-                        </i>
-                        @endcan
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="py-4 px-3">
-            <div class="flex">
-                <div class="flex space-x-4 items-center mb-3">
-                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                    <select wire:model.live="perPage"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
+                                    @can('tenant-create')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="confirmDelete({{ $tenant->id }})">
+                                        </i>
+                                    @endcan
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="py-4 px-3">
+                    <div class="flex">
+                        <div class="flex space-x-4 items-center mb-3">
+                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <select wire:model.live="perPage"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{ $tenants->links() }}
                 </div>
-            </div>
-            {{ $tenants->links() }}
-        </div>
-        <x-dialog-modal wire:model.live="confirmItemDelete">
-            <x-slot name="title">{{ __('Delete Tenant') }}</x-slot>
-            <x-slot name="content">{{ __('Are you sure you want to delete this tenant?') }}</x-slot>
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('confirmItemDelete', false)">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-                <x-danger-button class="ms-3" wire:click="deleteTenant({{ $tenant->id }})">
-                    {{ __('Delete Tenant') }}
-                </x-danger-button>
-            </x-slot>
-        </x-dialog-modal>
-
-        <!-- Bulk Delete Confirmation Modal -->
+                <x-dialog-modal wire:model.live="confirmItemDelete">
+                    <x-slot name="title">{{ __('Delete Tenant') }}</x-slot>
+                    <x-slot name="content">{{ __('Are you sure you want to delete this tenant?') }}</x-slot>
+                    <x-slot name="footer">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)">
+                            {{ __('Cancel') }}
+                        </x-secondary-button>
+                        <x-danger-button class="ms-3" wire:click="deleteTenant({{ $tenant->id }})">
+                            {{ __('Delete Tenant') }}
+                        </x-danger-button>
+                    </x-slot>
+                </x-dialog-modal>
+                <!-- Bulk Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmBulkDelete">
             <x-slot name="title">
                 {{ __('Delete Tenants') }}
@@ -286,7 +277,7 @@
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
-    </div>
-</div>
-@endif
+            </div>
+        </div>
+    @endif
 </div>

@@ -1,10 +1,9 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Maintenance Request') }}
         </h2>
     </x-slot>
-    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mb-4 mt-4 bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Maintenance</h2>
 
 
@@ -12,29 +11,29 @@
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Maintenance Name -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Maintenance Name</label>
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter maintenance name" required>
                     @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Property ID -->
-                <div class="sm:col-span-2">
+                <div>
                     <label for="property_id" class="block mb-2 text-sm font-medium text-gray-900">Assigned
                         Property</label>
                     <select wire:model="property_id" id="property_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Property</option>
                         @foreach ($properties as $property)
-                        <option value="{{ $property->id }}">{{ $property->name_number }}</option>
+                            <option value="{{ $property->id }}">{{ $property->name_number }}</option>
                         @endforeach
                     </select>
                     @error('property_id')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -46,7 +45,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                         placeholder="Enter maintenance description" required></textarea>
                     @error('description')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -57,7 +56,7 @@
                     <input type="date" wire:model="reported_at" id="reported_at"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('reported_at')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -68,7 +67,7 @@
                     <input type="date" wire:model="resolved_at" id="resolved_at"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('resolved_at')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -86,7 +85,7 @@
                             <option value="planned">Planned</option>
                         </select>
                         @error('priority_status')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -99,7 +98,7 @@
                             <input type="datetime-local" wire:model="planned_datetime" id="planned_datetime"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             @error('planned_datetime')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -118,7 +117,6 @@
                 </x-button>
             </div>
         </form>
-    </div>
     <!-- Edit Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmEditItem">
         <x-slot name="title">

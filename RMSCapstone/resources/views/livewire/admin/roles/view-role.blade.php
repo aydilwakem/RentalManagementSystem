@@ -1,19 +1,20 @@
-<div class="min-h-[550px] container mx-auto p-8 bg-white rounded-lg">
+<div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('View Role') }}
         </h2>
     </x-slot>
 
-    <div class="py-3 px-8 mx-auto max-w-2xl border rounded-lg bg-white shadow-md">
+    <div class="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
 
         <!-- Back Button -->
-        <div class="mx-auto max-w-2xl flex justify-end items-center">
+        <div class="flex justify-end mb-4">
             <button onclick="history.back()"
                 class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                 <span class="leading-none translate-y-[-3px]">&times;</span>
             </button>
         </div>
+
 
         <!-- Role Name -->
         <div class="flex justify-center items-center space-x-2 mb-4">
@@ -44,7 +45,6 @@
                 'House Category' => 'house-category-',
                 'Tenant' => 'tenant-',
                 'Appearance' => 'appearance-',
-
             ];
 
             $groupedPermissions = [];
@@ -76,21 +76,21 @@
 
         <div class="space-y-4">
             <h1 class="flex font-semibold text-gray-800">Permissions:</h1>
-            @foreach ($groupedPermissions as $group => $permissions)
-                @if ($permissions->count())
-                    <div class="border p-4 rounded-lg">
-                        <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
-                        <ul class="list-disc list-inside space-y-1 text-gray-700">
-                            @foreach ($permissions as $perm)
-                                <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-            @endforeach
+            <div class="grid grid-cols-3 gap-4">
+                @foreach ($groupedPermissions as $group => $permissions)
+                    @if ($permissions->count())
+                        <div class="border p-4 rounded-lg">
+                            <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
+                            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                                @foreach ($permissions as $perm)
+                                    <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
         </div>
-
-
 
 
         <!-- Action Buttons -->
@@ -125,7 +125,8 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})"
+                    wire:loading.attr="disabled">
                     {{ __('Delete Role') }}
                 </x-danger-button>
             </x-slot>
