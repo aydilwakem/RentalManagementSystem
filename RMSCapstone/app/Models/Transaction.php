@@ -73,9 +73,9 @@ class Transaction extends Model
     }
 
     // One transaction has many Invoices
-    public function invoices()
+    public function invoice()
     {
-        return $this->hasMany(Invoice::class, 'invoice_id');
+        return $this->hasOne(Invoice::class);
     }
 
     // One transaction has many Guest Details
@@ -98,7 +98,7 @@ class Transaction extends Model
     public function activities()
     {
         return $this->belongsToMany(Activity::class, 'transaction_activities')
-            ->withPivot('quantity')
+            ->withPivot('quantity', 'amount', 'activity_datetime', 'status')
             ->withTimestamps();
     }
 

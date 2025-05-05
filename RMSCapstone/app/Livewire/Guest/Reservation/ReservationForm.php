@@ -7,9 +7,14 @@ use App\Models\Property;
 use App\Models\Activity;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
+use App\Models\Invoice;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationSubmittedMail;
+
 use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
@@ -53,6 +58,11 @@ class ReservationForm extends Component
     public $contact_number;
     public $country;
     public $heard_from;
+
+
+    // ------------------- INVOICE -------------------- // 
+
+    public $invoice_number;
 
     // ------------------- NAVIGATION STEPS -------------------- // 
 
@@ -371,8 +381,6 @@ class ReservationForm extends Component
         return $this->total_amount;
     }
 
-
-
     // --------------------------------------------- VALIDATIONS ----------------------------------------------- //
 
     /**
@@ -599,12 +607,12 @@ class ReservationForm extends Component
 
     public function register()
     {
-
-        // dd($this->cart);
-
         $this->resetErrorBag();
 
-        DB::transaction(function () {
+        $reservationData = [];
+
+        DB::transaction(function () use (&$reservationData) {
+            // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
                 'middle_name' => $this->middle_name,
@@ -615,20 +623,42 @@ class ReservationForm extends Component
                 'trn_user_type' => $this->trn_user_type,
             ]);
 
+            $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+
+            // Step 2: Create transaction
             $transaction = Transaction::create([
                 'reservation_type_id' => $this->reservation_type_id,
                 'created_by' => $transactionUser->id,
                 'start_datetime' => $this->check_in_date,
                 'end_datetime' => $this->check_out_date,
-                'total_adults' => collect($this->cart)->sum('adults'), // goes through each item and adds the value of adults.
-                'total_kids' => collect($this->cart)->sum('kids'), // goes through each item and adds the value of kids.
+                'total_adults' => collect($this->cart)->sum('adults'),
+                'total_kids' => collect($this->cart)->sum('kids'),
                 'pax' => $this->total_pax,
                 'total_amount' => $this->computeTotalAmount(),
+                'deposit_amount' => $this->computeTotalAmount() * ($depositPercentage / 100),
                 'heard_from' => $this->heard_from,
                 'reservation_source' => $this->reservation_source,
                 'transaction_status' => $this->transaction_status,
             ]);
 
+            // Step 3 & 4: Generate invoice number
+            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
+            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+
+            // Step 5: Create invoice
+            $invoice = Invoice::create([
+                'transaction_id' => $transaction->id,
+                'invoice_number' => $invoiceNumber,
+                'invoice_type' => 'Room',
+                'sub_total' => $this->computeTotalAmount(),
+                'deposit_paid' => 0,
+                'amount_paid' => 0,
+                'balance_due' => $this->computeTotalAmount(),
+                'due_date' => $this->check_out_date,
+                'invoice_status' => 'pending',
+            ]);
+
+            // Step 6: Attach rooms and activities
             foreach ($this->cart as $item) {
                 if ($item['type'] === 'room') {
                     $transaction->properties()->attach($item['room_id'], [
@@ -649,9 +679,29 @@ class ReservationForm extends Component
                     ]);
                 }
             }
+
+            // Prepare data for the email (accessible outside transaction)
+            $reservationData = [
+                'name' => $this->first_name . ' ' . $this->last_name,
+                'email' => $this->email,
+                'invoice_number' => $invoiceNumber,
+                'check_in' => $this->check_in_date,
+                'check_out' => $this->check_out_date,
+                'total_amount' => $this->computeTotalAmount(),
+                'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
+            ];
         });
 
+        // Step 7: Send confirmation email
+        try {
+            Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+        } catch (\Exception $e) {
+            logger()->error('Email send failed: ' . $e->getMessage());
+            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        }
+
+        // Step 8: Flash success message and redirect
         session()->flash('success', 'Reservation successfully submitted!');
-        return redirect()->route('guest.reservation-form');
+        return redirect()->route('guest.proof-of-payment-page');
     }
 }
