@@ -31,6 +31,25 @@
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
                 <div class="flex items-center justify-between d p-4">
+
+                    <!-- Create Room Button -->
+                    <div class="flex space-x-3">
+                        @can('new-reservation-create')
+                            <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
+                                New Transaction
+                            </x-button>
+                        @endcan
+
+                        <!-- Soft-Deletes -->
+                        @can('new-reservation-soft-delete')
+                            <x-button
+                                class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                                icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
+                                Deleted New Reservations
+                            </x-button>
+                        @endcan
+                    </div>
+
                     {{-- Search --}}
                     <div class="flex">
                         <div class="relative w-full">
@@ -48,28 +67,10 @@
                         </div>
                     </div>
 
-                    <!-- Create Room Button -->
-                    <div class="flex space-x-4">
-                        @can('new-reservation-create')
-                            <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
-                                New Transaction
-                            </x-button>
-                        @endcan
-
-                        <!-- Soft-Deletes -->
-                        @can('new-reservation-soft-delete')
-                            <x-button
-                                class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                                icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
-                                Deleted New Reservations
-                            </x-button>
-                        @endcan
-                    </div>
-
                     {{-- Status Type --}}
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900">Reservation Status:</label>
+                            <label class="flex text-sm font-medium text-gray-900">Reservation Status:</label>
                             <select wire:model.live="statusFilter"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                 <option value="">All</option>
@@ -86,6 +87,10 @@
                             </select>
                         </div>
                     </div>
+
+
+
+
                 </div>
 
                 {{-- Table --}}
@@ -321,7 +326,7 @@
 
                                 {{-- Stay Duration --}}
                                 <td class="px-4 py-3">
-                                    {{ optional($transaction->properties->first()->pivot)->days ?? 'N/A' }} day(s)
+                                    {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)
                                 </td>
 
                                 {{-- Check-in Date --}}
@@ -597,14 +602,14 @@
 {{-- <li>
     @can('new-reservation-confirm')
     <a href="#"
-        class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white 
+        class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white
                                                         {{ $transaction->transaction_status == 'reserved' ? '' : 'cursor-not-allowed text-gray-400 pointer-events-none' }}"
         @if($transaction->transaction_status == 'reserved')
         wire:click.prevent="confirmReservation({{ $transaction->id }})"
         wire:loading.attr="disabled"
         @endif>
         <i
-            class="fa-solid fa-circle-check 
+            class="fa-solid fa-circle-check
                                                             {{ $transaction->transaction_status == 'reserved' ? 'text-green-600 hover:text-green-700' : 'text-gray-400' }}">
         </i>
         <span>Confirm Receipt</span>

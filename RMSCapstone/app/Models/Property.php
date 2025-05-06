@@ -44,6 +44,7 @@ class Property extends Model
 
     protected $casts = [
         'occupancy_rules' => 'array',  // Automatically decode JSON to array
+        'images' => 'array',           // Automatically decode JSON to array
     ];
 
     // ----------------------------------------- Relationships -------------------------------------------- //

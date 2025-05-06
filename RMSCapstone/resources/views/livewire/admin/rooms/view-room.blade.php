@@ -20,9 +20,15 @@
 
             <!-- Room Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="mb-4 md:mb-0">
-                    <img src="{{ asset($room->images ? 'storage/' . $room->images : 'images/rms-default.png') }}"
-                        alt="{{ $room->name_number }}" class="w-full h-64 object-cover rounded-lg border">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @forelse ($room->images ?? [] as $img)
+                        <img src="{{ asset('storage/' . $img) }}" class="w-full h-48 object-cover rounded border"
+                            alt="Room Image">
+                    @empty
+                        <img src="{{ asset('images/rms-default.png') }}" class="w-full h-48 object-cover rounded border"
+                            alt="Default Image">
+                    @endforelse
+
                 </div>
 
                 <div>

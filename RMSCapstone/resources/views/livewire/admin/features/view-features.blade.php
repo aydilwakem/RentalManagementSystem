@@ -1,37 +1,36 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     @if ($features->isEmpty())
-    <!-- Empty Page Message -->
-    <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">No features yet.<br> Click "Create Feature" to add a new
-            feature.</p>
-        <x-button class="mt-4" href="{{ route('admin.create-feature') }}" icon="fas fa-plus" wire:navigate>
-            Create Feature
-        </x-button>
-    </div>
-    @else
-    {{-- Display Session Message --}}
-    @if (session('message'))
-    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-        {{ session('message') }}
-    </div>
-    @endif
-    <div>
-        <div class="flex items-center justify-between px-4 mb-3">
-            <x-button icon="fas fa-plus" href="{{ route('admin.create-feature') }}">
-                New Feature
-            </x-button>
-
-            <!-- Deleted Rooms (Restore and Delete Forever -->
-            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                icon="fas fa-trash" href="{{ route('admin.deleted-features') }}">
-                Deleted Features
+        <!-- Empty Page Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No features yet.<br> Click "Create Feature" to add a new
+                feature.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-feature') }}" icon="fas fa-plus" wire:navigate>
+                Create Feature
             </x-button>
         </div>
-        <!-- Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-            <!-- Header-->
+    @else
+        {{-- Display Session Message --}}
+        @if (session('message'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('message') }}
+            </div>
+        @endif
+        <div>
+            <div class="flex items-center justify-between">
+                <div class="mb-4">
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-feature') }}">
+                        New Feature
+                    </x-button>
+                </div>
 
+                <!-- Deleted Rooms (Restore and Delete Forever -->
+                <x-button class="mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-features') }}">
+                    Deleted Features
+                </x-button>
+            </div>
             <!-- Table -->
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
@@ -78,68 +77,65 @@
                 <table class="w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-4 py-3"><input wire:model.live="selectPageRows" type="checkbox"
+                            <th scope="col" class="px-4 py-3 flex items-center space-x-2"><input wire:model.live="selectPageRows" type="checkbox"
                                     id="checkAll" class="accent-blue-600 w-4 h-4">
-                            </th>
-                            {{-- ID --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
+                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                    <span>ID</span>
                                     @if ($sortBy !== 'id')
-                                    {{-- Default icon when sorting is not active --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                    </svg>
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
                                     @else
-                                    @if ($sortDir == 'ASC')
-                                    {{-- Up arrow (Ascending) --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                    </svg>
-                                    @else
-                                    {{-- Down arrow (Descending) --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                    </svg>
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
                                     @endif
-                                    @endif
-                                </button>
-
+                                </div>
                             </th>
-
                             {{-- Name --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
                                 <button class="flex items-center">
                                     Name
                                     @if ($sortBy !== 'name')
-                                    {{-- Default icon when sorting is not active --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                    </svg>
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
                                     @else
-                                    @if ($sortDir == 'ASC')
-                                    {{-- Up arrow (Ascending) --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                    </svg>
-                                    @else
-                                    {{-- Down arrow (Descending) --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                    @endif
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
                                     @endif
                                 </button>
                             </th>
@@ -150,33 +146,33 @@
                     </thead>
                     <tbody class="text-left">
                         @foreach ($features as $feature)
-                        <tr class="border-b">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                <input wire:model.live="selectedRows" type="checkbox" name="features[]"
-                                    value="{{ $feature->id }}" class="accent-blue-600 w-4 h-4">
-                            </th>
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $fakeIDs[$feature->id] ?? 'FTR-???' }}
-                            </th>
-                            <td class="px-4 py-3 font-semibold text-gray-900">{{ $feature->name }}</td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                            <tr class="border-b">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="features[]"
+                                        value="{{ $feature->id }}" class="accent-blue-600 w-4 h-4">
+                                    <span>{{ $fakeIDs[$feature->id] ?? 'FTR-???' }}</span>
+                                </th>
+                                <td class="px-4 py-3 font-semibold text-gray-900">{{ $feature->name }}</td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
 
-                                {{-- View --}}
-                                <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                    href="{{ route('admin.view-feature', ['feature' => $feature->id]) }}">
-                                </i>
+                                    {{-- View --}}
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        wire:navigate
+                                        href="{{ route('admin.view-feature', ['feature' => $feature->id]) }}">
+                                    </i>
 
-                                {{-- Edit --}}
-                                <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                    href="{{ route('admin.edit-feature', ['feature' => $feature->id]) }}">
-                                </i>
+                                    {{-- Edit --}}
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                        wire:navigate
+                                        href="{{ route('admin.edit-feature', ['feature' => $feature->id]) }}">
+                                    </i>
 
-                                {{-- Delete --}}
-                                <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                    wire:click="confirmDelete({{ $feature->id }})" wire:loading.attr="disabled">
-                                </i>
-                            </td>
-                        </tr>
+                                    {{-- Delete --}}
+                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                        wire:click="confirmDelete({{ $feature->id }})" wire:loading.attr="disabled">
+                                    </i>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -211,7 +207,8 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
+                            wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
@@ -233,7 +230,8 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmBulkDelete', false)"
+                            wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
@@ -243,6 +241,5 @@
                     </x-slot>
                 </x-dialog-modal>
             </div>
-        </div>
-        @endif
-    </div>
+    @endif
+</div>

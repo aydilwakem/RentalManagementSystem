@@ -1,9 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
     <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
         <div class="mx-auto max-w-2xl lg:py-2">
-            <h2 class="mb-4 text-xl font-bold text-gray-900">Add a New Feature</h2>
-
-
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a New Feature</h2>
             <form wire:submit.prevent="">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Feature -->
@@ -24,7 +22,7 @@
                         Cancel
                     </x-button>
                     <x-button wire:loading.attr="disabled" wire:click="confirmCreate">
-                        Add Feature
+                        Create Feature
                     </x-button>
                 </div>
             </form>

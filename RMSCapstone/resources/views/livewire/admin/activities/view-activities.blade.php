@@ -37,7 +37,7 @@
 
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Header-->
-                <div class="flex items-center justify-between d p-4">
+                <div class="flex items-center justify-between p-4">
                     <!-- Search Tab -->
                     <div class="flex">
                         <div class="relative w-full">
@@ -111,7 +111,6 @@
                                         @endif
                                     @endif
                                 </button>
-
                             </th>
 
                             {{-- Name --}}
