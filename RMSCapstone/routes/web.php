@@ -40,6 +40,10 @@ use App\Livewire\Admin\Inclusions\EditInclusion;
 use App\Livewire\Admin\Inclusions\ViewInclusion;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
+use App\Livewire\Admin\Reservations\Payments\ConfirmReceipt;
+use App\Livewire\Admin\Reservations\ViewReservation;
+use App\Livewire\Admin\Reservations\EditReservation;
+use App\Livewire\Admin\Reservations\AddTransaction;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -445,6 +449,40 @@ Route::middleware([
         return view('admin.reservations.reservations-list');
     })->name('admin.reservations-list');
 
+    // View Reservation
+    Route::get('view/reservation/{transaction}', ViewReservation::class)
+        ->name('admin.view-reservation');
+
+    // Edit Reservation
+    Route::get('edit/reservation/{transaction}', EditReservation::class)
+        ->name('admin.edit-reservation');
+
+    // Add Transaction 
+    Route::get('add/transaction/{transaction}', AddTransaction::class)
+        ->name('admin.add-transaction');
+
+
+    /**
+     * Payments
+     */
+
+    Route::get('/payments-list', function () {
+        return view('admin.reservations.payments.payment-list');
+    })->name('admin.payments-list');
+
+    // Confirm Payment Receipt
+    Route::get('view/confirm-receipt/{transaction}', ConfirmReceipt::class)
+        ->name('admin.confirm-receipt');
+
+
+    /**
+     * Invoice
+     */
+
+    Route::get('/invoice-list', function () {
+        return view('admin.reservations.invoices.invoice-list');
+    })->name('admin.invoice-list');
+
 
 
 
@@ -646,6 +684,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/reservation-form', function () {
         return view('guest.reservation.reservation-form');
     })->name('guest.reservation-form');
+
+    Route::get('/proof-of-payment-page', function () {
+        return view('guest.proof-of-payment-page');
+    })->name('guest.proof-of-payment-page');
 });
 
 
