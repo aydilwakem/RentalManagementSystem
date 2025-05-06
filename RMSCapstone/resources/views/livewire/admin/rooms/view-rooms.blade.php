@@ -103,15 +103,12 @@
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
                             <!-- Select All Checkbox-->
-                            <th scope="col" class="px-4 py-3">
+                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                     class="accent-blue-600 w-4 h-4">
-                            </th>
-
-                            <!-- ID-->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
+                                <!-- ID-->
+                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                    <span>ID</span>
                                     @if ($sortBy !== 'id')
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -133,7 +130,7 @@
                                             </svg>
                                         @endif
                                     @endif
-                                </button>
+                                </div>
                             </th>
 
                             <!-- Name -->
@@ -326,12 +323,10 @@
                     <tbody class="">
                         @forelse ($rooms as $room)
                             <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                                     <input wire:model.live="selectedRows" type="checkbox" name="room[]"
                                         value="{{ $room->id }}" class="accent-blue-600 w-4 h-4">
-                                </th>
-                                <th scope="row" class="font-medium text-gray-900">
-                                    {{ $fakeIDs[$room->id] ?? 'RM-???' }}
+                                    <span>{{ $fakeIDs[$room->id] ?? 'RM-???' }}</span>
                                 </th>
                                 <td class="px-4 py-3">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>

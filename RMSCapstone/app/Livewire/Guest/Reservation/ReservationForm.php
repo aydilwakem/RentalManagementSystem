@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
-
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
@@ -29,7 +29,7 @@ class ReservationForm extends Component
     public $check_in_date;
     public $check_out_date;
 
-    // ----------------------- ROOMS ---------------------------- // 
+    // ----------------------- ROOMS ---------------------------- //
 
 
     // rooms - adults - kids - extra-guest - extra-charge - amount
@@ -41,7 +41,7 @@ class ReservationForm extends Component
     public $roomAmount = []; // base rate * days
     public $roomsTotalAmount = [];
 
-    // --------------------- ACTIVITIES ------------------------- // 
+    // --------------------- ACTIVITIES ------------------------- //
 
     // activities - quantity - activity_datetime - activityAmount - status
     public $activities = [];
@@ -50,7 +50,7 @@ class ReservationForm extends Component
     public $activityAmount = [];
     public $status = [];
 
-    // ------------------- GUEST DETAIL ------------------------ // 
+    // ------------------- GUEST DETAIL ------------------------ //
     public $first_name;
     public $middle_name;
     public $last_name;
@@ -60,11 +60,12 @@ class ReservationForm extends Component
     public $heard_from;
 
 
-    // ------------------- INVOICE -------------------- // 
+    // ------------------- INVOICE -------------------- //
 
     public $invoice_number;
+    public $paymentMethod;
 
-    // ------------------- NAVIGATION STEPS -------------------- // 
+    // ------------------- NAVIGATION STEPS -------------------- //
 
     public $currentStep = 1;
     public $totalSteps = 4;
@@ -86,8 +87,8 @@ class ReservationForm extends Component
     {
         $this->rooms = Property::ofType('Room')->get();
         $this->activities = Activity::all();
-
         $this->currentStep = 1;
+        $this->paymentMethod = PaymentMethod::all();
     }
 
 
@@ -150,14 +151,14 @@ class ReservationForm extends Component
 
     /**
      * Handles dynamic updates to component properties like adults, kids, check-in/out, or activity quantity.
-     * 
+     *
      * This method responds to Livewire property changes. If the property is related to
      * room guest counts (adults/kids), it updates the respective values in the cart.
      * If the property is check-in/check-out date, it fetches available rooms.
      * If the property is related to activity quantity, it updates the quantity in the cart.
-     * 
+     *
      * @param string $property The name of the property that was updated.
-     * 
+     *
      * @return void
      */
 
@@ -196,7 +197,7 @@ class ReservationForm extends Component
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
 
-                    $adults = (int) ($this->adults[$roomId] ?? 0); // extracts the adults of the item 
+                    $adults = (int) ($this->adults[$roomId] ?? 0); // extracts the adults of the item
                     $kids = (int) ($this->kids[$roomId] ?? 0); // extracts the kids of the item
 
                     $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
@@ -224,7 +225,7 @@ class ReservationForm extends Component
         }
 
 
-        // ----------------------- QUANTITY ------------------------------ // 
+        // ----------------------- QUANTITY ------------------------------ //
 
         if (Str::startsWith($property, 'quantity.')) {
             // Extract the activity ID from the property name
@@ -242,7 +243,7 @@ class ReservationForm extends Component
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
                     $quantity = (int) ($this->quantity[$activityId] ?? 0);
-                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity    
+                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity
 
                     $this->cart[$index]['quantity'] = $quantity;
                     $this->cart[$index]['amount'] = $activityAmount; // Update the amount in the cart
@@ -255,10 +256,10 @@ class ReservationForm extends Component
 
     /**
      * Computes the number of days between check-in and check-out.
-     * 
+     *
      * Uses Carbon to parse the dates and get the difference in days.
      * Returns 0 if either date is not provided.
-     * 
+     *
      * @return int Duration of the stay in days.
      */
 
@@ -280,10 +281,10 @@ class ReservationForm extends Component
 
     /**
      * Fetch available rooms for the selected check-in and check-out dates.
-     * 
+     *
      * Filters out rooms already booked during the specified range by checking
      * overlapping transactions. Only available rooms of type 'Room' are returned.
-     * 
+     *
      * @return void
      */
 
@@ -311,10 +312,10 @@ class ReservationForm extends Component
 
     /**
      * Computes the total number of guests (pax) by summing all adults and kids from the cart.
-     * 
+     *
      * Loops through the `adults` and `kids` arrays and adds their values to get the total pax.
      * Updates the `total_pax` property accordingly.
-     * 
+     *
      * @return void
      */
 
@@ -430,8 +431,8 @@ class ReservationForm extends Component
      * Adds a room to the cart.
      *
      * This method adds a room to the cart if it's not already there. It ensures that
-     * the room is not duplicated in the cart by checking the cart before adding it. 
-     * It also updates the number of adults and kids for that room and calls a method to 
+     * the room is not duplicated in the cart by checking the cart before adding it.
+     * It also updates the number of adults and kids for that room and calls a method to
      * compute the total number of people (pax) in the cart.
      *
      * @param int $roomId The ID of the room to be added to the cart.
@@ -531,7 +532,7 @@ class ReservationForm extends Component
             'status' => $activitystatus,  // Set the status of the activity
         ];
 
-        // $this->computeTotalAmount(); 
+        // $this->computeTotalAmount();
     }
 
 
@@ -547,12 +548,12 @@ class ReservationForm extends Component
      * Remove an item from the cart based on the given type and item ID.
      *
      * This method filters out the item from the cart array, depending on whether
-     * the item is an activity or a room. It ensures that the correct item is removed 
+     * the item is an activity or a room. It ensures that the correct item is removed
      * from the cart based on its type and ID.
      *
      * @param mixed $type The type of item to remove ('activity' or 'room').
      * @param mixed $itemId The ID of the item to be removed.
-     * 
+     *
      * @return void This method does not return any value, it modifies the cart directly.
      */
 
@@ -570,7 +571,7 @@ class ReservationForm extends Component
                 return $item['type'] !== 'room' || $item['room_id'] != $itemId;
             }
 
-            return true; // Fallback case (this should rarely be hit) 
+            return true; // Fallback case (this should rarely be hit)
         });
 
         // Reindex the array after filtering to ensure keys are sequential
@@ -595,7 +596,7 @@ class ReservationForm extends Component
      *
      * This method resets error messages, initiates a database transaction,
      * stores user and reservation information, and links selected rooms and
-     * activities to the created transaction. The cart is expected to contain 
+     * activities to the created transaction. The cart is expected to contain
      * both 'room' and 'activity' types. Adults, kids, and pax totals are calculated
      * from the cart data.
      *

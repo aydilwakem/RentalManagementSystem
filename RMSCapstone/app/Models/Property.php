@@ -38,7 +38,9 @@ class Property extends Model
         'country',
         'amount',
         'extra_charge_per_hour',
+        'extra_person_charge',
         'image',
+        'images',
         'description',
     ];
 

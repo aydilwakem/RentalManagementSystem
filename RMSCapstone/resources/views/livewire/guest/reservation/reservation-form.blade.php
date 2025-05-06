@@ -49,6 +49,7 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room">
+                        {{-- @include('livewire.guest.reservation.review') --}}
                         @include('livewire.guest.reservation.choose-room')
                     </div>
                 @endif
@@ -70,7 +71,7 @@
                 <!-- Review reservation -->
                 @if ($currentStep == 4)
                     <div class="step-review">
-                        @include('livewire.guest.reservation.review')
+                        {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
                 @endif
 
@@ -97,9 +98,11 @@
             @endphp
 
             @if ($check_in_date)
-                <div class="text-lg flex items-center justify-center font-semibold text-green-700 mb-1">
+                <div
+                    class="-mt-6 -mx-6 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold py-2 rounded-t-lg shadow-sm">
                     Reservation Summary
                 </div>
+
                 <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
                     <span>
                         {{ Carbon::parse($check_in_date)->format('F j, Y') }}
@@ -170,7 +173,9 @@
                                             <div class="flex justify-between items-start gap-2">
                                                 <!-- Labels -->
                                                 <div class="space-y-1">
-                                                    <div class="text-sm text-gray-600">Extra Charge:</div>
+                                                    @if ($item['extra_charge'])
+                                                        <div class="text-sm text-gray-600">Extra Person Charge:</div>
+                                                    @endif
                                                     <div class="text-sm text-gray-600">Subtotal:</div>
                                                 </div>
 

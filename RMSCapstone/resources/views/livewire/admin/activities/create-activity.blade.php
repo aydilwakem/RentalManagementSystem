@@ -4,7 +4,6 @@
 
     <form wire:submit.prevent="">
         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-
             <!-- Name of Activity -->
             <div>
                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name</label>
@@ -50,9 +49,6 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
-
-
-
 
             <!-- Image Upload -->
             <div class="space-y-4">

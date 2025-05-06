@@ -234,7 +234,7 @@
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                                 <input wire:model.live="selectedRows" type="checkbox" name="houses[]"
                                     value="{{ $house->id }}" class="accent-blue-600 w-4 h-4">
-                                <span>{{ $fakeIDs[$house->id] ?? 'RM-???' }}</span>
+                                <span>{{ $fakeIDs[$house->id] ?? 'HS-???' }}</span>
                             </th>
                             <td class="px-4 py-3">{{ $house->name_number }}</td>
                             <td class="px-4 py-3">{{ $house->amount }}</td>

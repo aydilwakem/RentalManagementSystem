@@ -83,9 +83,11 @@
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
                             {{-- ID --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
+                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
+                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                    <span>ID</span>
                                     @if ($sortBy !== 'id')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -110,7 +112,7 @@
                                             </svg>
                                         @endif
                                     @endif
-                                </button>
+                                </div>
                             </th>
 
                             {{-- Name --}}
@@ -127,15 +129,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -216,8 +220,10 @@
                     <tbody>
                         @foreach ($activities as $activity)
                             <tr class="border-b">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $fakeIDs[$activity->id] ?? 'ACT-???' }}
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
+                                        value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
+                                    <span>{{ $fakeIDs[$activity->id] ?? 'ACT-???' }}</span>
                                 </th>
                                 <td class="px-4 py-3"> {{ $activity->name }}</td>
                                 <td class="px-4 py-3">
@@ -292,27 +298,28 @@
                 </x-slot>
             </x-dialog-modal> --}}
 
-            <!-- Bulk Delete Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmBulkDelete">
-                <x-slot name="title">
-                    {{ __('Delete Activities') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __('Are you sure you want to delete these items?') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
-                    </x-secondary-button>
-
-                    <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                <!-- Bulk Delete Confirmation Modal -->
+                <x-dialog-modal wire:model.live="confirmBulkDelete">
+                    <x-slot name="title">
                         {{ __('Delete Activities') }}
-                    </x-danger-button>
-                </x-slot>
-            </x-dialog-modal>
-        </div>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        {{ __('Are you sure you want to delete these items?') }}
+                    </x-slot>
+
+                    <x-slot name="footer">
+                        <x-secondary-button wire:click="$set('confirmBulkDelete', false)"
+                            wire:loading.attr="disabled">
+                            {{ __('Cancel') }}
+                        </x-secondary-button>
+
+                        <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                            {{ __('Delete Activities') }}
+                        </x-danger-button>
+                    </x-slot>
+                </x-dialog-modal>
+            </div>
 
     @endif
 </div>

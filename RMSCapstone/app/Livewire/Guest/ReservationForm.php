@@ -39,6 +39,7 @@ class ReservationForm extends Component
     public $last_name;
     public $email;
 
+
     //-------------------------- Dropdowns --------------------------------- //
     public $rooms;
     public $activities;

@@ -136,9 +136,11 @@
                 <table class="w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
+                            <th scope="col" class="px-4 py-3 flex items-center space-x-2 mt-3">
+                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
+                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                    <span>ID</span>
                                     @if ($sortBy !== 'id')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -156,14 +158,15 @@
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
                                         @endif
                                     @endif
-                                </button>
+                                </div>
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
                                 <button class="flex items-center">
@@ -196,7 +199,7 @@
                                     @endif
                                 </button>
                             </th>
-                            <th scope="col">Assigned Property</th>
+                            <th scope="col" class="px-4 py-3">Assigned Property</th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('description')">
                                 <button class="flex items-center">
                                     Description
@@ -230,7 +233,7 @@
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('reported_at')">
                                 <button class="flex items-center">
-                                    Reported At
+                                    Date Reported
                                     @if ($sortBy !== 'reported_at')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -261,7 +264,7 @@
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('resolved_at')">
                                 <button class="flex items-center">
-                                    Resolved At
+                                    Date Resolved
                                     @if ($sortBy !== 'resolved_at')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -292,7 +295,7 @@
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('priority_status')">
                                 <button class="flex items-center">
-                                    Priority Status
+                                    Priority
                                     @if ($sortBy !== 'priority_status')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -327,11 +330,14 @@
                         </th> --}}
                         </tr>
                     </thead>
-                    <tbody class="text-left">
+                    <tbody>
                         @forelse ($maintenances as $maintenance)
                             <tr class="border-b">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $fakeIDs[$maintenance->id] ?? 'MNT-???' }}
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="maintenances[]"
+                                        value="{{ $maintenance->id }}" class="accent-blue-600 w-4 h-4">
+                                    <span>{{ $fakeIDs[$maintenance->id] ?? 'MNT-???' }}</span>
                                 </th>
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $maintenance->name }}
@@ -339,7 +345,7 @@
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $maintenance->property->name_number ?? 'No Property Assigned' }}
                                 </th>
-                                <td class="px-4 py-3"> {{ $maintenance->description }}</td>
+                                <td class="px-4 py-3"> {{ Str::limit($maintenance->description, 40) }}</td>
                                 <td class="px-4 py-3">
                                     {{ $maintenance->reported_at->format('F j, Y') }}
                                 </td>
@@ -361,7 +367,7 @@
                                         <span class="px-2 py-1 bg-red-600 text-white rounded">Emergency</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
                                     <!-- View Icon -->
                                     @can('maintenance-view')

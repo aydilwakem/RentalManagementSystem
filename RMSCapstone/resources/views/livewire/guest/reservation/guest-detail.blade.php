@@ -61,8 +61,24 @@
                         @enderror
                     </div>
 
+                    {{-- <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                        <select wire:model="country"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+                            <option value="">-- Select a country --</option>
+                            @foreach ($countries as $c)
+                                <option value="{{ $c }}">{{ $c }}</option>
+                            @endforeach
+                        </select>
+                        @error('country')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div> --}}
+
+
+
                     <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">How did you hear about us?</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Where did you hear about us?</label>
                         <select wire:model="heard_from"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
                             <option value="">Select an option</option>

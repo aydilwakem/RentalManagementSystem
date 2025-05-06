@@ -30,43 +30,51 @@
                 @enderror
             </div>
 
-            <!-- Ideal Guest -->
-            <div>
-                <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal
-                    Guest</label>
-                <input type="number" wire:model="ideal_guest" id="ideal_guest"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('ideal_guest')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+            <!-- Guest Inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+
+                <!-- Ideal Guest -->
+                <div>
+                    <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal Guest</label>
+                    <input type="number" wire:model="ideal_guest" id="ideal_guest"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        placeholder="Enter ideal guest number">
+                    @error('ideal_guest')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Max Adults -->
+                <div>
+                    <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Maximum Adults</label>
+                    <input type="number" wire:model="max_adults" id="max_adults" min="0"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        placeholder="Enter max adults number">
+                    @error('max_adults')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Max Kids -->
+                <div>
+                    <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Maximum Kids</label>
+                    <input type="number" wire:model="max_kids" id="max_kids" min="0"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        placeholder="Enter max kids number">
+                    @error('max_kids')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
 
-            <!-- Max Adults -->
-            <div>
-                <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max Adults</label>
-                <input type="number" wire:model="max_adults" id="max_adults" min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('max_adults')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Max Kids -->
-            <div>
-                <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
-                <input type="number" wire:model="max_kids" id="max_kids" min="0"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('max_kids')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
 
             <!-- Turnover Duration -->
             <div>
                 <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
                     Duration (Hours)</label>
                 <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="Enter turnover duration">
                 @error('turnover_duration')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
@@ -98,10 +106,22 @@
                 @enderror
             </div>
 
+            <!-- Extra Person Charge -->
+            <div>
+                <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra Person
+                    Charge</label>
+                <input type="amount" wire:model="extra_person_charge" id="extra_person_charge"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Enter extra person charge">
+                @error('amount')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
             <!-- Available Amenities -->
             <div class="sm:col-span-2">
                 <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                     @foreach ($features as $feature)
                         <div class="flex items-center">
                             <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
@@ -116,15 +136,15 @@
             </div>
 
             <!-- Max Occupancy Rules -->
-            <div class="mb-4">
+            <div class=" col-span-2">
                 <h3 class="block mb-2 text-sm font-semibold text-gray-900">Occupancy Rules</h3>
-                <div class="mt-2 flex justify-start mb-2">
+                <div class="mt-2 flex flex-start mb-2">
                     <button type="button" wire:click="addRule"
                         class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-all duration-200 text-sm">
                         Add Rule
                     </button>
                 </div>
-                <div class="space-y-3">
+                <div class="flex flex-col sm:flex-row flex-wrap gap-3">
                     @foreach ($occupancy_rules as $index => $rule)
                         <div class="bg-white border border-gray-200 rounded-md shadow-sm p-3">
                             <div class="grid grid-cols-2 gap-2 sm:gap-4">
@@ -162,20 +182,61 @@
             </div>
 
 
-            <!-- Image Upload -->
-            <div class="space-y-4">
-                <div class="mb-4">
-                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
-                    <input multiple type="file" wire:model="images" id="image" accept="image/png, image/jpeg"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-none">
+            <div class="mb-4 col-span-2">
+                <label for="images" class="block mb-2 text-sm font-medium text-gray-900">Room Image(s)</label>
+                <div class="flex flex-wrap gap-4">
+                    @if ($images && count($images) > 0)
+                        @foreach ($images as $index => $image)
+                            <div class="relative shrink-0">
+                                <img src="{{ $image->temporaryUrl() }}"
+                                    class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                                <button type="button" wire:click="removeImage({{ $index }})"
+                                    class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                    ×
+                                </button>
+                                @if ($loop->first)
+                                    <span
+                                        class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">Main
+                                        Image</span>
+                                @endif
+                            </div>
+                        @endforeach
+                        <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                            wire:target="images">
+                            <div
+                                class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="absolute bottom-1 text-xs text-gray-600">Add Image</span>
+                            </div>
+                        </label>
+                    @else
+                        <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                            wire:target="images">
+                            <div
+                                class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="text-xs">Add image</span>
+                            </div>
+                        </label>
+                    @endif
 
-                    @error('images')
+                    <input multiple type="file" wire:model="images" id="imageInput"
+                        accept="image/png, image/jpeg" class="hidden" @if (!$images || count($images) < 5)  @endif>
+
+                    @error('images.*')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Uploading Spinner -->
-                <div wire:loading wire:target="images" class="flex items-center justify-center px-5">
+                <div wire:loading wire:target="images" class="flex items-center justify-start mt-2">
                     <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                             stroke-width="4"></circle>
@@ -183,28 +244,6 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                     </svg>
                     <span>Uploading...</span>
-                </div>
-
-                <!-- Image Previews -->
-                <div wire:loading.remove wire:target="images">
-                    @if ($images && count($images) > 0)
-                        @foreach ($images as $index => $image)
-                            <div class="relative mb-4">
-                                <img src="{{ $image->temporaryUrl() }}"
-                                    class="w-full h-48 object-contain rounded-lg shadow" alt="Image Preview">
-                                <button type="button" wire:click="removeImage({{ $index }})"
-                                    class="absolute top-2 right-2 bg-gray-300 text-gray-600 rounded-full w-6 h-6 flex items-center justify-center text-sm">
-                                    ×
-                                </button>
-                            </div>
-                        @endforeach
-                    @else
-                        <!-- No image placeholder-->
-                        <div
-                            class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
-                            No image selected
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

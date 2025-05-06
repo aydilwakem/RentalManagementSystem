@@ -19,20 +19,19 @@ class CreateRoom extends Component
     public $ideal_guest;
     public $max_adults;
     public $max_kids;
-    public $occupancy_rules = [
-        ['adults' => 2, 'kids' => 2],
-        ['adults' => 3, 'kids' => 0],
-    ]; // Default values for occupancy rules
+    public $occupancy_rules = [['adults' => 2, 'kids' => 2], ['adults' => 3, 'kids' => 0]]; // Default values for occupancy rules
     public $turnover_duration;
     public $property_status = 'available'; // Default
     public $amount;
 
     #[Rule(['images.*' => 'image|max:2024'])]
-    public $images;
-
-    public $selectedFeatures = [];        // Selected feature IDs
-    public $features = [];     // All features to show in UI
-    public $roomCategories;       // All room categories
+    public $images = [];
+    public $storedImages = [];
+    public $image; // Single image
+    public $extra_person_charge;
+    public $selectedFeatures = []; // Selected feature IDs
+    public $features = []; // All features to show in UI
+    public $roomCategories; // All room categories
     public $confirmCreateItem = false;
 
     public function confirmCreate()
@@ -46,9 +45,15 @@ class CreateRoom extends Component
         $this->images = array_values($this->images); // reindex array
     }
 
+    public function updatedImages()
+    {
+        // Prevent duplicate uploads by only appending new images
+        $this->images = array_merge($this->storedImages, $this->images);
+    }
+
     public function mount()
     {
-        $this->roomCategories = PropertyCategory::all();   // Load categories
+        $this->roomCategories = PropertyCategory::all(); // Load categories
         //mount only room inclusions
         $this->features = PropertyFeature::where('property_type_id', 1)->get();
     }
@@ -77,7 +82,9 @@ class CreateRoom extends Component
                 'turnover_duration' => 'required|string',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
-                'images' => 'required|array',
+                'extra_person_charge' => 'required|numeric|min:100|max:10000.00',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
+                'images' => 'nullable|array',
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
                 'selectedFeatures' => 'nullable|array',
                 'selectedFeatures.*' => 'exists:property_features,id',
@@ -90,15 +97,22 @@ class CreateRoom extends Component
             throw $e;
         }
 
+        if ($this->image && $this->image->isValid()) {
+            $imagePath = $this->image->store('rooms', 'public');
+        } else {
+            $imagePath = null;
+        }
+
         $imagePaths = [];
         if (is_array($this->images)) {
-            foreach($this->images as $image) {
-                if (!$image->isValid()) {
+            foreach ($this->images as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('rooms', 'public');
+                    $imagePaths[] = $path;
+                } else {
                     session()->flash('error', 'Image upload failed. Please try again.');
                     return;
                 }
-                $path = $image->store('rooms', 'public');
-                $imagePaths[] = $path;
             }
         }
 
@@ -112,8 +126,10 @@ class CreateRoom extends Component
             'max_kids' => $this->max_kids,
             'turnover_duration' => $this->turnover_duration,
             'property_status' => $this->property_status,
+            'extra_person_charge' => $this->extra_person_charge,
             'amount' => $this->amount,
-            'images' => $imagePaths,
+            'image' => $imagePath,
+            'images' => array_merge($imagePaths, $this->storedImages),
             'occupancy_rules' => $this->occupancy_rules,
         ]);
 
@@ -132,10 +148,11 @@ class CreateRoom extends Component
             'turnover_duration',
             'property_status',
             'amount',
+            'extra_person_charge',
+            'image',
             'images',
             'selectedFeatures',
-            'occupancy_rules',
-        ]);
+            'occupancy_rules']);
 
         session()->flash('message', 'Room successfully created!');
         return redirect()->route('admin.rooms');
