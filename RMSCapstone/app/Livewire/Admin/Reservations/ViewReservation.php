@@ -20,6 +20,11 @@ class ViewReservation extends Component
 
     public function mount(Transaction $transaction)
     {
+        $this->loadTransactionData($transaction);
+    }
+
+    public function loadTransactionData(Transaction $transaction)
+    {
         // Eager-load relationships only if not already loaded
         $transaction->loadMissing([
             'invoice.payments',
