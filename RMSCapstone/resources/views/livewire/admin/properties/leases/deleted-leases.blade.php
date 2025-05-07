@@ -8,14 +8,14 @@
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />
             </svg>
-            Back to Tenants
+            Back to Leases
         </button>
     </div>
 
-    @if ($deletedTenants->isEmpty())
+    @if ($deletedLeases->isEmpty())
     <!-- Empty Page Message -->
     <div class="text-center py-10">
-        <p class="text-gray-500 text-lg font-semibold">No deleted tenants yet.</p>
+        <p class="text-gray-500 text-lg font-semibold">No leases yet.</p>
     </div>
     @else
     {{-- Display Session Message --}}
@@ -36,29 +36,36 @@
                         <th scope="col" class="px-4 py-3 text-left">ID</th>
 
                         <!-- Room Name -->
-                        <th scope="col" class="px-4 py-3 text-left">Name</th>
+                        <th scope="col" class="px-4 py-3 text-left">Property</th>
 
                         <!-- Room Category -->
-                        <th scope="col" class="px-4 py-3 text-left">Email</th>
+                        <th scope="col" class="px-4 py-3 text-left">Tenant</th>
 
                         <!-- Actions -->
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="text-center">
-                    @foreach ($deletedTenants as $tenant)
+                    @foreach ($deletedLeases as $lease)
                     <tr class="border-b">
-                        <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$tenant->id] ?? 'TNT-???'
+                        <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$lease->id] ?? 'LEASE-???'
                             }}
                         </td>
-                        <td class="px-4 py-3 text-left">{{ $tenant->first_name }} {{ $tenant->last_name }}</td>
-                        <td class="px-4 py-3 text-left">{{ $tenant->email }}</td>
+                        <td class="px-4 py-3 text-left">
+                            @foreach ($lease->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                            @endforeach</td>
+                        </td>
+                        <td class="px-4 py-3 text-left">
+                            {{ $lease->transactionUser->first_name }}
+                            {{ $lease->transactionUser->last_name }}
+                        </td>
                         <td class="px-4 py-3 space-x-2 text-center">
-                            <x-button wire:click="restoreTenant({{ $tenant->id }})">
+                            <x-button wire:click="restoreLease({{ $lease->id }})">
                                 Restore
                             </x-button>
                             <!-- Delete Forever Button -->
-                            <x-button wire:click="confirmDeleteForever({{ $tenant->id }})"
+                            <x-button wire:click="confirmDeleteForever({{ $lease->id }})"
                                 class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded">
                                 Delete Forever
                             </x-button>
@@ -71,11 +78,11 @@
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
             <x-slot name="title">
-                {{ __('Delete Tenant Forever') }}
+                {{ __('Delete Lease Forever') }}
             </x-slot>
 
             <x-slot name="content">
-                {{ __('Are you sure you want to permanently delete this tenant?') }}
+                {{ __('Are you sure you want to permanently delete this lease?') }}
             </x-slot>
 
             <x-slot name="footer">
@@ -83,9 +90,9 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteTenantForever({{ $tenant->id }})"
+                <x-danger-button class="ms-3" wire:click="deleteLeaseForever({{ $lease->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Delete Tenant') }}
+                    {{ __('Delete Lease') }}
                 </x-danger-button>
             </x-slot>
         </x-dialog-modal>
