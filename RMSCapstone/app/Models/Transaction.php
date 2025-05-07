@@ -75,7 +75,7 @@ class Transaction extends Model
     // One transaction has many Invoices
     public function invoice()
     {
-        return $this->hasOne(Invoice::class);
+        return $this->hasOne(Invoice::class, 'transaction_id');
     }
 
     // One transaction has many Guest Details
@@ -116,5 +116,20 @@ class Transaction extends Model
     public function scopeNewReservations($query)
     {
         return $query->where('transaction_status', 'pending');
+    }
+
+
+
+    //  ------------------------------ ACCESSORS --------------------------------- //
+
+
+    public function getTotalRoomsAttribute()
+    {
+        return $this->properties->sum('pivot.total_amount');
+    }
+
+    public function getTotalAddonsAttribute()
+    {
+        return $this->activities->sum('pivot.amount');
     }
 }

@@ -20,8 +20,7 @@ class ReservationList extends Component
 
     use WithPagination; // Enables pagination for Livewire component
 
-    // Properties that can be modified via URL parameters
-    #[Url(history: true)]
+    #[Url(history: true)] // Properties that can be modified via URL parameters
     public $search = ''; // Search term for filtering transactions
 
     #[Url()]
@@ -36,10 +35,7 @@ class ReservationList extends Component
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 2;
 
-
-
-
-    // ------------------------------- FLAGS -------------------------------- //
+    // ------------------------------- FLAGS --------------------------------------------- //
     public $confirmingAction = false;
     public $actionTitle = '';
     public $actionMessage = '';
@@ -248,41 +244,3 @@ class ReservationList extends Component
         $this->sortDir = "ASC"; // Default sorting direction when changing columns
     }
 }
-
-
-
-
-
-
-
-
-/**
- * Marks a transaction as reserved
- */
-    // public function confirmReservation($id)
-    // {
-    //     $transaction = Transaction::find($id);
-
-    //     if ($transaction) {
-    //         $transaction->update(['isReserved' => true]); // Updates only the 'isReserved' field
-
-    //         //Mail::to($transaction->email)->send(new ConfirmationEmail());
-
-    //         session()->flash('message', 'Reservation confirmed successfully.'); // Success message
-    //     } else {
-    //         session()->flash('error', 'Reservation not found.'); // Error message if transaction not found
-    //     }
-    // }
-
-
-    // public function confirmReservation() {}
-
-    // public function startReservation() {}
-
-    // public function maskAsDone() {}
-
-    // public function markAsNoShow() {}
-
-    // public function cancelReservation() {}
-
-    // public function terminateReservation() {}

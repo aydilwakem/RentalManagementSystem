@@ -450,6 +450,14 @@ class ReservationForm extends Component
             return; // Exit the function if dates are not set
         }
 
+
+        // Check if quantity is set for the room
+        if (!isset($this->adults[$roomId]) && !isset($this->kids[$roomId])) {
+            $this->addError('cart', 'Please select the number of adults and kids for this room.');
+            return; // Exit the function if quantity is not set
+        }
+
+
         // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
 
@@ -613,6 +621,7 @@ class ReservationForm extends Component
         $reservationData = []; // Initialize an empty array to store reservation data for email
 
         DB::transaction(function () use (&$reservationData) {
+
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,

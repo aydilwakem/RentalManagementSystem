@@ -93,10 +93,12 @@
 
             <!-- Submit Button -->
             <div class="flex justify-center">
-                <x-button type="submit" class="w-auto mx-auto text-center transition duration-300" icon="fas fa-check">
+                <x-button type="submit" class="w-auto mx-auto text-center transition duration-300" icon="fas fa-check"
+                    wire:click="requestQuote">
                     Request Quote
                 </x-button>
             </div>
+
 
 
         </form>
@@ -107,7 +109,7 @@
     const eventTypeSelect = document.getElementById('event-type');
     const otherEventTypeDiv = document.getElementById('other-event-type');
 
-    eventTypeSelect.addEventListener('change', function() {
+    eventTypeSelect.addEventListener('change', function () {
         if (this.value === 'other') {
             otherEventTypeDiv.classList.remove('hidden');
         } else {

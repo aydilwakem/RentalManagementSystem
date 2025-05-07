@@ -21,13 +21,13 @@ class Payment extends Model
         'payment_date',
         'payment_status',
         'notes',
-        'paid_at',
+        'verified_at',
         'currency',
     ];
     protected $casts = [
         'amount_paid' => 'decimal:2',
         'payment_date' => 'datetime',
-        'paid_at' => 'datetime',
+        'verified_at' => 'datetime',
     ];
 
     // A payment belongs to an invoice

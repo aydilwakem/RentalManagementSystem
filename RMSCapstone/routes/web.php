@@ -38,9 +38,11 @@ use App\Livewire\Admin\HouseCategories\EditHouseCategory;
 use App\Livewire\Admin\HouseCategories\ViewHouseCategory;
 use App\Livewire\Admin\Inclusions\EditInclusion;
 use App\Livewire\Admin\Inclusions\ViewInclusion;
+use App\Livewire\Admin\Properties\Leases\EditLease;
+use App\Livewire\Admin\Properties\Leases\ViewLease;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
-use App\Livewire\Admin\Reservations\Payments\ConfirmReceipt;
+use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
@@ -466,13 +468,14 @@ Route::middleware([
      * Payments
      */
 
+    // View Payments List
     Route::get('/payments-list', function () {
         return view('admin.reservations.payments.payment-list');
     })->name('admin.payments-list');
 
-    // Confirm Payment Receipt
-    Route::get('view/confirm-receipt/{transaction}', ConfirmReceipt::class)
-        ->name('admin.confirm-receipt');
+    // View Payment Receipt
+    Route::get('view/payment-receipt/{payment}', ViewReceipt::class)
+        ->name('admin.view-payment-receipt');
 
 
     /**
@@ -588,6 +591,29 @@ Route::middleware([
     })->name('admin.deleted-features');
 
 
+    // ------------------ Leases
+    //List
+    Route::get('/leases', function () {
+        return view('admin.rentals.leases.view-leases');
+    })->name('admin.leases');
+
+    // Create
+    Route::get('create/lease', function () {
+        return view('admin.rentals.leases.create-lease');
+    })->name('admin.create-lease');
+
+    //View 
+    Route::get('view/lease/{transaction}', ViewLease::class)
+        ->name('admin.view-lease');
+
+    //Edit
+    Route::get('edit/lease/{transaction}', EditLease::class)
+        ->name('admin.edit-lease');
+
+    // Deleted Leases (Soft Deletes)
+    Route::get('deleted-leases', function () {
+        return view('admin.rentals.leases.deleted-leases');
+    })->name('admin.deleted-leases');
 
 
     // ------------------ House Categories
