@@ -177,8 +177,8 @@
                 <!-- Uploading Spinner -->
                 <div wire:loading wire:target="images" class="flex items-center justify-center px-5">
                     <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
                         <path class="opacity-75" fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                     </svg>
@@ -190,8 +190,8 @@
                     @if ($images && count($images) > 0)
                         @foreach ($images as $index => $image)
                             <div class="relative mb-4">
-                                <img src="{{ $image->temporaryUrl() }}"
-                                    class="w-full h-48 object-contain rounded-lg shadow" alt="Image Preview">
+                                <img src="{{ $image->temporaryUrl() }}" class="w-full h-48 object-contain rounded-lg shadow"
+                                    alt="Image Preview">
                                 <button type="button" wire:click="removeImage({{ $index }})"
                                     class="absolute top-2 right-2 bg-gray-300 text-gray-600 rounded-full w-6 h-6 flex items-center justify-center text-sm">
                                     ×

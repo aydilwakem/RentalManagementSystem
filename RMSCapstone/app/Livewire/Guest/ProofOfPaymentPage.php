@@ -115,10 +115,11 @@ class ProofOfPaymentPage extends Component
             ]);
 
             // Step 5: Update the transaction status
-            $transaction->update([
-                'transaction_status' => 'reserved',
-            ]);
-
+            if ($transaction->transaction_status === 'pending') {
+                $transaction->update([
+                    'transaction_status' => 'reserved',
+                ]);
+            }
             // Prepare payment details for the email
             $paymentDetails = [
                 'full_name' => $firstName . ' ' . $lastName,

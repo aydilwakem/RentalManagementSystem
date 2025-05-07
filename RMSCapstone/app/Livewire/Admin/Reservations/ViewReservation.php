@@ -4,7 +4,6 @@ namespace App\Livewire\Admin\Reservations;
 
 use Livewire\Component;
 use App\Models\Transaction;
-use App\Models\Invoice;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
@@ -12,31 +11,38 @@ class ViewReservation extends Component
 {
 
     // Relationship: Transaction->Invoice->Payments
-    public Transaction $transaction; // Holds the current transaction
-    public Invoice $invoice; // Holds the invoice associated with the transaction
+    public $transaction; // Holds the current transaction
+    public $invoice; // Holds the invoice associated with the transaction
+    public $guestDetails; // Holds all guest associated with the transaction
     public $payments; // Holds all payments associated with the invoice
+    public $totalAddons; // Holds the total amount of addons
+    public $totalRooms; // Holds the total amount of rooms
 
     public function mount(Transaction $transaction)
     {
-        // Eager-load all related models in one go
-        $transaction->load([
+        // Eager-load relationships only if not already loaded
+        $transaction->loadMissing([
             'invoice.payments',
             'transactionUser',
-            'properties',      // many-to-many through transaction_properties
-            'activities',      // many-to-many through transaction_activities
+            'guestDetails',
+            'properties',
+            'activities',
         ]);
 
-        // Check if invoice exists
         if (!$transaction->invoice) {
             abort(404, 'Invoice not found for this transaction.');
         }
 
         $this->transaction = $transaction;
         $this->invoice = $transaction->invoice;
+        $this->guestDetails = $transaction->guestDetails;
+        $this->payments = $this->invoice->payments ?? collect();
 
-        // Payments are already eager-loaded, so no new query is made here
-        $this->payments = $this->invoice->payments;
+        // Use model accessors for calculated totals
+        $this->totalRooms = $transaction->total_rooms; // In the Transaction Modal 
+        $this->totalAddons = $transaction->total_addons;
     }
+
 
     public function render()
     {

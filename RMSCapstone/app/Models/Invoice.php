@@ -35,7 +35,7 @@ class Invoice extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Invoice::class, 'transaction_id');
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 
     // An invoice can have many payments

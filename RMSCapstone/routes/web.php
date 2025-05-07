@@ -40,7 +40,7 @@ use App\Livewire\Admin\Inclusions\EditInclusion;
 use App\Livewire\Admin\Inclusions\ViewInclusion;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
-use App\Livewire\Admin\Reservations\Payments\ConfirmReceipt;
+use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
@@ -466,13 +466,14 @@ Route::middleware([
      * Payments
      */
 
+    // View Payments List
     Route::get('/payments-list', function () {
         return view('admin.reservations.payments.payment-list');
     })->name('admin.payments-list');
 
-    // Confirm Payment Receipt
-    Route::get('view/confirm-receipt/{transaction}', ConfirmReceipt::class)
-        ->name('admin.confirm-receipt');
+    // View Payment Receipt
+    Route::get('view/payment-receipt/{payment}', ViewReceipt::class)
+        ->name('admin.view-payment-receipt');
 
 
     /**

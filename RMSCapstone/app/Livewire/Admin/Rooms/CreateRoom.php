@@ -92,7 +92,7 @@ class CreateRoom extends Component
 
         $imagePaths = [];
         if (is_array($this->images)) {
-            foreach($this->images as $image) {
+            foreach ($this->images as $image) {
                 if (!$image->isValid()) {
                     session()->flash('error', 'Image upload failed. Please try again.');
                     return;

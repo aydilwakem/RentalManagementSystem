@@ -96,7 +96,7 @@
                         <a href="{{ route('dashboard') }}">
                             <div
                                 class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('dashboard') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ Route::is('dashboard') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
                                     Dashboard
@@ -113,7 +113,7 @@
                     @can('new-reservation-list')
                         <div @click="toggle('rooms')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                        {{ Route::is('admin.reservations-list') || Route::is('admin.view-confirmed-transactions*') || Route::is('admin.view-ongoing-transactions*') || Route::is('admin.view-old-transactions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                                    {{ Route::is('admin.reservations-list') || Route::is('admin.view-confirmed-transactions*') || Route::is('admin.view-ongoing-transactions*') || Route::is('admin.view-old-transactions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-calendar"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -137,28 +137,7 @@
                         @can('new-reservation-list')
                             <a href="{{ route('admin.reservations-list') }}" wire:navigate
                                 class="block px-3 py-2 {{ Route::is('admin.reservations-list') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                                <h1 class="cursor-pointer">New Reservations</h1>
-                            </a>
-                        @endcan
-
-                        @can('confirmed-reservation-list')
-                            <a href="{{ route('admin.view-confirmed-transactions') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.view-confirmed-transactions') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                                <h1 class="cursor-pointer">Confirmed Reservations</h1>
-                            </a>
-                        @endcan
-
-                        @can('on-going-booking-list')
-                            <a href="{{ route('admin.view-ongoing-transactions') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.view-ongoing-transactions') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                                <h1 class="cursor-pointer">On-going Bookings</h1>
-                            </a>
-                        @endcan
-
-                        @can('old-booking-list')
-                            <a href="{{ route('admin.view-old-transactions') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.view-old-transactions') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                                <h1 class="cursor-pointer">Old Bookings</h1>
+                                <h1 class="cursor-pointer">Reservations List</h1>
                             </a>
                         @endcan
 
@@ -172,7 +151,7 @@
                     @can('room-list')
                         <div @click="toggle('rooms')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                            {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                        {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-bed"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -234,7 +213,7 @@
                     @can('house-list')
                         <div @click="toggle('houses')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                        {{ Route::is('admin.properties*') || Route::is('admin.house-categories*') || Route::is('admin.tenants*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                    {{ Route::is('admin.properties*') || Route::is('admin.house-categories*') || Route::is('admin.tenants*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -293,7 +272,7 @@
                     @can('event-list')
                         <div @click="toggle('events')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                            {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-calendar-plus"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -372,7 +351,7 @@
                         <a href="{{ route('admin.activities') }}" wire:navigate>
                             <div
                                 class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('admin.activities') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ Route::is('admin.activities') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-person-swimming"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Activities</h1>
                             </div>
@@ -386,7 +365,7 @@
                         <a href="{{ route('admin.maintenances') }}" wire:navigate>
                             <div
                                 class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-broom"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Maintenance</h1>
                             </div>
@@ -400,7 +379,7 @@
                     @can('branding-view')
                         <div @click="toggle('settings')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                        {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.payments') || Route::is('admin.appearance') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                    {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.payments') || Route::is('admin.appearance') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-cogs"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -467,7 +446,7 @@
                         <a href="{{ route('api-tokens.index') }}" wire:navigate>
                             <div
                                 class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ Route::is('api-tokens.index') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-key"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
                             </div>
@@ -497,9 +476,9 @@
                             <div @click="$store.sidebar.active = 'team-settings'"
                                 class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                                 x-bind:class="{
-                                                                                                                                                                                                                                                                            'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
-                                                                                                                                                                                                                                                                            'text-gray-400 ': $store.sidebar.active != 'team-settings'
-                                                                                                                                                                                                                                                                        }">
+                                                                                                                                                                                                                                                                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
+                                                                                                                                                                                                                                                                                        'text-gray-400 ': $store.sidebar.active != 'team-settings'
+                                                                                                                                                                                                                                                                                    }">
                                 <i class="fa-solid fa-users"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Team Settings</h1>
                             </div>
@@ -510,9 +489,9 @@
                                 <div @click="$store.sidebar.active = 'create-team'"
                                     class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-400 ': $store.sidebar.active != 'create-team'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'text-gray-400 ': $store.sidebar.active != 'create-team'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }">
                                     <i class="fa-solid fa-plus"></i>
                                     <h1 x-cloak x-show="$store.sidebar.full">Create New Team</h1>
                                 </div>
@@ -524,9 +503,9 @@
                                 <div @click="$store.sidebar.active = 'create-team'"
                                     class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'text-gray-400 ': $store.sidebar.active != 'create-team'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'text-gray-400 ': $store.sidebar.active != 'create-team'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }">
                                     <i class="fa-solid fa-plus"></i>
                                     <h1 x-cloak x-show="$store.sidebar.full">Create New Team</h1>
                                 </div>
