@@ -10,19 +10,19 @@ use App\Models\PropertyFeature;
 
 class CreateProperty extends Component
 {
-
     use WithFileUploads;
 
     public $property_type_id = 2; // Property Type = House
 
     // ----------------------------- House Details ---------------------------------------//
 
-
     public $name_number;
     public $capacity;
     public $max_adults;
     public $max_kids;
     public $image;
+    public $images = [];
+    public $storedImages = [];
     public $description;
     public $amount; // Monthly Rent
     public $property_status = 'available';
@@ -54,11 +54,22 @@ class CreateProperty extends Component
         $this->features = PropertyFeature::where('property_type_id', 2)->get();
     }
 
+    public function removeImage($index)
+    {
+        unset($this->images[$index]);
+        $this->images = array_values($this->images); // reindex array
+    }
+
+    public function updatedImages()
+    {
+        // Prevent duplicate uploads by only appending new images
+        $this->images = array_merge($this->storedImages, $this->images);
+    }
 
     public function saveProperty()
     {
         try {
-            // Validate form input 
+            // Validate form input
             $this->validate([
                 'name_number' => 'required|string|max:255|unique:properties,name_number',
                 'property_type_id' => 'required|exists:property_types,id',
@@ -67,7 +78,9 @@ class CreateProperty extends Component
                 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
-                'image' => 'nullable|image|max:1024',
+                'image' => 'nullable|image|max:2024',
+                'images' => 'nullable|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
                 'description' => 'nullable|string',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
@@ -97,6 +110,19 @@ class CreateProperty extends Component
             $imagePath = $this->image->store('houses', 'public');
         }
 
+        $imagePaths = [];
+        if (is_array($this->images)) {
+            foreach ($this->images as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('houses', 'public');
+                    $imagePaths[] = $path;
+                } else {
+                    session()->flash('error', 'Image upload failed. Please try again.');
+                    return;
+                }
+            }
+        }
+
         // Create Property
         $house = Property::create([
             'property_type_id' => $this->property_type_id,
@@ -115,6 +141,8 @@ class CreateProperty extends Component
             'property_status' => $this->property_status,
             'description' => $this->description,
             'image' => $imagePath, // Save path in DB
+            'images' => array_merge($imagePaths, $this->storedImages),
+
         ]);
 
         // Attach selected features to pivot
@@ -123,23 +151,7 @@ class CreateProperty extends Component
         }
 
         // Reset form fields
-        $this->reset([
-            'name_number',
-            'capacity',
-            'max_adults',
-            'max_kids',
-            'amount',
-            'house_number',
-            'street',
-            'barangay',
-            'city_municipality',
-            'postal_code',
-            'country',
-            'property_status',
-            'description',
-            'image',
-            'selectedFeatures',
-        ]);
+        $this->reset(['name_number', 'capacity', 'max_adults', 'max_kids', 'amount', 'house_number', 'street', 'barangay', 'city_municipality', 'postal_code', 'country', 'property_status', 'description', 'image', 'selectedFeatures']);
 
         // Flash message for success
         session()->flash('message', 'Property successfully created!');
@@ -153,13 +165,6 @@ class CreateProperty extends Component
         return view('livewire.admin.properties.create-property');
     }
 }
-
-
-
-
-
-
-
 
 // public $property_category_id;
 

@@ -23,7 +23,11 @@ class EditEventHall extends Component
     public $extra_charge_per_hour;
     public $image;
     public $newImage;
-    public $property_status; 
+    public $newImages = [];
+    public $storedImages = [];
+    public $confirmDeleteImage = false;
+    public $imageToDeleteIndex = null;
+    public $property_status;
     public $eventHallId;
     public $features;            // All available features
     public $selectedFeatures = []; // Selected feature IDs
@@ -47,6 +51,7 @@ class EditEventHall extends Component
         $this->extra_charge_per_hour = $eventHall->extra_charge_per_hour;
         $this->property_status = $eventHall->property_status;
         $this->image = $eventHall->image;
+        $this->storedImages = $eventHall->images ?? [];
 
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $eventHall->features()->pluck('property_features.id')->toArray();
@@ -63,6 +68,7 @@ class EditEventHall extends Component
                 'extra_charge_per_hour' => 'required|numeric|min:1000|max:50000.00',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'newImage' => 'nullable|image|max:2048',
+                'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -86,15 +92,30 @@ class EditEventHall extends Component
             $this->image = $this->newImage->store('event-halls', 'public');
         }
 
+        // Handle image upload if a new one is selected
+        $newImagePaths = [];
+        if (!empty($this->newImages)) {
+            foreach ($this->newImages as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('event-halls', 'public');
+                    $newImagePaths[] = $path;
+                }
+            }
+        }
+
+        // Merge old and new images
+        $allImages = array_merge($this->storedImages, $newImagePaths);
+
         // Update Event Hall
         $this->eventHall->update([
             'name_number' => $this->name_number,
             'description' => $this->description,
             'amount' => $this->amount,
             'capacity' => $this->capacity,
-            'extra_charge_per_hour' => $this->extra_charge_per_hour, 
+            'extra_charge_per_hour' => $this->extra_charge_per_hour,
             'property_status' => $this->property_status,
             'image' => $this->image,
+            'images' => $allImages,
         ]);
 
         $this->eventHall->features()->sync($this->selectedFeatures);
@@ -104,7 +125,27 @@ class EditEventHall extends Component
         return redirect()->route('admin.event-halls');
     }
 
-    
+    public function confirmImageDelete($index)
+    {
+        $this->imageToDeleteIndex = $index;
+        $this->confirmDeleteImage = true;
+    }
+
+    public function removeStoredImage()
+    {
+        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
+            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
+            unset($this->storedImages[$this->imageToDeleteIndex]);
+            $this->storedImages = array_values($this->storedImages); // Reindex array
+        }
+
+        $this->confirmDeleteImage = false;
+        $this->imageToDeleteIndex = null;
+
+        session()->flash('message', 'Image successfully deleted.');
+    }
+
+
     public function render()
     {
         return view('livewire.admin.event-halls.edit-event-hall');

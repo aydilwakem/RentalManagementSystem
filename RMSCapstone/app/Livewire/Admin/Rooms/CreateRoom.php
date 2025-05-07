@@ -39,6 +39,13 @@ class CreateRoom extends Component
         $this->confirmCreateItem = true;
     }
 
+    public function mount()
+    {
+        $this->roomCategories = PropertyCategory::all(); // Load categories
+        //mount only room inclusions
+        $this->features = PropertyFeature::where('property_type_id', 1)->get();
+    }
+
     public function removeImage($index)
     {
         unset($this->images[$index]);
@@ -49,13 +56,6 @@ class CreateRoom extends Component
     {
         // Prevent duplicate uploads by only appending new images
         $this->images = array_merge($this->storedImages, $this->images);
-    }
-
-    public function mount()
-    {
-        $this->roomCategories = PropertyCategory::all(); // Load categories
-        //mount only room inclusions
-        $this->features = PropertyFeature::where('property_type_id', 1)->get();
     }
 
     public function addRule()

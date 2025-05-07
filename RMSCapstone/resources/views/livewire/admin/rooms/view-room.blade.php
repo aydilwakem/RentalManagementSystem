@@ -21,6 +21,7 @@
             <!-- Room Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="grid grid-cols-1 gap-2">
+                    <!-- Room Image Array -->
                     @if (isset($room->images) && count($room->images) > 0)
                         <div class="w-full">
                             <img src="{{ asset('storage/' . $room->images[0]) }}"
@@ -42,20 +43,20 @@
                         </div>
                     @endif
                 </div>
-                <div id="imageModal" class="fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                <!-- Image Popup View -->
+                <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
                     <div class="flex items-center justify-center min-h-screen">
-                        <div class="modal-content">
+                        <div class=" relative modal-content">
                             <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
-                            <div class="mt-4 text-center">
-                                <button onclick="closeModal()"
-                                    class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
-                                    Close
-                                </button>
-                            </div>
+                            <button onclick="closeModal()"
+                                class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="leading-none translate-y-[-3px]">&times;</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Room Details -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900">Room Details</h3>
                     <ul class="list-disc pl-5 text-gray-600 mb-3">

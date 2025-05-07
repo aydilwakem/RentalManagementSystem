@@ -24,6 +24,10 @@ class EditProperty extends Component
     public $max_kids;
     public $image;
     public $newImage;
+    public $newImages = [];
+    public $storedImages = [];
+    public $confirmDeleteImage = false;
+    public $imageToDeleteIndex = null;
     public $description;
     public $amount; // Monthly Rent
     public $property_status;
@@ -77,8 +81,29 @@ class EditProperty extends Component
         $this->description = $property->description;
         $this->property_status = $property->property_status;
         $this->image = $property->image;
+        $this->storedImages = $property->images ?? [];
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $property->features()->pluck('property_features.id')->toArray();
+    }
+
+    public function confirmImageDelete($index)
+    {
+        $this->imageToDeleteIndex = $index;
+        $this->confirmDeleteImage = true;
+    }
+
+    public function removeStoredImage()
+    {
+        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
+            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
+            unset($this->storedImages[$this->imageToDeleteIndex]);
+            $this->storedImages = array_values($this->storedImages); // Reindex array
+        }
+
+        $this->confirmDeleteImage = false;
+        $this->imageToDeleteIndex = null;
+
+        session()->flash('message', 'Image successfully deleted.');
     }
 
     public function updateProperty()
@@ -100,6 +125,7 @@ class EditProperty extends Component
                 'country' => 'required|string',
                 'description' => 'nullable|string',
                 'newImage' => 'nullable|image|max:2048',
+                'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -107,13 +133,22 @@ class EditProperty extends Component
             throw $e;
         }
 
-        // Handle image upload if a new one is selected
-        if ($this->newImage) {
-            if ($this->property->image) {
-                Storage::disk('public')->delete($this->property->image);
-            }
-            $this->image = $this->newImage->store('houses', 'public');
-        }
+         // Handle image upload if a new one is selected
+         $newImagePaths = [];
+
+         if (!empty($this->newImages)) {
+             foreach ($this->newImages as $image) {
+                 if ($image->isValid()) {
+                     $path = $image->store('houses', 'public');
+                     $newImagePaths[] = $path;
+                 }
+             }
+         }
+
+         // Merge old and new images
+        $allImages = array_merge($this->storedImages, $newImagePaths);
+
+
         // Update property details
         $this->property->update([
             'name_number' => $this->name_number,
@@ -131,6 +166,7 @@ class EditProperty extends Component
             'property_status' => $this->property_status,
             'description' => $this->description,
             'image' => $this->image,
+            'images' => $allImages,
         ]);
 
         $this->property->features()->sync($this->selectedFeatures);

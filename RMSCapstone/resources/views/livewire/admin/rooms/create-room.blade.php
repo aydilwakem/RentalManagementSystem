@@ -113,7 +113,7 @@
                 <input type="amount" wire:model="extra_person_charge" id="extra_person_charge"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter extra person charge">
-                @error('amount')
+                @error('extra_person_charge')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
@@ -181,7 +181,7 @@
                 </div>
             </div>
 
-
+            <!-- Image Upload -->
             <div class="mb-4 col-span-2">
                 <label for="images" class="block mb-2 text-sm font-medium text-gray-900">Room Image(s)</label>
                 <div class="flex flex-wrap gap-4">
@@ -210,7 +210,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
-                                <span class="absolute bottom-1 text-xs text-gray-600">Add Image</span>
                             </div>
                         </label>
                     @else

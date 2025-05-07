@@ -21,18 +21,22 @@ class EditRoom extends Component
     public $ideal_guest;
     public $max_adults;
     public $max_kids;
-    public $occupancyRules = [];  // The list of occupancy rules
+    public $occupancyRules = []; // The list of occupancy rules
     public $turnover_duration;
     public $property_status;
     public $amount;
+    public $extra_person_charge;
     public $image;
     public $newImage;
-    public $features;            // All available features
+    public $newImages = [];
+    public $storedImages = [];
+    public $confirmDeleteImage = false;
+    public $imageToDeleteIndex = null;
+    public $features; // All available features
     public $selectedFeatures = []; // Selected feature IDs
     public $occupancy_rules = [];
     public $roomCategories; // Store room categories for dropdown
     public $roomId;
-
 
     public $confirmEditItem = false;
 
@@ -40,7 +44,6 @@ class EditRoom extends Component
     {
         $this->confirmEditItem = $id;
     }
-
 
     public function mount(Property $room)
     {
@@ -55,10 +58,10 @@ class EditRoom extends Component
         $this->property_status = $room->property_status;
         $this->amount = $room->amount;
         $this->image = $room->image;
+        $this->storedImages = $room->images ?? [];
         $this->roomCategories = PropertyCategory::all();
         $this->occupancy_rules = $room->occupancy_rules ?? []; // If null, fallback to empty array
-
-
+        $this->extra_person_charge = $room->extra_person_charge;
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
     }
@@ -74,6 +77,26 @@ class EditRoom extends Component
         $this->occupancy_rules = array_values($this->occupancy_rules); // Re-index array
     }
 
+    public function confirmImageDelete($index)
+    {
+        $this->imageToDeleteIndex = $index;
+        $this->confirmDeleteImage = true;
+    }
+
+    public function removeStoredImage()
+    {
+        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
+            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
+            unset($this->storedImages[$this->imageToDeleteIndex]);
+            $this->storedImages = array_values($this->storedImages); // Reindex array
+        }
+
+        $this->confirmDeleteImage = false;
+        $this->imageToDeleteIndex = null;
+
+        session()->flash('message', 'Image successfully deleted.');
+    }
+
     public function updateRoom()
     {
         try {
@@ -86,7 +109,9 @@ class EditRoom extends Component
                 'turnover_duration' => 'required|integer|min:1',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
+                'extra_person_charge' => 'required|numeric|min:0|max:1000000.00',
                 'newImage' => 'nullable|image|max:2048',
+                'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'occupancy_rules' => 'required|array',
                 'occupancy_rules.*.adults' => 'required|integer|min:0',
                 'occupancy_rules.*.kids' => 'required|integer|min:0',
@@ -98,12 +123,18 @@ class EditRoom extends Component
         }
 
         // Handle image upload if a new one is selected
-        if ($this->newImage) {
-            if ($this->room->image) {
-                Storage::disk('public')->delete($this->room->image);
+        $newImagePaths = [];
+        if (!empty($this->newImages)) {
+            foreach ($this->newImages as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('rooms', 'public');
+                    $newImagePaths[] = $path;
+                }
             }
-            $this->image = $this->newImage->store('rooms', 'public');
         }
+
+        // Merge old and new images
+        $allImages = array_merge($this->storedImages, $newImagePaths);
 
         // Update room details
         $this->room->update([
@@ -115,7 +146,9 @@ class EditRoom extends Component
             'turnover_duration' => $this->turnover_duration,
             'property_status' => $this->property_status,
             'amount' => $this->amount,
+            'extra_person_charge' => $this->extra_person_charge,
             'image' => $this->image,
+            'images' => $allImages,
             'occupancy_rules' => $this->occupancy_rules,
         ]);
 

@@ -5,28 +5,56 @@
         </h2>
     </x-slot>
 
-    <div class="py-6 ">
+    <div class="py-2">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
 
-            <!-- Back Button -->
-            <div class="flex justify-end mb-4">
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">House: {{ $house->name_number }}</h2>
+
+                <!-- Back Button -->
                 <button onclick="history.back()"
-                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
                     <span class="leading-none translate-y-[-3px]">&times;</span>
                 </button>
             </div>
 
-            <!-- Property Name -->
-            <h2 class="mb-4 text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center">
-                House: {{ $house->name_number }}
-            </h2>
-
             <!-- House Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- House Image -->
-                <div class="mb-4">
-                    <img src="{{ asset($house->image ? 'storage/' . $house->image : 'images/rms-default.png') }}"
-                        class="w-full h-64 object-cover rounded-lg shadow-md">
+                <div class="grid grid-cols-1 gap-2">
+                    @if (isset($house->images) && count($house->images) > 0)
+                        <div class="w-full">
+                            <img src="{{ asset('storage/' . $house->images[0]) }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main house Image"
+                                onclick="openModal('{{ asset('storage/' . $house->images[0]) }}')">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            @foreach (array_slice($house->images, 1) as $img)
+                                <img src="{{ asset('storage/' . $img) }}"
+                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="house Image"
+                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="w-full">
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                        </div>
+                    @endif
+                </div>
+                <!-- Image Popup View -->
+                <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                    <div class="flex items-center justify-center min-h-screen">
+                        <div class=" relative modal-content">
+                            <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                            <button onclick="closeModal()"
+                                class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="leading-none translate-y-[-3px]">&times;</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {{--
@@ -54,19 +82,19 @@
                         <li><strong>Monthly Rent:</strong> {{ $house->amount }}</li>
                     </ul>
 
-                    <!-- Room Amenities -->
+                    <!-- house Amenities -->
                     <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
                     @if ($house->features->isNotEmpty())
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ($house->features as $feature)
-                            <span
-                                class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-                                {{ $feature->name }}
-                            </span>
-                        @endforeach
-                    </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($house->features as $feature)
+                                <span
+                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                                    {{ $feature->name }}
+                                </span>
+                            @endforeach
+                        </div>
                     @else
-                        <p class="text-gray-500">No amenities selected for this room.</p>
+                        <p class="text-gray-500">No amenities selected for this house.</p>
                     @endif
 
                     <!-- Address -->
@@ -84,7 +112,7 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-between space-x-4 pt-2">
+            <div class="flex items-center justify-between space-x-4 pt-2 mt-4">
                 <!-- Edit -->
                 <x-button type="button" icon="fas fa-pen-to-square"
                     class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
@@ -141,4 +169,19 @@
             </x-dialog-modal>
         </div>
     </div>
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = imageSrc;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore background scroll
+        }
+    </script>
 </div>

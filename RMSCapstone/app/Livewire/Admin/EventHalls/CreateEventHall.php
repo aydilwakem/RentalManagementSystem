@@ -19,7 +19,8 @@ class CreateEventHall extends Component
     public $capacity;
     public $extra_charge_per_hour;
     public $image;
-
+    public $images = [];
+    public $storedImages = [];
     public $property_status = 'available'; // Default
     public $property_category_id;
     public $property_type_id = 3; // Room
@@ -42,6 +43,18 @@ class CreateEventHall extends Component
         $this->features = PropertyFeature::where('property_type_id', 3)->get();
     }
 
+    public function removeImage($index)
+    {
+        unset($this->images[$index]);
+        $this->images = array_values($this->images); // reindex array
+    }
+
+    public function updatedImages()
+    {
+        // Prevent duplicate uploads by only appending new images
+        $this->images = array_merge($this->storedImages, $this->images);
+    }
+
     public function saveEventHall()
     {
         try{
@@ -54,6 +67,8 @@ class CreateEventHall extends Component
             'extra_charge_per_hour' => 'required|numeric|min:1000|max:50000.00',
             'property_status' => 'required|in:available,booked,out_of_service',
             'image' => 'nullable|image|max:1024', // Max 1MB image
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
 
@@ -76,6 +91,19 @@ class CreateEventHall extends Component
             $imagePath = $this->image->store('event-halls', 'public'); // Saves in storage/app/public/event-halls
         }
 
+        $imagePaths = [];
+        if (is_array($this->images)) {
+            foreach ($this->images as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('rooms', 'public');
+                    $imagePaths[] = $path;
+                } else {
+                    session()->flash('error', 'Image upload failed. Please try again.');
+                    return;
+                }
+            }
+        }
+
         // Create Event Category
         $eventHall = Property::create([
             'name_number' => $this->name_number,
@@ -87,6 +115,7 @@ class CreateEventHall extends Component
             'capacity' => $this->capacity,
             'extra_charge_per_hour' => $this->extra_charge_per_hour,
             'image' => $imagePath, // Save path in DB
+            'images' => array_merge($imagePaths, $this->storedImages),
         ]);
 
         // Attach selected features to pivot
@@ -96,12 +125,13 @@ class CreateEventHall extends Component
 
         // Reset form fields
         $this->reset(['name_number',
-        'property_status', 
-        'description', 
-        'image', 
-        'amount', 
-        'capacity', 
-        'extra_charge_per_hour', 
+        'property_status',
+        'description',
+        'image',
+        'images',
+        'amount',
+        'capacity',
+        'extra_charge_per_hour',
         'selectedFeatures',]);
 
         // Flash message for success
@@ -111,7 +141,7 @@ class CreateEventHall extends Component
         return redirect()->route('admin.event-halls');
     }
 
-    
+
     public function render()
     {
         return view('livewire.admin.event-halls.create-event-hall', [
