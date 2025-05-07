@@ -40,6 +40,8 @@ class ReservationConfirmedMail extends Mailable
             ->subject('Reservation Confirmed!')
             ->with([
                 'name' => $this->reservationData['name'],
+                'email' => $this->reservationData['email'],
+                'contact_number' => $this->reservationData['contact_number'],
                 'transaction_number' => $this->reservationData['transaction_number'],
                 'email' => $this->reservationData['email'],
                 'invoice_number' => $this->reservationData['invoice_number'],
@@ -47,6 +49,10 @@ class ReservationConfirmedMail extends Mailable
                 'check_out' => $this->reservationData['check_out'],
                 'total_amount' => $this->reservationData['total_amount'],
                 'deposit' => $this->reservationData['deposit'],
+                'amount_paid' =>  $this->reservationData['amount_paid'],
+                'balance_due' =>  $this->reservationData['balance_due'],
+                'properties' => $this->reservationData['properties'], 
+                'activities' => $this->reservationData['activities'], 
             ]);
     }
 }
