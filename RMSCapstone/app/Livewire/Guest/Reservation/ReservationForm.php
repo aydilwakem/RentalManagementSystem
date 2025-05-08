@@ -31,7 +31,6 @@ class ReservationForm extends Component
 
     // ----------------------- ROOMS ---------------------------- //
 
-
     // rooms - adults - kids - extra-guest - extra-charge - amount
     public $rooms = [];
     public $adults = [];
@@ -59,7 +58,6 @@ class ReservationForm extends Component
     public $country;
     public $heard_from;
 
-
     // ------------------- INVOICE -------------------- //
 
     public $invoice_number;
@@ -70,8 +68,6 @@ class ReservationForm extends Component
     public $currentStep = 1;
     public $totalSteps = 4;
     protected $queryString = ['currentStep'];
-
-
 
     /**
      * Initializes the component with default values.
@@ -91,7 +87,6 @@ class ReservationForm extends Component
         $this->paymentMethod = PaymentMethod::all();
     }
 
-
     /**
      * Renders the Livewire reservation form view for guests.
      *
@@ -102,12 +97,7 @@ class ReservationForm extends Component
         return view('livewire.guest.reservation.reservation-form');
     }
 
-
-
-
-
     // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
-
 
     /**
      * Advances to the next step in the multi-step reservation form.
@@ -141,13 +131,7 @@ class ReservationForm extends Component
         $this->currentStep = max($this->currentStep - 1, 1);
     }
 
-
-
-
-
-
     // --------------------------------------------- LOGIC ----------------------------------------------- //
-
 
     /**
      * Handles dynamic updates to component properties like adults, kids, check-in/out, or activity quantity.
@@ -164,13 +148,10 @@ class ReservationForm extends Component
 
     public function updated($property)
     {
-
         // ---------------------------- ADULTS AND KIDS -------------------------- //
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
-
             // haystack - adults.2 or kids.2
             // needle - adults. or kids.
-
 
             $roomId = explode('.', $property)[1];
             // extract the room id from the adults.'room_id'
@@ -195,7 +176,6 @@ class ReservationForm extends Component
 
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
-
                     $adults = (int) ($this->adults[$roomId] ?? 0); // extracts the adults of the item
                     $kids = (int) ($this->kids[$roomId] ?? 0); // extracts the kids of the item
 
@@ -213,7 +193,6 @@ class ReservationForm extends Component
                 }
             }
 
-
             // Triggers compute total pax method
             $this->computeTotalPax();
         }
@@ -223,20 +202,17 @@ class ReservationForm extends Component
             $this->getAvailableRooms();
         }
 
-
         // ----------------------- QUANTITY ------------------------------ //
 
         if (Str::startsWith($property, 'quantity.')) {
             // Extract the activity ID from the property name
             $activityId = explode('.', $property)[1];
 
-
             // Find activities
             $activity = Activity::find($activityId);
             if (!$activity) {
                 return;
             }
-
 
             // Update the cart item's quantity dynamically
             foreach ($this->cart as $index => $item) {
@@ -251,8 +227,6 @@ class ReservationForm extends Component
         }
     }
 
-
-
     /**
      * Computes the number of days between check-in and check-out.
      *
@@ -262,8 +236,9 @@ class ReservationForm extends Component
      * @return int Duration of the stay in days.
      */
 
-    public function getStayDurationProperty() // This allows you to access the method as a property
+    public function getStayDurationProperty()
     {
+        // This allows you to access the method as a property
         if ($this->check_in_date && $this->check_out_date) {
             $in = Carbon::parse($this->check_in_date);
             $out = Carbon::parse($this->check_out_date);
@@ -274,9 +249,6 @@ class ReservationForm extends Component
 
     // you can call this method as a property in the blade file
     // $this-> getStayDurationProperty() or $this->getStayDuration
-
-
-
 
     /**
      * Fetch available rooms for the selected check-in and check-out dates.
@@ -300,14 +272,11 @@ class ReservationForm extends Component
             ->where('property_status', 'available')
             ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {
                 $query->where(function ($q) use ($checkIn, $checkOut) {
-                    $q->where('start_datetime', '<', $checkOut)
-                        ->where('end_datetime', '>', $checkIn);
+                    $q->where('start_datetime', '<', $checkOut)->where('end_datetime', '>', $checkIn);
                 });
             })
             ->get();
     }
-
-
 
     /**
      * Computes the total number of guests (pax) by summing all adults and kids from the cart.
@@ -318,21 +287,18 @@ class ReservationForm extends Component
      * @return void
      */
 
-
     // This method calculates the total number of guests (pax) in the cart
     public function computeTotalPax()
     {
         $total = 0; // this will store the total number of guests // 3
 
-
         foreach ($this->cart as $item) {
-
             // type = room, room_id = 1, adults = 2, kids = 1 // ideal guest = 2
             // type = room, room_id = 2, adults = 2, kids = 4
             // type = activity, activity_id = 1, quantity = 2
 
-
-            if ($item['type'] === 'room') {  // Fetch items with type = 'room' ex. room_id 1
+            if ($item['type'] === 'room') {
+                // Fetch items with type = 'room' ex. room_id 1
                 $adults = (int) ($item['adults'] ?? 0); // extracts the adults of the item - 2
                 $kids = (int) ($item['kids'] ?? 0); // extracts the kids of the item - 1
 
@@ -340,13 +306,11 @@ class ReservationForm extends Component
                 $guestsInRoom = $adults + $kids; // 2 + 1 = 3
 
                 $total += $guestsInRoom; // here the guestsInRoom will be added
-
             }
         }
 
         $this->total_pax = $total;
     }
-
 
     public function computeTotalAmountOfAllRooms()
     {
@@ -423,7 +387,6 @@ class ReservationForm extends Component
         }
     }
 
-
     // ------------------------------------------ ADD ITEMS TO CART ------------------------------------------ //
 
     /**
@@ -486,14 +449,12 @@ class ReservationForm extends Component
             'total_amount' => $roomAmount + $extraCharge,
         ];
 
-
         // Optional debugging line to inspect the cart's content (can be removed in production)
         // dd($this->cart);
 
         // Call a method to compute the total number of people (pax) in the cart after adding the room
         $this->computeTotalPax();
     }
-
 
     /**
      * Adds an activity to the cart.
@@ -529,25 +490,32 @@ class ReservationForm extends Component
 
         // Add the activity to the cart if it isn't already present
         $this->cart[] = [
-            'type' => 'activity',  // Define the type as 'activity'
-            'activity_id' => $activity->id,  // Set the activity ID from the activity object
-            'activity_name' => $activity->name,  // Set the activity name
-            'quantity' => $quantity,  // Set the quantity from the input or default to 1
-            'amount' => $activityAmount,  // Set the calculated amount for the activity
-            'status' => $activitystatus,  // Set the status of the activity
+            'type' => 'activity', // Define the type as 'activity'
+            'activity_id' => $activity->id, // Set the activity ID from the activity object
+            'activity_name' => $activity->name, // Set the activity name
+            'quantity' => $quantity, // Set the quantity from the input or default to 1
+            'amount' => $activityAmount, // Set the calculated amount for the activity
+            'status' => $activitystatus, // Set the status of the activity
         ];
 
         // $this->computeTotalAmount();
     }
 
+    public function incrementActivity($activityId)
+    {
+        $current = $this->quantity[$activityId] ?? 1;
+        $this->quantity[$activityId] = $current + 1;
+    }
 
-
-
-
-
+    public function decrementActivity($activityId)
+    {
+        $current = $this->quantity[$activityId] ?? 1;
+        if ($current > 1) {
+            $this->quantity[$activityId] = $current - 1;
+        }
+    }
 
     // ------------------------------------------ REMOVE ITEMS FROM CART ----------------------------------- //
-
 
     /**
      * Remove an item from the cart based on the given type and item ID.
@@ -564,7 +532,6 @@ class ReservationForm extends Component
 
     public function removeFromCart($type, $itemId)
     {
-
         // Filter the cart items to exclude the one with the matching type and ID
         $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
             if ($type === 'activity') {
@@ -587,14 +554,7 @@ class ReservationForm extends Component
         $this->computeTotalAmount();
     }
 
-
-
-
-
-
-
     // ------------------------------------------ DATABASE INSERTION -------------------------------------- //
-
 
     /**
      * Finalize and register a reservation based on the current cart and user input.
@@ -618,7 +578,6 @@ class ReservationForm extends Component
         $reservationData = []; // Initialize an empty array to store reservation data for email
 
         DB::transaction(function () use (&$reservationData) {
-
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
@@ -650,7 +609,7 @@ class ReservationForm extends Component
 
             // Step 3 & 4: Generate invoice number
             $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad($latestInvoice ? (int) substr($latestInvoice->invoice_number, -3) + 1 : 1, 3, '0', STR_PAD_LEFT);
 
             // Step 5: Create invoice
             $invoice = Invoice::create([

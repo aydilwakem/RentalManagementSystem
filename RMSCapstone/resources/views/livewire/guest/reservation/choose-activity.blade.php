@@ -1,7 +1,14 @@
 <div class="w-full flex justify-center">
     <div class="step-one w-full px-4">
+        <h1 class="text-3xl font-bold text-green-700">Our Activities</h1>
+        <p class="text-lg text-gray-700 text mb-3">
+            These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at
+            Canopy
+            Farm. These are not required but are highly recommended!
+        </p>
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
             @foreach ($activities as $activity)
                 <!-- Activity Card -->
                 <div
@@ -38,18 +45,30 @@
 
                         <!-- Controls -->
                         <div class="flex items-center justify-between sm:flex-row gap-4 mt-4">
-                            <!-- Quantity -->
+                            <!-- Counter -->
                             <div class="flex flex-col">
                                 <label for="quantity-{{ $activity->id }}"
                                     class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                                <select id="quantity-{{ $activity->id }}" wire:model.live="quantity.{{ $activity->id }}"
-                                    class="border border-gray-300 rounded px-3 py-1 focus:outline-none">
-                                    @for ($i = 1; $i <= 10; $i++)
-                                        <option value="{{ $i }}">{{ $i }}</option>
-                                    @endfor
-                                </select>
+                                <div class="flex items-center space-x-2">
+                                    <button type="button" wire:click.prevent="decrementActivity('{{ $activity->id }}')"
+                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
+                                        -
+                                    </button>
+
+                                    <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                        {{ $quantity[$activity->id] ?? 1 }}
+                                    </span>
+
+                                    <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                        +
+                                    </button>
+                                </div>
                             </div>
-                            <!-- Button -->
+
+
+
+                            <!-- Add to Cart Button -->
                             <div class="mt-auto">
                                 <button wire:click="addActivityToCart({{ $activity->id }})"
                                     class="w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
@@ -59,8 +78,8 @@
                                         <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
                                             class="mr-2">
                                             <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                    stroke-width="4"></circle>
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4"></circle>
                                                 <path class="opacity-75" fill="currentColor"
                                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                                 </path>
@@ -74,6 +93,7 @@
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 {{-- <div class="bg-white border rounded-xl overflow-hidden shadow-sm w-full">
