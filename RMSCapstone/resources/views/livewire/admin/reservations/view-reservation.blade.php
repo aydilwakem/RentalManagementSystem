@@ -1,274 +1,380 @@
 <div>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('View Reservation') }}
         </h2>
     </x-slot>
 
-    <div>
+    <div class="py-1">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-        <!---------------------------- GUEST DETAILS ---------------------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Guest Details</h2>
-        <div class="bg-white shadow-lg rounded-lg border border-gray-300 p-4">
-            <p><strong>Guest Name:</strong> {{ $transaction->transactionUser->first_name }}
-                {{ $transaction->transactionUser->middle_name }} {{ $transaction->transactionUser->last_name }}
-                {{ $transaction->transactionUser->suffix }}
-            </p>
-            <p><strong>Email:</strong> {{ $transaction->transactionUser->email }}</p>
-            <p><strong>Contact Number:</strong> {{ $transaction->transactionUser->contact_number }}</p>
-            <p><strong>Company Name:</strong> {{ $transaction->transactionUser->company_name ?? 'Not provided' }}</p>
-            <p><strong>Country:</strong> {{ $transaction->transactionUser->country ?? 'Not provided' }}</p>
+            <!---------------------------- GUEST DETAILS ---------------------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Guest Details') }}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
+                    <div><strong>Guest Name:</strong></div>
+                    <div>
+                        {{ $transaction->transactionUser->first_name }}
+                        {{ $transaction->transactionUser->middle_name }}
+                        {{ $transaction->transactionUser->last_name }}
+                        {{ $transaction->transactionUser->suffix }}
+                    </div>
+                    <div><strong>Email:</strong></div>
+                    <div>{{ $transaction->transactionUser->email }}</div>
+                    <div><strong>Contact Number:</strong></div>
+                    <div>{{ $transaction->transactionUser->contact_number }}</div>
+                    <div><strong>Company Name:</strong></div>
+                    <div>{{ $transaction->transactionUser->company_name ?? 'Not provided' }}</div>
+                    <div><strong>Country:</strong></div>
+                    <div>{{ $transaction->transactionUser->country ?? 'Not provided' }}</div>
+                </div>
+            </div>
+
+            <!---------------------------- ADDITIONAL GUESTS DETAILS ---------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Additional Guests Details') }}
+                </h2>
+                @if ($guestDetails->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Full Name</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Gender</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Residency</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Country of Origin</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach ($guestDetails as $guestDetail)
+                                    <tr>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $guestDetail->first_name }}
+                                            {{ $guestDetail->middle_name }}
+                                            {{ $guestDetail->last_name }}
+                                            {{ $guestDetail->suffix }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->gender ?? 'N/A' }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->residency }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $guestDetail->country_of_origin }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-gray-600 italic">No additional guests found for this transaction.</p>
+                @endif
+            </div>
+
+            <!---------------------------- TRANSACTION DETAILS --------------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Transaction Details') }}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700">
+                    <div class="col-span-full">
+                        <strong>Transaction Status:</strong>
+                        <div class="mt-1">
+                            @if ($transaction->transaction_status === 'pending')
+                                <span class="px-2 py-1 bg-gray-500 text-white rounded-md text-sm">Pending</span>
+                            @elseif ($transaction->transaction_status === 'reserved')
+                                <span class="px-2 py-1 bg-blue-500 text-white rounded-md text-sm">Waiting for
+                                    Confirmation</span>
+                            @elseif ($transaction->transaction_status === 'receipt_verified')
+                                <span class="px-2 py-1 bg-cyan-500 text-white rounded-md text-sm">Receipt
+                                    Verified</span>
+                            @elseif ($transaction->transaction_status === 'confirmed')
+                                <span class="px-2 py-1 bg-emerald-500 text-white rounded-md text-sm">Confirmed</span>
+                            @elseif ($transaction->transaction_status === 'ongoing')
+                                <span class="px-2 py-1 bg-yellow-400 text-black rounded-md text-sm">Ongoing</span>
+                            @elseif ($transaction->transaction_status === 'done')
+                                <span class="px-2 py-1 bg-indigo-600 text-white rounded-md text-sm">Done</span>
+                            @elseif ($transaction->transaction_status === 'no_show')
+                                <span class="px-2 py-1 bg-pink-400 text-white rounded-md text-sm">No Show</span>
+                            @elseif ($transaction->transaction_status === 'terminated')
+                                <span class="px-2 py-1 bg-rose-600 text-white rounded-md text-sm">Terminated</span>
+                            @elseif ($transaction->transaction_status === 'expired')
+                                <span class="px-2 py-1 bg-orange-500 text-white rounded-md text-sm">Expired</span>
+                            @elseif ($transaction->transaction_status === 'cancelled')
+                                <span class="px-2 py-1 bg-red-700 text-white rounded-md text-sm">Cancelled</span>
+                            @else
+                                {{ ucfirst($transaction->transaction_status) }}
+                            @endif
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Transaction Number:</strong>
+                        <div>#{{ $transaction->id }}</div>
+                    </div>
+                    <div>
+                        <strong>Reservation Created At:</strong>
+                        <div>{{ $transaction->created_at }}</div>
+                    </div>
+                    <div>
+                        <strong>Reservation Source:</strong>
+                        <div>{{ $transaction->reservation_source }}</div>
+                    </div>
+                    <div>
+                        <strong>Check-in Date:</strong>
+                        <div>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</div>
+                    </div>
+                    <div>
+                        <strong>Check-out Date:</strong>
+                        <div>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</div>
+                    </div>
+                    <div>
+                        <strong>Duration of Stay:</strong>
+                        <div>{{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)</div>
+                    </div>
+                    <div>
+                        <strong>Total Adults:</strong>
+                        <div>{{ $transaction->total_adults }}</div>
+                    </div>
+                    <div>
+                        <strong>Total Kids:</strong>
+                        <div>{{ $transaction->total_kids }}</div>
+                    </div>
+                    <div>
+                        <strong>Total Guests:</strong>
+                        <div>{{ $transaction->pax }}</div>
+                    </div>
+                    <div>
+                        <strong>Total Amount:</strong>
+                        <div>₱{{ number_format($transaction->total_amount, 2) }}</div>
+                    </div>
+                    <div>
+                        <strong>Deposit:</strong>
+                        <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
+                    </div>
+                    <div>
+                        <strong>Heard From:</strong>
+                        <div>{{ $transaction->heard_from }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!---------------------------- ROOM DETAILS ---------------------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Room Details') }}
+                </h2>
+                @if ($properties->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Room</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Category</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">No. of Adults
+                                    </th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">No. of Kids</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Stay Duration
+                                    </th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Extra Guests</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Base Rate</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Extra Guest Charge
+                                    </th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Room Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach ($properties as $property)
+                                    <tr>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $property->name_number }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $property->category->name }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                            {{ $property->pivot->adults ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                            {{ $property->pivot->kids ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                            {{ $property->pivot->days ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                            {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-right">
+                                            ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-right">
+                                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
+                                            ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Total Room Charges: ₱{{ number_format($totalRooms, 2) }}
+                        </div>
+                    </div>
+                @else
+                    <p class="text-gray-600 italic">No properties found for this transaction.</p>
+                @endif
+            </div>
+
+            <!---------------------------- ADD ON SERVICES ------------------------------------>
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Add-on Services/Activities') }}
+                </h2>
+                @if ($activities->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-left">Activity Name</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Quantity</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Unit Cost</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Activity Total
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach ($activities as $activity)
+                                    <tr>
+                                        <td class="border px-4 py-2 text-gray-700 text-left">{{ $activity->name }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                            {{ $activity->pivot->quantity }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-right">
+                                            ₱{{ number_format($activity->amount, 2) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
+                                            ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Total Activity Charges: ₱{{ number_format($totalAddons, 2) }}
+                        </div>
+                    </div>
+                @else
+                    <p class="text-gray-600 italic">No activities found for this transaction.</p>
+                @endif
+            </div>
+
+            <!---------------------------- INVOICE DETAILS ------------------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Invoice Details') }}
+                </h2>
+                @if ($invoice)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
+                        <!-- Invoice Info -->
+                        <div><strong>Invoice Number:</strong></div>
+                        <div># {{ $invoice->invoice_number }}</div>
+
+                        <div><strong>Due Date:</strong></div>
+                        <div>
+                            {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set' }}
+                        </div>
+
+                        <!-- COst Summary -->
+                        <div><strong>Grand Total:</strong></div>
+                        <div class="font-semibold">₱{{ number_format($invoice->sub_total, 2) }}</div>
+
+                        <div><strong>Deposit:</strong></div>
+                        <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
+
+                        <div><strong>Amount Paid:</strong></div>
+                        <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
+
+                        <div><strong>Balance Due:</strong></div>
+                        <div>₱{{ number_format($invoice->balance_due, 2) }}</div>
+
+                        <!-- Payment Status -->
+                        <div><strong>Invoice Status:</strong></div>
+                        <div>
+                            <div class="text-yellow-500">{{ ucfirst($invoice->invoice_status) }}</div>
+                        </div>
+
+                        <!-- Timeline -->
+                        <div><strong>Completed At:</strong></div>
+                        <div>
+                            {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
+                        </div>
+                    </div>
+                @else
+                    <p class="text-gray-600 italic">No invoice found for this transaction.</p>
+                @endif
+            </div>
+
+            <!---------------------------- PAYMENT DETAILS ---------------------------------------->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                    {{ __('Payments') }}
+                </h2>
+                @if ($payments->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Type</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Reference #</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Upload Date</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Status</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Notes</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach ($payments as $payment)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice_id }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $payment->paymentMethod->mode_of_payment_name }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            ₱{{ number_format($payment->amount_paid, 2) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ ucfirst($payment->payment_type) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $payment->payment_date ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2">
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                                {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
+                                                {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
+                                                {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
+                                                {{ ucfirst($payment->payment_status) }}
+                                            </span>
+                                        </td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $payment->notes ?? '-' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ $payment->verified_at ?? 'To be verified' }}</td>
+                                        <td class="border px-4 py-2 space-x-2">
+                                            @if ($payment->payment_status === 'pending')
+                                                <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
+                                                    class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded text-xs">
+                                                    Verify Receipt
+                                                </a>
+                                            @elseif($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
+                                                <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
+                                                    class="inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs">
+                                                    View Receipt
+                                                </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-gray-600 italic">No payments found for this invoice.</p>
+                @endif
+            </div>
         </div>
-
-
-        <!---------------------------- ADDITIONAL GUESTS DETAILS ---------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Additional Guests Details</h2>
-        @if ($guestDetails->isNotEmpty())
-            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md mb-6">
-                <table class="min-w-full border border-gray-300 text-sm text-left">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="border px-4 py-2">Full Name</th>
-                            <th class="border px-4 py-2">Gender</th>
-                            <th class="border px-4 py-2">Residency</th>
-                            <th class="border px-4 py-2">Country of Origin</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($guestDetails as $guestDetail)
-                            <tr>
-                                <td class="border px-4 py-2">
-                                    {{ $guestDetail->first_name }}
-                                    {{ $guestDetail->middle_name }}
-                                    {{ $guestDetail->last_name }}
-                                    {{ $guestDetail->suffix }}
-                                </td>
-                                <td class="border px-4 py-2">{{ $guestDetail->gender ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2">{{ $guestDetail->residency}}</td>
-                                <td class="border px-4 py-2">{{ $guestDetail->country_of_origin}}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <p>No additional guest found for this transaction.</p>
-        @endif
-
-
-        <!---------------------------- TRANSACTION DETAILS --------------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Transaction Details</h2>
-        <div class="bg-white shadow-lg rounded-lg border border-gray-300 p-4">
-            <p><strong>Transaction Number:</strong> #{{ $transaction->id }}</p>
-
-            <p><strong>Check-in Date:</strong>
-                {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</p>
-            <p><strong>Check-out Date:</strong>
-                {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</p>
-            <p><strong>Duration of Stay:</strong> {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)
-            </p>
-            <p><strong>Total Adults:</strong> {{ $transaction->total_adults }}</p>
-            <p><strong>Total Kids:</strong> {{ $transaction->total_kids }}</p>
-            <p><strong>Total Guests:</strong> {{ $transaction->pax }}</p>
-            <p><strong>Total Amount:</strong> ₱{{ number_format($transaction->total_amount, 2) }}</p>
-            <p><strong>Deposit:</strong> ₱{{ number_format($transaction->deposit_amount, 2) }}</p>
-            <p><strong>Heard From:</strong> {{ $transaction->heard_from }}</p>
-            <p><strong>Reservation Source:</strong> {{ $transaction->reservation_source }}</p>
-            <p><strong>Transaction Status:</strong> {{ ucfirst($transaction->transaction_status) }}</p>
-            <p><strong>Reservation Created At:</strong> {{ $transaction->created_at }}</p>
-        </div>
-
-
-        <!---------------------------- INVOICE DETAILS ------------------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Invoice Details</h2>
-        @if ($invoice)
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-            <div class="grid grid-cols-2 gap-4 text-sm mb-4">
-                <div class="font-semibold">Invoice Number:</div>
-                <div># {{ $invoice->invoice_number }}</div>
-
-                <div class="font-semibold">Subtotal:</div>
-                <div>₱{{ number_format($invoice->sub_total, 2) }}</div>
-
-                <div class="font-semibold">Deposit:</div>
-                <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
-
-                <div class="font-semibold">Amount Paid:</div>
-                <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
-
-                <div class="font-semibold">Balance Due:</div>
-                <div>₱{{ number_format($invoice->balance_due, 2) }}</div>
-
-                <div class="font-semibold">Due Date:</div>
-                <div>
-                    {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set'
-                    }}
-                </div>
-
-                <div class="font-semibold">Invoice Status:</div>
-                <div class="text-yellow-500">{{ ucfirst($invoice->invoice_status) }}</div>
-
-                <div class="font-semibold">Completed At:</div>
-                <div>
-                    {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not
-                    yet completed' }}
-                </div>
-            </div>
-        </div>
-        @else
-        <p>No invoice found for this transaction.</p>
-        @endif
-
-
-        <!---------------------------- ROOM DETAILS ---------------------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Room Details</h2>
-        @if ($properties->isNotEmpty())
-            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md mb-6">
-                <table class="min-w-full border border-gray-300 text-sm text-left">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="border px-4 py-2">Room Name</th>
-                            <th class="border px-4 py-2">Room Type</th>
-                            <th class="border px-4 py-2 text-center">Adults</th>
-                            <th class="border px-4 py-2 text-center">Kids</th>
-                            <th class="border px-4 py-2 text-center">Days</th>
-                            <th class="border px-4 py-2 text-center">Extra Guest</th>
-                            <th class="border px-4 py-2 text-right">Included Rate</th>
-                            <th class="border px-4 py-2 text-right">Extra Charge</th>
-                            <th class="border px-4 py-2 text-right">Total Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($properties as $property)
-                            <tr>
-                                <td class="border px-4 py-2">{{ $property->name_number }}</td>
-                                <td class="border px-4 py-2">{{ $property->category->name }}</td>
-                                <td class="border px-4 py-2 text-center">{{ $property->pivot->adults ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2 text-center">{{ $property->pivot->kids ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2 text-center">{{ $property->pivot->days ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2 text-center">{{ $property->pivot->extra_guest ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2 text-right">₱{{ number_format($property->pivot->amount ?? 0, 2) }}
-                                </td>
-                                <td class="border px-4 py-2 text-right">
-                                    ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                                <td class="border px-4 py-2 text-right font-semibold">
-                                    ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                <div class="text-right font-semibold text-base mt-2">
-                    Total Amount of Rooms: ₱{{ number_format($totalRooms, 2) }}
-                </div>
-            </div>
-        @else
-            <p>No properties found for this transaction.</p>
-        @endif
-
-
-        <!---------------------------- ADD ON SERVICES ------------------------------------>
-        <h2 class="text-xl font-semibold mt-6 mb-4">Add-on Services/Activities</h2>
-        @if ($activities->isNotEmpty())
-            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md mb-6">
-                <table class="table-auto w-full border border-gray-300 text-sm mb-4">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="border px-4 py-2 text-left">Activity</th>
-                            <th class="border px-4 py-2 text-center">Quantity</th>
-                            <th class="border px-4 py-2 text-right">Unit Price</th>
-                            <th class="border px-4 py-2 text-right">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($activities as $activity)
-                            <tr>
-                                <td class="border px-4 py-2">{{ $activity->name }}</td>
-                                <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
-                                <td class="border px-4 py-2 text-right"> ₱{{ number_format($activity->amount, 2) }}</td>
-                                <td class="border px-4 py-2 text-right">
-                                    ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                <div class="text-right font-semibold text-base mt-2">
-                    Total Add-ons: ₱{{ number_format($totalAddons, 2) }}
-                </div>
-            </div>
-        @else
-            <p class="text-gray-600 italic">No activities found for this transaction.</p>
-        @endif
-
-
-        <!---------------------------- PAYMENT DETAILS ---------------------------------------->
-        <h2 class="text-xl font-semibold mt-6 mb-4">Payments</h2>
-        @if ($payments->isNotEmpty())
-            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md">
-                <table class="min-w-full border-collapse text-sm text-left">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="border px-4 py-2">Payment ID</th>
-                            <th class="border px-4 py-2">Invoice ID</th>
-                            <th class="border px-4 py-2">Method</th>
-                            <th class="border px-4 py-2">Amount Paid</th>
-                            <th class="border px-4 py-2">Type</th>
-                            <th class="border px-4 py-2">Reference #</th>
-                            <th class="border px-4 py-2">Upload Date</th>
-                            <th class="border px-4 py-2">Status</th>
-                            <th class="border px-4 py-2">Notes</th>
-                            <th class="border px-4 py-2">Verified At</th>
-                            <th class="border px-4 py-2">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($payments as $payment)
-                            <tr class="hover:bg-gray-50">
-                                <td class="border px-4 py-2">{{ $payment->id }}</td>
-                                <td class="border px-4 py-2">{{ $payment->invoice_id }}</td>
-                                <td class="border px-4 py-2">{{ $payment->paymentMethod->mode_of_payment_name }}</td>
-                                <td class="border px-4 py-2">₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                <td class="border px-4 py-2">{{ ucfirst($payment->payment_type) }}</td>
-                                <td class="border px-4 py-2">{{ $payment->payment_reference_number ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2">{{ $payment->payment_date ?? 'N/A' }}</td>
-                                <td class="border px-4 py-2">
-                                    <span
-                                        class="text-sm 
-                                                                                                                                                                                                        {{ $payment->payment_status === 'pending' ? 'text-yellow-500' : '' }}
-                                                                                                                                                                                                        {{ $payment->payment_status === 'failed' ? 'text-red-500' : '' }}
-                                                                                                                                                                                                        {{ $payment->payment_status === 'completed' ? 'text-green-500' : '' }}">
-                                        {{ ucfirst($payment->payment_status) }}
-                                    </span>
-                                </td>
-                                <td class="border px-4 py-2">{{ $payment->notes ?? '-' }}</td>
-                                <td class="border px-4 py-2">{{ $payment->verified_at ?? 'To be verified' }}</td>
-                                <td class="border px-4 py-2 space-x-2">
-                                    @if($payment->payment_status === 'pending')
-                                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                            class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                                            Verify Receipt
-                                        </a>
-                                    @elseif($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
-                                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                            class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                                            View Receipt
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <p>No payments found for this invoice.</p>
-        @endif
-
-
-
-
     </div>
 </div>
 
@@ -391,7 +497,7 @@
             <td class="border px-4 py-2">{{ $payment->invoice_id }}</td>
             <td class="border px-4 py-2">
                 {{-- Display the payment screenshot as an image --}}
-                {{-- @if ($payment->payment_screenshot)
+{{-- @if ($payment->payment_screenshot)
                 <img src="{{ asset('storage/' . $payment->payment_screenshot) }}" alt="Payment Screenshot"
                     style="max-width: 200px; max-height: 200px;">
                 @else

@@ -8,7 +8,8 @@
                 <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation"
                     to
                     add a reservation.</p>
-                <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
+                <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus"
+                    wire:navigate>
                     Create Reservation
                 </x-button>
             </div>
@@ -22,7 +23,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -88,9 +89,6 @@
                         </div>
                     </div>
 
-
-
-
                 </div>
 
                 {{-- Table --}}
@@ -150,8 +148,9 @@
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -177,15 +176,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -208,15 +209,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -239,15 +242,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -270,15 +275,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -344,9 +351,11 @@
                                     @if ($transaction->transaction_status === 'pending')
                                         <span class="px-2 py-1 bg-gray-500 text-white rounded-md">Pending</span>
                                     @elseif ($transaction->transaction_status === 'reserved')
-                                        <span class="px-2 py-1 bg-blue-500 text-white rounded-md">Waiting for Confirmation</span>
+                                        <span class="px-2 py-1 bg-blue-500 text-white rounded-md">Waiting for
+                                            Confirmation</span>
                                     @elseif ($transaction->transaction_status === 'receipt_verified')
-                                        <span class="px-2 py-1 bg-cyan-500 text-white rounded-md">Receipt Verified</span>
+                                        <span class="px-2 py-1 bg-cyan-500 text-white rounded-md">Receipt
+                                            Verified</span>
                                     @elseif ($transaction->transaction_status === 'confirmed')
                                         <span class="px-2 py-1 bg-emerald-500 text-white rounded-md">Confirmed</span>
                                     @elseif ($transaction->transaction_status === 'ongoing')
@@ -366,38 +375,41 @@
 
 
                                 {{-- Action Icons --}}
-                                <td class="px-4 py-3 flex items-center space-x-3 relative">
+                                <td class="px-6 py-3 flex items-center relative">
 
                                     @php
                                         $dropdownId = 'dropdown-' . $transaction->id;
                                         $buttonId = 'dropdownDefaultButton-' . $transaction->id;
                                     @endphp
 
-                                    <!-- View Icon -->
-                                    @can('new-reservation-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                            href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}">
-                                        </i>
-                                    @endcan
-
                                     {{-- Ellipsis Dropdown --}}
                                     <button data-toggle="dropdown" data-id="{{ $transaction->id }}"
                                         class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                                        <i class="fas fa-ellipsis-v text-xl"></i>
+                                        <i class="fas fa-ellipsis-h text-xl"></i>
                                     </button>
 
                                     {{-- Dropdown --}}
                                     <div data-dropdown="{{ $transaction->id }}"
-                                        class="dropdown-menu absolute top-full mt-2 right-0 z-10 hidden bg-white divide-y divide-gray-100                                                                                                                                                                                                                                                                                                                                                                                                        rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                                        class="dropdown-menu absolute top-full mt-2 right-0 z-10 hidden bg-white divide-y divide-gray-100 overflow-visible max-h-none                                                                                                                                                                                                                                                                                                                                                                                                       rounded-lg shadow-sm w-44 dark:bg-gray-700">
 
                                         <!--------------------- Safe Actions --------------------------------->
-                                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <!-- View Icon -->
+                                                @can('new-reservation-view')
+                                                    <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-eye mr-2 text-blue-600"></i> View Reservation
+                                                    </a>
+                                                @endcan
+                                            </li>
                                             <!-- Confirm Receipt -->
                                             @if ($transaction->transaction_status === 'reserved')
                                                 <li>
                                                     <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
                                                         class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm Receipt
+                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
+                                                        Receipt
                                                     </a>
                                                 </li>
                                             @endif
@@ -408,7 +420,8 @@
                                                     <a href="#"
                                                         wire:click.prevent="showActionModal('confirmReservation', 'Confirm Reservation', 'Are you sure you want to confirm this reservation?', {{ $transaction->id }})"
                                                         class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm Reservation
+                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
+                                                        Reservation
                                                     </a>
                                                 </li>
                                             @endif
@@ -419,22 +432,23 @@
                                                     <a href="#"
                                                         wire:click.prevent="showActionModal('startReservation', 'Start Reservation', 'Are you sure you want to start this reservation?', {{ $transaction->id }})"
                                                         class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-play-circle mr-2 text-indigo-600"></i> Start Reservation
+                                                        <i class="fas fa-play-circle mr-2 text-indigo-600"></i> Start
+                                                        Reservation
                                                     </a>
                                                 </li>
                                             @endif
 
                                             <!-- Edit Transaction -->
                                             @if (
-                                                    $transaction->transaction_status === 'pending' ||
+                                                $transaction->transaction_status === 'pending' ||
                                                     $transaction->transaction_status === 'reserved' ||
                                                     $transaction->transaction_status === 'receipt_verified' ||
-                                                    $transaction->transaction_status === 'confirmed'
-                                                )
+                                                    $transaction->transaction_status === 'confirmed')
                                                 <li>
                                                     <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
                                                         class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit Reservation
+                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit
+                                                        Reservation
                                                     </a>
                                                 </li>
                                             @endif
@@ -445,44 +459,44 @@
                                             @if ($transaction->transaction_status === 'ongoing')
                                                 <a href="{{ route('admin.add-transaction', ['transaction' => $transaction->id]) }}"
                                                     class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add Transaction
+                                                    <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add
+                                                    Transaction
                                             @endif
 
-                                                <!-- Mark as Done -->
-                                                @if ($transaction->transaction_status === 'ongoing')
-                                                    <li>
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
-                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark as Done
-                                                        </a>
-                                                    </li>
-                                                @endif
+                                            <!-- Mark as Done -->
+                                            @if ($transaction->transaction_status === 'ongoing')
+                                                <li>
+                                                    <a href="#"
+                                                        wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark
+                                                        as Done
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                                <!-- Mark as No Show -->
-                                                @if ($transaction->transaction_status === 'confirmed')
-                                                    <li>
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }})"
-                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            <i class="fas fa-user-slash mr-2 text-pink-600"></i> Mark as No Show
-                                                        </a>
-                                                    </li>
-                                                @endif
+                                            <!-- Mark as No Show -->
+                                            @if ($transaction->transaction_status === 'confirmed')
+                                                <li>
+                                                    <a href="#"
+                                                        wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }})"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-user-slash mr-2 text-pink-600"></i> Mark as No
+                                                        Show
+                                                    </a>
+                                                </li>
+                                            @endif
                                         </ul>
 
                                         <!--------------------- Destructive Actions -------------------------->
-                                        <div class="py-2">
+                                        <div class="py-1">
 
                                             <!-- Cancel -->
-                                            @if (
-                                                    $transaction->transaction_status === 'pending' ||
-                                                    $transaction->transaction_status === 'reserved'
-                                                )
+                                            @if ($transaction->transaction_status === 'pending' || $transaction->transaction_status === 'reserved')
                                                 <a href="#"
                                                     wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }})"
-                                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                    <i class="fas fa-times mr-2"></i> Cancel
+                                                    class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                    <i class="fas fa-times mr-2"></i> Cancel Reservation
                                                 </a>
                                             @endif
 
@@ -491,22 +505,21 @@
                                                 <a href="#"
                                                     wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }})"
                                                     class="flex items-center px-4 py-2 text-sm text-yellow-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-ban mr-2"></i> Terminate
+                                                    <i class="fas fa-ban mr-2"></i> Terminate Reservation
                                                 </a>
                                             @endif
 
                                             <!-- Delete -->
                                             @if (
-                                                    $transaction->transaction_status === 'cancelled' ||
+                                                $transaction->transaction_status === 'cancelled' ||
                                                     $transaction->transaction_status === 'expired' ||
                                                     $transaction->transaction_status === 'done' ||
                                                     $transaction->transaction_status === 'no_show' ||
-                                                    $transaction->transaction_status === 'terminated'
-                                                )
+                                                    $transaction->transaction_status === 'terminated')
                                                 <a href="#"
                                                     wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }})"
                                                     class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-trash-alt mr-2"></i> Delete
+                                                    <i class="fas fa-trash-alt mr-2"></i> Delete Reservation
                                                 </a>
                                             @endif
 
@@ -571,7 +584,7 @@
 
 <script>
     document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
-        button.addEventListener("click", function (e) {
+        button.addEventListener("click", function(e) {
             e.stopPropagation(); // Prevent window click from firing
             const id = button.getAttribute("data-id");
             const dropdown = document.querySelector(`[data-dropdown="${id}"]`);
@@ -587,7 +600,7 @@
     });
 
     // Optional: Close all dropdowns when clicking outside
-    window.addEventListener("click", function () {
+    window.addEventListener("click", function() {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.classList.add("hidden");
         });
@@ -609,7 +622,7 @@
     <a href="#"
         class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white
                                                         {{ $transaction->transaction_status == 'reserved' ? '' : 'cursor-not-allowed text-gray-400 pointer-events-none' }}"
-        @if($transaction->transaction_status == 'reserved')
+        @if ($transaction->transaction_status == 'reserved')
         wire:click.prevent="confirmReservation({{ $transaction->id }})"
         wire:loading.attr="disabled"
         @endif>
