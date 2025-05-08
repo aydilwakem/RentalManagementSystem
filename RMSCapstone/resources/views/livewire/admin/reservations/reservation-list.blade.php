@@ -22,7 +22,7 @@
             @if (session('message'))
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                     class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                     {{ session('message') }}
                 </div>
             @endif
@@ -160,36 +160,8 @@
                                 </button>
                             </th>
 
-                            {{-- Room Name --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('room_id')">
-                                <button class="flex items-center">
-                                    Room Name
-                                    @if ($sortBy !== 'room_id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+
+                            <th scope="col" class="px-4 py-3">Room/s</th>
 
                             {{-- Pax --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
@@ -222,8 +194,36 @@
                                 </button>
                             </th>
 
-                            {{-- Duration --}}
-                            <th scope="col" class="px-4 py-3">Duration</th>
+                            {{-- Stay Duration --}}
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('days')">
+                                <button class="flex items-center">
+                                    Stay Duration
+                                    @if ($sortBy !== 'days')
+                                        {{-- Default icon when sorting is not active --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            {{-- Up arrow (Ascending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            {{-- Down arrow (Descending) --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
                             {{-- Check-in Date --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('start_datetime')">
@@ -413,20 +413,6 @@
                                                 </li>
                                             @endif
 
-                                            <!-- Edit Transaction -->
-                                            @if (
-                                                    $transaction->transaction_status === 'pending' ||
-                                                    $transaction->transaction_status === 'reserved' || $transaction->transaction_status
-                                                    === 'receipt_verified'
-                                                )
-                                                <li>
-                                                    <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit Reservation
-                                                    </a>
-                                                </li>
-                                            @endif
-
                                             <!-- Start Reservation -->
                                             @if ($transaction->transaction_status === 'confirmed')
                                                 <li>
@@ -437,6 +423,23 @@
                                                     </a>
                                                 </li>
                                             @endif
+
+                                            <!-- Edit Transaction -->
+                                            @if (
+                                                    $transaction->transaction_status === 'pending' ||
+                                                    $transaction->transaction_status === 'reserved' ||
+                                                    $transaction->transaction_status === 'receipt_verified' ||
+                                                    $transaction->transaction_status === 'confirmed'
+                                                )
+                                                <li>
+                                                    <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit Reservation
+                                                    </a>
+                                                </li>
+                                            @endif
+
+
 
                                             <!-- Add Transaction -->
                                             @if ($transaction->transaction_status === 'ongoing')
@@ -494,9 +497,11 @@
 
                                             <!-- Delete -->
                                             @if (
+                                                    $transaction->transaction_status === 'cancelled' ||
                                                     $transaction->transaction_status === 'expired' ||
-                                                    $transaction->transaction_status === 'done' || $transaction->transaction_status ===
-                                                    'no_show' || $transaction->transaction_status === 'terminated'
+                                                    $transaction->transaction_status === 'done' ||
+                                                    $transaction->transaction_status === 'no_show' ||
+                                                    $transaction->transaction_status === 'terminated'
                                                 )
                                                 <a href="#"
                                                     wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }})"

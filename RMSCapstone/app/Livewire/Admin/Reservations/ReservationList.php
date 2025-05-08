@@ -27,10 +27,10 @@ class ReservationList extends Component
     public $perPage = 10; // Number of transactions displayed per page
 
     #[Url(history: true)]
-    public $sortBy = 'created_at'; // Column used for sorting transactions
+    public $sortBy = 'updated_at'; // Column used for sorting transactions
 
     #[Url(history: true)]
-    public $sortDir = 'ASC'; // Sorting direction (ascending/descending)
+    public $sortDir = 'DESC'; // Sorting direction (ascending/descending)
 
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 2;
@@ -58,14 +58,20 @@ class ReservationList extends Component
     /**
      * Renders the Livewire component view and fetches transactions based on filters
      */
+
     public function render()
     {
-        $transactions = Transaction::with(['transactionUser', 'properties'])
-            ->where('reservation_type_id', 2) // Room reservation type
-            ->when($this->search !== '', callback: function ($query) {
-                $query->where('first_name', 'like', '%' . $this->search . '%');
+        $transactions = Transaction::query()
+            ->select('trn_transactions.*')
+            ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+            ->with(['transactionUser', 'properties'])
+            ->where('reservation_type_id', 2)
+            ->when($this->search !== '', function ($query) {
+                $query->whereHas('transactionUser', function ($subQuery) {
+                    $subQuery->where('first_name', 'like', '%' . $this->search . '%');
+                });
             })
-            ->when($this->statusFilter !== '', function ($query) {
+            ->when($this->statusFilter !== '', callback: function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
             })
             ->orderBy($this->sortBy, $this->sortDir)
@@ -73,6 +79,7 @@ class ReservationList extends Component
 
         return view('livewire.admin.reservations.reservation-list', compact('transactions'));
     }
+
 
 
 
@@ -104,7 +111,7 @@ class ReservationList extends Component
 
     public function confirmReservation($id)
     {
-        $transaction = Transaction::with(['transactionUser', 'invoice'])->find($id);
+        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities'])->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -115,9 +122,12 @@ class ReservationList extends Component
         $transaction->update(['transaction_status' => 'confirmed']);
         session()->flash('message', 'Transaction successfully confirmed!');
 
-        // Gather user and invoice data
+        // Gather user and invoice data, 
+        //and properties and activities
         $user = $transaction->transactionUser;
         $invoice = $transaction->invoice;
+        $properties = $transaction->properties;
+        $activities = $transaction->activities; 
 
         if (!$user || !$invoice) {
             logger()->error('User or invoice not found for transaction ID ' . $id);
@@ -128,6 +138,8 @@ class ReservationList extends Component
         // Prepare data for email
         $reservationData = [
             'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email, 
+            'contact_number' => $user->contact_number, 
             'transaction_number' => $transaction->id,
             'email' => $user->email,
             'invoice_number' => $invoice->invoice_number,
@@ -135,6 +147,10 @@ class ReservationList extends Component
             'check_out' => $transaction->end_datetime,
             'total_amount' => $transaction->total_amount,
             'deposit' => $transaction->deposit_paid,
+            'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
+            'balance_due' =>  $invoice->balance_due,
+            'properties' => $properties,
+            'activities' => $activities, 
         ];
 
         try {

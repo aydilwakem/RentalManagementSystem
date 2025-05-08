@@ -59,8 +59,8 @@
                                         <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
                                             class="mr-2">
                                             <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
                                                 <path class="opacity-75" fill="currentColor"
                                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                                 </path>
@@ -104,12 +104,10 @@
                                 <div class="w-full sm:w-auto flex flex-col">
                                     <label for="quantity-{{ $activity->id }}"
                                         class="text-sm font-medium text-gray-700">Quantity:</label>
-                                    <select id="quantity-{{ $activity->id }}"
-                                        wire:model.live="quantity.{{ $activity->id }}"
+                                    <select id="quantity-{{ $activity->id }}" wire:model.live="quantity.{{ $activity->id }}"
                                         class="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                        @for ($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">{{ $i }}</option>
-                                        @endfor
+                                        @for ($i = 1; $i <= 10; $i++) <option value="{{ $i }}">{{ $i }}</option>
+                                            @endfor
                                     </select>
                                 </div>
 
