@@ -21,30 +21,35 @@ class ViewReceipt extends Component
     public $transaction;
     public $transactionUser;
     public $amount_paid;
-
-
+    public $payment_type;
+    public $rejection_reason;
     public $confirmReceiptItem = false;
-    public $rejectReceiptItem = false;
+    public $showRejectModal = false;
 
 
-    //Method to make modal true
+    // -------------------------------- RENDER ---------------------------- //
+    public function render()
+    {
+        return view('livewire.admin.reservations.payments.view-receipt');
+    }
+
+    // -------------------------------- MODALS --------------------------- //
     public function ConfirmReceiptModal()
     {
         $this->confirmReceiptItem = true;
     }
 
-    public function RejectReceiptModal()
-    {
-        $this->rejectReceiptItem = true;
-    }
-
-
+    // -------------------------------- MOUNT --------------------------- //
     public function mount(Payment $payment)
     {
         // Method to load related Payment data
         $this->loadPaymentData($payment);
     }
 
+    // -------------------------------- METHODS --------------------------- //
+
+
+    // Load payment data
     private function loadPaymentData(Payment $payment)
     {
         // Load the necessary relationships eagerly, only if they are not already loaded
@@ -62,32 +67,29 @@ class ViewReceipt extends Component
         $this->payment = $payment;
         $this->invoice = $payment->invoice;
         $this->transaction = $this->invoice->transaction;
+        $this->transactionUser = $this->transaction->transactionUser;
 
         // Check if invoice or transaction is missing
         if (!$this->invoice || !$this->transaction) {
             abort(404, 'Invoice or transaction not found for the payment.');
         }
 
-        // Set the amount paid
+        // Set the amount paid if payment already verified
         $this->amount_paid = $payment->amount_paid;
+        $this->payment_type = $payment->payment_type;
     }
 
 
-    public function render()
-    {
-        return view('livewire.admin.reservations.payments.view-receipt');
-    }
-
+    // Confirm Receipt
     public function confirmReceipt()
     {
-
-
-        Log::info('ConfirmReceipt method called.');
+        Log::info('Confirm Receipt method called.');
 
         try {
             // Validate form input
             $this->validate([
                 'amount_paid' => 'required|numeric|min:100|max:1000000.00',
+                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit', // Validation for the enum
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -97,6 +99,7 @@ class ViewReceipt extends Component
 
         $this->payment->update([
             'amount_paid' => $this->amount_paid,
+            'payment_type' => $this->payment_type,
             'payment_status' => 'completed',
             'verified_at' => now(),
         ]);
@@ -112,11 +115,15 @@ class ViewReceipt extends Component
             ]);
         }
 
+        // If the transaction status is set to 'reserved' update the transaction status to 'receipt_verified'
+        // Else, don't change the status, it means that the deposit has already been paid
         if ($this->transaction && $this->transaction->transaction_status === 'reserved') {
             $this->transaction->update([
-                'transaction_status' => 'receipt_verified'
+                'transaction_status' => 'receipt_verified',
+                'updated_at' => now()
             ]);
         }
+
 
 
         $this->confirmReceiptItem = false;
@@ -124,16 +131,45 @@ class ViewReceipt extends Component
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }
 
-
+    // Reject receipt 
     public function rejectReceipt()
     {
+        try {
+            // Validate form input
+            $this->validate([
+                'rejection_reason' => 'required|in:Incomplete details,Invalid receipt,Mismatched amount,Duplicate payment,Suspicious activity,Other', // Validation for the enum
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->showRejectModal = false;
+            throw $e;
+        }
+
         $this->payment->update([
             'payment_status' => 'failed',
+            'rejection_reason' => $this->rejection_reason,
         ]);
 
-        // Email to send notification to user that their payment is rejected
+        // Prepare the payment details to send in the email
+        $paymentDetails = [
+            'rejection_reason' => $this->rejection_reason,
+            'user_email' => $this->transactionUser->email,
+        ];
 
-        $this->rejectReceiptItem = false;
+        // Log the payment details for email
+        Log::info('Preparing to send rejection email', $paymentDetails);
+
+        try {
+            // Send the rejection email
+            Mail::to($this->transactionUser->email)
+                ->send(new ReceiptRejectedMail($paymentDetails));
+        } catch (\Exception $e) {
+            // Log the error if email fails to send
+            Log::error('Error sending rejection email: ' . $e->getMessage());
+            throw $e;
+        }
+
+        $this->showRejectModal = false;
 
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }

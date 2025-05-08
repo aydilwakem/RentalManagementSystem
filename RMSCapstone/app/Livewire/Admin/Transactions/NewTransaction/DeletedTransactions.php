@@ -23,7 +23,10 @@ class DeletedTransactions extends Component
 
     public function fetchDeletedNewTransactions()
     {
-        $this->deletedNewTransactions = Transaction::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedNewTransactions = Transaction::onlyTrashed()
+            ->where('reservation_type_id', 2)
+            ->orderBy('created_at', 'ASC')
+            ->get();
     }
 
     public function restoreTransaction($transactionId)
@@ -31,7 +34,7 @@ class DeletedTransactions extends Component
         $transaction = Transaction::withTrashed()->find($transactionId);
         if ($transaction) {
             $transaction->restore(); // Restore the transaction
-            session()->flash('message', 'Room restored successfully.');
+            session()->flash('message', 'Transaction restored successfully.');
             $this->deletedNewTransactions = Transaction::onlyTrashed()->get();
         }
     }
@@ -41,7 +44,7 @@ class DeletedTransactions extends Component
         $transaction = Transaction::withTrashed()->find($this->confirmItemDelete);
         if ($transaction) {
             $transaction->forceDelete(); // Permanently delete the room
-            session()->flash('message', 'Room permanently deleted.');
+            session()->flash('message', 'Transaction permanently deleted.');
             $this->fetchDeletedNewTransactions();
         }
         $this->confirmItemDelete = false;

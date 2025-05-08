@@ -27,10 +27,10 @@ class ReservationList extends Component
     public $perPage = 10; // Number of transactions displayed per page
 
     #[Url(history: true)]
-    public $sortBy = 'created_at'; // Column used for sorting transactions
+    public $sortBy = 'updated_at'; // Column used for sorting transactions
 
     #[Url(history: true)]
-    public $sortDir = 'ASC'; // Sorting direction (ascending/descending)
+    public $sortDir = 'DESC'; // Sorting direction (ascending/descending)
 
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 2;
@@ -58,14 +58,20 @@ class ReservationList extends Component
     /**
      * Renders the Livewire component view and fetches transactions based on filters
      */
+
     public function render()
     {
-        $transactions = Transaction::with(['transactionUser', 'properties'])
-            ->where('reservation_type_id', 2) // Room reservation type
-            ->when($this->search !== '', callback: function ($query) {
-                $query->where('first_name', 'like', '%' . $this->search . '%');
+        $transactions = Transaction::query()
+            ->select('trn_transactions.*')
+            ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+            ->with(['transactionUser', 'properties'])
+            ->where('reservation_type_id', 2)
+            ->when($this->search !== '', function ($query) {
+                $query->whereHas('transactionUser', function ($subQuery) {
+                    $subQuery->where('first_name', 'like', '%' . $this->search . '%');
+                });
             })
-            ->when($this->statusFilter !== '', function ($query) {
+            ->when($this->statusFilter !== '', callback: function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
             })
             ->orderBy($this->sortBy, $this->sortDir)
@@ -73,6 +79,7 @@ class ReservationList extends Component
 
         return view('livewire.admin.reservations.reservation-list', compact('transactions'));
     }
+
 
 
 

@@ -175,6 +175,7 @@ class AddTransaction extends Component
                             'amount' => $item['amount'],
                         ]);
 
+
                         // Update invoice subtotal and balance_due
                         $this->transaction->invoice->increment('sub_total', $item['amount']);
                         $this->transaction->invoice->increment('balance_due', $item['amount']);
@@ -182,6 +183,8 @@ class AddTransaction extends Component
                 }
             }
         });
+
+        $this->cart = [];
     }
 }
 

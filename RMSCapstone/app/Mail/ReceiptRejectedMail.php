@@ -14,6 +14,7 @@ class ReceiptRejectedMail extends Mailable
     use Queueable, SerializesModels;
 
     public $paymentDetails;
+
     /**
      * Create a new message instance.
      */
@@ -22,9 +23,16 @@ class ReceiptRejectedMail extends Mailable
         $this->paymentDetails = $paymentDetails;
     }
 
+    /**
+     * Build the message.
+     */
     public function build()
     {
-        return $this->subject('Your payment receipt was rejected')
-            ->view('emails.receipt-rejected');
+        return $this->subject('Payment Rejected')
+            ->view('guest.emails.payment-rejected')
+            ->with([
+                'rejection_reason' => $this->paymentDetails['rejection_reason'],
+                'user_email' => $this->paymentDetails['user_email'],
+            ]);
     }
 }

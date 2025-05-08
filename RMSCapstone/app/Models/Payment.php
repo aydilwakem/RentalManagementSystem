@@ -20,6 +20,7 @@ class Payment extends Model
         'payment_reference_number',
         'payment_date',
         'payment_status',
+        'rejection_reason',
         'notes',
         'verified_at',
         'currency',

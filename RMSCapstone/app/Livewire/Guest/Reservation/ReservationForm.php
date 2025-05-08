@@ -165,7 +165,6 @@ class ReservationForm extends Component
     {
 
         // ---------------------------- ADULTS AND KIDS -------------------------- //
-
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
 
             // haystack - adults.2 or kids.2
@@ -222,7 +221,6 @@ class ReservationForm extends Component
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
             $this->getAvailableRooms();
         }
-
 
         // ----------------------- QUANTITY ------------------------------ // 
 
@@ -449,13 +447,11 @@ class ReservationForm extends Component
             return; // Exit the function if dates are not set
         }
 
-
         // Check if quantity is set for the room
         if (!isset($this->adults[$roomId]) && !isset($this->kids[$roomId])) {
             $this->addError('cart', 'Please select the number of adults and kids for this room.');
             return; // Exit the function if quantity is not set
         }
-
 
         // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
