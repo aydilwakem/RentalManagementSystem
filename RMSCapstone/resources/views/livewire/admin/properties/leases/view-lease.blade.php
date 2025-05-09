@@ -35,14 +35,14 @@
     <div><strong>Total Months:</strong> {{ $this->getMonthCount($transaction->start_datetime,
         $transaction->end_datetime) }} Months</div>
     <div><strong>Monthly Rent:</strong>₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</div>
-    <div><strong>Total Rent in Duration:</strong>₱ {{ $transaction->total_amount }}</div>
+    <div><strong>Total Rent in Duration:</strong>₱ {{ number_format($transaction->total_amount, 2) }}</div>
 
     <!-- Action Buttons -->
     <div class="flex items-center justify-between space-x-4 mt-auto mb-3">
         <!-- Edit -->
         <x-button type="button" icon="fas fa-pen-to-square"
             class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            wire:navigate href="#">
+            wire:navigate href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
             Edit
         </x-button>
 

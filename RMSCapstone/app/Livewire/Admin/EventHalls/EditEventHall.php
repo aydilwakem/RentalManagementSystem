@@ -31,6 +31,7 @@ class EditEventHall extends Component
     public $eventHallId;
     public $features;            // All available features
     public $selectedFeatures = []; // Selected feature IDs
+    public $inclusions;
 
     public $confirmEditItem = false;
     public function confirmEdit($id)
@@ -42,6 +43,9 @@ class EditEventHall extends Component
     //To display info of selected item
     public function mount(Property $eventHall)
     {
+        //Only mount inclusions
+        $this->inclusions = PropertyFeature::where('property_type_id', 3)->get();
+
         $this->eventHall = $eventHall;
         $this->eventHallId = $eventHall->id;
         $this->name_number = $eventHall->name_number;

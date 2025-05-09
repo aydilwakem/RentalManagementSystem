@@ -17,7 +17,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Type event hall name" required>
                     @error('name_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -28,7 +28,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
                         placeholder="Your event category description here"></textarea>
                     @error('description')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -39,7 +39,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Event hall amount"></input>
                     @error('amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -50,7 +50,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Event hall capacity"></input>
                     @error('capacity')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -62,7 +62,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Event hall extra charge"></input>
                     @error('extra_charge_per_hour')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -77,7 +77,7 @@
                         <option value="out_of_service">Out of Service</option>
                     </select>
                     @error('property_status')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -85,18 +85,18 @@
                 <div class="sm:col-span-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                     <div class="grid grid-cols-2 gap-2">
-                        @foreach ($features as $feature)
-                            <div class="flex items-center">
-                                <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                                <label class="ms-2 text-sm font-medium text-gray-900">
-                                    {{ $feature->name }}
-                                </label>
-                            </div>
+                        @foreach ($inclusions as $inclusion)
+                        <div class="flex items-center">
+                            <input type="checkbox" wire:model="selectedFeatures" value="{{ $inclusion->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                            <label class="ms-2 text-sm font-medium text-gray-900">
+                                {{ $inclusion->name }}
+                            </label>
+                        </div>
                         @endforeach
                     </div>
                     @error('selectedFeatures')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -105,12 +105,11 @@
                     <div>
                         <label for="newImages" class="block mb-2 text-sm font-medium text-gray-900">Upload New Image
                             (Optional)</label>
-                        <input type="file" wire:model="newImages" id="image" multiple
-                            accept="image/png, image/jpeg"
+                        <input type="file" wire:model="newImages" id="image" multiple accept="image/png, image/jpeg"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
 
                         @error('newImage')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
                         <div wire:loading wire:target="newImages" class="flex items-center justify-center px-5 mt-4">
@@ -129,25 +128,23 @@
                         <div class="flex flex-wrap gap-4">
                             <!-- New uploaded image previews -->
                             @if ($newImages)
-                                @foreach ($newImages as $image)
-                                    <img src="{{ $image->temporaryUrl() }}"
-                                        class="w-52 h-40 object-cover rounded-lg shadow">
-                                @endforeach
+                            @foreach ($newImages as $image)
+                            <img src="{{ $image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-lg shadow">
+                            @endforeach
                             @endif
 
                             <!-- Existing stored image previews -->
                             @if ($storedImages)
-                                @foreach ($storedImages as $index => $image)
-                                    <div class="relative shrink-0">
-                                        <img src="{{ asset('storage/' . $image) }}"
-                                            class="w-52 h-40 object-cover rounded-lg shadow">
-                                        <button type="button" wire:click="confirmImageDelete({{ $index }})"
-                                            title="Delete Image"
-                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                            ×
-                                        </button>
-                                    </div>
-                                @endforeach
+                            @foreach ($storedImages as $index => $image)
+                            <div class="relative shrink-0">
+                                <img src="{{ asset('storage/' . $image) }}"
+                                    class="w-52 h-40 object-cover rounded-lg shadow">
+                                <button type="button" wire:click="confirmImageDelete({{ $index }})" title="Delete Image"
+                                    class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                    ×
+                                </button>
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>

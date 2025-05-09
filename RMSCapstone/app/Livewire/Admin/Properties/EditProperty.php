@@ -44,6 +44,7 @@ class EditProperty extends Component
     // ----------------------- House Features (Amenities) -------------------------------//
     public $selectedFeatures = [];
     public $features = [];
+    public $house_features; 
 
     // ----------------------------- Modals ---------------------------------------------//
     public $confirmCreateItem = false;
@@ -60,6 +61,9 @@ class EditProperty extends Component
 
     public function mount(Property $property)
     {
+        //Only mount house features
+        $this->house_features = PropertyFeature::where('property_type_id', 2)->get();
+
         // House details
         $this->property_id = $property->id;
         $this->name_number = $property->name_number;

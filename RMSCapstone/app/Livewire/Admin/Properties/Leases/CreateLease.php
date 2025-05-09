@@ -59,11 +59,15 @@ class CreateLease extends Component
     public function updatedStartDate()
     {
         $this->calculateTotalAmount();
+        $this->getAvailableHouses();
+        $this->getAvailableTenants();
     }
 
     public function updatedEndDate()
     {
         $this->calculateTotalAmount();
+        $this->getAvailableHouses();
+        $this->getAvailableTenants();
     }
 
     public function updatedMonthlyRent()
@@ -77,46 +81,9 @@ class CreateLease extends Component
         //Mount Tenants and Houses
         $this->tenants = TransactionUser::where('trn_user_type', 'tenant')->get();
         $this->houses = Property::where('property_type_id', 2)->get();
+        
+        $this->houses = Property::ofType('House')->where('property_status', 'available')->get();
 
-        //Use map function to check if there is an entry with an active lease
-        //Check if the house has an active lease in transactions_property
-        $this->houses = Property::where('property_type_id', 2)
-        ->get()
-        ->map(function ($house) {
-            $hasActiveLease = Transaction::whereHas('properties', function ($q) use ($house) {
-                $q->where('transaction_properties.property_id', $house->id);
-            })
-            ->where('end_datetime', '>=', now())
-            ->exists();
-
-            $house->is_leased = $hasActiveLease;
-            return $house;
-        });
-
-        // Load tenants and check for active leases, display the leased
-        $this->tenants = TransactionUser::where('trn_user_type', 'tenant')
-        ->get()
-        ->map(function ($tenant) {
-            // Find an active transaction for the tenant (created_by is the tenant ID)
-            $activeLease = Transaction::where('created_by', $tenant->id)
-                ->where('end_datetime', '>=', now())
-                ->first();
-
-            $tenant->has_active_lease = false;
-            $tenant->leased_property = null;
-
-            if ($activeLease) {
-                // Get the property linked via the transaction_properties pivot table
-                $property = $activeLease->properties()->first(); // Retrieve the first property assigned
-
-                if ($property) {
-                    $tenant->has_active_lease = true;
-                    $tenant->leased_property = $property->name_number ?? 'Unnamed Property';
-                }
-            }
-
-            return $tenant;
-        });
     }
 
     public function saveLease(){
@@ -170,14 +137,86 @@ class CreateLease extends Component
         return redirect()->route('admin.leases');
     }
 
+    //To get all available tenants and marked those unavailable as leased
+    public function getAvailableTenants()
+    {
+        if (!$this->start_date || !$this->end_date) {
+            return;
+        }
+    
+    $startDate = \Carbon\Carbon::parse($this->start_date)->startOfDay();
+    $endDate = \Carbon\Carbon::parse($this->end_date)->endOfDay();
+    
+        // Step 1: Get all available event halls (unfiltered)
+        $allTenants = TransactionUser::where('trn_user_type', 'tenant')
+            ->get();
+    
+        // Step 2: Load only overlapping transactions manually
+        $allTenants->load(['transactions' => function ($query) use ($startDate, $endDate) {
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->where('start_datetime', '<', $endDate)
+                  ->where('end_datetime', '>', $startDate);
+            });
+        }]);
+    
+        // Step 3: Flag each hall as booked if it has any overlapping transactions
+        $this->tenants = $allTenants->map(function ($tenant) {
+        $tenant->isLeased = $tenant->transactions->isNotEmpty();
 
+        if ($tenant->isLeased) {
+            $property = $tenant->transactions
+                ->first()
+                ->properties()
+                ->first();
 
+            $tenant->leasedPropertyName = $property?->name_number ?? 'Unnamed Property';
+        } else {
+            $tenant->leasedPropertyName = null;
+        }
 
+        return $tenant;
+    });
+    
+    }
+
+    //To get all available houses and marked those unavailable as Booked
+    public function getAvailableHouses()
+    {
+        if (!$this->start_date || !$this->end_date) {
+            return;
+        }
+    
+    $startDate = \Carbon\Carbon::parse($this->start_date)->startOfDay();
+    $endDate = \Carbon\Carbon::parse($this->end_date)->endOfDay();
+    
+        // Step 1: Get all available event halls (unfiltered)
+        $allHouses = Property::ofType('House')
+            ->where('property_status', 'available')
+            ->get();
+    
+        // Step 2: Load only overlapping transactions manually
+        $allHouses->load(['transactions' => function ($query) use ($startDate, $endDate) {
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->where('start_datetime', '<', $endDate)
+                  ->where('end_datetime', '>', $startDate);
+            });
+        }]);
+    
+        // Step 3: Flag each house as booked if it has any overlapping transactions
+        $this->houses = $allHouses->map(function ($house) {
+            $house->isBooked = $house->transactions->isNotEmpty();
+            return $house;
+        });
+    
+    }
 
 
 
     public function render()
     {
-        return view('livewire.admin.properties.leases.create-lease');
+        return view('livewire.admin.properties.leases.create-lease',[
+            'houses' => $this->houses,
+            'tenants' => $this->tenants,
+        ]);
     }
 }

@@ -76,7 +76,14 @@ class CreateRoom extends Component
                 'name_number' => 'required|string|max:255|unique:properties,name_number',
                 'property_category_id' => 'required|exists:property_categories,id',
                 'property_type_id' => 'required|exists:property_types,id',
-                'ideal_guest' => 'required|integer|min:1',
+                
+                'ideal_guest' => ['required','integer','min:1',
+                    function ($attribute, $value, $fail) {
+                        if ($value > $this->max_adults || $value > $this->max_kids) {
+                            $fail('Ideal guest must not exceed both maximum adults and maximum kids.');
+                        }
+                    },
+                ],
                 'max_adults' => 'required|integer|min:1',
                 'max_kids' => 'required|integer|min:0',
                 'turnover_duration' => 'required|string',

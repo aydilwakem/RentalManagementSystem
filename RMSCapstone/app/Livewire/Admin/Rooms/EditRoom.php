@@ -37,6 +37,7 @@ class EditRoom extends Component
     public $occupancy_rules = [];
     public $roomCategories; // Store room categories for dropdown
     public $roomId;
+    public $amenities; 
 
     public $confirmEditItem = false;
 
@@ -47,6 +48,9 @@ class EditRoom extends Component
 
     public function mount(Property $room)
     {
+        //only mount amenities for Room
+        $this->amenities = PropertyFeature::where('property_type_id', 1)->get();
+
         $this->roomId = $room->id;
         $this->room = $room;
         $this->name_number = $room->name_number;

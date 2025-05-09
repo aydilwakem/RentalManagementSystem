@@ -4,6 +4,28 @@
     <form wire:submit.prevent="">
         <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
 
+            <!-- Start Date -->
+            <div>
+                <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start
+                    Lease</label>
+                <input type="date" wire:model.live="start_date" id="start_date"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('start_date')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- End Date -->
+            <div>
+                <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Lease Date
+                </label>
+                <input type="date" wire:model.live="end_date" id="end_date"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                @error('end_date')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
             <!-- Select House -->
             <div>
                 <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">Select House</label>
@@ -11,11 +33,8 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     <option value="">Select House</option>
                     @foreach ($houses as $house)
-                    <option value="{{ $house->id }}" @if($house->is_leased) disabled class="text-gray-400"
-                        @endif>
-                        {{ $house->name_number }}
-                        @if($house->is_leased) (Leased)
-                        @endif
+                    <option value="{{ $house->id }}" @if($house->isBooked) disabled @endif>
+                        {{ $house->name_number }} @if($house->isBooked) - (Leased) @endif
                     </option>
                     @endforeach
                 </select>
@@ -32,11 +51,10 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     <option value="">Select Tenants</option>
                     @foreach ($tenants as $tenant)
-                    <option value="{{ $tenant->id }}" @if($tenant->has_active_lease) disabled class="text-gray-400"
-                        @endif>
-                        {{ $tenant->first_name . ' ' . $tenant->last_name ?? 'Tenant #' . $tenant->id }}
-                        @if($tenant->has_active_lease)
-                        (Leased: {{ $tenant->leased_property ?? 'Unnamed Property' }})
+                    <option value="{{ $tenant->id }}" @if($tenant->isLeased) disabled @endif>
+                        {{ $tenant->first_name }} {{ $tenant->last_name }}
+                        @if($tenant->isLeased)
+                        - (Leased: {{ $tenant->leasedPropertyName ?? 'Unnamed Property' }})
                         @endif
                     </option>
                     @endforeach
@@ -69,27 +87,6 @@
                 @enderror
             </div>
 
-            <!-- Start Date -->
-            <div>
-                <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start
-                    Lease</label>
-                <input type="date" wire:model.live="start_date" id="start_date"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('start_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- End Date -->
-            <div>
-                <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Lease Date
-                </label>
-                <input type="date" wire:model.live="end_date" id="end_date"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                @error('end_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
 
             <!-- Transaction Status -->
             <div class="mb-4">

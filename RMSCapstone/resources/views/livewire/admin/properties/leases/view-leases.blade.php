@@ -310,7 +310,7 @@
                             {{ $transaction->transactionUser->last_name }}</td>
                         <td class="px-4 py-3">{{ $transaction->pax }}</td>
                         <td class="px-4 py-3">₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</td>
-                        <td class="px-4 py-3">₱ {{ $transaction->total_amount}}</td>
+                        <td class="px-4 py-3">₱ {{ number_format($transaction->total_amount, 2) }}</td>
                         <td class="px-4 py-3">{{ $transaction->start_datetime->format('F j, Y') }}</td>
                         <td class="px-4 py-3">{{ $transaction->end_datetime->format('F j, Y') }}</td>
                         <td class="px-4 py-3">
