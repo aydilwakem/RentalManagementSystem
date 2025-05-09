@@ -5,115 +5,274 @@ namespace App\Livewire\Admin\Events;
 use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\EventHall;
+use App\Models\EventType;
+use App\Models\Invoice;
+use App\Models\Property;
+use App\Models\Transaction;
+use App\Models\TransactionUser;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class CreateEvent extends Component
 {
-    public $name;
-    public $event_category_id;
-    public $event_hall_id;
-    public $company_name;
-    public $contact_person;
+    //Public declaration for fields
+    // ----------------------- Types ---------------------------- // 
+    public $reservation_type_id = 3; // This reservation is for Events
+    public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
+    
+    // ----------------------- Heard From, Status Defaults ---------------------------- // 
+    public $reservation_source = 'WebApp';
+    public $transaction_status = 'confirmed';
+    
+    // ----------------------- EVENT DETAILS ---------------------------- // 
+    
+    // ----------------------- Guest ---------------------------- // 
+    public $first_name;
+    public $middle_name;
+    public $last_name;
     public $email;
-    public $event_date_start;
-    public $event_date_end;
-    public $event_time;
-    public $capacity;
-    public $total_amount;
-    public $status;
-    public $requests;
+    public $contact_number;
+    public $company_name;
+    public $city_municipality;
+    public $country; 
 
-    public $eventCategories = [];
-    public $eventHalls = []; // To store fetched event categories
+    // ----------------------- Halls (transaction_properties)---------------------------- // 
+    public $allHalls = [];
+    public $halls;
+    public $selected_hall;
+    public $adults = [];
+    public $kids = [];
+    public $extra_guest = [];
+    public $extra_charge = [];
+    public $hall_amount; 
+    // public $hall_total_amount; 
 
+    // ----------------------- Halls (trn_transactions)---------------------------- // 
+    public $total_amount; // Total amount for the reservation
+    public $pax = 0; // Total number of guests (adults + kids)
+    
+    public $start_datetime; //Start Date Time of Event
+    public $end_datetime; //End Date Time of Event
+    public $total_adults;
+    public $total_kids; 
+    //public $heard_from; 
+
+    // ------------------- INVOICE AND EVENT TYPE -------------------- // 
+    public $invoice_number;
+    public $eventTypes;
+    public $event_type_id;
+
+
+    
+    // ------------------- Modal -------------------- // 
     public $confirmCreateItem = false;
+
+    public function mount(){
+        $this->eventTypes = EventType::all();
+        $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
+    }
 
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
     }
 
-
-    public function mount()
-    {
-        // Fetch event categories and halls when the component mounts
-        $this->eventCategories = EventCategory::all();
-        $this->eventHalls = EventHall::all();
-    }
-
     public function saveEvent()
     {
-        try {
-            // Validate form input 
-            $this->validate([
-                'name' => 'required|string|max:255',
-                'event_category_id' => 'required|exists:prd_event_categories,id',
-                'event_hall_id' => 'required|exists:prd_event_halls,id',
-                'company_name' => 'required|string|max:255',
-                'contact_person' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'event_date_start' => 'required|date|after_or_equal:today',
-                'event_date_end' => 'nullable|date|after_or_equal:event_date_start',
-                'event_time' => 'required|date_format:H:i',
-                'capacity' => 'required|numeric|min:10|max:200',
-                'total_amount' => 'required|numeric|min:100|max:1000000.00',
-                'status' => 'required|in:confirmed,on-going,completed,cancelled',
-                'requests' => 'required|string',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // If validation fails, close the modal
-            $this->confirmCreateItem = false;
-            throw $e;
-        }
+        try{
+        $this->validate([
+            // Transaction User Fields
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'contact_number' => 'required|string|max:20',
+            'city_municipality' => 'required|string|max:255',
+            'company_name' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+    
+            // Transaction Fields
+            'event_type_id' => 'required|integer|exists:event_types,id',
+            'start_datetime' => 'required|date|after_or_equal:today|before_or_equal:end_datetime',
+            'end_datetime' => 'required|date|after_or_equal:start_datetime',
+            'total_adults' => 'required|integer|min:0',
+            'total_kids' => 'nullable|integer|min:0',
+            'pax' => 'required|integer|min:0',
+            'total_amount' => 'required|numeric|min:0',
+            'reservation_source' => 'required|string|max:100',
+            
+    
+            // Dynamic guests per hall (optional validation)
+            'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
+            'adults.*' => 'nullable|integer|min:0',
+            'kids.*' => 'nullable|integer|min:0',
+            'extra_guest.*' => 'nullable|integer|min:0',
+            'extra_charge.*' => 'nullable|numeric|min:0',
+        ]);
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        $this->confirmCreateItem = false;
+        throw $e;
+    }
+        
 
+    DB::transaction(function () {
 
-        // Create Event
-        $event = Event::create([
-            'name' => $this->name,
-            'event_category_id' => $this->event_category_id,
-            'event_hall_id' => $this->event_hall_id,
-            'company_name' => $this->company_name,
-            'contact_person' => $this->contact_person,
+        // Step 1: Create transaction user
+        $transactionUser = TransactionUser::create([
+            'first_name' => $this->first_name,
+            'middle_name' => $this->middle_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
-            'event_date_start' => $this->event_date_start,
-            'event_date_end' => $this->event_date_end,
-            'event_time' => $this->event_time,
-            'capacity' => $this->capacity,
+            'contact_number' => $this->contact_number,
+            'city_municipality' => $this->city_municipality,
+            'company_name' => $this->company_name,
+            'country' => $this->country, 
+            'trn_user_type' => $this->trn_user_type,
+        ]);
+
+        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+
+        // Step 2: Create transaction
+        $transaction = Transaction::create([
+            'reservation_type_id' => $this->reservation_type_id,
+            'created_by' => $transactionUser->id,
+            'event_type_id' => $this->event_type_id,
+            'start_datetime' => $this->start_datetime,
+            'end_datetime' => $this->end_datetime,
+            'total_adults' => $this->total_adults,
+            'total_kids' =>$this->total_kids,
+            // 'pax' => $this->total_kids + $this->total_adults, 
+            'pax' => $this->pax, 
             'total_amount' => $this->total_amount,
-            'status' => $this->status,
-            'requests' => $this->requests,
+            'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
+            'reservation_source' => $this->reservation_source,
+            'transaction_status' => $this->transaction_status,
         ]);
 
-        // Reset form fields
-        $this->reset([
-            'name',
-            'event_category_id',
-            'event_hall_id',
-            'company_name',
-            'contact_person',
-            'email',
-            'event_date_start',
-            'event_date_end',
-            'event_time',
-            'capacity',
-            'total_amount',
-            'status',
-            'requests',
+        // Step 3: Generate invoice number
+        $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
+        $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+
+        // Step 4: Create invoice
+        $invoice = Invoice::create([
+            'transaction_id' => $transaction->id,
+            'invoice_number' => $invoiceNumber,
+            'invoice_type' => 'event_hall',
+            'sub_total' => $this->total_amount,
+            'deposit_paid' => 0,
+            'amount_paid' => 0,
+            'balance_due' => $this->total_amount,
+            'due_date' => $this->end_datetime,
+            'invoice_status' => 'pending',
         ]);
 
-        // Flash message for success
-        session()->flash('message', 'Event successfully created!');
+        // Step 5: Attach halls to transaction
+        $transaction->properties()->attach($this->selected_hall, [
+            'adults' => $this->total_adults,
+            'kids' => $this->total_kids ?? 0,
+            'extra_guest' => 0,
+            'extra_charge' => 0,
+            'amount' => $this->total_amount,
+            'total_amount' => $this->total_amount,
+            'days' => $this->stayDuration ?? 1,
+        ]);
 
-        // Redirect back to event categories list
+    });
+
+        session()->flash('success', 'Event reservation successfully saved.');
         return redirect()->route('admin.events');
     }
 
+    
 
     public function render()
     {
         return view('livewire.admin.events.create-event', [
-            'eventCategories' => $this->eventCategories,
-            'eventHalls' => $this->eventHalls, // Pass categories to view
+            'halls' => $this->halls
         ]);
+    }
+
+
+    public function getAvailableHalls()
+    {
+        if (!$this->start_datetime || !$this->end_datetime) {
+            return;
+        }
+    
+        $startDate = \Carbon\Carbon::parse($this->start_datetime);
+        $endDate = \Carbon\Carbon::parse($this->end_datetime);
+    
+        // Step 1: Get all available event halls (unfiltered)
+        $allHalls = Property::ofType('Event Hall')
+            ->where('property_status', 'available')
+            ->get();
+    
+        // Step 2: Load only overlapping transactions manually
+        $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->where('start_datetime', '<', $endDate)
+                  ->where('end_datetime', '>', $startDate);
+            });
+        }]);
+    
+        // Step 3: Flag each hall as booked if it has any overlapping transactions
+        $this->halls = $allHalls->map(function ($hall) {
+            $hall->isBooked = $hall->transactions->isNotEmpty();
+            return $hall;
+        });
+    
+    }
+
+    public function updatedStartDatetime()
+    {
+        $this->getAvailableHalls();
+    }
+
+    public function updatedEndDatetime()
+    {
+        $this->getAvailableHalls();
+    }
+
+
+
+    // This allows you to access the method as a property
+    //Calculates day between start date and end date
+    public function getStayDurationProperty() 
+    {
+        if ($this->start_datetime && $this->end_datetime) {
+            $in = Carbon::parse($this->start_datetime);
+            $out = Carbon::parse($this->end_datetime);
+            return $in->diffInDays($out);
+        }
+        return 0;
+    }
+
+
+    /**
+     * Fetch available halls for the selected check-in and check-out dates.
+     * 
+     * Filters out halls already booked during the specified range by checking
+     * overlapping transactions. Only available halls of type 'Event Hall' are returned.
+     * 
+     * @return void
+     */
+
+
+
+
+    //  Method that computes the total pax based on inputed adults + kids
+    public function computeTotalPax(){
+        $this->pax = (int) $this->total_adults + (int) $this->total_kids;
+    }
+
+    public function updatedTotalAdults()
+    {
+        $this->computeTotalPax();
+    }
+
+    public function updatedTotalKids()
+    {
+        $this->computeTotalPax();
     }
 }

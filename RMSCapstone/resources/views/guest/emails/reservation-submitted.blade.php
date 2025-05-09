@@ -4,9 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservation Confirmation</title>
+
+    <style>
+        body,
+        p,
+        h3,
+        td {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
 
-<body style="background-color: #f8f8f8; font-family: Arial, sans-serif; margin: 0; padding: 0; color: #333;">
+<body style="background-color: #f8f8f8; font-family: Poppins, sans-serif; margin: 0; padding: 0; color: #333;">
 
     <div
         style="max-width: 600px; margin: 30px auto; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
@@ -18,7 +27,7 @@
         <h1 style="text-align: center; color: #166534;">Transaction Number: {{ $transaction_number }}</h1>
 
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
-            <h3>Hello, {{ $name }},</h3>
+            <h3>Hello {{ $name }},</h3>
 
             <p>Thank you for choosing Canopy Farm PH. We have successfully received your reservation and have issued you
                 the following transaction number:

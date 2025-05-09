@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Admin\Events;
 
+use App\Models\EventType;
+use App\Models\Property;
 use App\Models\Transaction;
+use App\Models\TransactionUser;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -22,8 +25,11 @@ class ViewEvents extends Component
     public $sortBy = 'created_at';
     #[Url(history: true)]
     public $sortDir = 'DESC';
-    public $eventStatus = '';
+    public $transactionStatus = '';
     public $confirmItemDelete = false;
+    public $eventTypes; 
+    public $halls; 
+    public $guests; 
 
     public function confirmDelete($id)
     {
@@ -36,6 +42,10 @@ class ViewEvents extends Component
         if (!session()->has('fake_ids_events')) {
             session(['fake_ids_events' => []]);
         }
+
+        $this->eventTypes = EventType::all();
+        $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
+        $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
     }
 
     public function deleteEvent()
@@ -77,8 +87,11 @@ class ViewEvents extends Component
         $allEvents = Transaction::all();
 
         $event = Transaction::query()
-            // ->search($this->search)
             ->where('reservation_type_id', 3)
+            //->search($this->search)
+            ->when($this->transactionStatus !== '', function ($query) {
+                $query->where('transaction_status', $this->transactionStatus);
+            })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 

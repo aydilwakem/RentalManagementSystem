@@ -111,10 +111,11 @@ class EditLease extends Component
             'transaction_status' => 'required|in:pending,confirmed,ongoing,done,terminated',
         ]);
     
-        // Directly use the $transaction model, no need for $id here.
+        // Directly use the $transaction model
         $this->transaction->transaction_status = $this->transaction_status;
         $this->transaction->save();
-    
+        
+        $this->confirmEditItem = true;
         session()->flash('success', 'Lease status updated successfully!');
         return redirect()->route('admin.leases');
     }

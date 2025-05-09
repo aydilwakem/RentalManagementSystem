@@ -4,9 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservation Confirmed</title>
+    <style>
+        body,
+        p,
+        h3,
+        td {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
 
-<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: Arial, sans-serif; color: #333333;">
+<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: Poppins, sans-serif; color: #333333;">
 
     <div
         style="max-width: 900px; margin: 30px auto; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
@@ -19,16 +27,21 @@
 
         {{-- Message --}}
 
-        <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
+        <div style=" padding: 20px 30px; font-size: 16px; line-height: 1.6;">
             <h3>Hello {{ $name }},</h3>
-            <p>We’re delighted to inform you that your payment has been successfully verified, and your reservation at
+            <p>We’re delighted to inform you that your payment has been
+                successfully verified, and your reservation at
                 Canopy Farm is now officially confirmed!
-            </p> <br>
-
-            <p>Thank you for choosing to stay with us. We’re excited to welcome you and provide a relaxing and
-                unforgettable experience.
             </p>
-
+            <p>Thank you for choosing to stay with us at Canopy Farm. We’re
+                excited to welcome you with warm hospitality and provide a peaceful escape where you can relax, unwind,
+                and create unforgettable memories.
+                Below are the details of your reservation for your review and reference.
+            </p>
+            <p>
+                If you have any questions or concerns before your arrival, please don’t hesitate to reach out — we’re
+                happy to assist you.
+            </p>
 
             <!-- Container -->
             <table cellpadding="0" cellspacing="0" style="width: 100%; margin: 0 auto; padding: 20px;">
@@ -122,14 +135,17 @@
                         </table>
 
                         <!-- Final Note -->
-                        <p style="font-size: 16px; margin-top: 20px;">There’s nothing more you need to do for now. Just
+                        <p style="font-size: 16px; margin-top: 20px;">There’s nothing more you need to do for now.
+                            Just
                             get
                             ready to enjoy your stay!</p>
-                        <p style="font-size: 16px;">If you have any questions or need assistance before your arrival,
+                        <p style="font-size: 16px;">If you have any questions or need assistance before your
+                            arrival,
                             feel
                             free
                             to reach out to us.</p>
-                        <p style="font-size: 16px; margin-top: 30px;"><strong>See you soon at Canopy Farm!</strong></p>
+                        <p style="font-size: 16px; margin-top: 30px;"><strong>See you soon at Canopy Farm!</strong>
+                        </p>
                     </td>
                 </tr>
             </table>

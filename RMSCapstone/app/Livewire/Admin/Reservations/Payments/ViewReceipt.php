@@ -154,6 +154,8 @@ class ViewReceipt extends Component
         $paymentDetails = [
             'rejection_reason' => $this->rejection_reason,
             'user_email' => $this->transactionUser->email,
+            'first_name' => $this->transactionUser->first_name,
+            'last_name' => $this->transactionUser->last_name,
         ];
 
         // Log the payment details for email

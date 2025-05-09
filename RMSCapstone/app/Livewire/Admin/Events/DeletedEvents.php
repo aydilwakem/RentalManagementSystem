@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Events;
 
 use App\Models\Event;
+use App\Models\Transaction;
 use Livewire\Component;
 
 class DeletedEvents extends Component
@@ -23,12 +24,12 @@ class DeletedEvents extends Component
 
     public function fetchDeletedEvents()
     {
-        $this->deletedEvents = Event::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedEvents = Transaction::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
     public function restoreEvent($eventId)
     {
-        $event = Event::withTrashed()->find($eventId);
+        $event = Transaction::withTrashed()->find($eventId);
         if ($event) {
             $event->restore();
             session()->flash('message', 'Event restored successfully.');
@@ -38,7 +39,7 @@ class DeletedEvents extends Component
 
     public function deleteEventForever($eventId)
     {
-        $event = Event::withTrashed()->find($this->confirmItemDelete);
+        $event = Transaction::withTrashed()->find($this->confirmItemDelete);
         if ($event) {
             $event->forceDelete();
             session()->flash('message', 'Event permanently deleted.');

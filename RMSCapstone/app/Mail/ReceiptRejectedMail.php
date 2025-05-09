@@ -33,6 +33,8 @@ class ReceiptRejectedMail extends Mailable
             ->with([
                 'rejection_reason' => $this->paymentDetails['rejection_reason'],
                 'user_email' => $this->paymentDetails['user_email'],
+                'first_name' => $this->paymentDetails['first_name'],
+                'last_name' => $this->paymentDetails['last_name'],
             ]);
     }
 }

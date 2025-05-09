@@ -34,10 +34,10 @@
                         <th scope="col" class="px-4 py-3 text-left">ID</th>
 
                         <!-- Event Name -->
-                        <th scope="col" class="px-4 py-3 text-left">Event Name</th>
+                        <th scope="col" class="px-4 py-3 text-left">Event Booked By</th>
 
                         <!-- Event Category -->
-                        <th scope="col" class="px-4 py-3 text-left">Event Category</th>
+                        <th scope="col" class="px-4 py-3 text-left">Event Hall</th>
 
                         <!-- Actions -->
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
@@ -47,9 +47,14 @@
                     @foreach ($deletedEvents as $event)
                     <tr class="border-b">
                         <td class="px-4 py-3 font-medium text-gray-900 text-left">
-                            {{ $fakeIDs[$event->id] ?? 'RCT-???' }}</td>
-                        <td class="px-4 py-3 text-left">{{ $event->name }}</td>
-                        <td class="px-4 py-3 text-left">{{ $event->category->name ?? 'N/A'}}</td>
+                            {{ $fakeIDs[$event->id] ?? 'EVT-???' }}</td>
+                        <td class="px-4 py-3 text-left">{{ $event->transactionUser->first_name }} {{
+                            $event->transactionUser->last_name }}</td>
+                        <td class="px-4 py-3 text-left">
+                            @foreach ($event->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                            @endforeach</td>
+                        </td>
                         <td class="px-4 py-3 space-x-2 text-center">
                             <x-button wire:click="restoreEvent({{ $event->id }})">
                                 Restore

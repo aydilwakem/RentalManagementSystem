@@ -5,6 +5,11 @@ namespace App\Livewire\Admin\Events;
 use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\EventHall;
+use App\Models\EventType;
+use App\Models\Invoice;
+use App\Models\Property;
+use App\Models\Transaction;
+use App\Models\TransactionUser;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -12,12 +17,13 @@ use Livewire\Component;
 class ViewEvent extends Component
 {
      // Create a public property 
-     public Event $event;
+    public Transaction $event;
+    public $halls; 
+    public $guests; 
+    public $event_invoice; 
+    public $eventTypes; 
 
-     public $eventCategories = [];
-     public $eventHalls = []; // To store fetched event categories
-
-     public $confirmItemDelete = false;
+    public $confirmItemDelete = false;
 
     public function confirmDelete($id)
     {
@@ -25,17 +31,15 @@ class ViewEvent extends Component
     }
 
     //To display foreign keys
-     public function mount(Event $event)
+     public function mount()
     {
-         // Fetch event categories and halls when the component mounts
-         $this->eventCategories = EventCategory::all();
-         $this->eventHalls = EventHall::all();
-
-        // // Load the event with its related category
-        // $this->event = $event->load('category');
+        $this->eventTypes = EventType::all();
+        $this->event_invoice = Invoice::where('invoice_type', 'Event_Hall')->get();
+        $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
+        $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
     }
 
-    public function deleteEventItem(Event $event)
+    public function deleteEventItem(Transaction $event)
     {
         if (!$event) {
             session()->flash('error', 'Event not found!');
@@ -46,7 +50,6 @@ class ViewEvent extends Component
             $event->delete();
             $this->confirmItemDelete = false;
     
-
         // Flash success message
         session()->flash('message', 'Event successfully deleted!');
 
