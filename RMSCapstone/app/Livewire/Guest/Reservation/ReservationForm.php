@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\Setting;
+use App\Models\GuestType;
 use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
@@ -73,15 +74,61 @@ class ReservationForm extends Component
 
     protected $queryString = ['currentStep'];
 
+    public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
+    public $guest_gender, $guest_residency, $guest_country_of_origin;
+
+    public $guest_types = [];
+    public $guests = [];
+
+    public $showGuestModal = false;
+    public $editingGuestIndex = null;
+    public $showEditModal = false;
+
+    public $editingGuest = [
+        'guest_first_name' => '',
+        'guest_middle_name' => '',
+        'guest_last_name' => '',
+        'guest_suffix' => '',
+        'guest_type_id' => '',
+        'guest_gender' => '',
+        'guest_residency' => '',
+        'guest_country_of_origin' => '',
+    ];
+
+    public function editGuest($index)
+    {
+        $this->editingGuestIndex = $index;
+        $this->editingGuest = $this->guests[$index];
+        $this->showEditModal = true;
+    }
+
+    public function updateGuest()
+    {
+        if (!is_null($this->editingGuestIndex)) {
+            $this->guests[$this->editingGuestIndex] = $this->editingGuest;
+        }
+
+        $this->showEditModal = false;
+        $this->reset('editingGuestIndex', 'editingGuest');
+    }
 
     public $confirmReservationModal = false;
+
 
     public function confirmCreate()
     {
         $this->confirmReservationModal = true;
     }
 
+    public function openGuestModal()
+    {
+        $this->showGuestModal = true;
+    }
 
+    public function closeGuestModal()
+    {
+        $this->showGuestModal = false;
+    }
 
     /**
      * Initializes the component with default values.
@@ -100,6 +147,7 @@ class ReservationForm extends Component
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
+        $this->guest_types = GuestType::all();
     }
 
     /**
@@ -555,6 +603,40 @@ class ReservationForm extends Component
         }
     }
 
+
+
+    public function addMultipleGuests()
+    {
+        // Validate the guest details
+        $this->validate([
+            'guest_first_name' => 'required|string',
+            'guest_middle_name' => 'nullable|string',
+            'guest_last_name' => 'required|string',
+            'guest_suffix' => 'nullable|string|max:10',
+            'guest_gender' => 'required|in:male,female,other',
+            'guest_residency' => 'required|in:local,foreigner',
+            'guest_country_of_origin' => 'required|string|max:100',
+            'guest_type_id' => 'required|exists:trn_guest_type,id',
+        ]);
+
+        // Add the guest details to the guests array
+        $this->guests[] = [
+            'guest_first_name' => $this->guest_first_name,
+            'guest_middle_name' => $this->guest_middle_name,
+            'guest_last_name' => $this->guest_last_name,
+            'guest_suffix' => $this->guest_suffix,
+            'guest_type_id' => $this->guest_type_id,
+            'guest_gender' => $this->guest_gender,
+            'guest_residency' => $this->guest_residency,
+            'guest_country_of_origin' => $this->guest_country_of_origin,
+        ];
+
+        $this->showGuestModal = false;
+
+        // Optionally clear the form inputs after adding a guest
+        $this->reset(['guest_first_name', 'guest_middle_name', 'guest_last_name', 'guest_suffix', 'guest_type_id', 'guest_gender', 'guest_residency', 'guest_country_of_origin']);
+    }
+
     // ------------------------------------------ REMOVE ITEMS FROM CART ----------------------------------- //
 
     /**
@@ -700,6 +782,22 @@ class ReservationForm extends Component
                     ]);
                 }
             }
+
+            // Step 7: Insert GuestDetails
+            foreach ($this->guests as $guest) {
+                GuestDetail::create([
+                    'transaction_id' => $transaction->id,
+                    'guest_first_name' => $guest['guest_first_name'],
+                    'guest_middle_name' => $guest['guest_middle_name'],
+                    'guest_last_name' => $guest['guest_last_name'],
+                    'guest_suffix' => $guest['guest_suffix'],
+                    'guest_gender' => $guest['guest_gender'],
+                    'guest_residency' => $guest['guest_residency'],
+                    'guest_country_of_origin' => $guest['guest_country_of_origin'],
+                    'guest_type_id' => $guest['guest_type_id'],
+                ]);
+            }
+
 
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [

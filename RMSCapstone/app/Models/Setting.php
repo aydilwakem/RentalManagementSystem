@@ -24,5 +24,7 @@ class Setting extends Model
         'rental_agreement',
         'custom_css',
         'custom_js',
+        'deposit_percentage',
+        'payment_proof_expiration_hours'
     ];
 }
