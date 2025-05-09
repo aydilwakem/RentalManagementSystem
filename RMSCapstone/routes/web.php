@@ -459,7 +459,7 @@ Route::middleware([
     Route::get('edit/reservation/{transaction}', EditReservation::class)
         ->name('admin.edit-reservation');
 
-    // Add Transaction 
+    // Add Transaction
     Route::get('add/transaction/{transaction}', AddTransaction::class)
         ->name('admin.add-transaction');
 
@@ -602,7 +602,7 @@ Route::middleware([
         return view('admin.rentals.leases.create-lease');
     })->name('admin.create-lease');
 
-    //View 
+    //View
     Route::get('view/lease/{transaction}', ViewLease::class)
         ->name('admin.view-lease');
 
@@ -714,6 +714,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/proof-of-payment-page', function () {
         return view('guest.proof-of-payment-page');
     })->name('guest.proof-of-payment-page');
+
+    Route::get('/thank-you-page', function () {
+        return view('guest.thank-you-page');
+    })->name('guest.thank-you-page');
 });
 
 

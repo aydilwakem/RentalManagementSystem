@@ -7,7 +7,6 @@
 
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
             <!---------------------------- GUEST DETAILS ---------------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
@@ -82,27 +81,40 @@
                         <strong>Transaction Status:</strong>
                         <div class="mt-1">
                             @if ($transaction->transaction_status === 'pending')
-                                <span class="px-2 py-1 bg-gray-500 text-white rounded-md text-sm">Pending</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Awaiting
+                                    Payement</span>
                             @elseif ($transaction->transaction_status === 'reserved')
-                                <span class="px-2 py-1 bg-blue-500 text-white rounded-md text-sm">Waiting for
-                                    Confirmation</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-blue-100 text-blue-500">Pending
+                                    Verification</span>
                             @elseif ($transaction->transaction_status === 'receipt_verified')
-                                <span class="px-2 py-1 bg-cyan-500 text-white rounded-md text-sm">Receipt
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-500">Payment
                                     Verified</span>
                             @elseif ($transaction->transaction_status === 'confirmed')
-                                <span class="px-2 py-1 bg-emerald-500 text-white rounded-md text-sm">Confirmed</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
                             @elseif ($transaction->transaction_status === 'ongoing')
-                                <span class="px-2 py-1 bg-yellow-400 text-black rounded-md text-sm">Ongoing</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">On-Going
+                                    </span>
                             @elseif ($transaction->transaction_status === 'done')
-                                <span class="px-2 py-1 bg-indigo-600 text-white rounded-md text-sm">Done</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-600">Completed</span>
                             @elseif ($transaction->transaction_status === 'no_show')
-                                <span class="px-2 py-1 bg-pink-400 text-white rounded-md text-sm">No Show</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-pink-100 text-pink-500">No
+                                    Show</span>
                             @elseif ($transaction->transaction_status === 'terminated')
-                                <span class="px-2 py-1 bg-rose-600 text-white rounded-md text-sm">Terminated</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-rose-100 text-rose-600">Terminated</span>
                             @elseif ($transaction->transaction_status === 'expired')
-                                <span class="px-2 py-1 bg-orange-500 text-white rounded-md text-sm">Expired</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-orange-100 text-orange-500">Expired</span>
                             @elseif ($transaction->transaction_status === 'cancelled')
-                                <span class="px-2 py-1 bg-red-700 text-white rounded-md text-sm">Cancelled</span>
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-600">Cancelled</span>
                             @else
                                 {{ ucfirst($transaction->transaction_status) }}
                             @endif
@@ -355,12 +367,12 @@
                                         <td class="border px-4 py-2 space-x-2">
                                             @if ($payment->payment_status === 'pending')
                                                 <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                    class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded text-xs">
+                                                    class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-center py-2 px-4 rounded text-xs">
                                                     Verify Receipt
                                                 </a>
                                             @elseif($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
                                                 <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                    class="inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs">
+                                                    class="inline-block bg-green-500 hover:bg-green-700 text-white font-semibold text-center py-2 px-4 rounded text-xs">
                                                     View Receipt
                                                 </a>
                                             @endif

@@ -1,103 +1,97 @@
-<div class="min-h-[550px] container mx-auto p-6 ">
+<div class="min-h-[550px] container mx-auto p-6 max-w-full">
 
     {{-- If there's no reservation, show this --}}
     @if ($transactions->isEmpty())
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-            <!-- Empty Table Message -->
-            <div class="text-center py-10">
-                <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation"
-                    to
-                    add a reservation.</p>
-                <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus"
-                    wire:navigate>
-                    Create Reservation
-                </x-button>
-            </div>
+        <!-- Empty Table Message -->
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation"
+                to
+                add a reservation.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
+                Create Reservation
+            </x-button>
         </div>
 
         {{-- If there's a reservation, show this --}}
     @else
-        <div>
-
-            {{-- Display Session Message --}}
-            @if (session('message'))
-                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                    class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+        {{-- Display Session Message --}}
+        @if (session('message'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                    {{ session('message') }}
+                {{ session('message') }}
+            </div>
+        @endif
+        <div>
+            <!-- Header-->
+            <div class="flex items-center justify-between mb-4">
+                <!-- Create Transaction Button -->
+                <div class="flex justify-between items-center">
+                    @can('new-reservation-create')
+                        <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
+                            New Transaction
+                        </x-button>
+                    @endcan
                 </div>
-            @endif
+                <!-- Soft-Deletes -->
+                @can('new-reservation-soft-delete')
+                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                        icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
+                        Deleted New Reservations
+                    </x-button>
+                @endcan
+            </div>
+        </div>
 
-            {{-- Start of Reservation List Container --}}
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-                <!-- Header-->
-                <div class="flex items-center justify-between d p-4">
-
-                    <!-- Create Room Button -->
-                    <div class="flex space-x-3">
-                        @can('new-reservation-create')
-                            <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
-                                New Transaction
-                            </x-button>
-                        @endcan
-
-                        <!-- Soft-Deletes -->
-                        @can('new-reservation-soft-delete')
-                            <x-button
-                                class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                                icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
-                                Deleted New Reservations
-                            </x-button>
-                        @endcan
-                    </div>
-
-                    {{-- Search --}}
-                    <div class="flex">
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <input wire:model.live.debounce.300ms="search" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
-                                placeholder="Search" required="">
+        {{-- Start of Reservation List Container --}}
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            {{-- Header --}}
+            <div class="flex items-center justify-between p-4">
+                {{-- Search --}}
+                <div class="flex">
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
+                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clip-rule="evenodd" />
+                            </svg>
                         </div>
+                        <input wire:model.live.debounce.300ms="search" type="text"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                            placeholder="Search" required="">
                     </div>
-
-                    {{-- Status Type --}}
-                    <div class="flex space-x-3">
-                        <div class="flex space-x-3 items-center">
-                            <label class="flex text-sm font-medium text-gray-900">Reservation Status:</label>
-                            <select wire:model.live="statusFilter"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                <option value="">All</option>
-                                <option value="pending">Pending</option>
-                                <option value="reserved">Waiting for Confirmation</option>
-                                <option value="receipt_verified">Receipt Verified</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="ongoing">On-going</option>
-                                <option value="done">Done</option>
-                                <option value="no_show">Out of Service</option>
-                                <option value="terminated">Terminated</option>
-                                <option value="expired">Expired</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
-
                 </div>
 
-                {{-- Table --}}
+                {{-- Status Type --}}
+                <div class="flex space-x-3">
+                    <div class="flex space-x-3 items-center">
+                        <label class="flex text-sm font-medium text-gray-900">Reservation Status:</label>
+                        <select wire:model.live="statusFilter"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">All</option>
+                            <option value="pending">Awaiting Payment</option>
+                            <option value="reserved">Pending Verification</option>
+                            <option value="receipt_verified">Payment Verified</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="ongoing">On-going</option>
+                            <option value="done">Completed</option>
+                            <option value="no_show">No Show</option>
+                            <option value="terminated">Terminated</option>
+                            <option value="expired">Expired</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Table --}}
+            <div class="overflow-x-auto">
                 <table class="w-full text-left">
-
                     {{-- Start of Column Headers --}}
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
                                 <button class="flex items-center">
                                     ID
@@ -307,7 +301,7 @@
                     {{-- Start of Table Body --}}
                     <tbody class="text-left">
 
-                        @foreach ($transactions as $transaction)
+                        @forelse ($transactions as $transaction)
                             <tr class="border-b">
 
                                 {{-- ID --}}
@@ -347,31 +341,45 @@
                                 </td>
 
                                 {{-- Transaction Status --}}
-                                <td class="px-4 py-3">
+                                <td class=" px-4 py-2">
                                     @if ($transaction->transaction_status === 'pending')
-                                        <span class="px-2 py-1 bg-gray-500 text-white rounded-md">Pending</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
+                                            Payement</span>
                                     @elseif ($transaction->transaction_status === 'reserved')
-                                        <span class="px-2 py-1 bg-blue-500 text-white rounded-md">Waiting for
-                                            Confirmation</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
+                                            Verification</span>
                                     @elseif ($transaction->transaction_status === 'receipt_verified')
-                                        <span class="px-2 py-1 bg-cyan-500 text-white rounded-md">Receipt
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
                                             Verified</span>
                                     @elseif ($transaction->transaction_status === 'confirmed')
-                                        <span class="px-2 py-1 bg-emerald-500 text-white rounded-md">Confirmed</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
                                     @elseif ($transaction->transaction_status === 'ongoing')
-                                        <span class="px-2 py-1 bg-yellow-400 text-black rounded-md">Ongoing</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
+                                        </span>
                                     @elseif ($transaction->transaction_status === 'done')
-                                        <span class="px-2 py-1 bg-indigo-600 text-white rounded-md">Done</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
                                     @elseif ($transaction->transaction_status === 'no_show')
-                                        <span class="px-2 py-1 bg-pink-400 text-white rounded-md">No Show</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
+                                            Show</span>
                                     @elseif ($transaction->transaction_status === 'terminated')
-                                        <span class="px-2 py-1 bg-rose-600 text-white rounded-md">Terminated</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
                                     @elseif ($transaction->transaction_status === 'expired')
-                                        <span class="px-2 py-1 bg-orange-500 text-white rounded-md">Expired</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
                                     @elseif ($transaction->transaction_status === 'cancelled')
-                                        <span class="px-2 py-1 bg-red-700 text-white rounded-md">Cancelled</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
                                     @endif
                                 </td>
+
 
 
                                 {{-- Action Icons --}}
@@ -465,14 +473,12 @@
 
                                             <!-- Mark as Done -->
                                             @if ($transaction->transaction_status === 'ongoing')
-                                                <li>
-                                                    <a href="#"
-                                                        wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark
-                                                        as Done
-                                                    </a>
-                                                </li>
+                                                <a href="#"
+                                                    wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
+                                                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                    <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark
+                                                    as Done
+                                                </a>
                                             @endif
 
                                             <!-- Mark as No Show -->
@@ -504,7 +510,7 @@
                                             @if ($transaction->transaction_status === 'ongoing')
                                                 <a href="#"
                                                     wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }})"
-                                                    class="flex items-center px-4 py-2 text-sm text-yellow-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                    class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                     <i class="fas fa-ban mr-2"></i> Terminate Reservation
                                                 </a>
                                             @endif
@@ -527,53 +533,58 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No reservations found matching this status.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                     {{-- End of Table Body --}}
                 </table>
-
-
-                {{-- Pagination --}}
-                <div class="py-4 px-3">
-                    <div class="flex ">
-                        <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                            <select wire:model.live="perPage"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{ $transactions->links() }}
-                </div>
-
-                <!-- Action Confirmation Modal -->
-                <x-dialog-modal wire:model.live="confirmingAction">
-                    <x-slot name="title">
-                        {{ __($actionTitle) }}
-                    </x-slot>
-
-                    <x-slot name="content">
-                        {{ __($actionMessage) }}
-                    </x-slot>
-
-                    <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
-                            {{ __('Cancel') }}
-                        </x-secondary-button>
-
-                        <x-danger-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
-                            {{ $actionTitle }}
-                        </x-danger-button>
-                    </x-slot>
-                </x-dialog-modal>
             </div>
 
+            {{-- Pagination --}}
+            <div class="py-4 px-3">
+                <div class="flex ">
+                    <div class="flex space-x-4 items-center mb-3">
+                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <select wire:model.live="perPage"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+                {{ $transactions->links() }}
+            </div>
+
+            <!-- Action Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmingAction">
+                <x-slot name="title">
+                    {{ __($actionTitle) }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __($actionMessage) }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                        {{ $actionTitle }}
+                    </x-button>
+                </x-slot>
+            </x-dialog-modal>
         </div>
+
     @endif
 
 
