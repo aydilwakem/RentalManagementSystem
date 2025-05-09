@@ -8,13 +8,13 @@ use App\Models\Activity;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
 use App\Models\Invoice;
-use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 
 class ReservationForm extends Component
@@ -67,7 +67,21 @@ class ReservationForm extends Component
 
     public $currentStep = 1;
     public $totalSteps = 4;
+
+    public $terms = 0;
+    public $terms_and_conditions;
+
     protected $queryString = ['currentStep'];
+
+
+    public $confirmReservationModal = false;
+
+    public function confirmCreate()
+    {
+        $this->confirmReservationModal = true;
+    }
+
+
 
     /**
      * Initializes the component with default values.
@@ -85,6 +99,7 @@ class ReservationForm extends Component
         $this->activities = Activity::all();
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
+        $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
     }
 
     /**
@@ -131,6 +146,7 @@ class ReservationForm extends Component
         $this->currentStep = max($this->currentStep - 1, 1);
     }
 
+
     // --------------------------------------------- LOGIC ----------------------------------------------- //
 
     /**
@@ -150,6 +166,7 @@ class ReservationForm extends Component
     {
         // ---------------------------- ADULTS AND KIDS -------------------------- //
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
+
             // haystack - adults.2 or kids.2
             // needle - adults. or kids.
 
@@ -199,6 +216,9 @@ class ReservationForm extends Component
 
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
+
+            $this->cart = [];
+            $this->currentStep = 1; // Balik sa step 1 kasi makulit ka
             $this->getAvailableRooms();
         }
 
@@ -271,12 +291,25 @@ class ReservationForm extends Component
         $this->rooms = Property::ofType('Room')
             ->where('property_status', 'available')
             ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {
-                $query->where(function ($q) use ($checkIn, $checkOut) {
-                    $q->where('start_datetime', '<', $checkOut)->where('end_datetime', '>', $checkIn);
-                });
+                $query->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed', 'ongoing'])
+                    ->where(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('start_datetime', '<', $checkOut) // Any booking that starts before the user checks out
+                            ->where('end_datetime', '>', $checkIn); // Ends after the user checks in
+                    });
             })
             ->get();
     }
+
+    public function getDepositProperty()
+    {
+        // Retrieve deposit percentage from database
+        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+
+        // Ensure computeTotalAmount() returns a valid amount
+        return $this->computeTotalAmount() * ($depositPercentage / 100);
+    }
+
+
 
     /**
      * Computes the total number of guests (pax) by summing all adults and kids from the cart.
@@ -358,6 +391,7 @@ class ReservationForm extends Component
      */
     public function validateData()
     {
+
         // If the current step is 1, 2, or 3, validate basic reservation data
         if (in_array($this->currentStep, [1, 2, 3])) {
             $this->validate([
@@ -383,6 +417,12 @@ class ReservationForm extends Component
                 'contact_number' => 'required|string',
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
+            ]);
+        }
+
+        if ($this->currentStep == 4) {
+            $this->validate([
+                'terms' => 'accepted',
             ]);
         }
     }
@@ -549,10 +589,23 @@ class ReservationForm extends Component
         // Reindex the array after filtering to ensure keys are sequential
         $this->cart = array_values($this->cart);
 
-        // Only recalculate if necessary
+        // Recalculate necessary values
         $this->computeTotalPax();
         $this->computeTotalAmount();
+
+        // Check if there are no "room" items left in the cart
+        $hasRoomItems = collect($this->cart)->contains(function ($item) {
+            return $item['type'] === 'room';
+        });
+
+        // If there are no rooms in the cart, reset to the first step
+        if (!$hasRoomItems) {
+            $this->cart = [];
+            $this->currentStep = 1; // Go back to the first step
+            // session()->flash('error', 'No rooms left in your cart. Returning to the first step.');
+        }
     }
+
 
     // ------------------------------------------ DATABASE INSERTION -------------------------------------- //
 
@@ -573,6 +626,7 @@ class ReservationForm extends Component
 
     public function register()
     {
+
         $this->resetErrorBag(); // Reset any previous error messages
 
         $reservationData = []; // Initialize an empty array to store reservation data for email
@@ -605,6 +659,7 @@ class ReservationForm extends Component
                 'heard_from' => $this->heard_from,
                 'reservation_source' => $this->reservation_source,
                 'transaction_status' => $this->transaction_status,
+                'terms' => $this->terms,
             ]);
 
             // Step 3 & 4: Generate invoice number

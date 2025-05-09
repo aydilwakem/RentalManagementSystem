@@ -1,6 +1,13 @@
 <div class="min-h-screen p-10">
     <div class="flex flex-col lg:flex-row gap-4 mx-auto">
 
+
+        @if (session()->has('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
         {{-- Left Side: Form Steps --}}
         <div class="w-full flex">
             <div class="w-full">
@@ -10,41 +17,21 @@
                     <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
                     <!-- Date Picker & Search -->
                     <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
-
                         <input type="date" wire:model.live="check_in_date"
                             min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
                             class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
                             placeholder="Check-in">
 
-
-                        {{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
-                            <input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
-
                         <h1><i class="fas fa-arrow-right"></i></h1>
 
                         <input type="date" wire:model.live="check_out_date"
-                            min="{{ $this->check_in_date ?? \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
+                            min="{{ isset($check_in_date) ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : \Carbon\Carbon::now('Asia/Manila')->addDay()->format('Y-m-d') }}"
                             class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
                             placeholder="Check-out">
-
-
-                        {{-- <button
-                            class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
-                            Search Availability
-                        </button> --}}
                     </div>
                 </div>
 
-                {{-- <div> --}}
-                {{-- <label for="checkin">Check-in Date & Time:</label>
-                    <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
-
-                    <label for="checkout">Check-out Date & Time:</label>
-                    <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
-                {{--
-                </div> --}}
-
-
+        
                 @if (session()->has('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
                 @endif
@@ -261,7 +248,7 @@
                     <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
                         <div>Deposit</div>
                         <div class="font-semibold">
-                            ₱{{ $total_amount > 0 ? number_format($total_amount * 0.5, 2) : '0.00' }}</div>
+                            ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
                     </div>
                 </div>
             @endif
@@ -289,15 +276,71 @@
                             wire:click="increaseStep()">Next</button>
                     @endif
 
-                    <!-- Confirm Reservation button -->
+                    {{-- Start of Modal for showing the Terms and Conditions --}}
+                    <div x-data="{ showModal: false, agreed: false }" 
+                    x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
+                    @keydown.escape.window="showModal = false">
+
                     @if ($currentStep == 4)
-                        <button type="button"
-                            class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                            wire:click="register">Confirm Reservation</button>
+                    <button type="button"
+                        class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                        @click="showModal = true">
+                    Confirm
+                    </button>
                     @endif
+
+                    <!-- Modal -->
+                    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+                        x-show="showModal"
+                        x-transition
+                        style="display: none;">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                        <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
+                        
+                        <div class="text-sm text-gray-800 space-y-3">      
+                            <p>
+                                {{  $terms_and_conditions }}
+                            </p>
+                        </div>
+
+                        <!-- Checkbox -->
+                        <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" x-model="agreed" wire:model="terms" class="form-checkbox text-green-600">
+                                <span class="ml-2 text-sm text-gray-700">I agree to the Terms and Conditions</span>
+                            </label>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-2 mt-6">
+                            <button @click="showModal = false"
+                                    class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                Cancel
+                            </button>
+                            <button 
+                                :disabled="!agreed"
+                                @click="showModal = false; $wire.register()" 
+                                class="px-4 py-2 rounded-md text-white transition duration-150 ease-in-out"
+                                :class="agreed 
+                                    ? 'bg-green-600 hover:bg-green-700' 
+                                    : 'bg-green-300 cursor-not-allowed'">
+                                Confirm & Complete Reservation
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                    </div>
+
+                    {{-- End of Modal for showing the Terms and Conditions --}}
+
+          
+
+            @if ($errors->has('terms'))
+                <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
+            @endif
+                    
                 </div>
             @endif
-
         </div>
 
 
@@ -348,3 +391,21 @@
         @endif
     </div>
 </div> --}}
+
+
+{{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
+                            <input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
+                        {{-- <button
+                            class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                            Search Availability
+                        </button> --}}
+
+
+                         {{-- <div> --}}
+                {{-- <label for="checkin">Check-in Date & Time:</label>
+                    <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
+
+                    <label for="checkout">Check-out Date & Time:</label>
+                    <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
+                {{--
+                </div> --}}
