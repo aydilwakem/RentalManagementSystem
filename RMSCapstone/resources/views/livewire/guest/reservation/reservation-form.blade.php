@@ -3,10 +3,10 @@
 
 
         @if (session()->has('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
 
         {{-- Left Side: Form Steps --}}
         <div class="w-full flex">
@@ -31,7 +31,6 @@
                     </div>
                 </div>
 
-        
                 @if (session()->has('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
                 @endif
@@ -39,8 +38,7 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room">
-                        {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                         @include('livewire.guest.reservation.choose-room')
+                        @include('livewire.guest.reservation.choose-room')
                     </div>
                 @endif
 
@@ -160,9 +158,9 @@
                                             </div>
 
                                             <!-- Charges Breakdown -->
-                                            <div class="flex justify-between items-start gap-2">
+                                            <div class="flex justify-between items-start gap-1">
                                                 <!-- Labels -->
-                                                <div class="space-y-1">
+                                                <div>
                                                     @if ($item['extra_charge'])
                                                         <div class="text-sm text-gray-600">Extra Person Charge:</div>
                                                     @endif
@@ -170,10 +168,12 @@
                                                 </div>
 
                                                 <!-- Amounts -->
-                                                <div class="text-right space-y-1">
-                                                    <div class="text-sm font-semibold text-gray-800">
-                                                        ₱{{ number_format($item['extra_charge'], 2) }}
-                                                    </div>
+                                                <div class="text-right">
+                                                    @if ($item['extra_charge'])
+                                                        <div class="text-sm font-semibold text-gray-800">
+                                                            ₱{{ number_format($item['extra_charge'], 2) }}
+                                                        </div>
+                                                    @endif
                                                     <div class="text-sm font-semibold text-gray-800">
                                                         ₱{{ number_format($item['total_amount'], 2) }}
                                                     </div>
@@ -190,7 +190,7 @@
                             @foreach ($cart as $item)
                                 @if ($item['type'] === 'activity')
                                     <!-- Activity Card -->
-                                    <div class="bg-gray-100 py-3 px-2 pr-8 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
                                         wire:key="cart-item-{{ $item['activity_id'] }}">
                                         <!-- back Button -->
                                         <button type="button"
@@ -205,11 +205,14 @@
                                                 <i class="fa-solid fa-square-plus"></i>
                                                 <strong>Activity:</strong> {{ $item['activity_name'] }}
                                             </div>
-                                            <div class="flex justify-between items-center">
+                                            <!-- Charges Breakdown -->
+                                            <div class="flex justify-between items-start gap-2">
+                                                <!-- Label and Quantity -->
                                                 <div class="text-sm text-gray-600">
                                                     Quantity: {{ $item['quantity'] }}
                                                 </div>
-                                                <div class="text-sm font-semibold">
+                                                <!-- Amount -->
+                                                <div class="text-sm font-semibold text-gray-800">
                                                     ₱{{ number_format($item['amount'], 2) }}
                                                 </div>
                                             </div>
@@ -230,7 +233,30 @@
             </div>
 
             @error('cart')
-                <span class="text-red-600">{{ $message }}</span>
+                <div id="toast-danger"
+                    class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800"
+                    role="alert">
+                    <div
+                        class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                            viewBox="0 0 20 20">
+                            <path
+                                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                        </svg>
+                        <span class="sr-only">Error icon</span>
+                    </div>
+                    <div class="ms-3 text-sm font-normal">{{ $message }}</div>
+                    <button type="button"
+                        class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+                        data-dismiss-target="#toast-danger" aria-label="Close">
+                        <span class="sr-only">Close</span>
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                    </button>
+                </div>
             @enderror
 
 
@@ -258,15 +284,31 @@
             @if ($cartCollection->contains('type', 'room'))
                 <div class="mt-6 flex justify-between">
 
-                    @if ($currentStep == 1)
+                    {{-- @if ($currentStep == 1)
                         <div> </div>
-                    @endif
+                    @endif --}}
 
                     <!-- Back button -->
                     @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
                         <button type="button"
                             class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
-                            wire:click="decreaseStep()"> Back
+                            wire:click="decreaseStep()">
+                            <div class="flex items-center justify-center">
+                                <!-- Spinner -->
+                                <span wire:loading wire:target="decreaseStep()" class="mr-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <!-- Button Text -->
+                                <span wire:loading.remove wire:target="decreaseStep()">
+                                    Back
+                                </span>
+                            </div>
                         </button>
                     @endif
 
@@ -274,79 +316,90 @@
                     @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
                         <button type="button"
                             class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                            wire:click="increaseStep()">Next</button>
+                            wire:click="increaseStep()">
+                            <div class="flex items-center justify-center">
+                                <!-- Spinner -->
+                                <span wire:loading wire:target="increaseStep()" class="mr-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <!-- Button Text -->
+                                <span wire:loading.remove wire:target="increaseStep()">
+                                    Next
+                                </span>
+                            </div>
+                        </button>
                     @endif
 
-                    {{-- Start of Modal for showing the Terms and Conditions --}}
-                    <div x-data="{ showModal: false, agreed: false }" 
-                    x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
-                    @keydown.escape.window="showModal = false">
-
+                    <!-- Terms and Conditions Modal -->
                     @if ($currentStep == 4)
-                    <button type="button"
-                        class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                        @click="showModal = true">
-                    Confirm
-                    </button>
+                        <div x-data="{ showModal: false, agreed: false }" x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
+                            @keydown.escape.window="showModal = false">
+
+                            <button type="button"
+                                class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                @click="showModal = true">
+                                Confirm
+                            </button>
+
+
+                            <!-- Modal -->
+                            <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+                                x-show="showModal" x-transition style="display: none;">
+                                <div
+                                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                                    <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
+
+                                    <div class="text-sm text-gray-800 space-y-3">
+                                        <p>
+                                            {{ $terms_and_conditions }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Checkbox -->
+                                    <div class="mt-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="checkbox" x-model="agreed" wire:model="terms"
+                                                class="form-checkbox text-green-600">
+                                            <span class="ml-2 text-sm text-gray-700">I agree to the Terms and
+                                                Conditions</span>
+                                        </label>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="flex justify-between gap-2 mt-6">
+                                        <button @click="showModal = false"
+                                            class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
+                                            Cancel
+                                        </button>
+                                        <button type="button" :disabled="!agreed"
+                                            @click="if (agreed) { showModal = false; $wire.register(); }"
+                                            class="mt-4 block px-4 py-2  border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                            :class="agreed
+                                                ?
+                                                'bg-green-700 bg-opacity-85 hover:bg-green-700 cursor-pointer' :
+                                                'bg-green-400 cursor-not-allowed'">
+                                            Complete Reservation
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endif
-
-                    <!-- Modal -->
-                    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
-                        x-show="showModal"
-                        x-transition
-                        style="display: none;">
-                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                        <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
-                        
-                        <div class="text-sm text-gray-800 space-y-3">      
-                            <p>
-                                {{  $terms_and_conditions }}
-                            </p>
-                        </div>
-
-                        <!-- Checkbox -->
-                        <div class="mt-4">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" x-model="agreed" wire:model="terms" class="form-checkbox text-green-600">
-                                <span class="ml-2 text-sm text-gray-700">I agree to the Terms and Conditions</span>
-                            </label>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button @click="showModal = false"
-                                    class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
-                                Cancel
-                            </button>
-                            <button 
-                                :disabled="!agreed"
-                                @click="showModal = false; $wire.register()" 
-                                class="px-4 py-2 rounded-md text-white transition duration-150 ease-in-out"
-                                :class="agreed 
-                                    ? 'bg-green-600 hover:bg-green-700' 
-                                    : 'bg-green-300 cursor-not-allowed'">
-                                Confirm & Complete Reservation
-                            </button>
-                        </div>
-                    </div>
-                    </div>
-                    </div>
-
                     {{-- End of Modal for showing the Terms and Conditions --}}
 
-          
-
-            @if ($errors->has('terms'))
-                <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
-            @endif
-                    
+                    @if ($errors->has('terms'))
+                        <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
+                    @endif
                 </div>
+
             @endif
         </div>
-
-
-
-
     </div>
 </div>
 
@@ -396,17 +449,17 @@
 
 {{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
                             <input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
-                        {{-- <button
+{{-- <button
                             class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
                             Search Availability
                         </button> --}}
 
 
-                         {{-- <div> --}}
-                {{-- <label for="checkin">Check-in Date & Time:</label>
+{{-- <div> --}}
+{{-- <label for="checkin">Check-in Date & Time:</label>
                     <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
 
                     <label for="checkout">Check-out Date & Time:</label>
                     <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
-                {{--
+{{--
                 </div> --}}

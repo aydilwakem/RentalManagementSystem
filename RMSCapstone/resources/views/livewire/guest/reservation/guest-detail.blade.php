@@ -7,8 +7,9 @@
                 Guest Details
             </div>
             <div class="px-6 pt-6 text-gray-700 text-md">
-                Please provide your personal details below, including your name, email, contact number, and country. If
-                you're bringing additional guests, you can add their information using the button below.
+                Please provide your personal details below, these will be used as the main reference for your
+                reservation. If
+                you're bringing additional guests, you can add their information using the option below.
             </div>
 
             <div class="p-6 space-y-6">
@@ -114,23 +115,30 @@
 
                     <!-- Displaying Added Guests -->
                     <div class="mt-6">
-                        @if(count($guests) > 0)
-                            <ul class="space-y-2">
-                                @foreach($guests as $guest)
-                                    <li class="flex justify-between items-center p-2 bg-gray-100 rounded-md">
-                                        <span>{{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}</span>
-                                        <div class="space-x-2">
-                                            <button wire:click="editGuest({{ $loop->index }})"
-                                                class="text-blue-500">Edit</button>
-                                            <button class="text-red-500">Delete</button>
+                        @if (count($guests) > 0)
+                            <ol class="space-y-3 list-decimal pl-6 text-gray-800 mb-3">
+                                @foreach ($guests as $guest)
+                                    <li>
+                                        <div
+                                            class="p-4 bg-green-50 rounded-2xl border border-green-200 flex justify-between items-center">
+                                            <div class="font-semibold text-green-800">
+                                                {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
+                                            </div>
+                                            <div class="space-x-2">
+                                                <button wire:click="editGuest({{ $loop->index }})"
+                                                    class="text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">Edit</button>
+                                                <button
+                                                    class="text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">Remove</button>
+                                            </div>
                                         </div>
                                     </li>
                                 @endforeach
-                            </ul>
+                            </ol>
                         @else
                             <p>No guests added yet.</p>
                         @endif
                     </div>
+
 
 
                     <!-- Button to open modal -->
@@ -141,11 +149,11 @@
                         </button>
                     </div>
 
-                    @if($showEditModal)
+                    @if ($showEditModal)
                         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div
-                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                                <h2 class="text-lg font-semibold mb-4">Edit Guest Details</h2>
+                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
+                                <h2 class="text-xl font-bold mb-4 text-center text-green-700">Edit Guest Details</h2>
 
                                 <!-- Guest Name -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,32 +161,36 @@
                                         <label class="block text-sm text-gray-700">First Name</label>
                                         <input type="text" wire:model.defer="editingGuest.guest_first_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
-                                        @error('editingGuest.guest_first_name') <span
-                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        @error('editingGuest.guest_first_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Middle Name</label>
                                         <input type="text" wire:model.defer="editingGuest.guest_middle_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                        @error('editingGuest.guest_middle_name') <span
-                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        @error('editingGuest.guest_middle_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Last Name</label>
                                         <input type="text" wire:model.defer="editingGuest.guest_last_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
-                                        @error('editingGuest.guest_last_name') <span
-                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        @error('editingGuest.guest_last_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Suffix</label>
                                         <input type="text" wire:model.defer="editingGuest.guest_suffix"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                        @error('editingGuest.guest_suffix') <span
-                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        @error('editingGuest.guest_suffix')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -188,12 +200,13 @@
                                     <select wire:model.defer="editingGuest.guest_type_id"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
-                                        @foreach($guest_types as $type)
+                                        @foreach ($guest_types as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('editingGuest.guest_type_id') <span
-                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    @error('editingGuest.guest_type_id')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <!-- Gender -->
@@ -206,8 +219,9 @@
                                         <option value="female">Female</option>
                                         <option value="other">Other</option>
                                     </select>
-                                    @error('editingGuest.guest_gender') <span
-                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    @error('editingGuest.guest_gender')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <!-- Residency -->
@@ -219,8 +233,9 @@
                                         <option value="local">Local</option>
                                         <option value="foreigner">Foreigner</option>
                                     </select>
-                                    @error('editingGuest.guest_residency') <span
-                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    @error('editingGuest.guest_residency')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <!-- Country of Origin -->
@@ -228,18 +243,19 @@
                                     <label class="block text-sm text-gray-700">Country of Origin</label>
                                     <input type="text" wire:model.defer="editingGuest.guest_country_of_origin"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                    @error('editingGuest.guest_country_of_origin') <span
-                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    @error('editingGuest.guest_country_of_origin')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <!-- Actions -->
                                 <div class="flex justify-end gap-2 mt-6">
                                     <button wire:click="$set('showEditModal', false)"
-                                        class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                        class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                         Cancel
                                     </button>
                                     <button wire:click="updateGuest"
-                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                                        class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
                                         Save Changes
                                     </button>
                                 </div>
@@ -248,14 +264,14 @@
                     @endif
 
 
-
                     <!-- Modal -->
-                    @if($showGuestModal)
+                    @if ($showGuestModal)
                         <div id="guestModal"
                             class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div
-                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                                <h2 class="text-lg font-semibold mb-4">Enter Guest Details</h2>
+                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
+                                <h2 class="text-xl font-bold mb-4 text-center text-green-700">Enter Additional Guest
+                                    Details</h2>
 
                                 <!-- Guest Name -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,7 +279,8 @@
                                         <label class="block text-sm text-gray-700">First Name</label>
                                         <input type="text" wire:model="guest_first_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
-                                        @error('guest_first_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @error('guest_first_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -271,7 +288,8 @@
                                         <label class="block text-sm text-gray-700">Middle Name</label>
                                         <input type="text" wire:model="guest_middle_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                        @error('guest_middle_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @error('guest_middle_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -279,7 +297,8 @@
                                         <label class="block text-sm text-gray-700">Last Name</label>
                                         <input type="text" wire:model="guest_last_name"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
-                                        @error('guest_last_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @error('guest_last_name')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -287,7 +306,8 @@
                                         <label class="block text-sm text-gray-700">Suffix</label>
                                         <input type="text" wire:model="guest_suffix"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                        @error('guest_suffix') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @error('guest_suffix')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -298,11 +318,12 @@
                                     <select wire:model="guest_type_id"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
-                                        @foreach($guest_types as $type)
+                                        @foreach ($guest_types as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('guest_type_id') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @error('guest_type_id')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -314,9 +335,10 @@
                                         <option value="">Select Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
-                                        <option value="other">Other</option>
+                                        <option value="other">Prefer not to say</option>
                                     </select>
-                                    @error('guest_gender') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @error('guest_gender')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -329,7 +351,8 @@
                                         <option value="local">Local</option>
                                         <option value="foreigner">Foreigner</option>
                                     </select>
-                                    @error('guest_residency') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @error('guest_residency')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -338,21 +361,21 @@
                                     <label class="block text-sm text-gray-700">Country of Origin</label>
                                     <input type="text" wire:model="guest_country_of_origin"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
-                                    @error('guest_country_of_origin') <span
-                                        class="text-red-500 text-sm">{{ $message }}</span>
+                                    @error('guest_country_of_origin')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
 
 
                                 <!-- Actions -->
-                                <div class="flex justify-end gap-2 mt-6">
+                                <div class="flex justify-between gap-2 mt-6">
                                     <button type="button" wire:click="closeGuestModal"
-                                        class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                        class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                         Cancel
                                     </button>
                                     <button type="button" wire:click="addMultipleGuests"
-                                        class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white transition duration-150 ease-in-out">
-                                        Add Guests
+                                        class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                                        Add Guest
                                     </button>
                                 </div>
                             </div>

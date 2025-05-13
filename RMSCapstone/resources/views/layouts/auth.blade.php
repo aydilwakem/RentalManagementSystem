@@ -41,13 +41,11 @@
             </div>
         </header>
     @endif --}}
-    @livewire('guest.navbar')
 
     <div class="font-sans text-gray-900 antialiased">
         {{ $slot }}
     </div>
 
-    @livewire('guest.footer')
 
     @livewireScripts
 </body>
