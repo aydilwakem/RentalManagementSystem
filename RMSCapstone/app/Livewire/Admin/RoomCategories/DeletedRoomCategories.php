@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\RoomCategories;
 
+use App\Models\PropertyCategory;
 use App\Models\RoomCategory;
 use Illuminate\Database\QueryException;
 use Livewire\Component;
@@ -25,24 +26,15 @@ class DeletedRoomCategories extends Component
 
     public function fetchDeletedRoomCategories()
     {
-        $this->deletedRoomCategories = RoomCategory::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedRoomCategories = PropertyCategory::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
     public function restoreRoomCategory($roomCategoryId)
     {
-        $roomCategory = RoomCategory::withTrashed()->find($roomCategoryId);
+        $roomCategory = PropertyCategory::withTrashed()->find($roomCategoryId);
         if ($roomCategory) {
             $roomCategory->restore();
             
-            // Check if there are any detached amenities stored in the session
-        $detachedAmenities = session()->get('detached_amenities', []);
-
-        // If detached amenities exist, re-attach them
-        if (!empty($detachedAmenities)) {
-            $roomCategory->amenities()->attach($detachedAmenities);
-            // Clear the session after reattaching
-            session()->forget('detached_amenities');
-        }
             session()->flash('message', 'Room category restored successfully.');
             $this->fetchDeletedRoomCategories();
         }
@@ -50,23 +42,14 @@ class DeletedRoomCategories extends Component
 
     public function deleteRoomCategoryForever($roomCategoryId)
     {
-        try{
-        $roomCategory = RoomCategory::withTrashed()->find($this->confirmItemDelete);
+        $roomCategory = PropertyCategory::withTrashed()->find($this->confirmItemDelete);
         if ($roomCategory) {
             $roomCategory->forceDelete();
             session()->flash('message', 'Room category permanently deleted.');
             $this->fetchDeletedRoomCategories();
         }
         $this->confirmItemDelete = false;
-    }catch (QueryException $e) {
-        // Check if the error is an integrity constraint violation
-        if ($e->getCode() == 23000) { 
-            $this->cannotDeleteItem = true; // Show the cannot delete modal
-            $this->confirmItemDelete = false;
-        } else {
-            throw $e; // Re-throw other exceptions
-        }
-    }
+    
     }
 
     public function render()

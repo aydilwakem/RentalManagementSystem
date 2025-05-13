@@ -219,7 +219,7 @@
 
                         <!-- Existing stored image previews -->
                         @if ($storedImages)
-                        @foreach ($storedImages as $image)
+                        @foreach ($storedImages as $index => $image)
                         <div class="relative shrink-0">
                             <img src="{{ asset('storage/' . $image) }}"
                                 class="w-52 h-40 object-cover rounded-lg shadow">

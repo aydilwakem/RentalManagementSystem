@@ -15,4 +15,9 @@ class EventType extends Model
     {
         return $this->hasMany(Transaction::class, 'event_type_id');
     }
+
+    public function scopeSearch($query, $search)
+    {
+        $query->where('name', 'like', "%{$search}%");
+    }
 }

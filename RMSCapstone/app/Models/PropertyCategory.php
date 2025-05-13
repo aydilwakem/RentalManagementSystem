@@ -10,10 +10,15 @@ class PropertyCategory extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'description', 'image'];
+    protected $fillable = ['name', 'description'];
 
     public function properties()
     {
         return $this->hasMany(Property::class, 'property_category_id');
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        $query->where('name', 'like', "%{$search}%");
     }
 }

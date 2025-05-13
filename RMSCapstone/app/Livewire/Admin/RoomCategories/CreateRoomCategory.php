@@ -4,8 +4,7 @@ namespace App\Livewire\Admin\RoomCategories;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use App\Models\RoomCategory;
-use App\Models\Amenity;
+use App\Models\PropertyCategory;
 
 class CreateRoomCategory extends Component
 {
@@ -14,10 +13,6 @@ class CreateRoomCategory extends Component
     public $name;
     public $description;
 
-    public $image;
-
-    public $selectedAmenities = [];
-    public $amenities;
 
     public $confirmCreateItem = false;
 
@@ -26,20 +21,14 @@ class CreateRoomCategory extends Component
         $this->confirmCreateItem = true;
     }
 
-    public function mount()
-    {
-        $this->amenities = Amenity::all(); // Fetch all amenities
-    }
 
     public function saveCategory()
     {
         try{
         // Validate form input (including image)
         $this->validate([
-            'name' => 'required|string|max:255|unique:prd_room_categories,name',
+            'name' => 'required|string|max:255|unique:property_categories,name',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:1024', // Max 1MB image
-            'selectedAmenities' => 'array',
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
                 // If validation fails, close the modal
@@ -47,30 +36,14 @@ class CreateRoomCategory extends Component
                 throw $e;
             }
 
-        // Ensure image upload is complete before storing
-        if ($this->image && !$this->image->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Store Image (if uploaded)
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('room-categories', 'public'); // Saves in storage/app/public/room-categories
-        }
-
         // Create Room Category
-        $roomCategory = RoomCategory::create([
+        $roomCategory = PropertyCategory::create([
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $imagePath, // Save path in DB
         ]);
 
-        // Attach selected amenities via pivot table
-        $roomCategory->amenities()->sync($this->selectedAmenities);
-
         // Reset form fields
-        $this->reset(['name', 'description', 'image', 'selectedAmenities']);
+        $this->reset(['name', 'description']);
 
         // Flash message for success
         session()->flash('message', 'Room Category successfully created!');
