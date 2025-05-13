@@ -95,23 +95,6 @@ class ReservationForm extends Component
         'guest_country_of_origin' => '',
     ];
 
-    public function editGuest($index)
-    {
-        $this->editingGuestIndex = $index;
-        $this->editingGuest = $this->guests[$index];
-        $this->showEditModal = true;
-    }
-
-    public function updateGuest()
-    {
-        if (!is_null($this->editingGuestIndex)) {
-            $this->guests[$this->editingGuestIndex] = $this->editingGuest;
-        }
-
-        $this->showEditModal = false;
-        $this->reset('editingGuestIndex', 'editingGuest');
-    }
-
     public $confirmReservationModal = false;
 
 
@@ -635,6 +618,24 @@ class ReservationForm extends Component
 
         // Optionally clear the form inputs after adding a guest
         $this->reset(['guest_first_name', 'guest_middle_name', 'guest_last_name', 'guest_suffix', 'guest_type_id', 'guest_gender', 'guest_residency', 'guest_country_of_origin']);
+    }
+
+
+    public function editGuest($index)
+    {
+        $this->editingGuestIndex = $index;
+        $this->editingGuest = $this->guests[$index];
+        $this->showEditModal = true;
+    }
+
+    public function updateGuest()
+    {
+        if (!is_null($this->editingGuestIndex)) {
+            $this->guests[$this->editingGuestIndex] = $this->editingGuest;
+        }
+
+        $this->showEditModal = false;
+        $this->reset('editingGuestIndex', 'editingGuest');
     }
 
     // ------------------------------------------ REMOVE ITEMS FROM CART ----------------------------------- //
