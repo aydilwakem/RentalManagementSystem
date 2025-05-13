@@ -96,8 +96,7 @@
                 @can('dashboard-view')
                 <div>
                     <a href="{{ route('dashboard') }}">
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('dashboard') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-house"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">
@@ -298,35 +297,36 @@
                 </div>
 
                 <!-- Payments -->
+                @can('payments-list')
                 <div>
                     <a href="{{ route('admin.payments-list') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('admin.payments-list') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-money-bill"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Payments</h1>
                         </div>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Invoice -->
+                @can('invoices-list')
                 <div>
                     <a href="{{ route('admin.invoice-list') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('admin.invoice-list') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-file-invoice"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Invoices</h1>
                         </div>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Activities -->
                 @can('activity-list')
                 <div>
                     <a href="{{ route('admin.activities') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('admin.activities') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-person-swimming"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Activities</h1>
@@ -339,8 +339,7 @@
                 @can('maintenance-list')
                 <div>
                     <a href="{{ route('admin.maintenances') }}" wire:navigate>
-                        <div
-                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                        <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
                             {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-broom"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Maintenance</h1>
