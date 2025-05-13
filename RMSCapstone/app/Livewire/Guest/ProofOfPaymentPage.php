@@ -156,7 +156,7 @@ class ProofOfPaymentPage extends Component
 
         // Step 7: Notify user and redirect
         session()->flash('message', 'Payment submitted successfully!');
-        return redirect()->route('guest.reservation-form');
+        return redirect()->route('guest.thank-you-page');
     }
 
 

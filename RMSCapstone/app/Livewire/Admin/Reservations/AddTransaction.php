@@ -55,7 +55,7 @@ class AddTransaction extends Component
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
                     $quantity = (int) ($this->quantity[$activityId] ?? 0);
-                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity    
+                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity
 
                     $this->cart[$index]['quantity'] = $quantity;
                     $this->cart[$index]['amount'] = $activityAmount; // Update the amount in the cart
@@ -121,7 +121,7 @@ class AddTransaction extends Component
 
         //  dd($this->cart);
 
-        // $this->computeTotalAmount(); 
+        // $this->computeTotalAmount();
     }
 
     public function removeFromCart($type, $itemId)
@@ -138,11 +138,25 @@ class AddTransaction extends Component
                 return $item['type'] !== 'room' || $item['room_id'] != $itemId;
             }
 
-            return true; // Fallback case (this should rarely be hit) 
+            return true; // Fallback case (this should rarely be hit)
         });
 
         // Reindex the array after filtering to ensure keys are sequential
         $this->cart = array_values($this->cart);
+    }
+
+        public function incrementActivity($activityId)
+    {
+        $current = $this->quantity[$activityId] ?? 1;
+        $this->quantity[$activityId] = $current + 1;
+    }
+
+    public function decrementActivity($activityId)
+    {
+        $current = $this->quantity[$activityId] ?? 1;
+        if ($current > 1) {
+            $this->quantity[$activityId] = $current - 1;
+        }
     }
 
 

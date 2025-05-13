@@ -49,7 +49,7 @@
                             <div class="flex flex-col">
                                 <label for="quantity-{{ $activity->id }}"
                                     class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                                <div class="flex items-center space-x-2">
+                                <div class="flex items-center">
                                     <button type="button" wire:click.prevent="decrementActivity('{{ $activity->id }}')"
                                         class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
                                         -

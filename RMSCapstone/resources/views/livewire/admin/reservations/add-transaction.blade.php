@@ -6,134 +6,177 @@
     </x-slot>
 
 
-    {{--------------------------- Selected Activities (existing) -----------------}}
-    @if ($transaction->activities->isNotEmpty())
-        <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md mb-6">
-            <table class="table-auto w-full border border-gray-300 text-sm mb-4">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="border px-4 py-2 text-left">Activity</th>
-                        <th class="border px-4 py-2 text-center">Quantity</th>
-                        <th class="border px-4 py-2 text-right">Unit Price</th>
-                        <th class="border px-4 py-2 text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($transaction->activities as $activity)
+    <div>
+        {{-- ------------------------- Selected Activities (existing) --------------- --}}
+        @if ($transaction->activities->isNotEmpty())
+            <div class="overflow-x-auto bg-white p-6 rounded-lg shadow-md mb-6">
+                <h3 class="font-semibold text-lg text-gray-700 mb-3">Existing Activities</h3>
+                <table class="table-auto w-full border border-gray-300 text-sm mb-4">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <td class="border px-4 py-2">{{ $activity->name }}</td>
-                            <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
-                            <td class="border px-4 py-2 text-right">₱{{ number_format($activity->amount, 2) }}</td>
-                            <td class="border px-4 py-2 text-right">
-                                ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                            <th class="border px-4 py-2 text-left">Activity</th>
+                            <th class="border px-4 py-2 text-center">Quantity</th>
+                            <th class="border px-4 py-2 text-right">Unit Price</th>
+                            <th class="border px-4 py-2 text-right">Total</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @else
-        <p class="text-gray-600 italic">No activities found for this transaction.</p>
-    @endif
+                    </thead>
+                    <tbody>
+                        @foreach ($transaction->activities as $activity)
+                            <tr>
+                                <td class="border px-4 py-2">{{ $activity->name }}</td>
+                                <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
+                                <td class="border px-4 py-2 text-right">₱{{ number_format($activity->amount, 2) }}</td>
+                                <td class="border px-4 py-2 text-right">
+                                    ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p class="text-gray-600 italic">No activities found for this transaction.</p>
+        @endif
 
 
-    @php
-        $cartCollection = collect($cart); // Convert array to collection
-    @endphp
+        @php
+            $cartCollection = collect($cart); // Convert array to collection
+        @endphp
+    </div>
 
 
 
-
-    {{--------------------------- Selected Activities (new) ----------------------}}
+    {{-- ------------------------- Selected Activities (new) -------------------- --}}
     @if ($cartCollection->contains('type', 'activity'))
-        @foreach ($cart as $item)
-            @if ($item['type'] === 'activity')
-                <div class="flex justify-between items-center mb-2" wire:key="cart-item-{{ $item['activity_id'] }}">
-                    <div class="text-gray-900">
-                        <strong>Activity:</strong> {{ $item['activity_name'] }}<br>
-                        <span class="text-sm">Quantity: {{ $item['quantity'] }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="text-md font-semibold text-green-700">
-                            ₱{{ number_format($item['amount'], 2) }}
-                        </div>
-                        <button type="button" wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
-                            class="text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center transition"
-                            title="Remove Activity">
-                            <span class="text-xl leading-none">&times;</span>
-                        </button>
-                    </div>
-                </div>
-            @endif
-        @endforeach
-    @endif
-
-    @error('cart') <span class="text-red-600">{{ $message }}</span> @enderror
-
-
-
-
-
-    {{--------------------------- Select New Activity ---------------------------}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        @foreach ($availableActivities as $activity)
-            <div class="lg:col-span-2 space-y-6">
-
-                <div class="bg-white border rounded-xl overflow-hidden shadow-sm">
-                    <div class="md:flex">
-
-                        <!-- Activity Info -->
-                        <div class="md:w-2/3">
-                            <h4 class="text-2xl font-semibold mb-2">{{ $activity->name }}</h4>
-                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
-                                <i class="fas fa-users mr-2"></i> Description: {{ $activity->description }}
-                            </p>
-                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
-                                <i class="fas fa-money mr-2"></i> Amount:
-                                {{ $activity->amount }}
-                            </p>
-                        </div>
-
-                        <!-- Activity Quantity Input -->
-                        <div class="mt-4 md:mt-auto md:pt-4 flex flex-col justify-end">
-                            <div class="flex flex-col sm:flex-row items-center gap-3">
-                                <div class="flex items-center gap-2 w-full sm:w-auto">
-                                    <label for="quantity-{{ $activity->id }}"
-                                        class="text-sm font-medium text-gray-700">Quantity:</label>
-                                    <select id="quantity-{{ $activity->id }}" wire:model.live="quantity.{{ $activity->id }}"
-                                        class="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                        @for ($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">{{ $i }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-
-                                <!-- Button to add activity in the cart -->
-                                <div>
-                                    <button
-                                        wire:click="addActivityToCart({{ $activity->id }})""
-                                                                                                                                                                                            class="
-                                        px-4 py-2 mt-3 w-full bg-green-700 bg-opacity-85 hover:bg-green-800 text-white
-                                        rounded">
-                                        Add to Cart
-                                    </button>
-                                </div>
-
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h3 class="font-semibold text-lg text-gray-700 mb-1">Added Activities</h3>
+            <hr>
+            <div class="space-y-3">
+                @foreach ($cart as $item)
+                    @if ($item['type'] === 'activity')
+                        <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-none"
+                            wire:key="cart-item-{{ $item['activity_id'] }}">
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-gray-900">{{ $item['activity_name'] }}</span>
+                                <span class="text-sm text-gray-500">Quantity: {{ $item['quantity'] }}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-md font-semibold text-green-700">
+                                    ₱{{ number_format($item['amount'], 2) }}
+                                </span>
+                                <button type="button"
+                                    wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                                    title="Remove Activity"
+                                    class="bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                    <span class="leading-none translate-y-[-1px] font-bold">&times;</span>
+                                </button>
+                                {{-- <button type="button"
+                                    wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                                    class="text-gray-500 hover:text-red-600  transition-colors" title="Remove Activity">
+                                    <span class="text-xl leading-none">&times;</span>
+                                </button> --}}
                             </div>
                         </div>
+                    @endif
+                @endforeach
+            </div>
+            {{-- Button to Save Changes --}}
+            <div class="flex justify-end mt-4">
+                <button wire:click="register"
+                    class="px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    @endif
 
+    @error('cart')
+        <span class="text-red-600">{{ $message }}</span>
+    @enderror
+
+
+
+    {{-- ------------------------- Select New Activity ------------------------- --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        @foreach ($availableActivities as $activity)
+            <div
+                class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-0 flex flex-col md:flex-row">
+                <div class="md:w-1/2">
+                    @if ($activity->image)
+                        <img class="w-full h-48 object-cover" src="{{ asset('storage/' . $activity->image) }}"
+                            alt="{{ $activity->name }}">
+                    @else
+                        <img class="w-full h-48 object-cover" src="{{ asset('images/rms-default.png') }}"
+                            alt="{{ $activity->name }}">
+                    @endif
+                </div>
+
+                <div class="md:w-1/2 p-4 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800"> {{ $activity->name }}</h2>
+                        <p class="text-gray-600 text-sm mb-4 text-justify">
+                            @if (!empty($activity->description))
+                                {{ $activity->description }}
+                            @else
+                                Try this activity only at our place!
+                            @endif
+                        </p>
+                        <div class="text-lg font-semibold text-green-600 mb-2">
+                            @if ($activity->amount == 0)
+                                <span class="text-green-600 font-semibold">FREE</span>
+                            @else
+                                ₱{{ number_format($activity->amount, 2) }}
+                            @endif
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <!-- Counter -->
+                            <div class="flex flex-col">
+                                <label for="quantity-{{ $activity->id }}"
+                                    class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                                <div class="flex items-center">
+                                    <button type="button"
+                                        wire:click.prevent="decrementActivity('{{ $activity->id }}')"
+                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
+                                        -
+                                    </button>
+
+                                    <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                        {{ $quantity[$activity->id] ?? 1 }}
+                                    </span>
+
+                                    <button type="button"
+                                        wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                            <button wire:click="addActivityToCart({{ $activity->id }})"
+                                class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
+                                        class="mr-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
+                                        Add Transaction
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         @endforeach
     </div>
-
-    {{-- Button to Save Changes --}}
-    <div>
-        <button wire:click="register""
-                                                        class=" px-4 py-2 mt-3 w-full bg-green-700 bg-opacity-85
-            hover:bg-green-800 text-white rounded">
-            Save Changes
-        </button>
-    </div>
-
 </div>
