@@ -65,7 +65,7 @@
         <!-- Edit -->
         <x-button type="button" icon="fas fa-pen-to-square"
             class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            wire:navigate href="#">
+            wire:navigate href="{{ route('admin.edit-event', ['event' => $event->id]) }}">
             Edit
         </x-button>
 

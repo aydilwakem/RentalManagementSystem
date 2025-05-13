@@ -139,7 +139,7 @@
             </div>
 
             <!-- Max Occupancy Rules -->
-            <div class=" col-span-2">
+            {{-- <div class=" col-span-2">
                 <h3 class="block mb-2 text-sm font-semibold text-gray-900">Occupancy Rules</h3>
                 <div class="mt-2 flex flex-start mb-2">
                     <button type="button" wire:click="addRule"
@@ -182,7 +182,7 @@
                     </div>
                     @endforeach
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Image Upload -->
             <div class="space-y-4 col-span-2">
