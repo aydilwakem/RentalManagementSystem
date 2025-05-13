@@ -58,7 +58,7 @@ class ViewMaintenances extends Component
     public function deleteSelectedRows(){
         Maintenance::whereIn('id', $this->selectedRows)->delete(); 
         $this->confirmBulkDelete = false;
-        session()->flash('message', 'All selected activities got deleted!');
+        session()->flash('message', 'All selected maintenances got deleted!');
     }
 
     public function confirmDeleteInBulk(){

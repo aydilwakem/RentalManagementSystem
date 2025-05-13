@@ -2,7 +2,7 @@
     <div class="mb-6">
         <div class="flex items-center justify-between mb-3">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('View Tenant') }}
+                {{ __('View Lease') }}
             </h2>
             <button onclick="history.back()"
                 class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-xl focus:outline-none">

@@ -3,7 +3,8 @@
 namespace App\Livewire\Admin\EventCategories;
 
 use App\Models\Event;
-use App\Models\EventCategory;
+use App\Models\EventType;
+use App\Models\Transaction;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -44,7 +45,7 @@ class ViewEventCategories extends Component
 //Function to delete an item, if there is constraint, modal will appear
 public function deleteEventCategory()
 {
-        $eventCategory = EventCategory::find($this->confirmItemDelete);
+        $eventCategory = EventType::find($this->confirmItemDelete);
 
         if (!$eventCategory) {
             session()->flash('error', 'Event Category not found.');
@@ -52,7 +53,7 @@ public function deleteEventCategory()
         }
 
         // Check if the category is referenced in another table
-        if (Event::where('event_category_id', $eventCategory->id)->exists()) { 
+        if (Transaction::where('event_type_id', $eventCategory->id)->exists()) { 
             $this->cannotDeleteItem = true; // Show the cannot delete modal
             $this->confirmItemDelete = null; // Close the confirmation modal
             return;
@@ -65,7 +66,7 @@ public function deleteEventCategory()
             $this->confirmItemDelete = null;
 
             // Refresh event categories
-            $eventCategories = EventCategory::orderBy('created_at', 'ASC')->get();
+            $eventCategories = EventType::orderBy('created_at', 'ASC')->get();
 
             // Reset fake IDs
             $fakeIDs = [];
@@ -101,7 +102,7 @@ public function deleteEventCategory()
     public function render()
     {
 
-        $eventCategories = EventCategory::query()
+        $eventCategories = EventType::query()
             ->search($this->search)
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
@@ -110,9 +111,9 @@ public function deleteEventCategory()
             $fakeIDs = session('fake_ids_eventCategory', []);
 
             // Recalculate fake IDs if count mismatches
-            if (count($fakeIDs) !== EventCategory::count()) {
+            if (count($fakeIDs) !== EventType::count()) {
                 $fakeIDs = [];
-                foreach (EventCategory::orderBy('created_at', 'ASC')->get() as $index => $category) {
+                foreach (EventType::orderBy('created_at', 'ASC')->get() as $index => $category) {
                     $fakeIDs[$category->id] = 'ECT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
                 }
                 session(['fake_ids_eventCategory' => $fakeIDs]);

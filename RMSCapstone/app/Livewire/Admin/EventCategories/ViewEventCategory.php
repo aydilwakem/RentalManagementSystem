@@ -3,7 +3,8 @@
 namespace App\Livewire\Admin\EventCategories;
 
 use App\Models\Event;
-use App\Models\EventCategory;
+use App\Models\EventType;
+use App\Models\Transaction;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Livewire\Component;
 class ViewEventCategory extends Component
 {
      // Create a public property 
-     public EventCategory $eventCategory;
+    public EventType $eventCategory;
 
     
     public $confirmItemDelete = false;
@@ -26,7 +27,7 @@ class ViewEventCategory extends Component
      // Function for deleting a record
     public function deleteEventCategory()
     {
-            $eventCategory = EventCategory::find($this->confirmItemDelete);
+            $eventCategory = EventType::find($this->confirmItemDelete);
 
             if (!$eventCategory) {
                 session()->flash('error', 'Event Category not found.');
@@ -34,7 +35,7 @@ class ViewEventCategory extends Component
             }
 
             // Check if the category is referenced in another table
-        if (Event::where('event_category_id', $eventCategory->id)->exists()) { 
+        if (Transaction::where('event_type_id', $eventCategory->id)->exists()) { 
             $this->cannotDeleteItem = true; // Show the cannot delete modal
             $this->confirmItemDelete = null; // Close the confirmation modal
             return;

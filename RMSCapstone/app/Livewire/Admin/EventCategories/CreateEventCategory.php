@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\EventCategories;
 
-use App\Models\EventCategory;
+use App\Models\EventType;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -13,7 +13,6 @@ class CreateEventCategory extends Component
     //Public declaration of fillable fields
     public $name;
     public $description;
-    public $image;
 
     //Public variable declaration of create confirmation modal
     public $confirmCreateItem = false;
@@ -25,7 +24,7 @@ class CreateEventCategory extends Component
     }
 
     /**
-     * Creates a new event category with optional image upload.
+     * Creates a new event category.
      * - Validates input fields and handles failed validation.
      * - Stores uploaded image if present.
      * - Saves the event category record and resets form fields.
@@ -36,9 +35,8 @@ class CreateEventCategory extends Component
         try{
         // Validate form input (including image)
         $this->validate([
-            'name' => 'required|string|max:255|unique:prd_event_categories,name',
+            'name' => 'required|string|max:255|unique:event_types,name',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
         // If validation fails, close the modal
@@ -46,27 +44,15 @@ class CreateEventCategory extends Component
         throw $e;
     }
 
-        // Ensure image upload is complete before storing
-        if ($this->image && !$this->image->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Store Image (if uploaded)
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('event-categories', 'public'); // Saves in storage/app/public/event-categories
-        }
 
         // Create Event Category
-        $eventCategory = EventCategory::create([
+        $eventCategory = EventType::create([
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $imagePath, // Save path in DB
         ]);
 
         // Reset form fields
-        $this->reset(['name', 'description', 'image']);
+        $this->reset(['name', 'description']);
 
         // Flash message for success
         session()->flash('message', 'Event Category successfully created!');

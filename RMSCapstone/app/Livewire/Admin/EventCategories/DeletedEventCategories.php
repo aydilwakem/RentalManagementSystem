@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\EventCategories;
 
-use App\Models\EventCategory;
+use App\Models\EventType;
 use Illuminate\Database\QueryException;
 use Livewire\Component;
 
@@ -30,7 +30,7 @@ class DeletedEventCategories extends Component
     //Method to fetch all soft deleted items and store it in variable
     public function fetchDeletedEventCategories()
     {
-        $this->deletedEventCategories = EventCategory::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedEventCategories = EventType::onlyTrashed()->orderBy('created_at', 'ASC')->get();
     }
 
     /**
@@ -40,7 +40,7 @@ class DeletedEventCategories extends Component
      */
     public function restoreEventCategory($eventCategoryId)
     {
-        $eventCategory = EventCategory::withTrashed()->find($eventCategoryId);
+        $eventCategory = EventType::withTrashed()->find($eventCategoryId);
         if ($eventCategory) {
             $eventCategory->restore();
             session()->flash('message', 'Event category restored successfully.');
@@ -57,7 +57,7 @@ class DeletedEventCategories extends Component
     public function deleteEventCategoryForever($eventCategoryId)
     {
         try{
-        $eventCategory = EventCategory::withTrashed()->find($this->confirmItemDelete);
+        $eventCategory = EventType::withTrashed()->find($this->confirmItemDelete);
         if ($eventCategory) {
             $eventCategory->forceDelete();
             session()->flash('message', 'Event category permanently deleted.');

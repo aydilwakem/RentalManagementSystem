@@ -23,24 +23,24 @@
                 <div class="grid grid-cols-1 gap-2">
                     <!-- Room Image Array -->
                     @if (isset($room->images) && count($room->images) > 0)
-                        <div class="w-full">
-                            <img src="{{ asset('storage/' . $room->images[0]) }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Room Image"
-                                onclick="openModal('{{ asset('storage/' . $room->images[0]) }}')">
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            @foreach (array_slice($room->images, 1) as $img)
-                                <img src="{{ asset('storage/' . $img) }}"
-                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="Room Image"
-                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
-                            @endforeach
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('storage/' . $room->images[0]) }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Room Image"
+                            onclick="openModal('{{ asset('storage/' . $room->images[0]) }}')">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        @foreach (array_slice($room->images, 1) as $img)
+                        <img src="{{ asset('storage/' . $img) }}"
+                            class="w-full h-44 object-cover rounded border cursor-pointer" alt="Room Image"
+                            onclick="openModal('{{ asset('storage/' . $img) }}')">
+                        @endforeach
+                    </div>
                     @else
-                        <div class="w-full">
-                            <img src="{{ asset('images/rms-default.png') }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
-                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('images/rms-default.png') }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                            onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                    </div>
                     @endif
                 </div>
                 <!-- Image Popup View -->
@@ -72,39 +72,39 @@
 
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Amenities</h3>
                     @if ($room->features->isNotEmpty())
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            @foreach ($room->features as $feature)
-                                <span
-                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-                                    {{ $feature->name }}
-                                </span>
-                            @endforeach
-                        </div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @foreach ($room->features as $feature)
+                        <span
+                            class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                            {{ $feature->name }}
+                        </span>
+                        @endforeach
+                    </div>
                     @else
-                        <p class="text-gray-500 mt-2">No amenities selected for this room.</p>
+                    <p class="text-gray-500 mt-2">No amenities selected for this room.</p>
                     @endif
 
                     <!-- Maximum Occupancy Rules -->
-                    <h3 class="text-lg font-semibold mb-2">Maximum Occupancy Rules</h3>
+                    {{-- <h3 class="text-lg font-semibold mb-2">Maximum Occupancy Rules</h3>
 
                     @if ($room->occupancy_rules && is_array($room->occupancy_rules))
-                        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
-                            @foreach ($room->occupancy_rules as $index => $rule)
-                                <div class="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                    <div class="flex justify-between items-center">
-                                        <div class="text-sm">
-                                            <p><strong>Adults:</strong> {{ $rule['adults'] }}</p>
-                                            <p><strong>Kids:</strong> {{ $rule['kids'] }}</p>
-                                        </div>
-                                    </div>
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                        @foreach ($room->occupancy_rules as $index => $rule)
+                        <div class="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm">
+                                    <p><strong>Adults:</strong> {{ $rule['adults'] }}</p>
+                                    <p><strong>Kids:</strong> {{ $rule['kids'] }}</p>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
+                        @endforeach
+                    </div>
                     @else
-                        <p>No occupancy rules set.</p>
+                    <p>No occupancy rules set.</p>
                     @endif
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 mt-6">
@@ -137,8 +137,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
             </x-slot>
 
@@ -151,8 +150,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
                     {{ __('Delete Room') }}
                 </x-danger-button>
             </x-slot>

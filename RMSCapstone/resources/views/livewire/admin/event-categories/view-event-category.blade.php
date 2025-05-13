@@ -19,12 +19,6 @@
             {{ $eventCategory->name }}
         </h2>
 
-        <!-- Event Category Image -->
-        <div class="mb-4">
-            <img src="{{ asset($eventCategory->image ? 'storage/' . $eventCategory->image : 'images/rms-default.png') }}"
-                alt="{{ $eventCategory->name }}" class="w-full h-64 object-cover rounded-lg shadow-md">
-        </div>
-
         <!-- Description -->
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Description</h3>

@@ -257,11 +257,11 @@
     <!-- Edit Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmEditItem">
         <x-slot name="title">
-            {{ __('Edit Lease') }}
+            {{ __('Edit Event') }}
         </x-slot>
 
         <x-slot name="content">
-            {{ __('Are you sure you want to save changes on this lease?') }}
+            {{ __('Are you sure you want to save changes on this event?') }}
         </x-slot>
 
         <x-slot name="footer">
@@ -270,7 +270,7 @@
             </x-secondary-button>
 
             <x-button class="ms-3 bg-green text-white" wire:click="updateEvent" wire:loading.attr="disabled">
-                {{ __('Edit Lease') }}
+                {{ __('Edit Event') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>

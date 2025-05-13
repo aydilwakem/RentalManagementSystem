@@ -5,7 +5,7 @@ namespace App\Livewire\Admin\RoomCategories;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
-use App\Models\RoomCategory;
+use App\Models\PropertyCategory;
 use App\Models\Amenity;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,13 +16,9 @@ class EditRoomCategory extends Component
 {
     use WithFileUploads;
 
-    public RoomCategory $roomCategory; // Store the model received
+    public PropertyCategory $roomCategory; // Store the model received
     public $name;
     public $description;
-    public $image;
-    public $newImage;
-    public $selectedAmenities = []; // Store the selected amenities
-    public $amenities; // Store all available amenities
     public $roomCategoryId;
 
 
@@ -34,25 +30,20 @@ class EditRoomCategory extends Component
     }
 
     // Mount the fields to pre-fill the edit form
-    public function mount(RoomCategory $roomCategory)
+    public function mount(PropertyCategory $roomCategory)
     {
         $this->roomCategoryId = $roomCategory->id;
         $this->roomCategory = $roomCategory;
         $this->name = $roomCategory->name;
         $this->description = $roomCategory->description;
-        $this->image = $roomCategory->image;
-        $this->selectedAmenities = $roomCategory->amenities->pluck('id')->toArray(); // Pluck the associated amenities of the roomCategory using the relationship
-        $this->amenities = Amenity::all();
     }
 
     public function updateCategory()
     {
         try {
             $this->validate([
-                'name' => "required|string|max:255|unique:prd_room_categories,name,{$this->roomCategoryId},id",
+                'name' => "required|string|max:255|unique:property_categories,name,{$this->roomCategoryId},id",
                 'description' => 'nullable|string',
-                'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
-                'selectedAmenities' => 'array',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -60,30 +51,11 @@ class EditRoomCategory extends Component
             throw $e;
         }
 
-        // Ensure the image is uploaded properly
-        if ($this->newImage && !$this->newImage->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Handle Image Upload
-        if ($this->newImage) {
-            if ($this->roomCategory->image) {
-                Storage::disk('public')->delete($this->roomCategory->image);
-            }
-            // Save the image in public folder
-            $this->image = $this->newImage->store('room-categories', 'public');
-        }
-
         // Update Room Category
         $this->roomCategory->update([
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->image, // Ensure image path is updated
         ]);
-
-        // Sync selected amenities
-        $this->roomCategory->amenities()->sync($this->selectedAmenities);
 
         session()->flash('message', 'Room Category successfully updated!');
 

@@ -18,12 +18,6 @@
             {{ $roomCategory->name }}
         </h2>
 
-        <!-- Room Image -->
-        <div class="mb-4">
-            <img src="{{ asset($roomCategory->image ? 'storage/' . $roomCategory->image : 'images/rms-default.png') }}"
-                class="w-full h-64 object-cover rounded-lg shadow-md">
-        </div>
-
         <!-- Description -->
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Description</h3>
@@ -32,16 +26,6 @@
             @else
             <em class="text-gray-600 leading-relaxed">No description provided.</em>
             @endif
-        </div>
-
-        <!-- Amenities -->
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Amenities</h3>
-            <ul class="list-disc pl-5 text-gray-500">
-                @foreach ($roomCategory->amenities as $amenity)
-                <li>{{ $amenity->name }}</li>
-                @endforeach
-            </ul>
         </div>
 
         <!-- Action Buttons -->

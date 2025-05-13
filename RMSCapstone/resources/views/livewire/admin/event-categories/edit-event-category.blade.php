@@ -31,36 +31,6 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
-
-                <!-- Image Upload -->
-                <div class="sm:col-span-2">
-                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload New Image
-                        (Optional)</label>
-                    <input type="file" wire:model="newImage" id="image" accept="image/png, image/jpeg"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-
-                    @error('newImage')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-
-                    <div wire:loading wire:target="newImage" class="mt-2 text-gray-600">Uploading image...</div>
-
-                    <!-- Image Preview -->
-                    <div class="mt-2">
-                        @if ($newImage)
-                        <!-- Show new uploaded image -->
-                        <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        @elseif ($eventCategory->image)
-                        <!-- Show existing image from storage -->
-                        <img src="{{ asset('storage/' . $eventCategory->image) }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
-                        @else
-                        <!-- Show default image if no image exists -->
-                        <img src="{{ asset('images/rms-default.png') }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
-                        @endif
-                    </div>
-                </div>
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
