@@ -36,7 +36,7 @@ class CreateEventCategory extends Component
         // Validate form input (including image)
         $this->validate([
             'name' => 'required|string|max:255|unique:event_types,name',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
         // If validation fails, close the modal

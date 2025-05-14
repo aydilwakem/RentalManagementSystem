@@ -26,39 +26,39 @@
     <h3 class="text-lg font-semibold text-gray-900 mb-3">Address</h3>
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
         @if (empty($tenant->house_number) &&
-                empty($tenant->street) &&
-                empty($tenant->barangay) &&
-                empty($tenant->city_municipality) &&
-                empty($tenant->province) &&
-                empty($tenant->region) &&
-                empty($tenant->postal_code) &&
-                empty($tenant->country))
-            <span>No address available</span>
+        empty($tenant->street) &&
+        empty($tenant->barangay) &&
+        empty($tenant->city_municipality) &&
+        empty($tenant->province) &&
+        empty($tenant->region) &&
+        empty($tenant->postal_code) &&
+        empty($tenant->country))
+        <span>No address available</span>
         @else
-            @if ($tenant->house_number)
-                {{ $tenant->house_number }},
-            @endif
-            @if ($tenant->street)
-                {{ $tenant->street }},
-            @endif
-            @if ($tenant->barangay)
-                {{ $tenant->barangay }},
-            @endif
-            @if ($tenant->city_municipality)
-                {{ $tenant->city_municipality }},
-            @endif
-            @if ($tenant->province)
-                {{ $tenant->province }},
-            @endif
-            @if ($tenant->region)
-                {{ $tenant->region }},
-            @endif
-            @if ($tenant->postal_code)
-                {{ $tenant->postal_code }},
-            @endif
-            @if ($tenant->country)
-                {{ $tenant->country }}
-            @endif
+        @if ($tenant->house_number)
+        {{ $tenant->house_number }},
+        @endif
+        @if ($tenant->street)
+        {{ $tenant->street }},
+        @endif
+        @if ($tenant->barangay)
+        {{ $tenant->barangay }},
+        @endif
+        @if ($tenant->city_municipality)
+        {{ $tenant->city_municipality }},
+        @endif
+        @if ($tenant->province)
+        {{ $tenant->province }},
+        @endif
+        @if ($tenant->region)
+        {{ $tenant->region }},
+        @endif
+        @if ($tenant->postal_code)
+        {{ $tenant->postal_code }},
+        @endif
+        @if ($tenant->country)
+        {{ $tenant->country }}
+        @endif
         @endif
     </div>
 
@@ -79,6 +79,7 @@
         </x-button>
     </div>
 
+    {{-- Confirm Delete Modal --}}
     <x-dialog-modal wire:model.live="confirmItemDelete">
         <x-slot name="title">
             {{ __('Delete Tenant') }}
@@ -93,10 +94,26 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deleteTenant({{ $tenant->id }})"
-                wire:loading.attr="disabled">
+            <x-danger-button class="ms-3" wire:click="deleteTenant({{ $tenant->id }})" wire:loading.attr="disabled">
                 {{ __('Delete Tenant') }}
             </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('This tenant has an active lease and cannot be deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
         </x-slot>
     </x-dialog-modal>
 </div>

@@ -22,25 +22,24 @@
                 <!-- Event Hall Image -->
                 <div class="grid grid-cols-1 gap-2">
                     @if (isset($eventHall->images) && count($eventHall->images) > 0)
-                        <div class="w-full">
-                            <img src="{{ asset('storage/' . $eventHall->images[0]) }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer"
-                                alt="Main eventHall Image"
-                                onclick="openModal('{{ asset('storage/' . $eventHall->images[0]) }}')">
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            @foreach (array_slice($eventHall->images, 1) as $img)
-                                <img src="{{ asset('storage/' . $img) }}"
-                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="eventHall Image"
-                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
-                            @endforeach
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('storage/' . $eventHall->images[0]) }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main eventHall Image"
+                            onclick="openModal('{{ asset('storage/' . $eventHall->images[0]) }}')">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        @foreach (array_slice($eventHall->images, 1) as $img)
+                        <img src="{{ asset('storage/' . $img) }}"
+                            class="w-full h-44 object-cover rounded border cursor-pointer" alt="eventHall Image"
+                            onclick="openModal('{{ asset('storage/' . $img) }}')">
+                        @endforeach
+                    </div>
                     @else
-                        <div class="w-full">
-                            <img src="{{ asset('images/rms-default.png') }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
-                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('images/rms-default.png') }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                            onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                    </div>
                     @endif
                 </div>
                 <!-- Image Popup View -->
@@ -62,9 +61,9 @@
                     <ul class="list-disc pl-5 space-y-2 text-gray-700">
                         <li><strong>Description:</strong>
                             @if (!empty($eventHall->description))
-                                <span class="block ml-2 text-gray-600">{{ $eventHall->description }}</span>
+                            <span class="block ml-2 text-gray-600">{{ $eventHall->description }}</span>
                             @else
-                                <em class="text-gray-500 ml-2">No description provided.</em>
+                            <em class="text-gray-500 ml-2">No description provided.</em>
                             @endif
                         </li>
                         <li><strong>Rate:</strong> ₱{{ number_format($eventHall->amount, 2) }}</li>
@@ -77,13 +76,13 @@
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mt-4">Amenities</h3>
                         @if ($eventHall->features->isNotEmpty())
-                            <ul class="list-disc list-inside mt-2 text-gray-700">
-                                @foreach ($eventHall->features as $feature)
-                                    <li>{{ $feature->name }}</li>
-                                @endforeach
-                            </ul>
+                        <ul class="list-disc list-inside mt-2 text-gray-700">
+                            @foreach ($eventHall->features as $feature)
+                            <li>{{ $feature->name }}</li>
+                            @endforeach
+                        </ul>
                         @else
-                            <p class="text-gray-500 mt-2">No features selected for this event hall.</p>
+                        <p class="text-gray-500 mt-2">No features selected for this event hall.</p>
                         @endif
                     </div>
                 </div>
@@ -143,6 +142,7 @@
             </x-secondary-button>
         </x-slot>
     </x-dialog-modal>
+
     <script>
         function openModal(imageSrc) {
             const modal = document.getElementById('imageModal');

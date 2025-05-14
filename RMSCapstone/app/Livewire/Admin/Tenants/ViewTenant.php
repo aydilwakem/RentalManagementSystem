@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
+use App\Models\Transaction;
 use App\Models\TransactionUser;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -13,6 +14,7 @@ class ViewTenant extends Component
     public TransactionUser $tenant;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -20,24 +22,36 @@ class ViewTenant extends Component
     }
 
     // Function to delete a tenant
-    public function deleteTenant(TransactionUser $tenant)
+    public function deleteTenant()
     {
+        if ($this->confirmItemDelete) {
+        $tenant = TransactionUser::find($this->confirmItemDelete);
+
         if (!$tenant) {
             session()->flash('error', 'Tenant not found!');
+            return redirect()->route('admin.tenants');
+        }
+
+        // Check if the event hall is linked to any transaction
+        $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) use ($tenant) {
+            $query->where('created_by', $tenant->id);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; //Cannot delete because hall is active in Transactions
+            $this->confirmItemDelete = null;
             return;
         }
 
-        // Delete the tenant
-        if ($this->confirmItemDelete) {
-            $tenant->delete();
-            $this->confirmItemDelete = false;
+        // Delete the hall
+        $tenant->delete();
 
-            // Flash success message
-            session()->flash('message', 'Tenant successfully deleted!');
+        $this->confirmItemDelete = null;
 
-            // Redirect to the admin tenants page
-            return redirect()->route('admin.tenants');
+        session()->flash('message', 'Tenant successfully deleted!');
         }
+
+        return redirect()->route('admin.tenants');
     }
 
     public function render()

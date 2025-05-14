@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
+use App\Models\Transaction;
 use App\Models\TransactionUser;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -25,6 +26,7 @@ class ViewTenants extends Component
 
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false; 
+    public $cannotDeleteItem = false; //Modal for cannot delete for tenants with active lease
 
     //public declaration for bulk actions 
     public $selectedRows = []; 
@@ -54,9 +56,30 @@ class ViewTenants extends Component
     }
 
     public function deleteSelectedRows(){
-        TransactionUser::whereIn('id', $this->selectedRows)->delete(); 
+       try {
+        //Check active event halls
+        $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) {
+            $query->whereIn('created_by', $this->selectedRows);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Trigger modal
+            $this->confirmBulkDelete = false;
+            return;
+        }
+
+        // Bulk Delete
+        TransactionUser::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
-        session()->flash('message', 'All selected features got deleted!');
+        session()->flash('message', 'All selected tenants got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e; 
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -77,23 +100,49 @@ class ViewTenants extends Component
 
     public function deleteTenant($id)
     {
-        $tenant = TransactionUser::find($id);
+        $tenant = TransactionUser::find($this->confirmItemDelete);
 
-        if ($tenant) {
-            if ($this->confirmItemDelete) {
-                TransactionUser::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+        if (!$tenant) {
+            session()->flash('error', 'Tenant not found.');
+            return;
+        }
 
-                $tenants = TransactionUser::orderBy('created_at', 'ASC')->get();
+        // Check if the event hall is active in Events
+        $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) use ($tenant) {
+            $query->where('created_by', $tenant->id);
+        })->exists();
 
-                $fakeIDs = [];
-                foreach ($tenants as $index => $tenantItem) {
-                    $fakeIDs[$tenantItem->id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Show "Cannot delete" modal
+            $this->confirmItemDelete = null; // Reset delete ID
+            return;
+        }
 
-                session(['fake_ids_tenants' => $fakeIDs]);
+        try {
 
-                session()->flash('message', 'Tenant successfully deleted!');
+            // Delete the event hall
+            $tenant->delete();
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
+
+            // Refresh the list of event halls and regenerate fake ids
+            $tenants = TransactionUser::orderBy('created_at', 'ASC')->get();
+            $fakeIDs = [];
+            foreach ($tenants as $index => $tenant) {
+                $fakeIDs[$tenant->id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Store updated fake IDs in session
+            session(['fake_ids_tenants' => $fakeIDs]);
+
+            // Flash success message
+            session()->flash('message', 'Tenant successfully deleted!');
+        }catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000) {
+                $this->cannotDeleteItem = true;
+            } else {
+                throw $e;
             }
         }
     }
