@@ -50,10 +50,10 @@
                     {{ $event->invoice->transaction_id ?? 'N/A'}}
                 </div>
                 <div><strong>Invoice Number: </strong> {{ $event->invoice->invoice_number}}</div>
-                <div><strong>Sub Total: </strong> ₱{{ number_format($event->invoice->subtotal, 2) }}</div>
-                <div><strong>Total Adults: </strong>₱{{ number_format($event->invoice->balance_due, 2) }}</div>
-                <div><strong>Total Kids: </strong> {{ $event->invoice->due_date->format('F j, Y')}}</div>
-                <div><strong>Total People: </strong> {{ ucfirst($event->invoice->invoice_status)}}</div>
+                <div><strong>Sub Total: </strong> ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
+                <div><strong>Balance Due: </strong>₱{{ number_format($event->invoice->balance_due, 2) }}</div>
+                <div><strong>Due Date: </strong> {{ $event->invoice->due_date->format('F j, Y')}}</div>
+                <div><strong>Invoice Status: </strong> {{ ucfirst($event->invoice->invoice_status)}}</div>
             </div>
         </div>
     </div>
