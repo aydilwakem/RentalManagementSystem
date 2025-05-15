@@ -70,6 +70,11 @@ class EditTransaction extends Component
         $this->confirmEditItem = $id;
     }
 
+    public function render()
+    {
+        return view('livewire.admin.transactions.new-transaction.edit-transaction');
+    }
+
     // Mount the fields to pre-fill the edit form
     public function mount(Transaction $transaction)
     {
@@ -183,11 +188,5 @@ class EditTransaction extends Component
         session()->flash('message', 'Room Category successfully updated!');
 
         return redirect()->route('admin.view-new-transactions');
-    }
-
-
-    public function render()
-    {
-        return view('livewire.admin.transactions.new-transaction.edit-transaction');
     }
 }

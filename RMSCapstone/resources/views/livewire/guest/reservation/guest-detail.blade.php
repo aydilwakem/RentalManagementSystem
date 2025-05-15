@@ -64,6 +64,7 @@
                         @enderror
                     </div>
 
+
                     <!-- Country -->
                     <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
@@ -73,6 +74,8 @@
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+
 
                     {{-- <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
@@ -88,8 +91,20 @@
                         @enderror
                     </div> --}}
 
-                    <!-- Source of Hearing -->
-                    <div class="col-span-2">
+
+
+                    <!-- Company Name -->
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                        <input type="text" wire:model="company_name"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        @error('last_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <!-- Source of Hearing -->
                         <label class="block text-sm font-medium text-gray-700 mb-1">Where did you hear about us?</label>
                         <select wire:model="heard_from"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
@@ -104,6 +119,7 @@
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
                 </div>
 
                 <!-- Additional Guests Section (Optional) -->
@@ -122,7 +138,8 @@
                                         <div class="space-x-2">
                                             <button wire:click="editGuest({{ $loop->index }})"
                                                 class="text-blue-500">Edit</button>
-                                            <button class="text-red-500">Delete</button>
+                                            <button wire:click="deleteGuest({{ $loop->index }})"
+                                                class="text-red-500">Delete</button>
                                         </div>
                                     </li>
                                 @endforeach
@@ -132,15 +149,20 @@
                         @endif
                     </div>
 
-
                     <!-- Button to open modal -->
-                    <div class="mt-4">
-                        <button type="button" wire:click="openGuestModal"
-                            class="inline-flex items-center px-3 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
-                            <i class="fas fa-plus mr-1"></i> Add Guest
-                        </button>
-                    </div>
+                    @if(count($guests) < $total_pax)
+                        <div class="mt-4">
+                            <button type="button" wire:click="openGuestModal"
+                                class="inline-flex items-center px-3 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                                <i class="fas fa-plus mr-1"></i> Add Guest
+                            </button>
+                        </div>
+                    @endif
 
+
+                    <!------------------------------ MODALS ------------------------------------>
+
+                    <!-- Edit Modal -->
                     @if($showEditModal)
                         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div
@@ -189,7 +211,7 @@
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
                                         @foreach($guest_types as $type)
-                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                            <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                         @endforeach
                                     </select>
                                     @error('editingGuest.guest_type_id') <span
@@ -247,9 +269,7 @@
                         </div>
                     @endif
 
-
-
-                    <!-- Modal -->
+                    <!-- Add Guest Modal -->
                     @if($showGuestModal)
                         <div id="guestModal"
                             class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -352,7 +372,7 @@
                                     </button>
                                     <button type="button" wire:click="addMultipleGuests"
                                         class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white transition duration-150 ease-in-out">
-                                        Add Guests
+                                        Add Guest
                                     </button>
                                 </div>
                             </div>

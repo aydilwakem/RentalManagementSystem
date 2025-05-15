@@ -113,8 +113,9 @@ class Property extends Model
 
     public function scopeAvailableRooms($query)
     {
-        return $query->whereRaw('LOWER(property_status) = ?', ['available']);
+        return $query->where('property_status', 'available');
     }
+
 
     public function scopeSearch($query, $search)
     {

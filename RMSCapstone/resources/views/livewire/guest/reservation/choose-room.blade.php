@@ -131,7 +131,7 @@
                                                     class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                 <select wire:model.live="adults.{{ $room->id }}"
                                                     class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                    @for ($i = 0; $i <= $room->max_adults; $i++)
+                                                    @for ($i = 1; $i <= $room->max_adults; $i++)
                                                         <option value="{{ $i }}">{{ $i }}
                                                         </option>
                                                     @endfor

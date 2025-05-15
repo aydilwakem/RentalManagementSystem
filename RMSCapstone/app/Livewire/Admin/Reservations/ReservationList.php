@@ -12,6 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
 use App\Mail\ReservationConfirmedMail;
+use App\Mail\ReservationCompletedMail;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -81,8 +82,6 @@ class ReservationList extends Component
     }
 
 
-
-
     // -------------------------------------- CONFIRMATION MODAL -------------------------------------- //
 
     public function showActionModal($method, $title, $message, $id)
@@ -127,7 +126,7 @@ class ReservationList extends Component
         $user = $transaction->transactionUser;
         $invoice = $transaction->invoice;
         $properties = $transaction->properties;
-        $activities = $transaction->activities; 
+        $activities = $transaction->activities;
 
         if (!$user || !$invoice) {
             logger()->error('User or invoice not found for transaction ID ' . $id);
@@ -138,19 +137,19 @@ class ReservationList extends Component
         // Prepare data for email
         $reservationData = [
             'name' => $user->first_name . ' ' . $user->last_name,
-            'email' => $user->email, 
-            'contact_number' => $user->contact_number, 
+            'email' => $user->email,
+            'contact_number' => $user->contact_number,
             'transaction_number' => $transaction->id,
             'email' => $user->email,
             'invoice_number' => $invoice->invoice_number,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
-            'total_amount' => $transaction->total_amount,
+            'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
             'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
             'balance_due' =>  $invoice->balance_due,
             'properties' => $properties,
-            'activities' => $activities, 
+            'activities' => $activities,
         ];
 
         try {
@@ -180,14 +179,54 @@ class ReservationList extends Component
      */
     public function markAsDone($id)
     {
-        $transaction = Transaction::find($id);
-        if ($transaction) {
-            $transaction->update(['transaction_status' => 'done']); // Update transaction status to 'done'
-            session()->flash('message', 'Transaction marked as done!');
+        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities'])->find($id);
+
+        if (!$transaction) {
+            session()->flash('error', 'Transaction not found.');
+            return;
         }
 
-        Log::info('Transaction ID: ' . $id);
-        Log::info('Transaction: ', [$transaction]);
+        // Update transaction status
+        $transaction->update(['transaction_status' => 'done']);
+        session()->flash('message', 'Transaction successfully confirmed!');
+
+        // Gather user and invoice data, 
+        //and properties and activities
+        $user = $transaction->transactionUser;
+        $invoice = $transaction->invoice;
+        $properties = $transaction->properties;
+        $activities = $transaction->activities;
+
+        if (!$user || !$invoice) {
+            logger()->error('User or invoice not found for transaction ID ' . $id);
+            session()->flash('error', 'Confirmation email could not be sent due to missing data.');
+            return;
+        }
+
+        // Prepare data for email
+        $reservationData = [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'contact_number' => $user->contact_number,
+            'transaction_number' => $transaction->id,
+            'email' => $user->email,
+            'invoice_number' => $invoice->invoice_number,
+            'check_in' => $transaction->start_datetime,
+            'check_out' => $transaction->end_datetime,
+            'total_amount' => $invoice->amount_paid,
+            'deposit' => $transaction->deposit_paid,
+            'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
+            'balance_due' =>  $invoice->balance_due,
+            'properties' => $properties,
+            'activities' => $activities,
+        ];
+
+        try {
+            Mail::to($reservationData['email'])->send(new ReservationCompletedMail($reservationData));
+        } catch (\Exception $e) {
+            logger()->error('Email send failed: ' . $e->getMessage());
+            session()->flash('error', 'Reservation marked as done, but email failed to send.');
+        }
     }
 
     /**

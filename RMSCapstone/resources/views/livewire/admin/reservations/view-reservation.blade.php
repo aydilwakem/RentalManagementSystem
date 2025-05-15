@@ -314,6 +314,95 @@
                 @endif
             </div>
 
+        <!------------------------  GENERATE OFFICIAL RECEIPT ------------------------------------->
+            @if ($transaction->transaction_status == 'done')
+                <div>
+                    @if (is_null($transaction->invoice->receipt))
+                        <!-- Show this if receipt does NOT exist -->
+                        <button 
+                            wire:click="GenerateReceiptModal"
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
+                            <i class="fas fa-receipt"></i>
+                            Generate Official Receipt
+                        </button>
+                    @else
+                        <!-- Show this if receipt already exists -->
+                        <button 
+                            wire:click="ShowReceipt"
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
+                            <i class="fas fa-eye"></i>
+                            View Receipt
+                        </button>
+                    @endif
+                </div>
+            @endif
+
+            @if ($showReceiptModal && $receipt)
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                        <!-- Header -->
+                        <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
+                            <h2 class="text-2xl font-semibold text-gray-800">Official Receipt</h2>
+                            <button wire:click="$set('showReceiptModal', false)" 
+                                    class="text-gray-400 hover:text-red-600 transition duration-200 text-3xl leading-none">&times;</button>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="px-6 py-5 space-y-4 text-gray-700 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Receipt Number:</span>
+                                <span class="text-gray-900">{{ $receipt->receipt_number }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Receipt Date:</span>
+                                <span class="text-gray-900">{{ $receipt->receipt_date->format('F d, Y') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Invoice Number:</span>
+                                <span class="text-gray-900">{{ $invoice->invoice_number }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Guest:</span>
+                                <span class="text-gray-900">
+                                    {{ $transaction->transactionUser->first_name ?? 'N/A' }} {{ $transaction->transactionUser->last_name ?? '' }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Amount Received:</span>
+                                <span class="text-green-600 font-semibold">₱{{ number_format($receipt->amount_received, 2) }}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">Notes:</span>
+                                <p class="mt-1 text-gray-600 italic">{{ $receipt->notes ?? 'None' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+                            <button wire:click="$set('showReceiptModal', false)"
+                                    class="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                                Close
+                            </button>
+
+                            <button 
+                                wire:click="printOfficialReceipt"
+                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
+                                <i class="fas fa-print"></i>
+                                Print Receipt
+                            </button>
+
+                             <button 
+                                wire:click="sendReceiptToEmail"
+                                class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
+                                <i class="fas fa-envelope"></i>
+                                Send to Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+     
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">

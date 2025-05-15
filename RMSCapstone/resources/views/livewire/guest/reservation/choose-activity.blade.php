@@ -50,6 +50,7 @@
                                 <label for="quantity-{{ $activity->id }}"
                                     class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
                                 <div class="flex items-center">
+
                                     <button type="button" wire:click.prevent="decrementActivity('{{ $activity->id }}')"
                                         class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
                                         -
@@ -59,15 +60,17 @@
                                         {{ min($quantity[$activity->id] ?? 1, $total_pax) }}
                                     </span>
 
-                                    <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
-                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
-                                        +
-                                    </button>
-
-                                    @if (min($quantity[$activity->id] ?? 1, $total_pax) == $total_pax)
-                                        <span class="text-red-500 text-xs ml-2">Maximum quantity reached (based on your total
-                                            guests)</span>
+                                    @if (($quantity[$activity->id] ?? 1) < $total_pax)
+                                        <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                            +
+                                        </button>
+                                    @else
+                                        <span class="text-red-500 text-xs ml-2">
+                                            Maximum quantity reached (based on your total guests)
+                                        </span>
                                     @endif
+
                                 </div>
                             </div>
 

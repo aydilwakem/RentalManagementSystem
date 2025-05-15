@@ -6,7 +6,9 @@ use Livewire\Component;
 use App\Models\Property;
 use App\Models\Activity;
 use App\Models\Transaction;
+use App\Models\Setting;
 use App\Models\TransactionUser;
+use App\Models\GuestDetail;
 use App\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +16,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
-use App\Models\Setting;
 use App\Models\GuestType;
 use Illuminate\Support\Facades\Log;
 
@@ -56,6 +57,7 @@ class ReservationForm extends Component
     public $last_name;
     public $email;
     public $contact_number;
+    public $company_name;
     public $country;
     public $heard_from;
 
@@ -71,6 +73,7 @@ class ReservationForm extends Component
 
     public $terms = 0;
     public $terms_and_conditions;
+    public $expirationHours;
 
     protected $queryString = ['currentStep'];
 
@@ -83,6 +86,7 @@ class ReservationForm extends Component
     public $showGuestModal = false;
     public $editingGuestIndex = null;
     public $showEditModal = false;
+
 
     public $editingGuest = [
         'guest_first_name' => '',
@@ -125,8 +129,8 @@ class ReservationForm extends Component
 
     public function mount()
     {
-        $this->rooms = Property::ofType('Room')->get();
-        $this->activities = Activity::all();
+        $this->rooms = Property::ofType('Room')->availableRooms()->get();
+        $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
@@ -252,30 +256,6 @@ class ReservationForm extends Component
             $this->currentStep = 1; // Balik sa step 1 kasi makulit ka
             $this->getAvailableRooms();
         }
-
-        // ----------------------- QUANTITY ------------------------------ //
-
-        if (Str::startsWith($property, 'quantity.')) {
-            // Extract the activity ID from the property name
-            $activityId = explode('.', $property)[1];
-
-            // Find activities
-            $activity = Activity::find($activityId);
-            if (!$activity) {
-                return;
-            }
-
-            // Update the cart item's quantity dynamically
-            foreach ($this->cart as $index => $item) {
-                if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                    $quantity = (int) ($this->quantity[$activityId] ?? 0);
-                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity
-
-                    $this->cart[$index]['quantity'] = $quantity;
-                    $this->cart[$index]['amount'] = $activityAmount; // Update the amount in the cart
-                }
-            }
-        }
     }
 
     /**
@@ -320,7 +300,8 @@ class ReservationForm extends Component
         $checkOut = \Carbon\Carbon::parse($this->check_out_date);
 
         $this->rooms = Property::ofType('Room')
-            ->where('property_status', 'available')
+            ->where('property_status', 'available') // only explicitly include available
+            ->where('property_status', '!=', ['out_of_service', 'held', 'booked']) // explicitly exclude out_of_service
             ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {
                 $query->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed', 'ongoing'])
                     ->where(function ($q) use ($checkIn, $checkOut) {
@@ -483,12 +464,6 @@ class ReservationForm extends Component
             return; // Exit the function if dates are not set
         }
 
-        // Check if quantity is set for the room
-        if (!isset($this->adults[$roomId]) && !isset($this->kids[$roomId])) {
-            $this->addError('cart', 'Please select the number of adults and kids for this room.');
-            return; // Exit the function if quantity is not set
-        }
-
         // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
 
@@ -500,7 +475,7 @@ class ReservationForm extends Component
             }
         }
 
-        $adults = (int) ($this->adults[$roomId] ?? 0);
+        $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
         $stayDuration = $this->getStayDurationProperty();
         $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
@@ -574,15 +549,41 @@ class ReservationForm extends Component
 
     public function incrementActivity($activityId)
     {
-        $current = $this->quantity[$activityId] ?? 1;
-        $this->quantity[$activityId] = $current + 1;
+        $activity = Activity::find($activityId);
+        if (!$activity) return;
+
+        // Get the current quantity or default to 1
+        $currentQuantity = $this->quantity[$activityId] ?? 1;
+
+        // Check if the current quantity is less than total_pax before incrementing
+        if ($currentQuantity < $this->total_pax) {
+            $this->quantity[$activityId] = $currentQuantity + 1;
+
+            foreach ($this->cart as $index => $item) {
+                if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
+                    $quantity = $this->quantity[$activityId];
+                    $this->cart[$index]['quantity'] = $quantity;
+                    $this->cart[$index]['amount'] = $activity->amount * $quantity;
+                }
+            }
+        }
     }
 
     public function decrementActivity($activityId)
     {
-        $current = $this->quantity[$activityId] ?? 1;
-        if ($current > 1) {
-            $this->quantity[$activityId] = $current - 1;
+        $activity = Activity::find($activityId);
+        if (!$activity) return;
+
+        // Decrease the quantity, but prevent going below 1
+        $this->quantity[$activityId] = max(1, ($this->quantity[$activityId] ?? 1) - 1);
+
+        // Update the cart with the new quantity and amount
+        foreach ($this->cart as $index => $item) {
+            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
+                $quantity = $this->quantity[$activityId];
+                $this->cart[$index]['quantity'] = $quantity;
+                $this->cart[$index]['amount'] = $activity->amount * $quantity;
+            }
         }
     }
 
@@ -590,15 +591,16 @@ class ReservationForm extends Component
 
     public function addMultipleGuests()
     {
+
         // Validate the guest details
         $this->validate([
             'guest_first_name' => 'required|string',
             'guest_middle_name' => 'nullable|string',
             'guest_last_name' => 'required|string',
             'guest_suffix' => 'nullable|string|max:10',
-            'guest_gender' => 'required|in:male,female,other',
-            'guest_residency' => 'required|in:local,foreigner',
-            'guest_country_of_origin' => 'required|string|max:100',
+            'guest_gender' => 'nullable|in:male,female,other',
+            'guest_residency' => 'nullable|in:local,foreigner',
+            'guest_country_of_origin' => 'nullable|string|max:100',
             'guest_type_id' => 'required|exists:trn_guest_type,id',
         ]);
 
@@ -636,6 +638,12 @@ class ReservationForm extends Component
 
         $this->showEditModal = false;
         $this->reset('editingGuestIndex', 'editingGuest');
+    }
+
+    public function deleteGuest($index)
+    {
+        unset($this->guests[$index]);
+        $this->guests = array_values($this->guests);
     }
 
     // ------------------------------------------ REMOVE ITEMS FROM CART ----------------------------------- //
@@ -722,6 +730,7 @@ class ReservationForm extends Component
                 'last_name' => $this->last_name,
                 'email' => $this->email,
                 'contact_number' => $this->contact_number,
+                'company_name' => $this->company_name,
                 'country' => $this->country,
                 'trn_user_type' => $this->trn_user_type,
             ]);
@@ -788,17 +797,21 @@ class ReservationForm extends Component
             foreach ($this->guests as $guest) {
                 GuestDetail::create([
                     'transaction_id' => $transaction->id,
-                    'guest_first_name' => $guest['guest_first_name'],
-                    'guest_middle_name' => $guest['guest_middle_name'],
-                    'guest_last_name' => $guest['guest_last_name'],
-                    'guest_suffix' => $guest['guest_suffix'],
-                    'guest_gender' => $guest['guest_gender'],
-                    'guest_residency' => $guest['guest_residency'],
-                    'guest_country_of_origin' => $guest['guest_country_of_origin'],
+                    'first_name' => $guest['guest_first_name'],
+                    'middle_name' => $guest['guest_middle_name'],
+                    'last_name' => $guest['guest_last_name'],
+                    'suffix' => $guest['guest_suffix'],
+                    'gender' => $guest['guest_gender'],
+                    'residency' => $guest['guest_residency'],
+                    'country_of_origin' => $guest['guest_country_of_origin'],
                     'guest_type_id' => $guest['guest_type_id'],
                 ]);
             }
 
+
+            // Get the payment_proof_expiration_hours from database
+            $setting = Setting::first();
+            $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
 
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
@@ -810,6 +823,7 @@ class ReservationForm extends Component
                 'check_out' => $this->check_out_date,
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
+                'expirationHours' => $this->expirationHours,
             ];
         });
 

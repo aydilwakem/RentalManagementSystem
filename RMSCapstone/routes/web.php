@@ -490,6 +490,8 @@ Route::middleware([
 
 
 
+
+
     //Create
     Route::get('create/new-reservation', function () {
         return view('admin.transactions.new.create-transaction');
@@ -718,6 +720,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/thank-you-page', function () {
         return view('guest.thank-you-page');
     })->name('guest.thank-you-page');
+
+    Route::get('/feedback-form', function () {
+        return view('guest.feedback.feedback-form');
+    })->name('guest.feedback-form');
 });
 
 

@@ -13,6 +13,10 @@ class Activity extends Model
 
     protected $fillable = ['name', 'description', 'amount', 'inclusions', 'image'];
 
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
+
     public function scopeSearch($query, $value)
     {
         $query->where('name', 'like', "%{$value}%")->orWhere('description', 'like', "%{$value}%");
@@ -28,5 +32,10 @@ class Activity extends Model
                 'status',
             )
             ->withTimestamps();
+    }
+
+    public function scopeAvailableActivities($query)
+    {
+        return $query->where('amount', '!=', 0);
     }
 }

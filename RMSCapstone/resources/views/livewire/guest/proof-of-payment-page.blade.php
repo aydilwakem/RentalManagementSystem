@@ -1,4 +1,5 @@
 <div class="max-w-xl mx-auto mt-10 bg-white rounded-lg shadow-md border mb-10">
+
     <div class="w-full flex items-center justify-center h-24 bg-green-800 rounded-md">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="80" height="80"
             version="1.0" viewBox="0 0 360 360">
@@ -46,7 +47,8 @@
 
     <h2 class="text-xl font-semibold text-center mt-4">Upload your proof of payment</h2>
     <div class="px-8">
-        <p class=" text-gray-600 mb-6 mt-3 text-justify">We look forward to your stay with us! A confirmation email has been
+        <p class=" text-gray-600 mb-6 mt-3 text-justify">We look forward to your stay with us! A confirmation email has
+            been
             sent to your email address. It includes your total amount or required deposit, along with your
             Transaction No. Please refer to it when making your payment.
         </p>
@@ -62,12 +64,12 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Payment Method</option>
                         @foreach ($payment_methods as $payment_method)
-                            <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
-                            </option>
+                        <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
+                        </option>
                         @endforeach
                     </select>
                     @error('payment_method_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -77,9 +79,18 @@
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="transaction_id" id="transaction_id"
                         class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300" />
-                    @error('transaction_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+
+                    {{-- Display error message if transaction not found --}}
+                    @if($transactionNotFound)
+                    <span class="text-red-500 text-sm">Transaction not found. Please check the transaction
+                        number.</span>
+                    @endif
+
+                    {{-- Display error message if transaction status = expired --}}
+                    @if($transactionExpired)
+                    <span class="text-red-500 text-sm">Your transaction has expired. You are not allowed to upload a
+                        payment screenshot.</span>
+                    @endif
                 </div>
 
                 {{-- Payment Reference Number --}}
@@ -93,7 +104,7 @@
                         placeholder="Enter your reference number" />
 
                     @error('payment_reference_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -123,7 +134,7 @@
 
                 <!-- Error Message -->
                 @error('payment_screenshot')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
 
                 <!-- Loading Indicator -->
@@ -133,10 +144,10 @@
 
                 <!-- Image Preview -->
                 @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
-                    <div class="mt-2">
-                        <img src="{{ $payment_screenshot->temporaryUrl() }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
-                    </div>
+                <div class="mt-2">
+                    <img src="{{ $payment_screenshot->temporaryUrl() }}"
+                        class="w-32 h-32 object-cover rounded-lg shadow">
+                </div>
                 @endif
             </div>
 
@@ -146,7 +157,7 @@
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                     placeholder="Enter any notes (optional)" />
                 @error('notes')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 

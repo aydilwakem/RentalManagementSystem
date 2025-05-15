@@ -68,6 +68,7 @@
         <!-- Table Content -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
+
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
@@ -85,92 +86,57 @@
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>PM-001</span>
-                        </td>
-                        <td class="px-4 py-3">Carl Capilitan</td>
-                        <td class="px-4 py-3">TN-0509-001</td>
-                        <td class="px-4 py-3">INV-0001</td>
-                        <td class="px-4 py-3">₱2,500</td>
-                        <td class="px-4 py-3">Partial?</td>
-                        <td class="px-4 py-3">0012748</td>
-                        <td class="px-4 py-3">Bank Transfer</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-500">
-                                Pending
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
-                            </i>
-                        </td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>PM-001</span>
-                        </td>
-                        <td class="px-4 py-3">Sarah Cute</td>
-                        <td class="px-4 py-3">TN-0509-002</td>
-                        <td class="px-4 py-3">INV-0002</td>
-                        <td class="px-4 py-3">₱5,500</td>
-                        <td class="px-4 py-3">Down Payment?</td>
-                        <td class="px-4 py-3">0098614</td>
-                        <td class="px-4 py-3">GCash</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-500">
-                                Failed
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
-                            </i>
-                        </td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>PM-001</span>
-                        </td>
-                        <td class="px-4 py-3">Barbie Jalandoni</td>
-                        <td class="px-4 py-3">TN-0509-003</td>
-                        <td class="px-4 py-3">INV-0003</td>
-                        <td class="px-4 py-3">₱8,000</td>
-                        <td class="px-4 py-3">Full</td>
-                        <td class="px-4 py-3">01019264</td>
-                        <td class="px-4 py-3">Maya</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-500">
-                                Completed
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                href="#">
-                            </i>
-                        </td>
-                    </tr>
+                    @foreach ($payments as $payment)
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
+                                            <span>{{ $payment->id ?? 'N/A' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
+                                            {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $payment->invoice->transaction->id ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $payment->invoice->invoice_number ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            ₱{{ number_format($payment->amount_paid, 2) }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ ucfirst($payment->payment_type ?? 'Unknown') }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $payment->payment_reference_number ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold 
+                                                                                        {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' :
+                        ($payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' :
+                            ($payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : 'bg-gray-100 text-gray-500')) }}">
+                                                {{ ucfirst($payment->payment_status ?? 'Unknown') }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 space-x-1">
+                                            <!-- View Icon -->
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                                href="#">
+                                            </i>
+                                            <!-- Delete Icon -->
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
+                                            </i>
+                                        </td>
+                                    </tr>
+                    @endforeach
+
                 </tbody>
             </table>
         </div>

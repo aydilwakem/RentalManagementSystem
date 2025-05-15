@@ -3,10 +3,10 @@
 
 
         @if (session()->has('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
 
         {{-- Left Side: Form Steps --}}
         <div class="w-full flex">
@@ -31,38 +31,38 @@
                     </div>
                 </div>
 
-        
+
                 @if (session()->has('message'))
-                    <div class="alert alert-success">{{ session('message') }}</div>
+                <div class="alert alert-success">{{ session('message') }}</div>
                 @endif
 
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
-                    <div class="step-room">
-                        {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                         @include('livewire.guest.reservation.choose-room')
-                    </div>
+                <div class="step-room">
+
+                    @include('livewire.guest.reservation.choose-room')
+                </div>
                 @endif
 
                 <!-- Choose an Activity -->
                 @if ($currentStep == 2)
-                    <div class="step-activity">
-                        @include('livewire.guest.reservation.choose-activity')
-                    </div>
+                <div class="step-activity">
+                    @include('livewire.guest.reservation.choose-activity')
+                </div>
                 @endif
 
                 <!-- Enter Guest Details -->
                 @if ($currentStep == 3)
-                    <div class="step-guest-details w-full">
-                        @include('livewire.guest.reservation.guest-detail')
-                    </div>
+                <div class="step-guest-details w-full">
+                    @include('livewire.guest.reservation.guest-detail')
+                </div>
                 @endif
 
                 <!-- Review reservation -->
                 @if ($currentStep == 4)
-                    <div class="step-review">
-                        @include('livewire.guest.reservation.review')
-                    </div>
+                <div class="step-review">
+                    @include('livewire.guest.reservation.review')
+                </div>
                 @endif
 
 
@@ -84,201 +84,200 @@
         <div class="w-full lg:w-1/3 bg-gray-50 border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-0 z-10">
             <!------------------------------ Reservation Date Details --------------------------->
             @php
-                use Carbon\Carbon;
+            use Carbon\Carbon;
             @endphp
 
             @if ($check_in_date)
-                <div
-                    class="-mt-6 -mx-6 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold py-2 rounded-t-lg shadow-sm">
-                    Reservation Summary
-                </div>
+            <div
+                class="-mt-6 -mx-6 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold py-2 rounded-t-lg shadow-sm">
+                Reservation Summary
+            </div>
 
-                <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
-                    <span>
-                        {{ Carbon::parse($check_in_date)->format('F j, Y') }}
-                    </span>
+            <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
+                <span>
+                    {{ Carbon::parse($check_in_date)->format('F j, Y') }}
+                </span>
 
-                    @error('check_in_date')
-                        <span class="text-red-600">{{ $message }}</span>
-                    @enderror
+                @error('check_in_date')
+                <span class="text-red-600">{{ $message }}</span>
+                @enderror
 
-                    <i class="fa-solid fa-arrow-right"></i>
-                    @if ($check_out_date)
-                        <span>
-                            {{ Carbon::parse($check_out_date)->format('F j, Y') }}
-                        </span>
-                    @endif
-                </div>
+                <i class="fa-solid fa-arrow-right"></i>
+                @if ($check_out_date)
+                <span>
+                    {{ Carbon::parse($check_out_date)->format('F j, Y') }}
+                </span>
+                @endif
+            </div>
             @endif
 
             @if ($check_out_date)
-                <div class="flex justify-center items-center text-md text-gray-800 mb-2 space-x-4">
-                    <!-- Stay Duration -->
-                    <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
+            <div class="flex justify-center items-center text-md text-gray-800 mb-2 space-x-4">
+                <!-- Stay Duration -->
+                <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
 
-                </div>
+            </div>
             @endif
 
             @if ($check_in_date)
-                <hr class="my-2 border-gray-200">
+            <hr class="my-2 border-gray-200">
             @endif
 
             <!------------------------------ Selected Items ------------------------------------->
             @php
-                $cartCollection = collect($cart); // Convert array to collection
+            $cartCollection = collect($cart); // Convert array to collection
             @endphp
 
 
             <div>
                 @if ($cartCollection->isNotEmpty())
-                    <div class="flex flex-col gap-2 mb-2 py-2">
-                        <!-- Selected Rooms -->
-                        @if ($cartCollection->contains('type', 'room'))
-                            @foreach ($cart as $item)
-                                @if ($item['type'] === 'room')
-                                    <!-- Room Card -->
-                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
-                                        wire:key="cart-item-{{ $item['room_id'] }}">
-                                        <!-- Back Button -->
-                                        <button type="button"
-                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
-                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
-                                            title="Remove Room">
-                                            <span class="leading-none ">&times;</span>
-                                        </button>
-                                        <!-- Room Details -->
-                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
-                                            <!-- Room Name -->
-                                            <div class="text-md">
-                                                <i class="fa-solid fa-bed"></i>
-                                                <strong>Room:</strong> {{ $item['room_name'] }}
-                                            </div>
+                <div class="flex flex-col gap-2 mb-2 py-2">
+                    <!-- Selected Rooms -->
+                    @if ($cartCollection->contains('type', 'room'))
+                    @foreach ($cart as $item)
+                    @if ($item['type'] === 'room')
+                    <!-- Room Card -->
+                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                        wire:key="cart-item-{{ $item['room_id'] }}">
+                        <!-- Back Button -->
+                        <button type="button" wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
+                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                            title="Remove Room">
+                            <span class="leading-none ">&times;</span>
+                        </button>
+                        <!-- Room Details -->
+                        <div class="text-gray-800 flex flex-col justify-between mt-1">
+                            <!-- Room Name -->
+                            <div class="text-md">
+                                <i class="fa-solid fa-bed"></i>
+                                <strong>Room:</strong> {{ $item['room_name'] }}
+                            </div>
 
-                                            <!-- Guest Info -->
-                                            <div class="text-sm text-gray-600">
-                                                Adults: {{ $item['adults'] }}, Kids: {{ $item['kids'] }}
-                                            </div>
+                            <!-- Guest Info -->
+                            <div class="text-sm text-gray-600">
+                                Adults: {{ $item['adults'] }}, Kids: {{ $item['kids'] }}
+                            </div>
 
-                                            <!-- Charges Breakdown -->
-                                            <div class="flex justify-between items-start gap-2">
-                                                <!-- Labels -->
-                                                <div class="space-y-1">
-                                                    @if ($item['extra_charge'])
-                                                        <div class="text-sm text-gray-600">Extra Person Charge:</div>
-                                                    @endif
-                                                    <div class="text-sm text-gray-600">Subtotal:</div>
-                                                </div>
+                            <!-- Charges Breakdown -->
+                            <div class="flex justify-between items-start gap-2">
+                                <!-- Labels -->
+                                <div class="space-y-1">
+                                    @if ($item['extra_charge'])
+                                    <div class="text-sm text-gray-600">Extra Person Charge:</div>
+                                    @endif
+                                    <div class="text-sm text-gray-600">Subtotal:</div>
+                                </div>
 
-                                                <!-- Amounts -->
-                                                <div class="text-right space-y-1">
-                                                    <div class="text-sm font-semibold text-gray-800">
-                                                        ₱{{ number_format($item['extra_charge'], 2) }}
-                                                    </div>
-                                                    <div class="text-sm font-semibold text-gray-800">
-                                                        ₱{{ number_format($item['total_amount'], 2) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <!-- Amounts -->
+                                <div class="text-right space-y-1">
+                                    <div class="text-sm font-semibold text-gray-800">
+                                        ₱{{ number_format($item['extra_charge'], 2) }}
                                     </div>
-                                @endif
-                            @endforeach
-                        @endif
-
-                        <!-- Selected Activities -->
-                        @if ($cartCollection->contains('type', 'activity'))
-                            @foreach ($cart as $item)
-                                @if ($item['type'] === 'activity')
-                                    <!-- Activity Card -->
-                                    <div class="bg-gray-100 py-3 px-2 pr-8 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
-                                        wire:key="cart-item-{{ $item['activity_id'] }}">
-                                        <!-- back Button -->
-                                        <button type="button"
-                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
-                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
-                                            title="Remove Activity">
-                                            <span class="leading-none ">&times;</span>
-                                        </button>
-                                        <!-- Activity Details -->
-                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
-                                            <div class="text-md">
-                                                <i class="fa-solid fa-square-plus"></i>
-                                                <strong>Activity:</strong> {{ $item['activity_name'] }}
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <div class="text-sm text-gray-600">
-                                                    Quantity: {{ $item['quantity'] }}
-                                                </div>
-                                                <div class="text-sm font-semibold">
-                                                    ₱{{ number_format($item['amount'], 2) }}
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="text-sm font-semibold text-gray-800">
+                                        ₱{{ number_format($item['total_amount'], 2) }}
                                     </div>
-                                @endif
-                            @endforeach
-                        @endif
-                        <p class="mt-4">Total Guests: {{ $total_pax }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    @endif
+                    @endforeach
+                    @endif
+
+                    <!-- Selected Activities -->
+                    @if ($cartCollection->contains('type', 'activity'))
+                    @foreach ($cart as $item)
+                    @if ($item['type'] === 'activity')
+                    <!-- Activity Card -->
+                    <div class="bg-gray-100 py-3 px-2 pr-8 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                        wire:key="cart-item-{{ $item['activity_id'] }}">
+                        <!-- back Button -->
+                        <button type="button"
+                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                            title="Remove Activity">
+                            <span class="leading-none ">&times;</span>
+                        </button>
+                        <!-- Activity Details -->
+                        <div class="text-gray-800 flex flex-col justify-between mt-1">
+                            <div class="text-md">
+                                <i class="fa-solid fa-square-plus"></i>
+                                <strong>Activity:</strong> {{ $item['activity_name'] }}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-gray-600">
+                                    Quantity: {{ $item['quantity'] }}
+                                </div>
+                                <div class="text-sm font-semibold">
+                                    ₱{{ number_format($item['amount'], 2) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @endforeach
+                    @endif
+                    <p class="mt-4">Total Guests: {{ $total_pax }}</p>
+                </div>
                 @else
-                    <!-- Show when no room is selected -->
-                    <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
-                        <i class="fa-solid fa-bed text-3xl mb-2"></i>
-                        <span>No rooms added yet</span>
-                    </div>
+                <!-- Show when no room is selected -->
+                <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
+                    <i class="fa-solid fa-bed text-3xl mb-2"></i>
+                    <span>No rooms added yet</span>
+                </div>
                 @endif
             </div>
 
             @error('cart')
-                <span class="text-red-600">{{ $message }}</span>
+            <span class="text-red-600">{{ $message }}</span>
             @enderror
 
 
             <!------------------------------ Price Breakdown ------------------------------------->
             @if ($cartCollection->contains('type', 'room'))
-                <div>
-                    <hr class="my-2 border-gray-200">
+            <div>
+                <hr class="my-2 border-gray-200">
 
-                    <!-- Total Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Total</div>
-                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
-                    </div>
-
-                    <!-- Deposit -->
-                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
-                        <div>Deposit</div>
-                        <div class="font-semibold">
-                            ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
-                    </div>
+                <!-- Total Amount -->
+                <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                    <div class="text-lg">Total</div>
+                    <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
                 </div>
+
+                <!-- Deposit -->
+                <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                    <div>Deposit</div>
+                    <div class="font-semibold">
+                        ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
+                </div>
+            </div>
             @endif
 
             <!-- Navigation Buttons-->
             @if ($cartCollection->contains('type', 'room'))
-                <div class="mt-6 flex justify-between">
+            <div class="mt-6 flex justify-between">
 
-                    @if ($currentStep == 1)
-                        <div> </div>
-                    @endif
+                @if ($currentStep == 1)
+                <div> </div>
+                @endif
 
-                    <!-- Back button -->
-                    @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
-                        <button type="button"
-                            class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
-                            wire:click="decreaseStep()"> Back
-                        </button>
-                    @endif
+                <!-- Back button -->
+                @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
+                <button type="button"
+                    class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
+                    wire:click="decreaseStep()"> Back
+                </button>
+                @endif
 
-                    <!-- Next button -->
-                    @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
-                        <button type="button"
-                            class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                            wire:click="increaseStep()">Next</button>
-                    @endif
+                <!-- Next button -->
+                @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
+                <button type="button"
+                    class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                    wire:click="increaseStep()">Next</button>
+                @endif
 
-                    {{-- Start of Modal for showing the Terms and Conditions --}}
-                    <div x-data="{ showModal: false, agreed: false }" 
+                {{-- Start of Modal for showing the Terms and Conditions --}}
+                <div x-data="{ showModal: false, agreed: false }"
                     x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
                     @keydown.escape.window="showModal = false">
 
@@ -286,61 +285,58 @@
                     <button type="button"
                         class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                         @click="showModal = true">
-                    Confirm
+                        Confirm
                     </button>
                     @endif
 
                     <!-- Modal -->
                     <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
-                        x-show="showModal"
-                        x-transition
-                        style="display: none;">
-                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                        <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
-                        
-                        <div class="text-sm text-gray-800 space-y-3">      
-                            <p>
-                                {{  $terms_and_conditions }}
-                            </p>
-                        </div>
+                        x-show="showModal" x-transition style="display: none;">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                            <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
 
-                        <!-- Checkbox -->
-                        <div class="mt-4">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" x-model="agreed" wire:model="terms" class="form-checkbox text-green-600">
-                                <span class="ml-2 text-sm text-gray-700">I agree to the Terms and Conditions</span>
-                            </label>
-                        </div>
+                            <div class="text-sm text-gray-800 space-y-3">
+                                <p>
+                                    {{ $terms_and_conditions }}
+                                </p>
+                            </div>
 
-                        <!-- Actions -->
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button @click="showModal = false"
+                            <!-- Checkbox -->
+                            <div class="mt-4">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" x-model="agreed" wire:model="terms"
+                                        class="form-checkbox text-green-600">
+                                    <span class="ml-2 text-sm text-gray-700">I agree to the Terms and Conditions</span>
+                                </label>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex justify-end gap-2 mt-6">
+                                <button @click="showModal = false"
                                     class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
-                                Cancel
-                            </button>
-                            <button 
-                                :disabled="!agreed"
-                                @click="showModal = false; $wire.register()" 
-                                class="px-4 py-2 rounded-md text-white transition duration-150 ease-in-out"
-                                :class="agreed 
+                                    Cancel
+                                </button>
+                                <button :disabled="!agreed" @click="showModal = false; $wire.register()"
+                                    class="px-4 py-2 rounded-md text-white transition duration-150 ease-in-out" :class="agreed 
                                     ? 'bg-green-600 hover:bg-green-700' 
                                     : 'bg-green-300 cursor-not-allowed'">
-                                Confirm & Complete Reservation
-                            </button>
+                                    Confirm & Complete Reservation
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    </div>
-
-                    {{-- End of Modal for showing the Terms and Conditions --}}
-
-          
-
-            @if ($errors->has('terms'))
-                <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
-            @endif
-                    
                 </div>
+
+                {{-- End of Modal for showing the Terms and Conditions --}}
+
+
+
+                @if ($errors->has('terms'))
+                <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
+                @endif
+
+            </div>
             @endif
         </div>
 
@@ -395,18 +391,18 @@
 
 
 {{-- <input type="date" wire:model="check_in_date" wire:change="getAvailableRooms">
-                            <input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
-                        {{-- <button
-                            class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
-                            Search Availability
-                        </button> --}}
+<input type="date" wire:model="check_out_date" wire:change="getAvailableRooms"> --}}
+{{-- <button
+    class="px-4 py-3 bg-green-700 bg-opacity-85 hover:bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+    Search Availability
+</button> --}}
 
 
-                         {{-- <div> --}}
-                {{-- <label for="checkin">Check-in Date & Time:</label>
-                    <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
+{{-- <div> --}}
+    {{-- <label for="checkin">Check-in Date & Time:</label>
+    <input type="datetime-local" id="checkin" wire:model.live="check_in_date">
 
-                    <label for="checkout">Check-out Date & Time:</label>
-                    <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
-                {{--
-                </div> --}}
+    <label for="checkout">Check-out Date & Time:</label>
+    <input type="datetime-local" id="checkout" wire:model.live="check_out_date"> --}}
+    {{--
+</div> --}}

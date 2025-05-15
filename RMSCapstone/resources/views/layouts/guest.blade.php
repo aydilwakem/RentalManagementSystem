@@ -24,6 +24,16 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+
 
     <!-- Alpine Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -35,11 +45,11 @@
 
 <body>
     {{-- @if (isset($header))
-        <header class="bg-white white:bg-[#2A2A2A] shadow w-full px-6">
-            <div class="py-6">
-                {{ $header }}
-            </div>
-        </header>
+    <header class="bg-white white:bg-[#2A2A2A] shadow w-full px-6">
+        <div class="py-6">
+            {{ $header }}
+        </div>
+    </header>
     @endif --}}
     @auth
         @livewire('guest.navbar')
