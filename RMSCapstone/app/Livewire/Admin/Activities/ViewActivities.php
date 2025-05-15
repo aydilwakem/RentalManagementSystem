@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Activities;
 
 use App\Models\Activity;
+use App\Models\Transaction;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -26,6 +27,7 @@ class ViewActivities extends Component
 
     //Public declaration for delete confirmation modal
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
     public $confirmBulkDelete = false; 
 
     //public declaration for bulk actions 
@@ -52,9 +54,30 @@ class ViewActivities extends Component
     }
 
     public function deleteSelectedRows(){
-        Activity::whereIn('id', $this->selectedRows)->delete(); 
+       try {
+        //Check active event halls
+        $usedInTransactions = Transaction::whereHas('activities', function ($query) {
+            $query->whereIn('activity_id', $this->selectedRows);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Trigger modal
+            $this->confirmBulkDelete = false;
+            return;
+        }
+
+        // Bulk Delete
+        Activity::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected activities got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e; 
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -80,30 +103,51 @@ class ViewActivities extends Component
     * Delete an activity record if confirmed, update the list of activities,
     * reset fake IDs, and store the updated IDs in the session.
     */
-    public function deleteActivity($id)
+    public function deleteActivity()
     {
-        $activity = Activity::find($id);
+        $activity = Activity::find($this->confirmItemDelete);
 
-        if ($activity) {
+    if (!$activity) {
+        session()->flash('error', 'Activity not found.');
+        return;
+    }
 
-            if ($this->confirmItemDelete) {
-                Activity::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
-            
+    // Check if the event hall is active in Events
+    $usedInTransactions = Transaction::whereHas('activities', function ($query) use ($activity) {
+        $query->where('activity_id', $activity->id);
+    })->exists();
 
-             // Fetch remaining activities - sorted by creation date
-             $activities = Activity::orderBy('created_at', 'ASC')->get();
+    if ($usedInTransactions) {
+        $this->cannotDeleteItem = true; // Show "Cannot delete" modal
+        $this->confirmItemDelete = null; // Reset delete ID
+        return;
+    }
 
-             // Reset fake IDs
-             $fakeIDs = [];
-             foreach ($activities as $index => $act) {
-                 $fakeIDs[$act->id] = 'ACT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-             }
- 
-             // Store updated fake IDs in a unique session key
-            session(['fake_ids_activities' => $fakeIDs]);
+    try {
 
-            session()->flash('message', 'Activity successfully deleted!');
+        // Delete the event hall
+        $activity->delete();
+
+        // Reset confirmation modal
+        $this->confirmItemDelete = null;
+
+        // Refresh the list of event halls and regenerate fake ids
+        $activities = Activity::orderBy('created_at', 'ASC')->get();
+        $fakeIDs = [];
+        foreach ($activities as $index => $activity) {
+            $fakeIDs[$activity->id] = 'ACT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+        }
+
+        // Store updated fake IDs in session
+        session(['fake_ids_activities' => $fakeIDs]);
+
+        // Flash success message
+        session()->flash('message', 'Activity successfully deleted!');
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
         }
     }
     }

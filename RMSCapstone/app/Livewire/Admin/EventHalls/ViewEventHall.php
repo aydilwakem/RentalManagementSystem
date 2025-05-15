@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\EventHalls;
 use App\Models\Event;
 use App\Models\EventHall;
 use App\Models\Property;
+use App\Models\Transaction;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -27,22 +28,35 @@ class ViewEventHall extends Component
     public function deleteEventHall()
     {
         if ($this->confirmItemDelete) {
-            $eventHall = Property::find($this->confirmItemDelete);
+        $eventHall = Property::find($this->confirmItemDelete);
 
-            if ($eventHall) {
-                $eventHall->features()->detach();
-
-                $eventHall->delete();
-
-                $this->confirmItemDelete = false;
-
-                session()->flash('message', 'Hall successfully deleted!');
-            } else {
-                session()->flash('error', 'Hall not found!');
-            }
+        if (!$eventHall) {
+            session()->flash('error', 'Event Hall not found!');
+            return redirect()->route('admin.event-halls');
         }
 
-        // Redirect to the admin houses page
+        // Check if the event hall is linked to any transaction
+        $usedInTransactions = Transaction::whereHas('properties', function ($query) use ($eventHall) {
+            $query->where('property_id', $eventHall->id);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; //Cannot delete because hall is active in Transactions
+            $this->confirmItemDelete = null;
+            return;
+        }
+
+        // Detach all features/amenities
+        $eventHall->features()->detach();
+
+        // Delete the hall
+        $eventHall->delete();
+
+        $this->confirmItemDelete = null;
+
+        session()->flash('message', 'Hall successfully deleted!');
+        }
+
         return redirect()->route('admin.event-halls');
     }
 

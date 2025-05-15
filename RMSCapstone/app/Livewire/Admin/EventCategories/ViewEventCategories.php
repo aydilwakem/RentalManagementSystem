@@ -28,6 +28,60 @@ class ViewEventCategories extends Component
 
     public $confirmItemDelete = false; //Modal for delete confirmation
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->eventCategories->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+    }
+
+    public function getEventCategoriesProperty()
+    {
+        return EventType::query()
+            ->search($this->search)
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+       try {
+        // Check if any of the selected Event Types are used in transactions
+        $usedInTransactions = Transaction::whereIn('event_type_id', $this->selectedRows)->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Trigger "can't delete" modal
+            $this->confirmBulkDelete = false;
+            return;
+        }
+
+        // Proceed with bulk deletion
+        EventType::whereIn('id', $this->selectedRows)->delete();
+
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected halls got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // Foreign key violation
+        } else {
+            throw $e; // Let other exceptions bubble up
+        }
+    }
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
+
 
     public function confirmDelete($id)
         {
@@ -101,11 +155,7 @@ public function deleteEventCategory()
 
     public function render()
     {
-
-        $eventCategories = EventType::query()
-            ->search($this->search)
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $eventCategories = $this->eventCategories; 
 
              // Retrieve unique session 
             $fakeIDs = session('fake_ids_eventCategory', []);

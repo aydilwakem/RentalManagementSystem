@@ -32,9 +32,9 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
                         <p class="text-gray-700 leading-relaxed">
                             @if (!empty($activity->description))
-                                {{ $activity->description }}
+                            {{ $activity->description }}
                             @else
-                                <em class="text-gray-500 leading-relaxed italic">No description provided.</em>
+                            <em class="text-gray-500 leading-relaxed italic">No description provided.</em>
                             @endif
                         </p>
                     </div>
@@ -50,9 +50,9 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Inclusions</h3>
                         <p class="text-gray-700 leading-relaxed">
                             @if (!empty($activity->inclusions))
-                                {{ $activity->inclusions }}
+                            {{ $activity->inclusions }}
                             @else
-                                <em class="text-gray-500 leading-relaxed">No inclusions provided.</em>
+                            <em class="text-gray-500 leading-relaxed">No inclusions provided.</em>
                             @endif
                         </p>
                     </div>
@@ -97,6 +97,24 @@
                     </x-danger-button>
                 </x-slot>
             </x-dialog-modal>
+
+            {{-- Cannot Delete Modal --}}
+            <x-dialog-modal wire:model="cannotDeleteItem">
+                <x-slot name="title">
+                    {{ __('Unable to Delete') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('This activity is currently in use and cannot be deleted.') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                        {{ __('OK') }}
+                    </x-secondary-button>
+                </x-slot>
+            </x-dialog-modal>
+
         </div>
     </div>
 </div>

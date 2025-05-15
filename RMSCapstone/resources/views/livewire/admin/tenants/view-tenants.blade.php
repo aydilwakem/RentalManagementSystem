@@ -199,6 +199,8 @@
 
     </div>
     @endif
+
+    {{-- Delete Confirmation Modal --}}
     <x-dialog-modal wire:model.live="confirmItemDelete">
         <x-slot name="title">{{ __('Delete Tenant') }}</x-slot>
         <x-slot name="content">{{ __('Are you sure you want to delete this tenant?') }}</x-slot>
@@ -211,6 +213,7 @@
             </x-danger-button>
         </x-slot>
     </x-dialog-modal>
+
     <!-- Bulk Delete Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmBulkDelete">
         <x-slot name="title">
@@ -229,6 +232,23 @@
             <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
                 {{ __('Delete Tenants') }}
             </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('This tenant has an active lease and cannot be deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
         </x-slot>
     </x-dialog-modal>
 </div>

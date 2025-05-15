@@ -62,7 +62,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteCategory" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRoomCategory" wire:loading.attr="disabled">
                     {{ __('Delete Room Category') }}
                 </x-danger-button>
             </x-slot>

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\EventHalls;
 use App\Models\Event;
 use App\Models\EventHall;
 use App\Models\Property;
+use App\Models\Transaction;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -62,9 +63,36 @@ class ViewEventHalls extends Component
     }
 
     public function deleteSelectedRows(){
-        Property::whereIn('id', $this->selectedRows)->delete(); 
+        try {
+        //Check active event halls
+        $usedInTransactions = Transaction::whereHas('properties', function ($query) {
+            $query->whereIn('property_id', $this->selectedRows);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Trigger modal
+            $this->confirmBulkDelete = false;
+            return;
+        }
+
+        // Detach features before deleting
+        $properties = Property::whereIn('id', $this->selectedRows)->get();
+        foreach ($properties as $property) {
+            $property->features()->detach();
+        }
+
+        // Bulk Delete
+        Property::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
-        session()->flash('message', 'All selected inclusions got deleted!');
+        session()->flash('message', 'All selected halls got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e; 
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -88,37 +116,52 @@ class ViewEventHalls extends Component
 
     public function deleteEventHall()
     {
-        if ($this->confirmItemDelete) {
-            // Find the hall to be deleted
-            $halls = Property::find($this->confirmItemDelete);
+        $eventHall = Property::find($this->confirmItemDelete);
 
-            if ($halls) {
-                // Detach all amenities associated with this hall
-                $halls->features()->detach();
-                $halls->delete();
+    if (!$eventHall) {
+        session()->flash('error', 'Event Hall not found.');
+        return;
+    }
 
-                // Reset confirmation state
-                $this->confirmItemDelete = false;
+    // Check if the event hall is active in Events
+    $usedInTransactions = Transaction::whereHas('properties', function ($query) use ($eventHall) {
+        $query->where('property_id', $eventHall->id);
+    })->exists();
 
-                // Fetch remaining halls - sorted by creation date
-                $halls = Property::orderBy('created_at', 'ASC')->get();
+    if ($usedInTransactions) {
+        $this->cannotDeleteItem = true; // Show "Cannot delete" modal
+        $this->confirmItemDelete = null; // Reset delete ID
+        return;
+    }
 
-                // Reset fake IDs
-                $fakeIDs = [];
-                foreach ($halls as $index => $hall) {
-                    $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
+    try {
+        $eventHall->features()->detach();
 
-                // Store updated fake IDs in a unique session key
-                session(['fake_ids_eventHalls' => $fakeIDs]);
+        // Delete the event hall
+        $eventHall->delete();
 
-                // Flash success message
-                session()->flash('message', 'Event Hall successfully deleted!');
-            } else {
-                // If room not found, flash an error message
-                session()->flash('error', 'Event Hall not found!');
-            }
+        // Reset confirmation modal
+        $this->confirmItemDelete = null;
+
+        // Refresh the list of event halls and regenerate fake ids
+        $eventHalls = Property::orderBy('created_at', 'ASC')->get();
+        $fakeIDs = [];
+        foreach ($eventHalls as $index => $hall) {
+            $fakeIDs[$hall->id] = 'HALL-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
+
+        // Store updated fake IDs in session
+        session(['fake_ids_eventHalls' => $fakeIDs]);
+
+        // Flash success message
+        session()->flash('message', 'Event Hall successfully deleted!');
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
+        }
+    }
     }
 
     public function setSortBy($sortByField)

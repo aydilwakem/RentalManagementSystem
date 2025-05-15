@@ -397,10 +397,10 @@
                         @endcan
 
                         @can('appearance-view')
-                        <a href="{{ route('admin.appearance') }}" wire:navigate
+                        {{-- <a href="{{ route('admin.appearance') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Appearance</h1>
-                        </a>
+                        </a> --}}
                         @endcan
                     </div>
                 </div>

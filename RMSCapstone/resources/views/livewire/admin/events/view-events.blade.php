@@ -251,7 +251,7 @@
                         {{ \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d') }}
                     </td>
                     <td class="px-4 py-3"> {{ $eventItem->pax }} </td>
-                    <td class="px-4 py-3"> {{ $eventItem->total_amount }} </td>
+                    <td class="px-4 py-3"> ₱{{ number_format($eventItem->total_amount, 2) }} </td>
                     <td class="px-4 py-3">
                         @if ($eventItem->transaction_status === 'confirmed')
                         <span class="px-2 py-1 bg-green-700 text-white rounded">Confirmed</span>
