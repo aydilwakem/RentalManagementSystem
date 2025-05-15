@@ -315,6 +315,9 @@
             </div>
 
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
+            <section id="payments">
+
+
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
                     {{ __('Payments') }}
@@ -386,6 +389,7 @@
                     <p class="text-gray-600 italic">No payments found for this invoice.</p>
                 @endif
             </div>
+            </section>
         </div>
     </div>
 </div>

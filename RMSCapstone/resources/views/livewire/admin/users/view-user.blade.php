@@ -71,19 +71,126 @@
             </div>
         </div>
 
-        <!-- Right Column -->
+        @php
+            $permissionGroups = [
+                'Room Management' => [
+                    'Rooms' => fn($p) => preg_match('/^room-(?!rate|category)/', $p->name),
+                    'Room Categories' => fn($p) => str_starts_with($p->name, 'room-category'),
+                    'Room Rates' => fn($p) => str_starts_with($p->name, 'room-rate'),
+                    'Amenities' => fn($p) => str_starts_with($p->name, 'amenity'),
+                ],
+
+                'Booking & Reservations' => [
+                    'New Reservations' => fn($p) => str_starts_with($p->name, 'new-reservation-'),
+                    'Confirmed Reservations' => fn($p) => str_starts_with($p->name, 'confirmed-reservation'),
+                    'On-going Bookings' => fn($p) => str_starts_with($p->name, 'on-going'),
+                    'Old Bookings' => fn($p) => str_starts_with($p->name, 'old'),
+                ],
+
+                'Event Management' => [
+                    'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
+                        !str_starts_with($p->name, 'event-category') &&
+                        !str_starts_with($p->name, 'event-hall'),
+                    'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
+                    'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
+                ],
+
+                'Property Management' => [
+                    'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
+                        !str_starts_with($p->name, 'house-category'),
+                    'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
+                    'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
+                ],
+
+                'Billing & Payments' => [
+                    'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
+                    'Payments' => fn($p) => str_starts_with($p->name, 'payments-list'),
+                    'Invoices' => fn($p) => str_starts_with($p->name, 'invoices-list'),
+                ],
+
+                'System Settings' => [
+                    'Settings' => fn($p) => str_starts_with($p->name, 'appearance-view'),
+                    'Dashboard' => fn($p) => str_starts_with($p->name, 'dashboard'),
+                ],
+
+                'User Management' => [
+                    'Roles' => fn($p) => str_starts_with($p->name, 'role'),
+                    'Users' => fn($p) => str_starts_with($p->name, 'user'),
+                ],
+
+                'Activities' => [
+                    'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
+                ],
+            ];
+
+            $groupedUserPermissions = [];
+            foreach ($permissionGroups as $category => $subgroups) {
+                foreach ($subgroups as $subLabel => $callback) {
+                    // Filter expects string $p here
+                    $filtered = collect($userPermissions)
+                        ->filter(function ($p) use ($callback) {
+                            // We wrap string in an object with a 'name' prop to satisfy your callbacks
+                            // OR modify callbacks to accept string instead of object
+                            return $callback((object) ['name' => $p]);
+                        })
+                        ->values();
+
+                    if ($filtered->isNotEmpty()) {
+                        $groupedUserPermissions[$category][$subLabel] = $filtered;
+                    }
+                }
+            }
+        @endphp
+
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Permissions</h3>
-            <div class="max-h-72 overflow-y-auto border rounded p-3 space-y-1 bg-gray-50">
-                <ul class="space-y-1">
-                    @forelse($userPermissions as $permission)
-                        <li>{{ $permission }}</li>
-                    @empty
-                        <li class="text-gray-500">No permissions assigned.</li>
-                    @endforelse
-                </ul>
+
+            <div class="border rounded bg-gray-50 max-h-full overflow-y-auto divide-y divide-gray-200">
+                @if (empty($groupedUserPermissions))
+                    <div class="p-4 text-gray-500">No permissions assigned.</div>
+                @else
+                    @foreach ($groupedUserPermissions as $category => $subgroups)
+                        <div x-data="{ open: false }" class="px-4 py-2">
+                            <button type="button" @click="open = !open"
+                                class="w-full flex justify-between items-center font-semibold text-gray-700 hover:text-green-600 focus:outline-none">
+                                {{ $category }}
+                                <svg :class="{ 'rotate-180': open }" class="h-5 w-5 transition-transform" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-transition class="mt-2 py-2 space-y-3 pl-4 pr-4 border-l border-gray-300 bg-white shadow">
+                                @foreach ($subgroups as $subLabel => $perms)
+                                    <div x-data="{ open: false }">
+                                        <button type="button" @click="open = !open"
+                                            class="w-full flex justify-between items-center text-gray-600 hover:text-green-500 focus:outline-none font-medium">
+                                            {{ $subLabel }}
+                                            <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                        <ul x-show="open" x-transition
+                                            class="mt-1 pl-4 list-disc list-inside space-y-1 text-gray-700 border p-2 rounded ">
+                                            @foreach ($perms as $perm)
+                                                <li>{{ ucfirst(str_replace('-', ' ', $perm)) }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
         </div>
+
+
+
     </div>
 
     <!-- Action Buttons -->
