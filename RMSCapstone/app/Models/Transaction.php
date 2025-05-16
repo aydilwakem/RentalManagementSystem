@@ -84,6 +84,10 @@ class Transaction extends Model
         return $this->hasMany(GuestDetail::class, 'transaction_id');
     }
 
+    public function feedbacks()
+    {
+        return $this->hasMany(FeedbackRating::class, 'transaction_id');
+    }
 
 
     // One transaction can have many properties

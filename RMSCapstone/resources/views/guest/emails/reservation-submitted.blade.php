@@ -45,7 +45,8 @@
                 <li style="margin-bottom: 8px;">Deposit: {{ number_format($deposit, 2) }}</li>
             </ul>
 
-            <p>Please pay the required deposit through the following link to confirm your reservation:</p>
+            <p>Please pay the required deposit within {{ $expirationHours }} hours through the following link to confirm
+                your reservation:</p>
 
             <p style="text-align: center; margin: 20px 0;">
                 <a href="http://127.0.0.1:8000/guest/proof-of-payment-page" target="_blank"

@@ -32,6 +32,8 @@
             </div>
 
             <!---------------------------- ADDITIONAL GUESTS DETAILS ---------------------------->
+
+             <!-- Existing Additional Guests -->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
                     {{ __('Additional Guests Details') }}
@@ -70,6 +72,36 @@
                     <p class="text-gray-600 italic">No additional guests found for this transaction.</p>
                 @endif
             </div>
+
+                 <!-- Displaying Added Guests -->
+                    <div class="mt-6">
+                        @if(count($guests) > 0)
+                            <ul class="space-y-2">
+                                @foreach($guests as $guest)
+                                    <li class="flex justify-between items-center p-2 bg-gray-100 rounded-md">
+                                        <span>{{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}</span>
+                                        <div class="space-x-2">
+                                            <button wire:click="editGuest({{ $loop->index }})"
+                                                class="text-blue-500">Edit</button>
+                                            <button wire:click="deleteGuest({{ $loop->index }})"
+                                                class="text-red-500">Delete</button>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+
+                    <!-- Button to open modal -->
+                    @if(count($guests) < count($guestDetails) - count($guests))
+                        <div class="mt-4">
+                            <button type="button" wire:click="openGuestModal"
+                                class="inline-flex items-center px-3 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                                <i class="fas fa-plus mr-1"></i> Add Guest
+                            </button>
+                        </div>
+                    @endif
+
 
             <!---------------------------- TRANSACTION DETAILS --------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
@@ -193,6 +225,7 @@
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-right">Extra Guest Charge
                                     </th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-right">Room Total</th>
+                                      {{-- <th class="border px-4 py-2 font-medium text-gray-900 text-right">Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
@@ -214,6 +247,14 @@
                                             ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
                                             ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+
+                                    {{-- <!-- Edit Icon -->
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                                        <i class="fas fa-edit text-blue-600 cursor-pointer"
+                                            wire:click="editRoom({{ $property->id }})">
+                                        </i>
+                                    </td> --}}
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -249,12 +290,16 @@
                                     <tr>
                                         <td class="border px-4 py-2 text-gray-700 text-left">{{ $activity->name }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center">
-                                            {{ $activity->pivot->quantity }}</td>
+                                       {{ $activity->pivot->quantity ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-right">
                                             ₱{{ number_format($activity->amount, 2) }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
-                                            ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
-                                        </td>
+                                            @if ($activity->pivot)
+                                                ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
+                                            @else
+                                                ₱N/A
+                                            @endif
+                                        </td>                                    
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -386,7 +431,289 @@
                     <p class="text-gray-600 italic">No payments found for this invoice.</p>
                 @endif
             </div>
+
+            <div class="flex space-x-2 mt-4">
+                <!-- Cancel Button -->
+               <button 
+                    wire:click="cancelEdit"
+                    class="px-4 py-2 bg-gray-500 text-white text-sm font-semibold rounded hover:bg-gray-600 transition">
+                    Cancel
+                </button>
+
+                 <!-- Save Changes Button -->
+                <button 
+                    wire:click="saveChanges({{ $transaction->id}})"
+                    class="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded hover:bg-green-700 transition">
+                    Save Changes
+                </button>
+            </div>
+
+               <!-- Add Guest Modal -->
+                @if($showGuestModal)
+                    <div id="guestModal"
+                            class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                            <div
+                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                                <h2 class="text-lg font-semibold mb-4">Enter Guest Details</h2>
+
+                                <!-- Guest Name -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-700">First Name</label>
+                                        <input type="text" wire:model="guest_first_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                        @error('guest_first_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Middle Name</label>
+                                        <input type="text" wire:model="guest_middle_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        @error('guest_middle_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Last Name</label>
+                                        <input type="text" wire:model="guest_last_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                        @error('guest_last_name') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Suffix</label>
+                                        <input type="text" wire:model="guest_suffix"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        @error('guest_suffix') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Guest Type -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Guest Type</label>
+                                    <select wire:model="guest_type_id"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Guest Type</option>
+                                        @foreach($guest_types as $type)
+                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('guest_type_id') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Gender</label>
+                                    <select wire:model="guest_gender"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    @error('guest_gender') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Residency -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Residency</label>
+                                    <select wire:model="guest_residency"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Residency</option>
+                                        <option value="local">Local</option>
+                                        <option value="foreigner">Foreigner</option>
+                                    </select>
+                                    @error('guest_residency') <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Country of Origin -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Country of Origin</label>
+                                    <input type="text" wire:model="guest_country_of_origin"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                    @error('guest_country_of_origin') <span
+                                        class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+
+                                <!-- Actions -->
+                                <div class="flex justify-end gap-2 mt-6">
+                                    <button type="button" wire:click="closeGuestModal"
+                                        class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                        Cancel
+                                    </button>
+                                    <button type="button" wire:click="addMultipleGuests"
+                                        class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white transition duration-150 ease-in-out">
+                                        Add Guest
+                                    </button>
+                                </div>
+                            </div>
+                    </div>
+                @endif  
+
+                   <!-- Edit Modal -->
+                    @if($showEditModal)
+                        <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                            <div
+                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                                <h2 class="text-lg font-semibold mb-4">Edit Guest Details</h2>
+
+                                <!-- Guest Name -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-700">First Name</label>
+                                        <input type="text" wire:model.defer="editingGuest.guest_first_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                        @error('editingGuest.guest_first_name') <span
+                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Middle Name</label>
+                                        <input type="text" wire:model.defer="editingGuest.guest_middle_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        @error('editingGuest.guest_middle_name') <span
+                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Last Name</label>
+                                        <input type="text" wire:model.defer="editingGuest.guest_last_name"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                        @error('editingGuest.guest_last_name') <span
+                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm text-gray-700">Suffix</label>
+                                        <input type="text" wire:model.defer="editingGuest.guest_suffix"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        @error('editingGuest.guest_suffix') <span
+                                        class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Guest Type -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Guest Type</label>
+                                    <select wire:model.defer="editingGuest.guest_type_id"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Guest Type</option>
+                                        @foreach($guest_types as $type)
+                                            <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('editingGuest.guest_type_id') <span
+                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Gender</label>
+                                    <select wire:model.defer="editingGuest.guest_gender"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    @error('editingGuest.guest_gender') <span
+                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Residency -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Residency</label>
+                                    <select wire:model.defer="editingGuest.guest_residency"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                        <option value="">Select Residency</option>
+                                        <option value="local">Local</option>
+                                        <option value="foreigner">Foreigner</option>
+                                    </select>
+                                    @error('editingGuest.guest_residency') <span
+                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Country of Origin -->
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-700">Country of Origin</label>
+                                    <input type="text" wire:model.defer="editingGuest.guest_country_of_origin"
+                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                    @error('editingGuest.guest_country_of_origin') <span
+                                    class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex justify-end gap-2 mt-6">
+                                    <button wire:click="$set('showEditModal', false)"
+                                        class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                        Cancel
+                                    </button>
+                                    <button wire:click="updateGuest"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
+      
+
         </div>
     </div>
 </div>
 
+
+
+
+          {{-- <!-- Edit Room Modal -->
+             @if($showRoomModal && isset($editingRooms[$selectedPropertyId]))
+    <div id="guestRoomModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+            <h2 class="text-lg font-bold mb-4">Edit Property Details</h2>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label>Total Adults</label>
+                    <select wire:model="editingRooms.{{ $selectedPropertyId }}.adults" class="w-full border p-1">
+                        <option value="">Select</option>
+                        @for ($i = 0; $i <= ($maxAdultsPerRoom[$selectedPropertyId] ?? 0); $i++)
+                            <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <div>
+                    <label>Total Kids</label>
+                    <select wire:model="editingRooms.{{ $selectedPropertyId }}.kids" class="w-full border p-1">
+                        <option value="">Select</option>
+                        @for ($i = 0; $i <= ($maxKidsPerRoom[$selectedPropertyId] ?? 0); $i++)
+                            <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-6 col-span-2">
+                    <button wire:click="$set('showRoomModal', false)"
+                            class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="button" wire:click="updateRoom"
+                            class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white transition duration-150 ease-in-out">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif --}}
+ 

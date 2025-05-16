@@ -21,6 +21,7 @@ class AddTransaction extends Component
     public $activity_datetime = [];
     public $activityAmount = [];
     public $status = [];
+    public $total_pax;
 
     public $availableActivities;
 
@@ -35,6 +36,7 @@ class AddTransaction extends Component
         // Method to load related Payment data
         $this->loadTransactionData($transaction);
         $this->availableActivities = Activity::all();
+        $this->total_pax = $transaction->pax;
     }
 
     public function updated($property)
@@ -145,7 +147,7 @@ class AddTransaction extends Component
         $this->cart = array_values($this->cart);
     }
 
-        public function incrementActivity($activityId)
+    public function incrementActivity($activityId)
     {
         $current = $this->quantity[$activityId] ?? 1;
         $this->quantity[$activityId] = $current + 1;
@@ -160,9 +162,10 @@ class AddTransaction extends Component
     }
 
 
-
     public function register()
     {
+        $this->resetErrorBag();
+
         DB::transaction(function () {
             foreach ($this->cart as $item) {
                 if ($item['type'] === 'activity') {
@@ -178,23 +181,25 @@ class AddTransaction extends Component
                             'quantity' => $newQuantity,
                             'amount' => $newAmount,
                         ]);
-
-                        // Update invoice subtotal and balance_due
-                        $this->transaction->invoice->increment('sub_total', $item['amount']);
-                        $this->transaction->invoice->increment('balance_due', $item['amount']);
                     } else {
                         // New activity: attach it
                         $this->transaction->activities()->attach($item['activity_id'], [
                             'quantity' => $item['quantity'],
                             'amount' => $item['amount'],
                         ]);
-
-
-                        // Update invoice subtotal and balance_due
-                        $this->transaction->invoice->increment('sub_total', $item['amount']);
-                        $this->transaction->invoice->increment('balance_due', $item['amount']);
                     }
+
+                    // Update invoice subtotal and balance_due
+                    $this->transaction->invoice->increment('sub_total', $item['amount']);
+                    $this->transaction->invoice->increment('balance_due', $item['amount']);
                 }
+            }
+
+            // ✅ Sync the invoice status based on the new balance
+            $invoice = $this->transaction->invoice->fresh(); // Get the updated invoice
+            if ($invoice->balance_due > 0 && $invoice->invoice_status === 'completed') {
+                $invoice->invoice_status = 'pending';
+                $invoice->save();
             }
         });
 

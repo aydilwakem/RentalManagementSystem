@@ -26,7 +26,8 @@ class ProofOfPaymentPage extends Component
     public $notes;
     public $currency = 'PHP';
 
-
+    public $transactionExpired = false;
+    public $transactionNotFound = false;
     public $confirmCreateItem = false;
 
     public function confirmCreate()
@@ -35,13 +36,45 @@ class ProofOfPaymentPage extends Component
     }
 
 
+    public function render()
+    {
+        return view('livewire.guest.proof-of-payment-page', [
+            'payment_methods' => $this->payment_methods,
+        ]);
+    }
+
     public function mount()
     {
         $this->payment_methods = PaymentMethod::all();
     }
 
+
+    public function updatedTransactionId()
+    {
+        // Reset flags
+        $this->transactionExpired = false;
+        $this->transactionNotFound = false;
+
+        // Check if the transaction exists
+        $transaction = Transaction::find($this->transaction_id);
+
+        if (!$transaction) {
+            // If the transaction does not exist
+            $this->transactionNotFound = true;
+        } elseif ($transaction->transaction_status === 'expired') {
+            // If the transaction exists but is expired, set the expired flag
+            $this->transactionExpired = true;
+        }
+    }
+
+
     public function submitProofOfPayment()
     {
+
+        if ($this->transactionExpired) {
+            session()->flash('error', 'Your transaction has expired. You cannot upload proof of payment.');
+            return;
+        }
 
         $paymentDetails = [];
 
@@ -58,8 +91,17 @@ class ProofOfPaymentPage extends Component
             throw $e;
         }
 
+        // // Step 2: Check if the transaction is expired
+        // $transaction = Transaction::findOrFail($this->transaction_id);
 
-        // Step 2: Handle the payment and invoice update in a transaction
+        // if ($transaction->transaction_status === 'expired') {
+        //     // If the transaction is expired, show an error and return
+        //     session()->flash('error', 'Your transaction has expired. You are no longer able to upload proof of payment for this transaction.');
+        //     return;
+        // }
+
+
+        // Step 3: Handle the payment and invoice update in a transaction
         DB::transaction(function () use (&$paymentDetails) {
 
             // Step 1: Ensure image upload is complete before storing
@@ -74,7 +116,7 @@ class ProofOfPaymentPage extends Component
                 $screenshotPath = $this->payment_screenshot->store('proof-of-payments', 'public'); // Saves in storage/app/public/proof-of-payments
             }
 
-            // Step 3: Check if the transaction exists
+            // Step 4: Check if the transaction exists
             $transaction = Transaction::findOrFail($this->transaction_id);
 
             if (!$transaction) {
@@ -85,7 +127,6 @@ class ProofOfPaymentPage extends Component
             $firstName = $transaction->transactionUser->first_name;
             $lastName = $transaction->transactionUser->last_name;
             $email = $transaction->transactionUser->email;
-
             $checkIn = $transaction->start_datetime;
             $checkOut = $transaction->end_datetime;
             $totalAmount = $transaction->total_amount;
@@ -99,7 +140,7 @@ class ProofOfPaymentPage extends Component
             }
 
 
-            // Step 4: Create payment record
+            // Step 5: Create payment record
             Payment::create([
                 'invoice_id' => $invoice->id,
                 'payment_method_id' => $this->payment_method_id,
@@ -114,7 +155,7 @@ class ProofOfPaymentPage extends Component
                 // 'paid_at' => This will be set by the admin
             ]);
 
-            // Step 5: Update the transaction status
+            // Step 6: Update the transaction status
             if ($transaction->transaction_status === 'pending') {
                 $transaction->update([
                     'transaction_status' => 'reserved',
@@ -136,7 +177,7 @@ class ProofOfPaymentPage extends Component
             ];
         });
 
-        // Step 6: Reset form fields
+        // Step 7: Reset form fields
         $this->reset([
             'payment_method_id',
             'transaction_id',
@@ -157,14 +198,5 @@ class ProofOfPaymentPage extends Component
         // Step 7: Notify user and redirect
         session()->flash('message', 'Payment submitted successfully!');
         return redirect()->route('guest.thank-you-page');
-    }
-
-
-
-    public function render()
-    {
-        return view('livewire.guest.proof-of-payment-page', [
-            'payment_methods' => $this->payment_methods,
-        ]);
     }
 }
