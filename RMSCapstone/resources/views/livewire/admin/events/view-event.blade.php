@@ -14,6 +14,8 @@
 
     <h3 class="text-lg font-semibold text-gray-900 mb-3">Event Details</h3>
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
+        <div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
             <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 mb-3">Guest Details</h3>
@@ -74,6 +76,12 @@
             class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
             wire:click="confirmDelete({{ $event->id }})">
             Delete
+        </x-button>
+
+        <x-button icon="fa-solid fa-file"
+            class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+            wire:click="exportEventDetails">
+            Export PDF
         </x-button>
     </div>
 

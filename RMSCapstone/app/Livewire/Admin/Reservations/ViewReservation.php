@@ -184,4 +184,34 @@ class ViewReservation extends Component
         // Send the email with attachment
         Mail::to($this->transaction->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
     }
+
+     public function exportReservationDetails()
+    {
+        $transaction = Transaction::with([
+        'invoice.payments',
+        'transactionUser',
+        'guestDetails',
+        'properties',
+        'activities' => function ($query) {
+            $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
+        },
+    ])->findOrFail($this->transaction->id);
+
+        $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
+            'transaction' => $transaction,  // Pass the actual transaction
+            //Pass the relationships
+            'guestDetails' => $transaction->guestDetails,
+            'invoice' => $transaction->invoice,
+            'activities' => $transaction->activities,
+            'properties' => $transaction->properties,
+            'payments' => $transaction->invoice->payments, 
+            'totalRooms' => $transaction->totalRooms,
+            'totalAddons' => $transaction->totalAddons,
+        ]);
+
+        // Optional: Download directly or store then return URL
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'reservation-details-' . $this->transaction->start_datetime . '.pdf');
+    }
 }

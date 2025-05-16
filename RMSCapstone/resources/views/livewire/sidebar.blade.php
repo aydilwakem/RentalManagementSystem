@@ -123,6 +123,20 @@
                 </div>
                 @endcan
 
+                {{-- Reports --}}
+                <div>
+                    <a href="{{ route('admin.reservation-reports') }}">
+                        <div
+                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
+                            {{ Route::is('admin.reservation-reports') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            <i class="fa-solid fa-file"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">
+                                Reports
+                            </h1>
+                        </div>
+                    </a>
+                </div>
+
                 <!-- Rooms Menu -->
                 <div x-data="dropdown" class="relative">
                     @can('room-list')

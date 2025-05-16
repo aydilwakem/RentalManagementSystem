@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFController;
 use App\Livewire\Admin\EventCategories\EditEventCategory;
 use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use App\Livewire\Admin\EventHalls\EditEventHall;
@@ -40,6 +41,7 @@ use App\Livewire\Admin\Inclusions\EditInclusion;
 use App\Livewire\Admin\Inclusions\ViewInclusion;
 use App\Livewire\Admin\Properties\Leases\EditLease;
 use App\Livewire\Admin\Properties\Leases\ViewLease;
+use App\Livewire\Admin\Reports\ReservationReports;
 use App\Livewire\Admin\Tenants\EditTenant;
 use App\Livewire\Admin\Tenants\ViewTenant;
 use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
@@ -290,6 +292,10 @@ Route::middleware([
         return view('admin.events.deleted-events');
     })->name('admin.deleted-events')->middleware('can:event-soft-delete');
 
+    //REPORTS Page
+    Route::get('/reservation-reports', function () {
+        return view('admin.reports.reservation-reports');
+    })->name('admin.reservation-reports');
 
     // Event Categories Route
 

@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\Property;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -31,12 +32,24 @@ class ViewEvent extends Component
     }
 
     //To display foreign keys
-     public function mount()
+    public function mount()
     {
         $this->eventTypes = EventType::all();
         $this->event_invoice = Invoice::where('invoice_type', 'Event_Hall')->get();
         $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
+    }
+
+    public function exportEventDetails()
+    {
+        $pdf = Pdf::loadView('livewire.admin.events.event-details', [
+            'event' => $this->event,  // Pass the actual event
+        ]);
+
+        // Optional: Download directly or store then return URL
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'event-details-' . $this->event->start_datetime . '.pdf');
     }
 
     public function deleteEventItem(Transaction $event)
