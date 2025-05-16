@@ -22,41 +22,34 @@
                             class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                             <div class="md:flex">
 
-                                <div class="md:w-1/3" x-data="{
-                                    active: 0,
-                                    images: {{ json_encode($room->images ?? []) }},
-                                    hover: false
-                                }">
+                                <div class="md:w-1/3" x-data="roomCarousel({{ json_encode($room->images ?? []) }})" x-init="init()">
+
                                     <!-- Carousel -->
                                     <div class="relative w-full h-64 overflow-hidden rounded-xl shadow-md"
-                                         @mouseenter="hover = true" @mouseleave="hover = false">
+                                        @mouseenter="hover = true" @mouseleave="hover = false">
 
                                         <!-- Images -->
                                         <template x-for="(image, index) in images" :key="index">
-                                            <img
-                                                x-show="active === index"
-                                                :src="'/storage/' + image"
+                                            <img x-show="active === index" :src="'/storage/' + image"
                                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
                                                 x-transition:enter="transition ease-out duration-500"
                                                 x-transition:enter-start="opacity-0"
-                                                x-transition:enter-end="opacity-100"
-                                            />
+                                                x-transition:enter-end="opacity-100" />
                                         </template>
 
-                                        <!-- Default Imga -->
-                                        <img x-show="images.length === 0"
-                                             src="{{ asset('images/rms-default.png') }}"
-                                             class="absolute inset-0 w-full h-full object-cover" />
+                                        <!-- Default Image -->
+                                        <img x-show="images.length === 0" src="{{ asset('images/rms-default.png') }}"
+                                            class="absolute inset-0 w-full h-full object-cover" />
 
                                         <!-- Prev Button -->
                                         <button x-show="hover"
                                             @click="active = active > 0 ? active - 1 : images.length - 1"
                                             class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
                                             x-cloak>
-                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-width="2"
-                                                 viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                      d="M15 19l-7-7 7-7" />
+                                                    d="M15 19l-7-7 7-7" />
                                             </svg>
                                         </button>
 
@@ -65,10 +58,9 @@
                                             @click="active = active < images.length - 1 ? active + 1 : 0"
                                             class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
                                             x-cloak>
-                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-width="2"
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                      d="M9 5l7 7-7 7" />
+                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor"
+                                                stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                                             </svg>
                                         </button>
 
@@ -80,8 +72,8 @@
                                                         'bg-white': active !== index,
                                                         'bg-green-200': active === index
                                                     }"
-                                                    class="w-2.5 h-2.5 rounded-full transition-all duration-300"
-                                                ></button>
+                                                    class="w-2.5 h-2.5 rounded-full transition-all duration-300">
+                                                </button>
                                             </template>
                                         </div>
                                     </div>
@@ -89,7 +81,8 @@
 
 
 
-                                <div class="md:w-2/3 p-4 flex flex-col md:flex-row justify-between gap-4 bg-gray-50">
+
+                                <div class="md:w-2/3 p-4 flex flex-col md:flex-row justify-between gap-4 bg-white">
 
                                     <!-- Room Info -->
                                     <div class="md:w-2/3">
@@ -188,4 +181,16 @@
             </div>
         @endif
     </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('roomCarousel', (images) => ({
+                active: 0,
+                images: images,
+                hover: false,
+                init() {
+                    this.active = 0;
+                }
+            }));
+        });
+    </script>
 </div>

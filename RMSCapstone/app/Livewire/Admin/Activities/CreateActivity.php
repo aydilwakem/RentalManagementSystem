@@ -28,10 +28,9 @@ class CreateActivity extends Component
         $this->confirmCreateItem = true;
     }
 
-    public function removeImage($index)
+    public function removeImage()
     {
-        unset($this->images[$index]);
-        $this->images = array_values($this->images); // reindex array
+        $this->image = null;
     }
 
     public function updatedImages()
@@ -51,22 +50,22 @@ class CreateActivity extends Component
 
     public function saveActivity()
     {
-    try{
-        // Validate input
-        $this->validate([
-            'name' => 'required|string|max:255|unique:prd_activities,name',
-            'description' => 'nullable|string',
-            'amount' => 'required|numeric|min:0|max:10000',
-            'inclusions' => 'nullable|string',
-            'image' => 'nullable|image|max:1024', // Max 1MB image
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+        try {
+            // Validate input
+            $this->validate([
+                'name' => 'required|string|max:255|unique:prd_activities,name',
+                'description' => 'nullable|string',
+                'amount' => 'required|numeric|min:0|max:10000',
+                'inclusions' => 'nullable|string',
+                'image' => 'nullable|image|max:1024', // Max 1MB image
+                'images' => 'nullable|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         // Ensure image upload is valid
         if ($this->image && !$this->image->isValid()) {
@@ -101,7 +100,6 @@ class CreateActivity extends Component
             'inclusions' => $this->inclusions,
             'image' => $imagePath,
             'images' => array_merge($imagePaths, $this->storedImages),
-
         ]);
 
         // Reset form fields

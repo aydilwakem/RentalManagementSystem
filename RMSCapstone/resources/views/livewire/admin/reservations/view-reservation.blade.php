@@ -161,7 +161,7 @@
                         <div>₱{{ number_format($transaction->total_amount, 2) }}</div>
                     </div>
                     <div>
-                        <strong>Deposit:</strong>
+                        <strong>Required Deposit:</strong>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
                     </div>
                     <div>
@@ -288,7 +288,7 @@
                         <div><strong>Grand Total:</strong></div>
                         <div class="font-semibold">₱{{ number_format($invoice->sub_total, 2) }}</div>
 
-                        <div><strong>Deposit:</strong></div>
+                        <div><strong>Required Deposit:</strong></div>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
 
                         <div><strong>Amount Paid:</strong></div>
@@ -319,7 +319,7 @@
                 <div>
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
-                        <button 
+                        <button
                             wire:click="GenerateReceiptModal"
                             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
                             <i class="fas fa-receipt"></i>
@@ -327,7 +327,7 @@
                         </button>
                     @else
                         <!-- Show this if receipt already exists -->
-                        <button 
+                        <button
                             wire:click="ShowReceipt"
                             class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                             <i class="fas fa-eye"></i>
@@ -343,7 +343,7 @@
                         <!-- Header -->
                         <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
                             <h2 class="text-2xl font-semibold text-gray-800">Official Receipt</h2>
-                            <button wire:click="$set('showReceiptModal', false)" 
+                            <button wire:click="$set('showReceiptModal', false)"
                                     class="text-gray-400 hover:text-red-600 transition duration-200 text-3xl leading-none">&times;</button>
                         </div>
 
@@ -384,14 +384,14 @@
                                 Close
                             </button>
 
-                            <button 
+                            <button
                                 wire:click="printOfficialReceipt"
                                 class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                                 <i class="fas fa-print"></i>
                                 Print Receipt
                             </button>
 
-                             <button 
+                             <button
                                 wire:click="sendReceiptToEmail"
                                 class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                                 <i class="fas fa-envelope"></i>
@@ -402,7 +402,7 @@
                 </div>
             @endif
 
-     
+
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
             <section id="payments">
 

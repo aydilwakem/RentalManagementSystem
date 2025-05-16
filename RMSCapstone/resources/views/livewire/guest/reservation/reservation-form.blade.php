@@ -79,7 +79,7 @@
         It also allows the user to remove items (rooms/activities) from the reservation cart.
         --}}
 
-        <div class="w-full lg:w-1/3 bg-gray-50 border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-0 z-10">
+        <div class="w-full lg:w-1/3 bg-white border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-0 z-10">
             <!------------------------------ Reservation Date Details --------------------------->
             @php
                 use Carbon\Carbon;
@@ -337,7 +337,7 @@
                     @endif
 
                     <!-- Terms and Conditions Modal -->
-                    @if ($currentStep == 4)
+                    @if ($currentStep == 1)
                         <div x-data="{ showModal: false, agreed: false }" x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
                             @keydown.escape.window="showModal = false">
 
@@ -353,11 +353,20 @@
                                 x-show="showModal" x-transition style="display: none;">
                                 <div
                                     class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                                    <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
+                                    <h2 class="text-xl font-bold mb-4 text-green-800">Terms and Conditions</h2>
 
-                                    <div class="text-sm text-gray-800 space-y-3">
+                                    <div class="text-sm text-gray-800 space-y-3 text-justify">
                                         <p>
-                                            {{ $terms_and_conditions }}
+                                            By completing this reservation, you agree to abide by all property rules and
+                                            regulations. Any damages incurred during your stay will be your
+                                            responsibility and charged accordingly. Detailed payment information,
+                                            cancellation policies, and other important terms will be provided upon
+                                            confirmation. We look forward to hosting you and are committed to ensuring
+                                            you have a pleasant and enjoyable stay.
+                                        </p>
+                                        <p>
+                                            We reserve the right to deny entry to anyone violating these terms. For any
+                                            questions or clarifications, please contact our support team <span class="text-green-700">canopyfarm@gmail.com</span>
                                         </p>
                                     </div>
 
@@ -377,14 +386,30 @@
                                             class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                             Cancel
                                         </button>
-                                        <button type="button" :disabled="!agreed"
-                                            @click="if (agreed) { showModal = false; $wire.register(); }"
+                                        <button wire:loading.attr="disabled" type="button" :disabled="!agreed"
+                                            @click="if (agreed) { $wire.register(); }"
                                             class="mt-4 block px-4 py-2  border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                             :class="agreed
                                                 ?
                                                 'bg-green-700 bg-opacity-85 hover:bg-green-700 cursor-pointer' :
                                                 'bg-green-400 cursor-not-allowed'">
-                                            Complete Reservation
+                                            <div class="flex items-center justify-center">
+                                                <!-- Spinner -->
+                                                <span wire:loading wire:target="register" class="mr-2">
+                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12"
+                                                            r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+
+                                                <!-- Button Text -->
+                                                <span wire:loading.remove wire:target="register">
+                                                    Complete Reservation
+                                                </span>
+                                            </div>
                                         </button>
                                     </div>
                                 </div>
