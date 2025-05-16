@@ -451,6 +451,11 @@ Route::middleware([
         return view('admin.reservations.reservations-list');
     })->name('admin.reservations-list');
 
+    //Create Transaction
+    Route::get('create/new-reservation', function () {
+        return view('admin.reservations.create-reservation');
+    })->name('admin.create-reservation');
+
     // View Reservation
     Route::get('view/reservation/{transaction}', ViewReservation::class)
         ->name('admin.view-reservation');
@@ -462,6 +467,8 @@ Route::middleware([
     // Add Transaction
     Route::get('add/transaction/{transaction}', AddTransaction::class)
         ->name('admin.add-transaction');
+
+
 
 
     /**
@@ -492,10 +499,7 @@ Route::middleware([
 
 
 
-    //Create
-    Route::get('create/new-reservation', function () {
-        return view('admin.transactions.new.create-transaction');
-    })->name('admin.create-new-transaction')->middleware('can:new-reservation-create');
+
 
     // View
     Route::get('view/new-reservation/{transaction}', ViewTransaction::class)

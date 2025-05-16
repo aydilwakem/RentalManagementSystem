@@ -219,6 +219,8 @@
                     @endif
                     <p class="mt-4">Total Guests: {{ $total_pax }}</p>
                 </div>
+
+                
                 @else
                 <!-- Show when no room is selected -->
                 <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">

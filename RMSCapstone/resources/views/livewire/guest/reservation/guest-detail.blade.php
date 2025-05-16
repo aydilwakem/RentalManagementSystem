@@ -12,6 +12,9 @@
             </div>
 
             <div class="p-6 space-y-6">
+
+
+
                 <!-- Guest Information Form -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- First Name -->
@@ -121,6 +124,9 @@
                     </div>
 
                 </div>
+
+
+
 
                 <!-- Additional Guests Section (Optional) -->
                 <div class="flex flex-col space-y-2 w-full">

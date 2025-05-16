@@ -2,582 +2,583 @@
 
     {{-- If there's no reservation, show this --}}
     @if ($transactions->isEmpty())
-        <!-- Empty Table Message -->
-        <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation"
-                to
-                add a reservation.</p>
-            <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
-                Create Reservation
-            </x-button>
-        </div>
+    <!-- Empty Table Message -->
+    <div class="text-center py-10">
+        <p class="text-gray-500 text-lg font-semibold">No new reservations yet.<br> Click "Create Reservation"
+            to
+            add a reservation.</p>
+        <x-button class="mt-4" href="{{ route('admin.create-new-transaction') }}" icon="fas fa-plus" wire:navigate>
+            Create Reservation
+        </x-button>
+    </div>
 
-        {{-- If there's a reservation, show this --}}
+    {{-- If there's a reservation, show this --}}
     @else
-        {{-- Display Session Message --}}
-        @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+    {{-- Display Session Message --}}
+    @if (session('message'))
+    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                                                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                {{ session('message') }}
-            </div>
-        @endif
-        <div>
-            <!-- Header-->
-            <div class="flex items-center justify-between mb-4">
+        {{ session('message') }}
+    </div>
+    @endif
+    <div>
+        <!-- Header-->
+        <div class="flex items-center justify-between mb-4">
 
-                <!-- Create Transaction Button -->
-                <div class="flex justify-between items-center">
-                    @can('new-reservation-create')
-                        <x-button icon="fas fa-plus" href="{{ route('admin.create-new-transaction') }}">
-                            New Transaction
-                        </x-button>
-                    @endcan
-                </div>
-                <!-- Soft-Deletes -->
-                @can('new-reservation-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
-                        Deleted New Reservations
-                    </x-button>
+            <!-- Create Transaction Button -->
+            <div class="flex justify-between items-center">
+                @can('new-reservation-create')
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
+                    Create Reservation
+                </x-button>
                 @endcan
             </div>
+            <!-- Soft-Deletes -->
+            @can('new-reservation-soft-delete')
+            <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
+                Deleted New Reservations
+            </x-button>
+            @endcan
+        </div>
+    </div>
+
+    {{-- Start of Reservation List Container --}}
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+        {{-- Header --}}
+        <div class="flex items-center justify-between p-4">
+            {{-- Search --}}
+            <div class="flex">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input wire:model.live.debounce.300ms="search" type="text"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                        placeholder="Search" required="">
+                </div>
+            </div>
+
+            {{-- Status Type --}}
+            <div class="flex space-x-3">
+                <div class="flex space-x-3 items-center">
+                    <label class="flex text-sm font-medium text-gray-900">Reservation Status:</label>
+                    <select wire:model.live="statusFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="">All</option>
+                        <option value="pending">Awaiting Payment</option>
+                        <option value="reserved">Pending Verification</option>
+                        <option value="receipt_verified">Payment Verified</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="ongoing">On-going</option>
+                        <option value="done">Completed</option>
+                        <option value="no_show">No Show</option>
+                        <option value="terminated">Terminated</option>
+                        <option value="expired">Expired</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        {{-- Start of Reservation List Container --}}
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-            {{-- Header --}}
-            <div class="flex items-center justify-between p-4">
-                {{-- Search --}}
-                <div class="flex">
-                    <div class="relative w-full">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
-                            placeholder="Search" required="">
-                    </div>
-                </div>
+        {{-- Table --}}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                {{-- Start of Column Headers --}}
+                <thead class="text-sm text-gray-700 bg-gray-200">
+                    <tr>
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
+                            <button class="flex items-center">
+                                ID
+                                @if ($sortBy !== 'id')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
 
-                {{-- Status Type --}}
-                <div class="flex space-x-3">
-                    <div class="flex space-x-3 items-center">
-                        <label class="flex text-sm font-medium text-gray-900">Reservation Status:</label>
-                        <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option value="">All</option>
-                            <option value="pending">Awaiting Payment</option>
-                            <option value="reserved">Pending Verification</option>
-                            <option value="receipt_verified">Payment Verified</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="ongoing">On-going</option>
-                            <option value="done">Completed</option>
-                            <option value="no_show">No Show</option>
-                            <option value="terminated">Terminated</option>
-                            <option value="expired">Expired</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
+                            <button class="flex items-center">
+                                Guest Name
+                                @if ($sortBy !== 'first_name')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
 
-            {{-- Table --}}
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    {{-- Start of Column Headers --}}
-                    <thead class="text-sm text-gray-700 bg-gray-200">
-                        <tr>
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
-                                    @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+
+                        <th scope="col" class="px-4 py-3">Room/s</th>
+
+                        {{-- Pax --}}
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
+                            <button class="flex items-center">
+                                Pax
+                                @if ($sortBy !== 'pax')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
+
+                        {{-- Stay Duration --}}
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('days')">
+                            <button class="flex items-center">
+                                Stay Duration
+                                @if ($sortBy !== 'days')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
+
+                        {{-- Check-in Date --}}
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('start_datetime')">
+                            <button class="flex items-center">
+                                Check-in
+                                @if ($sortBy !== 'start_datetime')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
+
+                        {{-- Check-out Date --}}
+                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('end_datetime')">
+                            <button class="flex items-center">
+                                Check-out
+                                @if ($sortBy !== 'end_datetime')
+                                {{-- Default icon when sorting is not active --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                {{-- Up arrow (Ascending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                {{-- Down arrow (Descending) --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
+
+                        {{-- Status --}}
+                        <th scope="col" class="px-4 py-3">Status</th>
+
+                        {{-- Action Buttonss --}}
+                        <th scope="col" class="px-4 py-3">Action</th>
+
+                    </tr>
+                </thead>
+                {{-- End of Column Headers --}}
+
+                {{-- Start of Table Body --}}
+                <tbody class="text-left">
+
+                    @forelse ($transactions as $transaction)
+                    <tr class="border-b">
+
+                        {{-- ID --}}
+                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                            {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
+                        </th>
+
+                        {{-- First Name and Last Name --}}
+                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                            {{ $transaction->transactionUser->first_name }}
+                            {{ $transaction->transactionUser->last_name }}
+                        </th>
+
+                        {{-- Rooms --}}
+                        <td class="px-4 py-3">
+                            @foreach ($transaction->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                            @endforeach
+                        </td>
+
+                        {{-- Pax --}}
+                        <td class="px-4 py-3"> {{ $transaction->pax }}</td>
+
+                        {{-- Stay Duration --}}
+                        <td class="px-4 py-3">
+                            {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)
+                        </td>
+
+                        {{-- Check-in Date --}}
+                        <td class="px-4 py-3">
+                            {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}
+                        </td>
+
+                        {{-- Check-out Date --}}
+                        <td class="px-4 py-3">
+                            {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}
+                        </td>
+
+                        {{-- Transaction Status --}}
+                        <td class=" px-4 py-2">
+                            @if ($transaction->transaction_status === 'pending')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
+                                Payment</span>
+                            @elseif ($transaction->transaction_status === 'reserved')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
+                                Verification</span>
+                            @elseif ($transaction->transaction_status === 'receipt_verified')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
+                                Verified</span>
+                            @elseif ($transaction->transaction_status === 'confirmed')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
+                            @elseif ($transaction->transaction_status === 'ongoing')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
+                            </span>
+                            @elseif ($transaction->transaction_status === 'done')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
+                            @elseif ($transaction->transaction_status === 'no_show')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
+                                Show</span>
+                            @elseif ($transaction->transaction_status === 'terminated')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
+                            @elseif ($transaction->transaction_status === 'expired')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
+                            @elseif ($transaction->transaction_status === 'cancelled')
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
+                            @endif
+                        </td>
+
+
+
+                        {{-- Action Icons --}}
+                        <td class="px-6 py-3 flex items-center relative">
+
+                            @php
+                            $dropdownId = 'dropdown-' . $transaction->id;
+                            $buttonId = 'dropdownDefaultButton-' . $transaction->id;
+                            @endphp
+
+                            {{-- Ellipsis Dropdown --}}
+                            <button data-toggle="dropdown" data-id="{{ $transaction->id }}"
+                                class="text-gray-700 hover:text-blue-600 focus:outline-none">
+                                <i class="fas fa-ellipsis-h text-xl"></i>
+                            </button>
+
+                            {{-- Dropdown --}}
+                            <div data-dropdown="{{ $transaction->id }}"
+                                class="dropdown-menu absolute top-full mt-2 right-0 z-10 hidden bg-white divide-y divide-gray-100 overflow-visible max-h-none                                                                                                                                                                                                                                                                                                                                                                                                       rounded-lg shadow-sm w-44 dark:bg-gray-700">
+
+                                <!--------------------- Safe Actions --------------------------------->
+                                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                    <li>
+                                        <!-- View Icon -->
+                                        @can('new-reservation-view')
+                                        <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-eye mr-2 text-blue-600"></i> View Reservation
+                                        </a>
+                                        @endcan
+                                    </li>
+                                    <!-- Confirm Receipt -->
+                                    @if ($transaction->transaction_status === 'reserved')
+                                    <li>
+                                        <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
+                                            Receipt
+                                        </a>
+                                    </li>
+                                    @endif
+
+                                    <!-- Confirm Reservation -->
+                                    @if ($transaction->transaction_status === 'receipt_verified')
+                                    <li>
+                                        <a href="#"
+                                            wire:click.prevent="showActionModal('confirmReservation', 'Confirm Reservation', 'Are you sure you want to confirm this reservation?', {{ $transaction->id }})"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
+                                            Reservation
+                                        </a>
+                                    </li>
+                                    @endif
+
+                                    <!-- Start Reservation -->
+                                    @if ($transaction->transaction_status === 'confirmed')
+                                    <li>
+                                        <a href="#"
+                                            wire:click.prevent="showActionModal('startReservation', 'Start Reservation', 'Are you sure you want to start this reservation?', {{ $transaction->id }})"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-play-circle mr-2 text-indigo-600"></i> Start
+                                            Reservation
+                                        </a>
+                                    </li>
+                                    @endif
+
+                                    <!-- Edit Transaction -->
+                                    @if (
+                                    $transaction->transaction_status === 'pending' ||
+                                    $transaction->transaction_status === 'reserved' ||
+                                    $transaction->transaction_status === 'receipt_verified' ||
+                                    $transaction->transaction_status === 'confirmed'
+                                    )
+                                    <li>
+                                        <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit
+                                            Reservation
+                                        </a>
+                                    </li>
+                                    @endif
+
+
+
+                                    <!-- Add Transaction -->
+                                    @if ($transaction->transaction_status === 'ongoing')
+                                    <a href="{{ route('admin.add-transaction', ['transaction' => $transaction->id]) }}"
+                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add
+                                        Transaction
                                         @endif
-                                    @endif
-                                </button>
-                            </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
-                                <button class="flex items-center">
-                                    Guest Name
-                                    @if ($sortBy !== 'first_name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                        <!-- Mark as Done -->
+                                        @if ($transaction->transaction_status === 'ongoing')
+                                        <a href="#"
+                                            wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
+                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark
+                                            as Done
+                                        </a>
                                         @endif
-                                    @endif
-                                </button>
-                            </th>
 
-
-                            <th scope="col" class="px-4 py-3">Room/s</th>
-
-                            {{-- Pax --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
-                                <button class="flex items-center">
-                                    Pax
-                                    @if ($sortBy !== 'pax')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                        <!-- Mark as No Show -->
+                                        @if ($transaction->transaction_status === 'confirmed')
+                                        <li>
+                                            <a href="#"
+                                                wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }})"
+                                                class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                <i class="fas fa-user-slash mr-2 text-pink-600"></i> Mark as No
+                                                Show
+                                            </a>
+                                        </li>
                                         @endif
+                                </ul>
+
+                                <!--------------------- Destructive Actions -------------------------->
+                                <div class="py-1">
+
+                                    <!-- Cancel -->
+                                    @if ($transaction->transaction_status === 'pending' ||
+                                    $transaction->transaction_status === 'reserved')
+                                    <a href="#"
+                                        wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }})"
+                                        class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <i class="fas fa-times mr-2"></i> Cancel Reservation
+                                    </a>
                                     @endif
-                                </button>
-                            </th>
 
-                            {{-- Stay Duration --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('days')">
-                                <button class="flex items-center">
-                                    Stay Duration
-                                    @if ($sortBy !== 'days')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
+                                    <!-- Terminate -->
+                                    @if ($transaction->transaction_status === 'ongoing')
+                                    <a href="#"
+                                        wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }})"
+                                        class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <i class="fas fa-ban mr-2"></i> Terminate Reservation
+                                    </a>
                                     @endif
-                                </button>
-                            </th>
 
-                            {{-- Check-in Date --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('start_datetime')">
-                                <button class="flex items-center">
-                                    Check-in
-                                    @if ($sortBy !== 'start_datetime')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
+                                    <!-- Delete -->
+                                    @if (
+                                    $transaction->transaction_status === 'cancelled' ||
+                                    $transaction->transaction_status === 'expired' ||
+                                    $transaction->transaction_status === 'done' ||
+                                    $transaction->transaction_status === 'no_show' ||
+                                    $transaction->transaction_status === 'terminated'
+                                    )
+                                    <a href="#"
+                                        wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }})"
+                                        class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <i class="fas fa-trash-alt mr-2"></i> Delete Reservation
+                                    </a>
                                     @endif
-                                </button>
-                            </th>
 
-                            {{-- Check-out Date --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('end_datetime')">
-                                <button class="flex items-center">
-                                    Check-out
-                                    @if ($sortBy !== 'end_datetime')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            {{-- Status --}}
-                            <th scope="col" class="px-4 py-3">Status</th>
-
-                            {{-- Action Buttonss --}}
-                            <th scope="col" class="px-4 py-3">Action</th>
-
-                        </tr>
-                    </thead>
-                    {{-- End of Column Headers --}}
-
-                    {{-- Start of Table Body --}}
-                    <tbody class="text-left">
-
-                        @forelse ($transactions as $transaction)
-                            <tr class="border-b">
-
-                                {{-- ID --}}
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
-                                </th>
-
-                                {{-- First Name and Last Name --}}
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $transaction->transactionUser->first_name }}
-                                    {{ $transaction->transactionUser->last_name }}
-                                </th>
-
-                                {{-- Rooms --}}
-                                <td class="px-4 py-3">
-                                    @foreach ($transaction->properties as $property)
-                                        {{ $property->name_number ?? 'N/A' }}<br>
-                                    @endforeach
-                                </td>
-
-                                {{-- Pax --}}
-                                <td class="px-4 py-3"> {{ $transaction->pax }}</td>
-
-                                {{-- Stay Duration --}}
-                                <td class="px-4 py-3">
-                                    {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)
-                                </td>
-
-                                {{-- Check-in Date --}}
-                                <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}
-                                </td>
-
-                                {{-- Check-out Date --}}
-                                <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}
-                                </td>
-
-                                {{-- Transaction Status --}}
-                                <td class=" px-4 py-2">
-                                    @if ($transaction->transaction_status === 'pending')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
-                                            Payment</span>
-                                    @elseif ($transaction->transaction_status === 'reserved')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
-                                            Verification</span>
-                                    @elseif ($transaction->transaction_status === 'receipt_verified')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
-                                            Verified</span>
-                                    @elseif ($transaction->transaction_status === 'confirmed')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
-                                    @elseif ($transaction->transaction_status === 'ongoing')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
-                                        </span>
-                                    @elseif ($transaction->transaction_status === 'done')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
-                                    @elseif ($transaction->transaction_status === 'no_show')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
-                                            Show</span>
-                                    @elseif ($transaction->transaction_status === 'terminated')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
-                                    @elseif ($transaction->transaction_status === 'expired')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
-                                    @elseif ($transaction->transaction_status === 'cancelled')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
-                                    @endif
-                                </td>
-
-
-
-                                {{-- Action Icons --}}
-                                <td class="px-6 py-3 flex items-center relative">
-
-                                    @php
-                                        $dropdownId = 'dropdown-' . $transaction->id;
-                                        $buttonId = 'dropdownDefaultButton-' . $transaction->id;
-                                    @endphp
-
-                                    {{-- Ellipsis Dropdown --}}
-                                    <button data-toggle="dropdown" data-id="{{ $transaction->id }}"
-                                        class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                                        <i class="fas fa-ellipsis-h text-xl"></i>
-                                    </button>
-
-                                    {{-- Dropdown --}}
-                                    <div data-dropdown="{{ $transaction->id }}"
-                                        class="dropdown-menu absolute top-full mt-2 right-0 z-10 hidden bg-white divide-y divide-gray-100 overflow-visible max-h-none                                                                                                                                                                                                                                                                                                                                                                                                       rounded-lg shadow-sm w-44 dark:bg-gray-700">
-
-                                        <!--------------------- Safe Actions --------------------------------->
-                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
-                                            <li>
-                                                <!-- View Icon -->
-                                                @can('new-reservation-view')
-                                                    <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-eye mr-2 text-blue-600"></i> View Reservation
-                                                    </a>
-                                                @endcan
-                                            </li>
-                                            <!-- Confirm Receipt -->
-                                            @if ($transaction->transaction_status === 'reserved')
-                                                <li>
-                                                    <a href="{{ route('admin.view-reservation', ['transaction' => $transaction->id]) }}"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
-                                                        Receipt
-                                                    </a>
-                                                </li>
-                                            @endif
-
-                                            <!-- Confirm Reservation -->
-                                            @if ($transaction->transaction_status === 'receipt_verified')
-                                                <li>
-                                                    <a href="#"
-                                                        wire:click.prevent="showActionModal('confirmReservation', 'Confirm Reservation', 'Are you sure you want to confirm this reservation?', {{ $transaction->id }})"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-circle mr-2 text-green-600"></i> Confirm
-                                                        Reservation
-                                                    </a>
-                                                </li>
-                                            @endif
-
-                                            <!-- Start Reservation -->
-                                            @if ($transaction->transaction_status === 'confirmed')
-                                                <li>
-                                                    <a href="#"
-                                                        wire:click.prevent="showActionModal('startReservation', 'Start Reservation', 'Are you sure you want to start this reservation?', {{ $transaction->id }})"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-play-circle mr-2 text-indigo-600"></i> Start
-                                                        Reservation
-                                                    </a>
-                                                </li>
-                                            @endif
-
-                                            <!-- Edit Transaction -->
-                                            @if (
-                                                    $transaction->transaction_status === 'pending' ||
-                                                    $transaction->transaction_status === 'reserved' ||
-                                                    $transaction->transaction_status === 'receipt_verified' ||
-                                                    $transaction->transaction_status === 'confirmed'
-                                                )
-                                                <li>
-                                                    <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit
-                                                        Reservation
-                                                    </a>
-                                                </li>
-                                            @endif
-
-
-
-                                            <!-- Add Transaction -->
-                                            @if ($transaction->transaction_status === 'ongoing')
-                                                <a href="{{ route('admin.add-transaction', ['transaction' => $transaction->id]) }}"
-                                                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add
-                                                    Transaction
-                                            @endif
-
-                                                <!-- Mark as Done -->
-                                                @if ($transaction->transaction_status === 'ongoing')
-                                                    <a href="#"
-                                                        wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }})"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-double mr-2 text-emerald-600"></i> Mark
-                                                        as Done
-                                                    </a>
-                                                @endif
-
-                                                <!-- Mark as No Show -->
-                                                @if ($transaction->transaction_status === 'confirmed')
-                                                    <li>
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }})"
-                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            <i class="fas fa-user-slash mr-2 text-pink-600"></i> Mark as No
-                                                            Show
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                        </ul>
-
-                                        <!--------------------- Destructive Actions -------------------------->
-                                        <div class="py-1">
-
-                                            <!-- Cancel -->
-                                            @if ($transaction->transaction_status === 'pending' || $transaction->transaction_status === 'reserved')
-                                                <a href="#"
-                                                    wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }})"
-                                                    class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                    <i class="fas fa-times mr-2"></i> Cancel Reservation
-                                                </a>
-                                            @endif
-
-                                            <!-- Terminate -->
-                                            @if ($transaction->transaction_status === 'ongoing')
-                                                <a href="#"
-                                                    wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }})"
-                                                    class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-ban mr-2"></i> Terminate Reservation
-                                                </a>
-                                            @endif
-
-                                            <!-- Delete -->
-                                            @if (
-                                                    $transaction->transaction_status === 'cancelled' ||
-                                                    $transaction->transaction_status === 'expired' ||
-                                                    $transaction->transaction_status === 'done' ||
-                                                    $transaction->transaction_status === 'no_show' ||
-                                                    $transaction->transaction_status === 'terminated'
-                                                )
-                                                <a href="#"
-                                                    wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }})"
-                                                    class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                    <i class="fas fa-trash-alt mr-2"></i> Delete Reservation
-                                                </a>
-                                            @endif
-
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No reservations found matching this status.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                    {{-- End of Table Body --}}
-                </table>
-            </div>
-
-            {{-- Pagination --}}
-            <div class="py-4 px-3">
-                <div class="flex ">
-                    <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                        <select wire:model.live="perPage"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-                </div>
-                {{ $transactions->links() }}
-            </div>
-
-            <!-- Action Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmingAction">
-                <x-slot name="title">
-                    {{ __($actionTitle) }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __($actionMessage) }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
-                    </x-secondary-button>
-
-                    <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
-                        {{ $actionTitle }}
-                    </x-button>
-                </x-slot>
-            </x-dialog-modal>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="15" class="text-center py-10 text-gray-500">
+                            No reservations found matching this status.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                {{-- End of Table Body --}}
+            </table>
         </div>
+
+        {{-- Pagination --}}
+        <div class="py-4 px-3">
+            <div class="flex ">
+                <div class="flex space-x-4 items-center mb-3">
+                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                    <select wire:model.live="perPage"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+            {{ $transactions->links() }}
+        </div>
+
+        <!-- Action Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmingAction">
+            <x-slot name="title">
+                {{ __($actionTitle) }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __($actionMessage) }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                    {{ $actionTitle }}
+                </x-button>
+            </x-slot>
+        </x-dialog-modal>
+    </div>
 
     @endif
 
