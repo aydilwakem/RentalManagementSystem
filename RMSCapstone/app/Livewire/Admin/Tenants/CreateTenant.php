@@ -47,13 +47,7 @@ class CreateTenant extends Component
                 'email' => 'required|email|unique:trn_users,email',
                 'contact_number' => 'nullable|string|max:100',
                 'company_name' => 'nullable|string|max:255',
-                'house_number' => 'nullable|string|max:255',
-                'street' => 'nullable|string|max:255',
-                'barangay' => 'nullable|string|max:255',
                 'city_municipality' => 'nullable|string|max:255',
-                'province' => 'nullable|string|max:255',
-                'region' => 'nullable|string|max:255',
-                'postal_code' => 'nullable|string|max:255',
                 'country' => 'required|string|max:255',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -72,18 +66,12 @@ class CreateTenant extends Component
             'email' => $this->email,
             'company_name' => $this->company_name,
             'contact_number' => $this->contact_number,
-            'house_number' => $this->house_number,
-            'street' => $this->street,
-            'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
-            'region' => $this->region,
-            'postal_code' => $this->postal_code,
             'country' => $this->country,
         ]);
 
         // Reset form fields
-        $this->reset(['trn_user_type', 'first_name', 'middle_name', 'last_name', 'suffix',  'contact_number', 'company_name', 'email', 'house_number', 'street', 'barangay', 'city_municipality', 'province', 'region', 'postal_code', 'country']);
+        $this->reset(['trn_user_type', 'first_name', 'middle_name', 'last_name', 'suffix',  'contact_number', 'company_name', 'email', 'city_municipality', 'country']);
 
         // Flash message for success
         session()->flash('message', 'Tenant successfully created!');

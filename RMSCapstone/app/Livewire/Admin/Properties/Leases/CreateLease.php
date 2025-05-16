@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin\Properties\Leases;
 
+use App\Models\Invoice;
 use App\Models\Property;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -88,38 +91,58 @@ class CreateLease extends Component
 
     public function saveLease(){
         try{
-        $this->validate([
+            $this->validate([
             'house_id' => 'required|exists:properties,id',
             'selectedTenant' => 'required|exists:trn_users,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'total_amount' => 'required|numeric|min:0',
             'pax' => 'required|numeric|min:1',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        // If validation fails, close the modal
+
+            ]); 
+        }catch (ValidationException $e) {
         $this->confirmCreateItem = false;
         throw $e;
     }
-    
-        // Create the lease (Transaction)
+
+        DB::transaction(function () {
+        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+
+        // Step 1: Create transaction
         $transaction = Transaction::create([
             'reservation_type_id' => $this->reservation_type_id,
             'trn_user_type' => $this->trn_user_type,
             'start_datetime' => Carbon::parse($this->start_date),
-            'end_datetime' =>  Carbon::parse($this->end_date),
+            'end_datetime' => Carbon::parse($this->end_date),
             'total_amount' => $this->total_amount,
+            'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'created_by' => $this->selectedTenant,
-            'pax' => $this->pax, 
+            'pax' => $this->pax,
         ]);
-        
-    
-        // Calculate number of days
+
+        // Step 2: Generate invoice number
+        $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
+        $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+
+        // Step 3: Create invoice
+        Invoice::create([
+            'transaction_id' => $transaction->id,
+            'invoice_number' => $invoiceNumber,
+            'invoice_type' => 'House',
+            'sub_total' => $this->total_amount,
+            'deposit_paid' => 0,
+            'amount_paid' => 0,
+            'balance_due' => $this->total_amount,
+            'due_date' => Carbon::parse($this->end_date),
+            'invoice_status' => 'pending',
+        ]);
+
+        // Step 4: Calculate number of days
         $days = Carbon::parse($this->start_date)->diffInDays(Carbon::parse($this->end_date)) + 1;
-    
-        // Attach house to transaction with pivot data
+
+        // Step 5: Attach house to transaction
         $transaction->properties()->attach($this->house_id, [
             'adults' => 1,
             'kids' => 0,
@@ -129,13 +152,13 @@ class CreateLease extends Component
             'total_amount' => $this->total_amount,
             'days' => $days,
         ]);
+    });
 
-        // Reset form fields
-        $this->reset(['start_date', 'end_date', 'total_amount', 'transaction_status', 'selectedTenant',  'pax', 'house_id']);
-        
-        session()->flash('message', 'Lease saved successfully!');
-        return redirect()->route('admin.leases');
-    }
+    $this->reset(['start_date', 'end_date', 'total_amount', 'transaction_status', 'selectedTenant', 'pax', 'house_id']);
+    session()->flash('success', 'Lease saved successfully!');
+    return redirect()->route('admin.leases');
+    
+}
 
     //To get all available tenants and marked those unavailable as leased
     public function getAvailableTenants()

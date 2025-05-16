@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Rooms;
 
 use Livewire\Component;
 use App\Models\Property;
+use App\Models\Transaction;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 
@@ -22,6 +23,7 @@ class ViewRooms extends Component
     public $perPage = 10;
     public $statusFilter = ''; // Holds the selected room status
 
+    public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false; 
 
@@ -52,9 +54,36 @@ class ViewRooms extends Component
     }
 
     public function deleteSelectedRows(){
-        Property::whereIn('id', $this->selectedRows)->delete(); 
+       try {
+        //Check active event halls
+        $usedInTransactions = Transaction::whereHas('properties', function ($query) {
+            $query->whereIn('property_id', $this->selectedRows);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Trigger modal
+            $this->confirmBulkDelete = false;
+            return;
+        }
+
+        // Detach features before deleting
+        $properties = Property::whereIn('id', $this->selectedRows)->get();
+        foreach ($properties as $property) {
+            $property->features()->detach();
+        }
+
+        // Bulk Delete
+        Property::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
-        session()->flash('message', 'All selected rooms got deleted!');
+        session()->flash('message', 'All selected halls got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e; 
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -76,38 +105,52 @@ class ViewRooms extends Component
 
     public function deleteRoom()
     {
-        if ($this->confirmItemDelete) {
-            // Find the room to be deleted
-            $room = Property::find($this->confirmItemDelete);
+        $room = Property::find($this->confirmItemDelete);
 
-            if ($room) {
-                // Detach all amenities associated with this room
-                $room->features()->detach();
+    if (!$room) {
+        session()->flash('error', 'Room not found.');
+        return;
+    }
 
-                $room->delete();
+    // Check if the event hall is active in Events
+    $usedInTransactions = Transaction::whereHas('properties', function ($query) use ($room) {
+        $query->where('property_id', $room->id);
+    })->exists();
 
-                // Reset confirmation state
-                $this->confirmItemDelete = false;
+    if ($usedInTransactions) {
+        $this->cannotDeleteItem = true; // Show "Cannot delete" modal
+        $this->confirmItemDelete = null; // Reset delete ID
+        return;
+    }
 
-                // Fetch remaining rooms - sorted by creation date
-                $rooms = Property::orderBy('created_at', 'ASC')->get();
+    try {
+        $room->features()->detach();
 
-                // Reset fake IDs
-                $fakeIDs = [];
-                foreach ($rooms as $index => $roomItem) {
-                    $fakeIDs[$roomItem->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
+        // Delete the event hall
+        $room->delete();
 
-                // Store updated fake IDs in a unique session key
-                session(['fake_ids_rooms' => $fakeIDs]);
+        // Reset confirmation modal
+        $this->confirmItemDelete = null;
 
-                // Flash success message
-                session()->flash('message', 'Room successfully deleted!');
-            } else {
-                // If room not found, flash an error message
-                session()->flash('error', 'Room not found!');
-            }
+        // Refresh the list of event halls and regenerate fake ids
+        $rooms = Property::orderBy('created_at', 'ASC')->get();
+        $fakeIDs = [];
+        foreach ($rooms as $index => $room) {
+            $fakeIDs[$room->id] = 'RM-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
+
+        // Store updated fake IDs in session
+        session(['fake_ids_rooms' => $fakeIDs]);
+
+        // Flash success message
+        session()->flash('message', 'Room successfully deleted!');
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
+        }
+    }
     }
 
 

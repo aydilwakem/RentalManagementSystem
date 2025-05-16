@@ -48,7 +48,7 @@
 
             <div class="mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 mb-3">Event Invoice</h3>
-                <div><strong>Transaction Id: </strong>
+                <div><strong>Transaction ID: </strong>
                     {{ $event->invoice->transaction_id ?? 'N/A'}}
                 </div>
                 <div><strong>Invoice Number: </strong> {{ $event->invoice->invoice_number}}</div>

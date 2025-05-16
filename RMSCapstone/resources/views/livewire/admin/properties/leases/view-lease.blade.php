@@ -29,13 +29,34 @@
         </div>
     </div>
 
-    <h3 class="text-lg font-semibold text-gray-900 mb-3">Rent Details</h3>
-    <div><strong>Lease Start Date:</strong> {{ $transaction->start_datetime->format('F j, Y') }}</div>
-    <div><strong>Lease End Date:</strong> {{ $transaction->end_datetime->format('F j, Y') }}</div>
-    <div><strong>Total Months:</strong> {{ $this->getMonthCount($transaction->start_datetime,
-        $transaction->end_datetime) }} Months</div>
-    <div><strong>Monthly Rent:</strong>₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</div>
-    <div><strong>Total Rent in Duration:</strong>₱ {{ number_format($transaction->total_amount, 2) }}</div>
+    <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 mb-1">Rent Details</h3>
+        <div><strong>Lease Start Date:</strong> {{ $transaction->start_datetime->format('F j, Y') }}</div>
+        <div><strong>Lease End Date:</strong> {{ $transaction->end_datetime->format('F j, Y') }}</div>
+        <div><strong>Total Months:</strong> {{ $this->getMonthCount($transaction->start_datetime,
+            $transaction->end_datetime) }} Months</div>
+        <div><strong>Monthly Rent:</strong>₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</div>
+        <div><strong>Total Rent in Duration:</strong>₱ {{ number_format($transaction->total_amount, 2) }}</div>
+    </div>
+
+    <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
+        <div><strong>Transaction ID: </strong>
+            {{ $transaction->invoice->transaction_id ?? 'N/A'}}
+        </div>
+        <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A'}}</div>
+        <div><strong>Sub Total: </strong> ₱{{ optional($transaction->invoice)->sub_total !== null
+            ? number_format(optional($transaction->invoice)->sub_total, 2)
+            : 'N/A' }}</div>
+        <div><strong>Balance Due: </strong>₱{{ optional($transaction->invoice)->sub_total !== null
+            ? number_format(optional($transaction->invoice)->balance_due, 2)
+            : 'N/A' }}</div>
+        <div><strong>Due Date: </strong> {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ??
+            'N/A' }}
+        </div>
+        <div><strong>Invoice Status: </strong> {{ ucfirst($transaction->invoice->invoice_status ?? 'N/A')}}</div>
+    </div>
+
 
     <!-- Action Buttons -->
     <div class="flex items-center justify-between space-x-4 mt-auto mb-3">

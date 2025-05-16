@@ -26,6 +26,44 @@ class OldMaintenances extends Component
     public $priorityStatus = '';
 
     public $confirmItemDelete = false;
+    public $confirmBulkDelete = false; 
+
+    //public declaration for bulk actions 
+    public $selectedRows = []; 
+    public $selectPageRows = false; 
+
+    public function updatedSelectPageRows($value){
+        if ($value){
+            $this->selectedRows = $this->maintenances->pluck('id')->map(function ($id){
+                return (string) $id; 
+                
+            })->toArray();;
+        }else{
+          $this->reset(['selectedRows', 'selectPageRows']);   
+        } 
+
+    }
+
+    public function getMaintenancesProperty(){
+        return Maintenance::query()
+        ->whereNotNull('resolved_at')
+        ->search($this->search)
+        ->when($this->priorityStatus !== '', function ($query) {
+            $query->where('priority_status', $this->priorityStatus);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
+    }
+
+    public function deleteSelectedRows(){
+        Maintenance::whereIn('id', $this->selectedRows)->delete(); 
+        $this->confirmBulkDelete = false;
+        session()->flash('message', 'All selected maintenances got deleted!');
+    }
+
+    public function confirmDeleteInBulk(){
+        $this->confirmBulkDelete = true; 
+    }
 
     public function mount()
     {
@@ -77,14 +115,7 @@ class OldMaintenances extends Component
 {
     $allOldMaintenances = Maintenance::all();
 
-    $maintenances = Maintenance::query()
-        ->whereNotNull('resolved_at')
-        ->search($this->search)
-        ->when($this->priorityStatus !== '', function ($query) {
-            $query->where('priority_status', $this->priorityStatus);
-        })
-        ->orderBy($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
+    $maintenances = $this->maintenances; 
 
     // Retrieve unique session for old maintenances
     $fakeIDs = session('fake_ids_old_maintenances', []);
