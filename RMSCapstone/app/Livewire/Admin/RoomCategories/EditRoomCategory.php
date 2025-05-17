@@ -42,7 +42,7 @@ class EditRoomCategory extends Component
     {
         try {
             $this->validate([
-                'name' => "required|string|max:255|unique:property_categories,name,{$this->roomCategoryId},id",
+                'name' => "required|string|max:100|unique:property_categories,name,{$this->roomCategoryId},id",
                 'description' => 'nullable|string',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

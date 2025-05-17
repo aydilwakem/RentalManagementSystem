@@ -73,22 +73,26 @@ class CreateRoom extends Component
     {
         try {
             $this->validate([
-                'name_number' => 'required|string|max:255|unique:properties,name_number',
+                'name_number' => 'required|string|max:100|unique:properties,name_number',
                 'property_category_id' => 'required|exists:property_categories,id',
                 'property_type_id' => 'required|exists:property_types,id',
                 
-                'ideal_guest' => ['required','integer','min:1',
+                'ideal_guest' => [
+                    'required',
+                    'integer',
+                    'min:1',
                     function ($attribute, $value, $fail) {
-                        if ($value > $this->max_adults || $value > $this->max_kids) {
-                            $fail('Ideal guest must not exceed both maximum adults and maximum kids.');
+                        $totalCapacity = $this->max_adults + $this->max_kids;
+                        if ($value > $totalCapacity) {
+                            $fail('Ideal guest must not exceed the sum of maximum adults and maximum kids.');
                         }
                     },
                 ],
-                'max_adults' => 'required|integer|min:1',
-                'max_kids' => 'required|integer|min:0',
+                'max_adults' => 'required|integer|min:1|max:20',
+                'max_kids' => 'required|integer|min:0|max:10',
                 'turnover_duration' => 'required|string',
                 'property_status' => 'required|in:available,booked,out_of_service',
-                'amount' => 'required|numeric|min:100|max:1000000.00',
+                'amount' => 'required|numeric|min:100|max:20000.00',
                 'extra_person_charge' => 'required|numeric|min:100|max:10000.00',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
                 'images' => 'nullable|array',

@@ -27,7 +27,7 @@ class CreateRoomCategory extends Component
         try{
         // Validate form input (including image)
         $this->validate([
-            'name' => 'required|string|max:255|unique:property_categories,name',
+            'name' => 'required|string|max:100|unique:property_categories,name',
             'description' => 'nullable|string',
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {

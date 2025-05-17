@@ -71,13 +71,13 @@ class CreateProperty extends Component
         try {
             // Validate form input
             $this->validate([
-                'name_number' => 'required|string|max:255|unique:properties,name_number',
+                'name_number' => 'required|string|max:100|unique:properties,name_number',
                 'property_type_id' => 'required|exists:property_types,id',
                 // 'capacity' => 'required|integer|min:1',
                 // 'max_adults' => 'required|integer|min:1',
                 // 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
-                'amount' => 'required|numeric|min:100|max:1000000.00',
+                'amount' => 'required|numeric|min:100|max:100000.00',
                 'image' => 'nullable|image|max:2024',
                 'images' => 'nullable|array',
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',

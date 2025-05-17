@@ -83,30 +83,30 @@ class CreateEvent extends Component
         try{
         $this->validate([
             // Transaction User Fields
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'first_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email' => 'required|email|max:100',
             'contact_number' => 'required|string|max:20',
-            'city_municipality' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
+            'city_municipality' => 'required|string|max:100',
+            'company_name' => 'required|string|max:100',
+            'country' => 'required|string|max:100',
     
             // Transaction Fields
             'event_type_id' => 'required|integer|exists:event_types,id',
             'start_datetime' => 'required|date|after_or_equal:today|before_or_equal:end_datetime',
             'end_datetime' => 'required|date|after_or_equal:start_datetime',
-            'total_adults' => 'required|integer|min:0',
-            'total_kids' => 'nullable|integer|min:0',
-            'pax' => 'required|integer|min:0',
-            'total_amount' => 'required|numeric|min:0',
+            'total_adults' => 'required|integer|min:5|max:200',
+            'total_kids' => 'nullable|integer|min:0|max:50',
+            'pax' => 'required|integer|min:5|max:200',
+            'total_amount' => 'required|numeric|min:10000|max:5000000.00',
             'reservation_source' => 'required|string|max:100',
             
     
             // Dynamic guests per hall (optional validation)
             'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
-            'adults.*' => 'nullable|integer|min:0',
-            'kids.*' => 'nullable|integer|min:0',
+            'adults.*' => 'nullable|integer|min:0|max:200',
+            'kids.*' => 'nullable|integer|min:0|max:50',
             'extra_guest.*' => 'nullable|integer|min:0',
             'extra_charge.*' => 'nullable|numeric|min:0',
         ]);

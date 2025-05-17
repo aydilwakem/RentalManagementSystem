@@ -86,8 +86,8 @@ class EditEvent extends Component
         $this->total_kids = $event->total_kids;
         $this->pax = $event->pax;
 
-        $this->start_datetime = $event->start_datetime->format('Y-m-d');
-        $this->end_datetime = $event->end_datetime->format('Y-m-d');
+        $this->start_datetime = $event->start_datetime->format('Y-m-d h:i A');
+        $this->end_datetime = $event->end_datetime->format('Y-m-d h:i A');
 
         $this->total_amount = $event->total_amount;
 

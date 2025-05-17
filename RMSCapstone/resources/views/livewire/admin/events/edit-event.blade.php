@@ -83,7 +83,7 @@
             <div>
                 <label for="start_datetime" class="block mb-2 text-sm font-medium text-gray-900">Event Start
                     Date and Time</label>
-                <input type="date" wire:model.live="start_datetime" id="start_datetime" readonly
+                <input type="datetime-local" wire:model.live="start_datetime" id="start_datetime" readonly
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300">
                 @error('start_datetime')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -94,7 +94,7 @@
             <div>
                 <label for="end_datetime" class="block mb-2 text-sm font-medium text-gray-900">Event End Date and Time
                 </label>
-                <input type="date" wire:model.live="end_datetime" id="end_datetime" readonly
+                <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime" readonly
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300">
                 @error('end_datetime')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
