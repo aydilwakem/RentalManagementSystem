@@ -1,7 +1,7 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
 
     <!-- Action Buttons -->
-    <div class="flex items-center justify-between mb-4">
+    {{-- <div class="flex items-center justify-between mb-4">
         <div class="flex justify-between items-center">
             <x-button icon="fas fa-plus" href="#">
                 New Invoice
@@ -11,7 +11,7 @@
             icon="fas fa-trash" href="#">
             Deleted Invoices
         </x-button>
-    </div>
+    </div> --}}
 
     <!-- Table BOdy -->
     <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
@@ -26,13 +26,14 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </div>
-                    <input type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
-                        placeholder="Search">
+                    <!-- Search-->
+                    <input wire:model.live.debounce.300ms="search" type="text"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                        placeholder="Search" required="">
                 </div>
 
                 <!-- Bulk Actions -->
-                <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                {{-- <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                     <button @click="open = !open" type="button"
                         class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Actions
@@ -47,20 +48,34 @@
                                 Delete</a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
-            <!-- Status Filter -->
+            <!-- Invoice Status Filter -->
             <div class="flex items-center">
-                <label class="w-32 text-sm font-medium text-gray-900">Invoice Status:</label>
-                <select
+                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900">Invoice Status:</label>
+                <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter"
                     class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                    <option>All</option>
-                    <option>Pending</option>
-                    <option>Verified</option>
-                    <option>Declined</option>
+                    <option value="">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="failed">Failed</option>
+                    <option value="overdue">Overdue</option>
                 </select>
             </div>
+
+
+            <!-- Invoice Type Filter -->
+            {{-- <div class="flex items-center mt-4">
+                <label for="invoice_type" class="w-32 text-sm font-medium text-gray-900">Invoice Type:</label>
+                <select id="invoice_type" name="invoice_type" wire:model="invoiceTypeFilter"
+                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    <option value="">All</option>
+                    @foreach ($reservationTypes as $type)
+                    <option value="{{ $type->reservation_type_id }}">{{ $type->name }}</option>
+                    @endforeach
+                </select>
+            </div> --}}
 
 
         </div>
@@ -68,10 +83,11 @@
         <!-- Table Content -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
+
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
+                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
                             <span>ID</span>
                         </th>
                         <th class="px-4 py-3">Guest Name</th>
@@ -82,97 +98,62 @@
                         <th class="px-4 py-3">Remaining Balance</th>
                         <th class="px-4 py-3">Availed Service</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Actions</th>
+                        {{-- <th class="px-4 py-3">Actions</th> --}}
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>INV-001</span>
-                        </td>
-                        <td class="px-4 py-3">Carl Capilitan</td>
-                        <td class="px-4 py-3">TN-0509-001</td>
-                        <td class="px-4 py-3">May 9, 2025</td>
-                        <td class="px-4 py-3">May 10, 2025</td>
-                        <td class="px-4 py-3">₱2,500</td>
-                        <td class="px-4 py-3">₱2,500</td>
-                        <td class="px-4 py-3">Room Booking</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-500">
-                                Partially Paid
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
-                            </i>
-                        </td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>INV-002</span>
-                        </td>
-                        <td class="px-4 py-3">Sarah Cute</td>
-                        <td class="px-4 py-3">TN-0509-002</td>
-                        <td class="px-4 py-3">May 12, 2025</td>
-                        <td class="px-4 py-3">May 15, 2025</td>
-                        <td class="px-4 py-3">₱5,500</td>
-                        <td class="px-4 py-3">₱2,250</td>
-                        <td class="px-4 py-3">Add-On Activity</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-500">
-                                Refunded
-                            </span>
 
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
-                            </i>
-                        </td>
-                    </tr>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            <input type="checkbox" class="accent-blue-600 w-4 h-4">
-                            <span>INV-003</span>
-                        </td>
-                        <td class="px-4 py-3">Barbie Jalandoni</td>
-                        <td class="px-4 py-3">TN-0509-003</td>
-                        <td class="px-4 py-3">May 20, 2025</td>
-                        <td class="px-4 py-3">May 24, 2025</td>
-                        <td class="px-4 py-3">₱8,000</td>
-                        <td class="px-4 py-3">₱0</td>
-                        <td class="px-4 py-3">Room Booking</td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-500">
-                                Completed
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                href="#">
-                            </i>
-                        </td>
-                    </tr>
+
+                <tbody>
+                    @foreach ($invoices as $invoice)
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
+                                            <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                                            {{ $invoice->transaction->transactionUser->last_name ?? '' }}
+                                        </td>
+                                        <td class="px-4 py-3">{{ $invoice->transaction->id ?? 'N/A' }}</td>
+                                        <td class="px-4 py-3">
+                                            {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-4 py-3">₱{{ number_format($invoice->sub_total, 2) }}</td>
+                                        <td class="px-4 py-3">₱{{ number_format($invoice->balance_due, 2) }}</td>
+                                        <td class="px-4 py-3">
+                                            {{ ucfirst($invoice->transaction->reservationType->first()->name ?? 'N/A') }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span
+                                                class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{
+                        $invoice->invoice_status === 'pending' ? 'bg-yellow-100 text-yellow-500' :
+                        ($invoice->invoice_status === 'completed' ? 'bg-green-100 text-green-500' :
+                            ($invoice->invoice_status === 'failed' ? 'bg-red-100 text-red-500' :
+                                ($invoice->invoice_status === 'overdue' ? 'bg-pink-100 text-pink-500' : 'bg-gray-100 text-gray-500')))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }}">
+                                                {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
+                                            </span>
+                                        </td>
+
+                                        {{-- <td class="px-4 py-3 space-x-1">
+                                            <!-- View Icon -->
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                                href="#"></i>
+                                            <!-- Delete Icon -->
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#"></i>
+                                        </td> --}}
+
+                                    </tr>
+                    @endforeach
+
                 </tbody>
+
+
+
             </table>
         </div>
     </div>

@@ -237,7 +237,8 @@
                         {{ $fakeIDs[$eventItem->id] ?? 'EVT-???' }}
                     </th>
                     <td class="px-4 py-3">
-                        {{ $eventItem->transactionUser->first_name }} </td>
+                        {{ $eventItem->transactionUser->first_name }}
+                        {{ $eventItem->transactionUser->last_name }}</td>
                     <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A'}} </td>
                     <td class="px-4 py-3"> @foreach ($eventItem->properties as $property)
                         {{ $property->name_number ?? 'N/A' }}<br>
@@ -245,10 +246,10 @@
                     <td class="px-4 py-3"> {{ $eventItem->transactionUser->company_name }} </td>
                     <td class="px-4 py-3"> {{ $eventItem->transactionUser->contact_number }} </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->event_date_start)->format('Y-m-d') }}
+                        {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('Y-m-d h:i A') }}
                     </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->event_date_end)->format('Y-m-d') }}
+                        {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('Y-m-d h:i A') }}
                     </td>
                     <td class="px-4 py-3"> {{ $eventItem->pax }} </td>
                     <td class="px-4 py-3"> ₱{{ number_format($eventItem->total_amount, 2) }} </td>

@@ -40,15 +40,15 @@ class CreateTenant extends Component
         try {
             // Validate form input
             $this->validate([
-                'first_name' => 'required|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
-                'last_name' => 'required|string|max:255',
-                'suffix' => 'nullable|string|max:255',
+                'first_name' => 'required|string|max:100',
+                'middle_name' => 'nullable|string|max:100',
+                'last_name' => 'required|string|max:100',
+                'suffix' => 'nullable|string|max:100',
                 'email' => 'required|email|unique:trn_users,email',
                 'contact_number' => 'nullable|string|max:100',
-                'company_name' => 'nullable|string|max:255',
-                'city_municipality' => 'nullable|string|max:255',
-                'country' => 'required|string|max:255',
+                'company_name' => 'nullable|string|max:100',
+                'city_municipality' => 'nullable|string|max:100',
+                'country' => 'required|string|max:100',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

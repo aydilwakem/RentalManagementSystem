@@ -87,6 +87,8 @@ class ReservationForm extends Component
     public $editingGuestIndex = null;
     public $showEditModal = false;
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
 
     public $editingGuest = [
         'guest_first_name' => '',
@@ -228,7 +230,7 @@ class ReservationForm extends Component
 
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
-                    $adults = (int) ($this->adults[$roomId] ?? 0); // extracts the adults of the item
+                    $adults = (int) ($this->adults[$roomId] ?? 1); // extracts the adults of the item
                     $kids = (int) ($this->kids[$roomId] ?? 0); // extracts the kids of the item
 
                     $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
@@ -455,6 +457,9 @@ class ReservationForm extends Component
 
     public function addRoomToCart($roomId)
     {
+
+        Log::info('addRoomToCart method called');
+
         // Resets any previous error messages
         $this->resetErrorBag();
 
@@ -501,6 +506,7 @@ class ReservationForm extends Component
         // Call a method to compute the total number of people (pax) in the cart after adding the room
         $this->computeTotalPax();
     }
+
 
     /**
      * Adds an activity to the cart.
@@ -663,6 +669,9 @@ class ReservationForm extends Component
 
     public function removeFromCart($type, $itemId)
     {
+
+        Log::info('removeFromCart method called');
+
         // Filter the cart items to exclude the one with the matching type and ID
         $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
             if ($type === 'activity') {

@@ -48,6 +48,7 @@ class ViewTenants extends Component
         ->where(function ($query) {
             $query->where('first_name', 'like', "%{$this->search}%")
                 ->orWhere('last_name', 'like', "%{$this->search}%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$this->search}%"])
                 ->orWhere('email', 'like', "%{$this->search}%");
         })
         ->where('trn_user_type', 'tenant')

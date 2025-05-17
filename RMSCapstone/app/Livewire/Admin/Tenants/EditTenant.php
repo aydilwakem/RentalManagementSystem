@@ -59,21 +59,15 @@ class EditTenant extends Component
     {
         try {
             $this->validate([
-                'first_name' => 'required|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
-                'last_name' => 'required|string|max:255',
-                'suffix' => 'nullable|string|max:255',
+                'first_name' => 'required|string|max:100',
+                'middle_name' => 'nullable|string|max:100',
+                'last_name' => 'required|string|max:100',
+                'suffix' => 'nullable|string|max:100',
                 'email' => 'required|email|unique:trn_users,email,' . $this->tenant->id, // Exclude the current tenant's email
                 'contact_number' => 'nullable|string|max:100',
-                'company_name' => 'nullable|string|max:255',
-                'house_number' => 'nullable|string|max:255',
-                'street' => 'nullable|string|max:255',
-                'barangay' => 'nullable|string|max:255',
-                'city_municipality' => 'nullable|string|max:255',
-                'province' => 'nullable|string|max:255',
-                'region' => 'nullable|string|max:255',
-                'postal_code' => 'nullable|string|max:255',
-                'country' => 'required|string|max:255',
+                'company_name' => 'nullable|string|max:100',
+                'city_municipality' => 'nullable|string|max:100',
+                'country' => 'required|string|max:100',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -90,13 +84,7 @@ class EditTenant extends Component
             'email' => $this->email,
             'contact_number' => $this->contact_number,
             'company_name' => $this->company_name,
-            'house_number' => $this->house_number,
-            'street' => $this->street,
-            'barangay' => $this->barangay,
             'city_municipality' => $this->city_municipality,
-            'province' => $this->province,
-            'region' => $this->region,
-            'postal_code' => $this->postal_code,
             'country' => $this->country,
         ]);
 

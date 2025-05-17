@@ -114,12 +114,12 @@ class EditProperty extends Component
     {
         try {
             $this->validate([
-                'name_number' => "required|string|max:255|unique:properties,name_number,{$this->property_id},id",
+                'name_number' => "required|string|max:100|unique:properties,name_number,{$this->property_id},id",
                 // 'capacity' => 'required|integer|min:1',
                 // 'max_adults' => 'required|integer|min:1',
                 // 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
-                'amount' => 'required|numeric|min:100|max:1000000.00',
+                'amount' => 'required|numeric|min:100|max:100000.00',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
                 'barangay' => 'required|string',

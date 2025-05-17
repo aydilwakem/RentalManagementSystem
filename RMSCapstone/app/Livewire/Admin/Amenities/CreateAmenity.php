@@ -32,7 +32,7 @@ class CreateAmenity extends Component
         try {
             // Validate form input
             $this->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:100',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

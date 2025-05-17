@@ -80,7 +80,7 @@ class EditActivity extends Component
             $this->validate([
                 'name' => "required|string|max:255|unique:prd_activities,name,{$this->activityId},id",
                 'description' => 'nullable|string',
-                'amount' => 'required|numeric|min:100',
+                'amount' => 'required|numeric|min:0|max:10000',
                 'inclusions' => 'nullable|string',
                 'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
             ]);
