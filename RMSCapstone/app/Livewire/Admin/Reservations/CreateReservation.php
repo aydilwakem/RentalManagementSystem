@@ -99,6 +99,8 @@ class CreateReservation extends Component
     public $showGuestModal = false;
     public $showEditModal = false;
 
+    public $addRoomFirstModal = false;
+
 
     // Summary
     public $total_amount;
@@ -198,9 +200,14 @@ class CreateReservation extends Component
 
     public function OpenActivityModal()
     {
-        Log::info('Activity Modal is opened.');
+        Log::info('Activity Modal request received.');
 
-        $this->activityModal = true;
+        // Check if selectedRooms is empty
+        if (empty($this->selectedRooms) || count($this->selectedRooms) === 0) {
+            $this->addRoomFirstModal = true;  // Show modal to add rooms first
+        } else {
+            $this->activityModal = true;      // Show activity modal
+        }
     }
 
 

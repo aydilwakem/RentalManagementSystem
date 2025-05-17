@@ -328,7 +328,7 @@
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
                         <button
-                            wire:click="GenerateReceiptModal"
+                            wire:click="GenerateReceipt"
                             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
                             <i class="fas fa-receipt"></i>
                             Generate Official Receipt
@@ -488,6 +488,25 @@
                 @endif
             </div>
             </section>
+
+
+            <!---------------------------- MODALS ---------------------------------------->
+            <div>
+                @if($cannotGenerateReceiptModal)
+                    <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+                        <div class="bg-white p-6 rounded shadow-lg w-96">
+                            <h2 class="text-lg font-semibold mb-4">Notice</h2>
+                            <p class="text-gray-700">Receipt cannot be generated. Invoice still has balance due.</p>
+                            <div class="mt-4 text-right">
+                                <button wire:click="$set('cannotGenerateReceiptModal', false)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
         </div>
     </div>
 </div>

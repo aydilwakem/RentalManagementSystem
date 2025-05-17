@@ -65,96 +65,97 @@
         <!-- Guest Details -->
         <div style="padding: 0 30px 30px 30px;">
             <h3 style="color: #166534;">Guest Details</h3>
-            <p><strong>Name:</strong> {{ $name }}</p>
-            <p><strong>Email:</strong> {{ $email }}</p>
-            <p><strong>Contact Number:</strong> {{ $contact_number }}</p>
+            <h4 style="color: #166534;">Transaction Number: {{ $transaction_number }}</h3>
+                <p><strong>Name:</strong> {{ $name }}</p>
+                <p><strong>Email:</strong> {{ $email }}</p>
+                <p><strong>Contact Number:</strong> {{ $contact_number }}</p>
 
-            <!-- Accommodations -->
-            <h3 style="color: #166534; margin-top: 30px;">Accommodations</h3>
-            <table style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Room</th>
-                        <th>Check-In</th>
-                        <th>Check-Out</th>
-                        <th>Adults</th>
-                        <th>Kids</th>
-                        <th>Days</th>
-                        <th>Extra</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($properties as $property)
-                        <tr>
-                            <td>{{ $property->name_number }}</td>
-                            <td>{{ \Carbon\Carbon::parse($check_in)->format('m/d/Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($check_out)->format('m/d/Y') }}</td>
-                            <td>{{ $property->pivot->adults ?? '0' }}</td>
-                            <td>{{ $property->pivot->kids ?? '0' }}</td>
-                            <td>{{ $property->pivot->days ?? '1' }}</td>
-                            <td>₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                            <td>₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <!-- Activities -->
-            @if(count($activities))
-                <h3 style="color: #166534; margin-top: 30px;">Add-On Activities</h3>
+                <!-- Accommodations -->
+                <h3 style="color: #166534; margin-top: 30px;">Accommodations</h3>
                 <table style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>Activity</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
+                            <th>Room</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Adults</th>
+                            <th>Kids</th>
+                            <th>Days</th>
+                            <th>Extra</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($activities as $activity)
+                        @foreach ($properties as $property)
                             <tr>
-                                <td>{{ $activity->name }}</td>
-                                <td>{{ $activity->pivot->quantity }}</td>
-                                <td>₱{{ number_format($activity->amount, 2) }}</td>
-                                <td>₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                                <td>{{ $property->name_number }}</td>
+                                <td>{{ \Carbon\Carbon::parse($check_in)->format('m/d/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($check_out)->format('m/d/Y') }}</td>
+                                <td>{{ $property->pivot->adults ?? '0' }}</td>
+                                <td>{{ $property->pivot->kids ?? '0' }}</td>
+                                <td>{{ $property->pivot->days ?? '1' }}</td>
+                                <td>₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                                <td>₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-            @endif
 
-            <!-- Breakdown -->
-            <h3 style="color: #166534; margin-top: 30px;">Total Breakdown</h3>
-            <table style="width: 100%;">
-                <tbody>
-                    <tr>
-                        <td style="width: 50%;"><strong>Invoice Number:</strong></td>
-                        <td>{{ $invoice_number }}</td>
-                    </tr>
-                    <tr style="background-color: #f5f5f5;">
-                        <td><strong>Check-in Date:</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Check-out Date:</strong></td>
-                        <td>{{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}</td>
-                    </tr>
-                    <tr style="background-color: #f5f5f5;">
-                        <td><strong>Total Amount:</strong></td>
-                        <td>₱{{ number_format($total_amount, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Amount Paid:</strong></td>
-                        <td>₱{{ number_format($amount_paid, 2) }}</td>
-                    </tr>
-                    <tr style="background-color: #f5f5f5;">
-                        <td><strong>Remaining Balance:</strong></td>
-                        <td>₱{{ number_format($balance_due, 2) }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                <!-- Activities -->
+                @if(count($activities))
+                    <h3 style="color: #166534; margin-top: 30px;">Add-On Activities</h3>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Activity</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($activities as $activity)
+                                <tr>
+                                    <td>{{ $activity->name }}</td>
+                                    <td>{{ $activity->pivot->quantity }}</td>
+                                    <td>₱{{ number_format($activity->amount, 2) }}</td>
+                                    <td>₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+
+                <!-- Breakdown -->
+                <h3 style="color: #166534; margin-top: 30px;">Total Breakdown</h3>
+                <table style="width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%;"><strong>Invoice Number:</strong></td>
+                            <td>{{ $invoice_number }}</td>
+                        </tr>
+                        <tr style="background-color: #f5f5f5;">
+                            <td><strong>Check-in Date:</strong></td>
+                            <td>{{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Check-out Date:</strong></td>
+                            <td>{{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}</td>
+                        </tr>
+                        <tr style="background-color: #f5f5f5;">
+                            <td><strong>Total Amount:</strong></td>
+                            <td>₱{{ number_format($total_amount, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amount Paid:</strong></td>
+                            <td>₱{{ number_format($amount_paid, 2) }}</td>
+                        </tr>
+                        <tr style="background-color: #f5f5f5;">
+                            <td><strong>Remaining Balance:</strong></td>
+                            <td>₱{{ number_format($balance_due, 2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
         </div>
 
         <p>We truly value your experience with us. Help us improve by sharing your thoughts through the link below:</p>

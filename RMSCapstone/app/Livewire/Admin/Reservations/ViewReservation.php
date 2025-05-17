@@ -24,6 +24,7 @@ class ViewReservation extends Component
     public $totalAddons; // Holds the total amount of addons
     public $totalRooms; // Holds the total amount of rooms
     public $showReceiptModal = false;
+    public $cannotGenerateReceiptModal = false;
     public $receipt;
     public $receiptNumber;
 
@@ -77,7 +78,7 @@ class ViewReservation extends Component
         $this->totalAddons = $transaction->total_addons;   // Total cost from addons (via accessor)
     }
 
-    public function GenerateReceiptModal()
+    public function GenerateReceipt()
     {
         Log::info('Show Generate Official Receipt Modal method triggered.');
 
@@ -87,8 +88,10 @@ class ViewReservation extends Component
         }
 
         // Prevent generating receipt for unpaid invoices
-        if ($this->invoice->balance_due > 0) {
-            abort(400, 'Receipt cannot be generated. Invoice still has balance due.');
+        if ($this->invoice->invoice_status != 'completed') {
+            $this->cannotGenerateReceiptModal = true;
+            Log::warning("Attempt to generate receipt for unpaid invoice ID: {$this->invoice->id}");
+            return; // ⛔️ stop further execution
         }
 
         // Check if receipt already exists
@@ -185,17 +188,17 @@ class ViewReservation extends Component
         Mail::to($this->transaction->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
     }
 
-     public function exportReservationDetails()
+    public function exportReservationDetails()
     {
         $transaction = Transaction::with([
-        'invoice.payments',
-        'transactionUser',
-        'guestDetails',
-        'properties',
-        'activities' => function ($query) {
-            $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
-        },
-    ])->findOrFail($this->transaction->id);
+            'invoice.payments',
+            'transactionUser',
+            'guestDetails',
+            'properties',
+            'activities' => function ($query) {
+                $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
+            },
+        ])->findOrFail($this->transaction->id);
 
         $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
             'transaction' => $transaction,  // Pass the actual transaction
@@ -204,7 +207,7 @@ class ViewReservation extends Component
             'invoice' => $transaction->invoice,
             'activities' => $transaction->activities,
             'properties' => $transaction->properties,
-            'payments' => $transaction->invoice->payments, 
+            'payments' => $transaction->invoice->payments,
             'totalRooms' => $transaction->totalRooms,
             'totalAddons' => $transaction->totalAddons,
         ]);

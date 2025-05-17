@@ -113,9 +113,21 @@ class Property extends Model
 
     public function scopeAvailableRooms($query)
     {
-        return $query->where('property_status', 'available');
+        return $query->where('property_status', 'available')
+            ->orderBy('amount', 'asc');
     }
 
+    public function scopeAvailableHouses($query)
+    {
+        return $query->where('property_status', 'available')
+            ->orderBy('amount', 'asc');
+    }
+
+    public function scopeAvailableEvents($query)
+    {
+        return $query->where('property_status', 'available')
+            ->orderBy('amount', 'asc');
+    }
 
     public function scopeSearch($query, $search)
     {

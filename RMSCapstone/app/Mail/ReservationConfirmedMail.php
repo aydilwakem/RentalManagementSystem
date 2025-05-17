@@ -51,8 +51,8 @@ class ReservationConfirmedMail extends Mailable
                 'deposit' => $this->reservationData['deposit'],
                 'amount_paid' =>  $this->reservationData['amount_paid'],
                 'balance_due' =>  $this->reservationData['balance_due'],
-                'properties' => $this->reservationData['properties'], 
-                'activities' => $this->reservationData['activities'], 
+                'properties' => $this->reservationData['properties'],
+                'activities' => $this->reservationData['activities'],
             ]);
     }
 }

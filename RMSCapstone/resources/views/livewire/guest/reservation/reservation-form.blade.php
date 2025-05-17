@@ -39,6 +39,7 @@
                 @if ($currentStep == 1)
                     <div class="step-room">
                         @include('livewire.guest.reservation.choose-room')
+                           {{-- @include('livewire.guest.reservation.guest-detail') --}}
                     </div>
                 @endif
 

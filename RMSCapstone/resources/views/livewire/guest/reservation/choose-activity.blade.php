@@ -26,15 +26,29 @@
                         <div class="flex flex-col md:flex-row md:space-x-6">
                             <!-- Activity Info -->
                             <div class="md:w-2/3 space-y-2">
-                                <h4 class="text-xl font-semibold text-gray-800">{{ $activity->name }}</h4>
+
+                                <h2 class="text-xl font-semibold text-gray-800"> {{ $activity->name }}</h2>
+
+                                <div class="flex items-center justify-between">
+                                    <!-- Price -->
+                                    <div class="text-right">
+                                        <span class="text-green-600 font-bold text-lg">
+                                            @if ($activity->amount == 0)
+                                                <span class="text-green-600 font-semibold">FREE</span>
+                                            @else
+                                                ₱{{ number_format($activity->amount, 2) }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
 
                                 <div class="flex flex-col">
-
 
                                     <label for="quantity-{{ $activity->id }}"
                                         class="text-sm font-medium text-gray-700 mb-1">
                                         Quantity:
                                     </label>
+
                                     <div class="flex items-center">
                                         <button type="button" wire:click="decrementActivity({{ $activity->id }})"
                                             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
@@ -51,22 +65,32 @@
                                                 +
                                             </button>
                                         @else
-                                            <span class="text-red-500 text-xs ml-2">
-                                                Maximum quantity reached (based on your total guests)
+                                            <span class="text-gray-500 text-xs ml-2">
+                                                Maximum quantity reached
                                             </span>
                                         @endif
                                     </div>
                                 </div>
                             </div>
 
-                            <div>
-                                <button
-                                    wire:click="addActivityToCart({{ $activity->id }})""
-                                                                                                                                                                        class="
-                                    px-4 py-2 mt-3 w-full bg-green-700 bg-opacity-85 hover:bg-green-800 text-white rounded">
-                                    Add to Cart
-                                </button>
-                            </div>
+                            @php
+                                $cartCollection = collect($cart); // Convert array to collection
+                                $activityInCart = $cartCollection->contains(function ($item) use ($activity) {
+                                    return $item['type'] === 'activity' && $item['activity_id'] == $activity->id;
+                                });
+                            @endphp
+
+                            @if ($activityInCart)
+                            @else
+                                <div>
+                                    <button
+                                        wire:click="addActivityToCart({{ $activity->id }})""
+                                                                                                                                                                                                                                                                                    class="
+                                        px-4 py-2 mt-3 w-full bg-green-700 bg-opacity-85 hover:bg-green-800 text-white rounded">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            @endif
 
                         </div>
                     </div>
