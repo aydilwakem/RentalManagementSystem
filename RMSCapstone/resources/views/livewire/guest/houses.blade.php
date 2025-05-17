@@ -109,20 +109,13 @@
                         <span class="text-green-600 font-bold text-lg">₱25,000/month</span>
                     </div>
 
-                    <!-- Facilities / Inclusions -->
+                    <!-- Features -->
                     <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">25
-                            SQM</span>
-                        <span class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">1 Master
-                            Bedroom</span>
-                        <span class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">2
-                            Bedroom</span>
-                        <span class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">2
-                            Bathroom</span>
-                        <span
-                            class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Parking</span>
-                        <span
-                            class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Garden</span>
+                        @foreach ($house->features as $feature)
+                            <span class="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">
+                                {{ $feature->name }}
+                            </span>
+                        @endforeach
                     </div>
                 </div>
             </div>

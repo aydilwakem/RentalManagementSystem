@@ -142,7 +142,7 @@
                                 @foreach ($guests as $guest)
                                     <li>
                                         <div
-                                            class="p-4 bg-green-50 rounded-2xl border border-green-200 flex justify-between items-center">
+                                            class="p-4 bg-white rounded-2xl border border-green-200 flex justify-between items-center">
                                             <div class="font-semibold text-green-800">
                                                 {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
                                             </div>

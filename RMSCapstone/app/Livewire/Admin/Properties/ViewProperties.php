@@ -25,25 +25,25 @@ class ViewProperties extends Component
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->houses->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getHousesProperty(){
-        return Property::query()
+        return Property::with('features')
         ->ofType('House')
         ->when($this->statusFilter, function ($query) {
             $query->where('property_status', $this->statusFilter);
@@ -81,13 +81,13 @@ class ViewProperties extends Component
         if ($e->getCode() == 23000) {
             $this->cannotDeleteItem = true; // FK error
         } else {
-            throw $e; 
+            throw $e;
         }
     }
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
@@ -167,7 +167,7 @@ class ViewProperties extends Component
     {
         $allHouses = Property::ofType('House')->get();
 
-        $houses = $this->houses; 
+        $houses = $this->houses;
 
         $fakeIDs = session('fake_ids_houses', []);
 

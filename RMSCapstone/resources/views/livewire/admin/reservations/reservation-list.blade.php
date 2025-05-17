@@ -419,7 +419,7 @@
                                         @if ($transaction->transaction_status === 'receipt_verified')
                                         <li>
                                             <a href="#"
-                                                wire:click.prevent="showActionModal('confirmReservation', 'Confirm Reservation', 'Are you sure you want to confirm this reservation?', {{ $transaction->id }}, 'warning')"
+                                                wire:click.prevent="showActionModal('confirmReservation', 'Confirm Reservation', 'Are you sure you want to confirm this reservation?', {{ $transaction->id }}, 'default')"
                                                 class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                 <i class="fas fa-check-circle mr-2 text-green-600"></i>
                                                 Confirm

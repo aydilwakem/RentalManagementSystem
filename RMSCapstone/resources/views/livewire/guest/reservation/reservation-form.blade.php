@@ -337,7 +337,7 @@
                     @endif
 
                     <!-- Terms and Conditions Modal -->
-                    @if ($currentStep == 1)
+                    @if ($currentStep == 4)
                         <div x-data="{ showModal: false, agreed: false }" x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
                             @keydown.escape.window="showModal = false">
 

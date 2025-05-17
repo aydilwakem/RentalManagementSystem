@@ -78,7 +78,7 @@
                 </h1>
             </div>
 
-            <div class="px-4 space-y-1 flex flex-col overflow-y-auto">
+            <div class="px-4 space-y-1 flex flex-col overflow-y-auto max-h-[36rem]">
                 <!-- SideBar Toggle -->
                 <button @click="$store.sidebar.full = !$store.sidebar.full"
                     class="hidden sm:block focus:outline-none absolute p-1 -right-3 top-10 bg-green-700 border rounded-full shadow-md">
@@ -220,6 +220,12 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
 
+                        {{-- Features List --}}
+                        <a href="{{ route('admin.leases') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.leases') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Leases</h1>
+                        </a>
+
                         @can('house-list')
                         <a href="{{ route('admin.properties') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.properties') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
@@ -246,13 +252,6 @@
                             class="block px-3 py-2 {{ Route::is('admin.features') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Features</h1>
                         </a>
-
-                        {{-- Features List --}}
-                        <a href="{{ route('admin.leases') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.leases') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                            <h1 class="cursor-pointer">Leases</h1>
-                        </a>
-
                     </div>
                 </div>
 

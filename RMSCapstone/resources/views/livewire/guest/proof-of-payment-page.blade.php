@@ -138,7 +138,7 @@
                         <div class="flex items-center justify-center min-h-screen">
                             <div class=" relative modal-content">
                                 <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
-                                <button type="button" conclick="closeModal()"
+                                <button type="button" onclick="closeModal()"
                                     class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                                     <span class="leading-none translate-y-[-3px]">&times;</span>
                                 </button>
