@@ -7,7 +7,6 @@ use App\Models\Transaction;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\Auth;
 
-
 class Dashboard extends Component
 {
     public $newReservations;
@@ -18,10 +17,8 @@ class Dashboard extends Component
     public $first_name;
     public $last_name;
 
-
     public function mount()
     {
-
         // Name of the user logged in
         $this->first_name = Auth::user()->name;
         $this->last_name = Auth::user()->last_name;
@@ -34,25 +31,27 @@ class Dashboard extends Component
         $this->newReservations = Transaction::newReservations()->count();
         $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();
         $this->reservations = Transaction::all();
-        $newReservationsData = Transaction::newReservations()->get();
+        $allTransactions = Transaction::with('reservationType', 'transactionUser')->get();
 
-        foreach ($newReservationsData as $reservation) {
+        foreach ($allTransactions as $transaction) {
             $this->events[] = [
-                'title' => $reservation->first_name . ' ' . $reservation->last_name,
-                'start' => $reservation->start_datetime,
-                'end' => $reservation->end_datetime,
-                'type' => $reservation->reservationType->name,
+                'title' => $transaction->transactionUser->first_name . ' ' . $transaction->transactionUser->last_name,
+                'start' => $transaction->start_datetime,
+                'end' => $transaction->end_datetime,
+                'type' => $transaction->reservationType?->name ?? 'N/A',
+                'category' => 'transaction',
+                'id' => $transaction->id,
+                'transaction_status' => $transaction->transaction_status,
             ];
         }
     }
-
-
 
     public function render()
     {
         return view('livewire.admin.dashboard', [
             'newReservations' => $this->newReservations,
             'pendingMaintenances' => $this->pendingMaintenances,
+            'events' => $this->events,
         ]);
     }
 }

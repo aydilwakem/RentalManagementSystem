@@ -54,18 +54,62 @@
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
                     },
-                    eventClassNames: function(info) {
-                        // Dynamically assign class based on category
-                        if (info.event.extendedProps.category === 'room') {
-                            return ['room-booking'];
-                        } else if (info.event.extendedProps.category === 'event') {
-                            return ['event-booking'];
-                        }
-                    }
+                    // eventClassNames: function(info) {
+                    //     let classes = [];
+
+                    //     // Assign base category styling
+                    //     if (info.event.extendedProps.category === 'room') {
+                    //         classes.push('room-booking');
+                    //     } else if (info.event.extendedProps.category === 'event') {
+                    //         classes.push('event-booking');
+                    //     }
+
+                    //     // Assign color based on transaction status
+                    //     switch (info.event.extendedProps.transaction_status) {
+                    //         case 'pending':
+                    //             classes.push('status-pending');
+                    //             break;
+                    //         case 'confirmed':
+                    //             classes.push('status-confirmed');
+                    //             break;
+                    //         case 'cancelled':
+                    //             classes.push('status-cancelled');
+                    //             break;
+                    //         default:
+                    //             classes.push('status-default');
+                    //     }
+
+                    //     return classes;
+                    // }
+
                 });
                 calendar.render();
             });
         </script>
     @endscript
+    {{-- <style>
+        .status-pending {
+            background-color: #facc15 !important;
+            /* yellow */
+            color: #000 !important;
+        }
 
+        .status-confirmed {
+            background-color: #4ade80 !important;
+            /* green */
+            color: #fff !important;
+        }
+
+        .status-cancelled {
+            background-color: #f87171 !important;
+            /* red */
+            color: #fff !important;
+        }
+
+        .status-default {
+            background-color: #a5b4fc !important;
+            /* indigo */
+            color: #fff !important;
+        }
+    </style> --}}
 </div>

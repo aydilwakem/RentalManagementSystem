@@ -58,8 +58,6 @@
             <!-- Image Upload -->
             <div class="space-y-4">
                 <div>
-
-
                     <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload New Image
                         (Optional)</label>
                     <input type="file" wire:model="newImage" id="image" accept="image/png, image/jpeg"
@@ -76,11 +74,19 @@
                 <div class="mt-2">
                     @if ($newImage)
                         <!-- Show new uploaded image -->
-                        <img src="{{ $newImage->temporaryUrl() }}" class="mt-4 w-full h-48 object-cover rounded-lg shadow">
+                        <img src="{{ $newImage->temporaryUrl() }}"
+                            class="mt-4 w-full h-48 object-cover rounded-lg shadow">
                     @elseif ($activity->image)
                         <!-- Show existing image from storage -->
-                        <img src="{{ asset('storage/' . $activity->image) }}"
-                            class="mt-4 w-full h-48 object-cover rounded-lg shadow">
+                        <div class="relative inline-block">
+                            <img src="{{ asset('storage/' . $activity->image) }}"
+                                class="mt-4 w-full h-48 object-cover rounded-lg shadow">
+                            <button type="button" wire:click="confirmImageDelete"
+                                class="absolute top-6 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition"
+                                aria-label="Remove image">
+                                ×
+                            </button>
+                        </div>
                     @else
                         <!-- Show default image if no image exists -->
                         <img src="{{ asset('images/rms-default.png') }}"
@@ -122,6 +128,27 @@
                 wire:loading.attr="disabled">
                 {{ __('Edit Activity') }}
             </x-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    <!-- Remove Image Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmDeleteImage">
+        <x-slot name="title">
+            {{ __('Delete Image') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to delete this image?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmDeleteImage', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-danger-button wire:click="removeStoredImage" wire:loading.attr="disabled">
+                {{ __('Delete') }}
+            </x-danger-button>
         </x-slot>
     </x-dialog-modal>
 </div>

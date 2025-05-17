@@ -44,7 +44,7 @@ class EditProperty extends Component
     // ----------------------- House Features (Amenities) -------------------------------//
     public $selectedFeatures = [];
     public $features = [];
-    public $house_features; 
+    public $house_features;
 
     // ----------------------------- Modals ---------------------------------------------//
     public $confirmCreateItem = false;
@@ -67,9 +67,9 @@ class EditProperty extends Component
         // House details
         $this->property_id = $property->id;
         $this->name_number = $property->name_number;
-        $this->capacity = $property->capacity;
-        $this->max_adults = $property->max_adults;
-        $this->max_kids = $property->max_kids;
+        // $this->capacity = $property->capacity;
+        // $this->max_adults = $property->max_adults;
+        // $this->max_kids = $property->max_kids;
         $this->amount = $property->amount;
 
         // House Address
@@ -115,9 +115,9 @@ class EditProperty extends Component
         try {
             $this->validate([
                 'name_number' => "required|string|max:255|unique:properties,name_number,{$this->property_id},id",
-                'capacity' => 'required|integer|min:1',
-                'max_adults' => 'required|integer|min:1',
-                'max_kids' => 'required|integer|min:0',
+                // 'capacity' => 'required|integer|min:1',
+                // 'max_adults' => 'required|integer|min:1',
+                // 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
                 'house_number' => 'required|string',
@@ -156,9 +156,9 @@ class EditProperty extends Component
         // Update property details
         $this->property->update([
             'name_number' => $this->name_number,
-            'capacity' => $this->capacity,
-            'max_adults' => $this->max_adults,
-            'max_kids' => $this->max_kids,
+            // 'capacity' => $this->capacity,
+            // 'max_adults' => $this->max_adults,
+            // 'max_kids' => $this->max_kids,
             'amount' => $this->amount,
             'house_number' => $this->house_number,
             'street' => $this->street,

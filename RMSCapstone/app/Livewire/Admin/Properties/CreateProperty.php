@@ -73,9 +73,9 @@ class CreateProperty extends Component
             $this->validate([
                 'name_number' => 'required|string|max:255|unique:properties,name_number',
                 'property_type_id' => 'required|exists:property_types,id',
-                'capacity' => 'required|integer|min:1',
-                'max_adults' => 'required|integer|min:1',
-                'max_kids' => 'required|integer|min:0',
+                // 'capacity' => 'required|integer|min:1',
+                // 'max_adults' => 'required|integer|min:1',
+                // 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:1000000.00',
                 'image' => 'nullable|image|max:2024',
@@ -127,9 +127,9 @@ class CreateProperty extends Component
         $house = Property::create([
             'property_type_id' => $this->property_type_id,
             'name_number' => $this->name_number,
-            'capacity' => $this->capacity,
-            'max_adults' => $this->max_adults,
-            'max_kids' => $this->max_kids,
+            // 'capacity' => $this->capacity,
+            // 'max_adults' => $this->max_adults,
+            // 'max_kids' => $this->max_kids,
             'amount' => $this->amount,
             'house_number' => $this->house_number,
             'street' => $this->street,
@@ -151,7 +151,22 @@ class CreateProperty extends Component
         }
 
         // Reset form fields
-        $this->reset(['name_number', 'capacity', 'max_adults', 'max_kids', 'amount', 'house_number', 'street', 'barangay', 'city_municipality', 'postal_code', 'country', 'property_status', 'description', 'image', 'selectedFeatures']);
+        $this->reset([
+        'name_number',
+        // 'capacity',
+        // 'max_adults',
+        // 'max_kids',
+        'amount',
+        'house_number',
+        'street',
+        'barangay',
+        'city_municipality',
+        'postal_code',
+        'country',
+        'property_status',
+        'description',
+        'image',
+        'selectedFeatures']);
 
         // Flash message for success
         session()->flash('message', 'Property successfully created!');

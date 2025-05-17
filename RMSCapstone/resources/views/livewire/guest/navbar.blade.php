@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-yellow-50 border-b border-gray-300">
+<nav x-data="{ open: false }" class="bg-green-800 border-b border-gray-300">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -6,12 +6,12 @@
             <!-- Logo -->
             <div class="shrink-0 flex items-center">
                 <x-application-mark class="block h-9 w-auto" />
-                <span class="ml-2 text-xl font-semibold text-green-800">Canopy Farm</span>
+                <span class="ml-2 text-xl font-semibold text-yellow-50">Canopy Farm</span>
             </div>
 
 
             <!-- Navigation Links -->
-            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+            <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
                 <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
                     {{ __('Home') }}
                 </x-nav-link>

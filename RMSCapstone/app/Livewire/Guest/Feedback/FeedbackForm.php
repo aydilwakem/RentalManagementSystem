@@ -47,7 +47,7 @@ class FeedbackForm extends Component
             ]);
         }
 
-        session()->flash('message', 'Feedback submitted successfully!');
+        session()->flash('message', 'Feedback submitted successfully. Thanks for helping us grow!');
         $this->reset(['transactionId', 'comments', 'ratingValues']);
     }
 

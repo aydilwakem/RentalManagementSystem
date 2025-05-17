@@ -42,6 +42,7 @@ class ReservationList extends Component
     public $actionMessage = '';
     public $actionMethod = '';
     public $actionId;
+    public $actionButtonType = 'default';
 
     // -------------------------------------- MOUNT -------------------------------------- //
 
@@ -84,13 +85,14 @@ class ReservationList extends Component
 
     // -------------------------------------- CONFIRMATION MODAL -------------------------------------- //
 
-    public function showActionModal($method, $title, $message, $id)
+    public function showActionModal($method, $title, $message, $id, $actionType = 'default')
     {
         $this->actionMethod = $method;  // e.g., 'deleteTransaction'
         $this->actionTitle = $title;    // e.g., 'Delete Transaction'
         $this->actionMessage = $message; // e.g., 'Are you sure you want to delete this transaction?'
         $this->actionId = $id;          // Store the ID for the action
         $this->confirmingAction = true;  // Trigger the confirmation modal
+        $this->actionButtonType = $actionType; // categorize if safe or desctructive action
     }
 
     public function executeAction()
@@ -121,7 +123,7 @@ class ReservationList extends Component
         $transaction->update(['transaction_status' => 'confirmed']);
         session()->flash('message', 'Transaction successfully confirmed!');
 
-        // Gather user and invoice data, 
+        // Gather user and invoice data,
         //and properties and activities
         $user = $transaction->transactionUser;
         $invoice = $transaction->invoice;

@@ -44,34 +44,34 @@
             </div>
 
             <!-- Capacity -->
-            <div>
+            {{-- <div>
                 <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900">Capacity</label>
                 <input type="number" wire:model="capacity" id="capacity"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 @error('capacity')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <!-- Max Adults -->
-            <div>
+            {{-- <div>
                 <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max Adults</label>
                 <input type="number" wire:model="max_adults" id="max_adults" min="0"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 @error('max_adults')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <!-- Max Kids -->
-            <div>
+            {{-- <div>
                 <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
                 <input type="number" wire:model="max_kids" id="max_kids" min="0"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 @error('max_kids')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <!-- House Number -->
             <div>
@@ -163,7 +163,7 @@
                 @enderror
             </div>
 
-            <!-- Available Amenities (Dynamic) -->
+            {{-- <!-- Available Amenities (Dynamic) -->
             <div class="sm:col-span-2">
                 <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -180,7 +180,7 @@
                 @error('selectedFeatures')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <!-- Image Upload -->
             <div class="mb-4 col-span-2">

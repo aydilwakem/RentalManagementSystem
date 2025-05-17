@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/canopy-logo.png') }}">
 
 </head>
-<x-guest-layout>
+<x-auth-layout>
 
     <body
         class="bg-green-800 text-black p-6 lg:p-8 lg:justify-center flex-col flex items-center justify-center bg-opacity-90 min-h-screen">
@@ -107,6 +107,6 @@
             <div class="h-14.5 hidden lg:block"></div>
         @endif
     </body>
-</x-guest-layout>
+</x-auth-layout>
 
 </html>

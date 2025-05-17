@@ -166,7 +166,7 @@
                         <div>₱{{ number_format($transaction->total_amount, 2) }}</div>
                     </div>
                     <div>
-                        <strong>Deposit:</strong>
+                        <strong>Required Deposit:</strong>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
                     </div>
                     <div>
@@ -286,36 +286,35 @@
                     <div><strong>Invoice Number:</strong></div>
                     <div># {{ $invoice->invoice_number }}</div>
 
-                    <div><strong>Due Date:</strong></div>
-                    <div>
-                        {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet
-                        set' }}
-                    </div>
+                        <div><strong>Due Date:</strong></div>
+                        <div>
+                            {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set' }}
+                        </div>
 
-                    <!-- COst Summary -->
-                    <div><strong>Grand Total:</strong></div>
-                    <div class="font-semibold">₱{{ number_format($invoice->sub_total, 2) }}</div>
+                        <!-- COst Summary -->
+                        <div><strong>Grand Total:</strong></div>
+                        <div class="font-semibold">₱{{ number_format($invoice->sub_total, 2) }}</div>
 
-                    <div><strong>Deposit:</strong></div>
-                    <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
+                        <div><strong>Required Deposit:</strong></div>
+                        <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
 
-                    <div><strong>Amount Paid:</strong></div>
-                    <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
+                        <div><strong>Amount Paid:</strong></div>
+                        <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
 
-                    <div><strong>Balance Due:</strong></div>
-                    <div>₱{{ number_format($invoice->balance_due, 2) }}</div>
+                        <div><strong>Balance Due:</strong></div>
+                        <div>₱{{ number_format($invoice->balance_due, 2) }}</div>
 
-                    <!-- Payment Status -->
-                    <div><strong>Invoice Status:</strong></div>
-                    <div>
-                        <div class="text-yellow-500">{{ ucfirst($invoice->invoice_status) }}</div>
-                    </div>
+                        <!-- Payment Status -->
+                        <div><strong>Invoice Status:</strong></div>
+                        <div>
+                            <div class="text-yellow-500">{{ ucfirst($invoice->invoice_status) }}</div>
+                        </div>
 
-                    <!-- Timeline -->
-                    <div><strong>Completed At:</strong></div>
-                    <div>
-                        {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') :
-                        'Not yet completed' }}
+                        <!-- Timeline -->
+                        <div><strong>Completed At:</strong></div>
+                        <div>
+                            {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
+                        </div>
                     </div>
                 </div>
                 @else
@@ -328,7 +327,7 @@
                 <div>
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
-                        <button 
+                        <button
                             wire:click="GenerateReceiptModal"
                             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
                             <i class="fas fa-receipt"></i>
@@ -336,7 +335,7 @@
                         </button>
                     @else
                         <!-- Show this if receipt already exists -->
-                        <button 
+                        <button
                             wire:click="ShowReceipt"
                             class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                             <i class="fas fa-eye"></i>
@@ -352,7 +351,7 @@
                         <!-- Header -->
                         <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
                             <h2 class="text-2xl font-semibold text-gray-800">Official Receipt</h2>
-                            <button wire:click="$set('showReceiptModal', false)" 
+                            <button wire:click="$set('showReceiptModal', false)"
                                     class="text-gray-400 hover:text-red-600 transition duration-200 text-3xl leading-none">&times;</button>
                         </div>
 
@@ -393,14 +392,14 @@
                                 Close
                             </button>
 
-                            <button 
+                            <button
                                 wire:click="printOfficialReceipt"
                                 class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                                 <i class="fas fa-print"></i>
                                 Print Receipt
                             </button>
 
-                             <button 
+                             <button
                                 wire:click="sendReceiptToEmail"
                                 class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
                                 <i class="fas fa-envelope"></i>
@@ -411,8 +410,11 @@
                 </div>
             @endif
 
-     
+
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
+            <section id="payments">
+
+
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
                     {{ __('Payments') }}
@@ -485,6 +487,7 @@
                 <p class="text-gray-600 italic">No payments found for this invoice.</p>
                 @endif
             </div>
+            </section>
         </div>
     </div>
 </div>

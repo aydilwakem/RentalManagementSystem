@@ -11,7 +11,7 @@
 </head>
 
 <body class="flex min-h-screen items-center justify-center bg-green-800 bg-opacity-90">
-    <x-guest-layout>
+    <x-auth-layout>
         <div
             class="flex flex-col lg:flex-row w-full max-w-4xl shadow-lg rounded-lg overflow-hidden my-6 lg:my-12 bg-white">
 
@@ -163,7 +163,7 @@
 
             </div>
         </div>
-    </x-guest-layout>
+    </x-auth-layout>
 </body>
 
 </html>

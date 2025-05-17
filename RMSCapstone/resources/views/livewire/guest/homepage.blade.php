@@ -1,7 +1,4 @@
 <div>
-
-
-
     <!-- HERO -->
     <section class="h-screen bg-cover bg-center relative pt-20"
         style="background-image: url('{{ asset('images/canopy-home2.png') }}');">

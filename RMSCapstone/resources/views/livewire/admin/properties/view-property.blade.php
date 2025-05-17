@@ -75,15 +75,15 @@
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900">House Details</h3>
                     <ul class="list-disc pl-5 text-gray-600">
-                        <li><strong>Capacity:</strong> {{ $house->capacity }}</li>
+                        {{-- <li><strong>Capacity:</strong> {{ $house->capacity }}</li>
                         <li><strong>Max Adults:</strong> {{ $house->max_adults }}</li>
-                        <li><strong>Max Kids:</strong> {{ $house->max_kids }}</li>
+                        <li><strong>Max Kids:</strong> {{ $house->max_kids }}</li> --}}
                         <li><strong>Availability:</strong> {{ ucfirst($house->property_status) }}</li>
                         <li><strong>Monthly Rent:</strong> {{ $house->amount }}</li>
                     </ul>
 
                     <!-- house Amenities -->
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
+                    {{-- <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
                     @if ($house->features->isNotEmpty())
                         <div class="flex flex-wrap gap-2">
                             @foreach ($house->features as $feature)
@@ -95,7 +95,7 @@
                         </div>
                     @else
                         <p class="text-gray-500">No amenities selected for this house.</p>
-                    @endif
+                    @endif --}}
 
                     <!-- Address -->
                     <div>
