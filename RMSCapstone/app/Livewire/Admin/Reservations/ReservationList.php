@@ -66,11 +66,14 @@ class ReservationList extends Component
         $transactions = Transaction::query()
             ->select('trn_transactions.*')
             ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id') //join trn_users for sort direction
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 2)
             ->when($this->search !== '', function ($query) {
                 $query->whereHas('transactionUser', function ($subQuery) {
-                    $subQuery->where('first_name', 'like', '%' . $this->search . '%');
+                    $subQuery->where('first_name', 'like', '%' . $this->search . '%')
+                            ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%" . $this->search . "%"]);
                 });
             })
             ->when($this->statusFilter !== '', callback: function ($query) {

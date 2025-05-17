@@ -87,8 +87,19 @@ class ViewEvents extends Component
         $allEvents = Transaction::all();
 
         $event = Transaction::query()
+            ->select('trn_transactions.*')
+            ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id') //join trn_users for sort direction
+            ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 3)
-            //->search($this->search)
+            ->when($this->search !== '', function ($query) {
+            $search = '%' . $this->search . '%';
+            $query->whereHas('transactionUser', function ($subQuery) use ($search) {
+                $subQuery->where('first_name', 'like', $search)
+                         ->orWhere('last_name', 'like', $search)
+                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+            });
+        })
             ->when($this->transactionStatus !== '', function ($query) {
                 $query->where('transaction_status', $this->transactionStatus);
             })

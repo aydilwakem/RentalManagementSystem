@@ -48,7 +48,7 @@ class ViewActivities extends Component
 
     public function getActivitiesProperty(){
         return Activity::query()
-        ->where('name', 'like', "%{$this->search}%")
+        ->where('name', 'like', '%' . trim($this->search) . '%')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }

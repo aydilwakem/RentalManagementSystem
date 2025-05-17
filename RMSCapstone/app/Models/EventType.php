@@ -18,6 +18,12 @@ class EventType extends Model
 
     public function scopeSearch($query, $search)
     {
-        $query->where('name', 'like', "%{$search}%");
+       $search = trim($search);
+
+        if ($search === '') {
+            return $query;
+        }
+
+        return $query->where('name', 'like', '%' . $search . '%');
     }
 }

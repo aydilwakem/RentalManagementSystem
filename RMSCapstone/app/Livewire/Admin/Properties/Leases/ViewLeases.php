@@ -120,9 +120,14 @@ class ViewLeases extends Component
     {
         $transactions = Transaction::with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 1) // Room reservation type
-            ->when($this->search !== '', callback: function ($query) {
-                $query->where('first_name', 'like', '%' . $this->search . '%');
-            })
+            ->when($this->search !== '', function ($query) {
+            $search = '%' . $this->search . '%';
+            $query->whereHas('transactionUser', function ($subQuery) use ($search) {
+                $subQuery->where('first_name', 'like', $search)
+                         ->orWhere('last_name', 'like', $search)
+                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+            });
+        })
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
             })

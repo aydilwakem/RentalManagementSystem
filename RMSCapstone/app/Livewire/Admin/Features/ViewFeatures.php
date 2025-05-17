@@ -46,7 +46,7 @@ class ViewFeatures extends Component
     public function getFeaturesProperty(){
         return PropertyFeature::query()
         ->where('property_type_id', 2) // Only features with property_type_id = 2
-        ->where('name', 'like', "%{$this->search}%")
+        ->where('name', 'like', '%' . trim($this->search) . '%')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }

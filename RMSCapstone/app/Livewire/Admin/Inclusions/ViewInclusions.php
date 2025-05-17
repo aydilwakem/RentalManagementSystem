@@ -46,7 +46,7 @@ class ViewInclusions extends Component
     public function getInclusionsProperty(){
         return PropertyFeature::query()
         ->where('property_type_id', 3) // Only features with property_type_id = 3
-        ->where('name', 'like', "%{$this->search}%")
+        ->where('name', 'like', '%' . trim($this->search) . '%')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }
