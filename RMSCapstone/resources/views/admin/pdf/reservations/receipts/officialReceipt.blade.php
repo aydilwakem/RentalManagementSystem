@@ -13,14 +13,14 @@
         }
 
         .header {
-            background-color: #28a745;
+            background-color: #166534;
             color: white;
             padding: 20px;
             text-align: center;
         }
 
         .section-title {
-            color: #28a745;
+            color: #166534;
             font-weight: bold;
             margin-top: 30px;
             margin-bottom: 10px;
@@ -40,14 +40,14 @@
 
         .info-table td.label {
             font-weight: bold;
-            color: #28a745;
+            color: #166534;
             width: 40%;
         }
 
         .amount {
             font-size: 20px;
             font-weight: bold;
-            color: #28a745;
+            color: #166534;
         }
 
         .notes {
@@ -63,7 +63,7 @@
         }
 
         .bordered {
-            border: 1px solid #28a745;
+            border: 1px solid #166534;
             padding: 10px;
             border-radius: 6px;
         }
@@ -72,8 +72,15 @@
 
 <body>
 
-    <div class="header">
-        <h1>Official Receipt</h1>
+    <div
+        style="background-color: #166534; color: #fff; padding: 20px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 60px;">
+        </div>
+        <h1 style="font-size: 24px; font-weight: bold; text-align: center; flex-grow: 1; margin: 0;">
+            Official Receipt
+        </h1>
+        <div></div>
     </div>
 
     <p class="section-title">Receipt Details</p>

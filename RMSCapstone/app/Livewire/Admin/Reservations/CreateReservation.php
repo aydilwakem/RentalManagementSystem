@@ -47,6 +47,8 @@ class CreateReservation extends Component
     public $activity_datetime = [];
     public $activityAmount = [];
     public $status = [];
+    public $activityImage;
+    public $activityDescription;
 
     // Primary Guest related public properties
 
@@ -324,7 +326,7 @@ class CreateReservation extends Component
 
 
 
-    // ----------------------- ROOMS ------------------------------ //  
+    // ----------------------- ROOMS ------------------------------ //
 
     public function SelectedRooms($roomId)
     {
@@ -389,7 +391,7 @@ class CreateReservation extends Component
 
 
 
-    // ----------------------- ACTIVITIES ------------------------- // 
+    // ----------------------- ACTIVITIES ------------------------- //
 
     public function SelectedActivities($activityId)
     {
@@ -423,6 +425,8 @@ class CreateReservation extends Component
             'quantity' => $quantity, // Set the quantity from the input or default to 1
             'amount' => $activityAmount, // Set the calculated amount for the activity
             'status' => $activitystatus, // Set the status of the activity
+            'image' => $activity->image, // Set the activity image
+            'description' => $activity->description, // Set the activity description
         ];
     }
 

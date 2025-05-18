@@ -56,7 +56,7 @@
             {{-- FREE ACTIVITIES --}}
 
             <!-- Activity Card -->
-            <div
+            {{-- <div
                 class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0">
                 <img class="w-full h-48 object-bottom" src="{{ asset('images/activity-bridge.png') }}"
                     alt="Nature Walk">
@@ -70,24 +70,7 @@
                         <span class="text-green-600 font-bold text-lg">FREE</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Activity Card -->
-            <div
-                class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0">
-                <img class="w-full h-48 object-center" src="{{ asset('images/activity-basement.png') }}"
-                    alt="Nature Walk">
-                <div class="p-5 pb-3">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Chill Out Game Room</h2>
-                    <p class="text-gray-600 text-sm mb-4 text-justify">Lorem ipsum dolor sit amet consectetur
-                        adipisicing
-                        elit. Porro aperiam ex provident officia aspernatur ipsum laborum temporibus quae totam vero,
-                        maxime, similique a atque assumenda tempora nisi ut error fugiat?</p>
-                    <div class="text-right">
-                        <span class="text-green-600 font-bold text-lg">FREE</span>
-                    </div>
-                </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>

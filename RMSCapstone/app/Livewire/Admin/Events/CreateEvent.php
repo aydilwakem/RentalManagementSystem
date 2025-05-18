@@ -17,17 +17,17 @@ use Livewire\Component;
 class CreateEvent extends Component
 {
     //Public declaration for fields
-    // ----------------------- Types ---------------------------- // 
+    // ----------------------- Types ---------------------------- //
     public $reservation_type_id = 3; // This reservation is for Events
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
-    
-    // ----------------------- Heard From, Status Defaults ---------------------------- // 
+
+    // ----------------------- Heard From, Status Defaults ---------------------------- //
     public $reservation_source = 'WebApp';
     public $transaction_status = 'confirmed';
-    
-    // ----------------------- EVENT DETAILS ---------------------------- // 
-    
-    // ----------------------- Guest ---------------------------- // 
+
+    // ----------------------- EVENT DETAILS ---------------------------- //
+
+    // ----------------------- Guest ---------------------------- //
     public $first_name;
     public $middle_name;
     public $last_name;
@@ -35,9 +35,9 @@ class CreateEvent extends Component
     public $contact_number;
     public $company_name;
     public $city_municipality;
-    public $country; 
+    public $country;
 
-    // ----------------------- Halls (transaction_properties)---------------------------- // 
+    // ----------------------- Halls (transaction_properties)---------------------------- //
     public $allHalls = [];
     public $halls;
     public $selected_hall;
@@ -45,27 +45,27 @@ class CreateEvent extends Component
     public $kids = [];
     public $extra_guest = [];
     public $extra_charge = [];
-    public $hall_amount; 
-    // public $hall_total_amount; 
+    public $hall_amount;
+    // public $hall_total_amount;
 
-    // ----------------------- Halls (trn_transactions)---------------------------- // 
+    // ----------------------- Halls (trn_transactions)---------------------------- //
     public $total_amount; // Total amount for the reservation
     public $pax = 0; // Total number of guests (adults + kids)
-    
+
     public $start_datetime; //Start Date Time of Event
     public $end_datetime; //End Date Time of Event
     public $total_adults;
-    public $total_kids; 
-    //public $heard_from; 
+    public $total_kids;
+    //public $heard_from;
 
-    // ------------------- INVOICE AND EVENT TYPE -------------------- // 
+    // ------------------- INVOICE AND EVENT TYPE -------------------- //
     public $invoice_number;
     public $eventTypes;
     public $event_type_id;
 
 
-    
-    // ------------------- Modal -------------------- // 
+
+    // ------------------- Modal -------------------- //
     public $confirmCreateItem = false;
 
     public function mount(){
@@ -91,7 +91,7 @@ class CreateEvent extends Component
             'city_municipality' => 'required|string|max:100',
             'company_name' => 'required|string|max:100',
             'country' => 'required|string|max:100',
-    
+
             // Transaction Fields
             'event_type_id' => 'required|integer|exists:event_types,id',
             'start_datetime' => 'required|date|after_or_equal:today|before_or_equal:end_datetime',
@@ -101,8 +101,8 @@ class CreateEvent extends Component
             'pax' => 'required|integer|min:5|max:200',
             'total_amount' => 'required|numeric|min:10000|max:5000000.00',
             'reservation_source' => 'required|string|max:100',
-            
-    
+
+
             // Dynamic guests per hall (optional validation)
             'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
             'adults.*' => 'nullable|integer|min:0|max:200',
@@ -114,7 +114,7 @@ class CreateEvent extends Component
         $this->confirmCreateItem = false;
         throw $e;
     }
-        
+
 
     DB::transaction(function () {
 
@@ -127,7 +127,7 @@ class CreateEvent extends Component
             'contact_number' => $this->contact_number,
             'city_municipality' => $this->city_municipality,
             'company_name' => $this->company_name,
-            'country' => $this->country, 
+            'country' => $this->country,
             'trn_user_type' => $this->trn_user_type,
         ]);
 
@@ -142,8 +142,8 @@ class CreateEvent extends Component
             'end_datetime' => $this->end_datetime,
             'total_adults' => $this->total_adults,
             'total_kids' =>$this->total_kids,
-            // 'pax' => $this->total_kids + $this->total_adults, 
-            'pax' => $this->pax, 
+            // 'pax' => $this->total_kids + $this->total_adults,
+            'pax' => $this->pax,
             'total_amount' => $this->total_amount,
             'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
             'reservation_source' => $this->reservation_source,
@@ -184,7 +184,7 @@ class CreateEvent extends Component
         return redirect()->route('admin.events');
     }
 
-    
+
 
     public function render()
     {
@@ -199,15 +199,15 @@ class CreateEvent extends Component
         if (!$this->start_datetime || !$this->end_datetime) {
             return;
         }
-    
+
         $startDate = \Carbon\Carbon::parse($this->start_datetime);
         $endDate = \Carbon\Carbon::parse($this->end_datetime);
-    
+
         // Step 1: Get all available event halls (unfiltered)
         $allHalls = Property::ofType('Event Hall')
             ->where('property_status', 'available')
             ->get();
-    
+
         // Step 2: Load only overlapping transactions manually
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
             $query->where(function ($q) use ($startDate, $endDate) {
@@ -215,13 +215,13 @@ class CreateEvent extends Component
                   ->where('end_datetime', '>', $startDate);
             });
         }]);
-    
+
         // Step 3: Flag each hall as booked if it has any overlapping transactions
         $this->halls = $allHalls->map(function ($hall) {
             $hall->isBooked = $hall->transactions->isNotEmpty();
             return $hall;
         });
-    
+
     }
 
     public function updatedStartDatetime()
@@ -238,7 +238,7 @@ class CreateEvent extends Component
 
     // This allows you to access the method as a property
     //Calculates day between start date and end date
-    public function getStayDurationProperty() 
+    public function getStayDurationProperty()
     {
         if ($this->start_datetime && $this->end_datetime) {
             $in = Carbon::parse($this->start_datetime);
@@ -251,10 +251,10 @@ class CreateEvent extends Component
 
     /**
      * Fetch available halls for the selected check-in and check-out dates.
-     * 
+     *
      * Filters out halls already booked during the specified range by checking
      * overlapping transactions. Only available halls of type 'Event Hall' are returned.
-     * 
+     *
      * @return void
      */
 
