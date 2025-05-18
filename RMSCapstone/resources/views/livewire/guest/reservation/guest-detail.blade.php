@@ -146,12 +146,20 @@
                                             <div class="font-semibold text-green-800">
                                                 {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
                                             </div>
-                                            <div class="space-x-2">
+                                            <div class="space-x-3 flex items-center">
                                                 <button wire:click="editGuest({{ $loop->index }})"
-                                                    class="text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">Edit</button>
+                                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">
+                                                    <i class="fas fa-edit mr-1"></i>
+                                                    Edit
+                                                </button>
+
                                                 <button
-                                                    class="text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">Remove</button>
+                                                    class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">
+                                                    <i class="fas fa-trash-alt mr-1"></i>
+                                                    Remove
+                                                </button>
                                             </div>
+
                                         </div>
                                     </li>
                                 @endforeach
@@ -162,19 +170,18 @@
                     </div>
 
                     <!-- Button to open modal -->
-                    @if(count($guests) < $total_pax - 1)
+                    @if (count($guests) < $total_pax - 1)
                         <div class="mt-4">
-                            <button type="button" wire:click="openGuestModal"
-                                class="inline-flex items-center px-3 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                            <x-button type="button" wire:click="openGuestModal">
                                 <i class="fas fa-plus mr-1"></i> Add Guest
-                            </button>
+                            </x-button>
                         </div>
                     @endif
 
                     <!------------------------------ MODALS ------------------------------------>
 
                     <!-- Edit Modal -->
-                    @if($showEditModal)
+                    @if ($showEditModal)
                         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div
                                 class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
@@ -225,7 +232,7 @@
                                     <select wire:model.defer="editingGuest.guest_type_id"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
-                                        @foreach($guest_types as $type)
+                                        @foreach ($guest_types as $type)
                                             <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                         @endforeach
                                     </select>
@@ -289,7 +296,7 @@
                     @endif
 
                     <!-- Add Guest Modal -->
-                    @if($showGuestModal)
+                    @if ($showGuestModal)
                         <div id="guestModal"
                             class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                             <div
@@ -343,7 +350,7 @@
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
                                         @foreach ($guest_types as $type)
-                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                            <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                         @endforeach
                                     </select>
                                     @error('guest_type_id')
@@ -398,8 +405,25 @@
                                         Cancel
                                     </button>
                                     <button type="button" wire:click="addMultipleGuests"
-                                        class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
-                                        Add Guest
+                                        wire:loading.attr="disabled">
+                                        <div class="flex items-center justify-center">
+                                            <!-- Spinner -->
+                                            <span wire:loading class="mr-2" wire:target="addMultipleGuests">
+                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4">
+                                                    </circle>
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                    </path>
+                                                </svg>
+                                            </span>
+
+                                            <!-- Button Text -->
+                                            <span wire:loading.remove wire:target="addMultipleGuests">
+                                                Add Guest
+                                            </span>
+                                        </div>
                                     </button>
                                 </div>
                             </div>

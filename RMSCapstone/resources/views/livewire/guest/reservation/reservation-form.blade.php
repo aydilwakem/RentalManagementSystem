@@ -39,14 +39,14 @@
                 @if ($currentStep == 1)
                     <div class="step-room">
                         @include('livewire.guest.reservation.choose-room')
-                           {{-- @include('livewire.guest.reservation.guest-detail') --}}
                     </div>
                 @endif
 
                 <!-- Choose an Activity -->
                 @if ($currentStep == 2)
                     <div class="step-activity">
-                        @include('livewire.guest.reservation.choose-activity')
+                        @include('livewire.guest.reservation.guest-detail')
+                        {{-- @include('livewire.guest.reservation.choose-activity') --}}
                     </div>
                 @endif
 

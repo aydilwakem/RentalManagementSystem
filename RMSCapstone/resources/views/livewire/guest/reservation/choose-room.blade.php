@@ -149,42 +149,44 @@
                                         <div class="mt-4">
 
 
-                                            
-                @php
-                    $cartCollection = collect($cart); // Convert array to collection
-                    $roomInCart = $cartCollection->contains(function ($item) use ($room) {
-                        return $item['type'] === 'room' && $item['room_id'] == $room->id;
-                    });
-                @endphp
 
-                <!-- Room info here -->
+                                            @php
+                                                $cartCollection = collect($cart); // Convert array to collection
+                                                $roomInCart = $cartCollection->contains(function ($item) use ($room) {
+                                                    return $item['type'] === 'room' && $item['room_id'] == $room->id;
+                                                });
+                                            @endphp
 
-                @if ($roomInCart)
+                                            <!-- Room info here -->
 
-                @else
-                    <!-- Add Room button -->
-                    <button wire:click="addRoomToCart({{ $room->id }})"
-                        class="w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                        wire:loading.attr="disabled"
-                        wire:target="addRoomToCart"
-                    >
-                        <div class="flex items-center justify-center">
-                            <!-- Spinner -->
-                            <span wire:loading class="mr-2" wire:target="addRoomToCart">
-                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                                </svg>
-                            </span>
+                                            @if ($roomInCart)
+                                            @else
+                                                <!-- Add Room button -->
+                                                <button wire:click="addRoomToCart({{ $room->id }})"
+                                                    class="w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                                    wire:loading.attr="disabled" wire:target="addRoomToCart">
+                                                    <div class="flex items-center justify-center">
+                                                        <!-- Spinner -->
+                                                        <span wire:loading class="mr-2" wire:target="addRoomToCart">
+                                                            <svg class="animate-spin h-5 w-5 text-white"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12"
+                                                                    r="10" stroke="currentColor" stroke-width="4">
+                                                                </circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                                </path>
+                                                            </svg>
+                                                        </span>
 
-                            <!-- Button Text -->
-                            <span wire:loading.remove wire:target="addRoomToCart">
-                                Add Room
-                            </span>
-                        </div>
-                    </button>
-                @endif
-        
+                                                        <!-- Button Text -->
+                                                        <span wire:loading.remove wire:target="addRoomToCart">
+                                                            Add Room
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                            @endif
+
                                         </div>
                                     </div>
                                 </div>
