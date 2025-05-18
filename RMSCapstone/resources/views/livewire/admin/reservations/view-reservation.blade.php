@@ -7,9 +7,25 @@
 
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <x-button icon="fa-solid fa-file"
-                wire:click="exportReservationDetails">
-                Export PDF
+            <x-button wire:click="exportReservationDetails">
+                <!-- Spinner -->
+                <span wire:loading wire:target="exportReservationDetails" class="mr-2">
+                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                        </path>
+                    </svg>
+                </span>
+
+                <i class="fas fa-file mr-2" wire:loading.remove wire:target="exportReservationDetails"></i>
+
+                <!-- Button Text -->
+                <span wire:loading.remove wire:target="exportReservationDetails">
+                    Export PDF
+                </span>
+
             </x-button>
             <!---------------------------- GUEST DETAILS ---------------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
@@ -347,19 +363,16 @@
                 <div>
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
-                        <button
-                            wire:click="GenerateReceipt"
+                        <button wire:click="GenerateReceipt"
                             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
                             <i class="fas fa-receipt"></i>
                             Generate Official Receipt
                         </button>
                     @else
                         <!-- Show this if receipt already exists -->
-                        <button wire:click="ShowReceipt"
-                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
-                            <i class="fas fa-eye"></i>
+                        <x-button wire:click="ShowReceipt" icon="fas fa-eye">
                             View Receipt
-                        </button>
+                        </x-button>
                     @endif
                 </div>
             @endif
@@ -371,7 +384,10 @@
                         <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
                             <h2 class="text-2xl font-semibold text-gray-800">Official Receipt</h2>
                             <button wire:click="$set('showReceiptModal', false)"
-                                class="text-gray-400 hover:text-red-600 transition duration-200 text-3xl leading-none">&times;</button>
+                                class="flex items-center justify-center w-7 h-7 rounded-full bg-gray-200 text-gray-600 hover:bg-red-100 hover:text-red-600 transition duration-200 text-2xl ">
+                                <span class="leading-none translate-y-[-3px]">&times;</span>
+                            </button>
+
                         </div>
 
                         <!-- Content -->
@@ -407,24 +423,41 @@
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
-                            <button wire:click="$set('showReceiptModal', false)"
-                                class="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
-                                Close
-                            </button>
+                        <div class="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-200">
 
-                            <button wire:click="printOfficialReceipt"
-                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
-                                <i class="fas fa-print"></i>
-                                Print Receipt
-                            </button>
+                            <!-- Print Receipt Button -->
+                            <x-button wire:click="printOfficialReceipt" wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading class="mr-2" wire:target="printOfficialReceipt">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4">
+                                            </circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
 
-                            <button wire:click="sendReceiptToEmail"
-                                class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2">
+                                    <i class="fas fa-print mr-2" wire:loading.remove
+                                        wire:target="printOfficialReceipt"></i>
+
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="printOfficialReceipt">
+                                        Print Receipt
+                                    </span>
+                                </div>
+                            </x-button>
+
+                            <!-- Send to Email Button -->
+                            <x-warning-button wire:click="sendReceiptToEmail">
                                 <i class="fas fa-envelope"></i>
-                                Send to Email
-                            </button>
+                                <span class="pl-2">Send to Email</span>
+                            </x-warning-button>
+
                         </div>
+
                     </div>
                 </div>
             @endif
@@ -509,13 +542,14 @@
 
             <!---------------------------- MODALS ---------------------------------------->
             <div>
-                @if($cannotGenerateReceiptModal)
+                @if ($cannotGenerateReceiptModal)
                     <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
                         <div class="bg-white p-6 rounded shadow-lg w-96">
                             <h2 class="text-lg font-semibold mb-4">Notice</h2>
                             <p class="text-gray-700">Receipt cannot be generated. Invoice still has balance due.</p>
                             <div class="mt-4 text-right">
-                                <button wire:click="$set('cannotGenerateReceiptModal', false)" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                <button wire:click="$set('cannotGenerateReceiptModal', false)"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                                     Close
                                 </button>
                             </div>

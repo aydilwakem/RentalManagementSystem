@@ -21,8 +21,14 @@
 
         <!-- Header -->
         <div
-            style="background-color: #166534; color: #fff; padding: 25px; text-align: center; font-size: 24px; font-weight: bold; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            Your Reservation is Confirmed!
+            style="background-color: #166534; color: #fff; padding: 20px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 60px;">
+            </div>
+            <h1 style="font-size: 24px; font-weight: bold; text-align: center; flex-grow: 1; margin: 0;">
+                Your Reservation is Confirmed!
+            </h1>
+            <div></div>
         </div>
 
         {{-- Message --}}

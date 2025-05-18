@@ -20,8 +20,14 @@
     <div
         style="max-width: 800px; margin: 30px auto; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
         <div
-            style="background-color: #166534; color: #fff; padding: 25px; text-align: center; font-size: 24px; font-weight: bold; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            New Event Quote Request
+            style="background-color: #166534; color: #fff; padding: 20px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 60px;">
+            </div>
+            <h1 style="font-size: 24px; font-weight: bold; text-align: center; flex-grow: 1; margin: 0;">
+                New Event Quote Request
+            </h1>
+            <div></div>
         </div>
 
 
@@ -41,16 +47,16 @@
                 <li style="margin-bottom: 8px;"><strong>Contact Person:</strong> {{ $quoteData['contact_person'] }}</li>
                 <li style="margin-bottom: 8px;"><strong>Email:</strong> {{ $quoteData['email'] }}</li>
                 <li style="margin-bottom: 8px;"><strong>Contact Number:</strong> {{ $quoteData['contact_number'] }}</li>
-                <li style="margin-bottom: 8px;"><strong>Selected Event Hall: </strong>{{
-                    $quoteData['selected_hall']->name_number }}</li>
-                <li style="margin-bottom: 8px;"><strong>Event Start:</strong> {{
-                    \Carbon\Carbon::parse($quoteData['event_start'])->format('F j, Y \a\t h:i A') }}</li>
-                <li style="margin-bottom: 8px;"><strong>Event End:</strong> {{
-                    \Carbon\Carbon::parse($quoteData['event_end'])->format('F j, Y \a\t h:i A') }}</li>
-                <li style="margin-bottom: 8px;"><strong>Event Type:</strong> {{ $quoteData['event_type'] ??
-                    $quoteData['other_event_type'] }}</li>
-                <li style="margin-bottom: 8px;"><strong>Additional Requests:</strong> {{
-                    $quoteData['additional_requests'] }}</li>
+                <li style="margin-bottom: 8px;"><strong>Selected Event Hall:
+                    </strong>{{ $quoteData['selected_hall']->name_number }}</li>
+                <li style="margin-bottom: 8px;"><strong>Event Start:</strong>
+                    {{ \Carbon\Carbon::parse($quoteData['event_start'])->format('F j, Y \a\t h:i A') }}</li>
+                <li style="margin-bottom: 8px;"><strong>Event End:</strong>
+                    {{ \Carbon\Carbon::parse($quoteData['event_end'])->format('F j, Y \a\t h:i A') }}</li>
+                <li style="margin-bottom: 8px;"><strong>Event Type:</strong>
+                    {{ $quoteData['event_type'] ?? $quoteData['other_event_type'] }}</li>
+                <li style="margin-bottom: 8px;"><strong>Additional Requests:</strong>
+                    {{ $quoteData['additional_requests'] }}</li>
             </ul>
 
         </div>
