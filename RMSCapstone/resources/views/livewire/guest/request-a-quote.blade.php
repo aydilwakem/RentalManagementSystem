@@ -57,7 +57,7 @@
                 <!-- Contact Number -->
                 <div class="mb-4">
                     <label for="contact-number" class="block text-sm font-medium text-gray-700">Contact Number</label>
-                    <input type="number" id="contact-number" name="contact_number" wire:model="contact_number"
+                    <input type="tel" id="contact-number" name="contact_number" wire:model="contact_number"
                         class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                         placeholder="Enter your contact number" required>
                     @error('contact_number')

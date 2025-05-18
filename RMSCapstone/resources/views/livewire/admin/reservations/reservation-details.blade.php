@@ -72,13 +72,13 @@
                         {{ $guestDetail->suffix }}
                     </td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
-                        {{ $guestDetail->gender ?? 'N/A' }}
+                        {{ ucfirst($guestDetail->gender ?? 'N/A') }}
                     </td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
-                        {{ $guestDetail->residency }}
+                        {{ ucfirst($guestDetail->residency) }}
                     </td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
-                        {{ $guestDetail->country_of_origin }}
+                        {{ ucfirst($guestDetail->country_of_origin) }}
                     </td>
                 </tr>
                 @endforeach
@@ -119,7 +119,7 @@
                 <td style="padding: 8px; font-weight: bold; width: 30%;">Transaction Status:</td>
                 <td style="padding: 8px;">
                     <span
-                        style="display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600; background-color: {{ $bg }}; color: {{ $color }}; border-radius: 999px;">
+                        style="display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: bold; background-color: {{ $bg }}; color: {{ $color }}; border-radius: 999px;">
                         {{ ucwords(str_replace('_', ' ', $status)) }}
                     </span>
                 </td>
@@ -188,21 +188,22 @@
         <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #374151;">
             <thead style="background-color: #f9fafb;">
                 <tr>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600;">Room</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600;">Category</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: center;">No. of
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold;">Room</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold;">Category</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center;">No. of
                         Adults</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: center;">No. of
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center;">No. of
                         Kids</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: center;">Stay
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center;">Stay
                         Duration</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: center;">Extra
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center;">Extra
                         Guests</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: right;">Base Rate
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: right;">Base Rate
                     </th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: right;">Extra
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: right;">Extra
                         Guest Charge</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: right;">Room Total
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: right;">Room
+                        Total
                     </th>
                 </tr>
             </thead>
@@ -223,14 +224,14 @@
                         number_format($property->pivot->amount ?? 0, 2) }}</td>
                     <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">PHP{{
                         number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: 600;">PHP{{
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">PHP{{
                         number_format($property->pivot->total_amount ?? 0, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div style="text-align: right; font-weight: 600; font-size: 15px; margin-top: 12px; color: #374151;">
+        <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
             Total Room Charges: PHP {{ number_format($totalRooms, 2) }}
         </div>
         @else
@@ -248,12 +249,12 @@
         <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
             <thead style="background-color: #f9fafb;">
                 <tr>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600;">Activity Name</th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: center;">Quantity
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold;">Activity Name</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center;">Quantity
                     </th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: right;">Unit Cost
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: right;">Unit Cost
                     </th>
-                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: 600; text-align: right;">Activity
+                    <th style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: right;">Activity
                         Total</th>
                 </tr>
             </thead>
@@ -265,7 +266,7 @@
                         $activity->pivot->quantity ?? 'N/A' }}</td>
                     <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">PHP{{
                         number_format($activity->amount ?? 0, 2) }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: 600;">
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
                         PHP{{ number_format(($activity->amount ?? 0) * ($activity->pivot->quantity ?? 0), 2) }}
                     </td>
                 </tr>
@@ -273,7 +274,7 @@
             </tbody>
         </table>
 
-        <div style="text-align: right; font-weight: 600; font-size: 15px; margin-top: 12px; color: #374151;">
+        <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
             Total Activity Charges: PHP{{ number_format($totalAddons, 2) }}
         </div>
         @else
@@ -304,7 +305,7 @@
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold;">Grand Total:</td>
-                <td style="padding: 8px; font-weight: 600;">PHP{{ number_format($invoice->sub_total, 2) }}</td>
+                <td style="padding: 8px; font-weight: bold;">PHP{{ number_format($invoice->sub_total, 2) }}</td>
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold;">Deposit:</td>
@@ -347,21 +348,21 @@
         <table style="width: 100%; border-collapse: collapse; font-size: 10px; color: #374151; table-layout: fixed;">
             <thead style="background-color: #f9fafb;">
                 <tr>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 7%;">ID</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 7%;">Invoice</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%;">Method</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 7%;">ID</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 7%;">Invoice</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%;">Method</th>
                     <th
-                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%; text-align: right;">
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: right;">
                         Amount</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 7%;">Type</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 7%;">Type</th>
                     <th
-                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         Ref #</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%;">Date</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%;">Status</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%;">Notes</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 10%;">Verified</th>
-                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: 600; width: 6%;">Action</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%;">Date</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%;">Status</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%;">Notes</th>
+                    <th style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%;">Verified
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -383,7 +384,7 @@
                         display: inline-block;
                         padding: 2px 6px;
                         font-size: 9px;
-                        font-weight: 600;
+                        font-weight: bold;
                         border-radius: 12px;
                         color:
                             {{ $payment->payment_status === 'pending' ? '#b45309' : 
@@ -400,20 +401,6 @@
                         {{ $payment->notes ?? '-' }}</td>
                     <td style="border: 1px solid #d1d5db; padding: 4px 6px;">{{ $payment->verified_at ?? 'To be
                         verified' }}</td>
-                    <td
-                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-size: 9px; white-space: nowrap; font-size: 8px;">
-                        @if ($payment->payment_status === 'pending')
-                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                            style="background-color: #f59e0b; color: white; padding: 4px 6px; border-radius: 4px; text-decoration: none;">
-                            Verify
-                        </a>
-                        @elseif($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
-                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                            style="background-color: #22c55e; color: white; padding: 4px 6px; border-radius: 4px; text-decoration: none;">
-                            View
-                        </a>
-                        @endif
-                    </td>
                 </tr>
                 @endforeach
             </tbody>

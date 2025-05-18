@@ -26,8 +26,11 @@ class ViewEvents extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
     public $transactionStatus = '';
+
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
     public $eventTypes; 
+
     public $halls; 
     public $guests; 
 
@@ -39,8 +42,8 @@ class ViewEvents extends Component
     public function mount()
     {
         // Ensure activities use a separate session key
-        if (!session()->has('fake_ids_events')) {
-            session(['fake_ids_events' => []]);
+        if (!session()->has('fake_ids_event-list')) {
+            session(['fake_ids_event-list' => []]);
         }
 
         $this->eventTypes = EventType::all();
@@ -50,25 +53,32 @@ class ViewEvents extends Component
 
     public function deleteEvent()
     {
-        if ($this->confirmItemDelete) {
-            // Find and delete the event
-            Transaction::find($this->confirmItemDelete)?->delete();
+       if ($this->confirmItemDelete) {
+        $event = Transaction::find($this->confirmItemDelete);
 
-            // Reset confirmation state
-            $this->confirmItemDelete = false;
+        if ($event && in_array($event->transaction_status, ['done', 'terminated'])) {
+            $event->delete();
 
-            // Recalculate fake IDs
+            // Recalculate fake IDs only for reservation_type_id = 3
             $fakeIDs = [];
-            foreach (Transaction::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+            foreach (
+                Transaction::where('reservation_type_id', 3)
+                    ->orderBy('created_at', 'ASC')
+                    ->get() as $index => $eventItem
+            ) {
                 $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
 
-            // Store updated fake IDs in session
-            session(['fake_ids_events' => $fakeIDs]);
+            session(['fake_ids_event-list' => $fakeIDs]);
 
-            // Flash message for user feedback
             session()->flash('message', 'Event successfully deleted!');
+        } else {
+            // Show modal instead of flash
+            $this->cannotDeleteItem = true;
         }
+
+        $this->confirmItemDelete = false;
+    }
     }
 
     public function setSortBy($sortByField)
@@ -106,17 +116,21 @@ class ViewEvents extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Retrieve unique session
-        $fakeIDs = session('fake_ids_events', []);
+        // For fake IDs: get all event-type transactions ordered by creation
+            $eventTransactions = Transaction::where('reservation_type_id', 3)
+                ->orderBy('created_at', 'ASC')
+                ->get();
 
-        // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== Transaction::count()) {
-            $fakeIDs = [];
-            foreach (Transaction::orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
-                $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            $fakeIDs = session('fake_ids_event-list', []);
+
+            // Recalculate if count mismatch
+            if (count($fakeIDs) !== $eventTransactions->count()) {
+                $fakeIDs = [];
+                foreach ($eventTransactions as $index => $eventItem) {
+                    $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+                session(['fake_ids_event-list' => $fakeIDs]);
             }
-            session(['fake_ids_events' => $fakeIDs]);
-        }
 
         return view('livewire.admin.events.view-events', [
             'event' => $event,

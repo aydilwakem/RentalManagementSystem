@@ -52,4 +52,9 @@ class Maintenance extends Model
     {
         return $query->whereNull('resolved_at');
     }
+
+    public function setResolvedAtAttribute($value)
+    {
+        $this->attributes['resolved_at'] = $value ?: null;
+    }
 }
