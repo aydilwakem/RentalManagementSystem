@@ -93,7 +93,7 @@ class ViewBranding extends Component
             }
 
             // Save the image in public folder
-            $imagePath = $this->newImage->store('room-categories', 'public');
+            $imagePath = $this->newImage->store('branding', 'public');
             $this->settings->logo = $imagePath;
         }
 

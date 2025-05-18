@@ -86,9 +86,9 @@
             <tr>
                 <th>Transaction Number</th>
                 <th>Reserved By</th>
-                <th>Property</th>
-                <th>Start</th>
-                <th>End</th>
+                <th>Room/s</th>
+                <th>Check-In Date</th>
+                <th>Check-Out Date</th>
                 <th>Total Amount</th>
                 <th>Status</th>
             </tr>

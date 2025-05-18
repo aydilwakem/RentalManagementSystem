@@ -134,8 +134,6 @@
                                 @endif
                             </button>
                         </th>
-                        <th scope="col" class="px-4 py-3">Category</th>
-                        <th scope="col" class="px-4 py-3">Event Hall</th>
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('company_name')">
                             <button class="flex items-center">
                                 Company Name
@@ -165,35 +163,8 @@
                                 @endif
                             </button>
                         </th>
-                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('contact_person')">
-                            <button class="flex items-center">
-                                Contact Number
-                                @if ($sortBy !== 'contact_person')
-                                {{-- Default icon when sorting is not active --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
-                                @else
-                                @if ($sortDir == 'ASC')
-                                {{-- Up arrow (Ascending) --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                {{-- Down arrow (Descending) --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
-                                @endif
-                            </button>
-                        </th>
+                        <th scope="col" class="px-4 py-3">Category</th>
+                        <th scope="col" class="px-4 py-3">Event Hall</th>
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('event_date_start')">
                             <button class="flex items-center">
                                 Event Start
@@ -239,17 +210,16 @@
                     <td class="px-4 py-3">
                         {{ $eventItem->transactionUser->first_name }}
                         {{ $eventItem->transactionUser->last_name }}</td>
+                    <td class="px-4 py-3"> {{ $eventItem->transactionUser->company_name }} </td>
                     <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A'}} </td>
                     <td class="px-4 py-3"> @foreach ($eventItem->properties as $property)
                         {{ $property->name_number ?? 'N/A' }}<br>
                         @endforeach</td>
-                    <td class="px-4 py-3"> {{ $eventItem->transactionUser->company_name }} </td>
-                    <td class="px-4 py-3"> {{ $eventItem->transactionUser->contact_number }} </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('Y-m-d h:i A') }}
+                        {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('F j, Y g:i A') }}
                     </td>
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('Y-m-d h:i A') }}
+                        {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('F j, Y g:i A') }}
                     </td>
                     <td class="px-4 py-3"> {{ $eventItem->pax }} </td>
                     <td class="px-4 py-3"> ₱{{ number_format($eventItem->total_amount, 2) }} </td>

@@ -289,6 +289,11 @@
                         </a>
                         @endcan
 
+                        <a href="{{ route('admin.event-reports') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('event-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Event Reports</h1>
+                        </a>
+
                         @can('event-hall-list')
                         <a href="{{ route('admin.event-halls') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.event-halls') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">

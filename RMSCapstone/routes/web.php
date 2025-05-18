@@ -292,7 +292,12 @@ Route::middleware([
         return view('admin.events.deleted-events');
     })->name('admin.deleted-events')->middleware('can:event-soft-delete');
 
-    //REPORTS Page
+    // Events Summary
+    Route::get('/event-reports', function () {
+        return view('admin.reports.event-reports');
+    })->name('admin.event-reports');
+
+    //--------------------------RESERVATION REPORTS PAGE------------------ //
     Route::get('/reservation-reports', function () {
         return view('admin.reports.reservation-reports');
     })->name('admin.reservation-reports');

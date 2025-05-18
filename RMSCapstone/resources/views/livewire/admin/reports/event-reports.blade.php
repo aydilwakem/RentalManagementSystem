@@ -30,7 +30,7 @@
                 <div class="flex items-end">
                     <x-button icon="fa-solid fa-file"
                         class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        wire:click="exportReservationSummary">
+                        wire:click="exportEventSummary">
                         Export PDF
                     </x-button>
                 </div>
@@ -40,7 +40,7 @@
         @if (empty($start_date) || empty($end_date))
         <div class="w-full text-center py-4">
             <span class="text-green-500 font-medium">
-                No reservations found. Select start date and end date to generate reservations summary.
+                No events found. Select start date and end date to generate events summary.
             </span>
         </div>
         @else
@@ -79,7 +79,7 @@
 
                     <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
                         <button class="flex items-center">
-                            Guest Name
+                            Booked By
                             @if ($sortBy !== 'first_name')
                             {{-- Default icon when sorting is not active --}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -106,7 +106,8 @@
                     </th>
 
 
-                    <th scope="col" class="px-4 py-3">Room/s</th>
+                    <th scope="col" class="px-4 py-3">Event Hall</th>
+                    <th scope="col" class="px-4 py-3">Event Type</th>
 
                     {{-- Pax --}}
                     <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
@@ -137,39 +138,10 @@
                         </button>
                     </th>
 
-                    {{-- Stay Duration --}}
-                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('days')">
-                        <button class="flex items-center">
-                            Stay Duration
-                            @if ($sortBy !== 'days')
-                            {{-- Default icon when sorting is not active --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                            </svg>
-                            @else
-                            @if ($sortDir == 'ASC')
-                            {{-- Up arrow (Ascending) --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                            </svg>
-                            @else
-                            {{-- Down arrow (Descending) --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4 ml-1">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                            @endif
-                            @endif
-                        </button>
-                    </th>
-
-                    {{-- Check-in Date --}}
+                    {{-- Event Start --}}
                     <th scope="col" class="px-4 py-3" wire:click="setSortBy('start_datetime')">
                         <button class="flex items-center">
-                            Check-in
+                            Event Start
                             @if ($sortBy !== 'start_datetime')
                             {{-- Default icon when sorting is not active --}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -195,10 +167,10 @@
                         </button>
                     </th>
 
-                    {{-- Check-out Date --}}
+                    {{-- Event End --}}
                     <th scope="col" class="px-4 py-3" wire:click="setSortBy('end_datetime')">
                         <button class="flex items-center">
-                            Check-out
+                            Event End
                             @if ($sortBy !== 'end_datetime')
                             {{-- Default icon when sorting is not active --}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -223,6 +195,8 @@
                             @endif
                         </button>
                     </th>
+                    {{-- Deposit Amount --}}
+                    <th scope="col" class="px-4 py-3">Deposit Amount</th>
                     {{-- Total Amount --}}
                     <th scope="col" class="px-4 py-3">Total Amount</th>
                     {{-- Status --}}
@@ -239,7 +213,7 @@
 
                     {{-- ID --}}
                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                        {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
+                        {{ $fakeIDs[$transaction->id] ?? 'EVT-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
                     </th>
 
                     {{-- First Name and Last Name --}}
@@ -248,29 +222,32 @@
                         {{ $transaction->transactionUser->last_name }}
                     </th>
 
-                    {{-- Rooms --}}
+                    {{-- Hall --}}
                     <td class="px-4 py-3">
                         @foreach ($transaction->properties as $property)
                         {{ $property->name_number ?? 'N/A' }}<br>
                         @endforeach
                     </td>
 
+                    {{-- Event Type --}}
+                    <td>{{ $transaction->event_type->name ?? 'N/A'}}</td>
+
                     {{-- Pax --}}
                     <td class="px-4 py-3"> {{ $transaction->pax }}</td>
 
-                    {{-- Stay Duration --}}
+                    {{-- Event Start Date --}}
                     <td class="px-4 py-3">
-                        {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)
+                        {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}
                     </td>
 
-                    {{-- Check-in Date --}}
+                    {{-- Event End Date --}}
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}
+                        {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}
                     </td>
 
-                    {{-- Check-out Date --}}
+                    {{-- Total Amount --}}
                     <td class="px-4 py-3">
-                        {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}
+                        ₱{{ number_format($transaction->deposit_amount, 2) }}
                     </td>
 
                     {{-- Total Amount --}}
@@ -323,7 +300,7 @@
                 @empty
                 <tr>
                     <td colspan="15" class="text-center py-10 text-gray-500">
-                        No reservations found matching this status.
+                        No events found matching this status.
                     </td>
                 </tr>
 
