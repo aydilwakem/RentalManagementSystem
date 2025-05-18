@@ -24,6 +24,7 @@ class ViewEvent extends Component
     public $event_invoice; 
     public $eventTypes; 
 
+    public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
 
     public function confirmDelete($id)
@@ -54,20 +55,23 @@ class ViewEvent extends Component
 
     public function deleteEventItem(Transaction $event)
     {
-        if (!$event) {
-            session()->flash('error', 'Event not found!');
-            return;
+         if (!$event) {
+        session()->flash('error', 'Event not found!');
+        return;
         }
 
         if ($this->confirmItemDelete) {
-            $event->delete();
-            $this->confirmItemDelete = false;
-    
-        // Flash success message
-        session()->flash('message', 'Event successfully deleted!');
+            if (in_array($event->transaction_status, ['done', 'terminated'])) {
+                $event->delete();
+                $this->confirmItemDelete = false;
 
-        // Redirect to the admin rooms page
-        return redirect()->route('admin.events');
+                session()->flash('message', 'Event successfully deleted!');
+                return redirect()->route('admin.events');
+            } else {
+                // Set modal flag if event is not deletable
+                $this->cannotDeleteItem = true;
+                $this->confirmItemDelete = false;
+            }
         }
     }
 

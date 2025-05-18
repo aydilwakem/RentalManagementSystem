@@ -48,7 +48,7 @@ class ViewRooms extends Component
         ->when($this->statusFilter, function ($query) {
             $query->where('property_status', $this->statusFilter);
         })
-        ->where('name_number', 'like', '%' . $this->search . '%') //mount name
+        ->where('name_number', 'like', '%' . trim($this->search) . '%')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }

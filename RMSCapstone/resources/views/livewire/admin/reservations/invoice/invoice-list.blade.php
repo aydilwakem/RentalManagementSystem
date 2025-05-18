@@ -105,49 +105,49 @@
 
                 <tbody>
                     @foreach ($invoices as $invoice)
-                                    <tr class="border-b hover:bg-gray-50">
-                                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
-                                            <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            {{ $invoice->transaction->transactionUser->first_name ?? '' }}
-                                            {{ $invoice->transaction->transactionUser->last_name ?? '' }}
-                                        </td>
-                                        <td class="px-4 py-3">{{ $invoice->transaction->id ?? 'N/A' }}</td>
-                                        <td class="px-4 py-3">
-                                            {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-3">₱{{ number_format($invoice->sub_total, 2) }}</td>
-                                        <td class="px-4 py-3">₱{{ number_format($invoice->balance_due, 2) }}</td>
-                                        <td class="px-4 py-3">
-                                            {{ ucfirst($invoice->transaction->reservationType->first()->name ?? 'N/A') }}
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <span
-                                                class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
+                            <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            {{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                            {{ $invoice->transaction->transactionUser->last_name ?? '' }}
+                        </td>
+                        <td class="px-4 py-3">{{ $invoice->transaction->id ?? 'N/A' }}</td>
+                        <td class="px-4 py-3">
+                            {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3">
+                            {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3">₱{{ number_format($invoice->sub_total, 2) }}</td>
+                        <td class="px-4 py-3">₱{{ number_format($invoice->balance_due, 2) }}</td>
+                        <td class="px-4 py-3">
+                            {{ ucfirst($invoice->invoice_type ?? 'N/A') }}
+                        </td>
+                        <td class="px-4 py-3">
+                            <span
+                                class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {{
                         $invoice->invoice_status === 'pending' ? 'bg-yellow-100 text-yellow-500' :
                         ($invoice->invoice_status === 'completed' ? 'bg-green-100 text-green-500' :
                             ($invoice->invoice_status === 'failed' ? 'bg-red-100 text-red-500' :
                                 ($invoice->invoice_status === 'overdue' ? 'bg-pink-100 text-pink-500' : 'bg-gray-100 text-gray-500')))
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }}">
-                                                {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
-                                            </span>
-                                        </td>
+                                {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
+                            </span>
+                        </td>
 
-                                        {{-- <td class="px-4 py-3 space-x-1">
-                                            <!-- View Icon -->
-                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                                href="#"></i>
-                                            <!-- Delete Icon -->
-                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#"></i>
-                                        </td> --}}
+                        {{-- <td class="px-4 py-3 space-x-1">
+                            <!-- View Icon -->
+                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                href="#"></i>
+                            <!-- Delete Icon -->
+                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#"></i>
+                        </td> --}}
 
-                                    </tr>
+                    </tr>
                     @endforeach
 
                 </tbody>

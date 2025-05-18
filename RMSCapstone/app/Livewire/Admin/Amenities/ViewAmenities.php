@@ -46,7 +46,7 @@ class ViewAmenities extends Component
     public function getAmenitiesProperty(){
         return PropertyFeature::query()
         ->where('property_type_id', 1) // Only amenities with property_type_id = 1
-        ->where('name', 'like', "%{$this->search}%")
+        ->where('name', 'like', '%' . trim($this->search) . '%')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }

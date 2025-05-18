@@ -33,7 +33,13 @@ class Maintenance extends Model
 
     public function scopeSearch($query, $search)
     {
-        $query->where('description', 'like', "%{$search}%");
+        $search = trim($search);
+
+        if ($search === '') {
+            return $query;
+        }
+
+        return $query->where('name', 'like', '%' . $search . '%');
     }
 
     public function scopeFinishedMaintenances($query)
@@ -45,5 +51,10 @@ class Maintenance extends Model
     public function scopePendingMaintenances($query)
     {
         return $query->whereNull('resolved_at');
+    }
+
+    public function setResolvedAtAttribute($value)
+    {
+        $this->attributes['resolved_at'] = $value ?: null;
     }
 }
