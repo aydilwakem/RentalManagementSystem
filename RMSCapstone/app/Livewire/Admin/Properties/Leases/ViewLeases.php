@@ -29,6 +29,7 @@ class ViewLeases extends Component
     //public $transactions;
     public $leases = [];
 
+    public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false; 
     public $statusFilter = ''; // Filter transactions by status
@@ -74,27 +75,33 @@ class ViewLeases extends Component
     }
 
     //Method to delete the lease
-    public function deleteLease($id)
+    public function deleteLease()
     {
-        $transaction = Transaction::find($id);
+        if ($this->confirmItemDelete) {
+        $lease = Transaction::find($this->confirmItemDelete);
 
-        if ($transaction) {
-            if ($this->confirmItemDelete) {
-                Transaction::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+        if ($lease && in_array($lease->transaction_status, ['done', 'terminated'])) {
+            $lease->delete();
 
-                $transaction = Transaction::orderBy('created_at', 'ASC')->get();
-
-                $fakeIDs = [];
-                foreach ($transaction as $index => $transactionItem) {
-                    $fakeIDs[$transactionItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-
-                session(['fake_ids_leases' => $fakeIDs]);
-
-                session()->flash('message', 'Lease successfully deleted!');
+            $fakeIDs = [];
+            foreach (
+                Transaction::where('reservation_type_id', 1) //house
+                    ->orderBy('created_at', 'ASC')
+                    ->get() as $index => $leaseItem
+            ) {
+                $fakeIDs[$leaseItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+
+            session(['fake_ids_leases' => $fakeIDs]);
+
+            session()->flash('message', 'Lease successfully deleted!');
+        } else {
+            // Show modal instead of flash
+            $this->cannotDeleteItem = true;
         }
+
+        $this->confirmItemDelete = false;
+    }
     }
 
     public function mount()

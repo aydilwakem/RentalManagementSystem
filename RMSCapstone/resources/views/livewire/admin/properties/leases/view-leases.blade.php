@@ -56,7 +56,7 @@
                         placeholder="Search tenants" required="">
                 </div>
 
-                {{-- Bulk Actions Button --}}
+                {{-- Bulk Actions Button
                 <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                     <button @click="open = !open" type="button"
                         class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -75,7 +75,7 @@
                                 Delete</a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <!-- Status-->
@@ -101,10 +101,10 @@
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
                         <!-- Select All Checkbox-->
-                        <th scope="col" class="px-4 py-3">
+                        {{-- <th scope="col" class="px-4 py-3">
                             <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                 class="accent-blue-600 w-4 h-4">
-                        </th>
+                        </th> --}}
 
                         <!-- ID-->
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
@@ -294,11 +294,11 @@
                 <tbody class="">
                     @forelse ($transactions as $transaction)
                     <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                        {{-- <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                             <input wire:model.live="selectedRows" type="checkbox" name="transaction[]"
                                 value="{{ $transaction->id }}" class="accent-blue-600 w-4 h-4">
-                        </th>
-                        <th scope="row" class="font-medium text-gray-900">
+                        </th> --}}
+                        <th scope="row" class="font-medium text-gray-900 px-4 py-3">
                             {{ $fakeIDs[$transaction->id] ?? 'LEASE-???' }}
                         </th>
                         <td class="px-4 py-3">
@@ -398,6 +398,24 @@
         </x-slot>
     </x-dialog-modal>
 
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('This is an active or on-going lease and cannot be deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
+        </x-slot>
+    </x-dialog-modal>
+
+    {{--
     <!-- Bulk Delete Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmBulkDelete">
         <x-slot name="title">
@@ -417,6 +435,6 @@
                 {{ __('Delete Lease') }}
             </x-danger-button>
         </x-slot>
-    </x-dialog-modal>
+    </x-dialog-modal> --}}
     @endif
 </div>

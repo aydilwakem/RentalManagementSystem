@@ -11,7 +11,9 @@ use Livewire\Component;
 class ViewLease extends Component
 {
     public Transaction $transaction;
+
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -21,20 +23,22 @@ class ViewLease extends Component
     public function deleteLease(Transaction $transaction)
     {
         if (!$transaction) {
-            session()->flash('error', 'Lease not found!');
-            return;
+        session()->flash('error', 'Lease not found!');
+        return;
         }
 
-        // Delete the tenant
         if ($this->confirmItemDelete) {
-            $transaction->delete();
-            $this->confirmItemDelete = false;
+            if (in_array($transaction->transaction_status, ['done', 'terminated'])) {
+                $transaction->delete();
+                $this->confirmItemDelete = false;
 
-            // Flash success message
-            session()->flash('message', 'Lease successfully deleted!');
-
-            // Redirect to the admin leases page
-            return redirect()->route('admin.leases');
+                session()->flash('message', 'Lease successfully deleted!');
+                return redirect()->route('admin.events');
+            } else {
+                // Set modal flag if event is not deletable
+                $this->cannotDeleteItem = true;
+                $this->confirmItemDelete = false;
+            }
         }
     }
 
