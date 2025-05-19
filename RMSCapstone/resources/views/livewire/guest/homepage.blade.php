@@ -120,7 +120,8 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <!-- Pagination -->
+                        {{--
+                        <!-- Pagination -->
                         <div class="swiper-pagination mt-32"></div>
 
                         <!-- Navigation -->
@@ -196,7 +197,8 @@
                         most of
                         your time in nature, we offer a variety of choices to suit your mood and interests. From
                         hands-on coffee tours and nature walks to farm experiences and local craft sessions, each
-                        activity is designed to enrich your visit and create lasting memories. </p>
+                        activity is designed to enrich your visit and create lasting memories.
+                    </p>
 
                     <!-- Badges -->
                     <div class="flex flex-wrap gap-2">
@@ -270,20 +272,39 @@
             <div class="container mx-auto px-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+                    {{-- For sessionn messages --}}
+                    @if (session('message'))
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        {{ session('message') }}
+                    </div>
+                    @endif
                     <!-- Contact Form -->
                     <div>
                         <div class="lg:w-full px-2 mb-4 text-center">
                             <h2 class="text-green-700 font-bold text-xl">CONTACT US</h2>
                         </div>
-                        <form id="request" class="space-y-3">
-                            <input type="text" name="Name" placeholder="Name"
+                        <form wire:submit.prevent="contactUs" class="space-y-3">
+                            <input type="text" name="Name" placeholder="Name" wire:model="name"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
-                            <input type="email" name="Email" placeholder="Email"
+                            @error('name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                            <input type="email" name="Email" placeholder="Email" wire:model="email"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
-                            <input type="tel" name="Phone Number" placeholder="Phone Number"
+                            @error('email')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                            <input type="tel" name="Phone Number" placeholder="Phone Number" wire:model="contact_number"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
-                            <textarea name="Message" placeholder="Message"
+                            @error('contact_number')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                            <textarea name="message" placeholder="Message" wire:model="message"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300 resize-none"></textarea>
+                            @error('message')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                             <button type="submit"
                                 class="w-full px-4 py-2 text-white bg-green-700 hover:bg-green-800 rounded-md">
                                 Send
