@@ -10,10 +10,10 @@
     </div>
     @else
     <div>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-4">
             <!-- Create Room Button -->
             @can('event-create')
-            <div class="flex items-center justify-between p-4">
+            <div class="flex items-center justify-between">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-event') }}">
                     New Event
                 </x-button>

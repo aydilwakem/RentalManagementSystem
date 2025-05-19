@@ -12,49 +12,61 @@
         <hr class="border-gray-300">
     </div>
 
-    <h3 class="text-lg font-semibold text-gray-900 mb-3">Lease Details</h3>
-    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
-            <div><strong>Property:</strong>
-                @foreach ($transaction->properties as $property)
-                {{ $property->name_number ?? 'N/A' }}<br>
-                @endforeach
-            </div>
-            <div>
-                <strong>Tenant:</strong>
-                {{ $transaction->transactionUser->first_name }}
-                {{$transaction->transactionUser->last_name }}
-            </div>
-            <div><strong>Total People:</strong> {{ $transaction->pax }}</div>
-        </div>
-    </div>
+    <div class="flex flex-col space-y-6 mb-6">
 
-    <div class="mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-1">Rent Details</h3>
-        <div><strong>Lease Start Date:</strong> {{ $transaction->start_datetime->format('F j, Y') }}</div>
-        <div><strong>Lease End Date:</strong> {{ $transaction->end_datetime->format('F j, Y') }}</div>
-        <div><strong>Total Months:</strong> {{ $this->getMonthCount($transaction->start_datetime,
-            $transaction->end_datetime) }} Months</div>
-        <div><strong>Monthly Rent:</strong>₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</div>
-        <div><strong>Total Rent in Duration:</strong>₱ {{ number_format($transaction->total_amount, 2) }}</div>
-    </div>
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Guest Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                <div><strong>Property:</strong>
+                    @foreach ($transaction->properties as $property)
+                        {{ $property->name_number ?? 'N/A' }}<br>
+                    @endforeach
+                </div>
+                <div>
+                    <strong>Tenant:</strong>
+                    {{ $transaction->transactionUser->first_name }}
+                    {{ $transaction->transactionUser->last_name }}
+                </div>
+                <div><strong>Total People:</strong> {{ $transaction->pax }}</div>
+            </div>
+        </div>
 
-    <div class="mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
-        <div><strong>Transaction ID: </strong>
-            {{ $transaction->invoice->transaction_id ?? 'N/A'}}
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Rent Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+            <div><strong>Lease Start Date:</strong> {{ $transaction->start_datetime->format('F j, Y') }}</div>
+            <div><strong>Lease End Date:</strong> {{ $transaction->end_datetime->format('F j, Y') }}</div>
+            <div><strong>Total Months:</strong>
+                {{ $this->getMonthCount($transaction->start_datetime, $transaction->end_datetime) }} Months
+            </div>
+            <div><strong>Monthly Rent:</strong>₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</div>
+            <div><strong>Total Rent in Duration:</strong>₱ {{ number_format($transaction->total_amount, 2) }}</div>
+            </div>
         </div>
-        <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A'}}</div>
-        <div><strong>Sub Total: </strong> ₱{{ optional($transaction->invoice)->sub_total !== null
-            ? number_format(optional($transaction->invoice)->sub_total, 2)
-            : 'N/A' }}</div>
-        <div><strong>Balance Due: </strong>₱{{ optional($transaction->invoice)->sub_total !== null
-            ? number_format(optional($transaction->invoice)->balance_due, 2)
-            : 'N/A' }}</div>
-        <div><strong>Due Date: </strong> {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ??
-            'N/A' }}
+
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+            <div><strong>Transaction ID: </strong>
+                {{ $transaction->invoice->transaction_id ?? 'N/A' }}
+            </div>
+            <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A' }}</div>
+            <div><strong>Sub Total: </strong>
+                ₱{{ optional($transaction->invoice)->sub_total !== null
+                    ? number_format(optional($transaction->invoice)->sub_total, 2)
+                    : 'N/A' }}
+            </div>
+            <div><strong>Balance Due:
+                </strong>₱{{ optional($transaction->invoice)->sub_total !== null
+                    ? number_format(optional($transaction->invoice)->balance_due, 2)
+                    : 'N/A' }}
+            </div>
+            <div><strong>Due Date: </strong>
+                {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ?? 'N/A' }}
+            </div>
+            <div><strong>Invoice Status: </strong> {{ ucfirst($transaction->invoice->invoice_status ?? 'N/A') }}</div>
+            </div>
         </div>
-        <div><strong>Invoice Status: </strong> {{ ucfirst($transaction->invoice->invoice_status ?? 'N/A')}}</div>
     </div>
 
 
@@ -89,7 +101,8 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deleteLease({{ $transaction->id }})" wire:loading.attr="disabled">
+            <x-danger-button class="ms-3" wire:click="deleteLease({{ $transaction->id }})"
+                wire:loading.attr="disabled">
                 {{ __('Delete Lease') }}
             </x-danger-button>
         </x-slot>

@@ -12,77 +12,83 @@
         <hr class="border-gray-300">
     </div>
 
-    <h3 class="text-lg font-semibold text-gray-900 mb-3">Event Details</h3>
-    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-        <div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Guest Details</h3>
-                <div><strong>Event Booked By: </strong> {{ $event->transactionUser->first_name}} {{
-                    $event->transactionUser->middle_name}} {{ $event->transactionUser->last_name}}</div>
-                <div><strong>Email: </strong> {{ $event->transactionUser->email}}</div>
-                <div><strong>Contact Number: </strong> {{ $event->transactionUser->contact_number}}</div>
-                <div><strong>Company Name: </strong> {{ $event->transactionUser->company_name}}</div>
-                <div><strong>Company Name: </strong> {{ $event->transactionUser->city_municipality}}, {{
-                    $event->transactionUser->country}}</div>
+    <div class="flex flex-col space-y-6 mb-6">
+        <!-- Guest Details -->
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Guest Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                <div><strong>Event Booked By:</strong> {{ $event->transactionUser->first_name }}
+                    {{ $event->transactionUser->middle_name }} {{ $event->transactionUser->last_name }}</div>
+                <div><strong>Email:</strong> {{ $event->transactionUser->email }}</div>
+                <div><strong>Contact Number:</strong> {{ $event->transactionUser->contact_number }}</div>
+                <div><strong>Company Name:</strong> {{ $event->transactionUser->company_name }}</div>
+                <div class="md:col-span-2"><strong>Location:</strong> {{ $event->transactionUser->city_municipality }},
+                    {{ $event->transactionUser->country }}</div>
             </div>
+        </div>
 
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Event Details</h3>
-                <div><strong>Event Hall: </strong> @foreach ($event->properties as $property)
-                    {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
+        <!-- Event Details -->
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                <div><strong>Event Hall:</strong>
+                    @foreach ($event->properties as $property)
+                        {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
                     @endforeach
                 </div>
-                <div><strong>Event Type: </strong>
-                    {{ $event->event_type->name ?? 'N/A'}}
-                </div>
-                <div><strong>Event Start Date: </strong> {{ $event->start_datetime->format('F j, Y h:i A')}}</div>
-                <div><strong>Event End Date: </strong> {{ $event->end_datetime->format('F j, Y h:i A')}}</div>
-                <div><strong>Total Adults: </strong> {{ $event->total_adults}}</div>
-                <div><strong>Total Kids: </strong> {{ $event->total_kids}}</div>
-                <div><strong>Total People: </strong> {{ $event->pax}}</div>
-                <div><strong>Event Status: </strong>{{ ucfirst($event->transaction_status) }}</div>
-                <div><strong>Total Agreed Amount: </strong>₱{{ number_format($event->total_amount, 2) }}</div>
-            </div>
-
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Event Invoice</h3>
-                <div><strong>Transaction ID: </strong>
-                    {{ $event->invoice->transaction_id ?? 'N/A'}}
-                </div>
-                <div><strong>Invoice Number: </strong> {{ $event->invoice->invoice_number}}</div>
-                <div><strong>Sub Total: </strong> ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
-                <div><strong>Balance Due: </strong>₱{{ number_format($event->invoice->balance_due, 2) }}</div>
-                <div><strong>Due Date: </strong> {{ $event->invoice->due_date->format('F j, Y')}}</div>
-                <div><strong>Invoice Status: </strong> {{ ucfirst($event->invoice->invoice_status)}}</div>
+                <div><strong>Event Type:</strong> {{ $event->event_type->name ?? 'N/A' }}</div>
+                <div><strong>Event Start Date:</strong> {{ $event->start_datetime->format('F j, Y h:i A') }}</div>
+                <div><strong>Event End Date:</strong> {{ $event->end_datetime->format('F j, Y h:i A') }}</div>
+                <div><strong>Total Adults:</strong> {{ $event->total_adults }}</div>
+                <div><strong>Total Kids:</strong> {{ $event->total_kids }}</div>
+                <div><strong>Total People:</strong> {{ $event->pax }}</div>
+                <div><strong>Event Status:</strong> {{ ucfirst($event->transaction_status) }}</div>
+                <div class="md:col-span-2"><strong>Total Agreed Amount:</strong>
+                    ₱{{ number_format($event->total_amount, 2) }}</div>
             </div>
         </div>
+
+        <!-- Event Invoice -->
+        <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Invoice</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction_id ?? 'N/A' }}</div>
+                <div><strong>Invoice Number:</strong> {{ $event->invoice->invoice_number }}</div>
+                <div><strong>Sub Total:</strong> ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
+                <div><strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}</div>
+                <div><strong>Due Date:</strong> {{ $event->invoice->due_date->format('F j, Y') }}</div>
+                <div><strong>Invoice Status:</strong> {{ ucfirst($event->invoice->invoice_status) }}</div>
+            </div>
+        </div>
+
     </div>
+
 
 
 
     <!-- Action Buttons -->
     <div class="flex items-center justify-between space-x-4 mt-auto mb-3">
-        <!-- Edit -->
-        <x-button type="button" icon="fas fa-pen-to-square"
-            class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            wire:navigate href="{{ route('admin.edit-event', ['event' => $event->id]) }}">
-            Edit
-        </x-button>
-
         <!-- Delete -->
         <x-button type="button" icon="fas fa-trash"
             class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
             wire:click="confirmDelete({{ $event->id }})">
             Delete
         </x-button>
+        <div class="flex space-x-2">
+            <!-- Edit -->
+            <x-button type="button" icon="fas fa-pen-to-square"
+                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:navigate href="{{ route('admin.edit-event', ['event' => $event->id]) }}">
+                Edit
+            </x-button>
 
-        <x-button icon="fa-solid fa-file"
-            class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-            wire:click="exportEventDetails">
-            Export PDF
-        </x-button>
+
+            <x-button icon="fa-solid fa-file"
+                class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:click="exportEventDetails">
+                Export PDF
+            </x-button>
+        </div>
     </div>
 
     <x-dialog-modal wire:model.live="confirmItemDelete">
@@ -99,7 +105,8 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deleteEventItem({{ $event->id }})" wire:loading.attr="disabled">
+            <x-danger-button class="ms-3" wire:click="deleteEventItem({{ $event->id }})"
+                wire:loading.attr="disabled">
                 {{ __('Delete Event') }}
             </x-danger-button>
         </x-slot>
