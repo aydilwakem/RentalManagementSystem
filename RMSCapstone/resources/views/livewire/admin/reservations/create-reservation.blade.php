@@ -367,11 +367,17 @@
                             @foreach ($guests as $guest)
                                 <li class="flex justify-between items-center p-2 bg-gray-100 rounded-md">
                                     <span>{{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}</span>
-                                    <div class="space-x-2">
+                                    <div class="space-x-4">
                                         <button wire:click="editGuest({{ $loop->index }})"
-                                            class="text-blue-500">Edit</button>
+                                            class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">
+                                            <i class="fas fa-edit mr-1"></i>
+                                            Edit
+                                        </button>
                                         <button wire:click="deleteGuest({{ $loop->index }})"
-                                            class="text-red-500">Delete</button>
+                                            class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">
+                                            <i class="fas fa-trash-alt mr-1"></i>
+                                            Delete
+                                        </button>
                                     </div>
                                 </li>
                             @endforeach
