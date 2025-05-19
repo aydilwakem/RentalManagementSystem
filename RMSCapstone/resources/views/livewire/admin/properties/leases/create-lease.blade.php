@@ -112,17 +112,18 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300">
             </div>
 
-            <!-- Actions Buttons -->
-            <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                    Cancel
-                </x-button>
-                <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
-                    Add Lease
-                </x-button>
-            </div>
-    </form>
+        </form>
+    </div>
+    <!-- Actions Buttons -->
+    <div class="flex justify-between items-center space-y-2 mt-6">
+        <x-button onclick="history.back()" type="button"
+            class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+            Cancel
+        </x-button>
+        <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+            Add Lease
+        </x-button>
+    </div>
 
     <!-- Create Confirmation Modal -->
     <x-dialog-modal wire:model.live="confirmCreateItem">
