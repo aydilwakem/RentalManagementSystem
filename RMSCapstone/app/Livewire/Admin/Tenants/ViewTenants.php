@@ -45,13 +45,13 @@ class ViewTenants extends Component
 
     public function getTenantsProperty(){
         return TransactionUser::query()
+        ->where('trn_user_type', 'tenant') 
         ->where(function ($query) {
             $query->where('first_name', 'like', "%{$this->search}%")
                 ->orWhere('last_name', 'like', "%{$this->search}%")
                 ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$this->search}%"])
                 ->orWhere('email', 'like', "%{$this->search}%");
         })
-        ->where('trn_user_type', 'tenant')
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }
@@ -128,7 +128,7 @@ class ViewTenants extends Component
             $this->confirmItemDelete = null;
 
             // Refresh the list of event halls and regenerate fake ids
-            $tenants = TransactionUser::orderBy('created_at', 'ASC')->get();
+            $tenants = TransactionUser::where('trn_user_type', 'tenant')->orderBy('created_at', 'ASC')->get();
             $fakeIDs = [];
             foreach ($tenants as $index => $tenant) {
                 $fakeIDs[$tenant->id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
@@ -162,14 +162,14 @@ class ViewTenants extends Component
     {
         $tenants = $this->tenants;
 
-        $fakeIDs = session('fake_ids_tenants', []);
+         $allTenants = TransactionUser::where('trn_user_type', 'tenant')
+        ->orderBy('created_at', 'ASC')
+        ->pluck('id');
 
-        if (count($fakeIDs) !== TransactionUser::count()) {
-            $fakeIDs = [];
-            foreach (TransactionUser::orderBy('created_at', 'ASC')->get() as $index => $tenantItem) {
-                $fakeIDs[$tenantItem->id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-            }
-            session(['fake_ids_tenants' => $fakeIDs]);
+        // Generate consistent fake IDs
+        $fakeIDs = [];
+        foreach ($allTenants as $index => $id) {
+            $fakeIDs[$id] = 'TNT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
         }
 
         return view('livewire.admin.tenants.view-tenants', [
