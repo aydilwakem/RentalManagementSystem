@@ -1,5 +1,12 @@
 <div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+                {{ __('Dashboard') }}
+            </h2>
+        </x-slot>
+
         <!-- Greeting -->
         <div class="sm:col-span-3">
             <h1 class="text-xl font-semibold">
@@ -37,55 +44,55 @@
     <div id='calendar'></div>
 
     @script
-        <script type="text/javascript">
-            document.addEventListener('livewire:initialized', () => {
-                var calendarEl = document.getElementById('calendar');
+    <script type="text/javascript">
+        document.addEventListener('livewire:initialized', () => {
+            var calendarEl = document.getElementById('calendar');
 
-                var events = @json($events);
+            var events = @json($events);
 
-                console.log("Events Data: ", events); // ✅ Debugging outpu
+            console.log("Events Data: ", events); // ✅ Debugging outpu
 
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    selectable: true,
-                    events: @json($events),
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
-                    },
-                    // eventClassNames: function(info) {
-                    //     let classes = [];
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                events: @json($events),
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
+                },
+                // eventClassNames: function(info) {
+                //     let classes = [];
 
-                    //     // Assign base category styling
-                    //     if (info.event.extendedProps.category === 'room') {
-                    //         classes.push('room-booking');
-                    //     } else if (info.event.extendedProps.category === 'event') {
-                    //         classes.push('event-booking');
-                    //     }
+                //     // Assign base category styling
+                //     if (info.event.extendedProps.category === 'room') {
+                //         classes.push('room-booking');
+                //     } else if (info.event.extendedProps.category === 'event') {
+                //         classes.push('event-booking');
+                //     }
 
-                    //     // Assign color based on transaction status
-                    //     switch (info.event.extendedProps.transaction_status) {
-                    //         case 'pending':
-                    //             classes.push('status-pending');
-                    //             break;
-                    //         case 'confirmed':
-                    //             classes.push('status-confirmed');
-                    //             break;
-                    //         case 'cancelled':
-                    //             classes.push('status-cancelled');
-                    //             break;
-                    //         default:
-                    //             classes.push('status-default');
-                    //     }
+                //     // Assign color based on transaction status
+                //     switch (info.event.extendedProps.transaction_status) {
+                //         case 'pending':
+                //             classes.push('status-pending');
+                //             break;
+                //         case 'confirmed':
+                //             classes.push('status-confirmed');
+                //             break;
+                //         case 'cancelled':
+                //             classes.push('status-cancelled');
+                //             break;
+                //         default:
+                //             classes.push('status-default');
+                //     }
 
-                    //     return classes;
-                    // }
+                //     return classes;
+                // }
 
-                });
-                calendar.render();
             });
-        </script>
+            calendar.render();
+        });
+    </script>
     @endscript
     {{-- <style>
         .status-pending {

@@ -44,7 +44,11 @@
                 'House' => 'house-',
                 'House Category' => 'house-category-',
                 'Tenant' => 'tenant-',
+                'Leases' => 'leases-',
                 'Appearance' => 'appearance-',
+                'Reports' => 'reports-',
+                'Payments' => 'payments-',
+                'Invoices' => 'invoices-',
             ];
 
             $groupedPermissions = [];
@@ -125,8 +129,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})" wire:loading.attr="disabled">
                     {{ __('Delete Role') }}
                 </x-danger-button>
             </x-slot>

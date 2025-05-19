@@ -18,68 +18,29 @@
             <div class="grid grid-cols-1 gap-6">
                 @foreach ($rooms as $room)
                     <div class=" space-y-6" wire:key="room-{{ $room->id }}">
-                        <div
-                            class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
+                        <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                             <div class="md:flex">
 
-                                <div class="md:w-1/3" x-data="roomCarousel({{ json_encode($room->images ?? []) }})" x-init="init()">
+                                <div class="md:w-1/3">
 
-                                    <!-- Carousel -->
-                                    <div class="relative w-full h-64 overflow-hidden rounded-xl shadow-md"
-                                        @mouseenter="hover = true" @mouseleave="hover = false">
+                                    <!-- Image Container -->
+                                    <div class="relative w-full h-64 overflow-hidden rounded-xl shadow-md">
+                                        @php
+                                            $firstImage = $room->images[0] ?? null;
+                                        @endphp
 
-                                        <!-- Images -->
-                                        <template x-for="(image, index) in images" :key="index">
-                                            <img x-show="active === index" :src="'/storage/' + image"
-                                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                                                x-transition:enter="transition ease-out duration-500"
-                                                x-transition:enter-start="opacity-0"
-                                                x-transition:enter-end="opacity-100" />
-                                        </template>
-
-                                        <!-- Default Image -->
-                                        <img x-show="images.length === 0" src="{{ asset('images/rms-default.png') }}"
-                                            class="absolute inset-0 w-full h-full object-cover" />
-
-                                        <!-- Prev Button -->
-                                        <button x-show="hover"
-                                            @click="active = active > 0 ? active - 1 : images.length - 1"
-                                            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
-                                            x-cloak>
-                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                        </button>
-
-                                        <!-- Next Button -->
-                                        <button x-show="hover"
-                                            @click="active = active < images.length - 1 ? active + 1 : 0"
-                                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
-                                            x-cloak>
-                                            <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor"
-                                                stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </button>
-
-                                        <!-- Dots -->
-                                        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-                                            <template x-for="(image, index) in images" :key="index">
-                                                <button @click="active = index"
-                                                    :class="{
-                                                        'bg-white': active !== index,
-                                                        'bg-green-200': active === index
-                                                    }"
-                                                    class="w-2.5 h-2.5 rounded-full transition-all duration-300">
-                                                </button>
-                                            </template>
-                                        </div>
+                                        @if ($firstImage)
+                                            <img src="{{ asset('storage/' . $firstImage) }}"
+                                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" />
+                                        @else
+                                            <!-- Default Placeholder -->
+                                            <img src="{{ asset('images/rms-default.png') }}"
+                                                class="absolute inset-0 w-full h-full object-cover" />
+                                        @endif
                                     </div>
+
+
                                 </div>
-
-
 
 
                                 <div class="md:w-2/3 p-4 flex flex-col md:flex-row justify-between gap-4 bg-white">
@@ -106,11 +67,10 @@
                                         </p>
                                         <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
                                         <p class="mt-4 text-lg font-medium">
-                                            Rate Per Night: <span
-                                                class="text-green-700 font-bold">{{ $room->amount }}</span>
+                                            Rate Per Night: <span class="text-green-700 font-bold">{{ $room->amount }}</span>
                                         </p>
-                                        {{-- <a href="#"
-                                            class="text-sm mt-2 hover:underline inline-block text-gray-600">See more
+                                        {{-- <a href="#" class="text-sm mt-2 hover:underline inline-block text-gray-600">See
+                                            more
                                             details</a> --}}
                                     </div>
 
@@ -120,8 +80,7 @@
 
                                             <!-- Adults -->
                                             <div class="flex-1">
-                                                <label
-                                                    class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                 <select wire:model.live="adults.{{ $room->id }}"
                                                     class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                     @for ($i = 1; $i <= $room->max_adults; $i++)
@@ -168,10 +127,9 @@
                                                     <div class="flex items-center justify-center">
                                                         <!-- Spinner -->
                                                         <span wire:loading class="mr-2" wire:target="addRoomToCart">
-                                                            <svg class="animate-spin h-5 w-5 text-white"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12" cy="12"
-                                                                    r="10" stroke="currentColor" stroke-width="4">
+                                                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                    stroke="currentColor" stroke-width="4">
                                                                 </circle>
                                                                 <path class="opacity-75" fill="currentColor"
                                                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
@@ -190,6 +148,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>

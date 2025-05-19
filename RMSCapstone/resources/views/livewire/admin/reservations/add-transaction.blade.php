@@ -63,8 +63,7 @@
                                 <span class="text-md font-semibold text-green-700">
                                     ₱{{ number_format($item['amount'], 2) }}
                                 </span>
-                                <button type="button"
-                                    wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                                <button type="button" wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
                                     title="Remove Activity"
                                     class="bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
                                     <span class="leading-none translate-y-[-1px] font-bold">&times;</span>
@@ -88,8 +87,8 @@
                         <!-- Spinner -->
                         <span wire:loading wire:target="register" class="mr-2">
                             <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                </circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                 </path>
@@ -152,8 +151,7 @@
                                     class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
 
                                 <div class="flex items-center">
-                                    <button type="button"
-                                        wire:click.prevent="decrementActivity('{{ $activity->id }}')"
+                                    <button type="button" wire:click.prevent="decrementActivity('{{ $activity->id }}')"
                                         class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
                                         -
                                     </button>
@@ -163,40 +161,50 @@
                                     </span>
 
                                     @if (($quantity[$activity->id] ?? 1) < $total_pax)
-                                        <button type="button"
-                                            wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                        <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
                                             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
                                             +
                                         </button>
                                     @else
-                                        <span class="text-red-500 text-xs ml-2">
-                                            Maximum quantity reached (based on your total guests)
+                                        <span class="text-gray-500 text-xs ml-2">
+                                            Maximum quantity reached
                                         </span>
                                     @endif
                                 </div>
 
                             </div>
+
+                            
+                           @php
+    $inCart = collect($cart)->contains(function($item) use ($activity) {
+        return $item['type'] === 'activity' && $item['activity_id'] == $activity->id;
+    });
+@endphp
+
+
                             <button wire:click="addActivityToCart({{ $activity->id }})"
                                 class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                 wire:loading.attr="disabled">
                                 <div class="flex items-center justify-center">
                                     <!-- Spinner -->
-                                    <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
-                                        class="mr-2">
+                                    <span wire:loading wire:target="addActivityToCart({{ $activity->id }})" class="mr-2">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>
                                         </svg>
                                     </span>
+                                    
                                     <!-- Button Text -->
                                     <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
                                         Add Transaction
                                     </span>
                                 </div>
                             </button>
+
+                            
                         </div>
                     </div>
                 </div>

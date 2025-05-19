@@ -65,6 +65,7 @@
                                         !str_starts_with($p->name, 'house-category'),
                                     'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
                                     'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
+                                     'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
                                 ],
                                 'Billing & Payments' => [
                                     'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
@@ -81,6 +82,9 @@
                                 ],
                                 'Activities' => [
                                     'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
+                                ],
+                                   'Reports' => [
+                                    'Reports' => fn($p) => str_starts_with($p->name, 'reports'),
                                 ],
                             ];
                         @endphp

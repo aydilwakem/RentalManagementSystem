@@ -91,7 +91,7 @@ class ViewReservation extends Component
         if ($this->invoice->invoice_status != 'completed') {
             $this->cannotGenerateReceiptModal = true;
             Log::warning("Attempt to generate receipt for unpaid invoice ID: {$this->invoice->id}");
-            return; // ⛔️ stop further execution
+            return;
         }
 
         // Check if receipt already exists
@@ -153,10 +153,16 @@ class ViewReservation extends Component
             abort(404, 'Missing data for generating the official receipt.');
         }
 
+        $this->activities = $this->transaction->activities()->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
+        $this->properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
+
         $data = [
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
+            'transactionUser' => $this->transactionUser,
+            'properties' => $this->properties,
+            'activities' => $this->activities,
         ];
 
         $pdf = Pdf::loadView('admin.pdf.reservations.receipts.officialReceipt', $data);
@@ -171,22 +177,33 @@ class ViewReservation extends Component
         Log::info('Send Receipt To Email Method called.');
 
         if (!$this->receipt || !$this->invoice || !$this->transaction) {
-            abort(404, 'Missing data for sending the official receipt.');
+            Log::error('Missing data for sending official receipt.');
+            abort(404, 'Missing data for generating the official receipt.');
         }
+
+        // Get related data for PDF
+        $activities = $this->transaction->activities()->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
+        $properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
         $data = [
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
+            'transactionUser' => $this->transactionUser,
+            'properties' => $properties,
+            'activities' => $activities,
         ];
 
-        // Generate PDF in memory
+        // Generate PDF from view with data
         $pdf = Pdf::loadView('admin.pdf.reservations.receipts.officialReceipt', $data);
         $pdfContent = $pdf->output();
 
-        // Send the email with attachment
-        Mail::to($this->transaction->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
+        // Send mail with attachment
+        Mail::to($this->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
+
+        Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
     }
+
 
     public function exportReservationDetails()
     {

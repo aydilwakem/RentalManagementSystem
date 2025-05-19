@@ -368,6 +368,7 @@
                             <i class="fas fa-receipt"></i>
                             Generate Official Receipt
                         </button>
+                        
                     @else
                         <!-- Show this if receipt already exists -->
                         <x-button wire:click="ShowReceipt" icon="fas fa-eye">

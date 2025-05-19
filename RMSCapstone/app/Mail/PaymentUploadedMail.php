@@ -50,7 +50,6 @@ class PaymentUploadedMail extends Mailable
                 'check_out' => $this->paymentDetails['check_out'],
                 'total_amount' => $this->paymentDetails['total_amount'],
                 'deposit' => $this->paymentDetails['deposit'],
-                'expirationHours' => $this->paymentDetails['expirationHours'],
             ]);
     }
 }

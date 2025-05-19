@@ -25,20 +25,27 @@ class FeedbackForm extends Component
 
     public function submit()
     {
-        $this->validate([
+        $expectedRatingTypeIds = FeedbackRatingType::pluck('id')->toArray();
+
+        $rules = [
             'transactionId' => 'required|numeric',
             'comments' => 'nullable|string',
             'ratingValues' => 'required|array',
-        ]);
+        ];
+
+        foreach ($expectedRatingTypeIds as $id) {
+            $rules["ratingValues.$id"] = 'required|numeric|min:1|max:5';
+        }
+
+        $this->validate($rules);
 
         // Create feedback
         $feedback = Feedback::create([
             'transaction_id' => $this->transactionId,
-            'submitted_at' => Carbon::now(),
+            'submitted_at' => now(),
             'comments' => $this->comments,
         ]);
 
-        // Save ratings
         foreach ($this->ratingValues as $typeId => $value) {
             FeedbackRating::create([
                 'feedback_id' => $feedback->id,

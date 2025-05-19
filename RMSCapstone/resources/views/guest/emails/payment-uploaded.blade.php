@@ -37,15 +37,6 @@
             <p>We have successfully received your uploaded payment screenshot. Please wait while we verify your payment.
             </p>
 
-            <p>Here are your payment details:</p>
-
-            <ul style="padding-left: 20px; margin-top: 10px;">
-                <li style="margin-bottom: 8px;">Check-in Date: {{ $check_in }}</li>
-                <li style="margin-bottom: 8px;">Check-out Date: {{ $check_out }}</li>
-                <li style="margin-bottom: 8px;">Total Amount: {{ number_format($total_amount, 2) }}</li>
-                <li style="margin-bottom: 8px;">Deposit: {{ number_format($deposit, 2) }}</li>
-            </ul>
-
             <p>You will receive another email once your reservation is confirmed. If you have any questions, feel free
                 to contact us.</p>
 
