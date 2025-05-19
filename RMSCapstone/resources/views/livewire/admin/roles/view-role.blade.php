@@ -49,6 +49,7 @@
                 'Reports' => 'reports-',
                 'Payments' => 'payments-',
                 'Invoices' => 'invoices-',
+                'Feedback' => 'feedback-',
             ];
 
             $groupedPermissions = [];

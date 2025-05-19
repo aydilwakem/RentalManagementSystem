@@ -25,66 +25,70 @@ class ViewTenants extends Component
     public $sortDir = 'DESC';
 
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete for tenants with active lease
 
     //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    public $selectedRows = [];
+    public $selectPageRows = false;
+    public $tenant;
 
-    public function updatedSelectPageRows($value){
-        if ($value){
-            $this->selectedRows = $this->tenants->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+    public function updatedSelectPageRows($value)
+    {
+        if ($value) {
+            $this->selectedRows = $this->tenants->pluck('id')->map(function ($id) {
+                return (string) $id;
             })->toArray();;
-        }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
-    }
-
-    public function getTenantsProperty(){
-        return TransactionUser::query()
-        ->where('trn_user_type', 'tenant') 
-        ->where(function ($query) {
-            $query->where('first_name', 'like', "%{$this->search}%")
-                ->orWhere('last_name', 'like', "%{$this->search}%")
-                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$this->search}%"])
-                ->orWhere('email', 'like', "%{$this->search}%");
-        })
-        ->orderBy($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
-    }
-
-    public function deleteSelectedRows(){
-       try {
-        //Check active event halls
-        $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) {
-            $query->whereIn('created_by', $this->selectedRows);
-        })->exists();
-
-        if ($usedInTransactions) {
-            $this->cannotDeleteItem = true; // Trigger modal
-            $this->confirmBulkDelete = false;
-            return;
-        }
-
-        // Bulk Delete
-        TransactionUser::whereIn('id', $this->selectedRows)->delete();
-
-        $this->confirmBulkDelete = false;
-        session()->flash('message', 'All selected tenants got deleted!');
-    } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() == 23000) {
-            $this->cannotDeleteItem = true; // FK error
         } else {
-            throw $e; 
+            $this->reset(['selectedRows', 'selectPageRows']);
         }
     }
+
+    public function getTenantsProperty()
+    {
+        return TransactionUser::query()
+            ->where('trn_user_type', 'tenant')
+            ->where(function ($query) {
+                $query->where('first_name', 'like', "%{$this->search}%")
+                    ->orWhere('last_name', 'like', "%{$this->search}%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$this->search}%"])
+                    ->orWhere('email', 'like', "%{$this->search}%");
+            })
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
     }
 
-    public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+    public function deleteSelectedRows()
+    {
+        try {
+            //Check active event halls
+            $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) {
+                $query->whereIn('created_by', $this->selectedRows);
+            })->exists();
+
+            if ($usedInTransactions) {
+                $this->cannotDeleteItem = true; // Trigger modal
+                $this->confirmBulkDelete = false;
+                return;
+            }
+
+            // Bulk Delete
+            TransactionUser::whereIn('id', $this->selectedRows)->delete();
+
+            $this->confirmBulkDelete = false;
+            session()->flash('message', 'All selected tenants got deleted!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == 23000) {
+                $this->cannotDeleteItem = true; // FK error
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    public function confirmDeleteInBulk()
+    {
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
@@ -139,7 +143,7 @@ class ViewTenants extends Component
 
             // Flash success message
             session()->flash('message', 'Tenant successfully deleted!');
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == 23000) {
                 $this->cannotDeleteItem = true;
             } else {
@@ -162,9 +166,9 @@ class ViewTenants extends Component
     {
         $tenants = $this->tenants;
 
-         $allTenants = TransactionUser::where('trn_user_type', 'tenant')
-        ->orderBy('created_at', 'ASC')
-        ->pluck('id');
+        $allTenants = TransactionUser::where('trn_user_type', 'tenant')
+            ->orderBy('created_at', 'ASC')
+            ->pluck('id');
 
         // Generate consistent fake IDs
         $fakeIDs = [];

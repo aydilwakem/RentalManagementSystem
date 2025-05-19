@@ -87,6 +87,10 @@
                                      'Reports' => [
                                         'Reports' => fn($p) => str_starts_with($p->name, 'reports'),
                                     ],
+
+                                       'Feedback' => [
+                                        'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
+                                    ],
                                 ];
                             @endphp
 

@@ -520,7 +520,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/feedback', function () {
         return view('admin.feedback');
-    })->name('admin.feedback');
+    })->name('admin.feedback')->middleware('can:feedback');
 
 
     // View
