@@ -513,6 +513,15 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         return view('admin.reservations.invoices.invoice-list');
     })->name('admin.invoice-list');
 
+    /**
+     * Feedback
+     */
+
+    Route::get('/feedback', function () {
+        return view('admin.feedback');
+    })->name('admin.feedback');
+
+
     // View
     Route::get('view/new-reservation/{transaction}', ViewTransaction::class)->name('admin.view-new-transaction')->middleware('can:new-reservation-view');
 
