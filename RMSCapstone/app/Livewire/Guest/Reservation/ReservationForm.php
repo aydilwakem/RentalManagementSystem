@@ -301,7 +301,7 @@ class ReservationForm extends Component
         $checkIn = \Carbon\Carbon::parse($this->check_in_date);
         $checkOut = \Carbon\Carbon::parse($this->check_out_date);
 
-        $this->rooms = Property::ofType('Room')
+        $this->rooms = Property::ofType('Room')->availableRooms()
             ->where('property_status', 'available') // only explicitly include available
             ->where('property_status', '!=', ['out_of_service', 'held', 'booked']) // explicitly exclude out_of_service
             ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {

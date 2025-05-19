@@ -68,6 +68,7 @@ Route::get('/', function () {
 
 // Authentication Middleware Group
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+
     // Dashboard Route
     Route::get('/', function () {
         return view('admin.dashboard');

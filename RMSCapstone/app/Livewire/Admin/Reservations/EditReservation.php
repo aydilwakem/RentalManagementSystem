@@ -45,8 +45,8 @@ class EditReservation extends Component
 
     // ---------------------- Guest Details ---------------------- //
 
-    // public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
-    // public $guest_gender, $guest_residency, $guest_country_of_origin;
+    public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
+    public $guest_gender, $guest_residency, $guest_country_of_origin;
     public $guests = [];
     public $guest_types = [];
 

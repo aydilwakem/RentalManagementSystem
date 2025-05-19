@@ -10,7 +10,7 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     placeholder="Enter room name">
                 @error('name_number')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -22,11 +22,11 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     <option value="">Select Category</option>
                     @foreach ($roomCategories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
                 @error('property_category_id')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -40,7 +40,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter ideal guest number">
                     @error('ideal_guest')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -51,7 +51,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter max adults number">
                     @error('max_adults')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -62,7 +62,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter max kids number">
                     @error('max_kids')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     placeholder="Enter turnover duration">
                 @error('turnover_duration')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -91,7 +91,7 @@
                     <option value="out_of_service">Out of Service</option>
                 </select>
                 @error('property_status')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -102,7 +102,7 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter amount">
                 @error('amount')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -114,7 +114,7 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter extra person charge">
                 @error('extra_person_charge')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
@@ -123,13 +123,13 @@
                 <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                     @foreach ($features as $feature)
-                    <div class="flex items-center">
-                        <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
-                            class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                        <label class="ms-2 text-sm font-medium text-gray-900">
-                            {{ $feature->name }}
-                        </label>
-                    </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                            <label class="ms-2 text-sm font-medium text-gray-900">
+                                {{ $feature->name }}
+                            </label>
+                        </div>
                     @endforeach
 
                 </div>
@@ -186,50 +186,50 @@
                 <label for="images" class="block mb-2 text-sm font-medium text-gray-900">Room Image(s)</label>
                 <div class="flex flex-wrap gap-4">
                     @if ($images && count($images) > 0)
-                    @foreach ($images as $index => $image)
-                    <div class="relative shrink-0">
-                        <img src="{{ $image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-md shadow-sm"
-                            alt="Image Preview">
-                        <button type="button" wire:click="removeImage({{ $index }})"
-                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                            ×
-                        </button>
-                        @if ($loop->first)
-                        <span
-                            class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">Main
-                            Image</span>
-                        @endif
-                    </div>
-                    @endforeach
-                    <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="images">
-                        <div
-                            class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                        </div>
-                    </label>
+                        @foreach ($images as $index => $image)
+                            <div class="relative shrink-0">
+                                <img src="{{ $image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-md shadow-sm"
+                                    alt="Image Preview">
+                                <button type="button" wire:click="removeImage({{ $index }})"
+                                    class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                    ×
+                                </button>
+                                @if ($loop->first)
+                                    <span
+                                        class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">Main
+                                        Image</span>
+                                @endif
+                            </div>
+                        @endforeach
+                        <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="images">
+                            <div
+                                class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </div>
+                        </label>
                     @else
-                    <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="images">
-                        <div
-                            class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            <span class="text-xs">Add image</span>
-                        </div>
-                    </label>
+                        <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="images">
+                            <div
+                                class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="text-xs">Add image</span>
+                            </div>
+                        </label>
                     @endif
 
                     <input multiple type="file" wire:model="images" id="imageInput" accept="image/png, image/jpeg"
                         class="hidden" @if (!$images || count($images) < 5) @endif>
 
                     @error('images.*')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 

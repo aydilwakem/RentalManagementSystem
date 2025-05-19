@@ -147,20 +147,49 @@ class AddTransaction extends Component
         $this->cart = array_values($this->cart);
     }
 
+
+
     public function incrementActivity($activityId)
     {
-        $current = $this->quantity[$activityId] ?? 1;
-        $this->quantity[$activityId] = $current + 1;
-    }
+        $activity = Activity::find($activityId);
+        if (!$activity) return;
 
-    public function decrementActivity($activityId)
-    {
-        $current = $this->quantity[$activityId] ?? 1;
-        if ($current > 1) {
-            $this->quantity[$activityId] = $current - 1;
+        // Get the current quantity or default to 1
+        $currentQuantity = $this->quantity[$activityId] ?? 1;
+
+        // Check if the current quantity is less than total_pax before incrementing
+        if ($currentQuantity < $this->total_pax) {
+            $this->quantity[$activityId] = $currentQuantity + 1;
+
+            foreach ($this->cart as $index => $item) {
+                if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
+                    $quantity = $this->quantity[$activityId];
+                    $this->cart[$index]['quantity'] = $quantity;
+                    $this->cart[$index]['amount'] = $activity->amount * $quantity;
+                }
+            }
         }
     }
 
+
+
+    public function decrementActivity($activityId)
+    {
+        $activity = Activity::find($activityId);
+        if (!$activity) return;
+
+        // Decrease the quantity, but prevent going below 1
+        $this->quantity[$activityId] = max(1, ($this->quantity[$activityId] ?? 1) - 1);
+
+        // Update the cart with the new quantity and amount
+        foreach ($this->cart as $index => $item) {
+            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
+                $quantity = $this->quantity[$activityId];
+                $this->cart[$index]['quantity'] = $quantity;
+                $this->cart[$index]['amount'] = $activity->amount * $quantity;
+            }
+        }
+    }
 
     public function register()
     {
