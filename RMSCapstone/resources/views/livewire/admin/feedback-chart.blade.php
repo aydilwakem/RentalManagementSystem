@@ -3,19 +3,38 @@
     <canvas id="ratingChart" height="120"></canvas>
 
     <div class="mt-10">
-        <h3 class="text-lg font-bold">Recent Comments</h3>
-        <ul class="mt-2 space-y-2">
+        <h3 class="text-lg font-bold mb-4">Recent Comments</h3>
+        <ul class="space-y-4">
             @foreach ($comments as $comment)
-                <div>
-                    <strong>
-                        {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                        {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                    </strong>
-                    <p>{{ $comment->comments }}</p>
-                </div>
+                <li class="flex items-start space-x-4 bg-white p-4 rounded shadow-sm">
+                    <!-- Profile Image -->
+                    <div class="flex-shrink-0">
+                        <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
+                            class="w-10 h-10 rounded-full object-cover">
+                    </div>
+
+                    <!-- Comment Content -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800">
+                                    {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                                    {{ $comment->transaction->transactionUser->last_name ?? '' }}
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-500">
+                                {{ $comment->created_at->diffForHumans() }}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-1">
+                            {{ $comment->comments }}
+                        </p>
+                    </div>
+                </li>
             @endforeach
         </ul>
     </div>
+
 
 </div>
 
