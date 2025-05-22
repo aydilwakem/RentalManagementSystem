@@ -153,7 +153,7 @@
                                                     Edit
                                                 </button>
 
-                                                <button
+                                                <button wire:click="deleteGuest({{ $loop->index }})"
                                                     class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">
                                                     <i class="fas fa-trash-alt mr-1"></i>
                                                     Remove
@@ -404,14 +404,13 @@
                                         class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                         Cancel
                                     </button>
-                                    <button type="button" wire:click="addMultipleGuests"
-                                        wire:loading.attr="disabled">
+                                    <button type="button" wire:click="addMultipleGuests" wire:loading.attr="disabled">
                                         <div class="flex items-center justify-center">
                                             <!-- Spinner -->
                                             <span wire:loading class="mr-2" wire:target="addMultipleGuests">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4">
                                                     </circle>
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">

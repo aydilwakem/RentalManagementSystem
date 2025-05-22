@@ -26,6 +26,7 @@ class ReservationList extends Component
 
     #[Url()]
     public $perPage = 10; // Number of transactions displayed per page
+    public $invoice;
 
     #[Url(history: true)]
     public $sortBy = 'updated_at'; // Column used for sorting transactions
@@ -38,6 +39,7 @@ class ReservationList extends Component
 
     // ------------------------------- FLAGS --------------------------------------------- //
     public $confirmingAction = false;
+    public $cannotMarkAsDoneModal = false;
     public $actionTitle = '';
     public $actionMessage = '';
     public $actionMethod = '';
@@ -65,18 +67,19 @@ class ReservationList extends Component
     {
         $transactions = Transaction::query()
             ->select('trn_transactions.*')
+            ->distinct()
             ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
-            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id') //join trn_users for sort direction
+            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id')
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 2)
             ->when($this->search !== '', function ($query) {
                 $query->whereHas('transactionUser', function ($subQuery) {
                     $subQuery->where('first_name', 'like', '%' . $this->search . '%')
-                            ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%" . $this->search . "%"]);
+                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%" . $this->search . "%"]);
                 });
             })
-            ->when($this->statusFilter !== '', callback: function ($query) {
+            ->when($this->statusFilter !== '', function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
             })
             ->orderBy($this->sortBy, $this->sortDir)
@@ -191,20 +194,24 @@ class ReservationList extends Component
             return;
         }
 
+        $invoice = $transaction->invoice;
+
+        if (!$invoice || $invoice->invoice_status !== 'completed') {
+            $this->cannotMarkAsDoneModal = true;
+            return;
+        }
+
         // Update transaction status
         $transaction->update(['transaction_status' => 'done']);
         session()->flash('message', 'Transaction successfully confirmed!');
 
-        // Gather user and invoice data, 
-        //and properties and activities
         $user = $transaction->transactionUser;
-        $invoice = $transaction->invoice;
         $properties = $transaction->properties;
         $activities = $transaction->activities;
 
-        if (!$user || !$invoice) {
-            logger()->error('User or invoice not found for transaction ID ' . $id);
-            session()->flash('error', 'Confirmation email could not be sent due to missing data.');
+        if (!$user) {
+            logger()->error('User not found for transaction ID ' . $id);
+            session()->flash('error', 'Confirmation email could not be sent due to missing user data.');
             return;
         }
 
@@ -214,13 +221,12 @@ class ReservationList extends Component
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'transaction_number' => $transaction->id,
-            'email' => $user->email,
             'invoice_number' => $invoice->invoice_number,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
             'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
-            'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
+            'amount_paid' => $invoice->amount_paid,
             'balance_due' =>  $invoice->balance_due,
             'properties' => $properties,
             'activities' => $activities,
@@ -233,6 +239,7 @@ class ReservationList extends Component
             session()->flash('error', 'Reservation marked as done, but email failed to send.');
         }
     }
+
 
     /**
      * Marks the selected transaction as 'no show'
