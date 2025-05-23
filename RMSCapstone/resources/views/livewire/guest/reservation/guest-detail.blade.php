@@ -70,6 +70,7 @@
 
 
                     <!-- Country -->
+                    <!--TODO: Make country field dropdown of pre populated countries (plugin) -->
                     <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
                         <input type="text" wire:model="country"
@@ -78,9 +79,6 @@
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-
-
                     {{-- <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
                         <select wire:model="country"
@@ -404,7 +402,7 @@
                                         class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                         Cancel
                                     </button>
-                                    <button type="button" wire:click="addMultipleGuests" wire:loading.attr="disabled">
+                                    <button type="button" wire:click="addMultipleGuests" wire:loading.attr="disabled " class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
                                         <div class="flex items-center justify-center">
                                             <!-- Spinner -->
                                             <span wire:loading class="mr-2" wire:target="addMultipleGuests">
@@ -428,7 +426,6 @@
                             </div>
                         </div>
                     @endif
-
                 </div>
             </div>
         </div>

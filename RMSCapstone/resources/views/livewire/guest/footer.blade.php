@@ -16,6 +16,12 @@
             <p>Phone: <span class="font-medium">0962-447-9893</span></p>
             <p>Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
         </div>
-        <p class="mt-2 text-xs">&copy; 2024 Canopy Farm. All rights reserved.</p>
+        <p class="mt-2 text-xs">
+            &copy; <span id="year"></span> Canopy Farm. All rights reserved.
+        </p>
+
+        <script>
+            document.getElementById("year").textContent = new Date().getFullYear();
+        </script>
     </div>
 </footer>
