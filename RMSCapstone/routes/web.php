@@ -720,7 +720,25 @@ Route::get('/event-email', function () {
     return view('guest.emails.event-quotes', compact('quoteData'));
 });
 
-Route::get('/reservation-submitted-email', function () {
+Route::get('/guest-event', function () {
+    $quoteData = [
+        'company_name' => 'Green Events Co.',
+        'contact_person' => 'Alex Cruz',
+        'email' => 'alex@example.com',
+        'contact_number' => '09171234567',
+        'selected_hall' => (object)['name_number' => 'Hall B - Garden View'],
+        'event_start' => now()->addDays(7)->setTime(15, 0),
+        'event_end' => now()->addDays(7)->setTime(21, 0),
+        'event_type' => 'Corporate Event',
+        'other_event_type' => null,
+        'additional_requests' => 'Stage setup and catering.',
+    ];
+
+    return view('guest.emails.request-quote', ['quoteData' => $quoteData]);
+});
+
+
+Route::get('/reservation-submitted', function () {
     $fakeData = [
         'name' => 'Juan Dela Cruz',
         'transaction_number' => 'TXN123456789',
@@ -800,6 +818,68 @@ Route::get('/reservation-completed', function () {
     ];
 
     return new ReservationCompletedMail($reservationData);
+});
+
+Route::get('/reservation-confirmed', function () {
+    $reservationData = [
+        'name' => 'Juan Dela Cruz',
+        'email' => 'juan.delacruz@example.com',
+        'contact_number' => '09123456789',
+        'transaction_number' => 'TXN-123456',
+        'invoice_number' => 'INV-987654',
+        'check_in' => now()->addDays(2)->toDateString(),
+        'check_out' => now()->addDays(4)->toDateString(),
+        'total_amount' => 5000,
+        'deposit' => 2000,
+        'amount_paid' => 2000,
+        'balance_due' => 3000,
+        'properties' => collect([
+            (object)[
+                'name_number' => 'Room A1',
+                'pivot' => (object)[
+                    'adults' => 2,
+                    'kids' => 1,
+                    'days' => 2,
+                    'extra_charge' => 500,
+                    'total_amount' => 2500,
+                ]
+            ]
+        ]),
+        'activities' => collect([
+            (object)[
+                'name' => 'ATV Ride',
+                'amount' => 500,
+                'pivot' => (object)[
+                    'quantity' => 2
+                ]
+            ]
+        ]),
+    ];
+
+    return new ReservationConfirmedMail($reservationData);
+});
+
+Route::get('/contact-email', function () {
+    $contactData = [
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'contact_number' => '09171234567',
+        'message' => '
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae nibh imperdiet, aliquet diam a, aliquam urna. Donec mi sapien, mollis laoreet nisl tempus, sollicitudin facilisis risus. Integer congue, ante nec scelerisque sodales, neque nunc bibendum mi, at cursus enim libero in dui. Fusce condimentum nunc vitae arcu ullamcorper mollis. Sed metus sem, posuere non leo ac, eleifend fermentum felis. Integer ullamcorper odio nec enim laoreet efficitur. Donec sed sapien vel lectus dapibus interdum.',
+    ];
+
+    return view('guest.emails.contact-message', ['contactData' => $contactData]);
+});
+
+Route::get('/guest-contact', function () {
+    $contactData = [
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'contact_number' => '09181234567',
+        'message' => 'I am interested in visiting the farm this weekend.',
+    ];
+
+    return view('guest.emails.contact-us', ['contactData' => $contactData]);
 });
 
 // ----------------------------- TEST ROUTE FOR PDFs ----------------------------------------- //
