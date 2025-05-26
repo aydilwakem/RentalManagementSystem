@@ -10,10 +10,12 @@ use App\Models\PropertyFeature;
 use App\Models\PropertyCategory;
 use App\Models\PropertyType;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Property extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     // ----------------------------------------- Table ------------------------------------------------ //
     protected $table = 'properties';

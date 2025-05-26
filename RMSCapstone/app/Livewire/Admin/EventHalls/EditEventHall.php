@@ -16,6 +16,8 @@ class EditEventHall extends Component
     use WithFileUploads;
 
     public Property $eventHall;
+    public $property_type_id = 3;
+
     public $name_number;
     public $description;
     public $amount;

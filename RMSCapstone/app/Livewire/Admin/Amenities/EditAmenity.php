@@ -15,6 +15,7 @@ class EditAmenity extends Component
 
     //Public variable declarations of amenity
     public PropertyFeature $amenity;
+    public $property_type_id;
     public $name;
     public $amenityId;
 

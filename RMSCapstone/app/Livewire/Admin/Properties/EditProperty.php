@@ -15,6 +15,7 @@ class EditProperty extends Component
     use WithFileUploads;
 
     public Property $property;
+    public $property_type_id = 2;
 
     // ----------------------------- House Details ---------------------------------------//
 

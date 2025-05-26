@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\Properties;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 use App\Models\Property;
-use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
 
 class CreateProperty extends Component
@@ -13,6 +12,7 @@ class CreateProperty extends Component
     use WithFileUploads;
 
     public $property_type_id = 2; // Property Type = House
+    public $property_category_id;
 
     // ----------------------------- House Details ---------------------------------------//
 

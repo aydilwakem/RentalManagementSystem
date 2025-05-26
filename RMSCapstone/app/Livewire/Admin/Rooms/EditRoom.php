@@ -16,6 +16,8 @@ class EditRoom extends Component
     use WithFileUploads;
 
     public Property $room;
+    public $property_type_id = 1;
+
     public $name_number;
     public $property_category_id;
     public $ideal_guest;
