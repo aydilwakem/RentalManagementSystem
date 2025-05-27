@@ -9,9 +9,6 @@
     <div class="py-1">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-
-
-
             <x-button wire:click="exportReservationDetails">
                 <!-- Spinner -->
                 <span wire:loading wire:target="exportReservationDetails" class="mr-2">
@@ -373,7 +370,6 @@
                             <i class="fas fa-receipt"></i>
                             Generate Official Receipt
                         </button>
-                        
                     @else
                         <!-- Show this if receipt already exists -->
                         <x-button wire:click="ShowReceipt" icon="fas fa-eye">
@@ -396,13 +392,14 @@
 
                         </div>
 
-                                            {{-- Display Session Message --}}
-    @if (session('message'))
-    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                        {{-- Display Session Message --}}
+                        @if (session('message'))
+                            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                 {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-        {{ session('message') }}
-    </div>
-    @endif
+                                {{ session('message') }}
+                            </div>
+                        @endif
 
                         <!-- Content -->
                         <div class="px-6 py-5 space-y-4 text-gray-700 text-sm">
@@ -572,6 +569,13 @@
                 @endif
             </div>
 
+            <!-- Back Button -->
+            <div class="justify-end flex">
+                <x-button onclick="history.back()" icon="fas fa-arrow-left"
+                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                    Back
+                </x-button>
+            </div>
         </div>
     </div>
 </div>

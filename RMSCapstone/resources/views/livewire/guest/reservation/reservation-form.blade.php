@@ -38,10 +38,7 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room">
-                        {{-- @include('livewire.guest.reservation.choose-room') --}}
-
-
-                         @include('livewire.guest.reservation.guest-detail')
+                        @include('livewire.guest.reservation.choose-room')
                     </div>
                 @endif
 
@@ -294,7 +291,8 @@
                     <!-- Back button -->
                     @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
                         <button type="button"
-                            class="mt-4 block px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
+                            class="mt-4 block px-4 py-2 h-10 w-16 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150"
+                            wire:loading.attr="disabled"
                             wire:click="decreaseStep()">
                             <div class="flex items-center justify-center">
                                 <!-- Spinner -->
@@ -318,7 +316,8 @@
                     <!-- Next button -->
                     @if ($currentStep == 1 || $currentStep == 2 || $currentStep == 3)
                         <button type="button"
-                            class="mt-4 block px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                            class="mt-4 block px-4 py-2 h-10 w-16 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                            wire:loading.attr="disabled"
                             wire:click="increaseStep()">
                             <div class="flex items-center justify-center">
                                 <!-- Spinner -->
@@ -369,7 +368,8 @@
                                         </p>
                                         <p>
                                             We reserve the right to deny entry to anyone violating these terms. For any
-                                            questions or clarifications, please contact our support team <span class="text-green-700">canopyfarm@gmail.com</span>
+                                            questions or clarifications, please contact our support team <span
+                                                class="text-green-700">canopyfarm@gmail.com</span>
                                         </p>
                                     </div>
 

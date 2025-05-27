@@ -93,7 +93,11 @@
 
                     <!-- Event Description -->
                     <p class="text-base text-gray-700 dark:text-gray-400 mb-2">
-                        {{ $hall->description ?? 'Book now and make your event unforgettable!' }}
+                        @if (!empty($hall->description))
+                            {{ $hall->description }}
+                        @else
+                            Book now and make your event unforgettable!
+                        @endif
                     </p>
 
                     <!-- Maximum Capacity -->

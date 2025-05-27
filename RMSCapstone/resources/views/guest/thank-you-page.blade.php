@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-[490px] flex items-center justify-center bg-gray-100 px-4">
+    <div class="min-h-[490px] flex items-center justify-center bg-yellow-50 px-4">
         <div class="bg-white rounded-3xl shadow-lg p-10 max-w-2xl w-full text-center">
             <div class="flex flex-col items-center mb-6">
                 <i class="fa-solid fa-circle-check text-green-700 text-5xl mb-4"></i>

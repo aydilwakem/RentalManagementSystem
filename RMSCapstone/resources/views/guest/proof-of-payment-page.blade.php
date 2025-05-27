@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="bg-yellow-50 overflow-hidden shadow-xl sm:rounded-lg">
         @livewire('guest.proof-of-payment-page')
     </div>
 </x-guest-layout>

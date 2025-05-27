@@ -44,10 +44,11 @@
 
 
                         <!-- Controls -->
-                        <div class="flex items-center justify-between sm:flex-row gap-4 mt-4">
+                        <div class="flex items-center justify-between sm:flex-row">
                             <!-- Counter -->
                             <div class="flex flex-col">
-                                <label for="quantity-{{ $activity->id }}" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="quantity-{{ $activity->id }}"
+                                    class="text-sm font-medium text-gray-700 mb-1">
                                     Quantity:
                                 </label>
 
@@ -63,7 +64,8 @@
                                     </span>
 
                                     @if (($quantity[$activity->id] ?? 1) < $total_pax)
-                                        <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                        <button type="button"
+                                            wire:click.prevent="incrementActivity('{{ $activity->id }}')"
                                             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
                                             +
                                         </button>
@@ -92,42 +94,37 @@
 
 
                                 @if ($activityInCart)
-
                                 @else
-                                    <button wire:click="addActivityToCart({{ $activity->id }})"
-                                        class="w-full px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                                        wire:loading.attr="disabled">
-                                        <div class="flex items-center justify-center">
+                                    <x-button wire:click="addActivityToCart({{ $activity->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="addActivityToCart({{ $activity->id }})"
+                                        class="relative h-10 w-full justify-center mt-5">
+
+                                        <div class="flex items-center justify-center relative w-full">
                                             <!-- Spinner -->
-                                            <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
-                                                class="mr-2">
+                                            <span wire:loading class=" flex items-center justify-center"
+                                                wire:target="addActivityToCart({{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                        stroke-width="4"></circle>
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                                    </path>
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                 </svg>
                                             </span>
+
                                             <!-- Button Text -->
-                                            <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
-                                                Add to Cart
+                                            <span wire:loading.remove
+                                                wire:target="addActivityToCart({{ $activity->id }})">
+                                                Add Activity
                                             </span>
                                         </div>
-                                    </button>
-
-
+                                    </x-button>
                                 @endif
-
-
-
                             </div>
-
                         </div>
                     </div>
                 </div>
             @endforeach
-
         </div>
     </div>
 </div>

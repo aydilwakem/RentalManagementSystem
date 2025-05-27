@@ -10,10 +10,10 @@ use Livewire\Component;
 
 class Homepage extends Component
 {
-    public $name; 
+    public $name;
     public $email;
-    public $contact_number; 
-    public $message; 
+    public $contact_number;
+    public $message;
 
     public function contactUs()
     {

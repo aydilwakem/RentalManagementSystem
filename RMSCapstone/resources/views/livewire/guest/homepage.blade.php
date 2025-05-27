@@ -274,40 +274,62 @@
 
                     {{-- For sessionn messages --}}
                     @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                        {{ session('message') }}
-                    </div>
+                            {{ session('message') }}
+                        </div>
                     @endif
                     <!-- Contact Form -->
                     <div>
                         <div class="lg:w-full px-2 mb-4 text-center">
-                            <h2 class="text-green-700 font-bold text-xl">CONTACT US</h2>
+                            <h2 class="text-green-700 font-bold text-2xl">CONTACT US</h2>
                         </div>
                         <form wire:submit.prevent="contactUs" class="space-y-3">
-                            <input type="text" name="Name" placeholder="Name" wire:model="name"
+                            <input type="text" name="name" placeholder="Name" wire:model="name"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
-                            <input type="email" name="Email" placeholder="Email" wire:model="email"
+
+                            <input type="email" name="email" placeholder="Email" wire:model="email"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('email')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
-                            <input type="tel" name="Phone Number" placeholder="Phone Number" wire:model="contact_number"
+
+                            <input type="tel" name="contact_number" placeholder="Phone Number"
+                                wire:model="contact_number"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('contact_number')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
+
                             <textarea name="message" placeholder="Message" wire:model="message"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300 resize-none"></textarea>
                             @error('message')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
-                            <button type="submit"
-                                class="w-full px-4 py-2 text-white bg-green-700 hover:bg-green-800 rounded-md">
-                                Send
+
+                            <button
+                                class="mt-4 block px-4 py-2 h-10 w-16 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading wire:target="contactUs" class="mr-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="contactUs">
+                                        Send
+                                    </span>
+                                </div>
                             </button>
                         </form>
                     </div>
