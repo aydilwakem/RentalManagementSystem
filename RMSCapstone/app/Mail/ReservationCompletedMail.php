@@ -36,7 +36,7 @@ class ReservationCompletedMail extends Mailable
      */
     public function build()
     {
-        return $this->view('guest.emails.reservation-completed-orig')
+        return $this->view('guest.emails.reservation-completed')
             ->subject('Reservation Completed!')
             ->with([
                 'name' => $this->reservationData['name'],

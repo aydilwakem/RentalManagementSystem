@@ -100,6 +100,11 @@
                 </div>
             @endif
 
+            <p style="margin-top: 20px;">
+                Thank you,<br>
+                The Canopy Farm PH
+            </p>
+
         </div>
 
         {{-- Footer --}}
