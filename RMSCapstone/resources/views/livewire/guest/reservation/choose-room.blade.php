@@ -15,12 +15,25 @@
                 </div>
             </div>
         @else
-        <!--TODO: Add lazy loading-->
+            <!--TODO: Add lazy loading-->
             <div class="grid grid-cols-1 gap-6">
+
+                <!-- Room Category Filter -->
+                <div class="flex items-center">
+                    <label for="property_category_id" class="w-32 text-sm font-medium text-gray-900">Room
+                        Category:</label>
+                    <select id="property_category_id" name="property_category_id" wire:model.live="roomCategoryFilter"
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                        <option value="">All</option>
+                        @foreach ($roomCategories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 @foreach ($rooms as $room)
                     <div class=" space-y-6" wire:key="room-{{ $room->id }}">
-                        <div
-                            class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
+                        <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                             <div class="md:flex">
 
                                 <div class="md:w-1/3">
@@ -83,8 +96,7 @@
 
                                             <!-- Adults -->
                                             <div class="flex-1">
-                                                <label
-                                                    class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                 <select wire:model.live="adults.{{ $room->id }}"
                                                     class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                     @for ($i = 1; $i <= $room->max_adults; $i++)
@@ -124,28 +136,24 @@
 
                                             @if ($roomInCart)
                                             @else
-                                                <x-button wire:click="addRoomToCart({{ $room->id }})"
-                                                    wire:loading.attr="disabled"
+                                                <x-button wire:click="addRoomToCart({{ $room->id }})" wire:loading.attr="disabled"
                                                     wire:target="addRoomToCart({{ $room->id }})"
                                                     class="relative h-10 w-full justify-center">
 
                                                     <div class="flex items-center justify-center relative w-full">
                                                         <!-- Spinner -->
-                                                        <span wire:loading
-                                                            class=" flex items-center justify-center"
+                                                        <span wire:loading class=" flex items-center justify-center"
                                                             wire:target="addRoomToCart({{ $room->id }})">
-                                                            <svg class="animate-spin h-5 w-5 text-white"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12" cy="12"
-                                                                    r="10" stroke="currentColor" stroke-width="4" />
+                                                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                    stroke="currentColor" stroke-width="4" />
                                                                 <path class="opacity-75" fill="currentColor"
                                                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                             </svg>
                                                         </span>
 
                                                         <!-- Button Text -->
-                                                        <span wire:loading.remove
-                                                            wire:target="addRoomToCart({{ $room->id }})">
+                                                        <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
                                                             Add Room
                                                         </span>
                                                     </div>

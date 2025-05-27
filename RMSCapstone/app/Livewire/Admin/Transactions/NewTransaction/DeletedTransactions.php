@@ -10,11 +10,24 @@ class DeletedTransactions extends Component
     public $deletedNewTransactions;
 
     public $confirmItemDelete = false;
+    public $cannotDeleteTransactionModal = false;
 
     public function confirmDeleteForever($id)
     {
-        $this->confirmItemDelete = $id;
+        $transaction = Transaction::withTrashed()->find($id);
+
+        if ($transaction) {
+            $guestCount = $transaction->guestDetails()->count();
+
+            if ($guestCount > 0) {
+                $this->cannotDeleteTransactionModal = true; // Show modal saying "Cannot delete"
+                return; // Exit early, don’t open the confirm delete modal
+            }
+
+            $this->confirmItemDelete = $id;      // Set the transaction id to delete
+        }
     }
+
 
     public function mount()
     {
@@ -42,11 +55,13 @@ class DeletedTransactions extends Component
     public function deleteTransactionForever($transactionId)
     {
         $transaction = Transaction::withTrashed()->find($this->confirmItemDelete);
+
         if ($transaction) {
-            $transaction->forceDelete(); // Permanently delete the room
+            $transaction->forceDelete();
             session()->flash('message', 'Transaction permanently deleted.');
             $this->fetchDeletedNewTransactions();
         }
+
         $this->confirmItemDelete = false;
     }
 

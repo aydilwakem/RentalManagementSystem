@@ -13,12 +13,14 @@ use App\Models\TransactionUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class CreateEvent extends Component
 {
     //Public declaration for fields
     // ----------------------- Types ---------------------------- //
     public $reservation_type_id = 3; // This reservation is for Events
+    public $transaction_number;
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
 
     // ----------------------- Heard From, Status Defaults ---------------------------- //
@@ -68,7 +70,8 @@ class CreateEvent extends Component
     // ------------------- Modal -------------------- //
     public $confirmCreateItem = false;
 
-    public function mount(){
+    public function mount()
+    {
         $this->eventTypes = EventType::all();
         $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
     }
@@ -80,105 +83,105 @@ class CreateEvent extends Component
 
     public function saveEvent()
     {
-        try{
-        $this->validate([
-            // Transaction User Fields
-            'first_name' => 'required|string|max:100',
-            'middle_name' => 'nullable|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'email' => 'required|email|max:100',
-            'contact_number' => 'required|string|max:20',
-            'city_municipality' => 'required|string|max:100',
-            'company_name' => 'required|string|max:100',
-            'country' => 'required|string|max:100',
+        try {
+            $this->validate([
+                // Transaction User Fields
+                'first_name' => 'required|string|max:100',
+                'middle_name' => 'nullable|string|max:100',
+                'last_name' => 'required|string|max:100',
+                'email' => 'required|email|max:100',
+                'contact_number' => 'required|string|max:20',
+                'city_municipality' => 'required|string|max:100',
+                'company_name' => 'required|string|max:100',
+                'country' => 'required|string|max:100',
 
-            // Transaction Fields
-            'event_type_id' => 'required|integer|exists:event_types,id',
-            'start_datetime' => 'required|date|after_or_equal:today|before_or_equal:end_datetime',
-            'end_datetime' => 'required|date|after_or_equal:start_datetime',
-            'total_adults' => 'required|integer|min:5|max:200',
-            'total_kids' => 'nullable|integer|min:0|max:50',
-            'pax' => 'required|integer|min:5|max:200',
-            'total_amount' => 'required|numeric|min:10000|max:5000000.00',
-            'reservation_source' => 'required|string|max:100',
-
-
-            // Dynamic guests per hall (optional validation)
-            'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
-            'adults.*' => 'nullable|integer|min:0|max:200',
-            'kids.*' => 'nullable|integer|min:0|max:50',
-            'extra_guest.*' => 'nullable|integer|min:0',
-            'extra_charge.*' => 'nullable|numeric|min:0',
-        ]);
-    }catch (\Illuminate\Validation\ValidationException $e) {
-        $this->confirmCreateItem = false;
-        throw $e;
-    }
+                // Transaction Fields
+                'event_type_id' => 'required|integer|exists:event_types,id',
+                'start_datetime' => 'required|date|after_or_equal:today|before_or_equal:end_datetime',
+                'end_datetime' => 'required|date|after_or_equal:start_datetime',
+                'total_adults' => 'required|integer|min:5|max:200',
+                'total_kids' => 'nullable|integer|min:0|max:50',
+                'pax' => 'required|integer|min:5|max:200',
+                'total_amount' => 'required|numeric|min:10000|max:5000000.00',
+                'reservation_source' => 'required|string|max:100',
 
 
-    DB::transaction(function () {
+                // Dynamic guests per hall (optional validation)
+                'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
+                'adults.*' => 'nullable|integer|min:0|max:200',
+                'kids.*' => 'nullable|integer|min:0|max:50',
+                'extra_guest.*' => 'nullable|integer|min:0',
+                'extra_charge.*' => 'nullable|numeric|min:0',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
-        // Step 1: Create transaction user
-        $transactionUser = TransactionUser::create([
-            'first_name' => $this->first_name,
-            'middle_name' => $this->middle_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'contact_number' => $this->contact_number,
-            'city_municipality' => $this->city_municipality,
-            'company_name' => $this->company_name,
-            'country' => $this->country,
-            'trn_user_type' => $this->trn_user_type,
-        ]);
 
-        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+        DB::transaction(function () {
 
-        // Step 2: Create transaction
-        $transaction = Transaction::create([
-            'reservation_type_id' => $this->reservation_type_id,
-            'created_by' => $transactionUser->id,
-            'event_type_id' => $this->event_type_id,
-            'start_datetime' => $this->start_datetime,
-            'end_datetime' => $this->end_datetime,
-            'total_adults' => $this->total_adults,
-            'total_kids' =>$this->total_kids,
-            // 'pax' => $this->total_kids + $this->total_adults,
-            'pax' => $this->pax,
-            'total_amount' => $this->total_amount,
-            'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
-            'reservation_source' => $this->reservation_source,
-            'transaction_status' => $this->transaction_status,
-        ]);
+            // Step 1: Create transaction user
+            $transactionUser = TransactionUser::create([
+                'first_name' => $this->first_name,
+                'middle_name' => $this->middle_name,
+                'last_name' => $this->last_name,
+                'email' => $this->email,
+                'contact_number' => $this->contact_number,
+                'city_municipality' => $this->city_municipality,
+                'company_name' => $this->company_name,
+                'country' => $this->country,
+                'trn_user_type' => $this->trn_user_type,
+            ]);
 
-        // Step 3: Generate invoice number
-        $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-        $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+            $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
 
-        // Step 4: Create invoice
-        $invoice = Invoice::create([
-            'transaction_id' => $transaction->id,
-            'invoice_number' => $invoiceNumber,
-            'invoice_type' => 'event_hall',
-            'sub_total' => $this->total_amount,
-            'deposit_paid' => 0,
-            'amount_paid' => 0,
-            'balance_due' => $this->total_amount,
-            'due_date' => $this->end_datetime,
-            'invoice_status' => 'pending',
-        ]);
+            // Step 2: Create transaction
+            $transaction = Transaction::create([
+                'transaction_number' => 'EVT-' . strtoupper(Str::random(8)),
+                'reservation_type_id' => $this->reservation_type_id,
+                'created_by' => $transactionUser->id,
+                'event_type_id' => $this->event_type_id,
+                'start_datetime' => $this->start_datetime,
+                'end_datetime' => $this->end_datetime,
+                'total_adults' => $this->total_adults,
+                'total_kids' => $this->total_kids,
+                // 'pax' => $this->total_kids + $this->total_adults,
+                'pax' => $this->pax,
+                'total_amount' => $this->total_amount,
+                'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
+                'reservation_source' => $this->reservation_source,
+                'transaction_status' => $this->transaction_status,
+            ]);
 
-        // Step 5: Attach halls to transaction
-        $transaction->properties()->attach($this->selected_hall, [
-            'adults' => $this->total_adults,
-            'kids' => $this->total_kids ?? 0,
-            'extra_guest' => 0,
-            'extra_charge' => 0,
-            'amount' => $this->total_amount,
-            'total_amount' => $this->total_amount,
-            'days' => $this->stayDuration ?? 1,
-        ]);
+            // Step 3: Generate invoice number
+            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
+            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
 
-    });
+            // Step 4: Create invoice
+            $invoice = Invoice::create([
+                'transaction_id' => $transaction->id,
+                'invoice_number' => $invoiceNumber,
+                'invoice_type' => 'event_hall',
+                'sub_total' => $this->total_amount,
+                'deposit_paid' => 0,
+                'amount_paid' => 0,
+                'balance_due' => $this->total_amount,
+                'due_date' => $this->end_datetime,
+                'invoice_status' => 'pending',
+            ]);
+
+            // Step 5: Attach halls to transaction
+            $transaction->properties()->attach($this->selected_hall, [
+                'adults' => $this->total_adults,
+                'kids' => $this->total_kids ?? 0,
+                'extra_guest' => 0,
+                'extra_charge' => 0,
+                'amount' => $this->total_amount,
+                'total_amount' => $this->total_amount,
+                'days' => $this->stayDuration ?? 1,
+            ]);
+        });
 
         session()->flash('success', 'Event reservation successfully saved.');
         return redirect()->route('admin.events');
@@ -212,7 +215,7 @@ class CreateEvent extends Component
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
             $query->where(function ($q) use ($startDate, $endDate) {
                 $q->where('start_datetime', '<', $endDate)
-                  ->where('end_datetime', '>', $startDate);
+                    ->where('end_datetime', '>', $startDate);
             });
         }]);
 
@@ -221,7 +224,6 @@ class CreateEvent extends Component
             $hall->isBooked = $hall->transactions->isNotEmpty();
             return $hall;
         });
-
     }
 
     public function updatedStartDatetime()
@@ -262,7 +264,8 @@ class CreateEvent extends Component
 
 
     //  Method that computes the total pax based on inputed adults + kids
-    public function computeTotalPax(){
+    public function computeTotalPax()
+    {
         $this->pax = (int) $this->total_adults + (int) $this->total_kids;
     }
 

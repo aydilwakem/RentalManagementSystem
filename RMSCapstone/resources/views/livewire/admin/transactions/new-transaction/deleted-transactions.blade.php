@@ -18,6 +18,15 @@
             <p class="text-gray-500 text-lg font-semibold">No deleted transactions yet.</p>
         </div>
     @else
+
+        {{-- Display Error Message --}}
+        @if (session()->has('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -45,6 +54,7 @@
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody class="text-center">
                         @foreach ($deletedNewTransactions as $transaction)
                             <tr class="border-b">
@@ -80,6 +90,27 @@
                     </tbody>
                 </table>
             </div>
+
+
+            <div>
+                {{-- Modal Overlay --}}
+                @if ($cannotDeleteTransactionModal)
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                            <h2 class="text-xl font-semibold mb-4 text-red-600">Action Blocked</h2>
+                            <p class="text-gray-700">Cannot delete this transaction. It has existing guest records.</p>
+
+                            <div class="mt-6 text-right">
+                                <button wire:click="$set('cannotDeleteTransactionModal', false)"
+                                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
             <!-- Delete Confirmation Modal -->
             <x-dialog-modal wire:model.live="confirmItemDelete">
                 <x-slot name="title">

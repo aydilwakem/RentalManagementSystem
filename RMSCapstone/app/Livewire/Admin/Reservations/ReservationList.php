@@ -46,15 +46,8 @@ class ReservationList extends Component
     public $actionId;
     public $actionButtonType = 'default';
 
-    // -------------------------------------- MOUNT -------------------------------------- //
 
-    public function mount()
-    {
-        // Initializes session variable if not already set
-        if (!session()->has('fake_ids_transactions')) {
-            session(['fake_ids_transactions' => []]);
-        }
-    }
+
 
     // -------------------------------------- RENDER -------------------------------------- //
 

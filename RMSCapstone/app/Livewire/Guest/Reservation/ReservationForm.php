@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Models\Transaction;
 use App\Models\Setting;
 use App\Models\TransactionUser;
+use App\Models\PropertyCategory;
 use App\Models\GuestDetail;
 use App\Models\Invoice;
 use Carbon\Carbon;
@@ -27,10 +28,10 @@ class ReservationForm extends Component
     public $transaction_status = 'pending';
     public $cart = []; // Keeps all the selected rooms and activities
     public $total_amount; // Total amount for the reservation
-    public $total_pax = 0; // Total number of guests (adults + kids)
+    public $total_pax = 2; // Total number of guests (adults + kids)
     public $check_in_date;
     public $check_out_date;
-
+    public $roomCategories;
     // ----------------------- ROOMS ---------------------------- //
 
     // rooms - adults - kids - extra-guest - extra-charge - amount
@@ -64,6 +65,7 @@ class ReservationForm extends Component
     // ------------------- INVOICE -------------------- //
 
     public $invoice_number;
+    public $transaction_number;
     public $paymentMethod;
 
     // ------------------- NAVIGATION STEPS -------------------- //
@@ -86,6 +88,7 @@ class ReservationForm extends Component
     public $showGuestModal = false;
     public $editingGuestIndex = null;
     public $showEditModal = false;
+    public $roomCategoryFilter = '';
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -132,6 +135,7 @@ class ReservationForm extends Component
     public function mount()
     {
         $this->rooms = Property::ofType('Room')->availableRooms()->get();
+        $this->roomCategories = PropertyCategory::all();
         $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
@@ -598,6 +602,9 @@ class ReservationForm extends Component
     public function addMultipleGuests()
     {
 
+        Log::Info('addMultipleGuests method called.');
+
+
         // Validate the guest details
         $this->validate([
             'guest_first_name' => 'required|string',
@@ -724,6 +731,8 @@ class ReservationForm extends Component
      * @return \Illuminate\Http\RedirectResponse Redirects to the reservation form route.
      */
 
+
+
     public function register()
     {
 
@@ -748,6 +757,7 @@ class ReservationForm extends Component
 
             // Step 2: Create transaction
             $transaction = Transaction::create([
+                'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
                 'reservation_type_id' => $this->reservation_type_id,
                 'created_by' => $transactionUser->id,
                 'start_datetime' => $this->check_in_date,
@@ -763,14 +773,10 @@ class ReservationForm extends Component
                 'terms' => $this->terms,
             ]);
 
-            // Step 3 & 4: Generate invoice number
-            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad($latestInvoice ? (int) substr($latestInvoice->invoice_number, -3) + 1 : 1, 3, '0', STR_PAD_LEFT);
-
             // Step 5: Create invoice
             $invoice = Invoice::create([
                 'transaction_id' => $transaction->id,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
                 'invoice_type' => 'Room',
                 'sub_total' => $this->computeTotalAmount(),
                 'deposit_paid' => 0,
@@ -825,9 +831,9 @@ class ReservationForm extends Component
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
-                'transaction_number' => $transaction->id,
+                'transaction_number' => $transaction->transaction_number,
                 'email' => $this->email,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => $invoice->invoice_number,
                 'check_in' => $this->check_in_date,
                 'check_out' => $this->check_out_date,
                 'total_amount' => $this->computeTotalAmount(),
