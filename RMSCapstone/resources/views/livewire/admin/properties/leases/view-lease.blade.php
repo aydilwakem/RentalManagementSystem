@@ -19,7 +19,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                 <div><strong>Property:</strong>
                     @foreach ($transaction->properties as $property)
-                    {{ $property->name_number ?? 'N/A' }}<br>
+                        {{ $property->name_number ?? 'N/A' }}<br>
                     @endforeach
                 </div>
                 <div>
@@ -48,18 +48,18 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                 <div><strong>Transaction ID: </strong>
-                    {{ $transaction->invoice->transaction_id ?? 'N/A' }}
+                    {{ $transaction->invoice->transaction->transaction_number ?? 'N/A' }}
                 </div>
                 <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A' }}</div>
                 <div><strong>Sub Total: </strong>
                     ₱{{ optional($transaction->invoice)->sub_total !== null
-                    ? number_format(optional($transaction->invoice)->sub_total, 2)
-                    : 'N/A' }}
+    ? number_format(optional($transaction->invoice)->sub_total, 2)
+    : 'N/A' }}
                 </div>
                 <div><strong>Balance Due:
                     </strong>₱{{ optional($transaction->invoice)->sub_total !== null
-                    ? number_format(optional($transaction->invoice)->balance_due, 2)
-                    : 'N/A' }}
+    ? number_format(optional($transaction->invoice)->balance_due, 2)
+    : 'N/A' }}
                 </div>
                 <div><strong>Due Date: </strong>
                     {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ?? 'N/A' }}

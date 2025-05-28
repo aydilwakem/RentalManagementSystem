@@ -144,7 +144,7 @@
                     </div>
                     <div>
                         <strong>Transaction Number:</strong>
-                        <div>#{{ $transaction->id }}</div>
+                        <div>#{{ $transaction->transaction_number }}</div>
                     </div>
                     <div>
                         <strong>Reservation Created At:</strong>
@@ -502,7 +502,7 @@
                                     @foreach ($payments as $payment)
                                         <tr class="hover:bg-gray-50">
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice_id }}</td>
+                                            <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice->invoice_number }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
                                                 {{ $payment->paymentMethod->mode_of_payment_name }}</td>
                                             <td class="border px-4 py-2 text-gray-700">

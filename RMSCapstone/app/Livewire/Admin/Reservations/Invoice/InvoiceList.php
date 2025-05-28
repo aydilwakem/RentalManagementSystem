@@ -51,15 +51,8 @@ class InvoiceList extends Component
                 });
             })
             ->when($this->invoiceStatusFilter, function ($query) {
-                // This was incorrectly querying whereHas('invoices') which doesn't exist.
-                // Since we're already querying Invoice model, just filter directly on the invoice_status column:
                 $query->where('invoice_status', $this->invoiceStatusFilter);
             })
-            // ->when($this->invoiceTypeFilter, function ($query) {
-            //     $query->whereHas('transaction', function ($q) {
-            //         $q->where('reservation_type_id', $this->invoiceTypeFilter);
-            //     });
-            // })
             ->get();
 
         return view('livewire.admin.reservations.invoice.invoice-list');

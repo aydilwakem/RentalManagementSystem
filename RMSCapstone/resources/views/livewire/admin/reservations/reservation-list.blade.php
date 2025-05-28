@@ -104,194 +104,30 @@
             <!-- Table Body-->
             <div>
                 <table class="min-w-full text-left">
+
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                <button class="flex items-center">
-                                    ID
-                                    @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
 
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
-                                <button class="flex items-center">
-                                    Guest Name
-                                    @if ($sortBy !== 'first_name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            {{-- Transaction Number --}}
+                            <th scope="col" class="px-4 py-3">ID</th>
 
+                            {{-- Guest Name --}}
+                            <th scope="col" class="px-4 py-3">Guest Name</th>
 
+                            {{-- Rooms --}}
                             <th scope="col" class="px-4 py-3">Room/s</th>
 
                             {{-- Pax --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
-                                <button class="flex items-center">
-                                    Pax
-                                    @if ($sortBy !== 'pax')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            <th scope="col" class="px-4 py-3">Pax</th>
 
                             {{-- Stay Duration --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('days')">
-                                <button class="flex items-center">
-                                    Stay Duration
-                                    @if ($sortBy !== 'days')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            <th scope="col" class="px-4 py-3">Stay Duration</th>
 
                             {{-- Check-in Date --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('start_datetime')">
-                                <button class="flex items-center">
-                                    Check-in
-                                    @if ($sortBy !== 'start_datetime')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            <th scope="col" class="px-4 py-3">Check-in Date</th>
 
                             {{-- Check-out Date --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('end_datetime')">
-                                <button class="flex items-center">
-                                    Check-out
-                                    @if ($sortBy !== 'end_datetime')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            <th scope="col" class="px-4 py-3">Check-out Date</th>
 
                             {{-- Status --}}
                             <th scope="col" class="px-4 py-3">Status</th>
@@ -301,13 +137,14 @@
 
                         </tr>
                     </thead>
+
                     <tbody class="text-left">
                         @forelse ($transactions as $transaction)
                             <tr class="border-b hover:bg-gray-50">
 
                                 {{-- ID --}}
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                    {{ $fakeIDs[$transaction->id] ?? 'TXN-' . str_pad($loop->index + 1, 3, '0', STR_PAD_LEFT) }}
+                                    {{ $transaction->transaction_number }}
                                 </th>
 
                                 {{-- First Name and Last Name --}}
@@ -615,6 +452,7 @@
         </x-dialog-modal>
     @endif
 </div>
+
 <script>
     document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
         button.addEventListener("click", function (e) {

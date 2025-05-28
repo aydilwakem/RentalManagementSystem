@@ -21,6 +21,7 @@ class Transaction extends Model
     protected $table = 'trn_transactions';
 
     protected $fillable = [
+        'transaction_number',
         'reservation_type_id',
         'created_by',
         'event_type_id',
@@ -119,7 +120,7 @@ class Transaction extends Model
 
     public function scopeNewReservations($query)
     {
-        return $query->where('transaction_status', 'pending');
+        return $query->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified']);
     }
 
 

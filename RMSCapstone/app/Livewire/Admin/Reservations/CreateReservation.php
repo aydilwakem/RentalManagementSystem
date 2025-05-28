@@ -23,6 +23,8 @@ class CreateReservation extends Component
 {
 
     public $reservation_type_id = 2; // This reservation is for Rooms
+    public $transaction_number;
+
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
     public $reservation_source = 'WebApp';
     public $transaction_status = 'pending';
@@ -583,6 +585,7 @@ class CreateReservation extends Component
 
             // Step 2: Create transaction
             $transaction = Transaction::create([
+                'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
                 'reservation_type_id' => $this->reservation_type_id,
                 'created_by' => $transactionUser->id,
                 'start_datetime' => $this->check_in_date,
@@ -657,7 +660,7 @@ class CreateReservation extends Component
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
-                'transaction_number' => $transaction->id,
+                'transaction_number' => $transaction->transaction_number,
                 'email' => $this->email,
                 'invoice_number' => $invoiceNumber,
                 'check_in' => $this->check_in_date,

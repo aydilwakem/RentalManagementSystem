@@ -29,17 +29,17 @@
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 We've Received Your Reservation!
             </h1>
-            <p style="font-size: 16px; margin: 10px 0 20px;">Your booking is almost complete, just one more step to confirm your stay.</p>
+            <p style="font-size: 16px; margin: 10px 0 20px;">Your booking is almost complete, just one more step to
+                confirm your stay.</p>
         </div>
 
         {{-- Transaction Number Header --}}
-        <div
-            style="
+        <div style="
             padding: 20px 30px;
             text-align: center;
             border-bottom: 2px solid #166534;
             background-color: #f8fcf8;">
-            <p style="font-size: 18px; color: #555; margin-bottom: 5px; margin-top: 0;">Your Transaction Number:</p>
+            <p style="font-size: 18px; color: #555; margin-bottom: 5px; margin-top: 0;">Your Transaction ID:</p>
             <h1 style="font-size: 32px; color: #166534; margin: 0; font-weight: 700;">
                 {{ $transaction_number }}
             </h1>
@@ -57,8 +57,7 @@
             </p>
 
             {{-- Disclaimer --}}
-            <div
-                style="
+            <div style="
                 background-color: #fffacd; /* Light yellow background for attention */
                 border: 1px solid #e6b300; /* Yellow border */
                 border-left: 5px solid #e6b300;
@@ -81,11 +80,13 @@
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0; margin-bottom: 10px;">Reservation Details
                 </h3>
                 <ul style="padding-left: 0; list-style: none; margin: 0;">
-                    <li style="margin-bottom: 8px;"><strong>Transaction Number: {{ $transaction_number }}</strong></li>
+                    <li style="margin-bottom: 8px;"><strong>Transaction ID: {{ $transaction_number }}</strong></li>
                     {{-- <li style="margin-bottom: 8px;">Invoice Number: {{ $invoice_number }}</li> --}}
-                    <li style="margin-bottom: 8px;">Check-in Date: {{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}
+                    <li style="margin-bottom: 8px;">Check-in Date:
+                        {{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}
                     </li>
-                    <li style="margin-bottom: 8px;">Check-out Date: {{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}
+                    <li style="margin-bottom: 8px;">Check-out Date:
+                        {{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}
                     </li>
                 </ul>
             </div>
@@ -103,12 +104,12 @@
             </div>
 
             <p style="margin-bottom: 15px;">Please pay the required deposit within <strong
-                    style="color: #d9534f;">{{ $expirationHours }} hours</strong> to confirm your reservation. You can upload your proof of payment through the link below:</p>
+                    style="color: #d9534f;">{{ $expirationHours }} hours</strong> to confirm your reservation. You can
+                upload your proof of payment through the link below:</p>
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
-                <a href="http://127.0.0.1:8000/guest/proof-of-payment-page" target="_blank"
-                    style="
+                <a href="http://127.0.0.1:8000/guest/proof-of-payment-page" target="_blank" style="
                     display: inline-block;
                     padding: 12px 25px;
                     background-color: #166534; /* Your brand green */

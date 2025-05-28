@@ -18,12 +18,14 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Guest Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                 <div><strong>Event Booked By:</strong> {{ $event->transactionUser->first_name }}
-                    {{ $event->transactionUser->middle_name }} {{ $event->transactionUser->last_name }}</div>
+                    {{ $event->transactionUser->middle_name }} {{ $event->transactionUser->last_name }}
+                </div>
                 <div><strong>Email:</strong> {{ $event->transactionUser->email }}</div>
                 <div><strong>Contact Number:</strong> {{ $event->transactionUser->contact_number }}</div>
                 <div><strong>Company Name:</strong> {{ $event->transactionUser->company_name }}</div>
                 <div class="md:col-span-2"><strong>Location:</strong> {{ $event->transactionUser->city_municipality }},
-                    {{ $event->transactionUser->country }}</div>
+                    {{ $event->transactionUser->country }}
+                </div>
             </div>
         </div>
 
@@ -52,7 +54,8 @@
         <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Invoice</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction_id ?? 'N/A' }}</div>
+                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction->transaction_number ?? 'N/A' }}
+                </div>
                 <div><strong>Invoice Number:</strong> {{ $event->invoice->invoice_number }}</div>
                 <div><strong>Sub Total:</strong> ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
                 <div><strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}</div>
@@ -105,8 +108,7 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deleteEventItem({{ $event->id }})"
-                wire:loading.attr="disabled">
+            <x-danger-button class="ms-3" wire:click="deleteEventItem({{ $event->id }})" wire:loading.attr="disabled">
                 {{ __('Delete Event') }}
             </x-danger-button>
         </x-slot>

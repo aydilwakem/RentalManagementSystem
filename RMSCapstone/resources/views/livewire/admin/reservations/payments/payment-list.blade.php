@@ -117,7 +117,7 @@
                             {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
                         </td>
                         <td class="px-4 py-3">
-                            {{ $payment->invoice->transaction->id ?? 'N/A' }}
+                            {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}
                         </td>
                         <td class="px-4 py-3">
                             {{ $payment->invoice->invoice_number ?? 'N/A' }}
