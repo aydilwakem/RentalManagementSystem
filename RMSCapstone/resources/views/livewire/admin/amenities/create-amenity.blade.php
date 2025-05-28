@@ -24,7 +24,7 @@
         <!-- Form Container -->
         <form wire:submit.prevent="" class="flex flex-col h-full space-y-6 min-h-[200px]">
             <div class="mt-4">
-                <label for="name" class="block mb-2 text-sm font-semibold text-gray-800">Amenity Name</label>
+                <label for="name" class="block mb-2 text-sm font-semibold text-gray-800">Amenity Name <span class="text-red-500">*</span></label>
                 <input type="text" wire:model.live="name" id="name"
                     class="block w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-green-600 focus:border-green-600 focus:outline-none sm:text-base"
                     placeholder="Ex. Free Wi-Fi, Toiletries, Kettle" required autocomplete="off">

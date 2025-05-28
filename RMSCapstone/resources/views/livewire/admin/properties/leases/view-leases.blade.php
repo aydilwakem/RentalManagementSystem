@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
-    @if ($transactions->isEmpty())
+    @if ($transactions->isEmpty() && !$statusFilter && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No leases yet.<br> Click "Create Lease" to add a new lease.</p>
@@ -12,22 +12,20 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
         <div>
             <div class="flex items-center justify-between">
-                <!-- Label and Confirm Button -->
-
+                <!-- Create Button -->
                 <div class="flex justify-between items-center mb-4">
                     <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-lease') }}'">
                         New Lease
                     </x-button>
                 </div>
 
-                <!-- Deleted Leases (Restore and Delete Forever -->
-
+                <!-- Soft Deletes -->
                 <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                     icon="fas fa-trash" href="{{ route('admin.deleted-leases') }}">
                     Deleted Leases
@@ -54,7 +52,7 @@
                         <!-- Search-->
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
-                            placeholder="Search tenants" required="">
+                            placeholder="Search">
                     </div>
 
                     {{-- Bulk Actions Button
@@ -108,7 +106,7 @@
                             </th> --}}
 
                             {{-- Transaction Number --}}
-                            <th scope="col" class="px-4 py-3">ID</th>
+                            <th scope="col" class="px-4 py-3">Lease ID</th>
 
 
                             <!-- Property -->
@@ -120,67 +118,11 @@
                                 Tenant
                             </th>
 
-                            <!-- Total-->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('pax')">
-                                <button class="flex items-center">
-                                    Total People
-                                    @if ($sortBy !== 'pax')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
                             <!-- Monthly Rent-->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('total_amount')">
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('monthly_rent')">
                                 <button class="flex items-center">
                                     Monthly Rent
-                                    @if ($sortBy !== 'total_amount')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            <!-- Total Rent-->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('total_amount')">
-                                <button class="flex items-center">
-                                    Total Rent
-                                    @if ($sortBy !== 'total_amount')
+                                    @if ($sortBy !== 'monthly_rent')
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -264,11 +206,11 @@
                             <th scope="col" class="px-4 py-3">Status</th>
 
                             <!-- Actions -->
-                            <th scope="col" class="px-4 py-3">Actions</th>
+                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
 
-                    <tbody class="">
+                    <tbody>
                         @forelse ($transactions as $transaction)
                             <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600">
                                 {{-- <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
@@ -287,41 +229,46 @@
                                     {{ $transaction->transactionUser->first_name }}
                                     {{ $transaction->transactionUser->last_name }}
                                 </td>
-                                <td class="px-4 py-3">{{ $transaction->pax }}</td>
                                 <td class="px-4 py-3">₱ {{ number_format($this->getMonthlyRent($transaction), 2) }}</td>
-                                <td class="px-4 py-3">₱ {{ number_format($transaction->total_amount, 2) }}</td>
                                 <td class="px-4 py-3">{{ $transaction->start_datetime->format('F j, Y') }}</td>
                                 <td class="px-4 py-3">{{ $transaction->end_datetime->format('F j, Y') }}</td>
                                 <td class="px-4 py-3">
                                     @if ($transaction->transaction_status === 'confirmed')
-                                        <span class="px-2 py-1 bg-indigo-700 text-white rounded-md">Confirmed</span>
+                                         <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed
+                                        </span>
                                     @elseif($transaction->transaction_status === 'pending')
-                                        <span class="px-2 py-1 bg-gray-500 text-white rounded">Pending</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Pending
+                                        </span>
                                     @elseif($transaction->transaction_status === 'ongoing')
-                                        <span class="px-2 py-1 bg-yellow-600 text-white rounded">Ongoing</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
+                                        </span>
                                     @elseif($transaction->transaction_status === 'done')
-                                        <span class="px-2 py-1 bg-green-600 text-white rounded">Done</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Done
+                                        </span>
                                     @elseif($transaction->transaction_status === 'terminated')
-                                        <span class="px-2 py-1 bg-red-500 text-white rounded">Terminated</span>
+                                         <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-2">
                                     <!-- View Icon -->
-
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                         href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}">
                                     </i>
 
 
                                     <!-- Edit Icon -->
-
                                     <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
                                         href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
                                     </i>
 
 
                                     <!-- Delete Icon -->
-
                                     <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
                                         wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
                                     </i>
@@ -331,7 +278,7 @@
                         @empty
                             <tr>
                                 <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No leases found matching this status.
+                                    No leases found.
                                 </td>
                             </tr>
                         @endforelse
@@ -371,7 +318,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteLease({{ $transaction->id }})" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteLease" wire:loading.attr="disabled">
                     {{ __('Delete Lease') }}
                 </x-danger-button>
             </x-slot>

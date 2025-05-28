@@ -23,12 +23,12 @@ class ViewTenants extends Component
 
     #[Url(history: true)]
     public $sortDir = 'DESC';
-
+    public $selectedTenantId = null;
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete for tenants with active lease
 
-    //public declaration for bulk actions 
+    //public declaration for bulk actions
     public $selectedRows = [];
     public $selectPageRows = false;
     public $tenant;
@@ -47,6 +47,7 @@ class ViewTenants extends Component
     public function getTenantsProperty()
     {
         return TransactionUser::query()
+            ->with('transactions.properties')
             ->where('trn_user_type', 'tenant')
             ->where(function ($query) {
                 $query->where('first_name', 'like', "%{$this->search}%")
@@ -93,6 +94,7 @@ class ViewTenants extends Component
 
     public function confirmDelete($id)
     {
+        $this->selectedTenantId = $id;
         $this->confirmItemDelete = $id;
     }
 
@@ -103,7 +105,7 @@ class ViewTenants extends Component
         }
     }
 
-    public function deleteTenant($id)
+    public function deleteTenant()
     {
         $tenant = TransactionUser::find($this->confirmItemDelete);
 
@@ -120,6 +122,7 @@ class ViewTenants extends Component
         if ($usedInTransactions) {
             $this->cannotDeleteItem = true; // Show "Cannot delete" modal
             $this->confirmItemDelete = null; // Reset delete ID
+            $this->selectedTenantId = null;
             return;
         }
 

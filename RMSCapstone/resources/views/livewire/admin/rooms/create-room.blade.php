@@ -8,7 +8,7 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -26,7 +26,7 @@
                 <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
                     <!-- Room Name -->
                     <div>
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Room Name</label>
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Room Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize"
                             placeholder="Ex. Solah, Mercy">
@@ -38,7 +38,7 @@
                     <!-- Room Category -->
                     <div>
                         <label for="property_category_id" class="block mb-2 text-sm font-medium text-gray-900">Room
-                            Category</label>
+                            Category <span class="text-red-500">*</span></label>
                         <select wire:model="property_category_id" id="property_category_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                             <option value="">Select Category</option>
@@ -57,7 +57,7 @@
                         <!-- Ideal Guest -->
                         <div>
                             <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal
-                                Guest</label>
+                                Guest <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="ideal_guest" id="ideal_guest" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
@@ -69,7 +69,7 @@
                         <!-- Max Adults -->
                         <div>
                             <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Maximum
-                                Adults</label>
+                                Adults <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_adults" id="max_adults" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
@@ -81,7 +81,7 @@
                         <!-- Max Kids -->
                         <div>
                             <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Maximum
-                                Kids</label>
+                                Kids <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_kids" id="max_kids" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
@@ -95,7 +95,7 @@
                     <!-- Turnover Duration -->
                     <div>
                         <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
-                            Duration (Hours)</label>
+                            Duration (Hours) <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="turnover_duration" id="turnover_duration" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                             placeholder="Ex. 3 hours" onwheel="this.blur()" />
@@ -107,7 +107,7 @@
                     <!-- Room Status -->
                     <div>
                         <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Room
-                            Status</label>
+                            Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                             <option value="available">Available</option>
@@ -121,7 +121,7 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate</label>
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="amount" id="amount" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5"
                             placeholder="Ex. 2,800.00" onwheel="this.blur()" />
@@ -134,8 +134,8 @@
                     <!-- Extra Person Charge -->
                     <div>
                         <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra
-                            Person
-                            Charge</label>
+                            Person Charge <span class="text-red-500">*</span>
+                        </label>
                         <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none"
                             placeholder="Ex. 1,000.00" onwheel="this.blur()" />

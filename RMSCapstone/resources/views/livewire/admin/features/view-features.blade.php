@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
-    @if ($features->isEmpty())
+    @if ($features->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No features yet.<br> Click "Create Feature" to add a new
@@ -26,7 +26,8 @@
                 </div>
 
                 <!-- Deleted Rooms (Restore and Delete Forever -->
-                <x-button class="mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                <x-button
+                    class="mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                     icon="fas fa-trash" href="{{ route('admin.deleted-features') }}">
                     Deleted Features
                 </x-button>
@@ -77,8 +78,9 @@
                 <table class="w-full text-left">
                     <thead class="text-sm text-gray-700 bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2"><input wire:model.live="selectPageRows" type="checkbox"
-                                    id="checkAll" class="accent-blue-600 w-4 h-4">
+                            <th scope="col" class="px-4 py-3 flex items-center space-x-2"><input
+                                    wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
                                 <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
                                     <span>ID</span>
                                     @if ($sortBy !== 'id')
@@ -141,13 +143,14 @@
                             </th>
 
                             {{-- Actions --}}
-                            <th scope="col" class="px-4 py-3 text-center">Action</th>
+                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        @foreach ($features as $feature)
-                            <tr class="border-b">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                        @forelse ($features as $feature)
+                            <tr class="border-b hover:bg-gray-50">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                                     <input wire:model.live="selectedRows" type="checkbox" name="features[]"
                                         value="{{ $feature->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$feature->id] ?? 'FTR-???' }}</span>
@@ -173,7 +176,13 @@
                                     </i>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No features found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
 
@@ -212,7 +221,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteFeature({{ $feature->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteFeature"
                             wire:loading.attr="disabled">
                             {{ __('Delete Feature') }}
                         </x-danger-button>

@@ -8,7 +8,7 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -27,7 +27,7 @@
 
                     <!-- Name of Category -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                             placeholder="Ex. Cozy Rooms" required>

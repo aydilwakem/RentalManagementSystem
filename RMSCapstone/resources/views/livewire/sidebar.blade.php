@@ -150,7 +150,7 @@
                     @can('house-list')
                         <div @click="toggle('houses')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                            {{ Route::is('admin.properties*') || Route::is('admin.house-categories*') || Route::is('admin.tenants*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            {{ Route::is('admin.leases*') || Route::is('admin.properties*') || Route::is('admin.features*') || Route::is('admin.tenants*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">

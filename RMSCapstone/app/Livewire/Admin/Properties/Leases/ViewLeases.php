@@ -30,13 +30,14 @@ class ViewLeases extends Component
     public $leases = [];
 
     public $cannotDeleteItem = false;
+    public $selectedLeaseId = null;
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
     public $statusFilter = ''; // Filter transactions by status
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     //Bulk Delete Method
     public function updatedSelectPageRows($value){
@@ -48,7 +49,7 @@ class ViewLeases extends Component
                 ->when($this->statusFilter !== '', fn($query) => $query->where('transaction_status', $this->statusFilter))
                 ->orderBy($this->sortBy, $this->sortDir)
                 ->paginate($this->perPage);
-            
+
                 //pluck ids for bulk delete
             $this->selectedRows = $transactions->pluck('id')->map(fn($id) => (string) $id)->toArray();
         } else {
@@ -58,14 +59,15 @@ class ViewLeases extends Component
 
     //Bulk Delete by getting ID
     public function deleteSelectedRows(){
-        Transaction::whereIn('id', $this->selectedRows)->delete(); 
+        Transaction::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected leases got deleted!');
     }
 
     //Modal
-    public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+    public function confirmDeleteInBulk($id){
+        $this->selectedLeaseId = $id;
+        $this->confirmBulkDelete = true;
     }
 
     //Modal
@@ -101,6 +103,7 @@ class ViewLeases extends Component
         }
 
         $this->confirmItemDelete = false;
+        $this->selectedLeaseId = null;
     }
     }
 
@@ -167,21 +170,21 @@ class ViewLeases extends Component
         ) {
             return 0;
         }
-    
+
         $start = Carbon::parse($transaction->start_datetime)->startOfDay();
         $end = Carbon::parse($transaction->end_datetime)->startOfDay();
-    
+
         if ($start->gt($end)) {
             return 0;
         }
-    
+
         // Calculate the difference in months between the start and end date, inclusive of both months.
         $months = $start->diffInMonths($end) + 1;
-    
+
         if ($months <= 0) {
             return 0;
         }
-    
+
         return round($transaction->total_amount / $months, 2);
     }
 }
