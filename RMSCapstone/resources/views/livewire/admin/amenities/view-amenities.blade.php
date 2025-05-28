@@ -154,14 +154,14 @@
                     </thead>
                     <tbody class="text-left">
                         @foreach ($amenities as $amenity)
-                            <tr class="border-b">
+                            <tr class="border-b hover:bg-gray-50">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2">
                                     <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
                                         value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
                                 </th>
                                 <td class="px-4 py-3 font-semibold text-gray-900">{{ $amenity->name }}</td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     @can('amenity-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"

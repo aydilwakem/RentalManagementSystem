@@ -15,7 +15,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -303,7 +303,7 @@
                     </thead>
                     <tbody class="text-left">
                         @forelse ($transactions as $transaction)
-                            <tr class="border-b">
+                            <tr class="border-b hover:bg-gray-50">
 
                                 {{-- ID --}}
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">

@@ -105,7 +105,7 @@
                             @if ($transaction->transaction_status === 'pending')
                                 <span
                                     class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Awaiting
-                                    Payement</span>
+                                    Payment</span>
                             @elseif ($transaction->transaction_status === 'reserved')
                                 <span
                                     class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-blue-100 text-blue-500">Pending
