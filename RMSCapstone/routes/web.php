@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\PaymentController;
 use App\Livewire\Admin\EventCategories\EditEventCategory;
 use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use App\Livewire\Admin\EventHalls\EditEventHall;
@@ -58,6 +59,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -705,6 +707,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         ->name('admin.deleted-tenants')
         ->middleware('can:tenant-soft-delete');
 });
+
+
+// --------------------- TEST ROUTES FOR PAYMENT INTEGRATION ----------------------------------- //
+
+Route::get('/payment-success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment-failed', [PaymentController::class, 'failed'])->name('payment.failed');
 
 // ----------------------------- TEST ROUTE FOR EMAILS ----------------------------------------- //
 

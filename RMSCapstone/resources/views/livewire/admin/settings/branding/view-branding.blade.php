@@ -127,6 +127,36 @@
 
             </div>
 
+            <!-- Rental Settings -->
+            <h3 class="font-semibold text-lg text-gray-900 mt-8 mb-2">Rental Settings</h3>
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
+                <!-- Deposit Percentage -->
+                <div>
+                    <label for="deposit_percentage" class="block mb-2 text-sm font-medium text-gray-900">
+                        Deposit Percentage (%)
+                    </label>
+                    <input type="number" min="0" max="100" step="0.01" wire:model="deposit_percentage"
+                        id="deposit_percentage" placeholder="e.g., 50" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                   focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                </div>
+
+                <!-- Payment Proof Expiration Hours -->
+                <div>
+                    <label for="payment_proof_expiration_hours" class="block mb-2 text-sm font-medium text-gray-900">
+                        Payment Proof Expiration (Hours)
+                    </label>
+                    <input type="number" min="1" wire:model="payment_proof_expiration_hours"
+                        id="payment_proof_expiration_hours" placeholder="e.g., 24" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                   focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                </div>
+
+            </div>
+
+
+
+
+
             <!-- Submit Button -->
             <div class="flex justify-between items-center space-y-2 mt-6">
                 <x-button onclick="history.back()" type="button"

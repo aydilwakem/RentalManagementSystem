@@ -27,6 +27,8 @@ class ViewBranding extends Component
     public $rental_agreement;
     public $custom_css;
     public $custom_js;
+    public $deposit_percentage;
+    public $payment_proof_expiration_hours;
     public $settings;
 
     public function mount()
@@ -47,6 +49,8 @@ class ViewBranding extends Component
             $this->rental_agreement = $this->settings->rental_agreement;
             $this->custom_css = $this->settings->custom_css;
             $this->custom_js = $this->settings->custom_js;
+            $this->deposit_percentage = $this->settings->deposit_percentage;
+            $this->payment_proof_expiration_hours = $this->settings->payment_proof_expiration_hours;
         } else {
             // If no settings exist, create an empty settings instance
             $this->settings = new Setting();
@@ -75,6 +79,8 @@ class ViewBranding extends Component
                 'rental_agreement' => 'nullable|string',
                 'custom_css' => 'nullable|string',
                 'custom_js' => 'nullable|string',
+                'deposit_percentage' => 'nullable|numeric|min:0|max:100',
+                'payment_proof_expiration_hours' => 'nullable|integer|min:1',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmEditItem = false;
@@ -110,6 +116,8 @@ class ViewBranding extends Component
             'privacy_policy' => $this->privacy_policy,
             'refund_policy' => $this->refund_policy,
             'rental_agreement' => $this->rental_agreement,
+            'deposit_percentage' => $this->deposit_percentage,
+            'payment_proof_expiration_hours' => $this->payment_proof_expiration_hours,
             'custom_css' => $this->custom_css,
             'custom_js' => $this->custom_js,
         ]);
