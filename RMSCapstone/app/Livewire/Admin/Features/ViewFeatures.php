@@ -87,9 +87,9 @@ class ViewFeatures extends Component
      * - Fake IDs for the features are recalculated and stored in the session.
      * - Displays a success message after the feature is successfully deleted.
      */
-    public function deleteFeature($id)
+    public function deleteFeature()
     {
-        $feature = PropertyFeature::find($id);
+        $feature = PropertyFeature::find($this->selectedFeatureId);
 
         if ($feature) {
             if ($this->confirmItemDelete) {

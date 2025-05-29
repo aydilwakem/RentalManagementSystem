@@ -84,7 +84,7 @@
                      <div>
                          <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900">Monthly
                              Rent</label>
-                         <input type="amount" wire:model.live="monthly_rent" id="monthly_rent" readonly
+                         <input type="amount" wire:model.live="monthly_rent" id="monthly_rent" disabled
                              class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
                          @error('monthly_rent')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -95,7 +95,7 @@
                      <div>
                          <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start
                              Lease</label>
-                         <input type="date" wire:model.live="start_date" id="start_date" readonly
+                         <input type="date" wire:model.live="start_date" id="start_date" disabled
                              class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
                          @error('start_date')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -106,7 +106,7 @@
                      <div>
                          <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Lease Date
                          </label>
-                         <input type="date" wire:model.live="end_date" id="end_date" readonly
+                         <input type="date" wire:model.live="end_date" id="end_date" disabled
                              class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
                          @error('end_date')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -116,10 +116,10 @@
                      <!-- Transaction Status -->
                      <div class="mb-4">
                          <label for="transaction_status" class="block mb-2 text-sm font-medium text-gray-900">Lease
-                             Status</label>
+                             Status <span class="text-red-500">*</span></label>
                          <select wire:model="transaction_status" id="transaction_status"
-                             class="bg-gray-50 border border-gray-300 text-gray-900 font-semibold text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                             <option value="">-- Select Lease Status -- </option>
+                             class="bg-gray-50 border border-gray-300 text-gray-900 font-semibold text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                             <option value="">Select Lease Status</option>
                              <option value="pending">Pending</option>
                              <option value="confirmed">Confirmed</option>
                              <option value="ongoing">On-going</option>
@@ -134,7 +134,7 @@
                      <!-- Total Amount (calculated) -->
                      <div class="mb-4">
                          <label class="block mb-2 text-sm font-medium text-gray-900">Total Rent for Lease Term</label>
-                         <input type="text" value="₱{{ number_format($total_amount, 2) }}" readonly
+                         <input type="text" value="₱{{ number_format($total_amount, 2) }}" disabled
                              class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
                      </div>
                  </div>

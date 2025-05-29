@@ -82,8 +82,18 @@
                         <li><strong>Monthly Rent:</strong> {{ $house->amount }}</li>
                     </ul>
 
+                    <!-- Address -->
+                    <div>
+                        <h3 class="mt-3 text-lg font-semibold text-gray-900">Address</h3>
+                        <p class="text-gray-600">
+                            {{ $house->house_number }}, {{ $house->street }},
+                            {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
+                            {{ $house->postal_code }}, {{ $house->country }}
+                        </p>
+                    </div>
+
                     <!-- house Amenities -->
-                    {{-- <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
+                    <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
                     @if ($house->features->isNotEmpty())
                         <div class="flex flex-wrap gap-2">
                             @foreach ($house->features as $feature)
@@ -95,17 +105,9 @@
                         </div>
                     @else
                         <p class="text-gray-500">No amenities selected for this house.</p>
-                    @endif --}}
+                    @endif
 
-                    <!-- Address -->
-                    <div>
-                        <h3 class="mt-3 text-lg font-semibold text-gray-900">Address</h3>
-                        <p class="text-gray-600">
-                            {{ $house->house_number }}, {{ $house->street }},
-                            {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
-                            {{ $house->postal_code }}, {{ $house->country }}
-                        </p>
-                    </div>
+
                 </div>
 
 

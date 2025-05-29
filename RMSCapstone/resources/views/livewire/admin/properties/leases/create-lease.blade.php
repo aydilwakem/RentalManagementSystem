@@ -97,7 +97,7 @@
                         <label for="pax" class="block mb-2 text-sm font-medium text-gray-900">
                             Total People in the House <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="pax" id="pax" min="0"
+                        <input type="number" wire:model="pax" id="pax" min="0" onwheel="this.blur()"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                             placeholder="Ex. 5">
                         @error('pax')
