@@ -64,10 +64,18 @@ class EventReports extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
+            $totalEvents = $transactions->count();
+            $totalGuests = $transactions->sum('pax');
+            $totalAmountEarned = $transactions->sum('total_amount');
+
+
         $pdf = Pdf::loadView('livewire.admin.reports.events-report-summary', [
             'transactions' => $transactions,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            'totalEvents' => $totalEvents, 
+            'totalGuests' => $totalGuests,
+            'totalAmountEarned' => $totalAmountEarned,
         ]);
 
         return response()->streamDownload(function () use ($pdf) {
@@ -77,7 +85,7 @@ class EventReports extends Component
 
     public function render()
     {
-         //Query database, join tables for fks, and get all within date range
+        //Query database, join tables for fks, and get all within date range
        $transactions = Transaction::query()
         ->select('trn_transactions.*')
         ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id') //get properties

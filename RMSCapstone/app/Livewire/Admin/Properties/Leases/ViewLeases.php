@@ -155,33 +155,4 @@ class ViewLeases extends Component
         return view('livewire.admin.properties.leases.view-leases', compact('transactions', 'fakeIDs'));
     }
 
-
-    //Get monthly rent for display:
-        public function getMonthlyRent($transaction)
-    {
-        if (
-            empty($transaction->start_datetime) ||
-            empty($transaction->end_datetime) ||
-            !is_numeric($transaction->total_amount) ||
-            $transaction->total_amount <= 0
-        ) {
-            return 0;
-        }
-    
-        $start = Carbon::parse($transaction->start_datetime)->startOfDay();
-        $end = Carbon::parse($transaction->end_datetime)->startOfDay();
-    
-        if ($start->gt($end)) {
-            return 0;
-        }
-    
-        // Calculate the difference in months between the start and end date, inclusive of both months.
-        $months = $start->diffInMonths($end) + 1;
-    
-        if ($months <= 0) {
-            return 0;
-        }
-    
-        return round($transaction->total_amount / $months, 2);
-    }
 }

@@ -7,10 +7,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Livewire\Component;
 
-class ReservationReports extends Component
+class LeaseReports extends Component
 {
     public $statusFilter = ''; // Filter transactions by status
-    public $reservation_type_id = 2;
+    public $reservation_type_id = 1; //Filter lease transactions only
     public $sortBy = 'updated_at';
     public $sortDir = 'DESC'; 
     public $search = '';
@@ -19,14 +19,11 @@ class ReservationReports extends Component
     // ---FOR DATE RANGES INPUT ------ //
     public $start_date;
     public $end_date;
-    
 
-
-    public function mount()
-    {
-        // Initializes session variable if not already set
-        if (!session()->has('fake_ids_transactions')) {
-            session(['fake_ids_transactions' => []]);
+    public function mount(){
+         // Initializes session variable if not already set
+        if (!session()->has('fake_ids_lease-reports')) {
+            session(['fake_ids_lease-reports' => []]);
         }
     }
 
@@ -49,13 +46,12 @@ class ReservationReports extends Component
             ->get();
     }
 
-    public function exportReservationSummary()
-    {
+    public function exportLeaseSummary(){
         $transactions = Transaction::query()
             ->select('trn_transactions.*')
             ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
             ->with(['transactionUser', 'properties'])
-            ->where('reservation_type_id', 2)
+            ->where('reservation_type_id', 1) //1 for lease transactions
             ->when($this->start_date, function ($query) {
                 $start = Carbon::parse($this->start_date)->startOfDay();
                 $query->where('start_datetime', '>=', $start);
@@ -67,49 +63,49 @@ class ReservationReports extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
-        $totalReservations = $transactions->count();
+            $totalLeases = $transactions->count();
 
-        // Calculate average reservation length (in nights)
-        if ($totalReservations > 0) {
-            $totalNights = $transactions->sum(function($transaction) {
+            if ($totalLeases > 0) {
+            $totalMonths = $transactions->sum(function($transaction) {
                 $start = Carbon::parse($transaction->start_datetime);
                 $end = Carbon::parse($transaction->end_datetime);
-                return $start->diffInDays($end); // nights count
+                return $start->diffInMonths($end); // whole months only
             });
 
-            $averageLength = $totalNights / $totalReservations;
+            $averageLength = $totalMonths / $totalLeases;
         } else {
             $averageLength = 0;
         }
 
-        $totalGuests = $transactions->sum('pax');
-        $totalAmountEarned = $transactions->sum('total_amount');
+            $totalTenants = $transactions->sum('pax');
+            $totalAmountEarned = $transactions->sum('total_amount');
 
-        $pdf = Pdf::loadView('livewire.admin.reports.reservations-report-summary', [
+
+        $pdf = Pdf::loadView('livewire.admin.reports.leases-report-summary', [
             'transactions' => $transactions,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'totalReservations' => $totalReservations,  
             'averageLength' => round($averageLength, 2),
+            'totalLeases' => $totalLeases, 
+            'totalTenants' => $totalTenants,
             'totalAmountEarned' => $totalAmountEarned,
-            'totalGuests' => $totalGuests,
         ]);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'Reservation-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.pdf');
+        }, 'Lease-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.pdf');
     }
 
 
     public function render()
     {
-        //Query database, join tables for fks, and get all within date range
+         //Query database, join tables for fks, and get all within date range
        $transactions = Transaction::query()
         ->select('trn_transactions.*')
-        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id') //get properties
         ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id') //join trn_users for sort direction
-        ->with(['transactionUser', 'properties'])
-        ->where('reservation_type_id', 2)
+        ->with(['transactionUser', 'properties', 'event_type'])
+        ->where('reservation_type_id', 1) //3 for lease transactions
         ->when($this->start_date, function ($query) {
             // Parse input date for datetime variable
             $start = Carbon::parse($this->start_date)->startOfDay();
@@ -122,13 +118,10 @@ class ReservationReports extends Component
         })
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
-
-
-
-        return view('livewire.admin.reports.reservation-reports', compact('transactions'));
+        
+        return view('livewire.admin.reports.lease-reports', compact('transactions'));
     }
 
-    //--------------------------- SORT BY FUNCTION -----------//
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {

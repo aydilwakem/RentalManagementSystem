@@ -642,6 +642,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         return view('admin.rentals.leases.deleted-leases');
     })->name('admin.deleted-leases');
 
+    //Lease Summary
+    Route::get('/lease-reports', function () {
+        return view('admin.reports.lease-reports');
+    })->name('admin.lease-reports');
+
     // ------------------ House Categories
 
     // List

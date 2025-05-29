@@ -126,11 +126,11 @@
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold;">Transaction Number:</td>
-                <td style="padding: 8px;">#{{ $transaction->id }}</td>
+                <td style="padding: 8px;"><strong>{{ $transaction->transaction_number }}</strong></td>
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold;">Reservation Created At:</td>
-                <td style="padding: 8px;">{{ $transaction->created_at }}</td>
+                <td style="padding: 8px;">{{ $transaction->created_at->format('F j, Y, h:i A') }}</td>
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold;">Reservation Source:</td>

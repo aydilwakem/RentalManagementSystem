@@ -90,14 +90,47 @@ class CreateLease extends Component
         $this->houses = Property::ofType('House')->where('property_status', 'available')->get();
     }
 
+    public function updatedHouseId($value)
+    {
+        $house = Property::find($value);
+        $this->monthly_rent = $house ? $house->amount : 0;
+        
+        $this->calculateTotalAmount();
+    }
+
+
     public function saveLease()
     {
         try {
             $this->validate([
                 'house_id' => 'required|exists:properties,id',
                 'selectedTenant' => 'required|exists:trn_users,id',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
+                //'start_date' => 'required|date',
+                'start_date' => ['required', 'date',
+                function ($attribute, $value, $fail) {
+                    $startDate = Carbon::parse($value);
+                    $startOfMonth = now()->startOfMonth();
+
+                    if ($startDate->lessThan($startOfMonth)) {
+                        $fail('The start date cannot be from a previous month.');
+                    }
+                },
+            ],
+
+            'end_date' => ['required','date','after:start_date',
+                function ($attribute, $value, $fail) {
+                    if (isset($this->start_date)) {
+                        $start = \Carbon\Carbon::parse($this->start_date);
+                        $end = \Carbon\Carbon::parse($value);
+
+                        if ($end->lessThan($start->copy()->addMonths(3))) {
+                            $fail('The end date must be at least 3 months after the start date.');
+                        }
+                    }
+                },
+            ],
+
+                //'end_date' => 'required|date|after:start_date',
                 'total_amount' => 'required|numeric|min:0',
                 'pax' => 'required|numeric|min:1',
 
@@ -126,8 +159,7 @@ class CreateLease extends Component
             ]);
 
             // Step 2: Generate invoice number
-            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+            $invoiceNumber = 'INV-' . strtoupper(Str::random(8)); 
 
             // Step 3: Create invoice
             Invoice::create([

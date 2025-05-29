@@ -46,7 +46,7 @@
                 <div><strong>Event Start Date:</strong> {{ $event->start_datetime->format('F j, Y') }}</div>
                 <div><strong>Event End Date:</strong> {{ $event->end_datetime->format('F j, Y') }}</div>
                 <div><strong>Total Adults:</strong> {{ $event->total_adults }}</div>
-                <div><strong>Total Kids:</strong> {{ $event->total_kids }}</div>
+                <div><strong>Total Kids:</strong> {{ $event->total_kids ?? 'N/A'}}</div>
                 <div><strong>Total People:</strong> {{ $event->pax }}</div>
                 <div><strong>Event Status:</strong> {{ ucfirst($event->transaction_status) }}</div>
                 <div><strong>Total Agreed Amount:</strong> PHP {{ number_format($event->total_amount, 2) }}</div>
@@ -57,7 +57,8 @@
                 <h3
                     style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
                     Event Invoice</h3>
-                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction_id ?? 'N/A' }}</div>
+                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction->transaction_number ?? 'N/A' }}
+                </div>
                 <div><strong>Invoice Number:</strong> {{ $event->invoice->invoice_number }}</div>
                 <div><strong>Sub Total:</strong> PHP {{ number_format($event->invoice->sub_total, 2) }}</div>
                 <div><strong>Balance Due:</strong> PHP {{ number_format($event->invoice->balance_due, 2) }}</div>

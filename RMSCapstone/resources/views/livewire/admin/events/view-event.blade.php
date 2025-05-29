@@ -35,14 +35,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                 <div><strong>Event Hall:</strong>
                     @foreach ($event->properties as $property)
-                        {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
+                    {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
                     @endforeach
                 </div>
                 <div><strong>Event Type:</strong> {{ $event->event_type->name ?? 'N/A' }}</div>
                 <div><strong>Event Start Date:</strong> {{ $event->start_datetime->format('F j, Y h:i A') }}</div>
                 <div><strong>Event End Date:</strong> {{ $event->end_datetime->format('F j, Y h:i A') }}</div>
                 <div><strong>Total Adults:</strong> {{ $event->total_adults }}</div>
-                <div><strong>Total Kids:</strong> {{ $event->total_kids }}</div>
+                <div><strong>Total Kids:</strong> {{ $event->total_kids ?? 'N/A' }}</div>
                 <div><strong>Total People:</strong> {{ $event->pax }}</div>
                 <div><strong>Event Status:</strong> {{ ucfirst($event->transaction_status) }}</div>
                 <div class="md:col-span-2"><strong>Total Agreed Amount:</strong>

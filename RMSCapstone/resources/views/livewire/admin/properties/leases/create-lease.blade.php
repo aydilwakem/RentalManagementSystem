@@ -29,7 +29,7 @@
             <!-- Select House -->
             <div>
                 <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">Select House</label>
-                <select wire:model="house_id" id="house_id"
+                <select wire:model.live="house_id" id="house_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     <option value="">Select House</option>
                     @foreach ($houses as $house)
@@ -79,8 +79,8 @@
             <!-- Monthly Rent -->
             <div>
                 <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900">Monthly Rent</label>
-                <input type="amount" wire:model.live="monthly_rent" id="monthly_rent"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
+                <input type="amount" wire:model.live="monthly_rent" id="monthly_rent" readonly
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Enter total amount from start date to end date">
                 @error('monthly_rent')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -112,38 +112,38 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300">
             </div>
 
-        </form>
-    </div>
-    <!-- Actions Buttons -->
-    <div class="flex justify-between items-center space-y-2 mt-6">
-        <x-button onclick="history.back()" type="button"
-            class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-            Cancel
-        </x-button>
-        <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
-            Add Lease
-        </x-button>
-    </div>
+    </form>
+</div>
+<!-- Actions Buttons -->
+<div class="flex justify-between items-center space-y-2 mt-6">
+    <x-button onclick="history.back()" type="button"
+        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+        Cancel
+    </x-button>
+    <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+        Add Lease
+    </x-button>
+</div>
 
-    <!-- Create Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmCreateItem">
-        <x-slot name="title">
+<!-- Create Confirmation Modal -->
+<x-dialog-modal wire:model.live="confirmCreateItem">
+    <x-slot name="title">
+        {{ __('Create Lease') }}
+    </x-slot>
+
+    <x-slot name="content">
+        {{ __('Are you sure you want to add this item?') }}
+    </x-slot>
+
+    <x-slot name="footer">
+        <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+            {{ __('Cancel') }}
+        </x-secondary-button>
+
+        <x-button class="ms-3 bg-green text-white" wire:click="saveLease" wire:loading.attr="disabled">
             {{ __('Create Lease') }}
-        </x-slot>
-
-        <x-slot name="content">
-            {{ __('Are you sure you want to add this item?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-button class="ms-3 bg-green text-white" wire:click="saveLease" wire:loading.attr="disabled">
-                {{ __('Create Lease') }}
-            </x-button>
-        </x-slot>
-    </x-dialog-modal>
+        </x-button>
+    </x-slot>
+</x-dialog-modal>
 
 </div>
