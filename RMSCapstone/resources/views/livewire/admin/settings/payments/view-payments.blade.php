@@ -100,19 +100,18 @@
                                     </i>
                                 @endcan
                             </div>
+                        @empty
+                            <div
+                                class="flex flex-col items-center justify-center p-8 bg-white  text-center max-w-md mx-auto col-span-3">
+                                <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
+                                </svg>
+                                <p class="text-xl font-semibold text-gray-700 mb-2">No Payment Methods Found</p>
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <div
-                        class="flex flex-col items-center justify-center p-8 bg-white  text-center max-w-md mx-auto col-span-3">
-                        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                            </path>
-                        </svg>
-                        <p class="text-xl font-semibold text-gray-700 mb-2">No Payment Methods Found</p>
-                    </div>
                 @endforelse
 
             </div>
@@ -133,28 +132,47 @@
                 {{ $paymentMethod->links() }}
             </div>
         </div>
+        </div>
 
 
 
-        <!-- Delete Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmItemDelete">
-            <x-slot name="title">
+    <!-- Delete Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmItemDelete">
+        <x-slot name="title">
+            {{ __('Delete Payment Method') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to delete this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-danger-button class="ms-3" wire:click="deletePaymentMethod({{ $method->id }})"
+                wire:loading.attr="disabled">
                 {{ __('Delete Payment Method') }}
-            </x-slot>
+            </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
 
-            <x-slot name="content">
-                {{ __('Are you sure you want to delete this item?') }}
-            </x-slot>
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
 
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
+        <x-slot name="content">
+            {{ __('This payment method is currently in use and cannot be deleted.') }}
+        </x-slot>
 
-                <x-danger-button class="ms-3" wire:click="deletePaymentMethod" wire:loading.attr="disabled">
-                    {{ __('Delete Payment Method') }}
-                </x-danger-button>
-            </x-slot>
-        </x-dialog-modal>
-    @endif
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
+        </x-slot>
+    </x-dialog-modal>
+@endif
 </div>

@@ -107,7 +107,32 @@
                             </th> --}}
 
                             {{-- Transaction Number --}}
-                            <th scope="col" class="px-4 py-3">Lease ID</th>
+                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
+                            <button class="flex items-center">
+                                ID
+                                @if ($sortBy !== 'id')
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
+                                @else
+                                @if ($sortDir == 'ASC')
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>
+                                @else
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                                @endif
+                                @endif
+                            </button>
+                        </th>
 
 
                             <!-- Property -->
@@ -222,8 +247,8 @@
                                         value="{{ $transaction->id }}" class="accent-blue-600 w-4 h-4">
                                 </th> --}}
                                 <th scope="row" class="font-medium text-gray-900 px-4 py-3">
-                                    {{ $transaction->transaction_number }}
-                                </th>
+                            <span>{{ $fakeIDs[$transaction->id] ?? 'LSE-???' }}</span>
+                        </th>
                                 <td class="px-4 py-3">
                                     @foreach ($transaction->properties as $property)
                                         {{ $property->name_number ?? 'N/A' }}<br>

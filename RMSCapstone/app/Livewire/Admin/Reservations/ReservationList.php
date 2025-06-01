@@ -47,6 +47,13 @@ class ReservationList extends Component
     public $actionButtonType = 'default';
 
 
+    //------------------------------------MOUNT------------------------------------------ //
+    public function mount(){
+        // Ensure reservation-list use a separate session key
+        if (!session()->has('fake_ids_reservation_list')) {
+            session(['fake_ids_reservation_list' => []]);
+        }
+    }
 
 
     // -------------------------------------- RENDER -------------------------------------- //
@@ -78,7 +85,34 @@ class ReservationList extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.admin.reservations.reservation-list', compact('transactions'));
+            // Query for full list (for fake ID generation only)
+            $allTransactions = Transaction::where('reservation_type_id', 2)
+                ->orderBy('created_at', 'ASC')
+                ->get();
+
+            //Store in session 
+            $fakeIDs = session('fake_ids_reservation_list', []);
+
+            //Refresh to prevent duplicates in event & lease transactions
+            $needsRefresh = count($fakeIDs) !== $allTransactions->count();
+
+            // Check if any existing ID doesn't start with TXN-
+            foreach ($fakeIDs as $id => $fake) {
+                if (!str_starts_with($fake, 'TXN-')) {
+                    $needsRefresh = true;
+                    break;
+                }
+            }
+
+            if ($needsRefresh) {
+                $fakeIDs = [];
+                foreach ($allTransactions as $index => $transaction) {
+                    $fakeIDs[$transaction->id] = 'TXN-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+                session(['fake_ids_reservation_list' => $fakeIDs]);
+            }
+
+        return view('livewire.admin.reservations.reservation-list', compact('transactions', 'fakeIDs'));
     }
 
 

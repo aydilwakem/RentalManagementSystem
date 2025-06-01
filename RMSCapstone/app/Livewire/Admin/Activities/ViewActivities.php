@@ -10,7 +10,7 @@ use Livewire\WithPagination;
 
 class ViewActivities extends Component
 {
-    //Declarations for pagination and sorting
+    //-------------------------------------- DECLARATIONS --------------------------------- //
     use WithPagination;
 
     #[Url(history: true)]
@@ -25,13 +25,13 @@ class ViewActivities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
-    //Public declaration for delete confirmation modal
+   //-------------------------------------- MODALS --------------------------------- //
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false;
     public $confirmBulkDelete = false;
     public $selectedItemId = null;
 
-    //public declaration for bulk actions
+    //------------------------------------ BULK ACTIONS --------------------------------- //
     public $selectedRows = [];
     public $selectPageRows = false;
 
@@ -85,14 +85,14 @@ class ViewActivities extends Component
         $this->confirmBulkDelete = true;
     }
 
-    //Method to make modal true by getting item id
+    //------------------------------------ MODAL METHOD --------------------------------- //
     public function confirmDelete($id)
     {
         $this->selectedItemId = $id;
         $this->confirmItemDelete = true;
     }
 
-    //Method to mount the sessions of fake ids
+    //-------------------------------------- FAKE IDS --------------------------------- //
     public function mount()
     {
         // Ensure activities use a separate session key
@@ -101,8 +101,9 @@ class ViewActivities extends Component
         }
     }
 
+    //--------------------------------- DELETE ACTIVITY METHOD --------------------------------- //
     /**
-    * Delete an activity record if confirmed, update the list of activities,
+    * Delete an activity record if confirmed that it's not in used in transactions, update the list of activities,
     * reset fake IDs, and store the updated IDs in the session.
     */
     public function deleteActivity()
@@ -114,7 +115,7 @@ class ViewActivities extends Component
         return;
     }
 
-    // Check if the event hall is active in Events
+    // Check if the event hall is active in Transactions
     $usedInTransactions = Transaction::whereHas('activities', function ($query) use ($activity) {
         $query->where('activity_id', $activity->id);
     })->exists();

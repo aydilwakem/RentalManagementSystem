@@ -96,7 +96,7 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                     <div><strong>Transaction ID: </strong>
-                        {{ $transaction->invoice->transaction->transaction_number ?? 'N/A' }}
+                        {{ $transaction->transaction_number ?? 'N/A' }}
                     </div>
                     <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A' }}
                     </div>

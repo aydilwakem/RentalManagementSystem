@@ -114,7 +114,7 @@ class ViewTenants extends Component
             return;
         }
 
-        // Check if the event hall is active in Events
+        // Check if the tenant has active lease
         $usedInTransactions = Transaction::whereHas('transactionUser', function ($query) use ($tenant) {
             $query->where('created_by', $tenant->id);
         })->exists();
