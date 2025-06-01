@@ -111,7 +111,6 @@
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                             <option value="available">Available</option>
-                            <option value="booked">Booked</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
                         @error('property_status')

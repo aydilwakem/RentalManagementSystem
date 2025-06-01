@@ -27,7 +27,7 @@
 
                     <!-- Room Name -->
                     <div>
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Room Name</label>
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Room Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Ex. Solah, Mercy">
@@ -39,7 +39,7 @@
                     <!-- Room Category -->
                     <div>
                         <label for="property_category_id" class="block mb-2 text-sm font-medium text-gray-900">Room
-                            Category</label>
+                            Category <span class="text-red-500">*</span></label>
                         <select wire:model="property_category_id" id="property_category_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="">Select Category</option>
@@ -58,7 +58,7 @@
                         <!-- Ideal Guest -->
                         <div>
                             <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal
-                                Guest</label>
+                                Guests <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="ideal_guest" id="ideal_guest" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="Ex. 2"
@@ -71,7 +71,7 @@
                         <!-- Max Adults -->
                         <div>
                             <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Max
-                                Adults</label>
+                                Adults <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_adults" id="max_adults" min="0"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="Ex. 2"
@@ -83,7 +83,7 @@
 
                         <!-- Max Kids -->
                         <div>
-                            <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids</label>
+                            <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Max Kids <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_kids" id="max_kids" min="0"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="Ex. 2"
@@ -97,7 +97,7 @@
                     <!-- Turnover Duration -->
                     <div>
                         <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
-                            Duration (Hours)</label>
+                            Duration (Hours) <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="turnover_duration" id="turnover_duration" min="1"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             placeholder="Ex. 3 hours"
@@ -110,11 +110,10 @@
                     <!-- Room Status -->
                     <div>
                         <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Room
-                            Status</label>
+                            Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                             <option value="available">Available</option>
-                            <option value="booked">Booked</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
                         @error('property_status')
@@ -124,7 +123,7 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate</label>
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="amount" id="amount" required
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Ex. 2,800.00"
@@ -137,8 +136,7 @@
                     <!-- Extra Person Charge -->
                     <div>
                         <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra
-                            Person
-                            Charge</label>
+                            Person Charge <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="extra_person_charge" id="extra_person_charge"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Ex. 1,000.00"

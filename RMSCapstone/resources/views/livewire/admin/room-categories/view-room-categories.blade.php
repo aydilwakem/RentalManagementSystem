@@ -4,7 +4,7 @@
             {{ __('Room Categories') }}
         </h2>
     </x-slot>
-    @if ($roomCategories->isEmpty())
+    @if ($roomCategories->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No rooms yet.<br> Click "Create Room" to add a new room.</p>
@@ -152,10 +152,10 @@
                         </tr>
                     </thead>
 
-                    @foreach ($roomCategories as $roomCategory)
+                    @forelse ($roomCategories as $roomCategory)
                         <tr class="border-b hover:bg-gray-50">
                             <th scope="row"
-                            class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                                 <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
                                     value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
                                 <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>
@@ -163,12 +163,12 @@
                             <td class="px-4 py-3">{{ $roomCategory->name }}</td>
                             <td class="px-4 py-3">
                                 @if (!empty($roomCategory->description))
-                                    {{ Str::limit( $roomCategory->description, 100) }}
+                                    {{ Str::limit($roomCategory->description, 80) }}
                                 @else
                                     <em class="text-gray-600 leading-relaxed">No description provided.</em>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                            <td class="px-4 py-3 flex items-center justify-center space-x-2">
                                 <!-- View Icon -->
                                 @can('room-category-view')
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
@@ -192,7 +192,14 @@
 
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <!-- No Match Search / Filter Result Message -->
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No room categories found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </table>
 
                 {{-- Per Page --}}
@@ -228,7 +235,7 @@
                         {{ __('Cancel') }}
                     </x-secondary-button>
 
-                    <x-danger-button class="ms-3" wire:click="deleteRoomCategory({{ $roomCategory->id }})"
+                    <x-danger-button class="ms-3" wire:click="deleteRoomCategory"
                         wire:loading.attr="disabled">
                         {{ __('Delete Room Category') }}
                     </x-danger-button>

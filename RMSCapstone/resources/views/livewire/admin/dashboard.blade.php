@@ -44,55 +44,45 @@
     <div id='calendar'></div>
 
     @script
-    <script type="text/javascript">
-        document.addEventListener('livewire:initialized', () => {
-            var calendarEl = document.getElementById('calendar');
+        <script type="text/javascript">
+            document.addEventListener('livewire:initialized', () => {
+                var calendarEl = document.getElementById('calendar');
+                var events = @json($events);
 
-            var events = @json($events);
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    selectable: true,
+                    events: events,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    eventContent: function(arg) {
+                        let title = arg.event.title;
+                        let room = arg.event.extendedProps.room || '';
+                        let time = arg.event.extendedProps.time || '';
+                        let pax = arg.event.extendedProps.pax || '';
 
-            console.log("Events Data: ", events); // ✅ Debugging outpu
+                        let html = '<div><b>' + title + '</b></div>';
+                        if (room) html += '<div>Room: ' + room + '</div>';
+                        if (time) html += '<div>Time: ' + time + '</div>';
+                        if (pax) html += '<div>Pax: ' + pax + '</div>';
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                events: @json($events),
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
-                },
-                // eventClassNames: function(info) {
-                //     let classes = [];
-
-                //     // Assign base category styling
-                //     if (info.event.extendedProps.category === 'room') {
-                //         classes.push('room-booking');
-                //     } else if (info.event.extendedProps.category === 'event') {
-                //         classes.push('event-booking');
-                //     }
-
-                //     // Assign color based on transaction status
-                //     switch (info.event.extendedProps.transaction_status) {
-                //         case 'pending':
-                //             classes.push('status-pending');
-                //             break;
-                //         case 'confirmed':
-                //             classes.push('status-confirmed');
-                //             break;
-                //         case 'cancelled':
-                //             classes.push('status-cancelled');
-                //             break;
-                //         default:
-                //             classes.push('status-default');
-                //     }
-
-                //     return classes;
-                // }
-
+                        return {
+                            html: html
+                        };
+                    },
+                    eventClick: function(info) {
+                        info.jsEvent.preventDefault();
+                        if (info.event.url) {
+                            Livewire.navigate(info.event.url);
+                        }
+                    }
+                });
+                calendar.render();
             });
-            calendar.render();
-        });
-    </script>
+        </script>
     @endscript
     {{-- <style>
         .status-pending {

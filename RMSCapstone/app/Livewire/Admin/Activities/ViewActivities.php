@@ -108,7 +108,7 @@ class ViewActivities extends Component
     */
     public function deleteActivity()
     {
-        $activity = Activity::find($this->confirmItemDelete);
+        $activity = Activity::find($this->selectedItemId);
 
     if (!$activity) {
         session()->flash('error', 'Activity not found.');

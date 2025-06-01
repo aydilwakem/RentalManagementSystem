@@ -26,23 +26,24 @@ class ViewRoomCategories extends Component
     public $perPage = 10;
 
     public $confirmItemDelete = false;
+    public $selectedItemId = null;
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
 
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->roomCategories->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getRoomCategoriesProperty(){
@@ -78,12 +79,13 @@ class ViewRoomCategories extends Component
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
     {
-        $this->confirmItemDelete = $id;
+        $this->selectedItemId = $id;
+        $this->confirmItemDelete = true;
     }
 
 
@@ -97,7 +99,7 @@ class ViewRoomCategories extends Component
 
     public function deleteRoomCategory()
     {
-        $roomCategory = PropertyCategory::find($this->confirmItemDelete);
+        $roomCategory = PropertyCategory::find($this->selectedItemId);
 
         if (!$roomCategory) {
             session()->flash('error', 'Room Category not found.');
@@ -105,7 +107,7 @@ class ViewRoomCategories extends Component
         }
 
         // Check if the category is referenced in another table
-        if (Property::where('property_category_id', $roomCategory->id)->exists()) { 
+        if (Property::where('property_category_id', $roomCategory->id)->exists()) {
             $this->cannotDeleteItem = true; // Show the cannot delete modal
             $this->confirmItemDelete = null; // Close the confirmation modal
             return;
@@ -115,7 +117,8 @@ class ViewRoomCategories extends Component
             $roomCategory->delete(); // Attempt soft deletion
 
             // Reset confirmation modal
-            $this->confirmItemDelete = null;
+            $this->confirmItemDelete = false;
+            $this->selectedItemId = null;
 
             // Refresh event categories
             $roomCategories = PropertyCategory::orderBy('created_at', 'ASC')->get();
@@ -133,13 +136,13 @@ class ViewRoomCategories extends Component
             session()->flash('message', 'Room Category successfully deleted!');
         }catch (QueryException $e) {
             // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
+            if ($e->getCode() == 23000) {
                 $this->cannotDeleteItem = true; // Show the cannot delete modal
             } else {
                 throw $e; // Re-throw other exceptions
             }
         }
-    } 
+    }
 
 
     public function setSortBy($sortByField)
@@ -156,7 +159,7 @@ class ViewRoomCategories extends Component
     public function render()
     {
         $roomCategories = $this->roomCategories;
-        // Retrieve unique session 
+        // Retrieve unique session
         $fakeIDs = session('fake_ids_roomCategory', []);
 
         // Recalculate fake IDs if count mismatches
