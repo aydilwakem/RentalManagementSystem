@@ -41,7 +41,7 @@ class ViewEvents extends Component
 
     public function mount()
     {
-        // Ensure activities use a separate session key
+        // Ensure events use a separate session key
         if (!session()->has('fake_ids_event-list')) {
             session(['fake_ids_event-list' => []]);
         }

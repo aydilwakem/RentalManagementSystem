@@ -15,12 +15,12 @@ use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class CreateLease extends Component
 {
-
+    //---------------------------------------------- DECLARATIONS ----------------------------------//
     use WithFileUploads;
     public $reservation_type_id = 1; // House
     public $trn_user_type = 'tenant';
 
-    // Public declarations of fields
+    //---------------------------------------------- FIELDS ----------------------------------//
     public $house_id; // house_id
     public $houses = [];
     public $tenants;
@@ -34,23 +34,25 @@ class CreateLease extends Component
     public $selectedHouse; // Declare the selectedRoom property
 
     public $reservation_source = 'WebApp';
-    public $transaction_status = 'pending';
+    public $transaction_status;
 
     public $selectedTenant; // Tenant selected from dropdown
     public $confirmCreateItem = false; //modal
 
+    //---------------------------------------------- MODAL METHOD ----------------------------------//
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
     }
 
+    //-------------------------------------- CALCULATE TOTAL AMOUNT OF DURATION ----------------------------------//
     public function calculateTotalAmount()
     {
         if ($this->start_date && $this->end_date && $this->monthly_rent) {
             $start = Carbon::parse($this->start_date);
             $end = Carbon::parse($this->end_date);
 
-            // Calculate number of months (ceil to charge full month even if partial)
+            // Calculate number of months
             $months = $start->diffInMonths($end) + 1;
 
             // Multiply by rent
@@ -60,6 +62,7 @@ class CreateLease extends Component
         }
     }
 
+    //---------------------------------------------- LIVEWIRE UPDATES ----------------------------------//
     public function updatedStartDate()
     {
         $this->calculateTotalAmount();
@@ -80,7 +83,7 @@ class CreateLease extends Component
     }
 
 
-    //Mount all tenants
+    //---------------------------------------------- MOUNT ----------------------------------//
     public function mount()
     {
         //Mount Tenants and Houses
@@ -90,15 +93,22 @@ class CreateLease extends Component
         $this->houses = Property::ofType('House')->where('property_status', 'available')->get();
     }
 
+    //------------------------------- DISPLAY MONTHLY RENT METHOD ----------------------------------//
     public function updatedHouseId($value)
     {
-        $house = Property::find($value);
+        //$house = $this->houses->firstWhere('id', $value);
+        $house = collect($this->houses)->firstWhere('id', $value);
         $this->monthly_rent = $house ? $house->amount : 0;
-        
+
         $this->calculateTotalAmount();
+
+        // Optional: Re-run to refresh booking flags
+        $this->getAvailableHouses();
+        $this->getAvailableTenants();
     }
 
 
+    //---------------------------------------------- SAVE METHOD ----------------------------------//
     public function saveLease()
     {
         try {
@@ -133,6 +143,7 @@ class CreateLease extends Component
                 //'end_date' => 'required|date|after:start_date',
                 'total_amount' => 'required|numeric|min:0',
                 'pax' => 'required|numeric|min:1',
+                'transaction_status' => 'required|in:pending,confirmed,ongoing,terminated', 
 
             ]);
         } catch (ValidationException $e) {
@@ -194,15 +205,16 @@ class CreateLease extends Component
         return redirect()->route('admin.leases');
     }
 
-    //To get all available tenants and marked those unavailable as leased
+    
+    //------------------------------------GET TENANT METHOD ----------------------------------//
     public function getAvailableTenants()
     {
         if (!$this->start_date || !$this->end_date) {
             return;
         }
 
-        $startDate = \Carbon\Carbon::parse($this->start_date)->startOfDay();
-        $endDate = \Carbon\Carbon::parse($this->end_date)->endOfDay();
+        $startDate = Carbon::parse($this->start_date)->startOfDay();
+        $endDate = Carbon::parse($this->end_date)->endOfDay();
 
         // Step 1: Get all available event halls (unfiltered)
         $allTenants = TransactionUser::where('trn_user_type', 'tenant')
@@ -235,7 +247,7 @@ class CreateLease extends Component
         });
     }
 
-    //To get all available houses and marked those unavailable as Booked
+    //------------------------------------ GET HOUSE METHOD ----------------------------------//
     public function getAvailableHouses()
     {
         if (!$this->start_date || !$this->end_date) {
@@ -266,7 +278,7 @@ class CreateLease extends Component
     }
 
 
-
+//------------------------------------- RENDER ----------------------------------//
     public function render()
     {
         return view('livewire.admin.properties.leases.create-lease', [

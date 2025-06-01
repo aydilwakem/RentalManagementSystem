@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Settings\Payments;
 
+use App\Models\Payment;
 use App\Models\PaymentMethod;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -11,6 +12,7 @@ class ViewPayments extends Component
 {
     use WithPagination;
 
+    //---------------------------------------------- DECLARATIONS ----------------------------------//
     #[Url(history:true)]
     public $search = '';
 
@@ -23,31 +25,56 @@ class ViewPayments extends Component
     #[Url(history:true)]
     public $sortDir='DESC';
 
+    //---------------------------------------------- MODALS ----------------------------------//
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
+    //---------------------------------------------- MODAL METHOD ----------------------------------//
     public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-        }
-    
-
-   public function deletePaymentMethod($id)
     {
-        // Find the method by ID
-        $paymentMethod = PaymentMethod::find($id);
+        $this->confirmItemDelete = $id;
+    }
+    
+//---------------------------------------------- DELETE PAYMENT METHOD ----------------------------------//
+   public function deletePaymentMethod()
+    {
+        $paymentMethod = PaymentMethod::find($this->confirmItemDelete);
 
-        if ($paymentMethod) {
-            // Delete the payment method
-            if ($this->confirmItemDelete) {
-                PaymentMethod::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
+        if (!$paymentMethod) {
+            session()->flash('error', 'Payment Method not found.');
+            return;
+        }
+
+        // Check if the event hall is active in Events
+        $usedInTransactions = Payment::whereHas('paymentMethod', function ($query) use ($paymentMethod) {
+            $query->where('payment_method_id', $paymentMethod->id);
+        })->exists();
+
+        if ($usedInTransactions) {
+            $this->cannotDeleteItem = true; // Show "Cannot delete" modal
+            $this->confirmItemDelete = null; // Reset delete ID
+            return;
+        }
+
+        try {
+            // Delete the method
+            $paymentMethod->delete();
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
 
             // Flash success message
             session()->flash('message', 'Payment Method successfully deleted!');
-        }
+            }catch (\Illuminate\Database\QueryException $e) {
+                if ($e->getCode() == 23000) {
+                    $this->cannotDeleteItem = true;
+                } else {
+                    throw $e;
+                }
+            }
     }
-    }
-
+    
+//---------------------------------------------- SORT ----------------------------------//
     public function setSortBy($sortByField){
 
         if($this->sortBy == $sortByField){
@@ -58,6 +85,7 @@ class ViewPayments extends Component
         $this->sortDir = "ASC";
     }
     
+    //---------------------------------------------- RENDER ----------------------------------//
     public function render()
     {
         $paymentMethod = PaymentMethod::query()

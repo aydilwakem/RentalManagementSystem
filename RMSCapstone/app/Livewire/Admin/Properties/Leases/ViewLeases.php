@@ -126,7 +126,7 @@ class ViewLeases extends Component
     public function render()
     {
         $transactions = Transaction::with(['transactionUser', 'properties'])
-            ->where('reservation_type_id', 1) // Room reservation type
+            ->where('reservation_type_id', 1) // House reservation type
             ->when($this->search !== '', function ($query) {
             $search = '%' . $this->search . '%';
             $query->whereHas('transactionUser', function ($subQuery) use ($search) {
