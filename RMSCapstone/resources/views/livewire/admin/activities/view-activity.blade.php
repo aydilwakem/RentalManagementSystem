@@ -32,9 +32,9 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
                         <p class="text-gray-700 leading-relaxed">
                             @if (!empty($activity->description))
-                            {{ $activity->description }}
+                                {{ $activity->description }}
                             @else
-                            <em class="text-gray-500 leading-relaxed italic">No description provided.</em>
+                                <em class="text-gray-500 leading-relaxed italic">No description provided.</em>
                             @endif
                         </p>
                     </div>
@@ -50,9 +50,9 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Inclusions</h3>
                         <p class="text-gray-700 leading-relaxed">
                             @if (!empty($activity->inclusions))
-                            {{ $activity->inclusions }}
+                                {{ $activity->inclusions }}
                             @else
-                            <em class="text-gray-500 leading-relaxed">No inclusions provided.</em>
+                                <em class="text-gray-500 leading-relaxed">No inclusions provided.</em>
                             @endif
                         </p>
                     </div>
@@ -62,18 +62,16 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 pt-2">
                 <!-- Edit -->
-                <x-button type="button" icon="fas fa-pen-to-square"
-                    class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                <x-ghost-button type="button" icon="fas fa-pen-to-square"
                     wire:navigate href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
                     Edit
-                </x-button>
+                </x-ghost-button>
 
                 <!-- Delete -->
-                <x-button type="button" icon="fas fa-trash"
-                    class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                <x-danger-button type="button" icon="fas fa-trash"
                     wire:click="confirmDelete({{ $activity->id }})" wire:loading.attr="disabled">
                     Delete
-                </x-button>
+                </x-danger-button>
             </div>
 
             <!-- Delete Confirmation Modal -->

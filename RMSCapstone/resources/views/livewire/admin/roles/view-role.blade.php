@@ -1,119 +1,151 @@
 <div>
+    <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('View Role') }}
+            {{ __('Create User') }}
         </h2>
     </x-slot>
 
-    <div class="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+    <!-- Body Container -->
+    <div class="py-3">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
 
-        <!-- Back Button -->
-        <div class="flex justify-end mb-4">
-            <button onclick="history.back()"
-                class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                <span class="leading-none translate-y-[-3px]">&times;</span>
-            </button>
-        </div>
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Role: {{ $role->name }}</h2>
 
-
-        <!-- Role Name -->
-        <div class="flex justify-center items-center space-x-2 mb-4">
-            <h3 class="flex text-xl font-semibold text-gray-900">Role:</h3>
-            <h3 class="flex text-xl font-semibold text-gray-900">{{ $role->name }}</h3>
-        </div>
+                <!-- Back Button -->
+                <button onclick="history.back()"
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
+            </div>
 
 
-        @php
-            $groups = [
-                'Room' => 'room-',
-                'Room Rate' => 'room-rate-',
-                'Room Category' => 'room-category-',
-                'Event' => 'event-',
-                'Event Hall' => 'event-hall-',
-                'Event Category' => 'event-category-',
-                'Activity' => 'activity-',
-                'Maintenance' => 'maintenance-',
-                'Role' => 'role-',
-                'Payment Method' => 'payment-method-',
-                'User' => 'user-',
-                'Dashboard' => 'dashboard-',
-                'New Reservation' => 'new-reservation-',
-                'Confirm Reservation' => 'confirmed-reservation-',
-                'On-going Booking' => 'on-going-booking-',
-                'Old Booking' => 'old-booking-',
-                'House' => 'house-',
-                'House Category' => 'house-category-',
-                'Tenant' => 'tenant-',
-                'Leases' => 'leases-',
-                'Appearance' => 'appearance-',
-                'Reports' => 'reports-',
-                'Payments' => 'payments-',
-                'Invoices' => 'invoices-',
-                'Feedback' => 'feedback-',
-            ];
+            @php
+                $permissionGroups = [
+                    'Room Management' => [
+                        'Rooms' => fn($p) => preg_match('/^room-(?!rate|category)/', $p->name),
+                        'Room Categories' => fn($p) => str_starts_with($p->name, 'room-category'),
+                        'Room Rates' => fn($p) => str_starts_with($p->name, 'room-rate'),
+                        'Amenities' => fn($p) => str_starts_with($p->name, 'amenity'),
+                    ],
 
-            $groupedPermissions = [];
+                    'Booking & Reservations' => [
+                        'New Reservations' => fn($p) => str_starts_with($p->name, 'new-reservation-'),
+                        'Confirmed Reservations' => fn($p) => str_starts_with($p->name, 'confirmed-reservation'),
+                        'On-going Bookings' => fn($p) => str_starts_with($p->name, 'on-going'),
+                        'Old Bookings' => fn($p) => str_starts_with($p->name, 'old'),
+                    ],
 
-            foreach ($groups as $label => $prefix) {
-                $groupedPermissions[$label] = $role->permissions->filter(function ($permission) use ($prefix) {
-                    // Only match exact prefix and not submodules
-                    $subPrefixes = [
-                        'room-' => ['room-rate-', 'room-category-'],
-                        'event-' => ['event-hall-', 'event-category-'],
-                        'house-' => ['house-category-'],
-                    ];
+                    'Event Management' => [
+                        'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
+                            !str_starts_with($p->name, 'event-category') &&
+                            !str_starts_with($p->name, 'event-hall'),
+                        'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
+                        'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
+                    ],
 
-                    // If prefix has exclusions
-                    if (array_key_exists($prefix, $subPrefixes)) {
-                        foreach ($subPrefixes[$prefix] as $exclude) {
-                            if (str_starts_with($permission->name, $exclude)) {
-                                return false;
-                            }
+                    'Property Management' => [
+                        'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
+                            !str_starts_with($p->name, 'house-category'),
+                        'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
+                        'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
+                        'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
+                    ],
+
+                    'Billing & Payments' => [
+                        'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
+                        'Payments' => fn($p) => str_starts_with($p->name, 'payments-list'),
+                        'Invoices' => fn($p) => str_starts_with($p->name, 'invoices-list'),
+                    ],
+
+                    'System Settings' => [
+                        'Settings' => fn($p) => str_starts_with($p->name, 'appearance-view'),
+                        'Dashboard' => fn($p) => str_starts_with($p->name, 'dashboard'),
+                    ],
+
+                    'User Management' => [
+                        'Roles' => fn($p) => str_starts_with($p->name, 'role'),
+                        'Users' => fn($p) => str_starts_with($p->name, 'user'),
+                    ],
+
+                    'Activities' => [
+                        'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
+                    ],
+                    'Reports' => [
+                        'Reports' => fn($p) => str_starts_with($p->name, 'reports'),
+                    ],
+                ];
+
+                $groupedUserPermissions = [];
+                foreach ($permissionGroups as $category => $subgroups) {
+                    foreach ($subgroups as $subLabel => $callback) {
+                        // Filter expects string $p here
+                        $filtered = collect($rolePermissions)
+                            ->filter(function ($p) use ($callback) {
+                                // We wrap string in an object with a 'name' prop to satisfy your callbacks
+                                // OR modify callbacks to accept string instead of object
+                                return $callback((object) ['name' => $p]);
+                            })
+                            ->values();
+
+                        if ($filtered->isNotEmpty()) {
+                            $groupedUserPermissions[$category][$subLabel] = $filtered;
                         }
                     }
+                }
+            @endphp
 
-                    return str_starts_with($permission->name, $prefix);
-                });
-            }
-        @endphp
+            <div class="space-y-3">
+                <h3 class="text-xl font-bold text-green-800">Permissions</h3>
 
+                <div>
+                    @if (empty($groupedUserPermissions))
+                        <div class="text-gray-500 text-center py-8">No permissions assigned.</div>
+                    @else
+                        @foreach ($groupedUserPermissions as $category => $subgroups)
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
+                                <h4 class="text-lg font-bold text-green-800 mb-4">{{ $category }}</h4>
 
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach ($subgroups as $subLabel => $perms)
+                                        <div class="bg-white border border-gray-200 rounded-md p-4 shadow-sm">
+                                            <h5 class="text-gray-800 font-medium mb-2">{{ $subLabel }}</h5>
+                                            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                                @foreach ($perms as $perm)
+                                                    <li>{{ ucfirst(str_replace('-', ' ', $perm)) }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
 
-        <div class="space-y-4">
-            <h1 class="flex font-semibold text-gray-800">Permissions:</h1>
-            <div class="grid grid-cols-3 gap-4">
-                @foreach ($groupedPermissions as $group => $permissions)
-                    @if ($permissions->count())
-                        <div class="border p-4 rounded-lg">
-                            <h4 class="text-md font-semibold text-gray-700 mb-2">{{ $group }}</h4>
-                            <ul class="list-disc list-inside space-y-1 text-gray-700">
-                                @foreach ($permissions as $perm)
-                                    <li>{{ ucfirst(str_replace('-', ' ', $perm->name)) }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
                     @endif
-                @endforeach
+                </div>
+            </div>
+
+
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-between space-x-4 mt-5 mb-3">
+                <!-- Edit Button -->
+                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                    href="{{ route('admin.edit-role', ['role' => $role->id]) }}">
+                    Edit
+                </x-ghost-button>
+
+                <!-- Delete Button -->
+                <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $role->id }})">
+                    Delete
+                </x-danger-button>
             </div>
         </div>
 
 
-        <!-- Action Buttons -->
-        <div class="flex items-center justify-between space-x-4 mt-5 mb-3">
-            <!-- Edit Button -->
-            <x-button type="button" icon="fas fa-pen-to-square"
-                class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:navigate href="{{ route('admin.edit-role', ['role' => $role->id]) }}">
-                Edit
-            </x-button>
 
-            <!-- Delete Button -->
-            <x-button type="button" icon="fas fa-trash"
-                class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:click="confirmDelete({{ $role->id }})">
-                Delete
-            </x-button>
-        </div>
 
         <!-- Delete Confirmation Modal -->
         <x-dialog-modal wire:model.live="confirmItemDelete">
@@ -130,7 +162,8 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})" wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})"
+                    wire:loading.attr="disabled">
                     {{ __('Delete Role') }}
                 </x-danger-button>
             </x-slot>

@@ -11,27 +11,29 @@ class ViewPayments extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
 
-    #[Url()]
+    #[Url]
     public $perPage = 10;
 
-    #[Url(history:true)]
-    public $sortBy='created_at';
+    #[Url(history: true)]
+    public $sortBy = 'created_at';
 
-    #[Url(history:true)]
-    public $sortDir='DESC';
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
 
     public $confirmItemDelete = false;
+    public $selectedItemId = null;
+
 
     public function confirmDelete($id)
-        {
-            $this->confirmItemDelete = $id;
-        }
-    
+    {
+        $this->selectedItemId = $id;
+        $this->confirmItemDelete = true;
+    }
 
-   public function deletePaymentMethod($id)
+    public function deletePaymentMethod($id)
     {
         // Find the method by ID
         $paymentMethod = PaymentMethod::find($id);
@@ -41,29 +43,28 @@ class ViewPayments extends Component
             if ($this->confirmItemDelete) {
                 PaymentMethod::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
+                $this->selectedItemId = null;
 
-            // Flash success message
-            session()->flash('message', 'Payment Method successfully deleted!');
+
+                // Flash success message
+                session()->flash('message', 'Payment Method successfully deleted!');
+            }
         }
     }
-    }
 
-    public function setSortBy($sortByField){
-
-        if($this->sortBy == $sortByField){
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
-            return ;
+    public function setSortBy($sortByField)
+    {
+        if ($this->sortBy == $sortByField) {
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
+            return;
         }
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
-    
+
     public function render()
     {
-        $paymentMethod = PaymentMethod::query()
-            ->search($this->search)
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $paymentMethod = PaymentMethod::query()->search($this->search)->orderBy($this->sortBy, $this->sortDir)->paginate($this->perPage);
         return view('livewire.admin.settings.payments.view-payments', compact('paymentMethod'));
     }
 }

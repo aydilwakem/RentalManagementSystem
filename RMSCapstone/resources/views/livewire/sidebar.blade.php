@@ -415,7 +415,7 @@
                     @can('branding-view')
                         <div @click="toggle('settings')"
                             class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.payments') || Route::is('admin.appearance') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-cogs"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">

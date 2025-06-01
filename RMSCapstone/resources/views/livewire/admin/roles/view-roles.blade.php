@@ -1,5 +1,5 @@
 <div class="container mx-auto px-6 ">
-    @if ($roles->isEmpty())
+    @if ($roles->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No roles yet.<br> Click "Create Role" to add a new role.</p>
@@ -133,8 +133,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($roles as $role)
-                            <tr class="border-b">
+                        @forelse ($roles as $role)
+                            <tr class="border-b hover:bg-gray-50">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     {{ $fakeIDs[$role->id] ?? 'ROLE-???' }}
                                 </th>
@@ -166,7 +166,13 @@
 
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No roles found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
 
@@ -203,7 +209,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteRole({{ $role->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteRole"
                             wire:loading.attr="disabled">
                             {{ __('Delete Role') }}
                         </x-danger-button>

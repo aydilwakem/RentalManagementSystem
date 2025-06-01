@@ -28,22 +28,23 @@ class ViewActivities extends Component
     //Public declaration for delete confirmation modal
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
+    public $selectedItemId = null;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->activities->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getActivitiesProperty(){
@@ -75,19 +76,20 @@ class ViewActivities extends Component
         if ($e->getCode() == 23000) {
             $this->cannotDeleteItem = true; // FK error
         } else {
-            throw $e; 
+            throw $e;
         }
     }
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     //Method to make modal true by getting item id
     public function confirmDelete($id)
     {
-        $this->confirmItemDelete = $id;
+        $this->selectedItemId = $id;
+        $this->confirmItemDelete = true;
     }
 
     //Method to mount the sessions of fake ids
@@ -129,7 +131,8 @@ class ViewActivities extends Component
         $activity->delete();
 
         // Reset confirmation modal
-        $this->confirmItemDelete = null;
+        $this->confirmItemDelete = false;
+        $this->selectedItemId = null;
 
         // Refresh the list of event halls and regenerate fake ids
         $activities = Activity::orderBy('created_at', 'ASC')->get();
@@ -172,12 +175,12 @@ class ViewActivities extends Component
      * - Retrieves activities matching the search term, ordered by the selected field and direction.
      * - Fetches the session data for fake IDs or recalculates them if the count mismatch.
      * - Stores the updated fake IDs in session for consistent use across the view.
-     * 
+     *
      * Returns the view with the paginated activities and fake IDs for display.
      */
     public function render()
     {
-        $activities = $this->activities; 
+        $activities = $this->activities;
             // Retrieve unique session for activities
         $fakeIDs = session('fake_ids_activities', []);
 
@@ -189,7 +192,7 @@ class ViewActivities extends Component
             }
             session(['fake_ids_activities' => $fakeIDs]);
         }
-       
+
 
         return view('livewire.admin.activities.view-activities', [
             'activities' => $activities,
