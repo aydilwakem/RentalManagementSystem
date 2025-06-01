@@ -24,7 +24,12 @@ class DeletedEvents extends Component
 
     public function fetchDeletedEvents()
     {
-        $this->deletedEvents = Transaction::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        //$this->deletedEvents = Transaction::onlyTrashed()->orderBy('created_at', 'ASC')->get();
+        $this->deletedEvents = Transaction::onlyTrashed()
+        ->where('reservation_type_id', 3) //Filter events  
+        ->with(['properties', 'transactionUser'])
+        ->latest()
+        ->get();
     }
 
     public function restoreEvent($eventId)

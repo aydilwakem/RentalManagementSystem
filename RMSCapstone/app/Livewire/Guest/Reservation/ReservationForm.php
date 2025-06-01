@@ -19,6 +19,7 @@ use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
 use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
 
 class ReservationForm extends Component
 {
@@ -461,7 +462,8 @@ class ReservationForm extends Component
 
     public function addRoomToCart($roomId)
     {
-
+        Log::info('PHP ini loaded: ' . php_ini_loaded_file());
+        Log::info('curl.cainfo: ' . ini_get('curl.cainfo'));
         Log::info('addRoomToCart method called');
 
         // Resets any previous error messages
@@ -740,7 +742,14 @@ class ReservationForm extends Component
 
         $reservationData = []; // Initialize an empty array to store reservation data for email
 
+        // Get the payment_proof_expiration_hours from database
+        $setting = Setting::first();
+        $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+
+        // ---------------------- DB:TRANSACTION STARTS HERE ------------------------ //
+
         DB::transaction(function () use (&$reservationData) {
+
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
@@ -773,7 +782,7 @@ class ReservationForm extends Component
                 'terms' => $this->terms,
             ]);
 
-            // Step 5: Create invoice
+            // Step 3: Create invoice
             $invoice = Invoice::create([
                 'transaction_id' => $transaction->id,
                 'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
@@ -786,7 +795,7 @@ class ReservationForm extends Component
                 'invoice_status' => 'pending',
             ]);
 
-            // Step 6: Attach rooms and activities
+            // Step 4: Attach rooms and activities
             foreach ($this->cart as $item) {
                 if ($item['type'] === 'room') {
                     $transaction->properties()->attach($item['room_id'], [
@@ -808,7 +817,7 @@ class ReservationForm extends Component
                 }
             }
 
-            // Step 7: Insert GuestDetails
+            // Step 5: Insert GuestDetails
             foreach ($this->guests as $guest) {
                 GuestDetail::create([
                     'transaction_id' => $transaction->id,
@@ -823,12 +832,89 @@ class ReservationForm extends Component
                 ]);
             }
 
+            // Step 6: Create payment link using PayMongo API
 
-            // Get the payment_proof_expiration_hours from database
-            $setting = Setting::first();
-            $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+            // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
 
-            // Prepare data for the email (accessible outside transaction)
+            // Creates a new HTTP client instance (likely from GuzzleHttp\Client). 
+            // This client will be used to send HTTP requests to the PayMongo API.
+            $client = new Client();
+
+            // Retrieves the PayMongo secret key from .env.
+            $apiKey = env('PAYMONGO_SECRET_KEY');
+
+            // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
+            $amountInCentavos = intval($this->computeTotalAmount() * ($depositPercentage / 100) * 100);
+
+            try {
+
+                // Sends an HTTP POST request to PayMongo's API endpoint to create a checkout session (payment link).
+                $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
+
+                    'headers' => [ // Extra pieces of information to be sent with the HTTP request.
+                        'Accept' => 'application/json', // What type of data the client expects in response.
+                        'Content-Type' => 'application/json', // What type of data is being sent in the request body.
+                        'Authorization' => 'Basic ' . base64_encode($apiKey . ':'), // Access to paymongo, contains the secret key.
+                    ],
+
+                    // JSON payload to be sent in the request body.
+                    'json' => [
+                        'data' => [
+                            'attributes' => [ //  Payment Session Settings
+                                'send_email_receipt' => true, // Instructs PayMongo to email a receipt to the payer after a successful payment.
+                                'show_description' => true, // Shows the overall description of the payment on the checkout page.
+                                'show_line_items' => true, // Displays the breakdown of items (from line_items) on the PayMongo checkout page
+                                'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
+                                'success_url' => route('guest.thank-you-page'), // This is where the user will be redirected after successful payment.
+                                'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
+
+                                'line_items' => [ // This is a list of what the user is paying for.
+                                    [
+                                        'currency' => 'PHP',
+                                        'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
+                                        'description' => 'Reservation ' . $transaction->transaction_number,
+                                        'name' => 'Bayad ka na uy',
+                                        'quantity' => 1,
+                                    ],
+                                ],
+
+                                'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name, // This is a general description for the transaction, shown to the payer.
+
+                                // Additional metadata for tracking purposes.
+                                'metadata' => [
+                                    'invoice_id' => (string) $invoice->id,
+                                ]
+
+                            ],
+                        ],
+                    ],
+
+
+                ]);
+
+                // Converts the JSON response from the PayMongo API into a PHP array.
+                $responseData = json_decode($response->getBody(), true);
+
+                // Retrieves the 'data' key from the response, which contains the attributes of the created checkout session.
+                // $responseAllData = $responseData['data'] ?? [];
+                // dd($responseAllData);
+
+                // Retrieves the checkout_url from the response 
+                $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
+
+                // Save payment link to transaction (optional)
+                $transaction->update(['payment_link' => $paymentLink]);
+            } catch (\Exception $e) {
+
+                Log::error('PayMongo link creation failed: ' . $e->getMessage());
+                $paymentLink = null; // fallback
+
+            }
+
+            // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
+
+
+            // Step 7: Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
                 'transaction_number' => $transaction->transaction_number,
@@ -839,10 +925,11 @@ class ReservationForm extends Component
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
                 'expirationHours' => $this->expirationHours,
+                'payment_link' => $paymentLink,
             ];
         });
 
-        // Step 7: Send confirmation email
+        // Step 8: Send confirmation email
         try {
             Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
         } catch (\Exception $e) {
@@ -850,8 +937,14 @@ class ReservationForm extends Component
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
         }
 
-        // Step 8: Flash success message and redirect
+        // Step 9: Flash success message and redirect
         session()->flash('success', 'Reservation successfully submitted!');
-        return redirect()->route('guest.proof-of-payment-page');
+
+        if (!empty($reservationData['payment_link'])) {
+            session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
+            return redirect()->away($reservationData['payment_link']);
+        } else {
+            return redirect()->route('guest.proof-of-payment-page'); // Redirect to failback page if payment link is not available
+        }
     }
 }

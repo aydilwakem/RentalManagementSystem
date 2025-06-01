@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Properties\Leases;
 
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -42,33 +43,16 @@ class ViewLease extends Component
         }
     }
 
-    //Get monthly rent for display:
-        public function getMonthlyRent($transaction)
-    {
-        if (
-            empty($transaction->start_datetime) ||
-            empty($transaction->end_datetime) ||
-            !is_numeric($transaction->total_amount) ||
-            $transaction->total_amount <= 0
-        ) {
-            return 0;
-        }
-    
-        $start = Carbon::parse($transaction->start_datetime)->startOfDay();
-        $end = Carbon::parse($transaction->end_datetime)->startOfDay();
-    
-        if ($start->gt($end)) {
-            return 0;
-        }
-    
-        // Calculate the difference in months between the start and end date, inclusive of both months.
-        $months = $start->diffInMonths($end) + 1;
-    
-        if ($months <= 0) {
-            return 0;
-        }
-    
-        return round($transaction->total_amount / $months, 2);
+   
+    public function exportLeaseDetails(){
+         $pdf = Pdf::loadView('livewire.admin.properties.leases.lease-details', [
+            'transaction' => $this->transaction,  // Pass the actual lease
+        ]);
+
+        // Optional: Download directly or store then return URL
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'lease-details-' . $this->transaction->start_datetime . '.pdf');
     }
 
     public function getMonthCount($startDatetime, $endDatetime)

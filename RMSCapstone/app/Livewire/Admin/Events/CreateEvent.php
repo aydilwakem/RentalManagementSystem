@@ -156,7 +156,9 @@ class CreateEvent extends Component
 
             // Step 3: Generate invoice number
             $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-            $invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
+            $invoiceNumber = 'INV-' . strtoupper(Str::random(8)); 
+            //'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
+            //$invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
 
             // Step 4: Create invoice
             $invoice = Invoice::create([

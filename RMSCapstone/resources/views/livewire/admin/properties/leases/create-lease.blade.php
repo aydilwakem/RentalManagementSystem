@@ -180,3 +180,36 @@
 
     </div>
 </div>
+<!-- Actions Buttons -->
+<div class="flex justify-between items-center space-y-2 mt-6">
+    <x-button onclick="history.back()" type="button"
+        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+        Cancel
+    </x-button>
+    <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+        Add Lease
+    </x-button>
+</div>
+
+<!-- Create Confirmation Modal -->
+<x-dialog-modal wire:model.live="confirmCreateItem">
+    <x-slot name="title">
+        {{ __('Create Lease') }}
+    </x-slot>
+
+    <x-slot name="content">
+        {{ __('Are you sure you want to add this item?') }}
+    </x-slot>
+
+    <x-slot name="footer">
+        <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+            {{ __('Cancel') }}
+        </x-secondary-button>
+
+        <x-button class="ms-3 bg-green text-white" wire:click="saveLease" wire:loading.attr="disabled">
+            {{ __('Create Lease') }}
+        </x-button>
+    </x-slot>
+</x-dialog-modal>
+
+</div>

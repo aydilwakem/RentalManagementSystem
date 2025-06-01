@@ -81,10 +81,8 @@
 
 <body>
     <header>
-        <h1>Canopy Farm PH Events</h1>
-        <h4>006 San Gregorio Extension, Brgy. Buna Cerca , Indang, Philippines</h4>
-        <h4>0962 447 9893</h4>
-        <h2>Event Summary</h2>
+        <h1>Canopy Farm PH Property Leases</h1>
+        <h2>Lease Summary</h2>
         <p class="date-range">
             <strong>Date Range:</strong>
             {{ $start_date ? \Carbon\Carbon::parse($start_date)->format('F d, Y') : 'N/A' }}
@@ -98,12 +96,12 @@
             <tr>
                 <th>Item</th>
                 <th>Transaction Number</th>
-                <th>Booked By</th>
-                <th>Event Hall</th>
-                <th>Event Type</th>
-                <th>Total Guests</th>
-                <th>Event Start Date</th>
-                <th>Event End Date</th>
+                <th>Tenant Representative</th>
+                <th>Property Rented</th>
+                <th>Total Tenats </th>
+                <th>Lease Start Date</th>
+                <th>Lease End Date</th>
+                <th>Total Months</th>
                 <th>Total Amount</th>
                 <th>Status</th>
             </tr>
@@ -122,32 +120,35 @@
                     {{ $property->name_number ?? 'N/A' }}<br>
                     @endforeach
                 </td>
-                <td>{{ $transaction->event_type->name ?? 'N/A' }}</td>
                 <td>{{ $transaction->pax }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}</td>
+                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</td>
+                <td>{{ $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1 }}
+                    {{ Str::plural('month', $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1)
+                    }}</td>
                 <td>PHP{{ number_format($transaction->total_amount), 2 }}</td>
                 <td>{{ ucfirst($transaction->transaction_status) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" style="text-align: center;">No events found in this date range.</td>
+                <td colspan="6" style="text-align: center;">No leases found in this date range.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
 
     <div>
-        <h2><strong>Events Summary: </strong></h2>
-        <p><strong>Total Events Within Date Range: </strong>{{ $totalEvents }} events</p>
-        <p><strong>Total Guests:</strong> {{ $totalGuests }} guests </p>
+        <h2><strong>Leases Summary: </strong></h2>
+        <p><strong>Total Leases Within Date Range: </strong>{{ $totalLeases }} leases</p>
+        <p><strong>Average Lease Length (months): </strong>{{ $averageLength }} months </p>
+        <p><strong>Total Tenants:</strong> {{ $totalTenants }} tenants </p>
         <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
 
     </div>
 
     <footer>
         <div class="page-number"></div>
-        &copy; {{ now()->year }} Canopy Farm PH &mdash; Events Report generated on {{ now()->format('F d, Y h:i A')
+        &copy; {{ now()->year }} Canopy Farm PH &mdash; Leases Report generated on {{ now()->format('F d, Y h:i A')
         }}
     </footer>
 </body>

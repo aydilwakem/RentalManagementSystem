@@ -109,7 +109,7 @@
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
-                <a href="http://127.0.0.1:8000/guest/proof-of-payment-page" target="_blank" style="
+                <a href="{{ $payment_link }}" target="_blank" style="
                     display: inline-block;
                     padding: 12px 25px;
                     background-color: #166534; /* Your brand green */

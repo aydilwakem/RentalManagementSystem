@@ -92,32 +92,32 @@
             </div>
 
             <!-- Invoice ? -->
-            {{-- <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                        <div><strong>Transaction ID: </strong>
-                            {{ $transaction->invoice->transaction->transaction_number ?? 'N/A' }}
-                        </div>
-                        <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A' }}
-                        </div>
-                        <div><strong>Sub Total: </strong>
-                            ₱{{ optional($transaction->invoice)->sub_total !== null
-                                ? number_format(optional($transaction->invoice)->sub_total, 2)
-                                : 'N/A' }}
-                        </div>
-                        <div><strong>Balance Due:
-                            </strong>₱{{ optional($transaction->invoice)->sub_total !== null
-                                ? number_format(optional($transaction->invoice)->balance_due, 2)
-                                : 'N/A' }}
-                        </div>
-                        <div><strong>Due Date: </strong>
-                            {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ?? 'N/A' }}
-                        </div>
-                        <div><strong>Invoice Status: </strong>
-                            {{ ucfirst($transaction->invoice->invoice_status ?? 'N/A') }}
-                        </div>
+            <div class="bg-gray-50 rounded-lg p-6 text-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">Invoice Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                    <div><strong>Transaction ID: </strong>
+                        {{ $transaction->invoice->transaction->transaction_number ?? 'N/A' }}
                     </div>
-                </div> --}}
+                    <div><strong>Invoice Number: </strong> {{ $transaction->invoice->invoice_number ?? 'N/A' }}
+                    </div>
+                    <div><strong>Sub Total: </strong>
+                        ₱{{ optional($transaction->invoice)->sub_total !== null
+                            ? number_format(optional($transaction->invoice)->sub_total, 2)
+                            : 'N/A' }}
+                    </div>
+                    <div><strong>Balance Due:
+                        </strong>₱{{ optional($transaction->invoice)->sub_total !== null
+                            ? number_format(optional($transaction->invoice)->balance_due, 2)
+                            : 'N/A' }}
+                    </div>
+                    <div><strong>Due Date: </strong>
+                        {{ optional(optional($transaction->invoice)->due_date)->format('F j, Y') ?? 'N/A' }}
+                    </div>
+                    <div><strong>Invoice Status: </strong>
+                        {{ ucfirst($transaction->invoice->invoice_status ?? 'N/A') }}
+                    </div>
+                </div>
+            </div>
 
 
             <!-- Action Buttons -->
@@ -128,10 +128,16 @@
                     Edit
                 </x-ghost-button>
 
+
                 <!-- Delete -->
                 <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $transaction->id }})">
                     Delete
                 </x-danger-button>
+                <x-button icon="fa-solid fa-file"
+                    class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                    wire:click="exportLeaseDetails">
+                    Export PDF
+                </x-button>
             </div>
 
             <x-dialog-modal wire:model.live="confirmItemDelete">

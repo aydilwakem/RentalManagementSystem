@@ -46,6 +46,8 @@ class ReservationSubmittedMail extends Mailable
                 'total_amount' => $this->reservationData['total_amount'],
                 'deposit' => $this->reservationData['deposit'],
                 'expirationHours' => $this->reservationData['expirationHours'],
+                'payment_link' =>  $this->reservationData['payment_link'],
+
             ]);
     }
 }

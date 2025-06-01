@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <title>Reservation Summary</title>
     <style>
+        @page {
+            margin: 60px 40px 60px 40px;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-size: 12px;
@@ -27,6 +35,12 @@
             font-size: 18px;
             color: #444;
             margin-bottom: 5px;
+        }
+
+        h4 {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 3px;
         }
 
         .date-range {
@@ -72,6 +86,8 @@
 <body>
     <header>
         <h1>Canopy Farm PH</h1>
+        <h4>006 San Gregorio Extension, Brgy. Buna Cerca , Indang, Philippines</h4>
+        <h4>0962 447 9893</h4>
         <h2>Reservation Summary</h2>
         <p class="date-range">
             <strong>Date Range:</strong>
@@ -84,11 +100,13 @@
     <table>
         <thead>
             <tr>
+                <th>Item</th>
                 <th>Transaction Number</th>
                 <th>Reserved By</th>
                 <th>Room/s</th>
                 <th>Check-In Date</th>
                 <th>Check-Out Date</th>
+                <th>Total Guests</th>
                 <th>Total Amount</th>
                 <th>Status</th>
             </tr>
@@ -96,7 +114,8 @@
         <tbody>
             @forelse ($transactions as $transaction)
             <tr>
-                <td>{{ $transaction->id }}</td>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $transaction->transaction_number }}</td>
                 <td>
                     {{ $transaction->transactionUser->first_name }}
                     {{ $transaction->transactionUser->last_name }}
@@ -108,6 +127,7 @@
                 </td>
                 <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('M d, Y') }}</td>
                 <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('M d, Y') }}</td>
+                <td>{{ $transaction->pax }}</td>
                 <td>PHP{{ number_format($transaction->total_amount), 2 }}</td>
                 <td>{{ ucfirst($transaction->transaction_status) }}</td>
             </tr>
@@ -119,7 +139,17 @@
         </tbody>
     </table>
 
+    <div>
+        <h2><strong>Reservations Summary: </strong></h2>
+        <p><strong>Total Reservations Within Date Range: </strong>{{ $totalReservations }} reservations</p>
+        <p><strong>Total Guests:</strong> {{ $totalGuests }} guests </p>
+        <p><strong>Average Reservation Length (nights): </strong>{{ $averageLength }} nights </p>
+        <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
+
+    </div>
+
     <footer>
+        <div class="page-number"></div>
         &copy; {{ now()->year }} Canopy Farm PH &mdash; Reservation Report generated on {{ now()->format('F d, Y h:i A')
         }}
     </footer>
