@@ -21,6 +21,7 @@
                 </button>
             </div>
 
+            <!-- Form Container -->
             <form wire:submit.prevent="confirmEdit({{ $amenity->id }})" class="flex flex-col space-y-6 min-h-[200px]">
                 {{-- Form fields container --}}
                 <div class="mt-4">

@@ -226,7 +226,7 @@
                                     Pax <span class="text-red-500">*</span></label>
                                 <input type="number" id="pax" min="0" disabled
                                     value="{{ $pax }}"
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
                                 @error('pax')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror

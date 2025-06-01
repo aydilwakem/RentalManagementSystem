@@ -240,7 +240,7 @@
                                     value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
                                 {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
                             </th>
-                            <td class="px-4 py-3"> {{ $hall->name_number }} </td>
+                            <td class="px-4 py-3 text-gray-900 font-semibold"> {{ $hall->name_number }} </td>
                             <td class="px-4 py-3">
                                 @if (!empty($hall->description))
                                     {{ $hall->description }}

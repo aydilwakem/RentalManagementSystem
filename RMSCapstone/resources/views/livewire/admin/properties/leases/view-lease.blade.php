@@ -48,7 +48,7 @@
             <div class="bg-gray-50 rounded-lg p-6 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
                     <div>
-                        <strong>Monthly Rent: </strong>₱{{ number_format($this->getMonthlyRent($transaction), 2) }}
+                        {{-- <strong>Monthly Rent: </strong>₱{{ number_format($this->getMonthlyRent($transaction), 2) }} --}}
                     </div>
                     <div>
                         <strong>Total Rent for Lease Term:
@@ -121,23 +121,26 @@
 
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-between space-x-4 mt-auto mb-3">
-                <!-- Edit -->
-                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
-                    href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
-                    Edit
-                </x-ghost-button>
-
-
+            <div class="flex items-center justify-between space-x-4 mt-6 mb-3">
                 <!-- Delete -->
                 <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $transaction->id }})">
                     Delete
                 </x-danger-button>
-                <x-button icon="fa-solid fa-file"
-                    class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                    wire:click="exportLeaseDetails">
-                    Export PDF
-                </x-button>
+
+                <div class="space-x-3">
+                    <!-- Edit -->
+                    <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                        href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
+                        Edit
+                    </x-ghost-button>
+
+                    <!-- Export PDF -->
+                    <x-button icon="fa-solid fa-file"
+                        wire:click="exportLeaseDetails">
+                        Export PDF
+                    </x-button>
+                </div>
+                <!-- Edit -->
             </div>
 
             <x-dialog-modal wire:model.live="confirmItemDelete">

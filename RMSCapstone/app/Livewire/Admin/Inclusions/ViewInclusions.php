@@ -26,21 +26,23 @@ class ViewInclusions extends Component
 
     //Public declaration for confirmation modal
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
+    public $selectedInclusionId = null;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->inclusions->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getInclusionsProperty(){
@@ -52,18 +54,19 @@ class ViewInclusions extends Component
     }
 
     public function deleteSelectedRows(){
-        PropertyFeature::whereIn('id', $this->selectedRows)->delete(); 
+        PropertyFeature::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected inclusions got deleted!');
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
     {
-        $this->confirmItemDelete = $id;
+        $this->selectedInclusionId = $id;
+        $this->confirmItemDelete = true;
     }
 
     //Method for session of fake ids
@@ -91,6 +94,7 @@ class ViewInclusions extends Component
             if ($this->confirmItemDelete) {
                 PropertyFeature::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
+                $this->selectedInclusionId = null;
 
                 // Fetch remaining inclusion - sorted by creation date, only type 3 = Event Hall
                 $inclusions = PropertyFeature::where('property_type_id', 3)
@@ -126,11 +130,11 @@ class ViewInclusions extends Component
         $this->sortBy = $sortByField;
         $this->sortDir = "ASC";
     }
-    
+
     public function render()
     {
-        // Retrieve inclusions where property_type_id = 3, 
-        $inclusions = $this->inclusions; 
+        // Retrieve inclusions where property_type_id = 3,
+        $inclusions = $this->inclusions;
 
         // Retrieve fake IDs from session
         $fakeIDs = session('fake_ids_inclusions', []);

@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
-    @if ($inclusions->isEmpty())
+    @if ($inclusions->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No inclusions yet.<br> Click "Create Inclusion" to add a new
@@ -18,7 +18,7 @@
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between px-4 mb-3">
+            <div class="flex items-center justify-between mb-3">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-inclusion') }}">
                     New Inclusion
                 </x-button>
@@ -79,12 +79,13 @@
                     <table class="w-full text-left">
                         <thead class="text-sm text-gray-700 bg-gray-200">
                             <tr>
-                                <th scope="col" class="px-4 py-3"><input wire:model.live="selectPageRows"
-                                        type="checkbox" id="checkAll" class="accent-blue-600 w-4 h-4"> </th>
-                                {{-- ID --}}
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                                    <button class="flex items-center">
-                                        ID
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+                                    {{-- ID --}}
+                                    <div class="flex items-center space-x-2 cursor-pointer"
+                                        wire:click="setSortBy('id')">
+                                        <span>ID</span>
                                         @if ($sortBy !== 'id')
                                             {{-- Default icon when sorting is not active --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -111,8 +112,8 @@
                                                 </svg>
                                             @endif
                                         @endif
-                                    </button>
-
+                                        </button>
+                                    </div>
                                 </th>
 
                                 {{-- Name --}}
@@ -153,14 +154,12 @@
                             </tr>
                         </thead>
                         <tbody class="text-left">
-                            @foreach ($inclusions as $inclusion)
-                                <tr class="border-b">
+                            @forelse ($inclusions as $inclusion)
+                                <tr class="border-b hover:bg-gray-50">
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                         <input wire:model.live="selectedRows" type="checkbox" name="inclusions[]"
-                                            value="{{ $inclusion->id }}" class="accent-blue-600 w-4 h-4">
-                                    </th>
-                                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                        {{ $fakeIDs[$inclusion->id] ?? 'FTR-???' }}
+                                            value="{{ $inclusion->id }}" class="accent-blue-600 w-4 h-4 me-2">
+                                            {{ $fakeIDs[$inclusion->id] ?? 'FTR-???' }}
                                     </th>
                                     <td class="px-4 py-3 font-semibold text-gray-900">{{ $inclusion->name }}</td>
                                     <td class="px-4 py-3 flex items-center justify-center space-x-4">
@@ -187,7 +186,13 @@
 
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500">
+                                        No inclusions found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
 
@@ -228,7 +233,7 @@
                                 {{ __('Cancel') }}
                             </x-secondary-button>
 
-                            <x-danger-button class="ms-3" wire:click="deleteInclusion({{ $inclusion->id }})"
+                            <x-danger-button class="ms-3" wire:click="deleteInclusion"
                                 wire:loading.attr="disabled">
                                 {{ __('Delete Inclusion') }}
                             </x-danger-button>
