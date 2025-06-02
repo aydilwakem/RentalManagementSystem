@@ -32,8 +32,9 @@
     @livewireStyles
 </head>
 
-<body
-    class="h-screen font-sans antialiased bg-gray-100 text-gray-900 dark:bg-[#1E1E1E] dark:text-white transition-colors duration-300">
+<body x-data="{ theme: localStorage.getItem('theme') || 'theme-dark' }"
+      x-init="$el.classList.add(theme)"
+      x-effect="document.body.className = theme">
 
     <x-banner />
 

@@ -6,6 +6,6 @@
     </x-slot>
 
     <div class="bg-white overflow-x-auto shadow-xl sm:rounded-lg">
-        @livewire('admin.rooms.view-rooms')
+        @livewire('admin.rooms.view-rooms', ['lazy' => true])
     </div>
 </x-app-layout>

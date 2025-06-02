@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-        @livewire('admin.inclusions.view-inclusions')
+        @livewire('admin.inclusions.view-inclusions', ['lazy' => true])
     </div>
 
 </x-app-layout>

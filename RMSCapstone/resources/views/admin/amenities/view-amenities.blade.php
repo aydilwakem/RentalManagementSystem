@@ -6,6 +6,6 @@
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-        @livewire('admin.amenities.view-amenities')
+        @livewire('admin.amenities.view-amenities', ['lazy' => true])
     </div>
 </x-app-layout>

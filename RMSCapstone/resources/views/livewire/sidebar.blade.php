@@ -19,7 +19,7 @@
         </button>
 
         <!-- Desktop Menu Container  -->
-        <div class="h-screen bg-green-800 fixed sm:relative flex flex-col w-64 z-40 transition-all duration-300"
+        <div class="h-screen bg-primary-800 fixed sm:relative flex flex-col w-64 z-40 transition-all duration-300"
             x-bind:class="{
                 'w-64': $store.sidebar.full,
                 'w-64 sm:w-20': !$store.sidebar.full,
@@ -40,7 +40,7 @@
             <div class="px-4 space-y-1 flex flex-col overflow-y-auto max-h-[36rem]">
                 <!-- SideBar Toggle -->
                 <button @click="$store.sidebar.full = !$store.sidebar.full"
-                    class="hidden sm:block focus:outline-none absolute p-1 -right-3 top-10 bg-green-700 border rounded-full shadow-md">
+                    class="hidden sm:block focus:outline-none absolute p-1 -right-3 top-10 bg-primary-700 border rounded-full shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="h-4 w-4 transition-all duration-300 text-white transform"
                         x-bind:class="$store.sidebar.full ? 'rotate-90' : '-rotate-90 '" viewBox="0 0 20 20"
@@ -56,8 +56,8 @@
                     <div>
                         <a href="{{ route('dashboard') }}">
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                    {{ Route::is('dashboard') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                    {{ Route::is('dashboard') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
                                     Dashboard
@@ -72,8 +72,8 @@
                     <div>
                         <a href="{{ route('admin.reservations-list') }}">
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                    {{ Route::is('admin.reservations-list') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                    {{ Route::is('admin.reservations-list') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-calendar"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
                                     Reservations
@@ -89,8 +89,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('room-list')
                         <div @click="toggle('rooms')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                            {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                                            {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-bed"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -109,7 +109,7 @@
                     <!-- Rooms Dropdown content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
                         @can('room-list')
                             <a href="{{ route('admin.rooms') }}" wire:navigate
@@ -149,8 +149,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('house-list')
                         <div @click="toggle('houses')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                        {{ Route::is('admin.properties*') || Route::is('admin.leases*') || Route::is('admin.tenants*')  || Route::is('admin.features*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                        {{ Route::is('admin.properties*') || Route::is('admin.leases*') || Route::is('admin.tenants*') || Route::is('admin.features*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -169,7 +169,7 @@
                     <!-- Houses Dropdown content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
                         {{-- Features List --}}
                         @can('leases-list')
@@ -216,8 +216,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('event-list')
                         <div @click="toggle('events')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                            {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') || Route::is('admin.inclusions*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                            {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') || Route::is('admin.inclusions*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-calendar-plus"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -236,7 +236,7 @@
                     <!-- Events Dropdown Content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
                         @can('event-list')
                             <a href="{{ route('admin.events') }}" wire:navigate
@@ -273,8 +273,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('house-list')
                         <div @click="toggle('payments')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                {{ Route::is('admin.payments-list*') || Route::is('admin.invoice-list*') || Route::is('admin.payments*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                {{ Route::is('admin.payments-list*') || Route::is('admin.invoice-list*') || Route::is('admin.payments*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-money-bill"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -293,7 +293,7 @@
                     <!-- Payments Dropdown content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
                         <!-- Payments -->
                         @can('payments-list')
@@ -328,8 +328,8 @@
                     <div>
                         <a href="{{ route('admin.activities') }}" wire:navigate>
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                    {{ Route::is('admin.activities') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                    {{ Route::is('admin.activities') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-person-swimming"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Activities</h1>
                             </div>
@@ -342,8 +342,8 @@
                     <div>
                         <a href="{{ route('admin.maintenances') }}" wire:navigate>
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                    {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                    {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-broom"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Maintenance</h1>
                             </div>
@@ -355,8 +355,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('reports')
                         <div @click="toggle('report')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-file-invoice"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -375,7 +375,7 @@
                     <!-- Reports Dropdown content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
                         <!-- Reservation Report -->
                         @can('reports')
@@ -414,8 +414,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('branding-view')
                         <div @click="toggle('settings')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-cogs"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -434,7 +434,7 @@
                     <!-- Settings Dropdown content -->
                     <div x-cloak x-show="open" @click.outside="open = false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-                        class="text-white bg-green-600 rounded-lg shadow-sm mt-2">
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
 
                         @can('user-list')
@@ -452,10 +452,10 @@
                         @endcan
 
                         @can('appearance-view')
-                            {{-- <a href="{{ route('admin.appearance') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
-                            <h1 class="cursor-pointer">Appearance</h1>
-                        </a> --}}
+                            <a href="{{ route('admin.appearance') }}" wire:navigate
+                                class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                <h1 class="cursor-pointer">Appearance</h1>
+                            </a>
                         @endcan
                     </div>
                 </div>
@@ -464,8 +464,8 @@
                 <div class="relative">
                     <a href="{{ route('profile.show') }}" wire:navigate>
                         <div
-                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                            {{ Route::is('profile.show') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                            {{ Route::is('profile.show') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-user"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Profile</h1>
                         </div>
@@ -474,8 +474,8 @@
                     @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                         <a href="{{ route('api-tokens.index') }}" wire:navigate>
                             <div
-                                class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-green-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-gray-200 bg-green-600' : 'text-gray-400' }}">
+                                class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-key"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
                             </div>
@@ -503,9 +503,9 @@
 
                         <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" wire:navigate>
                             <div @click="$store.sidebar.active = 'team-settings'"
-                                class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                 x-bind:class="{
-                                    'text-gray-200 bg-green-600': $store.sidebar.active == 'team-settings',
+                                    'text-gray-200 bg-primary-600': $store.sidebar.active == 'team-settings',
                                     'text-gray-400 ': $store.sidebar.active != 'team-settings'
                                 }">
                                 <i class="fa-solid fa-users"></i>
@@ -516,9 +516,9 @@
                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                             <a href="{{ route('teams.create') }}" wire:navigate>
                                 <div @click="$store.sidebar.active = 'create-team'"
-                                    class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                    class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                        'text-gray-200 bg-primary-600': $store.sidebar.active == 'create-team',
                                         'text-gray-400 ': $store.sidebar.active != 'create-team'
                                     }">
                                     <i class="fa-solid fa-plus"></i>
@@ -530,9 +530,9 @@
                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                             <a href="{{ route('teams.create') }}" wire:navigate>
                                 <div @click="$store.sidebar.active = 'create-team'"
-                                    class="relative flex items-center hover:text-gray-200 hover:bg-green-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                    class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                        'text-gray-200 bg-green-600': $store.sidebar.active == 'create-team',
+                                        'text-gray-200 bg-primary-600': $store.sidebar.active == 'create-team',
                                         'text-gray-400 ': $store.sidebar.active != 'create-team'
                                     }">
                                     <i class="fa-solid fa-plus"></i>

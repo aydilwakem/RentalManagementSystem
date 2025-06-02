@@ -156,6 +156,12 @@ class ViewActivities extends Component
     }
     }
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
+
     /**
      * Method to set the sorting direction for a given field.
      * If the field is already selected, the direction (ASC/DESC) will toggle.

@@ -144,6 +144,10 @@ class ViewRoomCategories extends Component
         }
     }
 
+    public function placeholder(){
+        return view('livewire.admin.placeholder');
+    }
+
 
     public function setSortBy($sortByField)
     {

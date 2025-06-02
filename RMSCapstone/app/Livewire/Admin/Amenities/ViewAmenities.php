@@ -33,6 +33,10 @@ class ViewAmenities extends Component
     public $selectedRows = [];
     public $selectPageRows = false;
 
+     public function placeholder(){
+        return view('livewire.admin.placeholder');
+    }
+
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->amenities->pluck('id')->map(function ($id){

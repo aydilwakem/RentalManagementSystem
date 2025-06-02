@@ -33,6 +33,12 @@ class ViewTenants extends Component
     public $selectPageRows = false;
     public $tenant;
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
+
     public function updatedSelectPageRows($value)
     {
         if ($value) {

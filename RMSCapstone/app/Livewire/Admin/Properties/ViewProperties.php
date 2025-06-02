@@ -31,6 +31,12 @@ class ViewProperties extends Component
     public $selectedRows = [];
     public $selectPageRows = false;
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
+
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->houses->pluck('id')->map(function ($id){

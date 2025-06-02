@@ -175,6 +175,10 @@ class ViewRooms extends Component
         $this->sortDir = 'ASC';
     }
 
+    public function placeholder(){
+        return view('livewire.admin.placeholder');
+    }
+
     public function render()
     {
         //select all rooms from property model

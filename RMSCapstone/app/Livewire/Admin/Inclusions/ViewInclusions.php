@@ -34,6 +34,12 @@ class ViewInclusions extends Component
     public $selectedRows = [];
     public $selectPageRows = false;
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder-sm');
+    }
+
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->inclusions->pluck('id')->map(function ($id){

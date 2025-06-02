@@ -341,7 +341,8 @@
                                             class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
                                     @elseif($room->property_status === 'out_of_service')
                                         <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out of Service</span>
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out
+                                            of Service</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-2">

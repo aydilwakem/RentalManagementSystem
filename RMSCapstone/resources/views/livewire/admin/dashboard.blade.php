@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
 
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+            <h2 class="font-semibold text-xl text-black leading-tight dark:text-white">
                 {{ __('Dashboard') }}
             </h2>
         </x-slot>
@@ -17,27 +17,27 @@
 
         <!-- Reservations Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-calendar-check text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">New Reservations</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $newReservations }}</p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-calendar-check text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">New Reservations</h2>
+            <p class="text-2xl font-bold text-white">{{ $newReservations }}</p>
         </div>
 
 
         <!-- Rooms Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-bed text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">Rooms Available</h2>
-            <p class="text-2xl font-bold text-gray-800"> 4 </p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-bed text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">Rooms Available</h2>
+            <p class="text-2xl font-bold text-white"> 4 </p>
         </div>
 
         <!-- Maintenance Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-tools text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $pendingMaintenances }}</p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-tools text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">Pending Maintenances</h2>
+            <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
         </div>
     </div>
 

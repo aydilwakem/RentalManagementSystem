@@ -6,6 +6,6 @@
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-        @livewire('admin.events.view-events')
+        @livewire('admin.events.view-events', ['lazy' => true])
     </div>
 </x-app-layout>
