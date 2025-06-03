@@ -26,21 +26,26 @@ class ViewAmenities extends Component
 
     //Public declaration for confirmation modal
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
+    public $selectedItemId = null;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
+
+     public function placeholder(){
+        return view('livewire.admin.placeholder');
+    }
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->amenities->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getAmenitiesProperty(){
@@ -52,18 +57,19 @@ class ViewAmenities extends Component
     }
 
     public function deleteSelectedRows(){
-        PropertyFeature::whereIn('id', $this->selectedRows)->delete(); 
+        PropertyFeature::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected amenities got deleted!');
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
     {
-        $this->confirmItemDelete = $id;
+        $this->selectedItemId = $id;
+        $this->confirmItemDelete = true;
     }
 
     //Method for session of fake ids
@@ -83,14 +89,16 @@ class ViewAmenities extends Component
      * - Fake IDs for the amenities are recalculated and stored in the session.
      * - Displays a success message after the amenity is successfully deleted.
      */
-    public function deleteAmenity($id)
+    public function deleteAmenity()
     {
-        $amenity = PropertyFeature::find($id);
+        $amenity = PropertyFeature::find($this->selectedItemId);
+
 
         if ($amenity) {
             if ($this->confirmItemDelete) {
-                PropertyFeature::find($this->confirmItemDelete)?->delete();
+                PropertyFeature::find($this->selectedItemId)?->delete();
                 $this->confirmItemDelete = false;
+                $this->selectedItemId = null;
 
                 // Fetch remaining amenities - sorted by creation date, only type 1
                 $amenity = PropertyFeature::where('property_type_id', 1)
@@ -136,8 +144,8 @@ class ViewAmenities extends Component
      */
     public function render()
     {
-       // Retrieve amenities where property_type_id = 1, 
-        $amenities = $this->amenities; 
+       // Retrieve amenities where property_type_id = 1,
+        $amenities = $this->amenities;
 
         // Retrieve fake IDs from session
         $fakeIDs = session('fake_ids_amenities', []);

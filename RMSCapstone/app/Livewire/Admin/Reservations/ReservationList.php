@@ -15,16 +15,15 @@ use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationCompletedMail;
 use Illuminate\Support\Facades\Mail;
 
-
 class ReservationList extends Component
 {
-
     use WithPagination; // Enables pagination for Livewire component
+    // Properties that can be modified via URL parameters
 
-    #[Url(history: true)] // Properties that can be modified via URL parameters
+    #[Url(history: true)]
     public $search = ''; // Search term for filtering transactions
 
-    #[Url()]
+    #[Url]
     public $perPage = 10; // Number of transactions displayed per page
     public $invoice;
 
@@ -46,18 +45,16 @@ class ReservationList extends Component
     public $actionId;
     public $actionButtonType = 'default';
 
-
     //------------------------------------MOUNT------------------------------------------ //
-    public function mount(){
+    public function mount()
+    {
         // Ensure reservation-list use a separate session key
         if (!session()->has('fake_ids_reservation_list')) {
             session(['fake_ids_reservation_list' => []]);
         }
     }
 
-
     // -------------------------------------- RENDER -------------------------------------- //
-
 
     /**
      * Renders the Livewire component view and fetches transactions based on filters
@@ -73,11 +70,16 @@ class ReservationList extends Component
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 2)
             ->when($this->search !== '', function ($query) {
-                $query->whereHas('transactionUser', function ($subQuery) {
-                    $subQuery->where('first_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%" . $this->search . "%"]);
-                });
+                $query
+                    ->whereHas('transactionUser', function ($subQuery) {
+                        $subQuery
+                            ->where('first_name', 'like', '%' . $this->search . '%')
+                            ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $this->search . '%']);
+                    })
+                    ->orWhereHas('properties', function ($subQuery) {
+                        $subQuery->where('name_number', 'like', '%' . $this->search . '%');
+                    });
             })
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
@@ -85,46 +87,43 @@ class ReservationList extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-            // Query for full list (for fake ID generation only)
-            $allTransactions = Transaction::where('reservation_type_id', 2)
-                ->orderBy('created_at', 'ASC')
-                ->get();
+        // Query for full list (for fake ID generation only)
+        $allTransactions = Transaction::where('reservation_type_id', 2)->orderBy('created_at', 'ASC')->get();
 
-            //Store in session 
-            $fakeIDs = session('fake_ids_reservation_list', []);
+        //Store in session
+        $fakeIDs = session('fake_ids_reservation_list', []);
 
-            //Refresh to prevent duplicates in event & lease transactions
-            $needsRefresh = count($fakeIDs) !== $allTransactions->count();
+        //Refresh to prevent duplicates in event & lease transactions
+        $needsRefresh = count($fakeIDs) !== $allTransactions->count();
 
-            // Check if any existing ID doesn't start with TXN-
-            foreach ($fakeIDs as $id => $fake) {
-                if (!str_starts_with($fake, 'TXN-')) {
-                    $needsRefresh = true;
-                    break;
-                }
+        // Check if any existing ID doesn't start with TXN-
+        foreach ($fakeIDs as $id => $fake) {
+            if (!str_starts_with($fake, 'TXN-')) {
+                $needsRefresh = true;
+                break;
             }
+        }
 
-            if ($needsRefresh) {
-                $fakeIDs = [];
-                foreach ($allTransactions as $index => $transaction) {
-                    $fakeIDs[$transaction->id] = 'TXN-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-                session(['fake_ids_reservation_list' => $fakeIDs]);
+        if ($needsRefresh) {
+            $fakeIDs = [];
+            foreach ($allTransactions as $index => $transaction) {
+                $fakeIDs[$transaction->id] = 'TXN-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+            session(['fake_ids_reservation_list' => $fakeIDs]);
+        }
 
         return view('livewire.admin.reservations.reservation-list', compact('transactions', 'fakeIDs'));
     }
-
 
     // -------------------------------------- CONFIRMATION MODAL -------------------------------------- //
 
     public function showActionModal($method, $title, $message, $id, $actionType = 'default')
     {
-        $this->actionMethod = $method;  // e.g., 'deleteTransaction'
-        $this->actionTitle = $title;    // e.g., 'Delete Transaction'
+        $this->actionMethod = $method; // e.g., 'deleteTransaction'
+        $this->actionTitle = $title; // e.g., 'Delete Transaction'
         $this->actionMessage = $message; // e.g., 'Are you sure you want to delete this transaction?'
-        $this->actionId = $id;          // Store the ID for the action
-        $this->confirmingAction = true;  // Trigger the confirmation modal
+        $this->actionId = $id; // Store the ID for the action
+        $this->confirmingAction = true; // Trigger the confirmation modal
         $this->actionButtonType = $actionType; // categorize if safe or desctructive action
     }
 
@@ -134,7 +133,7 @@ class ReservationList extends Component
             // Dynamically call the appropriate method (deleteTransaction, cancelTransaction, etc.)
             $this->{$this->actionMethod}($this->actionId);
         }
-        $this->confirmingAction = false;  // Close the modal after action
+        $this->confirmingAction = false; // Close the modal after action
     }
 
     // -------------------------------------- BUTTON ACTIONS -------------------------------------- //
@@ -182,7 +181,7 @@ class ReservationList extends Component
             'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
             'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
-            'balance_due' =>  $invoice->balance_due,
+            'balance_due' => $invoice->balance_due,
             'properties' => $properties,
             'activities' => $activities,
         ];
@@ -195,7 +194,6 @@ class ReservationList extends Component
         }
     }
 
-
     /**
      * Starts the selected transaction
      */
@@ -207,7 +205,6 @@ class ReservationList extends Component
             session()->flash('message', 'Transaction successfully started!');
         }
     }
-
 
     /**
      * Marks the selected transaction as 'done'
@@ -254,7 +251,7 @@ class ReservationList extends Component
             'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
             'amount_paid' => $invoice->amount_paid,
-            'balance_due' =>  $invoice->balance_due,
+            'balance_due' => $invoice->balance_due,
             'properties' => $properties,
             'activities' => $activities,
         ];
@@ -267,7 +264,6 @@ class ReservationList extends Component
         }
     }
 
-
     /**
      * Marks the selected transaction as 'no show'
      */
@@ -278,7 +274,6 @@ class ReservationList extends Component
             $transaction->update(['transaction_status' => 'no_show']); // Update transaction status to 'no show'
             session()->flash('message', 'Transaction marked as no show!');
         }
-
 
         Log::info('Transaction ID: ' . $id);
         Log::info('Transaction: ', [$transaction]);
@@ -295,7 +290,6 @@ class ReservationList extends Component
             session()->flash('message', 'Transaction successfully cancelled!');
         }
     }
-
 
     /**
      * Terminates the selected transaction
@@ -321,8 +315,6 @@ class ReservationList extends Component
         }
     }
 
-
-
     // -------------------------------------- SORTING -------------------------------------- //
 
     /**
@@ -331,10 +323,10 @@ class ReservationList extends Component
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC"; // Toggle sorting direction
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC'; // Toggle sorting direction
             return;
         }
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC"; // Default sorting direction when changing columns
+        $this->sortDir = 'ASC'; // Default sorting direction when changing columns
     }
 }

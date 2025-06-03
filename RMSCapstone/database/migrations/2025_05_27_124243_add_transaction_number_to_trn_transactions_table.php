@@ -10,7 +10,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('trn_transactions', function (Blueprint $table) {
-            $table->string('transaction_number')->unique()->after('id');
+            $table->string('transaction_number')->nullable()->after('id');
+            $table->unique('transaction_number');
         });
     }
 

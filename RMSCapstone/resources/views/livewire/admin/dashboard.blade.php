@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
 
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+            <h2 class="font-semibold text-xl text-black leading-tight dark:text-white">
                 {{ __('Dashboard') }}
             </h2>
         </x-slot>
@@ -17,82 +17,72 @@
 
         <!-- Reservations Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-calendar-check text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">New Reservations</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $newReservations }}</p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-calendar-check text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">New Reservations</h2>
+            <p class="text-2xl font-bold text-white">{{ $newReservations }}</p>
         </div>
 
 
         <!-- Rooms Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-bed text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">Rooms Available</h2>
-            <p class="text-2xl font-bold text-gray-800"> 4 </p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-bed text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">Rooms Available</h2>
+            <p class="text-2xl font-bold text-white"> 4 </p>
         </div>
 
         <!-- Maintenance Card -->
         <div
-            class="bg-highlight rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-tools text-primary text-4xl"></i>
-            <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
-            <p class="text-2xl font-bold text-gray-800">{{ $pendingMaintenances }}</p>
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            <i class="fas fa-tools text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">Pending Maintenances</h2>
+            <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
         </div>
     </div>
 
     <div id='calendar'></div>
 
     @script
-    <script type="text/javascript">
-        document.addEventListener('livewire:initialized', () => {
-            var calendarEl = document.getElementById('calendar');
+        <script type="text/javascript">
+            document.addEventListener('livewire:initialized', () => {
+                var calendarEl = document.getElementById('calendar');
+                var events = @json($events);
 
-            var events = @json($events);
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    selectable: true,
+                    events: events,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    eventContent: function(arg) {
+                        let title = arg.event.title;
+                        let room = arg.event.extendedProps.room || '';
+                        let time = arg.event.extendedProps.time || '';
+                        let pax = arg.event.extendedProps.pax || '';
 
-            console.log("Events Data: ", events); // ✅ Debugging outpu
+                        let html = '<div><b>' + title + '</b></div>';
+                        if (room) html += '<div>Room: ' + room + '</div>';
+                        if (time) html += '<div>Time: ' + time + '</div>';
+                        if (pax) html += '<div>Pax: ' + pax + '</div>';
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                events: @json($events),
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // month week day buttons
-                },
-                // eventClassNames: function(info) {
-                //     let classes = [];
-
-                //     // Assign base category styling
-                //     if (info.event.extendedProps.category === 'room') {
-                //         classes.push('room-booking');
-                //     } else if (info.event.extendedProps.category === 'event') {
-                //         classes.push('event-booking');
-                //     }
-
-                //     // Assign color based on transaction status
-                //     switch (info.event.extendedProps.transaction_status) {
-                //         case 'pending':
-                //             classes.push('status-pending');
-                //             break;
-                //         case 'confirmed':
-                //             classes.push('status-confirmed');
-                //             break;
-                //         case 'cancelled':
-                //             classes.push('status-cancelled');
-                //             break;
-                //         default:
-                //             classes.push('status-default');
-                //     }
-
-                //     return classes;
-                // }
-
+                        return {
+                            html: html
+                        };
+                    },
+                    eventClick: function(info) {
+                        info.jsEvent.preventDefault();
+                        if (info.event.url) {
+                            Livewire.navigate(info.event.url);
+                        }
+                    }
+                });
+                calendar.render();
             });
-            calendar.render();
-        });
-    </script>
+        </script>
     @endscript
     {{-- <style>
         .status-pending {

@@ -10,13 +10,12 @@ use Livewire\WithPagination;
 
 class ViewLeases extends Component
 {
-
     use WithPagination;
 
     #[Url(history: true)]
     public $search = '';
 
-    #[Url()]
+    #[Url]
     public $perPage = 10;
 
     #[Url(history: true)]
@@ -30,16 +29,24 @@ class ViewLeases extends Component
     public $leases = [];
 
     public $cannotDeleteItem = false;
+    public $selectedLeaseId = null;
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
     public $statusFilter = ''; // Filter transactions by status
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
+
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
 
     //Bulk Delete Method
-    public function updatedSelectPageRows($value){
+    public function updatedSelectPageRows($value)
+    {
         //same with render
         if ($value) {
             $transactions = Transaction::with(['transactionUser', 'properties'])
@@ -48,8 +55,8 @@ class ViewLeases extends Component
                 ->when($this->statusFilter !== '', fn($query) => $query->where('transaction_status', $this->statusFilter))
                 ->orderBy($this->sortBy, $this->sortDir)
                 ->paginate($this->perPage);
-            
-                //pluck ids for bulk delete
+
+            //pluck ids for bulk delete
             $this->selectedRows = $transactions->pluck('id')->map(fn($id) => (string) $id)->toArray();
         } else {
             $this->reset(['selectedRows', 'selectPageRows']);
@@ -57,15 +64,18 @@ class ViewLeases extends Component
     }
 
     //Bulk Delete by getting ID
-    public function deleteSelectedRows(){
-        Transaction::whereIn('id', $this->selectedRows)->delete(); 
+    public function deleteSelectedRows()
+    {
+        Transaction::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected leases got deleted!');
     }
 
     //Modal
-    public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+    public function confirmDeleteInBulk($id)
+    {
+        $this->selectedLeaseId = $id;
+        $this->confirmBulkDelete = true;
     }
 
     //Modal
@@ -78,30 +88,32 @@ class ViewLeases extends Component
     public function deleteLease()
     {
         if ($this->confirmItemDelete) {
-        $lease = Transaction::find($this->confirmItemDelete);
+            $lease = Transaction::find($this->confirmItemDelete);
 
-        if ($lease && in_array($lease->transaction_status, ['done', 'terminated'])) {
-            $lease->delete();
+            if ($lease && in_array($lease->transaction_status, ['done', 'terminated'])) {
+                $lease->delete();
 
-            $fakeIDs = [];
-            foreach (
-                Transaction::where('reservation_type_id', 1) //house
-                    ->orderBy('created_at', 'ASC')
-                    ->get() as $index => $leaseItem
-            ) {
-                $fakeIDs[$leaseItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                $fakeIDs = [];
+                foreach (
+                    Transaction::where('reservation_type_id', 1) //house
+                        ->orderBy('created_at', 'ASC')
+                        ->get()
+                    as $index => $leaseItem
+                ) {
+                    $fakeIDs[$leaseItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                session(['fake_ids_leases' => $fakeIDs]);
+
+                session()->flash('message', 'Lease successfully deleted!');
+            } else {
+                // Show modal instead of flash
+                $this->cannotDeleteItem = true;
             }
 
-            session(['fake_ids_leases' => $fakeIDs]);
-
-            session()->flash('message', 'Lease successfully deleted!');
-        } else {
-            // Show modal instead of flash
-            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = false;
+            $this->selectedLeaseId = null;
         }
-
-        $this->confirmItemDelete = false;
-    }
     }
 
     public function mount()
@@ -115,44 +127,67 @@ class ViewLeases extends Component
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? "DESC" : "ASC";
+            $this->sortDir = $this->sortDir == 'ASC' ? 'DESC' : 'ASC';
             return;
         }
         $this->sortBy = $sortByField;
-        $this->sortDir = "ASC";
+        $this->sortDir = 'ASC';
     }
-
 
     public function render()
     {
         $transactions = Transaction::with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 1) // House reservation type
             ->when($this->search !== '', function ($query) {
-            $search = '%' . $this->search . '%';
-            $query->whereHas('transactionUser', function ($subQuery) use ($search) {
-                $subQuery->where('first_name', 'like', $search)
-                         ->orWhere('last_name', 'like', $search)
-                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
-            });
-        })
+                $search = '%' . $this->search . '%';
+                $query->whereHas('transactionUser', function ($subQuery) use ($search) {
+                    $subQuery
+                        ->where('first_name', 'like', $search)
+                        ->orWhere('last_name', 'like', $search)
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+                });
+            })
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('transaction_status', $this->statusFilter);
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-            $leaseTransactions = Transaction::where('reservation_type_id', 1)->orderBy('created_at', 'ASC')->get();
+        $leaseTransactions = Transaction::where('reservation_type_id', 1)->orderBy('created_at', 'ASC')->get();
 
-            $fakeIDs = session('fake_ids_leases', []);
+        $fakeIDs = session('fake_ids_leases', []);
 
-            if (count($fakeIDs) !== $leaseTransactions->count()) {
-                $fakeIDs = [];
-                foreach ($leaseTransactions as $index => $leaseItem) {
-                    $fakeIDs[$leaseItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-                session(['fake_ids_leases' => $fakeIDs]);
+        if (count($fakeIDs) !== $leaseTransactions->count()) {
+            $fakeIDs = [];
+            foreach ($leaseTransactions as $index => $leaseItem) {
+                $fakeIDs[$leaseItem->id] = 'LEASE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+            session(['fake_ids_leases' => $fakeIDs]);
+        }
         return view('livewire.admin.properties.leases.view-leases', compact('transactions', 'fakeIDs'));
     }
 
+    //Get monthly rent for display:
+    public function getMonthlyRent($transaction)
+    {
+        if (empty($transaction->start_datetime) || empty($transaction->end_datetime) || !is_numeric($transaction->total_amount) || $transaction->total_amount <= 0) {
+            return 0;
+        }
+
+        $start = Carbon::parse($transaction->start_datetime)->startOfDay();
+        $end = Carbon::parse($transaction->end_datetime)->startOfDay();
+
+        if ($start->gt($end)) {
+            return 0;
+        }
+
+        // Calculate the difference in months between the start and end date, inclusive of both months.
+        $months = $start->diffInMonths($end) + 1;
+
+        if ($months <= 0) {
+            return 0;
+        }
+
+        return round($transaction->total_amount / $months, 2);
+    }
 }

@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="overflow-hidden sm:rounded-lg">
         @livewire('admin.properties.leases.create-lease')
     </div>
 

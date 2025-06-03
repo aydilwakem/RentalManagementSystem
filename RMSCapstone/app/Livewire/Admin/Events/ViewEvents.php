@@ -29,10 +29,10 @@ class ViewEvents extends Component
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false;
-    public $eventTypes; 
+    public $eventTypes;
 
-    public $halls; 
-    public $guests; 
+    public $halls;
+    public $guests;
 
     public function confirmDelete($id)
     {
@@ -90,6 +90,12 @@ class ViewEvents extends Component
 
         $this->sortBy = $sortByField;
         $this->sortDir = 'ASC';
+    }
+
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
     }
 
     public function render()

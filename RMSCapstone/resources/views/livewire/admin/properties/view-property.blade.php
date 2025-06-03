@@ -82,8 +82,18 @@
                         <li><strong>Monthly Rent:</strong> {{ $house->amount }}</li>
                     </ul>
 
+                    <!-- Address -->
+                    <div>
+                        <h3 class="mt-3 text-lg font-semibold text-gray-900">Address</h3>
+                        <p class="text-gray-600">
+                            {{ $house->house_number }}, {{ $house->street }},
+                            {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
+                            {{ $house->postal_code }}, {{ $house->country }}
+                        </p>
+                    </div>
+
                     <!-- house Amenities -->
-                    {{-- <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
+                    <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
                     @if ($house->features->isNotEmpty())
                         <div class="flex flex-wrap gap-2">
                             @foreach ($house->features as $feature)
@@ -95,17 +105,9 @@
                         </div>
                     @else
                         <p class="text-gray-500">No amenities selected for this house.</p>
-                    @endif --}}
+                    @endif
 
-                    <!-- Address -->
-                    <div>
-                        <h3 class="mt-3 text-lg font-semibold text-gray-900">Address</h3>
-                        <p class="text-gray-600">
-                            {{ $house->house_number }}, {{ $house->street }},
-                            {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
-                            {{ $house->postal_code }}, {{ $house->country }}
-                        </p>
-                    </div>
+
                 </div>
 
 
@@ -114,18 +116,16 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 pt-2 mt-4">
                 <!-- Edit -->
-                <x-button type="button" icon="fas fa-pen-to-square"
-                    class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                <x-ghost-button type="button" icon="fas fa-pen-to-square"
                     wire:navigate href="{{ route('admin.edit-property', ['property' => $house->id]) }}">
                     Edit
-                </x-button>
+                </x-ghost-button>
 
                 <!-- Delete -->
-                <x-button type="button" icon="fas fa-trash"
-                    class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-6 py-2.5"
+                <x-danger-button type="button" icon="fas fa-trash"
                     wire:click="confirmDelete({{ $house->id }})" wire:loading.attr="disabled">
                     Delete
-                </x-button>
+                </x-danger-button>
             </div>
 
 

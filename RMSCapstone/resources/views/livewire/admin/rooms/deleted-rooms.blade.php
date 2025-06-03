@@ -3,7 +3,7 @@
     <!-- Back Button -->
     <div class="mb-4">
         <button onclick="window.history.back();"
-            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none">
+            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />
@@ -53,14 +53,13 @@
                                 <td class="px-4 py-3 text-left">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3 text-left">{{ $room->category->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 space-x-2 text-center">
-                                    <x-button wire:click="restoreRoom({{ $room->id }})">
+                                    <x-button wire:click="restoreRoom({{ $room->id }})" class="mb-2">
                                         Restore
                                     </x-button>
                                     <!-- Delete Forever Button -->
-                                    <x-button wire:click="confirmDeleteForever({{ $room->id }})"
-                                        class="!bg-red-500 hover:!bg-red-600 focus:outline-none focus:ring-2 focus:!ring-red-500 text-white font-semibold px-4 py-2 rounded">
+                                    <x-danger-button wire:click="confirmDeleteForever({{ $room->id }})">
                                         Delete Forever
-                                    </x-button>
+                                    </x-danger-button>
                                 </td>
                             </tr>
                         @endforeach
@@ -74,7 +73,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to permanently delete this item?') }}
+                    {{ __('Are you sure you want to permanently delete this item? This action cannot be undone') }}
                 </x-slot>
 
                 <x-slot name="footer">

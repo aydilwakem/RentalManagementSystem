@@ -35,10 +35,14 @@ class Dashboard extends Component
             // Only fetch dashboard data if permitted
             $this->newReservations = Transaction::newReservations()->count();
             $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();
-            $this->reservations = Transaction::all();
-            $allTransactions = Transaction::with('reservationType', 'transactionUser')->get();
+            $this->reservations = Transaction::where('reservation_type_id', 2)->get();
+            $allTransactions = Transaction::where('reservation_type_id', 2)->with('reservationType', 'transactionUser')->get();
 
             foreach ($allTransactions as $transaction) {
+
+                // Get room names
+                $rooms = $transaction->properties->pluck('name_number')->implode(', ');
+
                 $this->events[] = [
                     'title' => $transaction->transactionUser->first_name . ' ' . $transaction->transactionUser->last_name,
                     'start' => $transaction->start_datetime,
@@ -46,12 +50,15 @@ class Dashboard extends Component
                     'type' => $transaction->reservationType?->name ?? 'N/A',
                     'category' => 'transaction',
                     'id' => $transaction->id,
+                    'url' => route('admin.view-reservation', ['transaction' => $transaction->id]),
                     'transaction_status' => $transaction->transaction_status,
+                    'room' => $rooms,
+                    'pax' => $transaction->pax,
+                    //'time' => \Carbon\Carbon::parse($transaction->start_datetime)->format('g:i A') . ' - ' . \Carbon\Carbon::parse($transaction->end_datetime)->format('g:i A'),
                 ];
             }
         }
     }
-
 
     public function render()
     {

@@ -1,88 +1,112 @@
-<div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
-    <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add a new user</h2>
-
-    <form wire:submit.prevent="">
-        <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-            <!-- Name -->
-            <div>
-                <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Full Name</label>
-                <input type="text" wire:model="name" id="name"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    placeholder="Enter full name" required>
-                @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Email -->
-            <div>
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                <input type="email" wire:model="email" id="email"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    placeholder="Enter email" required>
-                @error('email')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Role Dropdown -->
-            <div class="sm:col-span-2">
-                <label class="block mb-2 text-sm font-medium text-gray-900">Select Role</label>
-                <select wire:model="selectedRole"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    <option value="">-- Choose a Role --</option>
-                    @foreach ($roles as $role)
-                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
-                    @endforeach
-                </select>
-                @error('selectedRole')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Password -->
-            <div class="sm:col-span-2">
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                <input type="password" wire:model="password" id="password"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    placeholder="Enter password" required>
-                @error('password')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-        <div class="flex justify-between items-center space-y-2 mt-8">
-            <x-button onclick="history.back()" type="button"
-                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                Cancel
-            </x-button>
-            <x-button type="submit" wire:click="confirmCreate" wire:loading.attr="disabled">
-                Add User
-            </x-button>
-        </div>
-    </form>
-
-
-    <!-- Create Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmCreateItem">
-        <x-slot name="title">
+<div>
+    <!-- Header -->
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Create User') }}
-        </x-slot>
+        </h2>
+    </x-slot>
 
-        <x-slot name="content">
-            {{ __('Are you sure you want to add this item?') }}
-        </x-slot>
+    <!-- Body Container -->
+    <div class="py-3">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
 
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New user</h2>
 
-            <x-button class="ms-3 bg-green text-white" wire:click="saveUser" wire:loading.attr="disabled">
-                {{ __('Create User') }}
-            </x-button>
-        </x-slot>
-    </x-dialog-modal>
+                <!-- Back Button -->
+                <button onclick="window.location.href='{{ route('admin.manage-users') }}'" wire:navigate
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
+            </div>
 
-</div>
+            <!-- Form container -->
+            <form wire:submit.prevent="">
+                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Full Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="name" id="name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            placeholder="Ex. Juan Dela Cruz" required>
+                        @error('name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email <span
+                                class="text-red-500">*</span></label>
+                        <input type="email" wire:model="email" id="email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            placeholder="Ex. juan.delacruz@example.com" required>
+                        @error('email')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Role Dropdown -->
+                    <div class="sm:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Select Role <span
+                                class="text-red-500">*</span></label>
+                        <select wire:model="selectedRole"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            <option value="">-- Choose a Role --</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                            @endforeach
+                        </select>
+                        @error('selectedRole')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Password -->
+                    <div class="sm:col-span-2">
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password <span
+                                class="text-red-500">*</span></label>
+                        <input type="password" wire:model="password" id="password"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            placeholder="Enter password" required>
+                        @error('password')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center space-y-2 mt-8">
+                    <x-ghost-button onclick="history.back()" type="button">
+                        Cancel
+                    </x-ghost-button>
+                    <x-button type="submit" wire:click="confirmCreate" wire:loading.attr="disabled">
+                        Create User
+                    </x-button>
+                </div>
+            </form>
+
+
+            <!-- Create Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmCreateItem">
+                <x-slot name="title">
+                    {{ __('Create User') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('Are you sure you want to add this item?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-button class="ms-3 bg-green text-white" wire:click="saveUser" wire:loading.attr="disabled">
+                        {{ __('Create User') }}
+                    </x-button>
+                </x-slot>
+            </x-dialog-modal>
+
+        </div>

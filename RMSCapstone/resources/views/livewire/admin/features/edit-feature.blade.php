@@ -1,58 +1,71 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div>
+    <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Feature') }}
         </h2>
     </x-slot>
-    <div class="shadow-lg rounded-lg p-6 max-w-2xl mx-auto border mt-16 bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Feature</h2>
 
-        <form wire:submit.prevent="">
-            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+    <!-- Body Container -->
+    <div class="py-3">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
 
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Edit Feature</h2>
+
+                <!-- Back Button -->
+                <button onclick="history.back()"
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="" class="flex flex-col space-y-6 min-h-[200px]">
                 <!-- Name of Feature -->
-                <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Feature Name</label>
+                <div class="mt-4">
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Feature Name <span class="text-red-500">*</span></label>
                     <input type="text" wire:model="name" id="name"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="Type feature name" required>
-                    @error('name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                        placeholder="Ex. Parking, Garden, Fully-Furnished" required> @error('name')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
-            <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                    Cancel
-                </x-button>
-                <x-button type="submit" class="mt-4" wire:click="confirmEdit({{ $feature->id }})">
-                    Save Changes
-                </x-button>
-            </div>
-        </form>
-    </div>
+                <!-- Space to push buttons to bottom -->
+                <div class="flex-grow"></div>
 
-    <!-- Edit Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmEditItem">
-        <x-slot name="title">
-            {{ __('Edit Feature') }}
-        </x-slot>
+                {{-- Action buttons --}}
+                <div class="flex justify-between space-x-3 pt-4 mt-auto">
+                    <x-ghost-button onclick="history.back()" type="button">
+                        Cancel
+                    </x-ghost-button>
+                    <x-button type="submit" wire:click="confirmEdit({{ $feature->id }})">
+                        Save Changes
+                    </x-button>
+                </div>
+            </form>
+        </div>
 
-        <x-slot name="content">
-            {{ __('Are you sure you want to save changes on this item?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-button class="ms-3 bg-green text-white" wire:click="updateFeature({{ $feature->id }})"
-                wire:loading.attr="disabled">
+        <!-- Edit Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmEditItem">
+            <x-slot name="title">
                 {{ __('Edit Feature') }}
-            </x-button>
-        </x-slot>
-    </x-dialog-modal>
-</div>
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to save changes on this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmEditItem', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-button class="ms-3 bg-green text-white" wire:click="updateFeature({{ $feature->id }})"
+                    wire:loading.attr="disabled">
+                    {{ __('Edit Feature') }}
+                </x-button>
+            </x-slot>
+        </x-dialog-modal>
+    </div>

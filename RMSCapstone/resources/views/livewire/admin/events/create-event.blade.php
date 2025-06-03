@@ -1,218 +1,272 @@
-<div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
-    <h2 class="mb-2 text-xl font-bold text-gray-900 text-center">Add New Event</h2>
+<div>
+    <!-- Header -->
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Create Event') }}
+        </h2>
+    </x-slot>
 
-    <form wire:submit.prevent="">
-        <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+    <!-- Body Container -->
+    <div class="py-3">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
 
-            {{-- GUEST DETAILS --}}
-            <div class="col-span-full md:col-span-2">
-                <h3 class="block mb-4 text-lg font-semibold text-gray-900 dark:text-white">Guest Details</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
-                        <input type="text" wire:model="first_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('first_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Event</h2>
 
-                    <div>
-                        <label for="middle_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Middle Name</label>
-                        <input type="text" wire:model="middle_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('middle_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
-                        <input type="text" wire:model="last_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('last_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        <input type="text" wire:model="email"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('email')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="contact_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact
-                            Number</label>
-                        <input type="text" wire:model="contact_number"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('contact_number')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="company_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company
-                            Name</label>
-                        <input type="text" wire:model="company_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('company_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label for="city_municipality"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City/Municipality</label>
-                        <input type="text" wire:model="city_municipality"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('city_municipality')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="country" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country</label>
-                        <input type="text" wire:model="country"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('country')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
+                <!-- Back Button -->
+                <button onclick="window.location.href='{{ route('admin.events') }}'" wire:navigate
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
             </div>
 
-            {{-- EVENT DETAILS --}}
-            <div class="col-span-full md:col-span-2">
-                <h3 class="block mb-4 text-lg font-semibold text-gray-900 dark:text-white">Event Details</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="start_datetime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
-                            Start
-                            Date and Time</label>
-                        <input type="datetime-local" wire:model.live="start_datetime" id="start_datetime"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('start_datetime')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+            <!-- Form Container -->
+            <form wire:submit.prevent="">
+                <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+
+                    {{-- GUEST DETAILS --}}
+                    <div class="col-span-full md:col-span-2">
+                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-white">Booking Contact Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="first_name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="first_name"
+                                    placeholder="Ex. Juan" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('first_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="middle_name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Middle
+                                    Name</label>
+                                <input type="text" wire:model="middle_name"
+                                    placeholder="Ex. Mercado"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('middle_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="last_name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="last_name"
+                                    placeholder="Ex. Dela Cruz" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('last_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div>
+                                <label for="email"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="email" required
+                                    placeholder="Ex. juan.delacruz@example.com"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('email')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="contact_number"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact
+                                    Number <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="contact_number" required
+                                    placeholder="Ex. 0912 3456 7890"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('contact_number')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="company_name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="company_name" required
+                                    placeholder="Ex. Event Management Inc."
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('company_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label for="city_municipality"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City/Municipality <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="city_municipality"
+                                    placeholder="Ex. Taguig City" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('city_municipality')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="country"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="country"
+                                    placeholder="Ex. Philippines" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('country')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="end_datetime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event End
-                            Date and Time
-                        </label>
-                        <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('end_datetime')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    {{-- EVENT DETAILS --}}
+                    <div class="col-span-full md:col-span-2 mt-4">
+                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-white">Event Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="start_datetime"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
+                                    Start
+                                    Date and Time <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" wire:model.live="start_datetime" id="start_datetime" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('start_datetime')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="end_datetime"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event End
+                                    Date and Time <span class="text-red-500">*</span>
+                                </label>
+                                <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('end_datetime')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="hall"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
+                                    Hall <span class="text-red-500">*</span></label>
+                                <select id="hall" wire:model="selected_hall" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <option value="">Select Event Hall</option>
+                                    @foreach ($halls as $hall)
+                                        <option value="{{ $hall->id }}"
+                                            @if ($hall->isBooked) disabled @endif>
+                                            {{ $hall->name_number }} @if ($hall->isBooked)
+                                                - (Booked)
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('selected_hall')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="event_type_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
+                                    Type <span class="text-red-500">*</span></label>
+                                <select wire:model="event_type_id" id="event_type_id" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <option value="">Select Event Type</option>
+                                    @foreach ($eventTypes as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('event_type_id')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div>
+                                <label for="total_adults"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
+                                    Adults <span class="text-red-500">*</span></label>
+                                <input type="number" wire:model.live="total_adults" id="total_adults"
+                                    min="0" onwheel="this.blur()" required
+                                    placeholder="Ex. 100 Adults"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('total_adults')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="total_kids"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
+                                    Kids <span class="text-red-500">*</span></label>
+                                <input type="number" wire:model.live="total_kids" id="total_kids" onwheel="this.blur()"
+                                    placeholder="Ex. 50 Kids" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('total_kids')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="pax"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
+                                    Pax <span class="text-red-500">*</span></label>
+                                <input type="number" id="pax" min="0" disabled
+                                    value="{{ $pax }}"
+                             class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                                @error('pax')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="mb-4">
+                                <label for="transaction_status"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
+                                    Status <span class="text-red-500">*</span></label>
+                                <select wire:model="transaction_status" id="transaction_status" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <option value="">-- Select Event Status -- </option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="ongoing">On-going</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="terminated">Terminated</option>
+                                </select>
+                                @error('transaction_status')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="total_amount"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Agreed Event
+                                    Cost <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="total_amount" id="total_amount" required
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
+                                    placeholder="Ex. 50,000.00">
+                                @error('total_amount')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="hall" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Event
-                            Hall</label>
-                        <select id="hall" wire:model="selected_hall"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            <option value="">-- Choose a hall --</option>
-                            @foreach ($halls as $hall)
-                                <option value="{{ $hall->id }}" @if ($hall->isBooked) disabled @endif>
-                                    {{ $hall->name_number }} @if ($hall->isBooked)
-                                        - (Booked)
-                                    @endif
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('selected_hall')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <div>
-                        <label for="event_type_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
-                            Type</label>
-                        <select wire:model="event_type_id" id="event_type_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            <option value="">Select Type</option>
-                            @foreach ($eventTypes as $type)
-                                <option value="{{ $type->id }}">{{ $type->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('event_type_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div>
-                        <label for="total_adults" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
-                            Adults</label>
-                        <input type="number" wire:model.live="total_adults" id="total_adults" min="0"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('total_adults')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="total_kids" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
-                            Kids</label>
-                        <input type="number" wire:model.live="total_kids" id="total_kids" min="0"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('total_kids')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="pax" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Pax</label>
-                        <input type="number" id="pax" min="0" readonly value="{{ $pax }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        @error('pax')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div class="mb-4">
-                        <label for="transaction_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
-                            Status</label>
-                        <select wire:model="transaction_status" id="transaction_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            <option value="">-- Select Event Status -- </option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="ongoing">On-going</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="terminated">Terminated</option>
-                        </select>
-                        @error('transaction_status')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="total_amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Agreed Event
-                            Amount</label>
-                        <input type="amount" wire:model="total_amount" id="total_amount"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Enter agreed total amount">
-                        @error('total_amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-
-            {{-- FOR SCREENSHOT PAYMENT UPLOAD --}}
-            {{--
+                    {{-- FOR SCREENSHOT PAYMENT UPLOAD --}}
+                    {{--
             <div class="col-span-full md:col-span-2">
                 <h3 class="block mb-4 text-lg font-semibold text-gray-900 dark:text-white">Payment Proof</h3>
                 <div class="space-y-4">
@@ -259,38 +313,38 @@
                 </div>
             </div>
             --}}
+                </div>
+
+                <div class="flex justify-between items-center space-y-2 mt-6">
+                    <x-ghost-button onclick="history.back()" type="button">
+                        Cancel
+                    </x-ghost-button>
+                    <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+                        Add Event
+                    </x-button>
+                </div>
+            </form>
+
+            <x-dialog-modal wire:model.live="confirmCreateItem">
+                <x-slot name="title">
+                    {{ __('Create Event') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('Are you sure you want to add this event?') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled"
+                        class="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-button
+                        class="ms-3 bg-green text-white dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800"
+                        wire:click="saveEvent" wire:loading.attr="disabled">
+                        {{ __('Create Event') }}
+                    </x-button>
+                </x-slot>
+            </x-dialog-modal>
         </div>
-
-        <div class="flex justify-between items-center space-y-2 mt-6">
-            <x-button onclick="history.back()" type="button"
-                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500">
-                Cancel
-            </x-button>
-            <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
-                Add Event
-            </x-button>
-        </div>
-    </form>
-
-    <x-dialog-modal wire:model.live="confirmCreateItem">
-        <x-slot name="title">
-            {{ __('Create Event') }}
-        </x-slot>
-
-        <x-slot name="content">
-            {{ __('Are you sure you want to add this event?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled"
-                class="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-500">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-button class="ms-3 bg-green text-white dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800"
-                wire:click="saveEvent" wire:loading.attr="disabled">
-                {{ __('Create Event') }}
-            </x-button>
-        </x-slot>
-    </x-dialog-modal>
-</div>

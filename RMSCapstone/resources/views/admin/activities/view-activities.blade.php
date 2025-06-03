@@ -6,6 +6,6 @@
     </x-slot>
 
     <div class="bg-white dark:bg-[#2A2A2A]  overflow-hidden shadow-xl sm:rounded-lg">
-        @livewire('admin.activities.view-activities')
+        @livewire('admin.activities.view-activities', ['lazy' => true])
     </div>
 </x-app-layout>

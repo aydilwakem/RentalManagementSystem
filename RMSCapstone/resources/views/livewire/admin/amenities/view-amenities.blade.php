@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
-    @if ($amenities->isEmpty())
+    @if ($amenities->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No amenities yet.<br> Click "Create Amenity" to add a new
@@ -153,15 +153,15 @@
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        @foreach ($amenities as $amenity)
-                            <tr class="border-b">
+                        @forelse ($amenities as $amenity)
+                            <tr class="border-b hover:bg-gray-50">
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2">
                                     <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
                                         value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
                                 </th>
                                 <td class="px-4 py-3 font-semibold text-gray-900">{{ $amenity->name }}</td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-4">
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     @can('amenity-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
@@ -186,7 +186,14 @@
 
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <!-- No Match Search / Filter Result Message -->
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No amenities found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
                 <div class="py-6 px-4 !bg-white rounded-xl shadow-sm">
@@ -224,7 +231,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteAmenity({{ $amenity->id }})"
+                        <x-danger-button class="ms-3" wire:click="deleteAmenity"
                             wire:loading.attr="disabled">
                             {{ __('Delete Amenity') }}
                         </x-danger-button>

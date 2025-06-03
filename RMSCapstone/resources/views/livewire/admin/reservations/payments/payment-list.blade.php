@@ -96,7 +96,7 @@
                         <th class="px-4 py-3">Guest Name</th>
                         <th class="px-4 py-3">Transaction No.</th>
                         <th class="px-4 py-3">Invoice No.</th>
-                        <th class="px-4 py-3">Total Amount Paid</th>
+                        <th class="px-4 py-3">Amount Paid</th>
                         <th class="px-4 py-3">Payment Type</th>
                         <th class="px-4 py-3">Reference No.</th>
                         <th class="px-4 py-3">Method</th>
@@ -106,44 +106,54 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($payments as $payment)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
-                            <span>{{ $payment->id ?? 'N/A' }}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
-                            {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->invoice_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            ₱{{ number_format($payment->amount_paid, 2) }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ ucfirst($payment->payment_type ?? 'Unknown') }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->payment_reference_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' :
-                        ($payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' :
-                            ($payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : 'bg-gray-100 text-gray-500')) }}">
-                                {{ ucfirst($payment->payment_status ?? 'Unknown') }}
-                            </span>
-                        </td>
-                        {{-- <td class="px-4 py-3 space-x-1">
+                    @forelse ($payments as $payment)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
+                                <span>{{ $payment->id ?? 'N/A' }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
+                                {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->invoice_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                ₱{{ number_format($payment->amount_paid, 2) }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ ucfirst($payment->payment_type ?? 'Unknown') }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->payment_reference_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                @if ($payment->payment_status === 'pending')
+                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">
+                                        Pending
+                                    </span>
+                                @elseif ($payment->payment_status === 'completed')
+                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-500">
+                                        Completed
+                                    </span>
+                                @elseif ($payment->payment_status === 'failed')
+                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-500">
+                                        Failed
+                                    </span>
+                                @else
+                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+                                        Unknown Status
+                                    </span>
+                                @endif
+                            </td>
+                            {{-- <td class="px-4 py-3 space-x-1">
                             <!-- View Icon -->
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                 href="#">
@@ -152,8 +162,14 @@
                             <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
                             </i>
                         </td> --}}
-                    </tr>
-                    @endforeach
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No payments found.
+                            </td>
+                        </tr>
+                    @endforelse
 
                 </tbody>
             </table>

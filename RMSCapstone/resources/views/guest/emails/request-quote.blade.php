@@ -114,7 +114,7 @@
             <p style="margin-top: 20px;">
                 We look forward to helping you plan your perfect event!<br>
                 Thank you,<br>
-                The Canopy Farm PH Team
+                The Canopy Farm PH
             </p>
 
         </div>

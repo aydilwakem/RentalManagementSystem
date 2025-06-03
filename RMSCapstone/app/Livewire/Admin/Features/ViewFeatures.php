@@ -26,21 +26,29 @@ class ViewFeatures extends Component
 
     //Public declaration for confirmation modal
     public $confirmItemDelete = false;
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
+    public $selectedFeatureId = null;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
+
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder-sm');
+    }
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->features->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getFeaturesProperty(){
@@ -52,17 +60,19 @@ class ViewFeatures extends Component
     }
 
     public function deleteSelectedRows(){
-        PropertyFeature::whereIn('id', $this->selectedRows)->delete(); 
+        PropertyFeature::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected features got deleted!');
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
     {
+        $this->selectedFeatureId = $id;
         $this->confirmItemDelete = $id;
     }
 
@@ -83,14 +93,15 @@ class ViewFeatures extends Component
      * - Fake IDs for the features are recalculated and stored in the session.
      * - Displays a success message after the feature is successfully deleted.
      */
-    public function deleteFeature($id)
+    public function deleteFeature()
     {
-        $feature = PropertyFeature::find($id);
+        $feature = PropertyFeature::find($this->selectedFeatureId);
 
         if ($feature) {
             if ($this->confirmItemDelete) {
                 PropertyFeature::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
+                $this->selectedFeatureId = null;
 
                 // Fetch remaining features - sorted by creation date, only type 2
                 $features = PropertyFeature::where('property_type_id', 2)
@@ -126,10 +137,10 @@ class ViewFeatures extends Component
         $this->sortBy = $sortByField;
         $this->sortDir = "ASC";
     }
-    
+
     public function render()
     {
-       // Retrieve features where property_type_id = 2, 
+       // Retrieve features where property_type_id = 2,
         $features = $this->features;
 
         // Retrieve fake IDs from session

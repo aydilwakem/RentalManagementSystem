@@ -28,21 +28,21 @@ class ViewEventCategories extends Component
 
     public $confirmItemDelete = false; //Modal for delete confirmation
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->eventCategories->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getEventCategoriesProperty()
@@ -79,9 +79,14 @@ class ViewEventCategories extends Component
     }
 
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
 
     public function confirmDelete($id)
         {
@@ -107,7 +112,7 @@ public function deleteEventCategory()
         }
 
         // Check if the category is referenced in another table
-        if (Transaction::where('event_type_id', $eventCategory->id)->exists()) { 
+        if (Transaction::where('event_type_id', $eventCategory->id)->exists()) {
             $this->cannotDeleteItem = true; // Show the cannot delete modal
             $this->confirmItemDelete = null; // Close the confirmation modal
             return;
@@ -135,13 +140,13 @@ public function deleteEventCategory()
             session()->flash('message', 'Event Category successfully deleted!');
         }catch (QueryException $e) {
             // Check if the error is an integrity constraint violation
-            if ($e->getCode() == 23000) { 
+            if ($e->getCode() == 23000) {
                 $this->cannotDeleteItem = true; // Show the cannot delete modal
             } else {
                 throw $e; // Re-throw other exceptions
             }
         }
-    } 
+    }
 
     public function setSortBy($sortByField){
 
@@ -155,9 +160,9 @@ public function deleteEventCategory()
 
     public function render()
     {
-        $eventCategories = $this->eventCategories; 
+        $eventCategories = $this->eventCategories;
 
-             // Retrieve unique session 
+             // Retrieve unique session
             $fakeIDs = session('fake_ids_eventCategory', []);
 
             // Recalculate fake IDs if count mismatches
@@ -169,13 +174,13 @@ public function deleteEventCategory()
                 session(['fake_ids_eventCategory' => $fakeIDs]);
             }
 
-        
-        return view('livewire.admin.event-categories.view-event-categories',[
-            'eventCategories' => $eventCategories, 
-            'fakeIDs' => $fakeIDs,
-           
-        ]); 
 
-        
+        return view('livewire.admin.event-categories.view-event-categories',[
+            'eventCategories' => $eventCategories,
+            'fakeIDs' => $fakeIDs,
+
+        ]);
+
+
     }
 }

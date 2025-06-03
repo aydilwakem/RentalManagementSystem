@@ -1,649 +1,225 @@
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!--[if gte mso 9]>
-    <xml>
-    <o:OfficeDocumentsettings>
-    <o:AllowPNG/>
-    <o:PixelsPerInch>96</o:PixelsPerInch>
-    </o:OfficeDocumentsettings>
-    </xml>
-    <![endif]-->
-    <!--[if gt mso 15]>
-     <style type="text/css" media="all">
-     /* Outlook 2016 Height Fix */
-     table, tr, td {border-collapse: collapse;}
-     tr { font-size:0px; line-height:0px; border-collapse: collapse; }
-     </style>
-     <![endif]-->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Invoice Email</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Reservation Completed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            mso-line-height-rule: exactly;
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
-
         body,
-        table,
-        td,
         p,
-        a,
-        li {
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            font-family: 'Lato', Arial, Helvetica, sans-serif;
-        }
-
-        table td {
-            border-collapse: collapse;
-        }
-
-        table {
-            border-spacing: 0;
-            border-collapse: collapse;
-            border-color: #FFFFFF;
-        }
-
-        p,
-        a,
-        li,
-        td,
-        blockquote {
-            mso-line-height-rule: exactly;
-        }
-
-        p,
-        a,
-        li,
-        td,
-        body,
-        table,
-        blockquote {
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        img,
-        a img {
-            border: 0;
-            outline: none;
-            text-decoration: none;
-        }
-
-        img {
-            -ms-interpolation-mode: bicubic;
-        }
-
-        * img[tabindex="0"]+div {
-            display: none !important;
-        }
-
-        a[href^=tel],
-        a[href^=sms],
-        a[href^=mailto],
-        a[href^=date] {
-            color: inherit;
-            cursor: default;
-            text-decoration: none;
-        }
-
-        a[x-apple-data-detectors] {
-            color: inherit !important;
-            text-decoration: none !important;
-            font-size: inherit !important;
-            font-family: inherit !important;
-            font-weight: inherit !important;
-            line-height: inherit !important
-        }
-
-        .logo {
-            width: 220px !important;
-            height: 35px !important;
-        }
-
-        .logo-footer {
-            width: 129px !important;
-            height: 29px !important;
-        }
-
-        .table-container .alert-icon {
-            width: 120px !important;
-            height: 120px !important;
-        }
-
-        .table-container .avatar-img {
-            width: 64px !important;
-            height: 64px !important;
-        }
-
-        .x-gmail-data-detectors,
-        .x-gmail-data-detectors * {
-            border-bottom: 0 !important;
-            cursor: default !important
-        }
-
-        @media screen {
-            body {
-                font-family: 'Lato', Arial, Helvetica, sans-serif;
-            }
-        }
-
-        @media only screen and (max-width: 640px) {
-            body {
-                margin: 0px !important;
-                padding: 0px !important;
-            }
-
-            body,
-            table,
-            td,
-            p,
-            a,
-            li,
-            blockquote {
-                -webkit-text-size-adjust: none !important;
-            }
-
-            .table-main,
-            .table-container,
-            .social-icons,
-            table,
-            .table-container td {
-                width: 100% !important;
-                min-width: 100% !important;
-                margin: 0 !important;
-                float: none !important;
-            }
-
-            .table-container img {
-                width: 100% !important;
-                max-width: 100% !important;
-                display: block;
-                height: auto !important;
-            }
-
-            .table-container a {
-                width: 50% !important;
-                max-width: 100% !important;
-            }
-
-            .table-container .logo {
-                width: 200px !important;
-                height: 30px !important;
-            }
-
-            .table-container .alert-icon {
-                width: 120px !important;
-                height: 120px !important;
-            }
-
-            .social-icons {
-                float: none !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-                width: 220px !important;
-                max-width: 220px !important;
-                min-width: 220px !important;
-                background: #383e56 !important;
-            }
-
-            .social-icons td {
-                width: auto !important;
-                min-width: 1% !important;
-                margin: 0 !important;
-                float: none !important;
-                text-align: center;
-            }
-
-            .social-icons td a {
-                width: auto !important;
-                max-width: 100% !important;
-                font-size: 10px !important;
-            }
-
-            .mobile-title {
-                font-size: 34px !important;
-            }
-
-            .table-container .logo-footer {
-                width: 129px !important;
-                height: 29px !important;
-                margin-bottom: 20px !important;
-            }
-
-            .block-img {
-                width: 100%;
-                height: auto;
-                margin-bottom: 20px;
-            }
-
-            .info-block {
-                padding: 0 !important;
-            }
-
-            .video-img {
-                width: 100% !important;
-                height: auto !important;
-            }
-
-            .post-footer-container td {
-                text-align: center !important;
-                padding: 0 40px 0 40px !important;
-            }
+        h3,
+        td {
+            font-family: 'Poppins', sans-serif;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 
-<body
-    style="padding: 0; margin: 0; -webkit-font-smoothing:antialiased; background-color:#f1f1f1; -webkit-text-size-adjust:none;">
-    <!--Main Parent Table -->
-    <table width="100%" border="0" cellpadding="0" direction="ltr" bgcolor="#f1f1f1" cellspacing="0"
-        role="presentation" style="width: 640px; min-width: 640px; margin:0 auto 0 auto;">
-        <tbody>
-            <tr>
-                <td style="display:none;font-size:0;line-height:0;color:#111111;">
-                    Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et
-                    dolore magnam aliquam quaerat
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <!--Content Starts Here -->
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#f1f1f1">
-                        <tr>
-                            <td height="30" style="line-height:30px;min-height:30px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <!--Top Header Starts Here -->
-                    <table border="0" bgcolor="#166534" cellpadding="0" cellspacing="0" width="640"
-                        role="presentation" align="center" style="width: 640px; min-width: 640px;">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <!-- Top spacing -->
-                                    <table cellpadding="0" cellspacing="0" border="0" width="40"
-                                        role="presentation" bgcolor="#166534">
-                                        <tr>
-                                            <td height="35" style="line-height:35px; min-height:35px;"></td>
-                                        </tr>
-                                    </table>
+<body style="margin: 0; padding: 0; background-color: #f0f0f0; font-family: Poppins, sans-serif; color: #333333;">
 
-                                    <!-- Logo row -->
-                                    <table cellpadding="0" cellspacing="0" border="0" width="640"
-                                        role="presentation" align="center" bgcolor="#166534">
-                                        <tr>
-                                            <td align="center">
-                                                <table cellpadding="0" cellspacing="0" border="0"
-                                                    role="presentation" align="center">
-                                                    <tr>
-                                                        <!-- Label -->
-                                                        <td align="center"
-                                                            style="color:#fdfdfd;padding:20px 20px 0 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:800;font-size:28px;-webkit-font-smoothing:antialiased;line-height:1.2;"
-                                                            class="table-container mobile-title">
-                                                            Canopy Farm
-                                                        </td>
+    <div
+        style="max-width: 800px; margin: 30px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
 
-                                                        <!-- Logo -->
-                                                        <td>
-                                                            <img src="{{ asset('images/canopy-logo.png') }}"
-                                                                alt="Canopy Farm Logo"
-                                                                style="max-width: 50px; height: auto; display: block;"
-                                                                width="50" border="0">
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
+        {{-- Header --}}
+        <div
+            style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
+            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
+                Thank you for visiting Canopy Farm! <i class="fa-solid fa-heart"></i>
+            </h1>
+            <p style="font-size: 16px; margin: 10px 0 20px;">We hope you enjoyed your visit and look forward to
+                welcoming you back soon!</p>
+        </div>
 
-                                        </tr>
-                                    </table>
+        {{-- Message --}}
+        <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
+            <h3 style="font-size: 18px; color: #333333; margin-top: 0;">Hello {{ $name }},</h3>
+            <p style="margin-bottom: 15px; text-align: justify;">Thank you for choosing Canopy Farm for your recent
+                stay. We hope you had a relaxing and memorable time
+                with us.
+            </p>
+            <p style="margin-bottom: 15px; text-align: justify;">It was a pleasure to have you as our guest, and we
+                truly appreciate you making wonderful memories here. If there is anything we can do to make your next
+                visit even better, please don’t hesitate to let us know.
+            </p>
+            <p style="margin-bottom: 25px; text-align: justify;">
+                Safe travels, and we look forward to welcoming you back soon!
+            </p>
 
-                                    <!-- Bottom spacing -->
-                                    <table cellpadding="0" cellspacing="0" border="0" width="40"
-                                        role="presentation" bgcolor="#166534">
-                                        <tr>
-                                            <td height="35" style="line-height:35px; min-height:35px;"></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            {{-- Guest Details --}}
+            <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 10px;">Guest
+                Details</h3>
+            <p style="margin: 5px 0;"><strong>Name:</strong> {{ $name }}</p>
+            <p style="margin: 5px 0;"><strong>Email:</strong> {{ $email }}</p>
+            <p style="margin: 5px 0;"><strong>Contact Number:</strong> {{ $contact_number }}</p>
 
-                    <!--Top Header Ends Here -->
-                    <!--Welcome  Section Ends Here -->
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tr>
-                            <td height="60" style="line-height:60px;min-height:60px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="640"
-                        role="presentation" bgcolor="#FFFFFF" class="table-container ">
-                        <tbody>
-                            <tr>
-                                <td align="center">
-                                    <img src="{{ asset('images/invoice-order-icon.png') }}" alt="Section Image"
-                                        width="120" height="120" class="alert-icon">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tr>
-                            <td height="20" style="line-height:20px;min-height:20px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tbody>
-                            <tr>
-                                <td align="center"
-                                    style="color:#45535C;padding:20px 40px 0 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:800;font-size:28px;-webkit-font-smoothing:antialiased;line-height:1.2;"
-                                    class="table-container mobile-title">
-                                    Thank You for Visiting Canopy Farm!
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center"
-                                    style="color:#45535C;padding:20px 40px 0 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:800;font-size:18px;-webkit-font-smoothing:antialiased;line-height:1.2;"
-                                    class="table-container mobile-title">
-                                    Hello {{ $name }},
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center"
-                                    style="color:#5a5a5a;padding:20px 40px 0 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:normal;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;"
-                                    class="table-container">
-                                    We hope you had a relaxing
-                                    and memorable time
-                                    with us. It was a pleasure to have you as our guest, and we truly appreciate you
-                                    making wonderful memories here. If there is anything we can do to make your next
-                                    visit even better, please don’t hesitate to let us know. <br>Safe travels, and we
-                                    look
-                                    forward to welcoming you back soon!</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tr>
-                            <td height="60" style="line-height:60px;min-height:60px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tbody>
-                            <tr>
-                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                                    style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                                    <tbody>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#f9f9f9" align="left"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                Order Confirmation #
-                                            </td>
-                                            <td bgcolor="#f9f9f9" align="right"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                4543656
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                                    style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                                    <tbody>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="left"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:normal;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                Purshased Item (1)
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="right"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                100$
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="left"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:normal;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                Purshased Item (2)
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="right"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                100$
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                                    style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                                    <tbody>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="left"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:normal;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                Shipping & Handling
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="right"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                20$
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                                    style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                                    <tbody>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="left"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:normal;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                Sales Taxes
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="right"
-                                                style="color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                                10$
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                                    style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                                    <tbody>
-                                        <tr>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="left"
-                                                style="border-top:2px solid #CCCCCC;border-bottom:2px solid #CCCCCC;color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;"
-                                                class="table-container">
-                                                TOTAL
-                                            </td>
-                                            <td bgcolor="#FFFFFF" align="right"
-                                                style="border-top:2px solid #CCCCCC;border-bottom:2px solid #CCCCCC;color:#5a5a5a;padding:10px 40px 10px 40px;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:16px;-webkit-font-smoothing:antialiased;line-height:1.4;"
-                                                class="table-container">
-                                                230$
-                                            </td>
-                                            <td bgcolor="#FFF" width="40" align="left"
-                                                style="color:#5a5a5a;padding:10px 0 10px 0;font-family: 'Lato', Arial, Helvetica, sans-serif;font-weight:bold;font-size:14px;-webkit-font-smoothing:antialiased;line-height:1.4;">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
-                        <tr>
-                            <td height="60" style="line-height:60px;min-height:60px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" bgcolor="#FFFFFF" role="presentation"
-                        class="table-container ">
-                        <tbody>
+            {{-- Reservation Details --}}
+            <div
+                style="background-color: #E8F5E9; border-radius: 5px; padding: 20px; margin-bottom: 25px; border: 1px solid #c6f3c9; margin-top: 20px;">
+                <h3 style="color: #166534; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Reservation Details
+                </h3>
+                <table cellpadding="0" cellspacing="0" style="width: 100%; font-size: 15px;">
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; color: #555;"><strong>Transaction
+                                Number:</strong></td>
+                        <td
+                            style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right; color: #166534; font-weight: bold;">
+                            {{ $invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; color: #555;">Check-in Date:</td>
+                        <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right;">
+                            {{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; color: #555;">Check-out Date:</td>
+                        <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right;">
+                            {{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #555;"><strong>Total Amount:</strong></td>
+                        <td style="padding: 8px 0; text-align: right; color: #555;">
+                            <strong>₱{{ number_format($total_amount, 2) }}</strong>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-                        </tbody>
-                    </table>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="640"
-                        style="width: 640px; min-width: 640px;" role="presentation" bgcolor="#FFFFFF">
+
+            {{-- Room Details --}}
+            <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                Accommodations</h3>
+            <table cellpadding="10" cellspacing="0"
+                style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                <tr style="background-color: #E8F5E9;">
+                    <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Room</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Total Pax</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Stay Duration</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Extra Person Charge</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
+                </tr>
+                @foreach ($properties as $property)
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                            {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) }}
+                        </td>
+                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td> --}}
+                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td> --}}
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                            {{ $property->pivot->days ?? '1' }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                            ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                    </tr>
+                @endforeach
+            </table>
+
+            {{-- Activities --}}
+            @if (count($activities))
+                <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                    Add-On Activities</h3>
+                <table cellpadding="10" cellspacing="0"
+                    style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                    <tr style="background-color: #E8F5E9;">
+                        <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Activity</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
+                    </tr>
+                    @foreach ($activities as $activity)
                         <tr>
-                            <td height="60" style="line-height:60px;min-height:60px;">
-                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $activity->name }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                                {{ $activity->pivot->quantity }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($activity->amount, 2) }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
                         </tr>
-                    </table>
-                    <table bgcolor="#383e56" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="35" style="line-height:35px;min-height:35px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table bgcolor="#383e56" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="35" style="line-height:35px;min-height:35px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table cellpadding="0" width="640" style="width: 640px; min-width: 640px;" cellspacing="0"
-                        border="0" role="presentation" align="center" bgcolor="#383e56">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <table cellpadding="0" width="220" cellspacing="0" border="0"
-                                        role="presentation" align="center" bgcolor="#383e56">
-                                        <tbody>
-                                            <tr class="social-icons">
-                                                <td style="padding:0 10px 0 10px;">
-                                                    <a href="https://www.MailerSend.com/" target="_blank"><img
-                                                            src="assets/social-facebook-white.png" alt="Social Icons"
-                                                            width="30" height="30" class="social-icon"></a>
-                                                </td>
-                                                <td style="padding:0 10px 0 10px;;">
-                                                    <a href="https://www.MailerSend.com/" target="_blank"><img
-                                                            src="assets/social-twitter-white.png" alt="Social Icons"
-                                                            width="30" height="30" class="social-icon"></a>
-                                                </td>
-                                                <td style="padding:0 10px 0 10px;">
-                                                    <a href="https://www.MailerSend.com/" target="_blank"><img
-                                                            src="assets/social-linkedin-white.png" alt="Social Icons"
-                                                            width="30" height="30" class="social-icon"></a>
-                                                </td>
-                                                <td style="padding:0 10px 0 10px;">
-                                                    <a href="https://www.MailerSend.com/" target="_blank"><img
-                                                            src="assets/social-instagram-white.png" alt="Social Icons"
-                                                            width="30" height="30" class="social-icon"></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table bgcolor="#383e56" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="35" style="line-height:35px;min-height:35px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table bgcolor="#383e56" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td
-                                style="color:#FFFFFF; font-size:14px; line-height:22px; text-align:center;border:none;font-weight:bold;">
-                                Street Address, Town/City, State ZIP <br>
-                                © 2021 Your Company, Inc. <br>
-                                <br>
-                                Update your email preferences <a href="https://www.MailerSend.com/" target="_blank"
-                                    class="link t-grey-1" style="text-decoration:underline; color:#FFFFFF;">here</a>.
-                            </td>
-                        </tr>
-                    </table>
-                    <table bgcolor="#383e56" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="60" style="line-height:60px;min-height:60px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table bgcolor="#CCCCCC" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="1" style="line-height:1px;min-height:1px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <table bgcolor="#f1f1f1" cellpadding="0" cellspacing="0" border="0" align="center"
-                        width="640" style="width: 640px; min-width: 640px;" role="presentation"
-                        class="table-container ">
-                        <tr>
-                            <td height="40" style="line-height:40px;min-height:40px;">
-                            </td>
-                        </tr>
-                    </table>
-                    <!--Bottom Section Ends Here -->
-                    <!--Main Td  Ends Here -->
-                </td>
-            </tr>
-        </tbody>
-        <!--Main Parent Table Ends Here -->
-    </table>
+                    @endforeach
+                </table>
+            @endif
+
+            {{-- Price Breakdown --}}
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 25px;">
+                <h3 style="color: #166534; margin-top: 0; margin-bottom: 10px;">Total Breakdown</h3>
+                <table width="100%" cellpadding="5" cellspacing="0" style="font-size: 15px;">
+                    <tr>
+                        <td style="text-align: left; ">Accomodation Charges</td>
+                        <td style="text-align: right;">₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; padding-bottom: 5px;">Activity Charges:</td>
+                        <td
+                            style="text-align: right; padding-bottom: 5px; {{ $balance_due > 0 ? 'color: #d9534f; font-weight: bold;' : 'color: black; font-weight: normal;' }}">
+                            ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }} </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-top: 1px solid #ddd; padding-top: 10px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-size: 18px; font-weight: bold;">Grand Total:</td>
+                        <td style="text-align: right; font-size: 18px; font-weight: bold; color: #166534;">
+                            ₱{{ number_format($total_amount, 2) }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            {{-- <hr style="border: none; border-top: 1px solid #cccccc; margin: 30px 0;"> --}}
+
+            <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6; text-align: center;">
+                <p style="margin-bottom: 25px;">We truly value your experience with us. Help us improve by sharing your
+                    thoughts:</p>
+
+                <a href="http://127.0.0.1:8000/guest/feedback-form"
+                    style="display: inline-block; background-color: #166534; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    Share Your Feedback Here!
+                </a>
+
+                <p style="font-size: 14px; color: #777; margin-top: 25px;">Your feedback helps us serve you better!</p>
+            </div>
+
+        </div>
+
+        {{-- Footer --}}
+        <div
+            style="background-color: #166534; color: #fff; text-align: center; padding: 15px; font-size: 14px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+
+            <div style="margin-bottom: 10px;">
+                <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
+
+                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
+                    style="color: #fff; margin: 0 8px; text-decoration: none;">
+                    <i class="fab fa-facebook-f fa-lg"></i>
+                </a>
+                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
+                    style="color: #fff; margin: 0 8px; text-decoration: none;">
+                    <i class="fab fa-instagram fa-lg"></i>
+                </a>
+                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
+                    style="color: #fff; margin: 0 8px; text-decoration: none;">
+                    <i class="fab fa-twitter fa-lg"></i>
+                </a>
+            </div>
+
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
+                <p style="margin: 0;">Phone: <span style="font-weight: 500;">0962-447-9893</span></p>
+                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            </div>
+
+
+            <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} Canopy Farm
+                PH. All rights reserved.</span>
+
+        </div>
+    </div>
 </body>
 
 </html>

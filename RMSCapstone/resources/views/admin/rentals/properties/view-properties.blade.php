@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-        @livewire('admin.properties.view-properties')
+        @livewire('admin.properties.view-properties', ['lazy' => true])
     </div>
 
 </x-app-layout>

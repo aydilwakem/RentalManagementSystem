@@ -16,7 +16,7 @@ class ViewEventHalls extends Component
 {
     use WithPagination;
 
-    public $eventHall; 
+    public $eventHall;
 
     #[Url(history: true)]
     public $search = '';
@@ -34,21 +34,21 @@ class ViewEventHalls extends Component
 
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false; //Modal for cannot delete due to integrity constraint
-    public $confirmBulkDelete = false; 
+    public $confirmBulkDelete = false;
 
-    //public declaration for bulk actions 
-    public $selectedRows = []; 
-    public $selectPageRows = false; 
+    //public declaration for bulk actions
+    public $selectedRows = [];
+    public $selectPageRows = false;
 
     public function updatedSelectPageRows($value){
         if ($value){
             $this->selectedRows = $this->halls->pluck('id')->map(function ($id){
-                return (string) $id; 
-                
+                return (string) $id;
+
             })->toArray();;
         }else{
-          $this->reset(['selectedRows', 'selectPageRows']);   
-        } 
+          $this->reset(['selectedRows', 'selectPageRows']);
+        }
     }
 
     public function getHallsProperty(){
@@ -90,13 +90,19 @@ class ViewEventHalls extends Component
         if ($e->getCode() == 23000) {
             $this->cannotDeleteItem = true; // FK error
         } else {
-            throw $e; 
+            throw $e;
         }
     }
     }
 
+    //lazy loading
+    public function placeholder()
+    {
+        return view('livewire.admin.placeholder');
+    }
+
     public function confirmDeleteInBulk(){
-        $this->confirmBulkDelete = true; 
+        $this->confirmBulkDelete = true;
     }
 
     public function confirmDelete($id)
@@ -181,7 +187,7 @@ class ViewEventHalls extends Component
     $allHalls = Property::ofType('Event Hall')->get();
 
     //query all halls with the property status (available, booked, out)
-    $halls = $this->halls; 
+    $halls = $this->halls;
 
     //Calculate fake IDs based on rooms sorted by created_at ASC
     $allSortedHalls = Property::ofType('Event Hall')

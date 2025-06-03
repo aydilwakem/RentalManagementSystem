@@ -1,6 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-
-    @if ($tenants->isEmpty())
+    @if ($tenants->isEmpty() && !$search)
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No tenants yet.<br> Click "Create Tenant" to add a new tenant.
             </p>
@@ -13,7 +12,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -29,7 +28,8 @@
                     </div>
                 @endcan
                 @can('tenant-soft-delete')
-                    <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    <x-button
+                        class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                         icon="fas fa-trash" href="{{ route('admin.deleted-tenants') }}">
                         Deleted Tenants
                     </x-button>
@@ -41,7 +41,7 @@
         <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
             <div class="flex items-center justify-between p-4">
                 {{-- Search Tab --}}
-                <div class="relative w-full md:w-1/2 lg:w-1/3">
+                <div class="relative">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg">
@@ -61,8 +61,8 @@
                     <button @click="open = !open" type="button"
                         class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Actions
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" aria-hidden="true">
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
@@ -80,85 +80,108 @@
             <table class="w-full text-left">
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
-                        <th scope="col" class="px-4 py-3">
+                        <!-- Checkbox -->
+                        <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                             <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                 class="accent-blue-600 w-4 h-4">
-                        </th>
-                        {{-- ID --}}
-                        <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                            <button class="flex items-center">
-                                ID
+                            <!-- ID -->
+                            <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                <span>ID</span>
                                 @if ($sortBy !== 'id')
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" class="size-4 ml-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                     </svg>
                                 @else
                                     @if ($sortDir == 'ASC')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                         </svg>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                         </svg>
                                     @endif
                                 @endif
-                            </button>
+                            </div>
                         </th>
 
-                        {{-- Name --}}
+                        <!-- Tenant Name -->
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('first_name')">
                             <button class="flex items-center">
                                 Tenant
                                 @if ($sortBy !== 'first_name')
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" class="size-4 ml-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                     </svg>
                                 @else
                                     @if ($sortDir == 'ASC')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                         </svg>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                            stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                         </svg>
                                     @endif
                                 @endif
                             </button>
                         </th>
 
-                        {{-- Email --}}
+                        <!-- Assigned Property -->
+                        <th scope="col" class="px-4 py-3">Assigned Property</th>
+
+                        <!-- Email -->
                         <th scope="col" class="px-4 py-3">Email</th>
 
-                        {{-- Phone Number --}}
+                        <!-- COntact Number -->
                         <th scope="col" class="px-4 py-3">Contact Number</th>
-                        <th scope="col" class="px-4 py-3 text-center">Action</th>
+
+                        <!-- Actions -->
+                        <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($tenants as $tenant)
-                        <tr class="border-b">
+                    @forelse ($tenants as $tenant)
+                        <tr class="border-b hover:bg-gray-50">
                             <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                <input wire:model.live="selectedRows" type="checkbox" name="tenant[]" value="{{ $tenant->id }}"
-                                    class="accent-blue-600 w-4 h-4">
+                                <input wire:model.live="selectedRows" type="checkbox" name="tenant[]"
+                                    value="{{ $tenant->id }}" class="accent-blue-600 w-4 h-4">
+                                <span> {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}</span>
                             </th>
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}
-                            </th>
+
                             <td class="px-4 py-3 font-semibold text-gray-900">
                                 {{ $tenant->first_name }} {{ $tenant->last_name }}
                             </td>
-                            <td class="px-4 py-3">{{ $tenant->email }}</td>
-                            <td class="px-4 py-3">{{ $tenant->contact_number ?? 'No contact number provided.' }}</td>
+                            <td class="px-4 py-3">
+                                @php $hasProperty = false; @endphp
+                                @foreach ($tenant->transactions as $transaction)
+                                    @foreach ($transaction->properties as $property)
+                                        {{ $property->name_number ?? 'N/A' }}<br>
+                                        @php $hasProperty = true; @endphp
+                                    @endforeach
+                                @endforeach
+                                @if (!$hasProperty)
+                                    <span class="italic text-gray-600">No property assigned</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                {!! $tenant->email ?? '<span class="text-gray-600 italic">No email provided.</span>' !!} </td>
+                            </td>
+                            <td class="px-4 py-3">
+                                {!! $tenant->contact_number ?? '<span class="text-gray-600 italic">No contact number provided.</span>' !!}
+                            </td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                 @can('tenant-view')
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
@@ -178,7 +201,13 @@
 
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No tenants found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
             <div class="py-4 px-3">
@@ -208,7 +237,7 @@
             <x-secondary-button wire:click="$set('confirmItemDelete', false)">
                 {{ __('Cancel') }}
             </x-secondary-button>
-            <x-danger-button class="ms-3" wire:click="deleteTenant({{ $tenant->id }})">
+            <x-danger-button class="ms-3" wire:click="deleteTenant">
                 {{ __('Delete Tenant') }}
             </x-danger-button>
         </x-slot>

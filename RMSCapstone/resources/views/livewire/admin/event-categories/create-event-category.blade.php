@@ -1,19 +1,38 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
-    <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6 shadow-md">
-        <div class="mx-auto max-w-2xl lg:py-2">
-            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new event category</h2>
+<div>
+    <!-- Header -->
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Create Event Category') }}
+        </h2>
+    </x-slot>
 
+    <!-- Body Container -->
+    <div class="py-3">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+
+            <div class="relative flex items-center mb-4">
+                <!-- Title -->
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Event Category</h2>
+
+                <!-- Back Button -->
+                <button onclick="window.location.href='{{ route('admin.event-categories') }}'" wire:navigate
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
+            </div>
+
+            <!-- Form container -->
             <form wire:submit.prevent="">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                     <!-- Name of Event Category -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category Name</label>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Category Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                            placeholder="Type event category name" required>
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            placeholder="Ex. Birthday, Wedding, etc." required>
                         @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -22,20 +41,20 @@
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900">Description</label>
                         <textarea wire:model="description" id="description" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                            placeholder="Your event category description here"></textarea>
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
+                            placeholder="Ex. Celebrating personal milestones like birthdays, complete with parties, gifts, and fun activities."></textarea>
                         @error('description')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center space-y-2 mt-6">
-                    <x-button onclick="history.back()" type="button"
-                        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                    <x-ghost-button onclick="history.back()" type="button">
                         Cancel
-                    </x-button>
-                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
+                    </x-ghost-button>
+                    <x-button type="submit" wire:loading.attr="disabled"
+                        wire:click="confirmCreate">
                         Add Event Category
                     </x-button>
                 </div>
