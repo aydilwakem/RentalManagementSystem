@@ -7,6 +7,7 @@ use App\Models\ReservationType;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Transaction>
@@ -24,6 +25,7 @@ class TransactionFactory extends Factory
     {
         return [
             'reservation_type_id' => ReservationType::factory(),
+            'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
             'created_by' => TransactionUser::factory(),
             //'event_type_id' => EventType::factory(),
             'total_adults' => $this->faker->numberBetween(1, 10),

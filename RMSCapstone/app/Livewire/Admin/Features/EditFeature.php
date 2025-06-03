@@ -13,6 +13,7 @@ class EditFeature extends Component
     public PropertyFeature $feature;
     public $name;
     public $featureId;
+    public $property_type_id; 
 
     //Public declaration of modal
     public $confirmEditItem = false;

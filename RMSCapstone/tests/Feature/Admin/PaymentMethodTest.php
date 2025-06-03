@@ -7,7 +7,11 @@ use App\Livewire\Admin\Settings\Payments\DeletedPayments;
 use App\Livewire\Admin\Settings\Payments\EditPayment;
 use App\Livewire\Admin\Settings\Payments\ViewPayment;
 use App\Livewire\Admin\Settings\Payments\ViewPayments;
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\Transaction;
+use App\Models\TransactionUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -274,4 +278,49 @@ class PaymentMethodTest extends TestCase
             'id' => $paymentMethod->id,
      ]);
     }
-}
+
+    public function test_payment_method_cannot_be_deleted_if_used_in_transactions()
+    {
+        // Create a user for the transaction
+        $user = TransactionUser::factory()->create();
+
+        // Create the transaction
+        $transaction = Transaction::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        // Create a payment method
+        $paymentMethod = PaymentMethod::factory()->create();
+
+        // Create an invoice associated with the transaction
+        $invoice = Invoice::factory()->create([
+            'transaction_id' => $transaction->id,
+        ]);
+
+        // Create a payment that uses the created invoice and payment method
+        $payment = Payment::factory()->create([
+            'invoice_id' => $invoice->id,
+            'payment_method_id' => $paymentMethod->id,
+        ]);
+
+    // Test single delete view component
+    Livewire::test(ViewPayment::class, ['paymentMethod' => $paymentMethod])
+        ->set('confirmItemDelete')
+        ->call('deletePaymentMethod', $paymentMethod->id)
+        ->assertSet('cannotDeleteItem', true)
+        ->assertHasNoErrors();
+
+    // Test list delete view component
+    Livewire::test(ViewPayments::class, ['paymentMethod' => $paymentMethod])
+        ->set('confirmItemDelete', $paymentMethod->id)
+        ->call('deletePaymentMethod')
+        ->assertSet('cannotDeleteItem', true)
+        ->assertHasNoErrors();
+
+    // Confirm the payment method was not soft deleted
+    $this->assertDatabaseHas('pm_payment_methods', [
+        'id' => $paymentMethod->id,
+        'deleted_at' => null,
+    ]);
+    }
+    }

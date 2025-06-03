@@ -15,11 +15,11 @@
     <h3 class="text-lg font-semibold text-gray-900 mb-3">Personal Information</h3>
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
-            <div><strong>Full Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }}
-                {{ $tenant->last_name }} {{ $tenant->suffix }}
+            <div><strong>Full Name:</strong> {{ $tenant->first_name ?? 'N/A'}} {{ $tenant->middle_name ?? 'N/A'}}
+                {{ $tenant->last_name ?? 'N/A'}} {{ $tenant->suffix ?? 'N/A'}}
             </div>
-            <div><strong>Email:</strong> {{ $tenant->email }}</div>
-            <div><strong>Phone Number:</strong> {{ $tenant->contact_number }}</div>
+            <div><strong>Email:</strong> {{ $tenant->email ?? 'N/A'}}</div>
+            <div><strong>Phone Number:</strong> {{ $tenant->contact_number ?? 'N/A'}}</div>
         </div>
     </div>
 
