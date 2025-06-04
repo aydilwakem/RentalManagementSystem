@@ -63,11 +63,19 @@
                         let room = arg.event.extendedProps.room || '';
                         let time = arg.event.extendedProps.time || '';
                         let pax = arg.event.extendedProps.pax || '';
+                        let status = arg.event.extendedProps.transaction_status || '';
 
-                        let html = '<div><b>' + title + '</b></div>';
-                        if (room) html += '<div>Room: ' + room + '</div>';
-                        if (time) html += '<div>Time: ' + time + '</div>';
-                        if (pax) html += '<div>Pax: ' + pax + '</div>';
+                        // First line with title, room and pax
+                        let firstLine = `<div class="text-sm font-semibold">${title}`;
+                        if (room) firstLine += ` | ${room}`;
+                        if (pax) firstLine += ` | ${pax} pax`;
+                        firstLine += '</div>';
+
+                        // Time on second line if exists
+                        let secondLine = time ? `<div class="text-xs text-gray-600">${time}</div>` : '';
+
+                        // Combine all lines
+                        let html = firstLine + secondLine;
 
                         return {
                             html: html

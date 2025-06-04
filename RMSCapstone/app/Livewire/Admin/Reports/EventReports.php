@@ -12,7 +12,7 @@ class EventReports extends Component
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 3; //Filter event transactions only
     public $sortBy = 'updated_at';
-    public $sortDir = 'DESC'; 
+    public $sortDir = 'DESC';
     public $search = '';
     public $perPage = 10;
 
@@ -29,7 +29,7 @@ class EventReports extends Component
 
     public function getTransactionsProperty()
     {
-        //-------- Querying database to select all from transactions 
+        //-------- Querying database to select all from transactions
         //-------- Where it's in between dinput date ranges
         $query = Transaction::query();
 
@@ -73,7 +73,7 @@ class EventReports extends Component
             'transactions' => $transactions,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'totalEvents' => $totalEvents, 
+            'totalEvents' => $totalEvents,
             'totalGuests' => $totalGuests,
             'totalAmountEarned' => $totalAmountEarned,
         ]);

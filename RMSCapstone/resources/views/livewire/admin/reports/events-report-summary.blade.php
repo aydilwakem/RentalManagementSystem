@@ -3,152 +3,179 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Event Reports</title>
+    <title>Canopy Farm PH - Event Summary Report</title>
+    <style>
+        @page {
+            margin: 40px 30px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #065f46;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 8px 0 4px;
+            color: #065f46;
+        }
+
+        p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .date-range {
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #c0c0c0;
+            padding: 8px 10px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        th {
+            background-color: #e6f7ed;
+            color: #065f46;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0fdf4;
+            border: 1px solid #a7f3d0;
+            border-radius: 5px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .summary p strong {
+            color: #047857;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .page-number {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
+        }
+    </style>
 </head>
-<style>
-    @page {
-        margin: 60px 40px 60px 40px;
-    }
-
-    .page-number:after {
-        content: "Page " counter(page);
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        font-size: 12px;
-        margin: 40px;
-        color: #333;
-    }
-
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    h1 {
-        font-size: 26px;
-        color: #166534;
-        margin: 0;
-    }
-
-    h2 {
-        font-size: 18px;
-        color: #444;
-        margin-bottom: 5px;
-    }
-
-    .date-range {
-        font-size: 13px;
-        margin-bottom: 25px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th,
-    td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        vertical-align: top;
-    }
-
-    th {
-        background-color: #e7f2ec;
-        color: #166534;
-        font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    footer {
-        position: fixed;
-        bottom: 30px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-size: 10px;
-        color: #999;
-    }
-</style>
 
 <body>
     <header>
-        <h1>Canopy Farm PH Events</h1>
-        <h4>006 San Gregorio Extension, Brgy. Buna Cerca , Indang, Philippines</h4>
-        <h4>0962 447 9893</h4>
-        <h2>Event Summary</h2>
+        <div class="page-number"></div>
+        <img src="{{ public_path('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+        <h1>Canopy Farm PH</h1>
+        <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+        <p>+63 962 447 9893</p>
+        <h2>Events Summary</h2>
         <p class="date-range">
-            <strong>Date Range:</strong>
+            <strong>Reporting Period:</strong>
             {{ $start_date ? \Carbon\Carbon::parse($start_date)->format('F d, Y') : 'N/A' }}
-            –
+            &ndash;
             {{ $end_date ? \Carbon\Carbon::parse($end_date)->format('F d, Y') : 'N/A' }}
         </p>
     </header>
-
+    <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
         <thead>
             <tr>
-                <th>Item</th>
-                <th>Transaction Number</th>
-                <th>Booked By</th>
-                <th>Event Hall</th>
-                <th>Event Type</th>
-                <th>Total Guests</th>
-                <th>Event Start Date</th>
-                <th>Event End Date</th>
-                <th>Total Amount</th>
-                <th>Status</th>
+                <th style="width: 6%;">#</th>
+                <th style="width: 13%;">Transaction No.</th>
+                <th style="width: 12%;">Booked By</th>
+                <th style="width: 10%;">Event Hall(s)</th>
+                <th style="width: 10%;">Event Type</th>
+                <th style="width: 9%;">Guests</th>
+                <th style="width: 14%;">Start Date & Time</th>
+                <th style="width: 14%;">End Date & Time</th>
+                <th style="width: 11%;">Amount</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($transactions as $transaction)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $transaction->transaction_number }}</td>
-                <td>
-                    {{ $transaction->transactionUser->first_name }}
-                    {{ $transaction->transactionUser->last_name }}
-                </td>
-                <td>
-                    @foreach ($transaction->properties as $property)
-                    {{ $property->name_number ?? 'N/A' }}<br>
-                    @endforeach
-                </td>
-                <td>{{ $transaction->event_type->name ?? 'N/A' }}</td>
-                <td>{{ $transaction->pax }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}</td>
-                <td>PHP{{ number_format($transaction->total_amount), 2 }}</td>
-                <td>{{ ucfirst($transaction->transaction_status) }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $transaction->transaction_number }}</td>
+                    <td>{{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
+                    </td>
+                    <td>
+                        @foreach ($transaction->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                        @endforeach
+                    </td>
+                    <td>{{ $transaction->event_type->name ?? 'N/A' }}</td>
+                    <td>{{ $transaction->pax }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}</td>
+                    <td>{{ number_format($transaction->total_amount, 2) }}</td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="6" style="text-align: center;">No events found in this date range.</td>
-            </tr>
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 20px;">No events were recorded for the
+                        selected date range.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
 
-    <div>
-        <h2><strong>Events Summary: </strong></h2>
-        <p><strong>Total Events Within Date Range: </strong>{{ $totalEvents }} events</p>
-        <p><strong>Total Guests:</strong> {{ $totalGuests }} guests </p>
-        <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
-
+    <div class="summary">
+        <h2>Summary of Key Metrics:</h2>
+        <p><strong>Total Events Conducted:</strong> {{ $totalEvents }}</p>
+        <p><strong>Total Guests Accommodated:</strong> {{ $totalGuests }}</p>
+        <p><strong>Total Revenue Generated:</strong> PHP {{ number_format($totalAmountEarned, 2) }}</p>
     </div>
 
     <footer>
         <div class="page-number"></div>
-        &copy; {{ now()->year }} Canopy Farm PH &mdash; Events Report generated on {{ now()->format('F d, Y h:i A')
-        }}
+        &copy; {{ now()->year }} Canopy Farm PH &mdash; Report generated on {{ now()->format('F d, Y h:i A') }}
     </footer>
 </body>
 

@@ -43,9 +43,8 @@
     @livewireStyles
 </head>
 
-<body x-data="{ theme: localStorage.getItem('theme') || 'theme-dark' }"
-      x-init="$el.classList.add(theme)"
-      x-effect="document.body.className = theme">    {{-- @if (isset($header))
+<body>
+  {{-- @if (isset($header))
     <header class="bg-white white:bg-[#2A2A2A] shadow w-full px-6">
         <div class="py-6">
             {{ $header }}

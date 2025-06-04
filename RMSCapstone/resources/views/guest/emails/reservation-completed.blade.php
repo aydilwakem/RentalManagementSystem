@@ -195,18 +195,24 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-facebook-f fa-lg"></i>
+                <a href="https://www.facebook.com/thecanopyfarmph" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/social-facebook-white.png') }}" alt="Facebook"
+                        style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-instagram fa-lg"></i>
+
+                <a href="https://www.instagram.com/thecanopyfarmph/" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/social-instagram-white.png') }}" alt="Instagram"
+                        style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-twitter fa-lg"></i>
+
+                <a href="https://www.tiktok.com/@canopyfarmph" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/tiktok-round-white-icon.png') }}" alt="Tiktok"
+                        style="width: 24px; height: 24px;">
                 </a>
+
             </div>
 
             <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">

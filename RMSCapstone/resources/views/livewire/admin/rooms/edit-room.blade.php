@@ -284,7 +284,7 @@
         </div>
 
         <!-- Edit Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmEditItem">
+        <x-dialog-modal wire:model.live="confirmEditItem" type="ghost">
             <x-slot name="title">
                 {{ __('Edit Room') }}
             </x-slot>
@@ -306,7 +306,7 @@
         </x-dialog-modal>
 
         <!-- Remove Image Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmDeleteImage">
+        <x-dialog-modal wire:model.live="confirmDeleteImage" type="danger">
             <x-slot name="title">
                 {{ __('Delete Image') }}
             </x-slot>

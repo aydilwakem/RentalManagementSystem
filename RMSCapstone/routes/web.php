@@ -55,11 +55,12 @@ use App\Mail\ReceiptRejectedMail;
 use App\Mail\ReservationCompletedMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationSubmittedMail;
+use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
-
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -70,7 +71,6 @@ Route::get('/', function () {
 
 // Authentication Middleware Group
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-
     // Dashboard Route
     Route::get('/', function () {
         return view('admin.dashboard');
@@ -522,8 +522,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/feedback', function () {
         return view('admin.feedback');
-    })->name('admin.feedback')->middleware('can:feedback');
-
+    })
+        ->name('admin.feedback')
+        ->middleware('can:feedback');
 
     // View
     Route::get('view/new-reservation/{transaction}', ViewTransaction::class)->name('admin.view-new-transaction')->middleware('can:new-reservation-view');
@@ -708,7 +709,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         ->middleware('can:tenant-soft-delete');
 });
 
-
 // --------------------- TEST ROUTES FOR PAYMENT INTEGRATION ----------------------------------- //
 
 Route::get('/payment-success', [PaymentController::class, 'success'])->name('payment.success');
@@ -739,7 +739,7 @@ Route::get('/guest-event', function () {
         'contact_person' => 'Alex Cruz',
         'email' => 'alex@example.com',
         'contact_number' => '09171234567',
-        'selected_hall' => (object)['name_number' => 'Hall B - Garden View'],
+        'selected_hall' => (object) ['name_number' => 'Hall B - Garden View'],
         'event_start' => now()->addDays(7)->setTime(15, 0),
         'event_end' => now()->addDays(7)->setTime(21, 0),
         'event_type' => 'Corporate Event',
@@ -749,7 +749,6 @@ Route::get('/guest-event', function () {
 
     return view('guest.emails.request-quote', ['quoteData' => $quoteData]);
 });
-
 
 Route::get('/reservation-submitted', function () {
     $fakeData = [
@@ -793,7 +792,6 @@ Route::get('/payment-rejected', function () {
     return new ReceiptRejectedMail($paymentDetails);
 });
 
-
 Route::get('/reservation-completed', function () {
     $reservationData = [
         'name' => 'Juan Dela Cruz',
@@ -808,25 +806,25 @@ Route::get('/reservation-completed', function () {
         'amount_paid' => 2000,
         'balance_due' => 3000,
         'properties' => collect([
-            (object)[
+            (object) [
                 'name_number' => 'Room A1',
-                'pivot' => (object)[
+                'pivot' => (object) [
                     'adults' => 2,
                     'kids' => 1,
                     'days' => 2,
                     'extra_charge' => 500,
                     'total_amount' => 2500,
-                ]
-            ]
+                ],
+            ],
         ]),
         'activities' => collect([
-            (object)[
+            (object) [
                 'name' => 'ATV Ride',
                 'amount' => 500,
-                'pivot' => (object)[
-                    'quantity' => 2
-                ]
-            ]
+                'pivot' => (object) [
+                    'quantity' => 2,
+                ],
+            ],
         ]),
     ];
 
@@ -847,25 +845,25 @@ Route::get('/reservation-confirmed', function () {
         'amount_paid' => 2000,
         'balance_due' => 3000,
         'properties' => collect([
-            (object)[
+            (object) [
                 'name_number' => 'Room A1',
-                'pivot' => (object)[
+                'pivot' => (object) [
                     'adults' => 2,
                     'kids' => 1,
                     'days' => 2,
                     'extra_charge' => 500,
                     'total_amount' => 2500,
-                ]
-            ]
+                ],
+            ],
         ]),
         'activities' => collect([
-            (object)[
+            (object) [
                 'name' => 'ATV Ride',
                 'amount' => 500,
-                'pivot' => (object)[
-                    'quantity' => 2
-                ]
-            ]
+                'pivot' => (object) [
+                    'quantity' => 2,
+                ],
+            ],
         ]),
     ];
 
@@ -895,11 +893,6 @@ Route::get('/guest-contact', function () {
     return view('guest.emails.contact-us', ['contactData' => $contactData]);
 });
 
-// ----------------------------- TEST ROUTE FOR PDFs ----------------------------------------- //
-
-
-
-
 Route::get('/reservation-confirmed', function () {
     $reservationData = [
         'name' => 'Juan Dela Cruz',
@@ -914,31 +907,181 @@ Route::get('/reservation-confirmed', function () {
         'amount_paid' => 2000,
         'balance_due' => 3000,
         'properties' => collect([
-            (object)[
+            (object) [
                 'name_number' => 'Room A1',
-                'pivot' => (object)[
+                'pivot' => (object) [
                     'adults' => 2,
                     'kids' => 1,
                     'days' => 2,
                     'extra_charge' => 500,
                     'total_amount' => 2500,
-                ]
-            ]
+                ],
+            ],
         ]),
         'activities' => collect([
-            (object)[
+            (object) [
                 'name' => 'ATV Ride',
                 'amount' => 500,
-                'pivot' => (object)[
-                    'quantity' => 2
-                ]
-            ]
+                'pivot' => (object) [
+                    'quantity' => 2,
+                ],
+            ],
         ]),
     ];
 
     return new ReservationConfirmedMail($reservationData);
 });
 
+// ----------------------------- TEST ROUTE FOR PDFs ----------------------------------------- //
+
+Route::get('/event-summary-preview', function () {
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 3) // 3 = event
+        ->get();
+
+    $start_date = now()->startOfMonth()->format('Y-m-d');
+    $end_date = now()->endOfMonth()->format('Y-m-d');
+
+    $totalEvents = $transactions->count();
+    $totalGuests = $transactions->sum('pax');
+    $totalAmountEarned = $transactions->sum('total_amount');
+
+    $pdf = Pdf::loadView('livewire.admin.reports.events-report-summary', [
+        'transactions' => $transactions,
+        'start_date' => $start_date,
+        'end_date' => $end_date,
+        'totalEvents' => $totalEvents,
+        'totalGuests' => $totalGuests,
+        'totalAmountEarned' => $totalAmountEarned,
+    ]);
+
+    return $pdf->stream('event-summary-preview.pdf');
+});
+
+Route::get('/lease-summary-preview', function () {
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 1) // 1 = lease
+        ->get();
+
+    $start_date = now()->startOfMonth()->format('Y-m-d');
+    $end_date = now()->endOfMonth()->format('Y-m-d');
+
+    $totalLeases = $transactions->count();
+
+    if ($totalLeases > 0) {
+        $totalMonths = $transactions->sum(function ($transaction) {
+            $start = Carbon::parse($transaction->start_datetime);
+            $end = Carbon::parse($transaction->end_datetime);
+            return $start->diffInMonths($end);
+        });
+
+        $averageLength = $totalMonths / $totalLeases;
+    } else {
+        $averageLength = 0;
+    }
+
+    $totalTenants = $transactions->sum('pax');
+    $totalAmountEarned = $transactions->sum('total_amount');
+
+    $pdf = Pdf::loadView('livewire.admin.reports.leases-report-summary', [
+        'transactions' => $transactions,
+        'start_date' => $start_date,
+        'end_date' => $end_date,
+        'totalLeases' => $totalLeases,
+        'averageLength' => round($averageLength, 2),
+        'totalTenants' => $totalTenants,
+        'totalAmountEarned' => $totalAmountEarned,
+    ]);
+
+    return $pdf->stream('lease-summary-preview.pdf');
+});
+
+Route::get('/reservation-summary-preview', function () {
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 2) // 2 = reservation
+        ->get();
+
+    $start_date = now()->startOfMonth()->format('Y-m-d');
+    $end_date = now()->endOfMonth()->format('Y-m-d');
+
+    $totalReservations = $transactions->count();
+
+    if ($totalReservations > 0) {
+        $totalDays = $transactions->sum(function ($transaction) {
+            $start = Carbon::parse($transaction->start_datetime);
+            $end = Carbon::parse($transaction->end_datetime);
+            return $start->diffInDays($end);
+        });
+
+        $averageLength = $totalDays / $totalReservations;
+    } else {
+        $averageLength = 0;
+    }
+
+    $totalGuests = $transactions->sum('pax');
+    $totalAmountEarned = $transactions->sum('total_amount');
+
+    $pdf = Pdf::loadView('livewire.admin.reports.reservations-report-summary', [
+        'transactions' => $transactions,
+        'start_date' => $start_date,
+        'end_date' => $end_date,
+        'totalReservations' => $totalReservations,
+        'averageLength' => round($averageLength, 2),
+        'totalGuests' => $totalGuests,
+        'totalAmountEarned' => $totalAmountEarned,
+    ]);
+
+    return $pdf->stream('reservation-summary-preview.pdf');
+});
+
+Route::get('/reservation-details-preview/{transaction}', function ($transactionId) {
+    $transaction = Transaction::with([
+        'invoice.payments',
+        'transactionUser',
+        'guestDetails',
+        'properties',
+        'activities' => function ($query) {
+            $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
+        },
+    ])->findOrFail($transactionId);
+
+    $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
+        'transaction' => $transaction,
+        'guestDetails' => $transaction->guestDetails,
+        'invoice' => $transaction->invoice,
+        'activities' => $transaction->activities,
+        'properties' => $transaction->properties,
+        'payments' => $transaction->invoice?->payments ?? [],
+        'totalRooms' => $transaction->totalRooms,
+        'totalAddons' => $transaction->totalAddons,
+    ]);
+
+    return $pdf->stream('reservation-details.pdf' . $transaction->start_datetime . '.pdf');
+});
+
+Route::get('/event-details-preview/{event}', function ($eventId) {
+    $event = Transaction::with([
+        'transactionUser',
+        'properties',
+        'invoice.transaction',
+        'event_type',
+    ])->findOrFail($eventId);
+
+    $pdf = Pdf::loadView('livewire.admin.events.event-details', [
+        'event' => $event,
+    ]);
+
+    return $pdf->stream('event-details-' . $event->start_datetime . '.pdf');
+});
 
 // ----------------------------- GUEST PAGES ----------------------------------------- //
 
