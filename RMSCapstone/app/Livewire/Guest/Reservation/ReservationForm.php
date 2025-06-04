@@ -883,6 +883,8 @@ class ReservationForm extends Component
                                 // Additional metadata for tracking purposes.
                                 'metadata' => [
                                     'invoice_id' => (string) $invoice->id,
+                                    'payment_type' => 'Security Deposit',
+                                    'notes' => 'Deposit for Reservation',
                                 ]
 
                             ],

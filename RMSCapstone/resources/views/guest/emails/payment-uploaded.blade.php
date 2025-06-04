@@ -27,10 +27,12 @@
 
         {{-- Header --}}
         <div
-            style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
-            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
-                Proof of Payment Received
+            style="background-color: #166534; color: #fff; padding: 20px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 60px;">
+            </div>
+            <h1 style="font-size: 24px; font-weight: bold; text-align: center; flex-grow: 1; margin: 0;">
+                Payment Received
             </h1>
             <p style="font-size: 16px; margin: 10px 0 20px;">Our team is now verifying it, and you'll receive a
                 confirmation email shortly.</p>
@@ -39,21 +41,17 @@
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
             <h3 style="margin-top: 0;">Hello {{ $full_name }},</h3>
 
-            <p style="margin-bottom: 15px;">We're pleased to inform you that we've successfully received your payment
-                screenshot for your upcoming stay at Canopy Farm PH!</p>
+            <p>Thank you for your payment! We have successfully received your payment.
+            </p>
 
-            <p style="margin-bottom: 15px;">Your payment is now under verification by our team. This process typically
-                takes around <strong>1-2 business days</strong>, and we appreciate your understanding and patience.</p>
-
-            <p style="margin-bottom: 25px;">Once verified, you will receive a separate email containing your <strong>official
-                reservation confirmation</strong> and all the necessary details, including your transaction ID, check-in
-                instructions, and payment summary. Please keep an eye on your inbox or spam!</p>
-
+            <p> Please wait while we confirm your reservation or update your booking. You’ll receive another email once
+                everything is finalized.</p>
 
             {{-- Closing statement and contact --}}
             <p style="margin-top: 25px;">
                 If you have any immediate questions or need to provide additional information, please don't hesitate to
-                reply to this email or call us directly at <span style="color:#166534; font-weight: 700;">0962-447-9893</span>.
+                reply to this email or call us directly at <span
+                    style="color:#166534; font-weight: 700;">0962-447-9893</span>.
                 We're here to ensure a smooth booking experience for you.
             </p>
 

@@ -18,6 +18,7 @@ class Invoice extends Model
         'invoice_number',
         'invoice_type',
         'sub_total',
+        'requested_remaining_balance',
         'deposit_paid',
         'amount_paid',
         'balance_due',
@@ -33,6 +34,7 @@ class Invoice extends Model
         'balance_due'   => 'decimal:2',
         'due_date'      => 'date',
         'completed_at'  => 'datetime',
+        'requested_remaining_balance' => 'boolean',
     ];
 
     public function transaction()

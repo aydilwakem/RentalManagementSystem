@@ -5,11 +5,15 @@ namespace App\Livewire\Admin\Reservations;
 use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\Receipt;
+use App\Models\Payment;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOfficialReceiptMail;
+use App\Mail\RequestRemainingBalanceMail;
+use App\Models\Invoice;
+use GuzzleHttp\Client;
 
 #[Layout('layouts.app')]
 class ViewReservation extends Component
@@ -23,10 +27,26 @@ class ViewReservation extends Component
     public $payments; // Holds all payments associated with the invoice
     public $totalAddons; // Holds the total amount of addons
     public $totalRooms; // Holds the total amount of rooms
-    public $showReceiptModal = false;
-    public $cannotGenerateReceiptModal = false;
     public $receipt;
     public $receiptNumber;
+
+    // ---------------- PAYMENT RELATED PROPERTIES ------------------ //
+
+    public $invoice_id;
+    public $amount_paid;
+    public $mode_of_payment;
+    public $payment_type;
+    public $payment_date;
+    public $payment_status;
+    public $notes;
+    public $currency;
+    public $verified_at;
+
+    // ---------------------------- MODALS -------------------------- // 
+    public $showReceiptModal = false;
+    public $cannotGenerateReceiptModal = false;
+    public $createPaymentModal = false;
+
 
     public function render()
     {
@@ -145,6 +165,7 @@ class ViewReservation extends Component
         $this->showReceiptModal = true;
     }
 
+
     public function printOfficialReceipt()
     {
         Log::info('Print Official Receipt method called.');
@@ -204,7 +225,6 @@ class ViewReservation extends Component
         Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
     }
 
-
     public function exportReservationDetails()
     {
         $transaction = Transaction::with([
@@ -233,5 +253,174 @@ class ViewReservation extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
         }, 'reservation-details-' . $this->transaction->start_datetime . '.pdf');
+    }
+
+    public function requestRemainingBalance()
+    {
+        Log::info('Request Remaining Balance method called.');
+
+
+        $transaction = $this->transaction;
+        $invoice = $this->invoice;
+        $transactionUser = $this->transactionUser;
+
+        $client = new Client();
+        $apiKey = env('PAYMONGO_SECRET_KEY');
+        $remainingBalanceInCentavos = intval($invoice->balance_due * 100);
+
+        try {
+            $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode($apiKey . ':'),
+                ],
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'send_email_receipt' => true,
+                            'show_description' => true,
+                            'show_line_items' => true,
+                            'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya'],
+                            'success_url' => route('guest.thank-you-page'),
+                            'cancel_url' => url('/payment-failed'),
+                            'line_items' => [[
+                                'currency' => 'PHP',
+                                'amount' => $remainingBalanceInCentavos,
+                                'description' => 'Reservation ' . $transaction->transaction_number,
+                                'name' => 'Canopy Farm PH',
+                                'quantity' => 1,
+                            ]],
+                            'description' => 'Reservation for ' . $transactionUser->first_name . ' ' . $transactionUser->last_name,
+                            'metadata' => [
+                                'invoice_id' => (string) $invoice->id,
+                                'payment_type' => 'Remaining Balance',
+                                'notes' => 'Payment for Remaining Balance',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $responseData = json_decode($response->getBody(), true);
+            $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
+
+            if ($paymentLink) {
+                $this->transaction->update(['payment_link' => $paymentLink]);
+            }
+        } catch (\Exception $e) {
+            Log::error('PayMongo link creation failed: ' . $e->getMessage());
+            $paymentLink = null; // fallback
+        }
+
+        // Update the invoice to flag that the request has been sent
+        $this->invoice->requested_remaining_balance = true;
+        $this->invoice->save();
+
+        $reservationData = [
+            'name' => trim($transactionUser->first_name . ' ' . $transactionUser->last_name),
+            'transaction_number' => $transaction->transaction_number,
+            'email' => $transactionUser->email ?? 'no-reply@example.com',
+            'invoice_number' => $invoice->invoice_number,
+            'check_in' => $transaction->start_datetime->format('Y-m-d'),
+            'check_out' => $transaction->end_datetime->format('Y-m-d'),
+            'sub_total' => $invoice->sub_total,
+            'amount_paid' => $invoice->amount_paid,
+            'remaining_balance' => $invoice->balance_due,
+            'payment_link' => $paymentLink,
+        ];
+
+        try {
+            Mail::to($reservationData['email'])->send(new RequestRemainingBalanceMail($reservationData));
+        } catch (\Exception $e) {
+            Log::error('Email send failed: ' . $e->getMessage());
+            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        }
+
+        return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id]);
+    }
+
+    public function OpenCreatePaymentModal()
+    {
+
+        Log::info('Open Create Payment method called.');
+        $this->createPaymentModal = true;
+    }
+
+    public function CloseCreatePaymentModal()
+    {
+
+        Log::info('Close Create Payment method called.');
+        $this->createPaymentModal = false;
+    }
+
+    public function CreatePayment()
+    {
+        Log::info('Create Payment method called.');
+
+        // Validate the input data
+        $this->validate([
+            'amount_paid' => 'required|numeric|min:0',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
+            'payment_date' => 'required|date',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        // Ensure the invoice exists
+        if (!$this->invoice) {
+            abort(404, 'No invoice found for this transaction.');
+        }
+
+        // Create the payment record
+        Payment::create([
+            'invoice_id' => $this->invoice->id,
+            'amount_paid' => $this->amount_paid,
+            'mode_of_payment' => 'cash',
+            'payment_type' => $this->payment_type,
+            'payment_date' => $this->payment_date,
+            'payment_status' => 'completed',
+            'notes' => $this->notes,
+            'currency' => 'PHP',
+            'verified_at' => now(),
+        ]);
+
+
+
+        // Update the invoice with the new amount paid and balance due
+        $newAmountPaid = $this->invoice->amount_paid + $this->amount_paid;
+        $newBalanceDue = max($this->invoice->sub_total - $newAmountPaid, 0);
+
+        $this->invoice->update([
+            'amount_paid' => $newAmountPaid,
+            'balance_due' => $newBalanceDue,
+        ]);
+
+        // If the balance is 0, update invoice status to 'completed'
+        if ($newBalanceDue == 0) {
+            $this->invoice->update([
+                'invoice_status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            // Log status change
+            Log::info("Invoice status updated to 'completed' because balance due is 0.");
+        }
+
+
+        // Reset the form fields after successful creation
+        $this->reset([
+            'amount_paid',
+            'mode_of_payment',
+            'payment_type',
+            'payment_date',
+            'payment_status',
+            'notes',
+            'currency',
+            'verified_at',
+        ]);
+
+        // Redirect to the same reservation view to refresh data
+        return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
+            ->with('success', 'Payment created successfully.');
     }
 }

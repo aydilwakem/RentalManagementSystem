@@ -22,6 +22,7 @@ class AddTransaction extends Component
     public $activityAmount = [];
     public $status = [];
     public $total_pax;
+    public $requested_remaining_balance;
 
     public $availableActivities;
 
@@ -218,14 +219,18 @@ class AddTransaction extends Component
                         ]);
                     }
 
-                    // Update invoice subtotal and balance_due
+                    // Update invoice subtotal, balance_due, and requested_remaining_balance state.
                     $this->transaction->invoice->increment('sub_total', $item['amount']);
                     $this->transaction->invoice->increment('balance_due', $item['amount']);
+                    $this->transaction->invoice->update([
+                        'requested_remaining_balance' => false,
+                    ]);
                 }
             }
 
-            // ✅ Sync the invoice status based on the new balance
+            // Sync the invoice status based on the new balance
             $invoice = $this->transaction->invoice->fresh(); // Get the updated invoice
+
             if ($invoice->balance_due > 0 && $invoice->invoice_status === 'completed') {
                 $invoice->invoice_status = 'pending';
                 $invoice->save();

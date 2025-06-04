@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Mail;
+
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+
+class RequestRemainingBalanceMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $reservationData;
+
+
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct($reservationData)
+    {
+        $this->reservationData = $reservationData;
+    }
+
+
+    public function build()
+    {
+        return $this->view('guest.emails.request-remaining-balance')
+            ->subject('Request Remaining Balance')
+            ->with([
+                'name' => $this->reservationData['name'],
+                'transaction_number' => $this->reservationData['transaction_number'],
+                'email' => $this->reservationData['email'],
+                'invoice_number' => $this->reservationData['invoice_number'],
+                'check_in' => $this->reservationData['check_in'],
+                'check_out' => $this->reservationData['check_out'],
+                'sub_total' => $this->reservationData['sub_total'],
+                'amount_paid' => $this->reservationData['amount_paid'],
+                'remaining_balance' => $this->reservationData['remaining_balance'],
+                'payment_link' =>  $this->reservationData['payment_link'],
+            ]);
+    }
+}

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
 class CreateReservation extends Component
@@ -657,6 +658,88 @@ class CreateReservation extends Component
             $setting = Setting::first();
             $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
 
+            // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
+
+            // Creates a new HTTP client instance (likely from GuzzleHttp\Client). 
+            // This client will be used to send HTTP requests to the PayMongo API.
+            $client = new Client();
+
+            // Retrieves the PayMongo secret key from .env.
+            $apiKey = env('PAYMONGO_SECRET_KEY');
+
+            // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
+            $amountInCentavos = intval($this->computeTotalAmount() * ($depositPercentage / 100) * 100);
+
+            try {
+
+                // Sends an HTTP POST request to PayMongo's API endpoint to create a checkout session (payment link).
+                $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
+
+                    'headers' => [ // Extra pieces of information to be sent with the HTTP request.
+                        'Accept' => 'application/json', // What type of data the client expects in response.
+                        'Content-Type' => 'application/json', // What type of data is being sent in the request body.
+                        'Authorization' => 'Basic ' . base64_encode($apiKey . ':'), // Access to paymongo, contains the secret key.
+                    ],
+
+                    // JSON payload to be sent in the request body.
+                    'json' => [
+                        'data' => [
+                            'attributes' => [ //  Payment Session Settings
+                                'send_email_receipt' => true, // Instructs PayMongo to email a receipt to the payer after a successful payment.
+                                'show_description' => true, // Shows the overall description of the payment on the checkout page.
+                                'show_line_items' => true, // Displays the breakdown of items (from line_items) on the PayMongo checkout page
+                                'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
+                                'success_url' => route('guest.thank-you-page'), // This is where the user will be redirected after successful payment.
+                                'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
+
+                                'line_items' => [ // This is a list of what the user is paying for.
+                                    [
+                                        'currency' => 'PHP',
+                                        'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
+                                        'description' => 'Reservation ' . $transaction->transaction_number,
+                                        'name' => 'Bayad ka na uy',
+                                        'quantity' => 1,
+                                    ],
+                                ],
+
+                                'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name, // This is a general description for the transaction, shown to the payer.
+
+                                // Additional metadata for tracking purposes.
+                                'metadata' => [
+                                    'invoice_id' => (string) $invoice->id,
+                                    'payment_type' => 'Security Deposit',
+                                    'notes' => 'Deposit for Reservation',
+                                ]
+
+                            ],
+                        ],
+                    ],
+
+
+                ]);
+
+                // Converts the JSON response from the PayMongo API into a PHP array.
+                $responseData = json_decode($response->getBody(), true);
+
+                // Retrieves the 'data' key from the response, which contains the attributes of the created checkout session.
+                // $responseAllData = $responseData['data'] ?? [];
+                // dd($responseAllData);
+
+                // Retrieves the checkout_url from the response 
+                $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
+
+                // Save payment link to transaction (optional)
+                $transaction->update(['payment_link' => $paymentLink]);
+            } catch (\Exception $e) {
+
+                Log::error('PayMongo link creation failed: ' . $e->getMessage());
+                $paymentLink = null; // fallback
+
+            }
+
+            // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
+
+
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
@@ -668,6 +751,7 @@ class CreateReservation extends Component
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
                 'expirationHours' => $this->expirationHours,
+                'payment_link' => $paymentLink,
             ];
         });
 

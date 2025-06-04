@@ -1009,3 +1009,8 @@ Route::prefix('guest')->group(function () {
 });
 
 // ----------------------------- TENANT PAGES ----------------------------------------- //
+
+
+// ------------------------------- WEBHOOK ----------------------------------------- //
+
+Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
