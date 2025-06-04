@@ -353,6 +353,7 @@
                         <div>
                             {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
                         </div>
+
                     </div>
             </div>
         @else
@@ -360,6 +361,34 @@
             @endif
 
 
+            <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
+
+       
+            @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
+                <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled">
+                    <div class="flex items-center justify-center">
+                        <!-- Spinner -->
+                        <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
+                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                        </span>
+
+                        <i class="fas fa-money-bill-wave mr-2" wire:loading.remove wire:target="requestRemainingBalance"></i>
+
+                        <span wire:loading.remove wire:target="requestRemainingBalance">
+                            Request Remaining Balance
+                        </span>
+                    </div>
+                </x-button>
+            @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
+                <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
+            @endif
+           
+            
             <!------------------------  GENERATE OFFICIAL RECEIPT ------------------------------------->
             @if ($transaction->transaction_status == 'done')
                 <div>
@@ -475,7 +504,26 @@
 
 
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
+           
+
             <section id="payments">
+
+
+                <div class="text-left py-10 flex items-center gap-2">
+                    <x-button wire:click="OpenCreatePaymentModal">
+                        <i class="fas fa-plus mr-2"></i>
+                        Create Payment
+                    </x-button>
+
+                    <!-- Info Icon with Tooltip -->
+                    <div class="relative group">
+                        <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer"></i>
+                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 text-xs text-white bg-gray-800 p-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                            Create Payment is for cash payments only.
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
                     <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
                         {{ __('Payments') }}
@@ -486,16 +534,16 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Invoice #</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Type</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Reference No.</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Upload Date</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Payment Date</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Status</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Notes</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Action</th>
+                                        {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Action</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white">
@@ -504,7 +552,7 @@
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice->invoice_number }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
-                                                {{ $payment->paymentMethod->mode_of_payment_name }}</td>
+                                                {{ $payment->mode_of_payment }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
                                                 ₱{{ number_format($payment->amount_paid, 2) }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
@@ -524,7 +572,7 @@
                                             </td>
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->notes ?? '-' }}
                                             </td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            {{-- <td class="border px-4 py-2 text-gray-700">
                                                 {{ $payment->verified_at ?? 'To be verified' }}</td>
                                             <td class="border px-4 py-2 space-x-2">
                                                 @if ($payment->payment_status === 'pending')
@@ -538,7 +586,7 @@
                                                         View Receipt
                                                     </a>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -550,6 +598,7 @@
                 </div>
             </section>
 
+          
 
             <!---------------------------- MODALS ---------------------------------------->
             <div>
@@ -568,6 +617,80 @@
                     </div>
                 @endif
             </div>
+
+            <div>
+                @if ($createPaymentModal)
+                    <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                            <h2 class="text-lg font-semibold mb-4 text-green-700">Add Payment</h2>
+
+                            <!-- Amount Paid -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700">Amount Paid</label>
+                                <input type="number" wire:model="amount_paid"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                @error('amount_paid')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Date -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700">Payment Date</label>
+                                <input type="date" wire:model="payment_date"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                @error('payment_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Type -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700">Payment Type</label>
+                                <select wire:model="payment_type"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                    <option value="">Select Payment Type</option>
+                                    <option value="Room Rent">Room Rent</option>
+                                    <option value="House Rent">House Rent</option>
+                                    <option value="Activity Fee">Activity Fee</option>
+                                    <option value="Event Hall">Event Hall</option>
+                                    <option value="Event Package">Event Package</option>
+                                    <option value="Security Deposit">Security Deposit</option>
+                                    <option value="Remaining Balance">Remaining Balance</option>
+                                </select>
+                                @error('payment_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700">Notes</label>
+                                <input type="text" wire:model="notes"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                @error('notes')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center gap-2 mt-6">
+                                <x-button type="button" wire:click="CloseCreatePaymentModal"
+                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                    Cancel
+                                </x-button>
+                                <x-button type="button" wire:click="CreatePayment">
+                                    Save Changes
+                                </x-button>
+                            </div>
+
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-------------------------- END OF MODALS ---------------------------------->
+              
 
             <!-- Back Button -->
             <div class="justify-end flex">

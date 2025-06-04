@@ -12,6 +12,7 @@ class EditTenant extends Component
 {
 
     public TransactionUser $tenant;
+    public $trn_user_type;
     public $first_name;
     public $middle_name;
     public $last_name;

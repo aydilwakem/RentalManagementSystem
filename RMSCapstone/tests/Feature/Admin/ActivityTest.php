@@ -184,7 +184,7 @@ class ActivityTest extends TestCase
         $response->assertDontSeeLivewire(DeletedActivities::class);
     }
 
-    //CRUD TESTING
+    //----------------------- CRUD TESTING ----------------------//
     //Create - with no image upload
     public function test_activity_can_be_created()
     {
@@ -289,52 +289,52 @@ class ActivityTest extends TestCase
 
     public function test_activity_cannot_be_deleted_if_used_in_transactions()
     {
-    // Create an activity
-    $activity = Activity::factory()->create();
+        // Create an activity
+        $activity = Activity::factory()->create();
 
-    // Create a transaction user (creator)
-    $user = TransactionUser::factory()->create();
+        // Create a transaction user (creator)
+        $user = TransactionUser::factory()->create();
 
-    // Create a transaction and attach the activity to it
-    $transaction = Transaction::factory()->create([
-        'created_by' => $user->id,
-    ]);
+        // Create a transaction and attach the activity to it
+        $transaction = Transaction::factory()->create([
+            'created_by' => $user->id,
+        ]);
 
-    // Attach activity to transaction (using pivot table 'transaction_activities')
-    $transaction->activities()->attach($activity->id, [
-        'quantity' => 1,
-        'amount' => 100,
-    ]);
+        // Attach activity to transaction (using pivot table 'transaction_activities')
+        $transaction->activities()->attach($activity->id, [
+            'quantity' => 1,
+            'amount' => 100,
+        ]);
 
-    // Mock the Livewire component and set confirmItemDelete to the activity id
-    //in ViewActivity Delete
-    Livewire::test(ViewActivity::class, ['activity' => $activity])
-        ->set('confirmItemDelete', $activity->id)
-        ->call('deleteActivity')
-        ->assertSet('cannotDeleteItem', true)
-        ->assertHasNoErrors();
+        // Mock the Livewire component and set confirmItemDelete to the activity id
+        //in ViewActivity Delete
+        Livewire::test(ViewActivity::class, ['activity' => $activity])
+            ->set('confirmItemDelete', $activity->id)
+            ->call('deleteActivity')
+            ->assertSet('cannotDeleteItem', true)
+            ->assertHasNoErrors();
 
-    //in ViewActivities Delete
-    Livewire::test(ViewActivities::class, ['activity' => $activity])
-        ->set('confirmItemDelete', $activity->id)
-        ->call('deleteActivity')
-        ->assertSet('cannotDeleteItem', true)
-        ->assertHasNoErrors();
+        //in ViewActivities Delete
+        Livewire::test(ViewActivities::class, ['activity' => $activity])
+            ->set('confirmItemDelete', $activity->id)
+            ->call('deleteActivity')
+            ->assertSet('cannotDeleteItem', true)
+            ->assertHasNoErrors();
 
-        // Simulate bulk delete attempt via ViewActivities component
-    Livewire::test(ViewActivities::class)
-        ->set('selectedRows', [$activity->id])
-        ->set('confirmBulkDelete', true)
-        ->call('deleteSelectedRows')
-        ->assertSet('cannotDeleteItem', true)
-        ->assertSet('confirmBulkDelete', false)
-        ->assertHasNoErrors();
+            // Simulate bulk delete attempt via ViewActivities component
+        Livewire::test(ViewActivities::class)
+            ->set('selectedRows', [$activity->id])
+            ->set('confirmBulkDelete', true)
+            ->call('deleteSelectedRows')
+            ->assertSet('cannotDeleteItem', true)
+            ->assertSet('confirmBulkDelete', false)
+            ->assertHasNoErrors();
 
-    // Assert activity still exists in database (not soft deleted)
-    $this->assertDatabaseHas('prd_activities', [
-        'id' => $activity->id,
-        'deleted_at' => null,
-    ]);
+        // Assert activity still exists in database (not soft deleted)
+        $this->assertDatabaseHas('prd_activities', [
+            'id' => $activity->id,
+            'deleted_at' => null,
+        ]);
     }
 
 public function test_bulk_delete_activities_successfully()

@@ -378,25 +378,23 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Invoice #</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Type</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Reference #</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Upload Date</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Payment Date</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Status</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Notes</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
                                 @foreach ($payments as $payment)
                                     <tr class="hover:bg-gray-50">
                                         <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice_id }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice->invoice_number }}</td>
                                         <td class="border px-4 py-2 text-gray-700">
-                                            {{ $payment->paymentMethod->mode_of_payment_name }}</td>
+                                            {{ $payment->mode_of_payment }}</td>
                                         <td class="border px-4 py-2 text-gray-700">
                                             ₱{{ number_format($payment->amount_paid, 2) }}</td>
                                         <td class="border px-4 py-2 text-gray-700">
@@ -415,7 +413,7 @@
                                             </span>
                                         </td>
                                         <td class="border px-4 py-2 text-gray-700">{{ $payment->notes ?? '-' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700">
+                                        {{-- <td class="border px-4 py-2 text-gray-700">
                                             {{ $payment->verified_at ?? 'To be verified' }}</td>
                                         <td class="border px-4 py-2 space-x-2">
                                             @if ($payment->payment_status === 'pending')
@@ -429,7 +427,7 @@
                                                     View Receipt
                                                 </a>
                                             @endif
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>

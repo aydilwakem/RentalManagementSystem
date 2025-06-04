@@ -41,7 +41,7 @@ class PaymentUploadedMail extends Mailable
     public function build()
     {
         return $this->view('guest.emails.payment-uploaded')
-            ->subject('Payment Uploaded Successfully')
+            ->subject('Payment Submitted Successfully')
             ->with([
                 'full_name' => $this->paymentDetails['full_name'],
                 'email' => $this->paymentDetails['email'],

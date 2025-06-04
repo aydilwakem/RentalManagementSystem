@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
     use SoftDeletes;
+    use HasFactory; 
 
     protected $table = 'trn_payments';
 
     protected $fillable = [
         'invoice_id',
         'payment_method_id',
+        'mode_of_payment',
         'amount_paid',
         'payment_type',
         'payment_screenshot',

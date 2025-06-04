@@ -151,6 +151,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         ->name('admin.deleted-rooms')
         ->middleware('can:room-soft-delete');
 
+    //Room Categories
     // List
     Route::get('/room-categories', function () {
         return view('admin.room-categories.view-room-categories');
@@ -305,12 +306,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Events Summary
     Route::get('/event-reports', function () {
         return view('admin.reports.event-reports');
-    })->name('admin.event-reports');
+    })->name('admin.event-reports')
+    ->middleware('can:event-reports');
 
     //--------------------------RESERVATION REPORTS PAGE------------------ //
     Route::get('/reservation-reports', function () {
         return view('admin.reports.reservation-reports');
-    })->name('admin.reservation-reports');
+    })->name('admin.reservation-reports')
+    ->middleware('can:reports');
 
     // Event Categories Route
 
@@ -375,23 +378,30 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     //List Inclusions
     Route::get('/inclusions', function () {
         return view('admin.inclusions.view-inclusions');
-    })->name('admin.inclusions');
+    })->name('admin.inclusions')
+    ->middleware('can:event-inclusions-list');
 
     // Create Inclusion
     Route::get('create/inclusions', function () {
         return view('admin.inclusions.create-inclusion');
-    })->name('admin.create-inclusion');
+    })->name('admin.create-inclusion')
+    ->middleware('can:event-inclusions-create');
 
     // View Inclusion
-    Route::get('view/inclusion/{inclusion}', ViewInclusion::class)->name('admin.view-inclusion');
+    Route::get('view/inclusion/{inclusion}', ViewInclusion::class)
+    ->name('admin.view-inclusion')
+    ->middleware('can:event-inclusions-view');
 
     //Edit Inclusions
-    Route::get('edit/inclusion/{inclusion}', EditInclusion::class)->name('admin.edit-inclusion');
+    Route::get('edit/inclusion/{inclusion}', EditInclusion::class)
+    ->name('admin.edit-inclusion')
+    ->middleware('can:event-inclusions-edit');
 
     // Deleted Inclusions (Soft Deletes)
     Route::get('deleted-inclusions', function () {
         return view('admin.inclusions.deleted-inclusions');
-    })->name('admin.deleted-inclusions');
+    })->name('admin.deleted-inclusions')
+    ->middleware('can:event-inclusions-soft-delete');
 
     // --------------------- Maintenance ---------------------------------------
 
@@ -503,7 +513,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // View Payments List
     Route::get('/payments-list', function () {
         return view('admin.reservations.payments.payment-list');
-    })->name('admin.payments-list');
+    })->name('admin.payments-list')
+    ->middleware('can:payments-list');
 
     // View Payment Receipt
     Route::get('view/payment-receipt/{payment}', ViewReceipt::class)->name('admin.view-payment-receipt');
@@ -514,7 +525,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/invoice-list', function () {
         return view('admin.reservations.invoices.invoice-list');
-    })->name('admin.invoice-list');
+    })->name('admin.invoice-list')
+    ->middleware('can:invoices-list');
 
     /**
      * Feedback
@@ -605,23 +617,30 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     //List Features
     Route::get('/features', function () {
         return view('admin.features.view-features');
-    })->name('admin.features');
+    })->name('admin.features')
+    ->middleware('can:house-features-list');
 
     // Create Feature
     Route::get('create/features', function () {
         return view('admin.features.create-feature');
-    })->name('admin.create-feature');
+    })->name('admin.create-feature')
+      ->middleware('can:house-features-create');
 
     // View Feature
-    Route::get('view/feature/{feature}', ViewFeature::class)->name('admin.view-feature');
+    Route::get('view/feature/{feature}', ViewFeature::class)
+    ->name('admin.view-feature')
+    ->middleware('can:house-features-view');
 
     //Edit Features
-    Route::get('edit/feature/{feature}', EditFeature::class)->name('admin.edit-feature');
+    Route::get('edit/feature/{feature}', EditFeature::class)
+    ->name('admin.edit-feature')
+    ->middleware('can:house-features-edit');
 
     // Deleted Features (Soft Deletes)
     Route::get('deleted-features', function () {
         return view('admin.features.deleted-features');
-    })->name('admin.deleted-features');
+    })->name('admin.deleted-features')
+      ->middleware('can:house-features-soft-delete');
 
     // ------------------ Leases
     //List
@@ -648,7 +667,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     //Lease Summary
     Route::get('/lease-reports', function () {
         return view('admin.reports.lease-reports');
-    })->name('admin.lease-reports');
+    })->name('admin.lease-reports')
+    ->middleware('can:lease-reports');
 
     // ------------------ House Categories
 
@@ -1132,3 +1152,8 @@ Route::prefix('guest')->group(function () {
 });
 
 // ----------------------------- TENANT PAGES ----------------------------------------- //
+
+
+// ------------------------------- WEBHOOK ----------------------------------------- //
+
+Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');

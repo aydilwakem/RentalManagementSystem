@@ -13,6 +13,7 @@ class EditInclusion extends Component
     public PropertyFeature $inclusion;
     public $name;
     public $inclusionId;
+    public $property_type_id; 
 
     //Public declaration of modal
     public $confirmEditItem = false;
