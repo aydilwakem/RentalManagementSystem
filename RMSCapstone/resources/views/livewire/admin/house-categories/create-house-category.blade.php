@@ -35,7 +35,7 @@
                         Cancel
                     </x-button>
                     <x-button wire:loading.attr="disabled" wire:click="confirmCreate">
-                        Add House Category
+                        Create House Category
                     </x-button>
                 </div>
             </form>

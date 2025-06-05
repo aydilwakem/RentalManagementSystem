@@ -68,7 +68,7 @@
                 </table>
             </div>
             <!-- Delete Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
                 <x-slot name="title">
                     {{ __('Delete Tenant Forever') }}
                 </x-slot>

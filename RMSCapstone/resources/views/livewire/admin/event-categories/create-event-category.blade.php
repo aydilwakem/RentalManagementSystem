@@ -55,7 +55,7 @@
                     </x-ghost-button>
                     <x-button type="submit" wire:loading.attr="disabled"
                         wire:click="confirmCreate">
-                        Add Event Category
+                        Create Event Category
                     </x-button>
                 </div>
             </form>

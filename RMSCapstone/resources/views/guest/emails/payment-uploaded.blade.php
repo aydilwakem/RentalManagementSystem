@@ -27,15 +27,14 @@
 
         {{-- Header --}}
         <div
-            style="background-color: #166534; color: #fff; padding: 20px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 60px;">
-            </div>
-            <h1 style="font-size: 24px; font-weight: bold; text-align: center; flex-grow: 1; margin: 0;">
+            style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
+            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 Payment Received
             </h1>
             <p style="font-size: 16px; margin: 10px 0 20px;">Our team is now verifying it, and you'll receive a
-                confirmation email shortly.</p>
+                confirmation email shortly.
+            </p>
         </div>
 
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">

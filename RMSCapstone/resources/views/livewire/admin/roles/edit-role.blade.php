@@ -134,7 +134,7 @@
                 </x-button>
                 <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
                     wire:click="confirmEdit({{ $role->id }})" :disabled="$this->isSuperAdmin() ? 'disabled' : null">
-                    Update Role
+                    Save Changes
                 </x-button>
             </div>
         </form>
@@ -146,7 +146,7 @@
         </x-slot>
 
         <x-slot name="content">
-            {{ __('Are you sure you want to save changes on this role?') }}
+            {{ __('Are you sure you want to save changes to this item?') }}
         </x-slot>
 
         <x-slot name="footer">
@@ -156,7 +156,7 @@
 
             <x-button class="ms-3 bg-green text-white" wire:click="updateRole({{ $role->id }})"
                 wire:loading.attr="disabled">
-                {{ __('Update Role') }}
+                {{ __('Save Changes') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>

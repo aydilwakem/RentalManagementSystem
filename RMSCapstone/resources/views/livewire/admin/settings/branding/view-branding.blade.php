@@ -6,7 +6,7 @@
         @if (session('message'))
         <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
             class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
             {{ session('message') }}
         </div>
         @endif
@@ -137,7 +137,7 @@
                         Deposit Percentage (%)
                     </label>
                     <input type="number" min="0" max="100" step="0.01" wire:model="deposit_percentage"
-                        id="deposit_percentage" placeholder="e.g., 50" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                        id="deposit_percentage" placeholder="e.g., 50" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                    focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
 
@@ -147,7 +147,7 @@
                         Payment Proof Expiration (Hours)
                     </label>
                     <input type="number" min="1" wire:model="payment_proof_expiration_hours"
-                        id="payment_proof_expiration_hours" placeholder="e.g., 24" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                        id="payment_proof_expiration_hours" placeholder="e.g., 24" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                    focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
 

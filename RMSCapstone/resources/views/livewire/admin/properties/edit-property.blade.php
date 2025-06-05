@@ -288,7 +288,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to save changes on this item?') }}
+                    {{ __('Are you sure you want to save changes to this item?') }}
                 </x-slot>
 
                 <x-slot name="footer">
@@ -298,12 +298,12 @@
 
                     <x-button class="ms-3 bg-green text-white" wire:click="updateProperty({{ $property->id }})"
                         wire:loading.attr="disabled">
-                        {{ __('Edit House') }}
+                        {{ __('Save Changes') }}
                     </x-button>
                 </x-slot>
             </x-dialog-modal>
 
-            <x-dialog-modal wire:model.live="confirmDeleteImage">
+            <x-dialog-modal wire:model.live="confirmDeleteImage" type="danger">
                 <x-slot name="title">
                     {{ __('Delete Image') }}
                 </x-slot>

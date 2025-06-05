@@ -62,7 +62,7 @@
                 </table>
             </div>
             <!-- Delete Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmItemDelete">
+            <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
                 <x-slot name="title">
                     {{ __('Delete Event Category Forever') }}
                 </x-slot>
@@ -84,7 +84,7 @@
             </x-dialog-modal>
 
             {{-- Cannot Delete Modal --}}
-            <x-dialog-modal wire:model="cannotDeleteItem">
+            <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
                 <x-slot name="title">
                     {{ __('Unable to Delete') }}
                 </x-slot>

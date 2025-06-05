@@ -95,7 +95,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to add this item?') }}
+                    {{ __('Are you sure you want to create this user?') }}
                 </x-slot>
 
                 <x-slot name="footer">

@@ -68,7 +68,7 @@
         </x-slot>
 
         <x-slot name="content">
-            {{ __('Are you sure you want to save changes in this user?') }}
+            {{ __('Are you sure you want to save changes to this user?') }}
         </x-slot>
 
         <x-slot name="footer">
@@ -77,7 +77,7 @@
             </x-secondary-button>
 
             <x-button class="ms-3 bg-green text-white" wire:click="updateUser({{ $user->id }})">
-                {{ __('Update User') }}
+                {{ __('Save Changes') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>

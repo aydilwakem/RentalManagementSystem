@@ -58,7 +58,7 @@
             </x-slot>
 
             <x-slot name="content">
-                {{ __('Are you sure you want to save changes on this item?') }}
+                {{ __('Are you sure you want to save changes to this item?') }}
             </x-slot>
 
             <x-slot name="footer">
@@ -68,7 +68,7 @@
 
                 <x-button class="ms-3 bg-green text-white" wire:click="updateInclusion({{ $inclusion->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Edit Inclusion') }}
+                    {{ __('Dave Changes') }}
                 </x-button>
             </x-slot>
         </x-dialog-modal>

@@ -73,7 +73,7 @@
 
                 <x-button class="ms-3 bg-green text-white" wire:click="updateCategory({{ $roomCategory->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Edit Room Category') }}
+                    {{ __('Save Changes') }}
                 </x-button>
             </x-slot>
         </x-dialog-modal>

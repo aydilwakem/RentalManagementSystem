@@ -348,3 +348,5 @@
                 </x-slot>
             </x-dialog-modal>
         </div>
+    </div>
+</div>

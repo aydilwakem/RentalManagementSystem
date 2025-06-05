@@ -194,7 +194,7 @@
             </x-slot>
 
             <x-slot name="content">
-                {{ __('Are you sure you want to save changes on this item?') }}
+                {{ __('Are you sure you want to save changes to this item?') }}
             </x-slot>
 
             <x-slot name="footer">
