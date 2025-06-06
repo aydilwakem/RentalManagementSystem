@@ -4,34 +4,41 @@
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No leases yet.<br> Click "Create Lease" to add a new lease.
             </p>
-            <x-button class="mt-4" href="{{ route('admin.create-lease') }}" icon="fas fa-plus">
-                Create Lease
-            </x-button>
+
+            @can('leases-create')
+                <x-button class="mt-4" href="{{ route('admin.create-lease') }}" icon="fas fa-plus">
+                    Create Lease
+                </x-button>
+            @endcan
+
         </div>
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
         <div>
             <div class="flex items-center justify-between">
-                <!-- Create Button -->
-                <div class="flex justify-between items-center mb-4">
+
+                @can('leases-create')
+                    <!-- Create Button -->
                     <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-lease') }}'">
                         New Lease
                     </x-button>
-                </div>
+                @endcan
 
-                <!-- Soft Deletes -->
-                <x-button
-                    class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                    icon="fas fa-trash" href="{{ route('admin.deleted-leases') }}">
-                    Deleted Leases
-                </x-button>
+                @can('leases-soft-delete')
+                    <!-- Soft Deletes -->
+                    <x-button class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                        icon="fas fa-trash" href="{{ route('admin.deleted-leases') }}">
+                        Deleted Leases
+                    </x-button>
+                @endcan
+
             </div>
         </div>
 
@@ -43,8 +50,8 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
@@ -108,31 +115,31 @@
 
                             {{-- Transaction Number --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
-                            <button class="flex items-center">
-                                ID
-                                @if ($sortBy !== 'id')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                </svg>
-                                @else
-                                @if ($sortDir == 'ASC')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>
-                                @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>
-                                @endif
-                                @endif
-                            </button>
-                        </th>
+                                <button class="flex items-center">
+                                    ID
+                                    @if ($sortBy !== 'id')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                        </svg>
+                                    @else
+                                        @if ($sortDir == 'ASC')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        @endif
+                                    @endif
+                                </button>
+                            </th>
 
 
                             <!-- Property -->
@@ -190,9 +197,8 @@
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -213,16 +219,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -247,8 +251,8 @@
                                         value="{{ $transaction->id }}" class="accent-blue-600 w-4 h-4">
                                 </th> --}}
                                 <th scope="row" class="font-medium text-gray-900 px-4 py-3">
-                            <span>{{ $fakeIDs[$transaction->id] ?? 'LSE-???' }}</span>
-                        </th>
+                                    <span>{{ $fakeIDs[$transaction->id] ?? 'LSE-???' }}</span>
+                                </th>
                                 <td class="px-4 py-3">
                                     @foreach ($transaction->properties as $property)
                                         {{ $property->name_number ?? 'N/A' }}<br>
@@ -259,7 +263,8 @@
                                     {{ $transaction->transactionUser->last_name }}
                                 </td>
                                 <td class="px-4 py-3">₱
-                                    {{ number_format($this->getMonthlyRent($transaction), 2) }}</td>
+                                    {{ number_format($this->getMonthlyRent($transaction), 2) }}
+                                </td>
                                 <td class="px-4 py-3">{{ $transaction->start_datetime->format('F j, Y') }}</td>
                                 <td class="px-4 py-3">{{ $transaction->end_datetime->format('F j, Y') }}</td>
                                 <td class="px-4 py-3">
@@ -286,25 +291,28 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-2">
-                                    <!-- View Icon -->
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}">
-                                    </i>
+
+                                    @can('leases-view')
+                                        <!-- View Icon -->
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}">
+                                        </i>
+                                    @endcan
 
 
-                                    <!-- Edit Icon -->
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
-                                        wire:navigate
-                                        href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
-                                    </i>
+                                    @can('leases-edit')
+                                        <!-- Edit Icon -->
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                            href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
+                                        </i>
+                                    @endcan
 
-
-                                    <!-- Delete Icon -->
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $transaction->id }})"
-                                        wire:loading.attr="disabled">
-                                    </i>
+                                    @can('leases-delete')
+                                        <!-- Delete Icon -->
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                            wire:click="confirmDelete({{ $transaction->id }})" wire:loading.attr="disabled">
+                                        </i>
+                                    @endcan
 
                                 </td>
                             </tr>
@@ -352,8 +360,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteLease"
-                    wire:loading.attr="disabled">
+                <x-danger-button class="ms-3" wire:click="deleteLease" wire:loading.attr="disabled">
                     {{ __('Delete Lease') }}
                 </x-danger-button>
             </x-slot>
@@ -377,25 +384,25 @@
         </x-dialog-modal>
 
         {{--
-    <!-- Bulk Delete Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmBulkDelete">
-        <x-slot name="title">
-            {{ __('Delete Leases') }}
-        </x-slot>
+        <!-- Bulk Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmBulkDelete">
+            <x-slot name="title">
+                {{ __('Delete Leases') }}
+            </x-slot>
 
-        <x-slot name="content">
-            {{ __('Are you sure you want to delete these items?') }}
-        </x-slot>
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete these items?') }}
+            </x-slot>
 
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
-                {{ __('Delete Lease') }}
-            </x-danger-button>
-        </x-slot>
-    </x-dialog-modal> --}}
+                <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
+                    {{ __('Delete Lease') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal> --}}
     @endif
 </div>

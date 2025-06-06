@@ -92,19 +92,22 @@
                         ],
 
                         'Event Management' => [
-                            'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
-                                !str_starts_with($p->name, 'event-category') &&
-                                !str_starts_with($p->name, 'event-hall'),
-                            'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
-                            'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
+                                            'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
+                                                !str_starts_with($p->name, 'event-category') &&
+                                                !str_starts_with($p->name, 'event-hall') &&
+                                                !str_starts_with($p->name, 'event-inclusions'),
+                                            'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
+                                            'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
+                                            'Event Inclusions' => fn($p) => str_starts_with($p->name, 'event-inclusions'),
                         ],
 
                         'Property Management' => [
-                            'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
-                                !str_starts_with($p->name, 'house-category'),
-                            'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
-                            'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
-                            'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
+                             'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
+                                                !str_starts_with($p->name, 'house-category'),
+                                            'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
+                                            'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
+                                            'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
+                                            'House Features' => fn($p) => str_starts_with($p->name, 'house-features'),
                         ],
 
                         'Billing & Payments' => [
@@ -127,7 +130,8 @@
                             'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
                         ],
                         'Reports' => [
-                            'Reports' => fn($p) => str_starts_with($p->name, 'reports'),
+                            'Reports' => fn($p) => str_starts_with($p->name, 'reports') || str_ends_with($p->name, 'reports'),
+                            'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
                         ],
                     ];
 

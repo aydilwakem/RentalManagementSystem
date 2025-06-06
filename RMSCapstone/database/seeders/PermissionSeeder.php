@@ -14,8 +14,32 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            "feedback",
+            "event-inclusions-create",
+            "event-inclusions-view",
+            "event-inclusions-edit",
+            "event-inclusions-delete",
+            "event-inclusions-soft-delete",
+
+            "house-features-create",
+            "house-features-view",
+            "house-features-edit",
+            "house-features-delete",
+            "house-features-soft-delete",
+
+            "leases-create",
+            "leases-view",
+            "leases-edit",
+            "leases-delete",
+            "leases-soft-delete",
+
+            "lease-reports",
+            "reservation-reports",
         ];
+
+        // Run this using 
+        // php artisan db:seed --class=PermissionSeeder
+
+
 
         foreach ($permissions as $key => $permission) {
             $permission = Permission::create(['name' => $permission]);

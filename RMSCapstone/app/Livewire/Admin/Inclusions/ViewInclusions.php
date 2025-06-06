@@ -40,32 +40,35 @@ class ViewInclusions extends Component
         return view('livewire.admin.placeholder-sm');
     }
 
-    public function updatedSelectPageRows($value){
-        if ($value){
-            $this->selectedRows = $this->inclusions->pluck('id')->map(function ($id){
+    public function updatedSelectPageRows($value)
+    {
+        if ($value) {
+            $this->selectedRows = $this->inclusions->pluck('id')->map(function ($id) {
                 return (string) $id;
-
             })->toArray();;
-        }else{
-          $this->reset(['selectedRows', 'selectPageRows']);
+        } else {
+            $this->reset(['selectedRows', 'selectPageRows']);
         }
     }
 
-    public function getInclusionsProperty(){
+    public function getInclusionsProperty()
+    {
         return PropertyFeature::query()
-        ->where('property_type_id', 3) // Only features with property_type_id = 3
-        ->where('name', 'like', '%' . trim($this->search) . '%')
-        ->orderBy($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
+            ->where('property_type_id', 3) // Only features with property_type_id = 3
+            ->where('name', 'like', '%' . trim($this->search) . '%')
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
     }
 
-    public function deleteSelectedRows(){
+    public function deleteSelectedRows()
+    {
         PropertyFeature::whereIn('id', $this->selectedRows)->delete();
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected inclusions got deleted!');
     }
 
-    public function confirmDeleteInBulk(){
+    public function confirmDeleteInBulk()
+    {
         $this->confirmBulkDelete = true;
     }
 
@@ -92,35 +95,32 @@ class ViewInclusions extends Component
      * - Fake IDs for the inclusion are recalculated and stored in the session.
      * - Displays a success message after the inclusion is successfully deleted.
      */
-    public function deleteInclusion($id)
+    public function deleteInclusion()
     {
-        $inclusion = PropertyFeature::find($id);
+        $inclusion = PropertyFeature::find($this->selectedInclusionId);
 
-        if ($inclusion) {
-            if ($this->confirmItemDelete) {
-                PropertyFeature::find($this->confirmItemDelete)?->delete();
-                $this->confirmItemDelete = false;
-                $this->selectedInclusionId = null;
+        if ($inclusion && $this->confirmItemDelete) {
+            $inclusion->delete();
 
-                // Fetch remaining inclusion - sorted by creation date, only type 3 = Event Hall
-                $inclusions = PropertyFeature::where('property_type_id', 3)
+            $this->confirmItemDelete = false;
+            $this->selectedInclusionId = null;
+
+            // Refresh and rebuild fake IDs
+            $inclusions = PropertyFeature::where('property_type_id', 3)
                 ->orderBy('created_at', 'ASC')
                 ->get();
 
-
-                // Reset fake IDs
-                $fakeIDs = [];
-                foreach ($inclusions as $index => $inclusionItem) {
-                    $fakeIDs[$inclusionItem->id] = 'INC-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-
-                // Store updated fake IDs in a unique session key
-                session(['fake_ids_inclusions' => $fakeIDs]);
-
-                session()->flash('message', 'Inclusion successfully deleted!');
+            $fakeIDs = [];
+            foreach ($inclusions as $index => $item) {
+                $fakeIDs[$item->id] = 'INC-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+
+            session(['fake_ids_inclusions' => $fakeIDs]);
+
+            session()->flash('message', 'Inclusion successfully deleted!');
         }
     }
+
 
     /**
      * Sets the sorting criteria for displaying inclusions.
@@ -150,18 +150,18 @@ class ViewInclusions extends Component
             // Reset the fake IDs array
             $fakeIDs = [];
 
-        // Fetch only features with property_type_id = 3
-        $inclusionsWithPropertyType3 = PropertyFeature::where('property_type_id', 3)
-            ->orderBy('created_at', 'ASC')
-            ->get();
+            // Fetch only features with property_type_id = 3
+            $inclusionsWithPropertyType3 = PropertyFeature::where('property_type_id', 3)
+                ->orderBy('created_at', 'ASC')
+                ->get();
 
-        // Recalculate fake IDs for inclusions with property_type_id = 3
-        foreach ($inclusionsWithPropertyType3 as $index => $inclusionItem) {
-            $fakeIDs[$inclusionItem->id] = 'INC-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-        }
+            // Recalculate fake IDs for inclusions with property_type_id = 3
+            foreach ($inclusionsWithPropertyType3 as $index => $inclusionItem) {
+                $fakeIDs[$inclusionItem->id] = 'INC-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+            }
 
-        // Store updated fake IDs in session
-        session(['fake_ids_inclusions' => $fakeIDs]);
+            // Store updated fake IDs in session
+            session(['fake_ids_inclusions' => $fakeIDs]);
         }
 
         // Return the view with inclusions and their respective fake IDs
