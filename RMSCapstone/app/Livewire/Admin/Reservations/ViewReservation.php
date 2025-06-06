@@ -50,12 +50,12 @@ class ViewReservation extends Component
 
     //-------------------------------- BRANDING -------------------------------------------- //
     public string $companyName = 'Company'; //Default
-    public string $logoPath = ''; 
-    public string $companyEmail; 
-    public string $companyContact; 
-    public string $companyAddress; 
-    public string $facebookLink; 
-    public string $instagramLink; 
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
 
     public function render()
@@ -228,9 +228,9 @@ class ViewReservation extends Component
             'activities' => $activities,
 
             // Branding
-            'branding_company_name' => $setting->company_name, 
-            'logo_path' => $setting->logo, 
-            'branding_company_email' => $setting->email, 
+            'branding_company_name' => $setting->company_name,
+            'logo_path' => $setting->logo,
+            'branding_company_email' => $setting->email,
             'branding_company_contact' => $setting->contact_number,
             'company_address' => $setting->address,
             'facebook_link' => $setting->facebook,
@@ -355,9 +355,9 @@ class ViewReservation extends Component
             'payment_link' => $paymentLink,
 
             // Branding
-            'branding_company_name' => $setting->company_name, 
-            'logo_path' => $setting->logo, 
-            'branding_company_email' => $setting->email, 
+            'branding_company_name' => $setting->company_name,
+            'logo_path' => $setting->logo,
+            'branding_company_email' => $setting->email,
             'branding_company_contact' => $setting->contact_number,
             'company_address' => $setting->address,
             'facebook_link' => $setting->facebook,
@@ -439,6 +439,13 @@ class ViewReservation extends Component
             // Log status change
             Log::info("Invoice status updated to 'completed' because balance due is 0.");
         }
+
+        // If the new amount paid is greater than or equal to the deposit amount, update transaction status to 'receipt_verified'
+        if ($newAmountPaid >= $this->transaction->deposit_amount) {
+            $this->transaction->update(['transaction_status' => 'receipt_verified']);
+            Log::info("Transaction status updated to 'reserved' because amount paid is greater than or equal to deposit amount.");
+        }
+
 
 
         // Reset the form fields after successful creation

@@ -86,8 +86,8 @@ class PaymentController extends Controller
             $data = $event['data']['attributes']['data'] ?? []; //  event->data->attributes->data
             $attributes = $data['attributes'] ?? []; // event->data->attributes->data->attributes
 
-            // Only handle the 'payment.paid' event
-            if ($eventType === 'payment.paid') {
+            // Handle 'payment.paid' and 'payment.failed' events
+            if ($eventType === 'payment.paid' || $eventType === 'payment.failed') {
 
                 $amountPaid = $attributes['amount'] ?? 0;
                 $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
@@ -95,31 +95,28 @@ class PaymentController extends Controller
                 $metadata = $attributes['metadata'] ?? [];
 
                 $invoiceId = (int)($metadata['invoice_id'] ?? 0);
-                Log::info("Processing payment for invoice ID: {$invoiceId}");
-
-                $invoice = $this->invoice ?? Invoice::find($invoiceId);
+                $invoice = Invoice::find($invoiceId);
 
                 if (!$invoice) {
                     Log::error("Invoice not found.", ['invoice_id' => $invoiceId]);
                     return response()->json(['error' => 'Invoice not found.'], 404);
                 }
 
-                $transaction = $invoice?->transaction;
+                $transaction = $invoice->transaction;
                 $amountInPesos = $amountPaid / 100;
 
-                if ($invoice->balance_due < $amountInPesos) {
-                    Log::warning('Payment exceeds balance due.', [
-                        'invoice_id' => $invoiceId,
-                        'amount_paid' => $amountInPesos,
-                        'balance_due' => $invoice->balance_due,
-                    ]);
-                    return response()->json(['error' => 'Payment exceeds balance due.'], 400);
-                }
-
                 try {
-
-                    DB::transaction(function () use (&$paymentDetails, $amountInPesos, $invoice, $invoiceId, $modeOfPayment, $paymentReferenceNumber, $metadata, $transaction) {
-
+                    DB::transaction(function () use (
+                        $eventType,
+                        $amountInPesos,
+                        $invoice,
+                        $invoiceId,
+                        $modeOfPayment,
+                        $paymentReferenceNumber,
+                        $metadata,
+                        $transaction
+                    ) {
+                        // Save payment record regardless of event type
                         $payment = Payment::create([
                             'amount_paid' => $amountInPesos,
                             'invoice_id' => $invoiceId,
@@ -129,68 +126,62 @@ class PaymentController extends Controller
                             'payment_date' => now(),
                             'verified_at' => now(),
                             'notes' => trim($metadata['notes'] ?? 'not defined'),
-                            'payment_status' => 'completed',
+                            'payment_status' => $eventType === 'payment.paid' ? 'completed' : 'failed',
                         ]);
 
+                        // Proceed only if payment was successful
+                        if ($eventType === 'payment.paid') {
 
-                        // Update the invoice with the new amount paid and balance due
-                        $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
-                        $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
+                            $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
+                            $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
 
-                        $invoice->update([
-                            'amount_paid' => $newAmountPaid,
-                            'balance_due' => $newBalanceDue,
-                        ]);
-
-                        // Log invoice update
-                        Log::info("Invoice updated: Amount Paid - {$newAmountPaid}, Balance Due - {$newBalanceDue}");
-
-                        // If the balance is 0, update invoice status to 'completed'
-                        if ($newBalanceDue == 0) {
                             $invoice->update([
-                                'invoice_status' => 'completed',
-                                'completed_at' => now(),
+                                'amount_paid' => $newAmountPaid,
+                                'balance_due' => $newBalanceDue,
                             ]);
 
-                            // Log status change
-                            Log::info("Invoice status updated to 'completed' because balance due is 0.");
+                            if ($newBalanceDue == 0) {
+                                $invoice->update([
+                                    'invoice_status' => 'completed',
+                                    'completed_at' => now(),
+                                ]);
+                            }
+
+                            if ($transaction && $transaction->transaction_status === 'pending') {
+                                $transaction->update([
+                                    'transaction_status' => 'receipt_verified',
+                                    'updated_at' => now(),
+                                ]);
+                            }
+
+                            $user = $transaction->transactionUser;
+                            if (!$user) {
+                                throw new \Exception("No user associated with transaction ID {$transaction->id}");
+                            }
+
+                            $paymentDetails = [
+                                'full_name' => $user->first_name . ' ' . $user->last_name,
+                                'email' => $user->email,
+                                'payment_method_id' => $payment->mode_of_payment,
+                                'transaction_id' => $transaction->id,
+                                'payment_reference_number' => $payment->payment_reference_number,
+                                'notes' => $payment->notes,
+                                'check_in' => $transaction->start_datetime,
+                                'check_out' => $transaction->end_datetime,
+                                'total_amount' => $transaction->total_amount,
+                                'deposit' => $transaction->deposit_amount,
+                            ];
+
+                            // Send email only for successful payments
+                            Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
                         }
-
-
-                        if ($transaction && $transaction->transaction_status === 'pending') {
-                            $transaction->update([
-                                'transaction_status' => 'receipt_verified',
-                                'updated_at' => now(),
-                            ]);
-                        }
-
-                        $user = $transaction->transactionUser;
-
-                        if (!$user) {
-                            throw new \Exception("No user associated with transaction ID {$transaction->id}");
-                        }
-
-                        $paymentDetails = [
-                            'full_name' => $user->first_name . ' ' . $user->last_name,
-                            'email' => $user->email,
-                            'payment_method_id' => $payment->mode_of_payment,
-                            'transaction_id' => $transaction->id,
-                            'payment_reference_number' => $payment->payment_reference_number,
-                            'notes' => $payment->notes,
-                            'check_in' => $transaction->start_datetime,
-                            'check_out' => $transaction->end_datetime,
-                            'total_amount' => $transaction->total_amount,
-                            'deposit' => $transaction->deposit_amount,
-                        ];
                     });
 
-                    // Send mail AFTER transaction commits successfully
-                    Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
+                    Log::info("Payment {$eventType} saved in database.", ['event_type' => $eventType, 'attributes' => $attributes]);
 
-                    Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
-                    return response()->json(['message' => 'Payment saved.'], 200);
+                    return response()->json(['message' => "Payment {$eventType} saved."], 200);
                 } catch (\Exception $e) {
-                    Log::error('Webhook payment processing failed: ' . $e->getMessage());
+                    Log::error("Failed to process {$eventType}: " . $e->getMessage());
                     return response()->json(['error' => 'Processing failed.'], 500);
                 }
             }
@@ -212,58 +203,169 @@ class PaymentController extends Controller
 
 
 
-    // try {
-        //     $webhook_secret = env('PAYMONGO_WEBHOOK_SECRET');
-        //     $webhook_signature = $request->header('Paymongo-Signature');
-        //     $event_datas = $request->getContent();
-        //     $event_filter = json_decode($event_datas, true);
+// try {
+//     $webhook_secret = env('PAYMONGO_WEBHOOK_SECRET');
+//     $webhook_signature = $request->header('Paymongo-Signature');
+//     $event_datas = $request->getContent();
+//     $event_filter = json_decode($event_datas, true);
 
-        //     // Signature verification
-        //     $webhook_signature_raw = preg_split("/,/", $webhook_signature);
-        //     $webhook_signature_raw_time = preg_split("/=/", $webhook_signature_raw[0]);
-        //     $webhook_signature_raw_data = preg_split("/=/", $webhook_signature_raw[1]);
+//     // Signature verification
+//     $webhook_signature_raw = preg_split("/,/", $webhook_signature);
+//     $webhook_signature_raw_time = preg_split("/=/", $webhook_signature_raw[0]);
+//     $webhook_signature_raw_data = preg_split("/=/", $webhook_signature_raw[1]);
 
-        //     $webhook_signature_time = $webhook_signature_raw_time[1] ?? null;
-        //     $webhook_signature_data = $webhook_signature_raw_data[1] ?? null;
+//     $webhook_signature_time = $webhook_signature_raw_time[1] ?? null;
+//     $webhook_signature_data = $webhook_signature_raw_data[1] ?? null;
 
-        //     if (!$webhook_signature_time || !$webhook_signature_data) {
-        //         Log::error('Webhook signature parsing failed.', ['signature' => $webhook_signature]);
-        //         return response()->json(['error' => 'Invalid signature format.'], 400);
-        //     }
+//     if (!$webhook_signature_time || !$webhook_signature_data) {
+//         Log::error('Webhook signature parsing failed.', ['signature' => $webhook_signature]);
+//         return response()->json(['error' => 'Invalid signature format.'], 400);
+//     }
 
-        //     $webhook_time_with_json_data = $webhook_signature_time . '.' . $event_datas;
-        //     $computedSignature = hash_hmac('sha256', $webhook_time_with_json_data, $webhook_secret);
-        //     $mySignature = hash_equals($computedSignature, $webhook_signature_data);
+//     $webhook_time_with_json_data = $webhook_signature_time . '.' . $event_datas;
+//     $computedSignature = hash_hmac('sha256', $webhook_time_with_json_data, $webhook_secret);
+//     $mySignature = hash_equals($computedSignature, $webhook_signature_data);
 
-        //     if ($mySignature === true) {
-        //         if ($event_filter['data']['type'] === 'link.payment.paid') {
-        //             $attributes = $event_filter['data']['attributes'];
-        //             $metadata = $attributes['metadata'] ?? [];
+//     if ($mySignature === true) {
+//         if ($event_filter['data']['type'] === 'link.payment.paid') {
+//             $attributes = $event_filter['data']['attributes'];
+//             $metadata = $attributes['metadata'] ?? [];
 
-        //             Payment::create([
-        //                 // 'invoice_id' => isset($metadata['invoice_id']) ? (int)$metadata['invoice_id'] : null,
-        //                 'amount_paid' => $attributes['amount'] / 100,
-        //             ]);
+//             Payment::create([
+//                 // 'invoice_id' => isset($metadata['invoice_id']) ? (int)$metadata['invoice_id'] : null,
+//                 'amount_paid' => $attributes['amount'] / 100,
+//             ]);
 
-        //             Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
+//             Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
 
-        //             return response()->json(['message' => 'Payment saved.'], 200);
-        //         }
+//             return response()->json(['message' => 'Payment saved.'], 200);
+//         }
 
-        //         Log::info('Webhook event not handled.', ['event_type' => $event_filter['data']['type']]);
-        //         return response()->json(['message' => 'Event not handled.'], 200);
-        //     }
+//         Log::info('Webhook event not handled.', ['event_type' => $event_filter['data']['type']]);
+//         return response()->json(['message' => 'Event not handled.'], 200);
+//     }
 
-        //     Log::warning('Invalid webhook signature.', [
-        //         'computed' => $computedSignature,
-        //         'received' => $webhook_signature_data,
-        //     ]);
-        //     return response()->json(['error' => 'Invalid signature.'], 403);
-        // } catch (\Exception $e) {
+//     Log::warning('Invalid webhook signature.', [
+//         'computed' => $computedSignature,
+//         'received' => $webhook_signature_data,
+//     ]);
+//     return response()->json(['error' => 'Invalid signature.'], 403);
+// } catch (\Exception $e) {
 
-        //     Log::error('Webhook processing error: ' . $e->getMessage(), [
-        //         'trace' => $e->getTraceAsString(),
-        //         'request_body' => $request->getContent(),
-        //     ]);
-        //     return response()->json(['error' => 'Server error.'], 500);
-        // }
+//     Log::error('Webhook processing error: ' . $e->getMessage(), [
+//         'trace' => $e->getTraceAsString(),
+//         'request_body' => $request->getContent(),
+//     ]);
+//     return response()->json(['error' => 'Server error.'], 500);
+// }
+
+
+
+
+// if ($eventType === 'payment.paid') {
+
+//     $amountPaid = $attributes['amount'] ?? 0;
+//     $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
+//     $paymentReferenceNumber = $data['id'] ?? null;
+//     $metadata = $attributes['metadata'] ?? [];
+
+//     $invoiceId = (int)($metadata['invoice_id'] ?? 0);
+//     Log::info("Processing payment for invoice ID: {$invoiceId}");
+
+//     $invoice = $this->invoice ?? Invoice::find($invoiceId);
+
+//     if (!$invoice) {
+//         Log::error("Invoice not found.", ['invoice_id' => $invoiceId]);
+//         return response()->json(['error' => 'Invoice not found.'], 404);
+//     }
+
+//     $transaction = $invoice?->transaction;
+//     $amountInPesos = $amountPaid / 100;
+
+//     if ($invoice->balance_due < $amountInPesos) {
+//         Log::warning('Payment exceeds balance due.', [
+//             'invoice_id' => $invoiceId,
+//             'amount_paid' => $amountInPesos,
+//             'balance_due' => $invoice->balance_due,
+//         ]);
+//         return response()->json(['error' => 'Payment exceeds balance due.'], 400);
+//     }
+
+//     try {
+
+//         DB::transaction(function () use (&$paymentDetails, $amountInPesos, $invoice, $invoiceId, $modeOfPayment, $paymentReferenceNumber, $metadata, $transaction) {
+
+//             $payment = Payment::create([
+//                 'amount_paid' => $amountInPesos,
+//                 'invoice_id' => $invoiceId,
+//                 'mode_of_payment' => $modeOfPayment,
+//                 'payment_type' => trim($metadata['payment_type'] ?? 'unknown'),
+//                 'payment_reference_number' => $paymentReferenceNumber,
+//                 'payment_date' => now(),
+//                 'verified_at' => now(),
+//                 'notes' => trim($metadata['notes'] ?? 'not defined'),
+//                 'payment_status' => 'completed',
+//             ]);
+
+
+//             // Update the invoice with the new amount paid and balance due
+//             $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
+//             $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
+
+//             $invoice->update([
+//                 'amount_paid' => $newAmountPaid,
+//                 'balance_due' => $newBalanceDue,
+//             ]);
+
+//             // Log invoice update
+//             Log::info("Invoice updated: Amount Paid - {$newAmountPaid}, Balance Due - {$newBalanceDue}");
+
+//             // If the balance is 0, update invoice status to 'completed'
+//             if ($newBalanceDue == 0) {
+//                 $invoice->update([
+//                     'invoice_status' => 'completed',
+//                     'completed_at' => now(),
+//                 ]);
+
+//                 // Log status change
+//                 Log::info("Invoice status updated to 'completed' because balance due is 0.");
+//             }
+
+
+//             if ($transaction && $transaction->transaction_status === 'pending') {
+//                 $transaction->update([
+//                     'transaction_status' => 'receipt_verified',
+//                     'updated_at' => now(),
+//                 ]);
+//             }
+
+//             $user = $transaction->transactionUser;
+
+//             if (!$user) {
+//                 throw new \Exception("No user associated with transaction ID {$transaction->id}");
+//             }
+
+//             $paymentDetails = [
+//                 'full_name' => $user->first_name . ' ' . $user->last_name,
+//                 'email' => $user->email,
+//                 'payment_method_id' => $payment->mode_of_payment,
+//                 'transaction_id' => $transaction->id,
+//                 'payment_reference_number' => $payment->payment_reference_number,
+//                 'notes' => $payment->notes,
+//                 'check_in' => $transaction->start_datetime,
+//                 'check_out' => $transaction->end_datetime,
+//                 'total_amount' => $transaction->total_amount,
+//                 'deposit' => $transaction->deposit_amount,
+//             ];
+//         });
+
+//         // Send mail AFTER transaction commits successfully
+//         Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
+
+//         Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
+//         return response()->json(['message' => 'Payment saved.'], 200);
+//     } catch (\Exception $e) {
+//         Log::error('Webhook payment processing failed: ' . $e->getMessage());
+//         return response()->json(['error' => 'Processing failed.'], 500);
+//     }
+// }

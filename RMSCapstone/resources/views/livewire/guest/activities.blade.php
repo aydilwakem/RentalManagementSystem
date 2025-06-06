@@ -6,7 +6,7 @@
                 These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at
                 {{ $companyName }}.<br> Book a room now and enjoy a variety of exciting experiences!
             </p>
-            <x-button class="mb-8" href="{{ route('guest.rooms') }}">
+            <x-button class="mb-8" href="{{ route('guest.reservation-form') }}">
                 Book Room Now
             </x-button>
         </div>

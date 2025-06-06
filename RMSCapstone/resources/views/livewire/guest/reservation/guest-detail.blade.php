@@ -97,7 +97,7 @@
 
                     <!-- Company Name -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name (Optional)</label>
                         <input type="text" wire:model="company_name"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
                         @error('last_name')

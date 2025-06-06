@@ -193,6 +193,14 @@ class EditReservation extends Component
             'guest_country_of_origin' => $this->guest_country_of_origin,
         ];
 
+        // If the transaction->guestDetail (one to many relationship) count is ==  to the transaction->pax 
+        // GuestDetail count = 2 == transaction->pax = 2
+        // Adding another guest will add charge to the invoice->subtotal
+        // if ($this->transaction->guestDetails->count() >= $this->transaction->pax) {
+        //     // Add charge to the invoice subtotal based
+        //     $this->invoice->increment('sub_total', 100); // Assuming a fixed charge of 100 for each additional guest
+        // }
+
         $this->showGuestModal = false;
 
         // Optionally clear the form inputs after adding a guest

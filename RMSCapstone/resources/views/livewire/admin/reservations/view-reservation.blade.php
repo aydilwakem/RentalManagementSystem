@@ -190,6 +190,10 @@
                         <strong>Heard From:</strong>
                         <div>{{ $transaction->heard_from }}</div>
                     </div>
+                      <div>
+                        <strong>Reservation Source:</strong>
+                        <div>{{ $transaction->reservation_source }}</div>
+                    </div>
                 </div>
             </div>
 
@@ -221,7 +225,9 @@
                                 @foreach ($properties as $property)
                                     <tr>
                                         <td class="border px-4 py-2 text-gray-700">{{ $property->name_number }}</td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $property->category->name }}</td>
+                                       <td class="border px-4 py-2 text-gray-700">
+                                            {{ optional($property->category)->name ?? 'N/A' }}
+                                        </td>
                                         <td class="border px-4 py-2 text-gray-700 text-center">
                                             {{ $property->pivot->adults ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center">

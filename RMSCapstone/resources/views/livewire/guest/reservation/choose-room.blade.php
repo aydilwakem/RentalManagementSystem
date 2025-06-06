@@ -19,17 +19,17 @@
             <div class="grid grid-cols-1 gap-6">
 
                 <!-- Room Category Filter -->
-                <div class="flex items-center">
+                {{-- <div class="flex items-center">
                     <label for="property_category_id" class="w-32 text-sm font-medium text-gray-900">Room
                         Category:</label>
                     <select id="property_category_id" name="property_category_id" wire:model.live="roomCategoryFilter"
                         class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
                         <option value="">All</option>
                         @foreach ($roomCategories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
 
                 @foreach ($rooms as $room)
                     <div class=" space-y-6" wire:key="room-{{ $room->id }}">

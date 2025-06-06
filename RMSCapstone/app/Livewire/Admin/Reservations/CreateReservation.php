@@ -27,7 +27,7 @@ class CreateReservation extends Component
     public $transaction_number;
 
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
-    public $reservation_source = 'WebApp';
+    public $reservation_source;
     public $transaction_status = 'pending';
 
     // Room related public properties

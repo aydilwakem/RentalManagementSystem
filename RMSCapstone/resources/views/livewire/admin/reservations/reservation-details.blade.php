@@ -528,7 +528,7 @@
                                 {{ $payment->invoice_id }}</td>
                             <td
                                 style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
-                                {{ $payment->paymentMethod->mode_of_payment_name }}</td>
+                                {{ $payment->mode_of_payment }}</td>
                             <td
                                 style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
                                 PHP{{ number_format($payment->amount_paid, 2) }}</td>
