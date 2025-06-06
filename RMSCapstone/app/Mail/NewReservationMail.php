@@ -9,17 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ReservationConfirmedMail extends Mailable
+class NewReservationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * The reservation details.
-     *
-     * @var array
-     */
     public $reservationData;
-
 
     /**
      * Create a new message instance.
@@ -29,19 +23,13 @@ class ReservationConfirmedMail extends Mailable
         $this->reservationData = $reservationData;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
+    
     public function build()
     {
-        return $this->view('guest.emails.reservation-confirmed')
-            ->subject('Reservation Confirmed!')
+        return $this->view('guest.emails.new-reservation')
+            ->subject('New Reservation Notification')
             ->with([
                 'name' => $this->reservationData['name'],
-                'email' => $this->reservationData['email'],
-                'contact_number' => $this->reservationData['contact_number'],
                 'transaction_number' => $this->reservationData['transaction_number'],
                 'email' => $this->reservationData['email'],
                 'invoice_number' => $this->reservationData['invoice_number'],
@@ -49,10 +37,6 @@ class ReservationConfirmedMail extends Mailable
                 'check_out' => $this->reservationData['check_out'],
                 'total_amount' => $this->reservationData['total_amount'],
                 'deposit' => $this->reservationData['deposit'],
-                'amount_paid' =>  $this->reservationData['amount_paid'],
-                'balance_due' =>  $this->reservationData['balance_due'],
-                'properties' => $this->reservationData['properties'],
-                'activities' => $this->reservationData['activities'],
 
                 //Branding
                 'branding_company_name' => $this->reservationData['branding_company_name'],

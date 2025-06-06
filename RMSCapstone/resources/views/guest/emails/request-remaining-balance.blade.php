@@ -25,7 +25,8 @@
         <!-- Header -->
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <img src="{{ asset('storage/' .   $logo_path) }}" alt=" {{ $branding_company_name }}"
+                style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 Final Payment Reminder
             </h1>
@@ -33,7 +34,8 @@
         </div>
 
         <!-- Transaction Number -->
-        <div style="padding: 20px 30px; text-align: center; border-bottom: 2px solid #166534; background-color: #f8fcf8;">
+        <div
+            style="padding: 20px 30px; text-align: center; border-bottom: 2px solid #166534; background-color: #f8fcf8;">
             <p style="font-size: 18px; color: #555; margin-bottom: 5px; margin-top: 0;">Your Transaction ID:</p>
             <h1 style="font-size: 32px; color: #166534; margin: 0; font-weight: 700;">
                 {{ $transaction_number }}
@@ -45,11 +47,14 @@
             <p><strong>Hello {{ $name }},</strong></p>
 
             <p>
-                We hope you’ve had a wonderful time at Canopy Farm PH! Before you leave the resort, we kindly remind you to complete the final payment for your stay.
+                We hope you’ve had a wonderful time at {{ $branding_company_name }}! Before you leave the resort, we
+                kindly remind you
+                to complete the final payment for your stay.
             </p>
 
             <!-- Reservation Summary -->
-            <div style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin: 20px 0;">
+            <div
+                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin: 20px 0;">
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Reservation Summary</h3>
                 <ul style="padding-left: 0; list-style: none; margin: 0;">
                     <li><strong>Transaction ID:</strong> {{ $transaction_number }}</li>
@@ -61,7 +66,8 @@
                 </ul>
             </div>
 
-            <p>To avoid any delays during checkout, please settle your remaining balance by clicking the button below:</p>
+            <p>To avoid any delays during checkout, please settle your remaining balance by clicking the button below:
+            </p>
 
             <!-- Payment Button -->
             <p style="text-align: center; margin: 30px 0;">
@@ -78,28 +84,43 @@
                 </a>
             </p>
 
-            <p>If you’ve already completed the payment, please ignore this message. Otherwise, we appreciate your prompt attention.</p>
+            <p>If you’ve already completed the payment, please ignore this message. Otherwise, we appreciate your prompt
+                attention.</p>
 
-            <p>Thank you for choosing Canopy Farm PH. We hope to see you again soon!</p>
+            <p>Thank you for choosing {{ $branding_company_name }}. We hope to see you again soon!</p>
 
-            <p>Best regards,<br>The Canopy Farm PH</p>
+            <p>Best regards,<br>The {{ $branding_company_name }}</p>
         </div>
 
-        <!-- Footer -->
-        <div style="background-color: #166534; color: #fff; text-align: center; padding: 15px; font-size: 14px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+        {{-- Footer --}}
+        <div
+            style="background-color: #166534; color: #fff; text-align: center; padding: 15px; font-size: 14px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
 
             <div style="margin-bottom: 10px;">
-                <p style="margin: 0; font-weight: 500;">Follow us!</p>
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank" style="color: #fff; margin: 0 8px;"><i class="fab fa-facebook-f fa-lg"></i></a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank" style="color: #fff; margin: 0 8px;"><i class="fab fa-instagram fa-lg"></i></a>
+                <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
+
+                <a href="{{ $facebook_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
+                </a>
+
+                <a href="{{ $instagram_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
+                </a>
+
+                <a href="https://larabelles-rms.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
+                </a>
             </div>
 
-            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
-                <p style="margin: 0;">Phone: <strong>0962-447-9893</strong></p>
-                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
+                <p style="margin: 0;">Phone: <span style="font-weight: 500;">{{ $branding_company_contact }}</span></p>
+                <p style="margin: 0;">Address: {{ $company_address }}</p>
             </div>
 
-            <span style="font-weight: 600;">&copy; {{ date('Y') }} Canopy Farm PH. All rights reserved.</span>
+
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
+                $branding_company_name }}. All rights reserved.</span>
         </div>
     </div>
 

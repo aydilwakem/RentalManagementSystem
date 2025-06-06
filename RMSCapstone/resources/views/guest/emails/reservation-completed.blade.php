@@ -27,9 +27,10 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <img src="{{ asset('storage/' .   $logo_path) }}" alt="{{ $branding_company_name }}"
+                style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
-                Thank you for visiting Canopy Farm! <i class="fa-solid fa-heart"></i>
+                Thank you for visiting {{ $branding_company_name }}! <i class="fa-solid fa-heart"></i>
             </h1>
             <p style="font-size: 16px; margin: 10px 0 20px;">We hope you enjoyed your visit and look forward to
                 welcoming you back soon!</p>
@@ -38,7 +39,8 @@
         {{-- Message --}}
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
             <h3 style="font-size: 18px; color: #333333; margin-top: 0;">Hello {{ $name }},</h3>
-            <p style="margin-bottom: 15px; text-align: justify;">Thank you for choosing Canopy Farm for your recent
+            <p style="margin-bottom: 15px; text-align: justify;">Thank you for choosing {{ $branding_company_name }} for
+                your recent
                 stay. We hope you had a relaxing and memorable time
                 with us.
             </p>
@@ -103,47 +105,49 @@
                     <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
                 </tr>
                 @foreach ($properties as $property)
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
-                            {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) }}
-                        </td>
-                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td> --}}
-                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td> --}}
-                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                            {{ $property->pivot->days ?? '1' }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                            ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                    </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                        {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) }}
+                    </td>
+                    {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td>
+                    --}}
+                    {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
+                    --}}
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                        {{ $property->pivot->days ?? '1' }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                        ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                        ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                </tr>
                 @endforeach
             </table>
 
             {{-- Activities --}}
             @if (count($activities))
-                <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
-                    Add-On Activities</h3>
-                <table cellpadding="10" cellspacing="0"
-                    style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
-                    <tr style="background-color: #E8F5E9;">
-                        <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Activity</th>
-                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
-                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
-                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
-                    </tr>
-                    @foreach ($activities as $activity)
-                        <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $activity->name }}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                                {{ $activity->pivot->quantity }}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                                ₱{{ number_format($activity->amount, 2) }}</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                                ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
-                        </tr>
-                    @endforeach
-                </table>
+            <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                Add-On Activities</h3>
+            <table cellpadding="10" cellspacing="0"
+                style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                <tr style="background-color: #E8F5E9;">
+                    <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Activity</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
+                </tr>
+                @foreach ($activities as $activity)
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $activity->name }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                        {{ $activity->pivot->quantity }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                        ₱{{ number_format($activity->amount, 2) }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                        ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                </tr>
+                @endforeach
+            </table>
             @endif
 
             {{-- Price Breakdown --}}
@@ -159,7 +163,7 @@
                         <td style="text-align: left; padding-bottom: 5px;">Activity Charges:</td>
                         <td
                             style="text-align: right; padding-bottom: 5px; {{ $balance_due > 0 ? 'color: #d9534f; font-weight: bold;' : 'color: black; font-weight: normal;' }}">
-                            ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }} </td>
+                            ₱{{ number_format($activities->sum(fn($a) => $a->amount * $a->pivot->quantity), 2) }} </td>
                     </tr>
                     <tr>
                         <td colspan="2" style="border-top: 1px solid #ddd; padding-top: 10px;"></td>
@@ -172,7 +176,8 @@
                 </table>
             </div>
 
-            {{-- <hr style="border: none; border-top: 1px solid #cccccc; margin: 30px 0;"> --}}
+            {{--
+            <hr style="border: none; border-top: 1px solid #cccccc; margin: 30px 0;"> --}}
 
             <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6; text-align: center;">
                 <p style="margin-bottom: 25px;">We truly value your experience with us. Help us improve by sharing your
@@ -195,34 +200,29 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/thecanopyfarmph" target="_blank"
-                    style="margin: 0 8px; text-decoration: none;">
-                    <img src="{{ asset('images/social-facebook-white.png') }}" alt="Facebook"
-                        style="width: 24px; height: 24px;">
+                <a href="{{ $facebook_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
                 </a>
 
-                <a href="https://www.instagram.com/thecanopyfarmph/" target="_blank"
-                    style="margin: 0 8px; text-decoration: none;">
-                    <img src="{{ asset('images/social-instagram-white.png') }}" alt="Instagram"
-                        style="width: 24px; height: 24px;">
+                <a href="{{ $instagram_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
                 </a>
 
-                <a href="https://www.tiktok.com/@canopyfarmph" target="_blank"
+                <a href="https://larabelles-rms.com/guest/homepage" target="_blank"
                     style="margin: 0 8px; text-decoration: none;">
-                    <img src="{{ asset('images/tiktok-round-white-icon.png') }}" alt="Tiktok"
-                        style="width: 24px; height: 24px;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
 
             </div>
 
-            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
-                <p style="margin: 0;">Phone: <span style="font-weight: 500;">0962-447-9893</span></p>
-                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
+                <p style="margin: 0;">Phone: <span style="font-weight: 500;">{{ $branding_company_contact }}</span></p>
+                <p style="margin: 0;">Address: {{ $company_address }}</p>
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} Canopy Farm
-                PH. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
+                $branding_company_name }}. All rights reserved.</span>
 
         </div>
     </div>

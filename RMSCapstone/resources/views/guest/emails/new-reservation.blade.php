@@ -27,12 +27,11 @@
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
             <img src="{{ asset('storage/' .   $logo_path) }}" alt=" {{ $branding_company_name }}"
                 style="max-height: 50px;">
-            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px; color:#fff;">
-                We've Received Your Reservation!
+            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
+                We Have A New Reservation!
             </h1>
-            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">Your booking is almost complete, just one more
-                step to
-                confirm your stay.</p>
+            <p style="font-size: 16px; margin: 10px 0 20px;">See the details below of the
+                new reservation</p>
         </div>
 
         {{-- Transaction Number Header --}}
@@ -41,41 +40,27 @@
             text-align: center;
             border-bottom: 2px solid #166534;
             background-color: #f8fcf8;">
-            <p style="font-size: 18px; color: #555; margin-bottom: 5px; margin-top: 0;">Your Transaction ID:</p>
+            <p style="font-size: 18px; color: #555; margin-bottom: 5px; margin-top: 0;">Assigned Transaction ID:</p>
             <h1 style="font-size: 32px; color: #166534; margin: 0; font-weight: 700;">
                 {{ $transaction_number }}
             </h1>
-            <p style="font-size: 14px; color: #555; margin-top: 10px;">Please keep this number for all inquiries.</p>
+            <p style="font-size: 14px; color: #555; margin-top: 10px;">This is the assigned Transaction ID of the new
+                reservation.</p>
         </div>
 
 
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
 
-            <p style="margin-bottom: 15px;"><strong>Hello {{ $name }},</strong></p>
+            <p style="margin-bottom: 15px;"><strong>Hello {{ $branding_company_name }} Admin,</strong></p>
 
             <p style="margin-bottom: 20px;">
-                Thank you for choosing {{ $branding_company_name }}! Your reservation request has been successfully
-                received. To
-                confirm your booking and secure your unforgettable stay, please complete your payment as detailed below.
+                A new reservation request has been successfully submitted for {{ $branding_company_name }}. Please
+                review the details
+                and await payment to confirm and secure the booking.
             </p>
 
-            {{-- Disclaimer --}}
-            <div style="
-                background-color: #fffacd; /* Light yellow background for attention */
-                border: 1px solid #e6b300; /* Yellow border */
-                border-left: 5px solid #e6b300;
-                border-radius: 5px;
-                padding: 15px;
-                margin-bottom: 25px;
-                color: #333333;
-                font-size: 15px;
-                line-height: 1.4;">
-                <strong>Note:</strong> If you have already submitted your payment or proof of payment, kindly
-                disregard this email and await our confirmation. We are currently processing your submission.
-            </div>
 
-
-            <p style="margin-bottom: 15px;">Here are your reservation details:</p>
+            <p style="margin-bottom: 15px;">Here are the reservation details:</p>
 
             {{-- Reservation Summary --}}
             <div
@@ -83,6 +68,7 @@
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0; margin-bottom: 10px;">Reservation Details
                 </h3>
                 <ul style="padding-left: 0; list-style: none; margin: 0;">
+                    <li style="margin-bottom: 8px;"><strong>Guest Name: {{ $name }}</strong></li>
                     <li style="margin-bottom: 8px;"><strong>Transaction ID: {{ $transaction_number }}</strong></li>
                     {{-- <li style="margin-bottom: 8px;">Invoice Number: {{ $invoice_number }}</li> --}}
                     <li style="margin-bottom: 8px;">Check-in Date:
@@ -106,35 +92,9 @@
                 </ul>
             </div>
 
-            <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-                    $expirationHours }} hours</strong> to confirm your reservation. You can
-                upload your proof of payment through the link below:</p>
-
-            {{-- Payment Link Button --}}
-            <p style="text-align: center; margin: 20px 0;">
-                <a href="{{ $payment_link }}" target="_blank" style="
-                    display: inline-block;
-                    padding: 12px 25px;
-                    background-color: #166534; /* Your brand green */
-                    color: #ffffff;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: bold;
-                    font-size: 18px;
-                    line-height: 1;">
-                    Proceed to Payment
-                </a>
-            </p>
-
-
             <p style="margin-top: 25px;">
-                If you need to make any changes to your reservation or have any questions, please don't hesitate to
-                reach out to us.
-            </p>
-
-            <p style="margin-top: 20px;">
-                Thank you,<br>
-                {{ $branding_company_name }}
+                If you need to update the reservation details or have any questions regarding this booking, please feel
+                free to contact the guest or reach out to the support team.
             </p>
 
         </div>
@@ -144,7 +104,7 @@
             style="background-color: #166534; color: #fff; text-align: center; padding: 15px; font-size: 14px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
 
             <div style="margin-bottom: 10px;">
-                <p style="margin: 0; font-weight: 500; margin: 8px 8px; color:#fff;">Connect with us!</span></p>
+                <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
                 <a href="{{ $facebook_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
                     <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
@@ -162,7 +122,7 @@
 
             <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
                 <p style="margin: 0;">Phone: <span style="font-weight: 500;">{{ $branding_company_contact }}</span></p>
-                <p style="margin: 0; color:#fff;">Address: {{ $company_address }}</p>
+                <p style="margin: 0;">Address: {{ $company_address }}</p>
             </div>
 
 

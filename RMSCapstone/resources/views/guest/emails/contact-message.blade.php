@@ -27,7 +27,8 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <img src="{{ asset('storage/' .   $contactData['logo_path'] ) }}" alt=" {{ $contactData['company_name'] }}"
+                style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 New Message from Contact Us!
             </h1>
@@ -36,12 +37,14 @@
 
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
 
-            <p style="margin-bottom: 15px;"><strong>Good day, Canopy Farm Admins!</strong></p>
+            <p style="margin-bottom: 15px;"><strong>Good day, {{ $contactData['company_name'] ?? 'No Name'}}
+                    Admins!</strong></p>
 
             <p style="margin-bottom: 20px;">
-                Below are the details of a new message from <strong> {{ $contactData['name'] }}</strong>, submitted through the
-                    Contact Us
-                    form. Please review the information and coordinate with the guest for further discussion.
+                Below are the details of a new message from <strong> {{ $contactData['name'] }}</strong>, submitted
+                through the
+                Contact Us
+                form. Please review the information and coordinate with the guest for further discussion.
             </p>
 
             <p style="margin-bottom: 10px;">Here is the summary of the message:</p>
@@ -60,8 +63,7 @@
 
             {{-- Message Box Section --}}
             <p style="margin-bottom: 10px; font-weight: bold;">Message:</p>
-            <div
-                style="
+            <div style="
                 background-color: #ffffff;
                 border: 1px solid #cccccc;
                 border-left: 5px solid #166534;
@@ -84,35 +86,39 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-facebook-f fa-lg"></i>
+                <a href="{{ $contactData['facebook_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/social-facebook-white.png') }}" alt="Facebook"
+                        style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-instagram fa-lg"></i>
+
+                <a href="{{ $contactData['instagram_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/social-instagram-white.png') }}" alt="Instagram"
+                        style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-twitter fa-lg"></i>
+
+                <a href="https://larabelles-rms.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
 
-            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
-                <p style="margin: 0;">Phone: <span style="font-weight: 500;">0962-447-9893</span></p>
-                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
+                <p style="margin: 0;">Phone: <span style="font-weight: 500;">{{ $contactData['company_contact'] ?? 'No
+                        Contact
+                        Number'}}</span></p>
+                <p style="margin: 0;">Address: <span style="font-weight: 500;">{{ $contactData['company_address'] ?? 'No
+                        Address
+                        '}}</span></p>
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} Canopy Farm
-                PH. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }}
+                {{$contactData['company_name'] }}. All rights reserved.</span>
 
         </div>
     </div>
 </body>
 
 </html>
-
-
-
-

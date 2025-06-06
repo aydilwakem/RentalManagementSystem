@@ -26,11 +26,13 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
-            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
+            <img src="{{ asset('storage/' .   $contactData['logo_path'] ) }}" alt=" {{ $contactData['company_name'] }}"
+                style="max-height: 50px;">
+            <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px; color: #fff;">
                 Thanks for Your Message!
             </h1>
-            <p style="font-size: 16px; margin: 10px 0 20px;">We've received your inquiry and will get back to you soon.
+            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">We've received your inquiry and will get back
+                to you soon.
             </p>
         </div>
 
@@ -38,7 +40,7 @@
 
             <p style="margin-bottom: 15px;"><strong>Hello {{ $contactData['name'] }},</strong></p>
 
-            <p>Thank you for reaching out to Canopy Farm PH!</p>
+            <p>Thank you for reaching out to {{ $contactData['company_name'] ?? 'No Name'}}!</p>
 
             <p style="margin-bottom: 20px;">
                 We've successfully received your message through our Contact Us form. Our team will review your inquiry
@@ -61,8 +63,7 @@
 
             {{-- Message Box Section --}}
             <p style="margin-bottom: 10px; font-weight: bold;">Your Message:</p>
-            <div
-                style="
+            <div style="
                 background-color: #ffffff;
                 border: 1px solid #cccccc;
                 border-left: 5px solid #166534;
@@ -77,12 +78,14 @@
             </div>
 
             <p style="margin-top: 25px;">
-                If you have any urgent questions, please feel free to call us directly at <span style="color:#166534; font-weight: 700;">0962-447-9893</span>
+                If you have any urgent questions, please feel free to call us directly at <span
+                    style="color:#166534; font-weight: 700;">{{ $contactData['company_contact'] ?? 'No Contact
+                    Number'}}</span>
             </p>
 
             <p style="margin-top: 20px;">
                 Thank you,<br>
-                The Canopy Farm PH
+                {{ $contactData['company_name'] }}
             </p>
 
         </div>
@@ -94,28 +97,34 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-facebook-f fa-lg"></i>
+                <a href="{{ $contactData['facebook_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-instagram fa-lg"></i>
+
+                <a href="{{ $contactData['instagram_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-twitter fa-lg"></i>
+
+                <a href="https://larabelles-rms.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
 
-            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
-                <p style="margin: 0;">Phone: <span style="font-weight: 500;">0962-447-9893</span></p>
-                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
+                <p style="margin: 0;">Phone: <span style="font-weight: 500;">{{ $contactData['company_contact'] ?? 'No
+                        Contact
+                        Number'}}</span></p>
+                <p style="margin: 0;">Address: <span style="font-weight: 500;">{{ $contactData['company_address'] ?? 'No
+                        Address
+                        '}}</span></p>
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} Canopy Farm
-                PH. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
+                $contactData['company_name'] }}. All rights reserved.</span>
 
         </div>
     </div>

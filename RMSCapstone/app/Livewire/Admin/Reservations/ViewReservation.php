@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOfficialReceiptMail;
 use App\Mail\RequestRemainingBalanceMail;
 use App\Models\Invoice;
+use App\Models\Setting;
 use GuzzleHttp\Client;
 
 #[Layout('layouts.app')]
@@ -46,6 +47,15 @@ class ViewReservation extends Component
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
     public $createPaymentModal = false;
+
+    //-------------------------------- BRANDING -------------------------------------------- //
+    public string $companyName = 'Company'; //Default
+    public string $logoPath = ''; 
+    public string $companyEmail; 
+    public string $companyContact; 
+    public string $companyAddress; 
+    public string $facebookLink; 
+    public string $instagramLink; 
 
 
     public function render()
@@ -206,6 +216,9 @@ class ViewReservation extends Component
         $activities = $this->transaction->activities()->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
         $properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
+        //Mount the branding
+        $setting = Setting::first();
+
         $data = [
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
@@ -213,6 +226,15 @@ class ViewReservation extends Component
             'transactionUser' => $this->transactionUser,
             'properties' => $properties,
             'activities' => $activities,
+
+            // Branding
+            'branding_company_name' => $setting->company_name, 
+            'logo_path' => $setting->logo, 
+            'branding_company_email' => $setting->email, 
+            'branding_company_contact' => $setting->contact_number,
+            'company_address' => $setting->address,
+            'facebook_link' => $setting->facebook,
+            'instagram_link' => $setting->instagram,
         ];
 
         // Generate PDF from view with data
@@ -220,7 +242,7 @@ class ViewReservation extends Component
         $pdfContent = $pdf->output();
 
         // Send mail with attachment
-        Mail::to($this->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
+        Mail::to($this->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number, $this->transactionUser, $data));
 
         Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
     }
@@ -317,6 +339,9 @@ class ViewReservation extends Component
         $this->invoice->requested_remaining_balance = true;
         $this->invoice->save();
 
+        //Call setting
+        $setting = Setting::first();
+
         $reservationData = [
             'name' => trim($transactionUser->first_name . ' ' . $transactionUser->last_name),
             'transaction_number' => $transaction->transaction_number,
@@ -328,6 +353,15 @@ class ViewReservation extends Component
             'amount_paid' => $invoice->amount_paid,
             'remaining_balance' => $invoice->balance_due,
             'payment_link' => $paymentLink,
+
+            // Branding
+            'branding_company_name' => $setting->company_name, 
+            'logo_path' => $setting->logo, 
+            'branding_company_email' => $setting->email, 
+            'branding_company_contact' => $setting->contact_number,
+            'company_address' => $setting->address,
+            'facebook_link' => $setting->facebook,
+            'instagram_link' => $setting->instagram,
         ];
 
         try {

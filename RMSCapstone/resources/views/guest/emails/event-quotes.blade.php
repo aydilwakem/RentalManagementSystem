@@ -27,7 +27,8 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+            <img src="{{ asset('storage/' .   $quoteData['logo_path'] ) }}" alt="{{ $quoteData['company_name'] }}"
+                style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 New Event Quote Request
             </h1>
@@ -42,7 +43,8 @@
 
             <p style="margin-bottom: 20px;">
                 A new event quote request has been submitted by <strong>{{ $quoteData['contact_person'] }}</strong> from
-                <strong>{{ $quoteData['company_name'] }}</strong>. Please review the details below and coordinate with
+                <strong>{{ $quoteData['client_company_name'] }}</strong>. Please review the details below and coordinate
+                with
                 the client for further discussion and confirmation.
             </p>
 
@@ -53,7 +55,8 @@
                 style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0; margin-bottom: 10px;">Contact Details</h3>
                 <ul style="padding-left: 0; list-style: none; margin: 0;">
-                    <li style="margin-bottom: 8px;"><strong>Company:</strong> {{ $quoteData['company_name'] }}</li>
+                    <li style="margin-bottom: 8px;"><strong>Company:</strong> {{ $quoteData['client_company_name'] }}
+                    </li>
                     <li style="margin-bottom: 8px;"><strong>Contact Person:</strong> {{ $quoteData['contact_person'] }}
                     </li>
                     <li style="margin-bottom: 8px;"><strong>Email:</strong> <a href="mailto:{{ $quoteData['email'] }}"
@@ -70,11 +73,11 @@
                 <ul style="padding-left: 0; list-style: none; margin: 0;">
                     <li style="margin-bottom: 8px;"><strong>Selected Event Hall:</strong>
                         {{ $quoteData['selected_hall']->name_number }}</li>
-                    <li style="margin-bottom: 8px;"><strong>Event Start:</strong> <strong
-                            style="color: #166534;">{{ \Carbon\Carbon::parse($quoteData['event_start'])->format('F j, Y \a\t h:i A') }}</strong>
+                    <li style="margin-bottom: 8px;"><strong>Event Start:</strong> <strong style="color: #166534;">{{
+                            \Carbon\Carbon::parse($quoteData['event_start'])->format('F j, Y \a\t h:i A') }}</strong>
                     </li>
-                    <li style="margin-bottom: 8px;"><strong>Event End:</strong> <strong
-                            style="color: #166534;">{{ \Carbon\Carbon::parse($quoteData['event_end'])->format('F j, Y \a\t h:i A') }}</strong>
+                    <li style="margin-bottom: 8px;"><strong>Event End:</strong> <strong style="color: #166534;">{{
+                            \Carbon\Carbon::parse($quoteData['event_end'])->format('F j, Y \a\t h:i A') }}</strong>
                     </li>
                     <li style="margin-bottom: 8px;"><strong>Event Type:</strong>
                         {{ $quoteData['event_type'] ?? $quoteData['other_event_type'] }}</li>
@@ -83,9 +86,8 @@
 
             {{-- Comments / Request --}}
             @if (!empty($quoteData['additional_requests']))
-                <p style="margin-bottom: 10px; font-weight: bold;">Additional Requests:</p>
-                <div
-                    style="
+            <p style="margin-bottom: 10px; font-weight: bold;">Additional Requests:</p>
+            <div style="
                     background-color: #ffffff;
                     border: 1px solid #cccccc;
                     border-left: 5px solid #166534;
@@ -96,13 +98,13 @@
                     word-wrap: break-word;
                     line-height: 1.5;
                     color: #333333;">
-                    {{ $quoteData['additional_requests'] }}
-                </div>
+                {{ $quoteData['additional_requests'] }}
+            </div>
             @endif
 
             <p style="margin-top: 20px;">
                 Thank you,<br>
-                The Canopy Farm PH
+                {{ $quoteData['company_name'] }}
             </p>
 
         </div>
@@ -114,28 +116,32 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-facebook-f fa-lg"></i>
+                <a href="{{ $quoteData['facebook_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-instagram fa-lg"></i>
+
+                <a href="{{ $quoteData['instagram_link'] }}" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
                 </a>
-                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-twitter fa-lg"></i>
+
+                <a href="https://larabelles-rms.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
 
-            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6;">
-                <p style="margin: 0;">Phone: <span style="font-weight: 500;">0962-447-9893</span></p>
-                <p style="margin: 0;">Address: 006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+            <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
+                <p style="margin: 0; color:#fff;">Phone: <span style="font-weight: 500;">{{
+                        $quoteData['company_contact'] }}</span>
+                </p>
+                <p style="margin: 0; color:#fff;">Address: {{ $quoteData['company_address'] }}</p>
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} Canopy Farm
-                PH. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
+                $quoteData['company_name'] }}. All rights reserved.</span>
 
         </div>
     </div>

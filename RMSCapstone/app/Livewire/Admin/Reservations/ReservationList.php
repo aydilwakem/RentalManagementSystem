@@ -13,6 +13,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationCompletedMail;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Mail;
 
 class ReservationList extends Component
@@ -44,6 +45,16 @@ class ReservationList extends Component
     public $actionMethod = '';
     public $actionId;
     public $actionButtonType = 'default';
+    
+    //-------------------------------- BRANDING -------------------------------------------- //
+    public string $companyName = 'Company'; //Default
+    public string $logoPath = ''; 
+    public string $companyEmail; 
+    public string $companyContact; 
+    public string $companyAddress; 
+    public string $facebookLink; 
+    public string $instagramLink; 
+
 
     //------------------------------------MOUNT------------------------------------------ //
     public function mount()
@@ -168,6 +179,9 @@ class ReservationList extends Component
             return;
         }
 
+        //Call setting
+        $setting = Setting::first();
+
         // Prepare data for email
         $reservationData = [
             'name' => $user->first_name . ' ' . $user->last_name,
@@ -184,8 +198,17 @@ class ReservationList extends Component
             'balance_due' => $invoice->balance_due,
             'properties' => $properties,
             'activities' => $activities,
-        ];
 
+            // Branding
+            'branding_company_name' => $setting->company_name, 
+            'logo_path' => $setting->logo, 
+            'branding_company_email' => $setting->email, 
+            'branding_company_contact' => $setting->contact_number,
+            'company_address' => $setting->address,
+            'facebook_link' => $setting->facebook,
+            'instagram_link' => $setting->instagram,
+        ];
+        logger()->info('Reservation Data:', $reservationData);
         try {
             Mail::to($reservationData['email'])->send(new ReservationConfirmedMail($reservationData));
         } catch (\Exception $e) {
@@ -239,6 +262,9 @@ class ReservationList extends Component
             return;
         }
 
+        //Call setting
+        $setting = Setting::first();
+
         // Prepare data for email
         $reservationData = [
             'name' => $user->first_name . ' ' . $user->last_name,
@@ -254,6 +280,15 @@ class ReservationList extends Component
             'balance_due' => $invoice->balance_due,
             'properties' => $properties,
             'activities' => $activities,
+
+            // Branding
+            'branding_company_name' => $setting->company_name, 
+            'logo_path' => $setting->logo, 
+            'branding_company_email' => $setting->email, 
+            'branding_company_contact' => $setting->contact_number,
+            'company_address' => $setting->address,
+            'facebook_link' => $setting->facebook,
+            'instagram_link' => $setting->instagram,
         ];
 
         try {

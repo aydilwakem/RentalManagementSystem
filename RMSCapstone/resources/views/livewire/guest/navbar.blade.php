@@ -5,30 +5,36 @@
 
             <!-- Logo -->
             <div class="shrink-0 flex items-center">
-                <x-application-mark class="block h-9 w-auto" />
-                <span class="ml-2 text-xl font-semibold text-yellow-50">Canopy Farm</span>
+                <img src="{{ asset('storage/' . $logoPath) }}" alt=" {{ $companyName }}"
+                    class="block h-9 w-auto rounded-full" />
+                <span class="ml-2 text-xl font-semibold text-yellow-50"> {{ $companyName }}</span>
             </div>
 
 
             <!-- Navigation Links -->
             <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
+                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')"
+                    wire:navigate>
                     {{ __('Home') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate>
+                <x-nav-link href="{{ route('guest.reservation-form') }}"
+                    :active="request()->routeIs('guest.reservation-form')" wire:navigate>
                     {{ __('Rooms') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')" wire:navigate>
+                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')"
+                    wire:navigate>
                     {{ __('Activities') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')" wire:navigate>
+                <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
+                    wire:navigate>
                     {{ __('Houses') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')" wire:navigate>
+                <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')"
+                    wire:navigate>
                     {{ __('Event Halls') }}
                 </x-nav-link>
             </div>
@@ -53,23 +59,28 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')"
+                wire:navigate>
                 {{ __('Home') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}"
+                :active="request()->routeIs('guest.reservation-form')" wire:navigate>
                 {{ __('Rooms') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.activities') }}"
+                :active="request()->routeIs('guest.activities')" wire:navigate>
                 {{ __('Activities') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
+                wire:navigate>
                 {{ __('Houses') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.event-halls') }}"
+                :active="request()->routeIs('guest.event-halls')" wire:navigate>
                 {{ __('Event Halls') }}
             </x-responsive-nav-link>
         </div>

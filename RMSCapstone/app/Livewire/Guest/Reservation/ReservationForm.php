@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Guest\Reservation;
 
+use App\Mail\NewReservationMail;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\Activity;
@@ -93,6 +94,15 @@ class ReservationForm extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
+    //----------------------- BRANDING ------------------------ //
+    public string $companyName = 'Company'; //Default
+    public string $logoPath = ''; 
+    public string $companyEmail; 
+    public string $companyContact; 
+    public string $companyAddress; 
+    public string $facebookLink; 
+    public string $instagramLink; 
+
 
     public $editingGuest = [
         'guest_first_name' => '',
@@ -142,6 +152,19 @@ class ReservationForm extends Component
         $this->paymentMethod = PaymentMethod::all();
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
         $this->guest_types = GuestType::all();
+
+        //For Branding
+        // Fetch the first row of the settings table
+        $setting = Setting::first(); 
+        if ($setting) {
+            $this->companyName = $setting->company_name;
+            $this->logoPath = $setting->logo;
+            $this->companyEmail = $setting->email;
+            $this->companyContact = $setting->contact_number;
+            $this->companyAddress = $setting->address;
+            $this->facebookLink = $setting->facebook;
+            $this->instagramLink = $setting->instagram;
+        }
     }
 
     /**
@@ -928,12 +951,22 @@ class ReservationForm extends Component
                 'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
                 'expirationHours' => $this->expirationHours,
                 'payment_link' => $paymentLink,
+
+                // Branding
+                'branding_company_name' => $this->companyName,
+                'logo_path' => $this->logoPath,
+                'branding_company_email' => $this->companyEmail,
+                'branding_company_contact' => $this->companyContact,
+                'company_address' => $this->companyAddress,
+                'facebook_link' => $this->facebookLink,
+                'instagram_link' => $this->instagramLink,
             ];
         });
 
         // Step 8: Send confirmation email
         try {
             Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+            Mail::to('rmscapstone26@gmail.com')->send(new NewReservationMail($reservationData));
         } catch (\Exception $e) {
             logger()->error('Email send failed: ' . $e->getMessage());
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');

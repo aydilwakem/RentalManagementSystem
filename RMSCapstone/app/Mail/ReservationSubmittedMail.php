@@ -48,6 +48,15 @@ class ReservationSubmittedMail extends Mailable
                 'expirationHours' => $this->reservationData['expirationHours'],
                 'payment_link' =>  $this->reservationData['payment_link'],
 
+                //Branding
+                'branding_company_name' => $this->reservationData['branding_company_name'],
+                'logo_path' =>$this->reservationData['logo_path'],
+                'branding_company_email' => $this->reservationData['branding_company_email'],
+                'branding_company_contact' => $this->reservationData['branding_company_contact'],
+                'company_address' => $this->reservationData['company_address'],
+                'facebook_link' => $this->reservationData['facebook_link'],
+                'instagram_link' => $this->reservationData['instagram_link'],
+
             ]);
     }
 }
