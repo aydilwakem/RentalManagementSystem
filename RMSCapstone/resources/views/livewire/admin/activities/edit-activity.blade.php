@@ -33,7 +33,7 @@
                             placeholder="Ex. Coffee Farm Tour" required>
 
                         @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -46,7 +46,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                             placeholder="Ex. 1,000.00">
                         @error('amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -58,7 +58,7 @@
                             class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
                             placeholder="Ex. Discover the journey from bean to cup on our immersive coffee farm tour."></textarea>
                         @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -69,7 +69,7 @@
                             class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
                             placeholder="Ex. Farm entrance fee, coffee tasting, light snacks, guide services."></textarea>
                         @error('inclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -83,7 +83,7 @@
 
                             <!-- Error Message -->
                             @error('image')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
 
                             <!-- Loading Indicator (Shows when file is being uploaded) -->
@@ -91,8 +91,8 @@
                                 <!-- Spinner -->
                                 <svg class="animate-spin h-5 w-5 text-green-700 mr-2" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor"
                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                     </path>
@@ -103,20 +103,20 @@
 
                         <div>
                             @if ($image && method_exists($image, 'temporaryUrl'))
-                                <div class="mt-2 relative inline-block">
-                                    <img src="{{ $image->temporaryUrl() }}"
-                                        class="w-32 h-32 object-cover rounded-lg shadow" alt="Image preview">
-                                    <button type="button" wire:click="removeImage"
-                                        class="absolute top-1 right-1 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition"
-                                        aria-label="Remove image">
-                                        ×
-                                    </button>
-                                </div>
+                            <div class="mt-2 relative inline-block">
+                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow"
+                                    alt="Image preview">
+                                <button type="button" wire:click="removeImage"
+                                    class="absolute top-1 right-1 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition"
+                                    aria-label="Remove image">
+                                    ×
+                                </button>
+                            </div>
                             @else
-                                <div wire:loading.remove wire:target="image"
-                                    class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
-                                    No image selected
-                                </div>
+                            <div wire:loading.remove wire:target="image"
+                                class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
+                                No image selected
+                            </div>
                             @endif
 
                         </div>
@@ -128,7 +128,7 @@
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
-                    <x-button type="submit" wire:loading.attr="disabled" wire:target="newImage"
+                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
                         wire:click="confirmEdit({{ $activity->id }})">
                         Save Changes
                     </x-button>

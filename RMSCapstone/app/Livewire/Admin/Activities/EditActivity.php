@@ -82,7 +82,7 @@ class EditActivity extends Component
                 'description' => 'nullable|string',
                 'amount' => 'required|numeric|min:0|max:10000',
                 'inclusions' => 'nullable|string',
-                'newImage' => 'nullable|image|max:2048', // Ensure image size is within limit
+                'image' => 'nullable|image|max:2048', // Ensure image size is within limit
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -91,18 +91,18 @@ class EditActivity extends Component
         } //Handles constraints
 
         // Ensure the image is uploaded properly
-        if ($this->newImage && !$this->newImage->isValid()) {
+        if ($this->image && !$this->image->isValid()) {
             session()->flash('error', 'Image upload failed. Please try again.');
             return;
         }
 
         // Handle Image Upload
-        if ($this->newImage) {
+        if ($this->image) {
             if ($this->activity->image) {
                 Storage::disk('public')->delete($this->activity->image);
             }
             // Save the image in public folder
-            $this->image = $this->newImage->store('activities', 'public');
+            $this->image = $this->image->store('activities', 'public');
         }
 
         // Update Activity

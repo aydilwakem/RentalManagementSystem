@@ -40,7 +40,7 @@ class DeletedActivities extends Component
         $activity = Activity::withTrashed()->find($activityId);
         if ($activity) {
             $activity->restore();
-            session()->flash('message', 'Amenity restored successfully.');
+            session()->flash('message', 'Activity restored successfully.');
             $this->fetchDeletedActivities();
         }
     }
@@ -54,7 +54,7 @@ class DeletedActivities extends Component
         $activity = Activity::withTrashed()->find($this->confirmItemDelete);
         if ($activity) {
             $activity->forceDelete();
-            session()->flash('message', 'Amenity permanently deleted.');
+            session()->flash('message', 'Activity permanently deleted.');
             $this->fetchDeletedActivities();
         }
         //Closes the modal
