@@ -162,7 +162,7 @@
 
                     <x-button class="ms-3 bg-green text-white" wire:click="updateTenant({{ $tenant->id }})"
                         wire:loading.attr="disabled">
-                        {{ __('Edit Tenant') }}
+                        {{ __('Save Changes') }}
                     </x-button>
                 </x-slot>
             </x-dialog-modal>

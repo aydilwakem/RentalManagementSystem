@@ -316,7 +316,7 @@
                         Cancel
                     </x-ghost-button>
                     <x-button wire:loading.attr="disabled" wire:target="image" wire:click="confirmEdit">
-                        Edit Event
+                        Save Changes
                     </x-button>
                 </div>
             </form>
@@ -328,7 +328,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to save changes on this event?') }}
+                    {{ __('Are you sure you want to save changes to this event?') }}
                 </x-slot>
 
                 <x-slot name="footer">
@@ -337,9 +337,11 @@
                     </x-secondary-button>
 
                     <x-button class="ms-3 bg-green text-white" wire:click="updateEvent" wire:loading.attr="disabled">
-                        {{ __('Edit Event') }}
+                        {{ __('Save Changes') }}
                     </x-button>
                 </x-slot>
             </x-dialog-modal>
 
         </div>
+    </div>
+</div>

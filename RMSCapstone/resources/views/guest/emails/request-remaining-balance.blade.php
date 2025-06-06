@@ -82,7 +82,7 @@
 
             <p>Thank you for choosing Canopy Farm PH. We hope to see you again soon!</p>
 
-            <p>Warm regards,<br>The Canopy Farm PH Team</p>
+            <p>Best regards,<br>The Canopy Farm PH</p>
         </div>
 
         <!-- Footer -->

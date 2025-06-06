@@ -41,7 +41,7 @@ class ViewPayments extends Component
 //---------------------------------------------- DELETE PAYMENT METHOD ----------------------------------//
    public function deletePaymentMethod()
     {
-        $paymentMethod = PaymentMethod::find($this->confirmItemDelete);
+        $paymentMethod = PaymentMethod::find($this->selectedItemId);
 
         if (!$paymentMethod) {
             session()->flash('error', 'Payment Method not found.');
@@ -64,7 +64,7 @@ class ViewPayments extends Component
             $paymentMethod->delete();
 
             // Reset confirmation modal
-            $this->confirmItemDelete = null;
+            $this->confirmItemDelete = false;
             $this->selectedItemId = null;
 
             // Flash success message

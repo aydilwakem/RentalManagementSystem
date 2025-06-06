@@ -226,7 +226,7 @@
                 </div>
 
                 <!-- Delete Confirmation Modal -->
-                <x-dialog-modal wire:model.live="confirmItemDelete">
+                <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
                     <x-slot name="title">
                         {{ __('Delete Event Category') }}
                     </x-slot>
@@ -249,7 +249,7 @@
                 </x-dialog-modal>
 
                 {{-- Cannot Delete Modal --}}
-                <x-dialog-modal wire:model="cannotDeleteItem">
+                <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
                     <x-slot name="title">
                         {{ __('Unable to Delete') }}
                     </x-slot>
@@ -266,7 +266,7 @@
                 </x-dialog-modal>
 
                 <!-- Bulk Delete Confirmation Modal -->
-                <x-dialog-modal wire:model.live="confirmBulkDelete">
+                <x-dialog-modal wire:model.live="confirmBulkDelete" type="ghost">
                     <x-slot name="title">
                         {{ __('Delete Event Categories') }}
                     </x-slot>

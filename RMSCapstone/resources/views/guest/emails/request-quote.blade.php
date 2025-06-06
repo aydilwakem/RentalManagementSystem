@@ -108,11 +108,11 @@
 
             {{-- Closing statement and contact --}}
             <p style="margin-top: 25px;">
-                If you have any urgent questions before we get back to you, don't hesitate to call us at <span style="color:#166534; font-weight: 700;">0962-447-9893</span>
+                If you have any urgent questions before we get back to you, don't hesitate to call us at <span style="color:#166534; font-weight: 700;">0962-447-9893</span> We look forward to helping you plan your perfect event!<br>
             </p>
 
             <p style="margin-top: 20px;">
-                We look forward to helping you plan your perfect event!<br>
+
                 Thank you,<br>
                 The Canopy Farm PH
             </p>

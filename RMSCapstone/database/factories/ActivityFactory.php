@@ -20,9 +20,10 @@ class ActivityFactory extends Factory
     {
         return [
         'name' => $this->faker->unique()->words(3, true), // Ensures uniqueness and max:255
-        'description' => $this->faker->paragraph(),  
+        'description' => $this->faker->paragraph(),
         'amount' => $this->faker->randomFloat(2, 0, 5000), // min:100
         'inclusions' => $this->faker->optional()->sentence(),
         ];
     }
 }
+

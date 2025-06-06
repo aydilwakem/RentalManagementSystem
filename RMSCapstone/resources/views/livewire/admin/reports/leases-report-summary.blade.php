@@ -3,153 +3,193 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Lease Reports</title>
+    <title>Canopy Farm PH - Lease Summary Report</title>
+    <style>
+        @page {
+            margin: 40px 30px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #065f46;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 8px 0 4px;
+            color: #065f46;
+        }
+
+        p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .date-range {
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #c0c0c0;
+            padding: 8px 10px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        th {
+            background-color: #e6f7ed;
+            color: #065f46;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0fdf4;
+            border: 1px solid #a7f3d0;
+            border-radius: 5px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .summary p strong {
+            color: #047857;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .page-number {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
+        }
+    </style>
 </head>
-<style>
-    @page {
-        margin: 60px 40px 60px 40px;
-    }
-
-    .page-number:after {
-        content: "Page " counter(page);
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        font-size: 12px;
-        margin: 40px;
-        color: #333;
-    }
-
-    header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    h1 {
-        font-size: 26px;
-        color: #166534;
-        margin: 0;
-    }
-
-    h2 {
-        font-size: 18px;
-        color: #444;
-        margin-bottom: 5px;
-    }
-
-    .date-range {
-        font-size: 13px;
-        margin-bottom: 25px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th,
-    td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        vertical-align: top;
-    }
-
-    th {
-        background-color: #e7f2ec;
-        color: #166534;
-        font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    footer {
-        position: fixed;
-        bottom: 30px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-size: 10px;
-        color: #999;
-    }
-</style>
 
 <body>
     <header>
-        <h1>Canopy Farm PH Property Leases</h1>
-        <h2>Lease Summary</h2>
+        <div class="page-number"></div>
+        <img src="{{ public_path('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+        <h1>Canopy Farm PH</h1>
+        <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+        <p>+63 962 447 9893</p>
+        <h2>Leases Summary</h2>
         <p class="date-range">
-            <strong>Date Range:</strong>
+            <strong>Reporting Period:</strong>
             {{ $start_date ? \Carbon\Carbon::parse($start_date)->format('F d, Y') : 'N/A' }}
-            –
+            &ndash;
             {{ $end_date ? \Carbon\Carbon::parse($end_date)->format('F d, Y') : 'N/A' }}
         </p>
     </header>
-
+    <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
         <thead>
             <tr>
-                <th>Item</th>
-                <th>Transaction Number</th>
-                <th>Tenant Representative</th>
-                <th>Property Rented</th>
-                <th>Total Tenats </th>
-                <th>Lease Start Date</th>
-                <th>Lease End Date</th>
-                <th>Total Months</th>
-                <th>Total Amount</th>
-                <th>Status</th>
+                <th style="width: 6%;">#</th>
+                <th style="width: 12%;">Transaction No.</th>
+                <th style="width: 12%;">Primary Tenant</th>
+                <th style="width: 10%;">Property Rented</th>
+                <th style="width: 10%;">Total Tenants</th>
+                <th style="width: 13%;">Lease Start Date</th>
+                <th style="width: 13%;">Lease End Date</th>
+                <th style="width: 11%;">Lease Duration</th>
+                <th style="width: 11%;">Total Lease Amount</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($transactions as $transaction)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $transaction->transaction_number }}</td>
-                <td>
-                    {{ $transaction->transactionUser->first_name }}
-                    {{ $transaction->transactionUser->last_name }}
-                </td>
-                <td>
-                    @foreach ($transaction->properties as $property)
-                    {{ $property->name_number ?? 'N/A' }}<br>
-                    @endforeach
-                </td>
-                <td>{{ $transaction->pax }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</td>
-                <td>{{ $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1 }}
-                    {{ Str::plural('month', $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1)
-                    }}</td>
-                <td>PHP{{ number_format($transaction->total_amount), 2 }}</td>
-                <td>{{ ucfirst($transaction->transaction_status) }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $transaction->transaction_number }}</td>
+                    <td>
+                        {{ $transaction->transactionUser->first_name }}
+                        {{ $transaction->transactionUser->last_name }}
+                    </td>
+                    <td>
+                        @foreach ($transaction->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                        @endforeach
+                    </td>
+                    <td>{{ $transaction->pax }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</td>
+
+                    @php
+                        $start = \Carbon\Carbon::parse($transaction->start_datetime);
+                        $end = \Carbon\Carbon::parse($transaction->end_datetime);
+                        $diffInDays = $start->diffInDays($end);
+                        $monthsRoundedUp = ceil($diffInDays / 30.44); // 30.44 = average days in a month
+                    @endphp
+
+                    <td>
+                        {{ $monthsRoundedUp }} {{ Str::plural('month', $monthsRoundedUp) }}
+                    </td>
+
+                    <td>{{ number_format($transaction->total_amount, 2) }}</td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="6" style="text-align: center;">No leases found in this date range.</td>
-            </tr>
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 20px;">No leases were recorded for the
+                        selected date range.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
 
-    <div>
-        <h2><strong>Leases Summary: </strong></h2>
+    <div class="summary">
+        <h2>Summary of Key Metrics:</h2>
         <p><strong>Total Leases Within Date Range: </strong>{{ $totalLeases }} leases</p>
         <p><strong>Average Lease Length (months): </strong>{{ $averageLength }} months </p>
         <p><strong>Total Tenants:</strong> {{ $totalTenants }} tenants </p>
         <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
-
     </div>
 
     <footer>
         <div class="page-number"></div>
-        &copy; {{ now()->year }} Canopy Farm PH &mdash; Leases Report generated on {{ now()->format('F d, Y h:i A')
-        }}
+        &copy; {{ now()->year }} Canopy Farm PH &mdash; Report generated on {{ now()->format('F d, Y h:i A') }}
     </footer>
 </body>
 

@@ -56,7 +56,10 @@
             <p style="margin-bottom: 0;">If you have any questions, need further clarification, or require assistance,
                 please don’t hesitate to contact us directly. We're here to help you finalize your booking promptly!</p>
 
-            <p style="margin-top: 30px;">Best regards,<br>The Canopy Farm PH</p>
+            <p style="margin-top: 20px;">
+                Thank you,<br>
+                The Canopy Farm PH
+            </p>
         </div>
 
         {{-- Footer --}}

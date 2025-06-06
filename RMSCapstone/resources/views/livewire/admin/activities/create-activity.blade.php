@@ -128,7 +128,7 @@
                     </x-ghost-button>
                     <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
                         wire:click="confirmCreate">
-                        Add Activity
+                        Create Activity
                     </x-button>
                 </div>
 
@@ -155,3 +155,5 @@
                 </x-slot>
             </x-dialog-modal>
         </div>
+    </div>
+</div>

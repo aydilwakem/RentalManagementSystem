@@ -218,7 +218,7 @@
                     </div>
 
                     <!-- Delete Confirmation Modal -->
-                    <x-dialog-modal wire:model.live="confirmItemDelete">
+                    <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
                         <x-slot name="title">
                             {{ __('Delete Inclusion') }}
                         </x-slot>
@@ -241,7 +241,7 @@
                     </x-dialog-modal>
 
                     <!-- Bulk Delete Confirmation Modal -->
-                    <x-dialog-modal wire:model.live="confirmBulkDelete">
+                    <x-dialog-modal wire:model.live="confirmBulkDelete" type="danger">
                         <x-slot name="title">
                             {{ __('Delete Inclusions') }}
                         </x-slot>

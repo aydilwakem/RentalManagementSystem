@@ -7,7 +7,6 @@
 }
 
 /* Root Styling */
-/* Green Theme */
 :root {
     --color-primary-50: #f0fdf4;
     --color-primary-100: #dcfce7;
@@ -32,6 +31,7 @@
     --color-secondary-900: #064e3b;
 
     --color-background: #f0fdf4;
+    --color-ghost: #808080;
     --color-surface: #ecfdf5;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -71,6 +71,7 @@
 
     /* Background & Text */
     --color-background: #ffffff;
+    --color-ghost: #808080;
     --color-surface: #f8fafc;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -102,6 +103,7 @@
     --color-secondary-900: #831843;
 
     --color-background: #fff1f2;
+    --color-ghost: #808080;
     --color-surface: #fdf2f8;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -133,6 +135,7 @@
     --color-secondary-900: #4c1d95;
 
     --color-background: #faf5ff;
+    --color-ghost: #808080;
     --color-surface: #f5f3ff;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -169,6 +172,7 @@
     --color-info: #06b6d4;
 
     --color-background: #0f172a;
+    --color-ghost: #808080;
     --color-surface: #1e293b;
     --color-text-primary: #f8fafc;
     --color-text-secondary: #cbd5e1;
@@ -207,6 +211,7 @@
     --color-info: #06b6d4;
 
     --color-background: #ffffff;
+    --color-ghost: #808080;
     --color-surface: #fef2f2;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -245,6 +250,7 @@
     --color-info: #06b6d4;
 
     --color-background: #000000;
+    --color-ghost: #808080;
     --color-surface: #1f2937;
     --color-text-primary: #f9fafb;
     --color-text-secondary: #9ca3af;
@@ -283,6 +289,7 @@
     --color-info: #06b6d4;
 
     --color-background: #fffbea;
+    --color-ghost: #808080;
     --color-surface: #fefce8;
     --color-text-primary: #1f2937;
     --color-text-secondary: #6b7280;
@@ -385,6 +392,10 @@
 
 .bg-background {
     background-color: var(--color-background);
+}
+
+.bg-ghost {
+    background-color: var(--color-ghost);
 }
 
 .text-primary {

@@ -26,7 +26,7 @@
 
                 <!-- Wrap in Alpine for state management -->
                 <div x-data="{ darkMode: false, fontSize: 'text-base' }" :class="fontSize"
-                    class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8">
+                    class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl">
 
                     <form wire:submit.prevent="">
                         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">

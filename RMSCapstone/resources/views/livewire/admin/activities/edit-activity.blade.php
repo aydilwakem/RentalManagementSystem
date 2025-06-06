@@ -143,7 +143,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to save changes on this item?') }}
+                    {{ __('Are you sure you want to save changes to this item?') }}
                 </x-slot>
 
                 <x-slot name="footer">
@@ -153,13 +153,13 @@
 
                     <x-button class="ms-3 bg-green text-white" wire:click="updateActivity({{ $activity->id }})"
                         wire:loading.attr="disabled">
-                        {{ __('Edit Activity') }}
+                        {{ __('Save Changes') }}
                     </x-button>
                 </x-slot>
             </x-dialog-modal>
 
             <!-- Remove Image Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmDeleteImage">
+            <x-dialog-modal wire:model.live="confirmDeleteImage" type="danger">
                 <x-slot name="title">
                     {{ __('Delete Image') }}
                 </x-slot>

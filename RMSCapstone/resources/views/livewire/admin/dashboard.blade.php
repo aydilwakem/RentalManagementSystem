@@ -63,11 +63,18 @@
                         let room = arg.event.extendedProps.room || '';
                         let time = arg.event.extendedProps.time || '';
                         let pax = arg.event.extendedProps.pax || '';
+                        let status = arg.event.extendedProps.transaction_status || '';
 
-                        let html = '<div><b>' + title + '</b></div>';
-                        if (room) html += '<div>Room: ' + room + '</div>';
-                        if (time) html += '<div>Time: ' + time + '</div>';
-                        if (pax) html += '<div>Pax: ' + pax + '</div>';
+                        // Reservation Details
+                        let firstLine = `<div class="text-sm font-semibold">${title}`;
+                        if (room) firstLine += ` | Room: ${room}`;
+                        if (pax) firstLine += ` | ${pax} pax`;
+                        firstLine += '</div>';
+
+                        // Time
+                        // let secondLine = time ? `<div class="text-xs text-gray-600">${time}</div>` : '';
+
+                        let html = firstLine;
 
                         return {
                             html: html

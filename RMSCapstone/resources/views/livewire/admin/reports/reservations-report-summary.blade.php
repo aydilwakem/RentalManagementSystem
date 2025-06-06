@@ -1,74 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Reservation Summary</title>
+    <title>Canopy Farm PH - Reservations Summary Report</title>
     <style>
         @page {
-            margin: 60px 40px 60px 40px;
-        }
-
-        .page-number:after {
-            content: "Page " counter(page);
+            margin: 40px 30px;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 12px;
-            margin: 40px;
+            margin: 0;
             color: #333;
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 26px;
-            color: #166534;
+            font-size: 24px;
             margin: 0;
+            color: #065f46;
         }
 
         h2 {
-            font-size: 18px;
-            color: #444;
-            margin-bottom: 5px;
+            font-size: 19px;
+            margin: 8px 0 4px;
+            color: #065f46;
         }
 
-        h4 {
-            font-size: 12px;
-            color: #444;
-            margin-bottom: 3px;
+        p {
+            margin: 0;
+            line-height: 1.5;
         }
 
         .date-range {
+            margin-bottom: 15px;
             font-size: 13px;
-            margin-bottom: 25px;
+            color: #555;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            table-layout: fixed;
+            margin-top: 15px;
         }
 
         th,
         td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            border: 1px solid #c0c0c0;
+            padding: 8px 10px;
             vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         th {
-            background-color: #e7f2ec;
-            color: #166534;
+            background-color: #e6f7ed;
+            color: #065f46;
             font-weight: bold;
+            font-size: 12px;
+            text-align: left;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .summary {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0fdf4;
+            border: 1px solid #a7f3d0;
+            border-radius: 5px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .summary p strong {
+            color: #047857;
         }
 
         footer {
@@ -78,80 +92,91 @@
             right: 0;
             text-align: center;
             font-size: 10px;
-            color: #999;
+            color: #888;
+        }
+
+        .page-number {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
         }
     </style>
 </head>
 
 <body>
     <header>
+        <div class="page-number"></div>
+        <img src="{{ public_path('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
         <h1>Canopy Farm PH</h1>
-        <h4>006 San Gregorio Extension, Brgy. Buna Cerca , Indang, Philippines</h4>
-        <h4>0962 447 9893</h4>
-        <h2>Reservation Summary</h2>
+        <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+        <p>+63 962 447 9893</p>
+        <h2>Reservations Summary</h2>
         <p class="date-range">
-            <strong>Date Range:</strong>
+            <strong>Reporting Period:</strong>
             {{ $start_date ? \Carbon\Carbon::parse($start_date)->format('F d, Y') : 'N/A' }}
-            –
+            &ndash;
             {{ $end_date ? \Carbon\Carbon::parse($end_date)->format('F d, Y') : 'N/A' }}
         </p>
     </header>
-
+    <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
         <thead>
             <tr>
-                <th>Item</th>
-                <th>Transaction Number</th>
-                <th>Reserved By</th>
-                <th>Room/s</th>
-                <th>Check-In Date</th>
-                <th>Check-Out Date</th>
-                <th>Total Guests</th>
-                <th>Total Amount</th>
-                <th>Status</th>
+                <th style="width: 6%;">#</th>
+                <th style="width: 13%;">Transaction No.</th>
+                <th style="width: 12%;">Booked By</th>
+                <th style="width: 10%;">Room(s)</th>
+                <th style="width: 14%;">Check-In Date</th>
+                <th style="width: 14%;">Check-Out Date</th>
+                <th style="width: 9%;">Total Guests</th>
+                <th style="width: 11%;">Total Amount</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($transactions as $transaction)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $transaction->transaction_number }}</td>
-                <td>
-                    {{ $transaction->transactionUser->first_name }}
-                    {{ $transaction->transactionUser->last_name }}
-                </td>
-                <td>
-                    @foreach ($transaction->properties as $property)
-                    {{ $property->name_number ?? 'N/A' }}<br>
-                    @endforeach
-                </td>
-                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('M d, Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('M d, Y') }}</td>
-                <td>{{ $transaction->pax }}</td>
-                <td>PHP{{ number_format($transaction->total_amount), 2 }}</td>
-                <td>{{ ucfirst($transaction->transaction_status) }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $transaction->transaction_number }}</td>
+                    <td>
+                        {{ $transaction->transactionUser->first_name }}
+                        {{ $transaction->transactionUser->last_name }}
+                    </td>
+                    <td>
+                        @foreach ($transaction->properties as $property)
+                            {{ $property->name_number ?? 'N/A' }}<br>
+                        @endforeach
+                    </td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('M d, Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('M d, Y') }}</td>
+                    <td>{{ $transaction->pax }}</td>
+                    <td>{{ number_format($transaction->total_amount, 2) }}</td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="6" style="text-align: center;">No reservations found in this date range.</td>
-            </tr>
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 20px;">No reservations were recorded for the
+                        selected date range.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
 
-    <div>
-        <h2><strong>Reservations Summary: </strong></h2>
+    <div class="summary">
+        <h2>Summary of Key Metrics:</h2>
         <p><strong>Total Reservations Within Date Range: </strong>{{ $totalReservations }} reservations</p>
         <p><strong>Total Guests:</strong> {{ $totalGuests }} guests </p>
         <p><strong>Average Reservation Length (nights): </strong>{{ $averageLength }} nights </p>
         <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
-
     </div>
 
     <footer>
         <div class="page-number"></div>
-        &copy; {{ now()->year }} Canopy Farm PH &mdash; Reservation Report generated on {{ now()->format('F d, Y h:i A')
-        }}
+        &copy; {{ now()->year }} Canopy Farm PH &mdash; Report generated on {{ now()->format('F d, Y h:i A') }}
     </footer>
 </body>
 

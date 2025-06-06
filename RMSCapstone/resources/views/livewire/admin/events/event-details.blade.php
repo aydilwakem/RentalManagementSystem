@@ -5,68 +5,279 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Event Details</title>
+    <style>
+        @page {
+            margin: 40px 30px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #065f46;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 8px 0 4px;
+            color: #065f46;
+        }
+
+        p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .date-range {
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #c0c0c0;
+            padding: 8px 10px;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        th {
+            background-color: #e6f7ed;
+            color: #065f46;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0fdf4;
+            border: 1px solid #a7f3d0;
+            border-radius: 5px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .summary p strong {
+            color: #047857;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .page-number {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
+        }
+    </style>
 </head>
 
-<body style="font-family: Arial, sans-serif; color: #333333; font-size: 14px; line-height: 1.6;">
-    <h1 style="font-size: 24px; font-weight: bold; color: #166534; margin-bottom: 16px; text-align:center;">Canopy Farm
-        PH Events</h1>
-    <h3 style="font-size: 24px; font-weight: bold; color: #166534; margin-bottom: 16px; text-align:center;">Event
-        Details</h3>
+<body style="font-family: Arial, sans-serif; font-size: 14px; color: #333; background-color: #fff;">
 
-    <div
-        style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 24px;">
+    {{-- Header --}}
+    <header style="text-align: center">
+        <div class="page-number"></div>
+        <img src="{{ public_path('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+        <h1 style="color: #166534;">Canopy Farm PH</h1>
+        <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+        <p>+63 962 447 9893</p>
+        <h2 style="color: #166534; padding-top: 10px;">Event Booking Details</h2>
+    </header>
 
-            <!-- Guest Details -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Guest Details</h3>
-                <div><strong>Event Booked By:</strong> {{ $event->transactionUser->first_name }} {{
-                    $event->transactionUser->middle_name }} {{ $event->transactionUser->last_name }}</div>
-                <div><strong>Email:</strong> {{ $event->transactionUser->email }}</div>
-                <div><strong>Contact Number:</strong> {{ $event->transactionUser->contact_number }}</div>
-                <div><strong>Company Name:</strong> {{ $event->transactionUser->company_name }}</div>
-                <div><strong>Address:</strong> {{ $event->transactionUser->city_municipality }}, {{
-                    $event->transactionUser->country }}</div>
-            </div>
+    {{-- Guest Details --}}
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Booking Contact Details
+        </h2>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Guest Name:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $event->transactionUser->first_name }}
+                    {{ $event->transactionUser->middle_name }}
+                    {{ $event->transactionUser->last_name }}
+                    {{ $event->transactionUser->suffix }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Email:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ $event->transactionUser->email }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Contact Number:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ $event->transactionUser->contact_number }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Company Name:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $event->transactionUser->company_name ?? 'Not provided' }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Country:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $event->transactionUser->country ?? 'Not provided' }}</td>
+            </tr>
+        </table>
+    </div>
 
-            <!-- Event Info -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Event Information</h3>
-                <div><strong>Event Hall:</strong>
-                    @foreach ($event->properties as $property)
-                    {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
-                    @endforeach
-                </div>
-                <div><strong>Event Type:</strong> {{ $event->event_type->name ?? 'N/A' }}</div>
-                <div><strong>Event Start Date:</strong> {{ $event->start_datetime->format('F j, Y') }}</div>
-                <div><strong>Event End Date:</strong> {{ $event->end_datetime->format('F j, Y') }}</div>
-                <div><strong>Total Adults:</strong> {{ $event->total_adults }}</div>
-                <div><strong>Total Kids:</strong> {{ $event->total_kids ?? 'N/A'}}</div>
-                <div><strong>Total People:</strong> {{ $event->pax }}</div>
-                <div><strong>Event Status:</strong> {{ ucfirst($event->transaction_status) }}</div>
-                <div><strong>Total Agreed Amount:</strong> PHP {{ number_format($event->total_amount, 2) }}</div>
-            </div>
+    {{-- EVent Hall Details --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Event Hall Details
+        </h2>
 
-            <!-- Invoice Info -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Event Invoice</h3>
-                <div><strong>Transaction ID:</strong> {{ $event->invoice->transaction->transaction_number ?? 'N/A' }}
-                </div>
-                <div><strong>Invoice Number:</strong> {{ $event->invoice->invoice_number }}</div>
-                <div><strong>Sub Total:</strong> PHP {{ number_format($event->invoice->sub_total, 2) }}</div>
-                <div><strong>Balance Due:</strong> PHP {{ number_format($event->invoice->balance_due, 2) }}</div>
-                <div><strong>Due Date:</strong> {{ $event->invoice->due_date->format('F j, Y') }}</div>
-                <div><strong>Invoice Status:</strong> {{ ucfirst($event->invoice->invoice_status) }}</div>
-            </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Event Hall</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Event Type</th>
 
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Event Start Date</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Event End date</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        No. of Adults</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        No. of Kids</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Total Guests</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Event Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($event->properties as $property)
+                    <tr>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $property->name_number ?? 'No Event Hall Booked' }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->event_type->name ?? 'N/A' }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->start_datetime->format('F j, Y') }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->end_datetime->format('F j, Y') }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->total_adults }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->total_kids }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ $event->pax }} </td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                            {{ ucfirst($event->transaction_status) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
+            Total Agreed Amount: PHP {{ number_format($event->total_amount, 2) }}
         </div>
+    </div>
+
+    {{-- Invoice Details --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Event Invoice
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Transaction ID</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Invoice No.</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Subtotal</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Balance Due</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Due Date</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Invoice Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->invoice->transaction->transaction_number ?? 'N/A' }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->invoice->invoice_number }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ number_format($event->invoice->sub_total, 2) }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ number_format($event->invoice->balance_due, 2) }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->invoice->due_date->format('F j, Y') }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ ucfirst($event->invoice->invoice_status) }} </td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 </body>
 

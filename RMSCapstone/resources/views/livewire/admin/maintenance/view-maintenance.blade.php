@@ -110,7 +110,7 @@
             </div>
         </div>
 
-        <x-dialog-modal wire:model.live="confirmItemDelete">
+        <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
             <x-slot name="title">
                 {{ __('Delete Maintenance') }}
             </x-slot>
