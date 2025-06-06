@@ -78,11 +78,13 @@
                                             {{ $guestDetail->last_name }}
                                             {{ $guestDetail->suffix }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->gender ?? 'N/A' }}
-                                        </td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->residency }}</td>
                                         <td class="border px-4 py-2 text-gray-700">
-                                            {{ $guestDetail->country_of_origin }}</td>
+                                            {{ ucfirst($guestDetail->gender) ?? 'N/A' }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ ucfirst($guestDetail->residency) }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">
+                                            {{ ucfirst($guestDetail->country_of_origin) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -143,8 +145,8 @@
                         </div>
                     </div>
                     <div>
-                        <strong>Transaction Number:</strong>
-                        <div>#{{ $transaction->transaction_number }}</div>
+                        <strong>Transaction ID:</strong>
+                        <div>{{ $transaction->transaction_number }}</div>
                     </div>
                     <div>
                         <strong>Reservation Created At:</strong>
@@ -227,7 +229,7 @@
                                         <td class="border px-4 py-2 text-gray-700 text-center">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center">
-                                            {{ $property->pivot->days ?? 'N/A' }}</td>
+                                            {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center">
                                             {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-right">
@@ -353,52 +355,60 @@
                         <div>
                             {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
                         </div>
-
                     </div>
+
+
+                    <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
+                    @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
+                        <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled" class="mt-6">
+                            <div class="flex items-center justify-center">
+                                <!-- Spinner -->
+                                <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
+                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                        </path>
+                                    </svg>
+                                </span>
+
+                                <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
+                                    wire:target="requestRemainingBalance"></i>
+
+                                <span wire:loading.remove wire:target="requestRemainingBalance">
+                                    Request Remaining Balance
+                                </span>
+                            </div>
+                        </x-button>
+                    @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
+                        <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
+                    @endif
             </div>
         @else
             <p class="text-gray-600 italic">No invoice found for this transaction.</p>
             @endif
 
-
-            <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
-
-       
-            @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
-                <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled">
-                    <div class="flex items-center justify-center">
-                        <!-- Spinner -->
-                        <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
-                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                            </svg>
-                        </span>
-
-                        <i class="fas fa-money-bill-wave mr-2" wire:loading.remove wire:target="requestRemainingBalance"></i>
-
-                        <span wire:loading.remove wire:target="requestRemainingBalance">
-                            Request Remaining Balance
-                        </span>
-                    </div>
-                </x-button>
-            @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
-                <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
-            @endif
-           
-            
             <!------------------------  GENERATE OFFICIAL RECEIPT ------------------------------------->
             @if ($transaction->transaction_status == 'done')
                 <div>
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
-                        <button wire:click="GenerateReceipt"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center gap-2">
-                            <i class="fas fa-receipt"></i>
-                            Generate Official Receipt
-                        </button>
+                        <x-button wire:click="GenerateReceipt" wire:loading.attr="disabled"
+                            wire:target="GenerateReceipt"
+                            class=" !bg-blue-600 text-white rounded hover:!bg-blue-700 focus:ring-2 focus:!ring-blue-600 focus:!border-blue-600 transition items-center gap-2">
+
+                            <!-- Show spinner and text while loading -->
+                            <span wire:loading wire:target="GenerateReceipt" class=" items-center gap-2">
+                                <span>Generating...</span>
+                            </span>
+
+                            <!-- Show default text when not loading -->
+                            <span wire:loading.remove wire:target="GenerateReceipt">
+                                <i class="fas fa-receipt"></i>
+                                Generate Official Receipt
+                            </span>
+                        </x-button>
                     @else
                         <!-- Show this if receipt already exists -->
                         <x-button wire:click="ShowReceipt" icon="fas fa-eye">
@@ -407,6 +417,7 @@
                     @endif
                 </div>
             @endif
+
 
             @if ($showReceiptModal && $receipt)
                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -491,9 +502,28 @@
                             </x-button>
 
                             <!-- Send to Email Button -->
-                            <x-warning-button wire:click="sendReceiptToEmail">
-                                <i class="fas fa-envelope"></i>
-                                <span class="pl-2">Send to Email</span>
+                            <x-warning-button wire:click="sendReceiptToEmail" wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading class="mr-2" wire:target="sendReceiptToEmail">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4">
+                                            </circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                    <i class="fas fa-envelope mr-2" wire:loading.remove
+                                        wire:target="sendReceiptToEmail"></i>
+
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="sendReceiptToEmail">
+                                        Send to Email
+                                    </span>
+                                </div>
                             </x-warning-button>
 
                         </div>
@@ -504,37 +534,42 @@
 
 
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
-           
+
 
             <section id="payments">
 
 
-                <div class="text-left py-10 flex items-center gap-2">
-                    <x-button wire:click="OpenCreatePaymentModal">
-                        <i class="fas fa-plus mr-2"></i>
-                        Create Payment
-                    </x-button>
 
-                    <!-- Info Icon with Tooltip -->
-                    <div class="relative group">
-                        <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer"></i>
-                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 text-xs text-white bg-gray-800 p-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                            Create Payment is for cash payments only.
-                        </div>
-                    </div>
-                </div>
 
                 <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                    <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
-                        {{ __('Payments') }}
-                    </h2>
+                    <div class="justify-between flex items-center">
+                        <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                            Payments
+                        </h2>
+                        <div class="text-left mb-4 flex items-center gap-2">
+                            <!-- Info Icon with Tooltip -->
+                            <div class="relative group inline-block">
+                                <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer"></i>
+
+                                <!-- Tooltip -->
+                                <div
+                                    class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                    Create Payment is for cash payments only.
+                                </div>
+                            </div>
+                            <x-button wire:click="OpenCreatePaymentModal">
+                                <i class="fas fa-plus mr-2"></i>
+                                Create Payment
+                            </x-button>
+                        </div>
+                    </div>
                     @if ($payments->isNotEmpty())
                         <div class="overflow-x-auto">
                             <table class="min-w-full border-collapse border border-gray-300 text-sm">
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Invoice #</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Type</th>
@@ -550,7 +585,8 @@
                                     @foreach ($payments as $payment)
                                         <tr class="hover:bg-gray-50">
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">{{ $payment->invoice->invoice_number }}</td>
+                                            <td class="border px-4 py-2 text-gray-700">
+                                                {{ $payment->invoice->invoice_number }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
                                                 {{ $payment->mode_of_payment }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
@@ -598,30 +634,36 @@
                 </div>
             </section>
 
-          
+
 
             <!---------------------------- MODALS ---------------------------------------->
             <div>
                 @if ($cannotGenerateReceiptModal)
-                    <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-                        <div class="bg-white p-6 rounded shadow-lg w-96">
-                            <h2 class="text-lg font-semibold mb-4">Notice</h2>
-                            <p class="text-gray-700">Receipt cannot be generated. Invoice still has balance due.</p>
-                            <div class="mt-4 text-right">
-                                <button wire:click="$set('cannotGenerateReceiptModal', false)"
-                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <x-dialog-modal wire:model.live="cannotGenerateReceiptModal" type="ghost">
+                        <x-slot name="title">
+                            {{ __('Cannot Perform Action') }}
+                        </x-slot>
+
+                        <x-slot name="content">
+                            {{ __('Receipt cannot be generated. Invoice still has balance due.') }}
+                        </x-slot>
+
+                        <x-slot name="footer">
+                            <x-secondary-button wire:click="$set('cannotGenerateReceiptModal', false)"
+                                wire:loading.attr="disabled">
+                                {{ __('Cancel') }}
+                            </x-secondary-button>
+                        </x-slot>
+                    </x-dialog-modal>
                 @endif
             </div>
 
             <div>
                 @if ($createPaymentModal)
-                    <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                    <div id="guestModal"
+                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
                             <h2 class="text-lg font-semibold mb-4 text-green-700">Add Payment</h2>
 
                             <!-- Amount Paid -->
@@ -690,7 +732,7 @@
             </div>
 
             <!-------------------------- END OF MODALS ---------------------------------->
-              
+
 
             <!-- Back Button -->
             <div class="justify-end flex">

@@ -36,7 +36,7 @@
                         <!-- Description -->
                         <p class="text-gray-600 text-sm mb-4 text-justify">
                             @if (!empty($activity->description))
-                                {{ $activity->description }}
+                                {{ Str::limit($activity->description, 300) }}
                             @else
                                 Try this activity only at Canopy Farm!
                             @endif

@@ -19,7 +19,7 @@ use GuzzleHttp\Client;
 class ViewReservation extends Component
 {
     public $transaction; // Holds the current transaction
-    public $transactionUser; // Holds the transaction user 
+    public $transactionUser; // Holds the transaction user
     public $invoice; // Holds the invoice associated with the transaction
     public $guestDetails; // Holds all guest associated with the transaction
     public $activities; // Holds all activities associated with the transaction
@@ -42,7 +42,7 @@ class ViewReservation extends Component
     public $currency;
     public $verified_at;
 
-    // ---------------------------- MODALS -------------------------- // 
+    // ---------------------------- MODALS -------------------------- //
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
     public $createPaymentModal = false;
@@ -221,6 +221,8 @@ class ViewReservation extends Component
 
         // Send mail with attachment
         Mail::to($this->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number));
+
+        session()->flash('message', 'Official receipt has been sent to guest\'s email!');
 
         Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
     }

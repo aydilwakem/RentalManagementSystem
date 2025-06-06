@@ -1,63 +1,60 @@
-<div class=" flex">
-    <div class="w-full px-4">
-        <div class="w-full rounded-xl shadow bg-gray-50 overflow-hidden">
-            <div class="bg-green-700 text-white text-lg font-semibold px-4 py-3 rounded-t-xl text-center">
-                Pay Using Your Preferred Method
+<div class="flex justify-center px-4 py-8">
+    <div class="w-full bg-gray-50 rounded-xl shadow overflow-hidden">
+        <!-- Header -->
+        <div class="bg-green-700 text-white text-lg font-semibold px-6 py-4 text-center rounded-t-xl">
+            Review Your Reservation Summary
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 space-y-8 text-gray-700 text-md">
+
+            <!-- Guest Details -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Guest Details</h3>
+                <p>Full Name: <span class="font-medium">Juan Dela Cruz</span></p>
+                <p>Email: <span class="font-medium">juan@example.com</span></p>
+                <p>Phone: <span class="font-medium">0917-123-4567</span></p>
             </div>
-            <div class="px-6 pt-6 text-gray-700 text-md">
-                Please select your preferred payment method below, scan the QR code, and take a screenshot of your payment. You’ll need to upload the receipt in the next step to confirm your reservation.
+
+            <!-- Room Information -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Room Information</h3>
+                <p>Room Name: <span class="font-medium">Deluxe Suite</span></p>
+                <p>Room Type: <span class="font-medium">Air-conditioned, Double Bed</span></p>
+                <p>Room Capacity: <span class="font-medium">2 Persons</span></p>
             </div>
-            <div class="p-6 space-y-6">
-                <div x-data="{ selected: '' }" class="space-y-4">
-                    @foreach ($paymentMethod as $index => $method)
-                        @php
-                            $optionId = 'option' . $index;
-                        @endphp
 
-                        <label
-                            class="block border rounded-lg p-4 cursor-pointer transition duration-300 w-full"
-                            :class="selected === '{{ $optionId }}' ?
-                                'border-green-600 bg-green-50' : 'border-gray-300'"
-                            @click="selected = '{{ $optionId }}'">
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <input type="radio" name="option" value="{{ $optionId }}"
-                                        x-model="selected" class="text-green-600" />
-                                    <span
-                                        class="font-medium text-gray-800">{{ $method->mode_of_payment_name }}</span>
-                                </div>
-                                <svg x-show="selected === '{{ $optionId }}'"
-                                    class="w-5 h-5 text-green-600" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586
-                                4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-
-                            <!-- Payment Details -->
-                            <div x-show="selected === '{{ $optionId }}'" x-transition
-                                class="mt-4 px-2 pt-2 text-center">
-                                @if ($method->account_number)
-                                    <div class="text-md font-semibold text-gray-700">
-                                        {{ $method->account_name }}
-                                    </div>
-                                    <div class="text-md font-semibold text-gray-700 mb-2">
-                                        {{ $method->account_number }}
-                                    </div>
-                                @endif
-
-                                <!-- QR Code -->
-                                <img src="{{ asset($method->mode_of_payment_qr_image ? 'storage/' . $method->mode_of_payment_qr_image : 'images/rms-default.png') }}"
-                                    alt="{{ $method->mode_of_payment_name }}"
-                                    class="w-48 h-auto mx-auto rounded-md shadow-sm border border-gray-200 object-contain">
-                            </div>
-                        </label>
-                    @endforeach
-                </div>
+            <!-- Reservation Activity -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Reservation Activity</h3>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>Checked availability</li>
+                    <li>Selected room and number of guests</li>
+                    <li>Chose payment method</li>
+                    <li>Uploaded proof of payment</li>
+                </ul>
             </div>
+
+            <!-- Dates -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Reservation Dates</h3>
+                <p>Check-in: <span class="font-medium">June 15, 2025</span></p>
+                <p>Check-out: <span class="font-medium">June 17, 2025</span></p>
+                <p>Nights: <span class="font-medium">2</span></p>
+            </div>
+
+            <!-- Total Cost -->
+            <div class="border-t pt-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Total Amount</h3>
+                <p class="text-2xl font-bold text-green-700">₱4,200.00</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-100 px-6 py-4 border-t text-center">
+            <x-button>
+                Proceed to Payment
+            </x-button>
         </div>
     </div>
 </div>

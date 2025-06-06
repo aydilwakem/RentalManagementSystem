@@ -27,7 +27,7 @@
                     <div><strong>Company Name:</strong></div>
                     <div>{{ $transaction->transactionUser->company_name ?? 'Not provided' }}</div>
                     <div><strong>Country:</strong></div>
-                    <div>{{ $transaction->transactionUser->country ?? 'Not provided' }}</div>
+                    <div>{{ ucfirst($transaction->transactionUser->country) ?? 'Not provided' }}</div>
                 </div>
             </div>
 
@@ -58,11 +58,11 @@
                                             {{ $guestDetail->last_name }}
                                             {{ $guestDetail->suffix }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->gender ?? 'N/A' }}
+                                        <td class="border px-4 py-2 text-gray-700">{{ ucfirst($guestDetail->gender) ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $guestDetail->residency }}</td>
+                                        <td class="border px-4 py-2 text-gray-700">{{ ucfirst($guestDetail->residency) }}</td>
                                         <td class="border px-4 py-2 text-gray-700">
-                                            {{ $guestDetail->country_of_origin }}</td>
+                                            {{ ucfirst($guestDetail->country_of_origin) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -154,8 +154,8 @@
                         </div>
                     </div>
                     <div>
-                        <strong>Transaction Number:</strong>
-                        <div>#{{ $transaction->id }}</div>
+                        <strong>Transaction ID:</strong>
+                        <div>{{ $transaction->id }}</div>
                     </div>
                     <div>
                         <strong>Reservation Created At:</strong>
@@ -378,7 +378,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Invoice #</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Type</th>

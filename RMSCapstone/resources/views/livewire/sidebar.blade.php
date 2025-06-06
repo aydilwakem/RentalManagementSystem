@@ -32,7 +32,7 @@
                 <img src="{{ asset('storage/' . $logoPath) }}" alt=" {{ $companyName }}"
                     class="h-8 w-8 object-cover rounded-full">
                 <h1 class="text-white font-semibold overflow-hidden whitespace-nowrap transition-all duration-300"
-                    x-bind:class="$store.sidebar.full ? 'text-lg w-auto opacity-100 ml-2' : 'w-0 opacity-0 ml-0'">
+                    x-bind:class="$store.sidebar.full ? 'text-lg w-auto ml-2' : 'w-0 ml-0'">
                     {{ $companyName }}
                 </h1>
             </div>
@@ -56,8 +56,8 @@
                     <div>
                         <a href="{{ route('dashboard') }}">
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                    {{ Route::is('dashboard') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                    {{ Route::is('dashboard') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
                                     Dashboard
@@ -72,8 +72,8 @@
                     <div>
                         <a href="{{ route('admin.reservations-list') }}">
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                    {{ Route::is('admin.reservations-list') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                    {{ Route::is('admin.reservations-list') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-calendar"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
                                     Reservations
@@ -89,8 +89,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('room-list')
                         <div @click="toggle('rooms')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                                            {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                                            {{ Route::is('admin.rooms*') || Route::is('admin.room-categories*') || Route::is('admin.room-rates*') || Route::is('admin.amenities*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-bed"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -113,28 +113,28 @@
 
                         @can('room-list')
                             <a href="{{ route('admin.rooms') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.rooms') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.rooms') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Rooms</h1>
                             </a>
                         @endcan
 
                         @can('room-category-list')
                             <a href="{{ route('admin.room-categories') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.room-categories') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.room-categories') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Room Categories</h1>
                             </a>
                         @endcan
 
                         {{-- @can('room-rate-list')
                         <a href="{{ route('admin.room-rates') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.room-rates') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            class="block px-3 py-2 {{ Route::is('admin.room-rates') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Room Rates</h1>
                         </a>
                         @endcan --}}
 
                         @can('amenity-list')
                             <a href="{{ route('admin.amenities') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.amenities') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.amenities') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Amenities</h1>
                             </a>
                         @endcan
@@ -149,8 +149,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('house-list')
                         <div @click="toggle('houses')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                        {{ Route::is('admin.properties*') || Route::is('admin.leases*') || Route::is('admin.tenants*') || Route::is('admin.features*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                        {{ Route::is('admin.properties*') || Route::is('admin.leases*') || Route::is('admin.tenants*') || Route::is('admin.features*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-house"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -174,7 +174,7 @@
                         {{-- Features List --}}
                         @can('leases-list')
                             <a href="{{ route('admin.leases') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.leases') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.leases') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Leases</h1>
                             </a>
                         @endcan
@@ -182,21 +182,21 @@
 
                         {{-- @can('house-category-list')
                         <a href="{{ route('admin.house-categories') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('#') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            class="block px-3 py-2 {{ Route::is('#') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">House Categories</h1>
                         </a>
                         @endcan --}}
 
                         @can('tenant-list')
                             <a href="{{ route('admin.tenants') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.tenants') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.tenants') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Tenants</h1>
                             </a>
                         @endcan
 
                         @can('house-list')
                             <a href="{{ route('admin.properties') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.properties') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.properties') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Houses</h1>
                             </a>
                         @endcan
@@ -204,7 +204,7 @@
                         {{-- Features List --}}
                         @can('house-features-list')
                             <a href="{{ route('admin.features') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.features') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.features') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Features</h1>
                             </a>
                         @endcan
@@ -216,8 +216,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('event-list')
                         <div @click="toggle('events')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                            {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') || Route::is('admin.inclusions*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                            {{ Route::is('admin.events*') || Route::is('admin.event-halls*') || Route::is('admin.event-categories*') || Route::is('admin.inclusions*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-calendar-plus"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -240,7 +240,7 @@
 
                         @can('event-list')
                             <a href="{{ route('admin.events') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.events') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.events') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Events</h1>
                             </a>
                         @endcan
@@ -248,21 +248,21 @@
 
                         @can('event-hall-list')
                             <a href="{{ route('admin.event-halls') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.event-halls') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.event-halls') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Event Halls</h1>
                             </a>
                         @endcan
 
                         @can('event-category-list')
                             <a href="{{ route('admin.event-categories') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.event-categories') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.event-categories') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Event Categories</h1>
                             </a>
                         @endcan
 
                         @can('event-inclusions-list')
                             <a href="{{ route('admin.inclusions') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.inclusions') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.inclusions') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Inclusions</h1>
                             </a>
                         @endcan
@@ -273,8 +273,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('house-list')
                         <div @click="toggle('payments')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                {{ Route::is('admin.payments-list*') || Route::is('admin.invoice-list*') || Route::is('admin.payments*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                {{ Route::is('admin.payments-list*') || Route::is('admin.invoice-list*') || Route::is('admin.payments*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-money-bill"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -298,7 +298,7 @@
                         <!-- Payments -->
                         @can('payments-list')
                             <a href="{{ route('admin.payments-list') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.payments-list') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.payments-list') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Payments</h1>
                             </a>
                         @endcan
@@ -307,7 +307,7 @@
                         <!-- Invoice -->
                         @can('invoices-list')
                             <a href="{{ route('admin.invoice-list') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.invoice-list') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.invoice-list') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Invoices</h1>
                             </a>
                         @endcan
@@ -315,7 +315,7 @@
                         <!-- Payment Methods -->
                         @can('payment-method-list')
                             <a href="{{ route('admin.payments') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Payment Methods</h1>
                             </a>
                         @endcan
@@ -328,8 +328,8 @@
                     <div>
                         <a href="{{ route('admin.activities') }}" wire:navigate>
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                    {{ Route::is('admin.activities') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                    {{ Route::is('admin.activities') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-person-swimming"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Activities</h1>
                             </div>
@@ -342,8 +342,8 @@
                     <div>
                         <a href="{{ route('admin.maintenances') }}" wire:navigate>
                             <div
-                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                    {{ Route::is('admin.maintenances') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                                class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                    {{ Route::is('admin.maintenances') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-broom"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">Maintenance</h1>
                             </div>
@@ -355,8 +355,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('reports')
                         <div @click="toggle('report')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-file-invoice"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -380,7 +380,7 @@
                         <!-- Reservation Report -->
                         @can('reports')
                             <a href="{{ route('admin.reservation-reports') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.reservation-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.reservation-reports') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Reservations</h1>
                             </a>
                         @endcan
@@ -388,21 +388,21 @@
                         <!-- Event Report -->
                         @can('event-reports')
                             <a href="{{ route('admin.event-reports') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('event-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('event-reports') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Events</h1>
                             </a>
                         @endcan
 
                         <!-- Lease Report -->
                         <a href="{{ route('admin.lease-reports') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.lease-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            class="block px-3 py-2 {{ Route::is('admin.lease-reports') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Lease</h1>
                         </a>
 
                         <!-- Feedback -->
                         @can('feedback')
                             <a href="{{ route('admin.feedback') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.feedback') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.feedback') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Feedback</h1>
                             </a>
                         @endcan
@@ -414,8 +414,8 @@
                 <div x-data="dropdown" class="relative">
                     @can('branding-view')
                         <div @click="toggle('settings')"
-                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-cogs"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">
@@ -439,21 +439,21 @@
 
                         @can('user-list')
                             <a href="{{ route('admin.manage-users') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">User Management</h1>
                             </a>
                         @endcan
 
                         @can('branding-view')
                             <a href="{{ route('admin.branding') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Branding</h1>
                             </a>
                         @endcan
 
                         @can('appearance-view')
                             <a href="{{ route('admin.appearance') }}" wire:navigate
-                                class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                                class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                                 <h1 class="cursor-pointer">Appearance</h1>
                             </a>
                         @endcan
@@ -464,8 +464,8 @@
                 <div class="relative">
                     <a href="{{ route('profile.show') }}" wire:navigate>
                         <div
-                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                            {{ Route::is('profile.show') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                            {{ Route::is('profile.show') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-user"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Profile</h1>
                         </div>
@@ -474,8 +474,8 @@
                     @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                         <a href="{{ route('api-tokens.index') }}" wire:navigate>
                             <div
-                                class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-gray-200 hover:bg-primary-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-gray-200 bg-primary-600' : 'text-gray-400' }}">
+                                class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                                 <i class="fa-solid fa-key"></i>
                                 <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
                             </div>
@@ -488,7 +488,7 @@
                     <form method="POST" action="{{ route('logout') }}" x-data>
                         @csrf
                         <button type="submit"
-                            class="relative flex w-full items-center hover:text-gray-200 hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
+                            class="relative flex w-full items-center hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
                             <i class="fa-solid fa-sign-out"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">Logout</h1>
                         </button>
@@ -503,9 +503,9 @@
 
                         <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" wire:navigate>
                             <div @click="$store.sidebar.active = 'team-settings'"
-                                class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                class="relative flex items-center hover:text-white hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                 x-bind:class="{
-                                    'text-gray-200 bg-primary-600': $store.sidebar.active == 'team-settings',
+                                    'text-white bg-primary-600': $store.sidebar.active == 'team-settings',
                                     'text-gray-400 ': $store.sidebar.active != 'team-settings'
                                 }">
                                 <i class="fa-solid fa-users"></i>
@@ -516,9 +516,9 @@
                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                             <a href="{{ route('teams.create') }}" wire:navigate>
                                 <div @click="$store.sidebar.active = 'create-team'"
-                                    class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                    class="relative flex items-center hover:text-white hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                        'text-gray-200 bg-primary-600': $store.sidebar.active == 'create-team',
+                                        'text-white bg-primary-600': $store.sidebar.active == 'create-team',
                                         'text-gray-400 ': $store.sidebar.active != 'create-team'
                                     }">
                                     <i class="fa-solid fa-plus"></i>
@@ -530,9 +530,9 @@
                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                             <a href="{{ route('teams.create') }}" wire:navigate>
                                 <div @click="$store.sidebar.active = 'create-team'"
-                                    class="relative flex items-center hover:text-gray-200 hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
+                                    class="relative flex items-center hover:text-white hover:bg-primary-700 space-x-2 rounded-md p-2 cursor-pointer"
                                     x-bind:class="{
-                                        'text-gray-200 bg-primary-600': $store.sidebar.active == 'create-team',
+                                        'text-white bg-primary-600': $store.sidebar.active == 'create-team',
                                         'text-gray-400 ': $store.sidebar.active != 'create-team'
                                     }">
                                     <i class="fa-solid fa-plus"></i>

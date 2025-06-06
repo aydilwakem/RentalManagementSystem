@@ -59,7 +59,7 @@
                 {{-- Payment Methods --}}
                 <div>
                     <label for="payment_method_id" class="block mb-2 text-sm font-medium text-gray-900">Payment
-                        Method</label>
+                        Method <span class="text-red-500">*</span></label>
                     <select wire:model="payment_method_id" id="payment_method_id"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Payment Method</option>
@@ -75,15 +75,16 @@
 
                 {{-- Transaction Number --}}
                 <div>
-                    <label class="block mb-1 font-medium text-gray-700">Transaction Number<span
+                    <label class="block mb-1 font-medium text-gray-700">Transaction ID<span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="transaction_number" id="transaction_number"
+                        placeholder="Ex. TRN-ABCDEFG"
                         class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300" />
 
                     {{-- Display error message if transaction not found --}}
                     @if ($transactionNotFound)
                     <span class="text-red-500 text-sm">Transaction not found. Please check the transaction
-                        number.</span>
+                        ID.</span>
                     @endif
 
                     {{-- Display error message if transaction status = expired --}}
@@ -100,6 +101,7 @@
                     </label>
 
                     <input type="text" id="payment_reference_number" wire:model="payment_reference_number"
+                        placeholder="Ex. 1234 5678 9012"
                         class="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 @error('payment_reference_number') border-red-500 @enderror"
                         placeholder="Enter your reference number" />
 
@@ -115,7 +117,7 @@
             {{-- Upload Payment Screenshot --}}
             <div class="sm:col-span-2">
                 <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Proof of
-                    Payment</label>
+                    Payment  <span class="text-red-500">*</span></label>
 
                 <!-- Hidden file input -->
                 <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
@@ -181,7 +183,7 @@
                 <label for="notes" class="block mb-1 font-medium text-gray-700">Notes</label>
                 <input type="text" id="notes" wire:model="notes"
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    placeholder="Enter any notes (optional)" />
+                    placeholder="Enter any note (optional)" />
                 @error('notes')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror

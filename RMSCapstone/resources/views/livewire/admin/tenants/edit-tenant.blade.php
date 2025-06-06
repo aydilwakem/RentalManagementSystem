@@ -152,7 +152,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to save changes on this tenant?') }}
+                    {{ __('Are you sure you want to save changes to this tenant?') }}
                 </x-slot>
 
                 <x-slot name="footer">
