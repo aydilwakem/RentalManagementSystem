@@ -5,13 +5,14 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\Maintenance;
+use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Component
 {
-    public $newReservations;
-    public $availableRooms;
-    public $pendingMaintenances;
+    public $newReservations = 0;
+    public $availableRooms = 0;
+    public $pendingMaintenances = 0;
     public $reservations;
     public $events = [];
     public $first_name;
@@ -32,14 +33,29 @@ class Dashboard extends Component
         if ($user->can('dashboard-view')) {
             $this->hasDashboardAccess = true;
 
-            // Only fetch dashboard data if permitted
-            $this->newReservations = Transaction::newReservations()->count();
-            $this->pendingMaintenances = Maintenance::pendingMaintenances()->count();
+            // Get all active reservations that are not completed
+            $this->newReservations = Transaction::where('reservation_type_id', 2)
+                ->whereNotIn('transaction_status', ['done'])
+                ->whereMonth('start_datetime', now()->month)
+                ->whereYear('start_datetime', now()->year)
+                ->count();
+
+            // Get all available rooms
+            $this->availableRooms = Property::where('property_type_id', 1)
+                ->where('property_status', 'available')
+                ->count();
+
+            // Get pending/unresolved maintenance requests
+            $this->pendingMaintenances = Maintenance::where('resolved_at', null)
+                ->count();
+
             $this->reservations = Transaction::where('reservation_type_id', 2)->get();
-            $allTransactions = Transaction::where('reservation_type_id', 2)->with('reservationType', 'transactionUser')->get();
+            $allTransactions = Transaction::where('reservation_type_id', 2)
+                // ->whereNotIn('transaction_status', ['done'])
+                ->with('reservationType', 'transactionUser')
+                ->get();
 
             foreach ($allTransactions as $transaction) {
-
                 // Get room names
                 $rooms = $transaction->properties->pluck('name_number')->implode(', ');
 

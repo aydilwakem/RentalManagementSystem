@@ -593,7 +593,8 @@ html {
     color: #fff;
 }
 
-/* Dashboard Calendar styling */
+/* Dashboard
+ styling */
 .fc-button {
     background-color: #198754 !important;
     color: white !important;
@@ -683,7 +684,7 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
 
 /* Calendar Events */
 .fc-event {
-    background-color: #198754;
+    background-color: #20c997;
     color: white;
     padding: 4px 8px;
     border-radius: 0.375rem;
@@ -694,37 +695,20 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
 }
 
 .fc-event:hover {
-    background-color: #20c997;
+    background-color: #198754;
     border-color: #198754;
     cursor: pointer;
 }
 
-
-.room-booking {
-    background-color: #198754;
-    color: white;
-    border-color: #146c43;
+.status-done {
+    background-color: #b4b9c2 !important;
+    border-color: #6b7280 !important;
 }
 
-.event-booking {
-    background-color: #f5f5dc;
-    color: black;
-    border-color: #e5e5b3;
+.status-done:hover {
+    background-color: #7c8188 !important;
+    border-color: #6b7280 !important;
 }
-
-.room-booking:hover {
-    background-color: #146c43;
-    color: white;
-    border-color: #0f5132;
-}
-
-.event-booking:hover {
-    background-color: #e5e5b3;
-    color: black;
-    border-color: #d2d2a2;
-}
-
-
 
 
 .fc-button-group .fc-button {
