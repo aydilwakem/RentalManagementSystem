@@ -133,6 +133,16 @@ class ReservationForm extends Component
         $this->showGuestModal = false;
     }
 
+    public function getFormattedCheckInDate()
+    {
+        return $this->check_in_date ? Carbon::parse($this->check_in_date)->format('F j, Y') : '';
+    }
+
+    public function getFormattedCheckOutDate()
+    {
+        return $this->check_out_date ? Carbon::parse($this->check_out_date)->format('F j, Y') : '';
+    }
+
     /**
      * Initializes the component with default values.
      *
@@ -859,7 +869,7 @@ class ReservationForm extends Component
 
             // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
 
-            // Creates a new HTTP client instance (likely from GuzzleHttp\Client). 
+            // Creates a new HTTP client instance (likely from GuzzleHttp\Client).
             // This client will be used to send HTTP requests to the PayMongo API.
             $client = new Client();
 
@@ -924,7 +934,7 @@ class ReservationForm extends Component
                 // $responseAllData = $responseData['data'] ?? [];
                 // dd($responseAllData);
 
-                // Retrieves the checkout_url from the response 
+                // Retrieves the checkout_url from the response
                 $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
 
                 // Save payment link to transaction (optional)
