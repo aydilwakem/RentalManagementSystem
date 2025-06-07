@@ -22,21 +22,21 @@
 
             <!-- Password -->
             {{-- <div class="sm:col-span-2">
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                    <input type="password" wire:model="password" id="password"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        placeholder="">
-                    @error('password')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div> --}}
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                <input type="password" wire:model="password" id="password"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    placeholder="">
+                @error('password')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div> --}}
 
             <!-- Role Selection -->
             <div class="sm:col-span-2">
                 <label for="role" class="block mb-2 text-sm font-medium text-gray-900">Select Role</label>
                 <select id="role" wire:model="selectedRole"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
-                    <option value="" disabled {{ is_null($selectedRole) ? 'selected' : '' }}>Select a role
+                    <option value={{ is_null($selectedRole) ? 'selected' : '' }}>Select a role
                     </option>
                     @foreach ($roles as $role)
                         <option value="{{ $role }}">{{ ucfirst($role) }}</option>
