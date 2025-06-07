@@ -91,6 +91,7 @@ class Transaction extends Model
     }
 
 
+
     // One transaction can have many properties
     public function properties()
     {

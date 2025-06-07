@@ -19,7 +19,8 @@ class ViewRoles extends Component
     public $confirmItemDelete = false;
 
     //mount session for fake IDs
-    public function mount(){
+    public function mount()
+    {
         // Ensure it use a separate session key
         if (!session()->has('fake_ids_roles')) {
             session(['fake_ids_roles' => []]);
@@ -31,9 +32,9 @@ class ViewRoles extends Component
         $this->confirmItemDelete = $id;
     }
 
-    public function deleteRole($id)
+    public function deleteRole()
     {
-        $role = Role::find($id);
+        $role = Role::find($this->confirmItemDelete);
 
         if (!$role) {
             session()->flash('error', 'Role not found.');
@@ -51,20 +52,20 @@ class ViewRoles extends Component
                 Role::find($this->confirmItemDelete)?->delete();
                 $this->confirmItemDelete = false;
 
-            // Fetch remaining roles - sorted by creation date
-            $roles = Role::orderBy('created_at', 'ASC')->get();
+                // Fetch remaining roles - sorted by creation date
+                $roles = Role::orderBy('created_at', 'ASC')->get();
 
-            // Reset fake IDs
-            $fakeIDs = [];
-            foreach ($roles as $index => $roleItem) {
-                $fakeIDs[$roleItem->id] = 'ROLE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                // Reset fake IDs
+                $fakeIDs = [];
+                foreach ($roles as $index => $roleItem) {
+                    $fakeIDs[$roleItem->id] = 'ROLE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                // Store updated fake IDs in a unique session key
+                session(['fake_ids_roles' => $fakeIDs]);
+
+                session()->flash('message', 'Role successfully deleted!');
             }
-
-            // Store updated fake IDs in a unique session key
-            session(['fake_ids_roles' => $fakeIDs]);
-
-            session()->flash('message', 'Role successfully deleted!');
-        }
         }
     }
 
@@ -87,10 +88,10 @@ class ViewRoles extends Component
             ->where('name', 'like', "%{$this->search}%")
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
-    
+
         // For generating fake IDs (always by created_at ASC, static)
         $allRoles = Role::orderBy('created_at', 'ASC')->get();
-    
+
         // Calculate fake IDs
         $fakeIDs = session('fake_ids_roles', []);
         if (count($fakeIDs) !== $allRoles->count()) {
@@ -100,7 +101,7 @@ class ViewRoles extends Component
             }
             session(['fake_ids_roles' => $fakeIDs]);
         }
-    
+
         return view('livewire.admin.roles.view-roles', compact('roles', 'fakeIDs'));
     }
 }

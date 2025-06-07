@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\FeedbackRatingType;
 use Illuminate\Support\Facades\DB;
 use App\Models\Feedback;
+use Illuminate\Support\Facades\Log;
 
 
 class FeedbackChart extends Component
@@ -13,13 +14,24 @@ class FeedbackChart extends Component
 
     public $chartData = [];
     public $comments = [];
+    public $rating_name;
+    public $feedbackRatingTypes;
+
+    public $createRatingTypeModal;
+
+    public function render()
+    {
+        return view('livewire.admin.feedback-chart', [
+            'feedback_rating_types' => $this->feedbackRatingTypes,
+        ]);
+    }
 
     public function mount()
     {
         $this->loadComments();
         $this->loadChartData();
+        $this->feedbackRatingTypes = FeedbackRatingType::all();
     }
-
 
     public function loadChartData()
     {
@@ -43,9 +55,51 @@ class FeedbackChart extends Component
             ->get();
     }
 
-    public function render()
+
+    public function openRatingTypeModal()
     {
-        return view('livewire.admin.feedback-chart');
+
+        Log::info('Open Rating Type method called.');
+        $this->createRatingTypeModal = true;
+    }
+
+    public function CloseRatingTypeModal()
+    {
+
+        Log::info('Close Rating Type method called.');
+        $this->createRatingTypeModal = false;
+    }
+
+    public function CreateRatingType()
+    {
+        Log::info('Add Rating Type method called.');
+
+        // Validate the input data
+        $this->validate([
+            'rating_name' => 'required|string',
+        ]);
+
+        // Create the payment record
+        FeedbackRatingType::create([
+            'rating_name' => $this->rating_name,
+        ]);
+
+        // Reset the form fields after successful creation
+        $this->reset([
+            'rating_name',
+        ]);
+
+        // Redirect to the same reservation view to refresh data
+        return redirect()->route('admin.feedback')
+            ->with('success', 'Feedback created successfully.');
+    }
+
+    public function RemoveRatingType($id)
+    {
+        Log::info('Remove Rating Type method called.');
+
+        FeedbackRatingType::findOrFail($id)->delete();
+        $this->feedbackRatingTypes = FeedbackRatingType::all();
     }
 }
 

@@ -1,5 +1,6 @@
 <div class="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center px-4 py-12">
     <div class="w-full max-w-3xl bg-white shadow-2xl rounded-2xl p-10 border border-gray-100">
+
         <!-- Header Section -->
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-green-700">We’d Love Your Feedback</h1>
@@ -23,13 +24,11 @@
             <!-- Transaction ID -->
             <div>
                 <label class="block text-md font-semibold text-gray-700 mb-1">Reservation / Transaction Number</label>
-                <input type="text" wire:model.defer="transactionId"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <input type="text" wire:model.defer="transaction_number"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="e.g. TXN-XXXXXXX">
 
-                {{-- placeholder="e.g. TXN-2025-0101 --}}
-
-                @error('transactionId')
-                    <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                @error('transaction_number') <span class=" text-red-500 text-sm mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
 

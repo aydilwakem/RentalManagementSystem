@@ -6,13 +6,14 @@ use Livewire\Component;
 use App\Models\Feedback;
 use App\Models\FeedbackRating;
 use App\Models\FeedbackRatingType;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 class FeedbackForm extends Component
 {
 
-    public $transactionId;
+    public $transaction_number;
     public $comments;
     public $ratingValues = [];
 
@@ -28,7 +29,7 @@ class FeedbackForm extends Component
         $expectedRatingTypeIds = FeedbackRatingType::pluck('id')->toArray();
 
         $rules = [
-            'transactionId' => 'required|numeric',
+            'transaction_number' => 'required|string',
             'comments' => 'nullable|string',
             'ratingValues' => 'required|array',
         ];
@@ -39,9 +40,14 @@ class FeedbackForm extends Component
 
         $this->validate($rules);
 
+        // Find in Transactions table with the transaction number
+
+        $transaction = Transaction::where('transaction_number', $this->transaction_number)->first();
+
         // Create feedback
         $feedback = Feedback::create([
-            'transaction_id' => $this->transactionId,
+            'transaction_id' => $transaction ? $transaction->id : null,
+            'transaction_number' => $this->transaction_number,
             'submitted_at' => now(),
             'comments' => $this->comments,
         ]);
@@ -54,8 +60,9 @@ class FeedbackForm extends Component
             ]);
         }
 
+
         session()->flash('message', 'Feedback submitted successfully. Thanks for helping us grow!');
-        $this->reset(['transactionId', 'comments', 'ratingValues']);
+        $this->reset(['transaction_number', 'comments', 'ratingValues']);
     }
 
 

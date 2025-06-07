@@ -14,6 +14,7 @@ class Feedback extends Model
 
     protected $fillable = [
         'transaction_id',
+        'transaction_number',
         'submitted_at',
         'comments',
     ];
