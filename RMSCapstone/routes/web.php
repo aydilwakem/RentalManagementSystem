@@ -520,6 +520,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // View Payment Receipt
     Route::get('view/payment-receipt/{payment}', ViewReceipt::class)->name('admin.view-payment-receipt');
 
+    // Payments Summary
+    Route::get('/payment-reports', function () {
+        return view('admin.reports.payment-reports');
+    })->name('admin.payment-reports');
+
     /**
      * Invoice
      */
@@ -528,6 +533,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         return view('admin.reservations.invoices.invoice-list');
     })->name('admin.invoice-list')
         ->middleware('can:invoices-list');
+
+    // Invoice Summary
+    Route::get('/invoice-reports', function () {
+        return view('admin.reports.invoice-reports');
+    })->name('admin.invoice-reports');
 
     /**
      * Feedback

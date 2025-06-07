@@ -5,76 +5,353 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Lease Details</title>
 </head>
 
+<style>
+    @page {
+        margin: 40px 30px;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin: 0;
+        color: #333;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin: 0;
+        color: #065f46;
+    }
+
+    h2 {
+        font-size: 19px;
+        margin: 8px 0 4px;
+        color: #065f46;
+    }
+
+    p {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .date-range {
+        margin-bottom: 15px;
+        font-size: 13px;
+        color: #555;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 15px;
+    }
+
+    th,
+    td {
+        border: 1px solid #c0c0c0;
+        padding: 8px 10px;
+        vertical-align: top;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    th {
+        background-color: #e6f7ed;
+        color: #065f46;
+        font-weight: bold;
+        font-size: 12px;
+        text-align: left;
+    }
+
+    .summary {
+        margin-top: 30px;
+        padding: 15px;
+        background-color: #f0fdf4;
+        border: 1px solid #a7f3d0;
+        border-radius: 5px;
+    }
+
+    .summary p {
+        margin: 5px 0;
+        font-size: 13px;
+    }
+
+    .summary p strong {
+        color: #047857;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 30px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10px;
+        color: #888;
+    }
+
+    .page-number {
+        position: fixed;
+        top: 30px;
+        right: 40px;
+        font-size: 11px;
+        color: #666;
+    }
+
+    .page-number:after {
+        content: "Page " counter(page);
+    }
+</style>
+
 <body style="font-family: Arial, sans-serif; color: #333333; font-size: 14px; line-height: 1.6;">
-    <h1 style="font-size: 24px; font-weight: bold; color: #166534; margin-bottom: 16px; text-align:center;">Canopy Farm
-        PH Property Leases</h1>
-    <h3 style="font-size: 24px; font-weight: bold; color: #166534; margin-bottom: 16px; text-align:center;">Lease
-        Details</h3>
+    {{-- Header --}}
+    <header style="text-align: center">
+        <div class="page-number"></div>
+        <img src="{{ public_path('images/canopy-logo.png') }}" alt="Canopy Farm PH" style="max-height: 50px;">
+        <h1 style="color: #166534;">Canopy Farm PH</h1>
+        <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
+        <p>+63 962 447 9893</p>
+        <h2 style="color: #166534; padding-top: 10px;">Lease Details</h2>
+    </header>
 
-    <div
-        style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 24px;">
+    <!-------------------------------- TENANT DETAILS ------------------------->
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Tenant Details
+        </h2>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Guest Name:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $transaction->transactionUser->first_name }}
+                    {{ $transaction->transactionUser->middle_name }}
+                    {{ $transaction->transactionUser->last_name }}
+                    {{ $transaction->transactionUser->suffix }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Email:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ $transaction->transactionUser->email }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Contact Number:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ $transaction->transactionUser->contact_number }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Company Name:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $transaction->transactionUser->company_name ?? 'Not provided' }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Country:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $transaction->transactionUser->country ?? 'Not provided' }}</td>
+            </tr>
+        </table>
+    </div>
 
-            <!-- Guest Details -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Tenant Details</h3>
-                <div><strong>Tenant Name:</strong> {{ $transaction->transactionUser->first_name }} {{
-                    $transaction->transactionUser->middle_name }} {{ $transaction->transactionUser->last_name }}</div>
-                <div><strong>Email:</strong> {{ $transaction->transactionUser->email }}</div>
-                <div><strong>Contact Number:</strong> {{ $transaction->transactionUser->contact_number }}</div>
-            </div>
-
-            <!-- Rent Info -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Rent Information</h3>
-                <div><strong>Property Rented:</strong>
+    <!--------------------------------------------- RENT INFORMATION --------------------------------->
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Rent Information
+        </h2>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Property Rented:</td>
+                <td style="padding: 6px; font-size: 14px;">
                     @foreach ($transaction->properties as $property)
                     {{ $property->name_number ?? 'No House Found' }}<br>
                     @endforeach
-                </div>
-                <div><strong>Monthly Rent:</strong> PHP
-                    @foreach ($transaction->properties as $property)
+
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Monthly Rent:</td>
+                <td style="padding: 6px; font-size: 14px;"> @foreach ($transaction->properties as $property)
                     {{ number_format($property->amount ?? 'N/A', 2) }}<br>
                     @endforeach
-                </div>
-                <div><strong>Lease Start Date:</strong> {{ $transaction->start_datetime->format('F j, Y') }}</div>
-                <div><strong>Lease End Date:</strong> {{ $transaction->end_datetime->format('F j, Y') }}</div>
-                <div>
-                    <strong>Total Months Stay:</strong>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Total People Staying:</td>
+                <td style="padding: 6px; font-size: 14px;"> {{ $transaction->pax }}<br>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Lease Start Date:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ $transaction->start_datetime->format('F j, Y') }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Lease End Date:</td>
+                <td style="padding: 6px; font-size: 14px;">
+                    {{ $transaction->end_datetime->format('F j, Y') }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Total Months Stay:</td>
+                <td style="padding: 6px; font-size: 14px;">
                     {{ $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1 }}
                     {{ Str::plural('month', $transaction->start_datetime->diffInMonths($transaction->end_datetime) + 1)
                     }}
-                </div>
-                <div><strong>Total People Staying:</strong> {{ $transaction->pax }}</div>
-                <div><strong>Rent Status:</strong> {{ ucfirst($transaction->transaction_status) }}</div>
-                <div><strong>Total Rent In Duration:</strong> PHP {{ number_format($transaction->total_amount, 2) }}
-                </div>
-            </div>
-
-            <!-- Invoice Info -->
-            <div style="flex: 1 1 300px; margin-bottom: 16px;">
-                <h3
-                    style="font-size: 18px; font-weight: bold; color: #166534; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
-                    Lease Invoice</h3>
-                <div><strong>Transaction ID:</strong> {{ $transaction->transaction_number ?? 'N/A'
-                    }}
-                </div>
-                <div><strong>Invoice Number:</strong> {{ $transaction->invoice->invoice_number }}</div>
-                <div><strong>Sub Total:</strong> PHP {{ number_format($transaction->invoice->sub_total, 2) }}</div>
-                <div><strong>Balance Due:</strong> PHP {{ number_format($transaction->invoice->balance_due, 2) }}</div>
-                <div><strong>Due Date:</strong> {{ $transaction->invoice->due_date->format('F j, Y') }}</div>
-                <div><strong>Invoice Status:</strong> {{ ucfirst($transaction->invoice->invoice_status) }}</div>
-            </div>
-
-        </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Total Rent In Duration</td>
+                <td style="padding: 6px; font-size: 14px;">{{ number_format($transaction->total_amount, 2) }}
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; font-weight: bold; font-size: 14px;">Rent Status:</td>
+                <td style="padding: 6px; font-size: 14px;">{{ ucfirst($transaction->transaction_status) }}<br>
+                </td>
+            </tr>
+        </table>
     </div>
+
+    <!-------------------------------------- INVOICE -------------------------->
+    {{-- Invoice Details --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Lease Invoice
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Transaction ID</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Invoice No.</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Subtotal</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Balance Due</th>
+
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Due Date</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Invoice Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $transaction->transaction_number ?? 'N/A'
+                        }}
+                    </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $transaction->invoice->invoice_number }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ number_format($transaction->invoice->sub_total, 2) }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ number_format($transaction->invoice->balance_due, 2) }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $transaction->invoice->due_date->format('F j, Y') }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ ucfirst($transaction->invoice->invoice_status) }} </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        {{-- ------------------------PAYMENT DETAILS --------------------------------- --}}
+        <div
+            style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-top: 30px;">
+            <h2
+                style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+                Payments
+            </h2>
+
+            @if ($payments->isNotEmpty())
+            <table
+                style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151; table-layout: fixed;">
+                <thead style="background-color: #166534; color: #fff;">
+                    <tr>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 5%; text-align: center; font-size: 14px;">
+                            ID</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 8%; text-align: center; font-size: 14px;">
+                            Invoice</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                            Method</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                            Amount</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 8%; text-align: center; font-size: 14px;">
+                            Type</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-size: 14px;">
+                            Ref No.</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                            Date</th>
+                        <th
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                            Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($payments as $payment)
+                    <tr>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ $payment->id }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ $payment->invoice_id }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ $payment->mode_of_payment }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ number_format($payment->amount_paid, 2) }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ ucfirst($payment->payment_type) }}</td>
+                        <td
+                            style="border: 1px solid #d1d5db; padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-size: 14px;">
+                            {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            {{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('M
+                            j,
+                            Y') : 'N/A' }}
+                        </td>
+                        <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                            <span
+                                style="display: inline-block; padding: 2px 6px; font-size: 12px; font-weight: bold; border-radius: 12px; color: {{ $payment->payment_status === 'pending' ? '#b45309' : ($payment->payment_status === 'failed' ? '#b91c1c' : '#15803d') }}; background-color: {{ $payment->payment_status === 'pending' ? '#fef3c7' : ($payment->payment_status === 'failed' ? '#fee2e2' : '#d1fae5') }};">
+                                {{ ucfirst($payment->payment_status) }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @else
+            <p style="font-size: 12px; color: #6b7280; font-style: italic; text-align: center;">No payments
+                found
+                for
+                this invoice.</p>
+            @endif
+        </div>
 </body>
 
 

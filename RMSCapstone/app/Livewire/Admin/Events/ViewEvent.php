@@ -88,14 +88,22 @@ class ViewEvent extends Component
 
     public function exportEventDetails()
     {
+        //eager load the relationship
+         $event = Transaction::with([
+            'invoice.payments',
+        ])->findOrFail($this->transaction->id);
+
         $pdf = Pdf::loadView('livewire.admin.events.event-details', [
-            'event' => $this->event,  // Pass the actual event
+            'event' => $event,  // Pass the actual event
+            //pass the relationship
+            'invoice' => $event->invoice,
+            'payments' => $event->invoice->payments,
         ]);
 
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'event-details-' . $this->event->start_datetime . '.pdf');
+        }, 'event-details-' . $event->start_datetime . '.pdf');
     }
 
     public function deleteEventItem(Transaction $event)

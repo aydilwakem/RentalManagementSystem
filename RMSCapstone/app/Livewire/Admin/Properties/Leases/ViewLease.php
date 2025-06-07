@@ -94,14 +94,22 @@ class ViewLease extends Component
 
     public function exportLeaseDetails()
     {
+        //eager load the relationship
+         $transaction = Transaction::with([
+            'invoice.payments',
+        ])->findOrFail($this->transaction->id);
+    
         $pdf = Pdf::loadView('livewire.admin.properties.leases.lease-details', [
-            'transaction' => $this->transaction,  // Pass the actual lease
+            'transaction' => $transaction,  // Pass the actual lease
+            //pass the relationship
+            'invoice' => $transaction->invoice,
+            'payments' => $transaction->invoice->payments,
         ]);
 
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'lease-details-' . $this->transaction->start_datetime . '.pdf');
+        }, 'lease-details-' . $transaction->start_datetime . '.pdf');
     }
 
     public function getMonthCount($startDatetime, $endDatetime)

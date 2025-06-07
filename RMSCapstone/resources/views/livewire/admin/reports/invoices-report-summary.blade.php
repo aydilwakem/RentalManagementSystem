@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Canopy Farm PH - Event Summary Report</title>
+    <title>Canopy Farm PH - Invoice Summary Report</title>
     <style>
         @page {
             margin: 40px 30px;
@@ -116,16 +116,25 @@
         <h1>Canopy Farm PH</h1>
         <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
         <p>+63 962 447 9893</p>
-        <h2>Events Summary</h2>
+        <h2>Invoice Summary</h2>
         <p class="date-range">
             <strong>Reporting Period:</strong>
-            @if ($start_date && $end_date)
-            {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
+            @if ($startDate && $endDate)
+            {{ \Carbon\Carbon::parse($startDate)->format('F d, Y') }}
             &ndash;
-            {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
+            {{ \Carbon\Carbon::parse($endDate)->format('F d, Y') }}
             @else
             All Records
             @endif
+        </p>
+
+        <p class="date-range">
+            <strong>Invoice Type:</strong>
+            {{ $invoiceTypeFilter ?: 'All' }}
+        </p>
+        <p class="date-range">
+            <strong>Invoice Status:</strong>
+            {{ $invoiceStatusFilter ?: 'All' }}
         </p>
     </header>
     <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
@@ -133,37 +142,42 @@
         <thead>
             <tr>
                 <th style="width: 6%;">#</th>
-                <th style="width: 13%;">Transaction No.</th>
-                <th style="width: 12%;">Booked By</th>
-                <th style="width: 10%;">Event Hall(s)</th>
-                <th style="width: 10%;">Event Type</th>
-                <th style="width: 9%;">Guests</th>
-                <th style="width: 14%;">Start Date & Time</th>
-                <th style="width: 14%;">End Date & Time</th>
-                <th style="width: 11%;">Amount</th>
+                <th style="width: 12%;">Invoice Number</th>
+                <th style="width: 12%;">Guest Name</th>
+                <th style="width: 10%;">Transaction Number</th>
+                <th style="width: 10%;">Billing Date</th>
+                <th style="width: 10%;">Payment Due Date</th>
+                <th style="width: 10%;">Amount Paid</th>
+                <th style="width: 13%;">Remaining Balance</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($transactions as $transaction)
+            @forelse ($invoices as $invoice)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $transaction->transaction_number }}</td>
-                <td>{{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
-                </td>
                 <td>
-                    @foreach ($transaction->properties as $property)
-                    {{ $property->name_number ?? 'N/A' }}<br>
-                    @endforeach
+                    {{ $invoice->invoice_number ?? 'N/A' }}
                 </td>
-                <td>{{ $transaction->event_type->name ?? 'N/A' }}</td>
-                <td>{{ $transaction->pax }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
-                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}</td>
-                <td>{{ number_format($transaction->total_amount, 2) }}</td>
+                <td>{{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                    {{ $invoice->transaction->transactionUser->last_name ?? '' }}</td>
+
+                <td>{{ $invoice->transaction->transaction_number ?? 'N/A' }}</td>
+
+                <td>
+                    {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
+                </td>
+
+                <td>
+                    {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
+                </td>
+
+                <td>{{ number_format($invoice->amount_paid, 2) }}</td>
+
+                <td>{{ number_format($invoice->balance_due, 2) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="10" style="text-align: center; padding: 20px;">No events were recorded for the
+                <td colspan="10" style="text-align: center; padding: 20px;">No invoices were recorded for the
                     selected date range.</td>
             </tr>
             @endforelse
@@ -172,9 +186,9 @@
 
     <div class="summary">
         <h2>Summary of Key Metrics:</h2>
-        <p><strong>Total Events Conducted:</strong> {{ $totalEvents }}</p>
-        <p><strong>Total Guests Accommodated:</strong> {{ $totalGuests }}</p>
-        <p><strong>Total Revenue Generated:</strong> PHP {{ number_format($totalAmountEarned, 2) }}</p>
+        <p><strong>Total Invoice Records Within Date Range: </strong>{{ $totalInvoices }} invoice records</p>
+        <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountPaid, 2) }}</p>
+        <p><strong>Total Remaining Balance: </strong>PHP {{ number_format($totalBalanceDue, 2) }}</p>
     </div>
 
     <footer>

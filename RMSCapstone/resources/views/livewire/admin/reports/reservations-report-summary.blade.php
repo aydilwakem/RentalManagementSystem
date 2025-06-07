@@ -119,9 +119,13 @@
         <h2>Reservations Summary</h2>
         <p class="date-range">
             <strong>Reporting Period:</strong>
-            {{ $start_date ? \Carbon\Carbon::parse($start_date)->format('F d, Y') : 'N/A' }}
+            @if ($start_date && $end_date)
+            {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
             &ndash;
-            {{ $end_date ? \Carbon\Carbon::parse($end_date)->format('F d, Y') : 'N/A' }}
+            {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
+            @else
+            All Records
+            @endif
         </p>
     </header>
     <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
@@ -140,28 +144,28 @@
         </thead>
         <tbody>
             @forelse ($transactions as $transaction)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $transaction->transaction_number }}</td>
-                    <td>
-                        {{ $transaction->transactionUser->first_name }}
-                        {{ $transaction->transactionUser->last_name }}
-                    </td>
-                    <td>
-                        @foreach ($transaction->properties as $property)
-                            {{ $property->name_number ?? 'N/A' }}<br>
-                        @endforeach
-                    </td>
-                    <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('M d, Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('M d, Y') }}</td>
-                    <td>{{ $transaction->pax }}</td>
-                    <td>{{ number_format($transaction->total_amount, 2) }}</td>
-                </tr>
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $transaction->transaction_number }}</td>
+                <td>
+                    {{ $transaction->transactionUser->first_name }}
+                    {{ $transaction->transactionUser->last_name }}
+                </td>
+                <td>
+                    @foreach ($transaction->properties as $property)
+                    {{ $property->name_number ?? 'N/A' }}<br>
+                    @endforeach
+                </td>
+                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('M d, Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('M d, Y') }}</td>
+                <td>{{ $transaction->pax }}</td>
+                <td>{{ number_format($transaction->total_amount, 2) }}</td>
+            </tr>
             @empty
-                <tr>
-                    <td colspan="10" style="text-align: center; padding: 20px;">No reservations were recorded for the
-                        selected date range.</td>
-                </tr>
+            <tr>
+                <td colspan="10" style="text-align: center; padding: 20px;">No reservations were recorded for the
+                    selected date range.</td>
+            </tr>
             @endforelse
         </tbody>
     </table>

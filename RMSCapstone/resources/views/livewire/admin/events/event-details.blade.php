@@ -201,24 +201,24 @@
             </thead>
             <tbody>
                 @foreach ($event->properties as $property)
-                    <tr>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $property->name_number ?? 'No Event Hall Booked' }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->event_type->name ?? 'N/A' }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->start_datetime->format('F j, Y') }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->end_datetime->format('F j, Y') }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->total_adults }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->total_kids }}</td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ $event->pax }} </td>
-                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                            {{ ucfirst($event->transaction_status) }}</td>
-                    </tr>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $property->name_number ?? 'No Event Hall Booked' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->event_type->name ?? 'N/A' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->start_datetime->format('F j, Y') }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->end_datetime->format('F j, Y') }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->total_adults }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->total_kids }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $event->pax }} </td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ ucfirst($event->transaction_status) }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -277,7 +277,82 @@
                 </tr>
             </tbody>
         </table>
+    </div>
 
+    {{-- ------------------------PAYMENT DETAILS --------------------------------- --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Payments
+        </h2>
+
+        @if ($payments->isNotEmpty())
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151; table-layout: fixed;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 5%; text-align: center; font-size: 14px;">
+                        ID</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 8%; text-align: center; font-size: 14px;">
+                        Invoice</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                        Method</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                        Amount</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 8%; text-align: center; font-size: 14px;">
+                        Type</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-size: 14px;">
+                        Ref No.</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                        Date</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
+                        Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($payments as $payment)
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ $payment->id }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ $payment->invoice_id }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ ucfirst($payment->mode_of_payment) }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ number_format($payment->amount_paid, 2) }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ ucfirst($payment->payment_type) }}</td>
+                    <td
+                        style="border: 1px solid #d1d5db; padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-size: 14px;">
+                        {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        {{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('M
+                        j,
+                        Y') : 'N/A' }}
+                    </td>
+                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
+                        <span
+                            style="display: inline-block; padding: 2px 6px; font-size: 12px; font-weight: bold; border-radius: 12px; color: {{ $payment->payment_status === 'pending' ? '#b45309' : ($payment->payment_status === 'failed' ? '#b91c1c' : '#15803d') }}; background-color: {{ $payment->payment_status === 'pending' ? '#fef3c7' : ($payment->payment_status === 'failed' ? '#fee2e2' : '#d1fae5') }};">
+                            {{ ucfirst($payment->payment_status) }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <p style="font-size: 12px; color: #6b7280; font-style: italic; text-align: center;">No payments
+            found
+            for
+            this invoice.</p>
+        @endif
     </div>
 </body>
 

@@ -1,63 +1,37 @@
-<div class="min-h-[550px] container mx-auto p-6 max-w-full">
-
-    <!-- Action Buttons -->
-    {{-- <div class="flex items-center justify-between mb-4">
-        <div class="flex justify-between items-center">
-            <x-button icon="fas fa-plus" href="#">
-                New Payment
-            </x-button>
-        </div>
-        <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-            icon="fas fa-trash" href="#">
-            Deleted Payments
-        </x-button>
-    </div> --}}
-
-    <!-- Table BOdy -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-        <!-- Header -->
+<div>
+    {{-- Table --}}
+    <div class="overflow-x-auto">
         <div class="flex items-center justify-between p-4">
-            <div class="flex">
-
+            <div class="flex gap-4 w-full">
                 <div class="relative w-full">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor" viewbox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                clip-rule="evenodd" />
-                        </svg>
+                    {{-- Start Date --}}
+                    <div class="w-full">
+                        <label for="startDate" class="block mb-2 text-sm font-medium text-gray-900">
+                            Start Date:</label>
+                        <input type="date" wire:model.lazy="startDate" id="startDate" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        @error('startDate')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    <!-- Search-->
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
-                        placeholder="Search" required="">
                 </div>
 
-                <!-- Bulk Actions -->
-                {{-- <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                    <button @click="open = !open" type="button"
-                        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Actions
-                        <svg class="-mr-1 ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div x-show="open" @click.away="open = false"
-                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                        <div class="py-1">
-                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
-                                Delete</a>
-                        </div>
-                    </div>
-                </div> --}}
-            </div>
+                {{-- End Date --}}
+                <div class="w-full">
+                    <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900">End Date:
+                    </label>
+                    <input type="date" wire:model.lazy="endDate" id="endDate" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    @error('endDate')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <div class="flex items-center space-x-8">
-                <!-- Payment Type Filter -->
-                <div class="flex items-center">
-                    <label for="payment_type" class="w-32 text-sm font-medium text-gray-900">Payment Type:</label>
-                    <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                <div class="w-full">
+                    <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900">Payment Type:
+                    </label>
+                    <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter" required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">All</option>
                         <option value="Room Rent">Room Rent</option>
                         <option value="House Rent">House Rent</option>
@@ -69,21 +43,23 @@
                     </select>
                 </div>
 
-                <!-- Payment Status Filter -->
-                <div class="flex items-center">
-                    <label for="payment_status" class="w-32 text-sm font-medium text-gray-900">Payment Status:</label>
-                    <select id="payment_status" name="payment_status" wire:model.live="paymentStatusFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                        <option value="">All</option>
-                        <option value="pending">Pending</option>
-                        <option value="completed">Completed</option>
-                        <option value="failed">Failed</option>
-                    </select>
+                <div class="flex items-end">
+                    <x-button icon="fa-solid fa-file"
+                        class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                        wire:click="exportPaymentSummary">
+                        Export PDF
+                    </x-button>
                 </div>
             </div>
-
         </div>
 
+        @if (empty($startDate) || empty($endDate))
+        <div class="w-full text-center py-4">
+            <span class="text-green-500 font-medium">
+                No payments found. Select start date and end date to generate payments summary.
+            </span>
+        </div>
+        @else
         <!-- Table Content -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
@@ -133,7 +109,7 @@
                             {{ $payment->payment_reference_number ?? 'N/A' }}
                         </td>
                         <td class="px-4 py-3">
-                            {{ ucfirst($payment->mode_of_payment?? 'N/A') }}
+                            {{ucfirst($payment->mode_of_payment?? 'N/A') }}
                         </td>
                         <td class="px-4 py-3">
                             @if ($payment->payment_status === 'pending')
@@ -179,8 +155,5 @@
                 </tbody>
             </table>
         </div>
-
-
-
+        @endif
     </div>
-</div>

@@ -356,7 +356,7 @@
                     @can('reports')
                     <div @click="toggle('report')"
                         class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
-                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                                {{ Route::is('admin.reservation-reports*') || Route::is('event-reports*') || Route::is('admin.feedback*') || Route::is('admin.lease-reports*') || Route::is('admin.invoice-reports*') || Route::is('admin.payment-reports*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-file-invoice"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">
@@ -408,6 +408,18 @@
                             <h1 class="cursor-pointer">Feedback</h1>
                         </a>
                         @endcan
+
+                        <!-- Invoice Report -->
+                        <a href="{{ route('admin.invoice-reports') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.invoice-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Invoice</h1>
+                        </a>
+
+                        <!-- Payment Report -->
+                        <a href="{{ route('admin.payment-reports') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.payment-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Payments</h1>
+                        </a>
 
                     </div>
                 </div>
