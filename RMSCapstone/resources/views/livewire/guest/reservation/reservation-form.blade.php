@@ -13,6 +13,7 @@
             <div class="w-full">
 
                 <div class="header">
+                    @if($currentStep != 4)
                     <!-- Title -->
                     <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
                     <!-- Date Picker & Search -->
@@ -29,6 +30,7 @@
                             class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
                             placeholder="Check-out">
                     </div>
+                    @endif
                 </div>
 
                 @if (session()->has('message'))
@@ -38,6 +40,7 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                 <div class="step-room">
+                    {{-- @include('livewire.guest.reservation.review') --}}
                     @include('livewire.guest.reservation.choose-room')
                 </div>
                 @endif
@@ -79,10 +82,11 @@
         It also allows the user to remove items (rooms/activities) from the reservation cart.
         --}}
 
+        @if($currentStep != 4)
         <div class="w-full lg:w-1/3 bg-white border border-gray-200 rounded-lg shadow-md p-6 h-fit sticky top-0 z-10">
             <!------------------------------ Reservation Date Details --------------------------->
             @php
-            use Carbon\Carbon;
+                $carbon = new \Carbon\Carbon;
             @endphp
 
             @if ($check_in_date)
@@ -93,7 +97,7 @@
 
             <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
                 <span>
-                    {{ Carbon::parse($check_in_date)->format('F j, Y') }}
+                    {{ $this->getFormattedCheckInDate() }}
                 </span>
 
                 @error('check_in_date')
@@ -103,7 +107,7 @@
                 <i class="fa-solid fa-arrow-right"></i>
                 @if ($check_out_date)
                 <span>
-                    {{ Carbon::parse($check_out_date)->format('F j, Y') }}
+                    {{ $this->getFormattedCheckOutDate() }}
                 </span>
                 @endif
             </div>
@@ -426,6 +430,7 @@
 
             @endif
         </div>
+        @endif
     </div>
 </div>
 
