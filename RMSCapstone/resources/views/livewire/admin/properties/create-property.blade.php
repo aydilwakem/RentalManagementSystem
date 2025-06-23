@@ -181,7 +181,7 @@
                     <div>
                         <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Property
                             Description</label>
-                        <input type="text" wire:model="description" id="description" required
+                        <input type="text" wire:model="description" id="description"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 resize-none"
                             placeholder="Spacious 3-bedroom, 2-bath house with garden access and parking"/>
                         @error('description')

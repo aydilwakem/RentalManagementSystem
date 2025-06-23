@@ -19,8 +19,8 @@ class EditMaintenance extends Component
     public $resolved_at;
     public $priority_status;
     public $maintenanceId;
-    public $planned_datetime; 
-    public $property_id; 
+    public $planned_datetime;
+    public $property_id;
     public $properties;
 
     public $confirmEditItem = false;
@@ -37,31 +37,31 @@ class EditMaintenance extends Component
     public function mount(Maintenance $maintenance)
     {
         $this->name = $maintenance->name;
-        $this->maintenanceId = $maintenance->id; 
-        $this->property_id = $maintenance->property_id; 
+        $this->maintenanceId = $maintenance->id;
+        $this->property_id = $maintenance->property_id;
         $this->description = $maintenance->description;
         $this->reported_at = optional($maintenance->reported_at)->format('Y-m-d');
         $this->resolved_at = optional($maintenance->resolved_at)->format('Y-m-d');
-        $this->planned_datetime = $maintenance->planned_datetime 
-        ? Carbon::parse($maintenance->planned_datetime)->format('Y-m-d\TH:i') 
+        $this->planned_datetime = $maintenance->planned_datetime
+        ? Carbon::parse($maintenance->planned_datetime)->format('Y-m-d\TH:i')
         : null;
         $this->priority_status = $maintenance->priority_status;
 
         //to show properties
-        $this->properties = Property::all();
+        $this->properties = Property::where('property_type_id', 2)->get();
     }
 
     public function updateMaintenance()
     {
         try{
-        // Validate form input 
-        $this->validate([   
+        // Validate form input
+        $this->validate([
             'name' => "required|string|unique:mnt_maintenance,name,{$this->maintenanceId},id",
-            'property_id' => 'required|exists:properties,id', 
+            'property_id' => 'required|exists:properties,id',
             'description' => 'required|string',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
-            'planned_datetime' =>'nullable|date|after_or_equal:today', 
+            'planned_datetime' =>'nullable|date|after_or_equal:today',
             'priority_status' => 'required|in:emergency,urgent,routine,planned',
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
@@ -74,11 +74,11 @@ class EditMaintenance extends Component
         // Update Event Hall
         $this->maintenance->update([
             'name' => $this->name,
-            'property_id' => $this->property_id, 
+            'property_id' => $this->property_id,
             'description' => $this->description,
             'reported_at' => $this->reported_at,
             'resolved_at' => $this->resolved_at,
-            'planned_datetime' => $this->planned_datetime, 
+            'planned_datetime' => $this->planned_datetime,
             'priority_status' => $this->priority_status,
         ]);
 

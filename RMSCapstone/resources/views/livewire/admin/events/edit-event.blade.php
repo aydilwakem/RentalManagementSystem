@@ -238,6 +238,7 @@
                                     <option value="">-- Select Event Status -- </option>
                                     <option value="confirmed">Confirmed</option>
                                     <option value="ongoing">On-going</option>
+                                    <option value="done">Done</option>
                                     <option value="cancelled">Cancelled</option>
                                     <option value="terminated">Terminated</option>
                                 </select>

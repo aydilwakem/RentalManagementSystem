@@ -12,13 +12,13 @@
             @foreach ($activities as $activity)
                 <!-- Activity Card -->
                 <div
-                    class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0">
+                    class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0 flex flex-col">
                     <img class="w-full h-48 object-cover"
                         src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
                         alt="{{ $activity->name }}">
 
                     <!-- Activity Name -->
-                    <div class="p-5 pb-3">
+                    <div class="p-5 pb-3 flex flex-col flex-grow">
                         <div class="flex items-center justify-between">
                             <h2 class="text-xl font-semibold text-gray-800"> {{ $activity->name }}</h2>
                             <!-- Price -->
@@ -34,7 +34,7 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="text-gray-600 text-sm mb-4 text-justify">
+                        <p class="text-gray-600 text-sm mb-4 text-justify flex-grow">
                             @if (!empty($activity->description))
                                 {{ Str::limit($activity->description, 300) }}
                             @else
@@ -44,7 +44,7 @@
 
 
                         <!-- Controls -->
-                        <div class="flex items-center justify-between sm:flex-row">
+                        <div class="flex items-center justify-between sm:flex-row mt-auto">
                             <!-- Counter -->
                             <div class="flex flex-col">
                                 <label for="quantity-{{ $activity->id }}"

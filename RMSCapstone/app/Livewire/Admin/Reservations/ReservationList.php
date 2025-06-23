@@ -45,15 +45,15 @@ class ReservationList extends Component
     public $actionMethod = '';
     public $actionId;
     public $actionButtonType = 'default';
-    
+
     //-------------------------------- BRANDING -------------------------------------------- //
     public string $companyName = 'Company'; //Default
-    public string $logoPath = ''; 
-    public string $companyEmail; 
-    public string $companyContact; 
-    public string $companyAddress; 
-    public string $facebookLink; 
-    public string $instagramLink; 
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
 
     //------------------------------------MOUNT------------------------------------------ //
@@ -78,7 +78,9 @@ class ReservationList extends Component
             ->distinct()
             ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
             ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id')
-            ->with(['transactionUser', 'properties'])
+            ->with(['transactionUser', 'properties' => function ($query) {
+                $query->where('property_type_id', 1);
+            }])
             ->where('reservation_type_id', 2)
             ->when($this->search !== '', function ($query) {
                 $query
@@ -89,7 +91,8 @@ class ReservationList extends Component
                             ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $this->search . '%']);
                     })
                     ->orWhereHas('properties', function ($subQuery) {
-                        $subQuery->where('name_number', 'like', '%' . $this->search . '%');
+                    $subQuery->where('name_number', 'like', '%' . $this->search . '%')
+                             ->where('property_type_id', 1);
                     });
             })
             ->when($this->statusFilter !== '', function ($query) {
@@ -200,9 +203,9 @@ class ReservationList extends Component
             'activities' => $activities,
 
             // Branding
-            'branding_company_name' => $setting->company_name, 
-            'logo_path' => $setting->logo, 
-            'branding_company_email' => $setting->email, 
+            'branding_company_name' => $setting->company_name,
+            'logo_path' => $setting->logo,
+            'branding_company_email' => $setting->email,
             'branding_company_contact' => $setting->contact_number,
             'company_address' => $setting->address,
             'facebook_link' => $setting->facebook,
@@ -282,9 +285,9 @@ class ReservationList extends Component
             'activities' => $activities,
 
             // Branding
-            'branding_company_name' => $setting->company_name, 
-            'logo_path' => $setting->logo, 
-            'branding_company_email' => $setting->email, 
+            'branding_company_name' => $setting->company_name,
+            'logo_path' => $setting->logo,
+            'branding_company_email' => $setting->email,
             'branding_company_contact' => $setting->contact_number,
             'company_address' => $setting->address,
             'facebook_link' => $setting->facebook,
