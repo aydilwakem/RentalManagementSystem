@@ -25,7 +25,7 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('storage/' .   $logo_path) }}" alt=" {{ $branding_company_name }}"
+            <img src="{{ asset('storage/' . $logo_path) }}" alt=" {{ $branding_company_name }}"
                 style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px; color:#fff;">
                 We've Received Your Reservation!
@@ -107,8 +107,27 @@
             </div>
 
             <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-                    $expirationHours }} hours</strong> to confirm your reservation. You can
+    $expirationHours }} hours</strong> to confirm your reservation. You can
                 upload your proof of payment through the link below:</p>
+
+            {{-- Manual Payment Options --}}
+            <p style="margin-bottom: 15px;">
+                <strong>Prefer to pay manually?</strong><br>
+                You may use any of the following options and upload your screenshot or deposit slip as proof of payment:
+                <br><br>
+                <strong>Bank Transfer:</strong><br>
+                <strong>Bank Name:</strong> Landbank<br>
+                <strong>Account Name:</strong> Canopy Farm PH<br>
+                <strong>Account Number:</strong> 00-2340-179315
+                <br><br>
+                <strong>GCash:</strong><br>
+                <strong>Account Name:</strong> Canopy Farm PH<br>
+                <strong>Mobile Number:</strong> 0987654321
+                <br><br>
+                <strong>Maya:</strong><br>
+                <strong>Account Name:</strong> Canopy Farm PH<br>
+                <strong>Mobile Number:</strong> 0987654321
+            </p>
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
@@ -167,7 +186,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-                $branding_company_name }}. All rights reserved.</span>
+    $branding_company_name }}. All rights reserved.</span>
 
         </div>
     </div>

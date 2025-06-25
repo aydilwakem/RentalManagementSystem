@@ -47,10 +47,13 @@
 
     <h2 class="text-xl font-semibold text-center mt-4">Upload your proof of payment</h2>
     <div class="px-8">
-        <p class=" text-gray-600 mb-6 mt-3 text-justify">We look forward to your stay with us! A confirmation email has
-            been
-            sent to your email address. It includes your total amount or required deposit, along with your
-            Transaction No. Please refer to it when making your payment.
+        <p class=" text-gray-600 mb-6 mt-3 text-justify">If you chose to pay manually (e.g., via GCash or Maya), please
+            upload a screenshot of your payment as proof.
+
+            Make sure to include your Transaction Number as the reference. You can find it in the confirmation email we
+            sent you along with the amount due or deposit required.
+
+            We look forward to your stay with us!
         </p>
 
         <form class="space-y-4" wire:submit.prevent="submitProofOfPayment">
@@ -75,7 +78,7 @@
 
                 {{-- Transaction Number --}}
                 <div>
-                    <label class="block mb-1 font-medium text-gray-700">Transaction ID<span
+                    <label class="block mb-1 font-medium text-gray-700">Transaction Number<span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="transaction_number" id="transaction_number"
                         placeholder="Ex. TRN-ABCDEFG"
@@ -117,7 +120,7 @@
             {{-- Upload Payment Screenshot --}}
             <div class="sm:col-span-2">
                 <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Proof of
-                    Payment  <span class="text-red-500">*</span></label>
+                    Payment <span class="text-red-500">*</span></label>
 
                 <!-- Hidden file input -->
                 <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"

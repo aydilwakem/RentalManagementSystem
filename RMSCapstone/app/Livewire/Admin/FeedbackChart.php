@@ -16,6 +16,7 @@ class FeedbackChart extends Component
     public $comments = [];
     public $rating_name;
     public $feedbackRatingTypes;
+    public $transactionNumber;
 
     public $createRatingTypeModal;
 
@@ -46,15 +47,18 @@ class FeedbackChart extends Component
             ->get();
     }
 
-    public function loadComments()
+    public function loadComments($transactionNumber = null)
     {
-        $this->comments = Feedback::with('transaction.transactionUser') // Eager load relationships
+        $query = Feedback::with('transaction.transactionUser')
             ->whereNotNull('comments')
-            ->orderBy('submitted_at', 'desc')
-            ->take(10)
-            ->get();
-    }
+            ->orderBy('submitted_at', 'desc');
 
+        if ($transactionNumber) {
+            $query->where('transaction_number', $transactionNumber);
+        }
+
+        $this->comments = $query->take(10)->get();
+    }
 
     public function openRatingTypeModal()
     {

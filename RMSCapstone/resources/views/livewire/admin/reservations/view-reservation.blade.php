@@ -583,8 +583,8 @@
                                         <th class="border px-4 py-2 font-medium text-gray-900">Payment Date</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Status</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900">Notes</th>
-                                        {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Action</th> --}}
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900">Uploaded Receipt</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white">
@@ -594,7 +594,8 @@
                                             <td class="border px-4 py-2 text-gray-700">
                                                 {{ $payment->invoice->invoice_number }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
-                                                {{ $payment->mode_of_payment }}</td>
+                                            {{ $payment->mode_of_payment ?? $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
+                                        </td>
                                             <td class="border px-4 py-2 text-gray-700">
                                                 ₱{{ number_format($payment->amount_paid, 2) }}</td>
                                             <td class="border px-4 py-2 text-gray-700">
@@ -614,21 +615,26 @@
                                             </td>
                                             <td class="border px-4 py-2 text-gray-700">{{ $payment->notes ?? '-' }}
                                             </td>
-                                            {{-- <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700">
                                                 {{ $payment->verified_at ?? 'To be verified' }}</td>
                                             <td class="border px-4 py-2 space-x-2">
-                                                @if ($payment->payment_status === 'pending')
-                                                    <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                        class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-center py-2 px-4 rounded text-xs">
-                                                        Verify Receipt
-                                                    </a>
-                                                @elseif($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
-                                                    <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                        class="inline-block bg-green-500 hover:bg-green-700 text-white font-semibold text-center py-2 px-4 rounded text-xs">
-                                                        View Receipt
-                                                    </a>
+                                                @if (!$payment->payment_screenshot)
+                                                 <span class="text-gray-500 italic">Paid via PayMongo (no receipt required)</span>
+                                                @else
+                                                    @if ($payment->payment_status === 'pending')
+                                                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
+                                                            class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-center py-2 px-4 rounded text-xs">
+                                                            Verify Receipt
+                                                        </a>
+                                                    @elseif ($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
+                                                        <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
+                                                            class="inline-block bg-green-500 hover:bg-green-700 text-white font-semibold text-center py-2 px-4 rounded text-xs">
+                                                            View Receipt
+                                                        </a>
+                                                    @endif
                                                 @endif
-                                            </td> --}}
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>

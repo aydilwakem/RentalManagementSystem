@@ -96,12 +96,12 @@ class ReservationForm extends Component
 
     //----------------------- BRANDING ------------------------ //
     public string $companyName = 'Company'; //Default
-    public string $logoPath = ''; 
-    public string $companyEmail; 
-    public string $companyContact; 
-    public string $companyAddress; 
-    public string $facebookLink; 
-    public string $instagramLink; 
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
 
     public $editingGuest = [
@@ -165,7 +165,7 @@ class ReservationForm extends Component
 
         //For Branding
         // Fetch the first row of the settings table
-        $setting = Setting::first(); 
+        $setting = Setting::first();
         if ($setting) {
             $this->companyName = $setting->company_name;
             $this->logoPath = $setting->logo;
@@ -307,14 +307,30 @@ class ReservationForm extends Component
      * @return int Duration of the stay in days.
      */
 
+    // public function getStayDurationProperty()
+    // {
+    //     // This allows you to access the method as a property
+    //     if ($this->check_in_date && $this->check_out_date) {
+    //         $in = Carbon::parse($this->check_in_date);
+    //         $out = Carbon::parse($this->check_out_date);
+    //         return $in->diffInDays($out);
+    //     }
+    //     return 0;
+    // }
+
     public function getStayDurationProperty()
     {
-        // This allows you to access the method as a property
         if ($this->check_in_date && $this->check_out_date) {
             $in = Carbon::parse($this->check_in_date);
             $out = Carbon::parse($this->check_out_date);
-            return $in->diffInDays($out);
+
+            if ($out->greaterThan($in)) {
+                return $in->diffInDays($out);
+            }
+
+            return 0;
         }
+
         return 0;
     }
 
@@ -897,7 +913,7 @@ class ReservationForm extends Component
                                 'send_email_receipt' => true, // Instructs PayMongo to email a receipt to the payer after a successful payment.
                                 'show_description' => true, // Shows the overall description of the payment on the checkout page.
                                 'show_line_items' => true, // Displays the breakdown of items (from line_items) on the PayMongo checkout page
-                                'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
+                                'payment_method_types' => ['card', 'gcash', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
                                 'success_url' => route('guest.thank-you-page'), // This is where the user will be redirected after successful payment.
                                 'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
 
@@ -906,7 +922,7 @@ class ReservationForm extends Component
                                         'currency' => 'PHP',
                                         'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
                                         'description' => 'Reservation ' . $transaction->transaction_number,
-                                        'name' => 'Bayad ka na uy',
+                                        'name' => 'Deposit',
                                         'quantity' => 1,
                                     ],
                                 ],
