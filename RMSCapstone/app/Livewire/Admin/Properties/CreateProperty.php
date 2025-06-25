@@ -147,7 +147,7 @@ class CreateProperty extends Component
 
         // Attach selected features to pivot
         if (!empty($this->features)) {
-            $house->features()->attach($this->features);
+            $house->features()->attach($this->selectedFeatures);
         }
 
         // Reset form fields

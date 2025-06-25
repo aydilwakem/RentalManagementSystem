@@ -127,7 +127,7 @@
 
                 <!-- Actions -->
                 <div class="flex justify-between items-center gap-2 mt-6">
-                    <x-button type="button" wire:click="CloseAddRatingTypeModal"
+                    <x-button type="button" wire:click="CloseRatingTypeModal"
                         class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                         Cancel
                     </x-button>

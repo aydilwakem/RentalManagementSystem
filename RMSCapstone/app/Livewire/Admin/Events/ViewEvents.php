@@ -53,32 +53,28 @@ class ViewEvents extends Component
 
     public function deleteEvent()
     {
-       if ($this->confirmItemDelete) {
-        $event = Transaction::find($this->confirmItemDelete);
+        if ($this->confirmItemDelete) {
+            $event = Transaction::find($this->confirmItemDelete);
 
-        if ($event && in_array($event->transaction_status, ['done', 'terminated'])) {
-            $event->delete();
+            if ($event && in_array($event->transaction_status, ['done', 'terminated'])) {
+                $event->delete();
 
-            // Recalculate fake IDs only for reservation_type_id = 3
-            $fakeIDs = [];
-            foreach (
-                Transaction::where('reservation_type_id', 3)
-                    ->orderBy('created_at', 'ASC')
-                    ->get() as $index => $eventItem
-            ) {
-                $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                // Recalculate fake IDs only for reservation_type_id = 3
+                $fakeIDs = [];
+                foreach (Transaction::where('reservation_type_id', 3)->orderBy('created_at', 'ASC')->get() as $index => $eventItem) {
+                    $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                }
+
+                session(['fake_ids_event-list' => $fakeIDs]);
+
+                session()->flash('message', 'Event successfully deleted!');
+            } else {
+                // Show modal instead of flash
+                $this->cannotDeleteItem = true;
             }
 
-            session(['fake_ids_event-list' => $fakeIDs]);
-
-            session()->flash('message', 'Event successfully deleted!');
-        } else {
-            // Show modal instead of flash
-            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = false;
         }
-
-        $this->confirmItemDelete = false;
-    }
     }
 
     public function setSortBy($sortByField)
@@ -109,13 +105,20 @@ class ViewEvents extends Component
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 3)
             ->when($this->search !== '', function ($query) {
-            $search = '%' . $this->search . '%';
-            $query->whereHas('transactionUser', function ($subQuery) use ($search) {
-                $subQuery->where('first_name', 'like', $search)
-                         ->orWhere('last_name', 'like', $search)
-                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
-            });
-        })
+                $search = '%' . $this->search . '%';
+                $query
+                    ->whereHas('transactionUser', function ($subQuery) use ($search) {
+                        $subQuery
+                            ->where('first_name', 'like', $search)
+                            ->orWhere('last_name', 'like', $search)
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+                    })
+                    ->orWhereHas('properties', function ($subQuery) use ($search) {
+                        $subQuery
+                            ->where('name_number', 'like', $search) // Search by event hall name
+                            ->where('property_type_id', 3);
+                    });
+            })
             ->when($this->transactionStatus !== '', function ($query) {
                 $query->where('transaction_status', $this->transactionStatus);
             })
@@ -123,20 +126,18 @@ class ViewEvents extends Component
             ->paginate($this->perPage);
 
         // For fake IDs: get all event-type transactions ordered by creation
-            $eventTransactions = Transaction::where('reservation_type_id', 3)
-                ->orderBy('created_at', 'ASC')
-                ->get();
+        $eventTransactions = Transaction::where('reservation_type_id', 3)->orderBy('created_at', 'ASC')->get();
 
-            $fakeIDs = session('fake_ids_event-list', []);
+        $fakeIDs = session('fake_ids_event-list', []);
 
-            // Recalculate if count mismatch
-            if (count($fakeIDs) !== $eventTransactions->count()) {
-                $fakeIDs = [];
-                foreach ($eventTransactions as $index => $eventItem) {
-                    $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                }
-                session(['fake_ids_event-list' => $fakeIDs]);
+        // Recalculate if count mismatch
+        if (count($fakeIDs) !== $eventTransactions->count()) {
+            $fakeIDs = [];
+            foreach ($eventTransactions as $index => $eventItem) {
+                $fakeIDs[$eventItem->id] = 'EVT-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
+            session(['fake_ids_event-list' => $fakeIDs]);
+        }
 
         return view('livewire.admin.events.view-events', [
             'event' => $event,

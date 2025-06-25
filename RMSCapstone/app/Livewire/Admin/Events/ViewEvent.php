@@ -19,7 +19,7 @@ use App\Models\Payment;
 #[Layout('layouts.app')]
 class ViewEvent extends Component
 {
-    // Create a public property 
+    // Create a public property
     public Transaction $event;
     public $transaction;
     public $invoice;
@@ -42,7 +42,7 @@ class ViewEvent extends Component
     public $currency;
     public $verified_at;
 
-    // ---------------------------- MODALS -------------------------- // 
+    // ---------------------------- MODALS -------------------------- //
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
     public $createPaymentModal = false;
@@ -216,7 +216,7 @@ class ViewEvent extends Component
         ]);
 
         // Redirect to the same reservation view to refresh data
-        return redirect()->route('admin.view-lease', ['transaction' => $this->transaction->id])
+        return redirect()->route('admin.view-event', ['event' => $this->event->id])
             ->with('success', 'Payment created successfully.');
     }
 

@@ -180,8 +180,8 @@
                             Cancel
                         </x-ghost-button>
                         <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
-                            wire:click="confirmCreate">
-                            Create Event Hall
+                            wire:click="confirmEdit({{ $eventHall->id }})">
+                            Save Changes
                         </x-button>
                     </div>
 
@@ -204,7 +204,7 @@
 
                 <x-button class="ms-3 bg-green text-white" wire:click="updateEventHall({{ $eventHall->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Edit Event Hall') }}
+                    {{ __('Save Changes') }}
                 </x-button>
             </x-slot>
         </x-dialog-modal>

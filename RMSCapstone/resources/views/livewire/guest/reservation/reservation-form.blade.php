@@ -40,8 +40,8 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                 <div class="step-room">
-                    {{-- @include('livewire.guest.reservation.review') --}}
-                    @include('livewire.guest.reservation.choose-room')
+                    @include('livewire.guest.reservation.choose-activity')
+                    {{-- @include('livewire.guest.reservation.choose-room') --}}
                 </div>
                 @endif
 
