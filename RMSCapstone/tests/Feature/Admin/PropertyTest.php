@@ -538,73 +538,83 @@ class PropertyTest extends TestCase
     //------------- Create Room - with no image upload
     public function test_room_can_be_created()
     {
+    // Create a user with the required permission
     $user = User::factory()->create();
-    $user->givePermissionTo('room-create'); 
+    $user->givePermissionTo('room-create');
 
-    $propertyData = Property::factory()->make()->toArray();
+    // Prepare fake data
+    $propertyCategory = \App\Models\PropertyCategory::factory()->create();
+    $propertyType = 1;
 
-    $allowedProperties = [
-        'property_type_id',  // required
-        'property_category_id', 
-        'name_number',  // required, unique
-        'property_status',  // required
-        'ideal_guest',  // required
-        'max_adults', // required
-        'max_kids',  // required
-        'turnover_duration',// required
-        'amount', // required
-        'extra_person_charge',  // required
+    $roomData = [
+        'name_number' => 'Room-' . fake()->unique()->numberBetween(100, 999),
+        'property_category_id' => $propertyCategory->id,
+        'property_type_id' => $propertyType,
+        'ideal_guest' => 3,
+        'max_adults' => 2,
+        'max_kids' => 2,
+        'turnover_duration' => 2,
+        'property_status' => 'available',
+        'amount' => 1500,
+        'extra_person_charge' => 300,
+        'image' => null,
+        'images' => [],
+        'selectedFeatures' => [],
     ];
 
-    $livewire = Livewire::actingAs($user)
-        ->test(CreateRoom::class);
+    // Run the Livewire test
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Admin\Rooms\CreateRoom::class) // Adjust component path if needed
+        ->set('name_number', $roomData['name_number'])
+        ->set('property_category_id', $roomData['property_category_id'])
+        ->set('property_type_id', $roomData['property_type_id'])
+        ->set('ideal_guest', $roomData['ideal_guest'])
+        ->set('max_adults', $roomData['max_adults'])
+        ->set('max_kids', $roomData['max_kids'])
+        ->set('turnover_duration', $roomData['turnover_duration'])
+        ->set('property_status', $roomData['property_status'])
+        ->set('amount', $roomData['amount'])
+        ->set('extra_person_charge', $roomData['extra_person_charge'])
+        ->set('image', null)
+        ->set('images', [])
+        ->set('selectedFeatures', [])
+        ->call('saveRoom')
+        ->assertHasNoErrors();
 
-    // Set only allowed properties 
-    foreach ($propertyData as $key => $value) {
-        if (in_array($key, $allowedProperties)) {
-            $livewire->set($key, $value);
-        }
-    }
-
-    $livewire->call('saveRoom');
-
+    // Assert that the new room exists in the database
     $this->assertDatabaseHas('properties', [
-        'name_number' => $propertyData['name_number'],
+        'name_number' => $roomData['name_number'],
+        'property_type_id' => $roomData['property_type_id'],
+        'property_category_id' => $roomData['property_category_id'],
     ]);
     }
 
     //------------- Create Hall - with no image upload
+    //Create House - with no image upload
     public function test_hall_can_be_created()
     {
-    $user = User::factory()->create();
-    $user->givePermissionTo('event-hall-create'); 
+        $user = User::factory()->create();
+        $user->givePermissionTo('event-hall-create');
 
-    $propertyData = Property::factory()->make()->toArray();
-
-    $allowedProperties = [
-        'property_type_id',  // required
-        'property_category_id', 
-        'name_number',  // required, unique
-        'property_status',  // required
-        'capacity',  // required
-        'amount', // required
-        'extra_charge_per_hour',  // required
-    ];
+       $name = 'Hall-' . fake()->unique()->numerify('###');
 
     $livewire = Livewire::actingAs($user)
-        ->test(CreateEventHall::class);
+        ->test(CreateEventHall::class)
+        ->set('name_number', $name)
+        ->set('property_type_id', 3)
+        ->set('amount', 20000)
+        ->set('capacity', 100)
+        ->set('extra_charge_per_hour', 1500)
+        ->set('description', 'A great hall')
+        ->set('property_status', 'available')
+        ->set('image', null)
+        ->set('images', [])
+        ->set('selectedFeatures', []);
 
-    // Set only allowed properties 
-    foreach ($propertyData as $key => $value) {
-        if (in_array($key, $allowedProperties)) {
-            $livewire->set($key, $value);
-        }
-    }
-
-    $livewire->call('saveEventHall');
+    $livewire->call('saveEventHall')->assertHasNoErrors();
 
     $this->assertDatabaseHas('properties', [
-        'name_number' => $propertyData['name_number'],
+        'name_number' => $name,
     ]);
     }
 

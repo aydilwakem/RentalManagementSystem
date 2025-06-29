@@ -657,23 +657,30 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     //List
     Route::get('/leases', function () {
         return view('admin.rentals.leases.view-leases');
-    })->name('admin.leases');
+    })->name('admin.leases')
+    ->middleware('can:leases-list');
 
     // Create
     Route::get('create/lease', function () {
         return view('admin.rentals.leases.create-lease');
-    })->name('admin.create-lease');
+    })->name('admin.create-lease')
+    ->middleware('can:leases-create');
 
     //View
-    Route::get('view/lease/{transaction}', ViewLease::class)->name('admin.view-lease');
+    Route::get('view/lease/{transaction}', ViewLease::class)
+    ->name('admin.view-lease')
+    ->middleware('can:leases-view');
 
     //Edit
-    Route::get('edit/lease/{transaction}', EditLease::class)->name('admin.edit-lease');
+    Route::get('edit/lease/{transaction}', EditLease::class)
+    ->name('admin.edit-lease')
+    ->middleware('can:leases-edit');
 
     // Deleted Leases (Soft Deletes)
     Route::get('deleted-leases', function () {
         return view('admin.rentals.leases.deleted-leases');
-    })->name('admin.deleted-leases');
+    })->name('admin.deleted-leases')
+    ->middleware('can:leases-soft-delete');
 
     //Lease Summary
     Route::get('/lease-reports', function () {

@@ -82,7 +82,7 @@ class ViewLease extends Component
                 $this->confirmItemDelete = false;
 
                 session()->flash('message', 'Lease successfully deleted!');
-                return redirect()->route('admin.events');
+                return redirect()->route('admin.leases');
             } else {
                 // Set modal flag if event is not deletable
                 $this->cannotDeleteItem = true;
