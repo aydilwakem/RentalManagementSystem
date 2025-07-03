@@ -10,7 +10,7 @@ use App\Models\Transaction;
 #[Layout('layouts.app')]
 class ViewRoom extends Component
 {
-    // Create a public property 
+    // Create a public property
     public Property $room;
 
     public $cannotDeleteItem = false;
@@ -35,8 +35,8 @@ class ViewRoom extends Component
         $room = Property::find($this->confirmItemDelete);
 
         if (!$room) {
-            session()->flash('error', 'Event Hall not found!');
-            return redirect()->route('admin.event-halls');
+            session()->flash('error', 'Room not found!');
+            return redirect()->route('admin.rooms');
         }
 
         // Check if the event hall is linked to any transaction

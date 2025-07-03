@@ -44,6 +44,7 @@ class ReservationForm extends Component
     public $extra_charge = []; // extra_guest * extra_person_charge * days
     public $roomAmount = []; // base rate * days
     public $roomsTotalAmount = [];
+    public $selectedFeatures = [];
 
     // --------------------- ACTIVITIES ------------------------- //
 
@@ -175,6 +176,9 @@ class ReservationForm extends Component
             $this->facebookLink = $setting->facebook;
             $this->instagramLink = $setting->instagram;
         }
+
+        $this->selectedFeatures = [];
+
     }
 
     /**
@@ -365,6 +369,7 @@ class ReservationForm extends Component
                             ->where('end_datetime', '>', $checkIn); // Ends after the user checks in
                     });
             })
+            ->with('features')
             ->get();
     }
 

@@ -5,8 +5,8 @@
         <div class="absolute inset-0 flex items-center justify-center text-center px-4">
             <div>
                 <h1 class="text-yellow-50 text-4xl md:text-6xl font-bold mb-2"
-                    style="text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);">{{
-                    $companyName }}
+                    style="text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);">
+                    {{ $companyName }}
                 </h1>
                 <p class="text-yellow-50 text-lg md:text-2xl font-light mb-6 drop-shadow-2xl">Where nature meets
                     elegance
@@ -66,7 +66,7 @@
                                     <h3 class="text-lg font-semibold mb-2 text-center">Memorable Moments, Made Here</h3>
                                     <p class="text-sm text-gray-600 mb-3 text-center">Host unforgettable events in our
                                         spacious
-                                        halls—ideal for weddings, parties, corporate gatherings, and celebrations of all
+                                        halls, ideal for weddings, parties, corporate gatherings, and celebrations of all
                                         kinds.</p>
                                     <div class="flex justify-center">
                                         <x-button href="{{ route('guest.event-halls') }}">
@@ -82,17 +82,17 @@
                                     <img src="{{ asset('images/pool-house2.png') }}" alt="AI"
                                         class="w-full h-48 object-cover">
                                     <span
-                                        class="absolute top-3 left-3 bg-white text-green-700 text-xs px-3 py-1 rounded-full border">Houses</span>
+                                        class="absolute top-3 left-3 bg-white text-green-700 text-xs px-3 py-1 rounded-full border">Spaces</span>
                                 </div>
                                 <div class="p-3">
-                                    <h3 class="text-lg font-semibold mb-2 text-center">Nature-Inspired Stays</h3>
-                                    <p class="text-sm text-gray-600 mb-3 text-center">Stay in our charming houses,
-                                        perfect for long-term stays, blending rustic elegance with modern amenities for
-                                        a truly immersive countryside experience.
+                                    <h3 class="text-lg font-semibold mb-2 text-center">Spaces for Rent</h3>
+                                    <p class="text-sm text-gray-600 mb-3 text-center"> Find a variety of rental spaces
+                                        to suit your needs, ideal for
+                                        long-term or short-term stays with practical amenities and flexible options.
                                     </p>
                                     <div class="flex justify-center">
                                         <x-button href="{{ route('guest.houses') }}">
-                                            Rent House
+                                            View Spaces
                                         </x-button>
                                     </div>
 
@@ -275,10 +275,11 @@
 
                     {{-- For sessionn messages --}}
                     @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                     {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                        {{ session('message') }}
-                    </div>
+                            {{ session('message') }}
+                        </div>
                     @endif
                     <!-- Contact Form -->
                     <div>
@@ -289,26 +290,26 @@
                             <input type="text" name="name" placeholder="Name" wire:model="name"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
                             <input type="email" name="email" placeholder="Email" wire:model="email"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('email')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
                             <input type="tel" name="contact_number" placeholder="Phone Number"
                                 wire:model="contact_number"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300">
                             @error('contact_number')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
                             <textarea name="message" placeholder="Message" wire:model="message"
                                 class="w-full p-3 border rounded-md focus:ring focus:ring-green-300 resize-none"></textarea>
                             @error('message')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
                             <button
@@ -318,8 +319,8 @@
                                     <!-- Spinner -->
                                     <span wire:loading wire:target="contactUs" class="mr-2">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>

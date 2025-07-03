@@ -30,7 +30,7 @@
 
                 <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
                     wire:navigate>
-                    {{ __('Houses') }}
+                    {{ __('Spaces') }}
                 </x-nav-link>
 
                 <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')"
@@ -76,7 +76,7 @@
 
             <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
                 wire:navigate>
-                {{ __('Houses') }}
+                {{ __('Spaces') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link href="{{ route('guest.event-halls') }}"

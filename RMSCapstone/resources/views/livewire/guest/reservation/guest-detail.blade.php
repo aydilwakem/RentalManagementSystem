@@ -1,9 +1,9 @@
 <!-- Guest Details Section -->
 <div class="flex">
-    <div class="w-full px-4">
+    <div class="w-full">
         <div class="w-full rounded-xl shadow bg-gray-50 overflow-hidden">
             <!-- Section Title -->
-            <div class="bg-green-700 text-white text-lg font-semibold px-4 py-3 rounded-t-xl text-center">
+            <div class="bg-green-800 text-white text-lg font-semibold px-4 py-3 rounded-t-xl text-center">
                 Guest Details
             </div>
             <div class="px-6 pt-6 text-gray-700 text-md">
@@ -12,7 +12,7 @@
                 you're bringing additional guests, you can add their information using the option below.
             </div>
 
-            <div class="p-6 space-y-6">
+            <div class="p-4 space-y-6">
 
                 <!-- Guest Information Form -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -130,30 +130,30 @@
 
                 <!-- Additional Guests Section (Optional) -->
                 <div class="flex flex-col space-y-2 w-full">
-                    <div class="font-semibold">
+                    <div class="font-semibold text-gray-700">
                         Additional Guests (Optional)
                     </div>
 
                     <!-- Displaying Added Guests -->
                     <div class="mt-6">
                         @if (count($guests) > 0)
-                            <ol class="space-y-3 list-decimal pl-6 text-gray-800 mb-3">
+                            <ol class="space-y-3 list-decimal pl-6 text-gray-700 mb-3">
                                 @foreach ($guests as $guest)
                                     <li class="me-2">
                                         <div
-                                            class="p-4 bg-white rounded-2xl border border-gray-500 flex justify-between items-center">
-                                            <div class="font-semibold text-gray-800">
+                                            class="p-2 bg-white rounded-2xl border border-gray-300 flex justify-between items-center">
+                                            <div class="font-semibold text-gray-700">
                                                 {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
                                             </div>
                                             <div class="space-x-5 flex items-center">
                                                 <button wire:click="editGuest({{ $loop->index }})"
-                                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">
+                                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-sm transition duration-150">
                                                     <i class="fas fa-edit mr-1"></i>
                                                     Edit
                                                 </button>
 
                                                 <button wire:click="deleteGuest({{ $loop->index }})"
-                                                    class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">
+                                                    class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-sm transition duration-150">
                                                     <i class="fas fa-trash-alt mr-1"></i>
                                                     Remove
                                                 </button>
