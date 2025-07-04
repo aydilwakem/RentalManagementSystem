@@ -18,9 +18,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- First Name -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="first_name"
-                            placeholder="Ex. Juan"
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="first_name" placeholder="Ex. Juan"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('first_name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -30,8 +30,7 @@
                     <!-- Middle Name -->
                     <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                        <input type="text" wire:model="middle_name"
-                            placeholder="Ex. Mercado"
+                        <input type="text" wire:model="middle_name" placeholder="Ex. Mercado"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('middle_name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -40,9 +39,9 @@
 
                     <!-- Last Name -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="last_name"
-                            placeholder="Ex. Dela Cruz"
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('last_name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -51,9 +50,9 @@
 
                     <!-- Email -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-                        <input type="email" wire:model="email"
-                            placeholder="Ex. juan.delacruz@example.com"
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email <span
+                                class="text-red-500">*</span></label>
+                        <input type="email" wire:model="email" placeholder="Ex. juan.delacruz@example.com"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('email')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -62,9 +61,9 @@
 
                     <!-- Contact Number -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="contact_number"
-                            placeholder="Ex. +63 912 345 6789"
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="contact_number" placeholder="Ex. +63 912 345 6789"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('contact_number')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -75,9 +74,9 @@
                     <!-- Country -->
                     <!--TODO: Make country field dropdown of pre populated countries (plugin) -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Country <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="country"
-                            placeholder="Ex. Philippines"
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="country" placeholder="Ex. Philippines"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('country')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -102,8 +101,7 @@
                     <!-- Company Name -->
                     <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Company Name (Optional)</label>
-                        <input type="text" wire:model="company_name"
-                            placeholder="Ex. ABC Corporation"
+                        <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         @error('last_name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -112,7 +110,8 @@
 
                     <div class="col-span-1">
                         <!-- Source of Hearing -->
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Where did you hear about us? <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Where did you hear about us? <span
+                                class="text-red-500">*</span></label>
                         <select wire:model="heard_from"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select an option</option>
@@ -137,12 +136,12 @@
                     <!-- Displaying Added Guests -->
                     <div class="mt-6">
                         @if (count($guests) > 0)
-                            <ol class="space-y-3 list-decimal pl-6 text-gray-700 mb-3">
+                            <ol
+                                class="space-y-3 list-decimal pl-6 text-gray-700 mb-3 p-3 bg-white rounded-2xl border border-gray-300">
                                 @foreach ($guests as $guest)
                                     <li class="me-2">
-                                        <div
-                                            class="p-2 bg-white rounded-2xl border border-gray-300 flex justify-between items-center">
-                                            <div class="font-semibold text-gray-700">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-semibold text-gray-700 flex">
                                                 {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
                                             </div>
                                             <div class="space-x-5 flex items-center">
@@ -158,7 +157,6 @@
                                                     Remove
                                                 </button>
                                             </div>
-
                                         </div>
                                     </li>
                                 @endforeach
@@ -189,7 +187,8 @@
                                 <!-- Guest Name -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm text-gray-700">First Name <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm text-gray-700">First Name <span
+                                                class="text-red-500">*</span></label>
                                         <input type="text" wire:model.defer="editingGuest.guest_first_name"
                                             placeholder="Ex. Juan"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
@@ -209,7 +208,8 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm text-gray-700">Last Name <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm text-gray-700">Last Name <span
+                                                class="text-red-500">*</span></label>
                                         <input type="text" wire:model.defer="editingGuest.guest_last_name"
                                             placeholder="Ex. Dela Cruz"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
@@ -231,7 +231,8 @@
 
                                 <!-- Guest Type -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Guest Type <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Guest Type <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model.defer="editingGuest.guest_type_id"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
@@ -246,7 +247,8 @@
 
                                 <!-- Gender -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Gender <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Gender <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model.defer="editingGuest.guest_gender"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Gender</option>
@@ -261,7 +263,8 @@
 
                                 <!-- Residency -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Residency <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Residency <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model.defer="editingGuest.guest_residency"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Residency</option>
@@ -275,7 +278,8 @@
 
                                 <!-- Country of Origin -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Country of Origin <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Country of Origin <span
+                                            class="text-red-500">*</span></label>
                                     <input type="text" wire:model.defer="editingGuest.guest_country_of_origin"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                     @error('editingGuest.guest_country_of_origin')
@@ -310,9 +314,9 @@
                                 <!-- Guest Name -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm text-gray-700">First Name <span class="text-red-500">*</span></label>
-                                        <input type="text" wire:model="guest_first_name"
-                                            placeholder="Ex. Juan"
+                                        <label class="block text-sm text-gray-700">First Name <span
+                                                class="text-red-500">*</span></label>
+                                        <input type="text" wire:model="guest_first_name" placeholder="Ex. Juan"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                                         @error('guest_first_name')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -330,7 +334,8 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm text-gray-700">Last Name <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm text-gray-700">Last Name <span
+                                                class="text-red-500">*</span></label>
                                         <input type="text" wire:model="guest_last_name"
                                             placeholder="Ex. Dela Cruz"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
@@ -352,7 +357,8 @@
 
                                 <!-- Guest Type -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Guest Type <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Guest Type <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model="guest_type_id"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Guest Type</option>
@@ -367,7 +373,8 @@
 
                                 <!-- Gender -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Gender <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Gender <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model="guest_gender"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Gender</option>
@@ -382,7 +389,8 @@
 
                                 <!-- Residency -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Residency <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Residency <span
+                                            class="text-red-500">*</span></label>
                                     <select wire:model="guest_residency"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         <option value="">Select Residency</option>
@@ -396,7 +404,8 @@
 
                                 <!-- Country of Origin -->
                                 <div class="mt-4">
-                                    <label class="block text-sm text-gray-700">Country of Origin <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm text-gray-700">Country of Origin <span
+                                            class="text-red-500">*</span></label>
                                     <input type="text" wire:model="guest_country_of_origin"
                                         placeholder="Ex. Philippines"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
