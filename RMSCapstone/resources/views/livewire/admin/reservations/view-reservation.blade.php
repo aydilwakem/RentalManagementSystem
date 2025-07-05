@@ -106,39 +106,39 @@
                         <div class="mt-1">
                             @if ($transaction->transaction_status === 'pending')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Awaiting
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
                                     Payment</span>
                             @elseif ($transaction->transaction_status === 'reserved')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-blue-100 text-blue-500">Pending
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
                                     Verification</span>
                             @elseif ($transaction->transaction_status === 'receipt_verified')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-500">Payment
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
                                     Verified</span>
                             @elseif ($transaction->transaction_status === 'confirmed')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
                             @elseif ($transaction->transaction_status === 'ongoing')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">On-Going
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
                                 </span>
                             @elseif ($transaction->transaction_status === 'done')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-600">Completed</span>
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
                             @elseif ($transaction->transaction_status === 'no_show')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-pink-100 text-pink-500">No
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
                                     Show</span>
                             @elseif ($transaction->transaction_status === 'terminated')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-rose-100 text-rose-600">Terminated</span>
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
                             @elseif ($transaction->transaction_status === 'expired')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-orange-100 text-orange-500">Expired</span>
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
                             @elseif ($transaction->transaction_status === 'cancelled')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-600">Cancelled</span>
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
                             @else
                                 {{ ucfirst($transaction->transaction_status) }}
                             @endif
@@ -309,8 +309,8 @@
             @if ($invoice)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
                         <!-- Invoice Info -->
-                        <div><strong>Invoice Number:</strong></div>
-                        <div># {{ $invoice->invoice_number }}</div>
+                        <div><strong>Invoice ID:</strong></div>
+                        <div>{{ $invoice->invoice_number }}</div>
 
                         <div><strong>Due Date:</strong></div>
                         <div>
@@ -335,22 +335,22 @@
                         <div>
                             @if ($invoice->invoice_status === 'pending')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
                                     Pending
                                 </span>
                             @elseif ($invoice->invoice_status === 'complete' || $invoice->invoice_status === 'completed')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-600">
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
                                     Completed
                                 </span>
                             @elseif ($invoice->invoice_status === 'failed')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-600">
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                     Failed
                                 </span>
                             @elseif ($invoice->invoice_status === 'overdue')
                                 <span
-                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-orange-100 text-orange-600">
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-600">
                                     Overdue
                                 </span>
                             @endif

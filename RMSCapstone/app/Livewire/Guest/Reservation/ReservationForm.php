@@ -44,6 +44,7 @@ class ReservationForm extends Component
     public $extra_charge = []; // extra_guest * extra_person_charge * days
     public $roomAmount = []; // base rate * days
     public $roomsTotalAmount = [];
+    public $selectedFeatures = [];
 
     // --------------------- ACTIVITIES ------------------------- //
 
@@ -115,6 +116,11 @@ class ReservationForm extends Component
         'guest_country_of_origin' => '',
     ];
 
+    //----------------------- PROMO CODE ------------------------ //
+    public $promoCode;
+    public $discountMessage;
+    public $errorMessage;
+    public $promoDiscount = 0;
     public $confirmReservationModal = false;
 
 
@@ -157,6 +163,7 @@ class ReservationForm extends Component
     {
         $this->rooms = Property::ofType('Room')->availableRooms()->get();
         $this->roomCategories = PropertyCategory::all();
+        $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
@@ -175,6 +182,11 @@ class ReservationForm extends Component
             $this->facebookLink = $setting->facebook;
             $this->instagramLink = $setting->instagram;
         }
+
+        $now = Carbon::now('Asia/Manila');
+        $this->check_in_date = $now->format('Y-m-d');
+        $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+
     }
 
     /**
@@ -365,6 +377,7 @@ class ReservationForm extends Component
                             ->where('end_datetime', '>', $checkIn); // Ends after the user checks in
                     });
             })
+            ->with('features')
             ->get();
     }
 
@@ -447,9 +460,37 @@ class ReservationForm extends Component
 
     public function computeTotalAmount()
     {
-        $this->total_amount = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+        $subtotal = $this->total_amount = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+        $total = $subtotal - $this->promoDiscount;
+        $this->total_amount  = max(0, $total);
         // dd($this->total_amount);
         return $this->total_amount;
+    }
+
+    public function applyPromoCode()
+    {
+        $this->reset(['discountMessage', 'errorMessage']); // Clear messages
+
+        if ($this->promoCode === 'TEST500') {
+            // fixed amount for testing lang
+            $this->promoDiscount = 500;
+            $this->total_amount -= $this->total_amount - $this->promoDiscount;
+            $this->discountMessage = 'Promo code applied! You saved ₱500.';
+        } else {
+            $this->promoDiscount = 0; // No discount
+            $this->total_amount = $this->computeTotalAmount();
+            $this->discountMessage = null;
+            $this->promoCode = '';
+            $this->errorMessage = 'Invalid promo code. Please try again.';
+        }
+    }
+
+    public function removePromoCode()
+    {
+        $this->promoCode = '';
+        $this->promoDiscount = 0;
+        $this->discountMessage = null;
+        $this->errorMessage = null;
     }
 
     // --------------------------------------------- VALIDATIONS ----------------------------------------------- //

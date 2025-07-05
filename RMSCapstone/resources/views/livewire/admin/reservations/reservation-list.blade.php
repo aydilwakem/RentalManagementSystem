@@ -299,7 +299,7 @@
                                             <a href="#"
                                                 wire:click.prevent="showActionModal('startReservation', 'Start Reservation', 'Are you sure you want to start this reservation?', {{ $transaction->id }}, 'default')"
                                                 class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                <i class="fas fa-play-circle mr-2 text-indigo-600"></i>
+                                                <i class="fas fa-play-circle mr-2 text-green-600"></i>
                                                 Start
                                                 Reservation
                                             </a>

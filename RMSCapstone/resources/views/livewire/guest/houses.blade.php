@@ -1,5 +1,5 @@
 <div class="max-w-[90%] mx-auto px-4 py-7 mb-8">
-    <h1 class="text-3xl font-bold text-green-700 mb-2 text-center">Houses for Lease</h1>
+    <h1 class="text-3xl font-bold text-green-700 mb-2 text-center">Spaces for Lease</h1>
 
     <!-- Inquire Text -->
     <p class="text-lg text-gray-700 text-center mb-5">
