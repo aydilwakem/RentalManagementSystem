@@ -20,11 +20,19 @@
     @endif
     <div class="mb-4">
         <div class="flex items-center justify-between">
-            <!-- Label and Confirm Button -->
-            @can('new-reservation-create')
-            <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
-                New Transaction
-            </x-button>
+            <div class="flex items-center space-x-2">
+                <!-- Label and Confirm Button -->
+                @can('new-reservation-create')
+                <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
+                    New Transaction
+                </x-button>
+
+                {{-- Check-outs Today --}}
+                <x-button icon="fa fa-file" wire:click="exportCheckoutsToday"
+                    class="inline-flex items-center text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    Export All Check-outs Today
+                </x-button>
+            </div>
             @endcan
             <!-- Soft Deletes -->
             @can('new-reservation-soft-delete')

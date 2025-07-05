@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationCompletedMail;
 use App\Models\Setting;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class ReservationList extends Component
@@ -352,6 +354,48 @@ class ReservationList extends Component
             session()->flash('message', 'Transaction successfully deleted!');
         }
     }
+
+
+
+    // ------------------------ ALL CHECKOUT EXPORT PDF METHOD ------------------------------- //
+    public function exportCheckoutsToday(){
+        
+        //FOR TESTING - Add target date of checkout that's in your reservation-list
+        $today = Carbon::create(2025, 7, 6);
+
+        //$today = Carbon::today();
+        
+        //Fetch all transactions with end_datetime today
+        $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->whereDate('end_datetime', $today)
+        ->where('reservation_type_id', 2)
+        ->orderBy('end_datetime')
+        ->get();
+
+        //Summary of transactions
+        $totalCheckouts = $transactions->count();
+        $totalGuests = $transactions->sum('pax');
+        $totalAmountEarned = $transactions->sum('total_amount');
+
+        //Pass variables in pdf
+        $pdf = Pdf::loadView('livewire.admin.reports.checkouts-today-report', [
+        'transactions' => $transactions,
+        'date' => $today->toDateString(),
+        'totalCheckouts' => $totalCheckouts,
+        'totalGuests' => $totalGuests,
+        'totalAmountEarned' => $totalAmountEarned
+    ]);
+
+     return response()->streamDownload(function () use ($pdf) {
+        echo $pdf->stream();
+    }, 'Checkouts-Today-' . $today->format('Ymd') . '.pdf');
+    }
+
+
+
 
     // -------------------------------------- SORTING -------------------------------------- //
 

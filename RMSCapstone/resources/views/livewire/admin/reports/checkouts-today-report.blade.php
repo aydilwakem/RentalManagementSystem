@@ -116,26 +116,8 @@
         <h1>Canopy Farm PH</h1>
         <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
         <p>+63 962 447 9893</p>
-        <h2>Reservations Summary</h2>
-        <p class="date-range">
-            <strong>Reporting Period:</strong>
-            @if ($start_date && $end_date)
-            {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
-            &ndash;
-            {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
-            @else
-            All Records
-            @endif
-        </p>
-        <p class="date-range">
-            <strong>Room:</strong>
-            {{ $roomFilter ? $rooms->firstWhere('id', $roomFilter)?->name_number ?? 'Unknown Room' : 'All Rooms' }}
+        <h2>Daily Checkout Summary</h2>
 
-        </p>
-        <p class="date-range">
-            <strong>Status:</strong>
-            {{ empty($reservationStatusFilter) ? 'All Statuses' : $reservationStatusFilter }}
-        </p>
     </header>
     <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
@@ -174,8 +156,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="10" style="text-align: center; padding: 20px;">No reservations were recorded for the
-                    selected date range.</td>
+                <td colspan="10" style="text-align: center; padding: 20px;">No checkouts found.</td>
             </tr>
             @endforelse
         </tbody>
@@ -183,13 +164,8 @@
 
     <div class="summary">
         <h2>Summary of Key Metrics:</h2>
-        <p><strong>Total Reservations Within Date Range: </strong>{{ $totalReservations }} reservations</p>
+        <p><strong>Total Checkouts Today: </strong>{{ $totalCheckouts }} reservations</p>
         <p><strong>Total Guests:</strong> {{ $totalGuests }} guests </p>
-        <p><strong>Average Reservation Length (nights): </strong>{{ $averageLength }} nights </p>
-        @if (empty($roomFilter))
-        <p><strong>Most Booked Room:</strong> {{ $mostBookedRoom ?? 'No bookings found within the selected date range'
-            }}</p>
-        @endif
         <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
     </div>
 

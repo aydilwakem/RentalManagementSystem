@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Admin\Reports;
 
+use App\Models\Property;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReservationReports extends Component
 {
@@ -16,39 +20,77 @@ class ReservationReports extends Component
     public $search = '';
     public $perPage = 10;
 
+    //------------------- FILTERS
+    public $filteredTransactions = [];
+    public $roomFilter = '';
+    public $rooms = []; 
+    public $reservationStatusFilter = '';
+
     // ---FOR DATE RANGES INPUT ------ //
     public $start_date;
     public $end_date;
     
 
-
+    //------------------------ MOUNT METHOD --------------------//
     public function mount()
     {
+        $this->rooms = Property::where('property_type_id', 1)->get();
+
         // Initializes session variable if not already set
         if (!session()->has('fake_ids_transactions')) {
             session(['fake_ids_transactions' => []]);
         }
     }
 
-    public function getTransactionsProperty()
+    //------------------------ FILTER BUTTON METHOD ------------------------//
+    /**
+     * Filter
+     *
+     * Queries the database by doing table joins on all transaction
+     * tables using where and filter variables
+     * 
+     */
+
+    public function applyReservationFilter()
     {
-        //-------- Querying database to select all from transactions 
-        //-------- Where it's in between dinput date ranges
-        $query = Transaction::query();
+        $query = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 2);
 
-        if ($this->start_date) {
-            $query->whereDate('start_datetime', '>=', $this->start_date);
-        }
-
-        if ($this->end_date) {
-            $query->whereDate('start_datetime', '<=', $this->end_date);
-        }
-
-        return $query
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->get();
+    if ($this->start_date) {
+        $query->whereDate('start_datetime', '>=', $this->start_date);
     }
 
+    if ($this->end_date) {
+        $query->whereDate('start_datetime', '<=', $this->end_date);
+    }
+
+    if ($this->roomFilter) {
+        $query->where('transaction_properties.property_id', $this->roomFilter);
+    }
+
+    $query->when($this->reservationStatusFilter, function ($query) {
+        $query->where('transaction_status', $this->reservationStatusFilter);
+    });
+
+    //use variable for filtering transactions
+    $this->filteredTransactions = $query
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->get();
+    }
+
+    //----------------------- EXPORT PDF METHOD ------------------------------------- //
+
+    /**
+     * EXPORT PDF
+     *
+     * Queries the database and exports a DOM PDF File
+     * to a dedicated pdf blade
+     *
+     * 
+     */
     public function exportReservationSummary()
     {
         $transactions = Transaction::query()
@@ -64,6 +106,12 @@ class ReservationReports extends Component
                 $end = Carbon::parse($this->end_date)->endOfDay();
                 $query->where('start_datetime', '<=', $end);
             })
+            ->when($this->roomFilter, function ($query) { //Property filter
+                $query->where('transaction_properties.property_id', $this->roomFilter);
+            })
+            ->when($this->reservationStatusFilter, function ($query) { //Status filter
+            $query->where('transaction_status', $this->reservationStatusFilter);
+        })
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
@@ -85,6 +133,43 @@ class ReservationReports extends Component
         $totalGuests = $transactions->sum('pax');
         $totalAmountEarned = $transactions->sum('total_amount');
 
+
+        // -------------- Most Booked Room within Date Range ----------------------- //
+     $mostBookedRoom = null;
+
+        if (!$this->roomFilter && $transactions->isNotEmpty()) {
+            $roomCounts = [];
+
+            foreach ($transactions as $transaction) {
+                foreach ($transaction->properties as $property) {
+                    $roomName = $property->name_number;
+
+                    if (!isset($roomCounts[$roomName])) {
+                        $roomCounts[$roomName] = 0;
+                    }
+
+                    $roomCounts[$roomName]++;
+                }
+        }
+
+        if (!empty($roomCounts)) {
+            arsort($roomCounts); // Sort descending by count
+            $topRoom = array_key_first($roomCounts);
+            $count = $roomCounts[$topRoom];
+
+            $mostBookedRoom = $topRoom . ' (' . $count . ' bookings)';
+    }
+
+    Log::info("Most Booked Room Count (from transactions):", [
+        'roomCounts' => $roomCounts,
+        'mostBookedRoom' => $mostBookedRoom,
+    ]);
+}
+
+
+    // ----------------------- PDF Variables --------------------- // 
+
+        //Passes all necessary variables to be defined in the blade
         $pdf = Pdf::loadView('livewire.admin.reports.reservations-report-summary', [
             'transactions' => $transactions,
             'start_date' => $this->start_date,
@@ -93,6 +178,10 @@ class ReservationReports extends Component
             'averageLength' => round($averageLength, 2),
             'totalAmountEarned' => $totalAmountEarned,
             'totalGuests' => $totalGuests,
+            'rooms' => $this->rooms,
+            'roomFilter' => $this->roomFilter, //Added variables to pdf 
+            'reservationStatusFilter' => $this->reservationStatusFilter,
+            'mostBookedRoom' => $mostBookedRoom //Pass variable to pdf for occupancy rate
         ]);
 
         return response()->streamDownload(function () use ($pdf) {
@@ -101,6 +190,132 @@ class ReservationReports extends Component
     }
 
 
+
+
+    // -------------------------- EXPORT CSV METHOD ------------------------------------ //
+    public function exportReservationCsv()
+    {
+    // Fetch transactions using query
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 2)
+        ->when($this->start_date, function ($query) {
+            $start = Carbon::parse($this->start_date)->startOfDay();
+            $query->where('start_datetime', '>=', $start);
+        })
+        ->when($this->end_date, function ($query) {
+            $end = Carbon::parse($this->end_date)->endOfDay();
+            $query->where('start_datetime', '<=', $end);
+        })
+        ->when($this->roomFilter, function ($query) {
+            $query->where('transaction_properties.property_id', $this->roomFilter);
+        })
+        ->when($this->reservationStatusFilter, function ($query) {
+            $query->where('transaction_status', $this->reservationStatusFilter);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->get();
+
+    // Calculations
+    $totalReservations = $transactions->count();
+    $totalGuests = $transactions->sum('pax');
+    $totalAmountEarned = $transactions->sum('total_amount');
+
+    //Calculate average night stay
+    $averageLength = 0;
+    if ($totalReservations > 0) {
+        $totalNights = $transactions->sum(function ($transaction) {
+            return Carbon::parse($transaction->start_datetime)->diffInDays(Carbon::parse($transaction->end_datetime));
+        });
+        $averageLength = $totalNights / $totalReservations;
+    }
+
+    // Determine most booked room and count
+    $mostBookedRoom = null;
+    if (!$this->roomFilter && $transactions->isNotEmpty()) {
+        $roomCounts = [];
+        foreach ($transactions as $transaction) {
+            foreach ($transaction->properties as $property) {
+                $roomName = $property->name_number;
+                $roomCounts[$roomName] = ($roomCounts[$roomName] ?? 0) + 1;
+            }
+        }
+
+        if (!empty($roomCounts)) {
+            arsort($roomCounts);
+            $topRoom = array_key_first($roomCounts);
+            $count = $roomCounts[$topRoom];
+            $mostBookedRoom = $topRoom . " ({$count} bookings)";
+        }
+    }
+
+    // CSV Filename
+    $filename = 'Reservation-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.csv';
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=\"$filename\"",
+    ];
+
+    //Define variables
+    return new StreamedResponse(function () use (
+        $transactions,
+        $totalReservations,
+        $totalGuests,
+        $averageLength,
+        $mostBookedRoom,
+        $totalAmountEarned
+    ) {
+        $handle = fopen('php://output', 'w');
+
+        // CSV Header Row
+        fputcsv($handle, [
+            'Transaction ID',
+            'Guest',
+            'Rooms',
+            'Check-in Date',
+            'Check-out Date',
+            'Total Guests',
+            'Status',
+            'Total Amount'
+        ]);
+
+        // Transaction rows
+        foreach ($transactions as $transaction) {
+            $rooms = $transaction->properties->pluck('name_number')->implode(', ');
+
+            $userName = optional($transaction->transactionUser)?->first_name . ' ' . optional($transaction->transactionUser)?->last_name ?? 'N/A';
+
+            fputcsv($handle, [
+                $transaction->transaction_number,
+                trim($userName),
+                $rooms,
+                Carbon::parse($transaction->start_datetime)->format('Y-m-d'),
+                Carbon::parse($transaction->end_datetime)->format('Y-m-d'),
+                $transaction->pax,
+                ucfirst($transaction->transaction_status),
+                number_format($transaction->total_amount, 2),
+            ]);
+        }
+
+        // Summary section
+        fputcsv($handle, []); // blank line
+        fputcsv($handle, ['Summary of Key Metrics']);
+        fputcsv($handle, ['Total Reservations Within Date Range:', $totalReservations . ' reservations']);
+        fputcsv($handle, ['Total Guests:', $totalGuests . ' guests']);
+        fputcsv($handle, ['Average Reservation Length (nights):', round($averageLength, 1) . ' nights']);
+        fputcsv($handle, ['Most Booked Room:', $mostBookedRoom ?? 'N/A']);
+        fputcsv($handle, ['Total Amount Earned:', 'PHP ' . number_format($totalAmountEarned, 2)]);
+
+        fclose($handle);
+    }, 200, $headers);
+}
+
+    
+
+    // -------------------------------- RENDER METHOD ------------------------- //
     public function render()
     {
         //Query database, join tables for fks, and get all within date range

@@ -27,11 +27,45 @@
                     @enderror
                 </div>
 
+                {{-- Select A Room --}}
+                <div class="w-full">
+                    <label for="select_room" class="block mb-2 text-sm font-medium text-gray-900">Select a Room
+                    </label>
+                    <select wire:model.live="roomFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="">All Rooms</option>
+                        @foreach ($rooms as $room)
+                        <option value="{{ $room->id }}">{{ $room->name_number }}</option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="w-full">
+                    <label for="reservation_status" class="block mb-2 text-sm font-medium text-gray-900">Reservation
+                        Status:</label>
+                    <select id="reservation_status" name="reservation_status" wire:model.live="reservationStatusFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">All</option>
+                        <option value="pending">Awaiting Payment</option>
+                        <option value="reserved">Pending Verification</option>
+                        <option value="receipt_verified">Payment Verified</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="ongoing">On-going</option>
+                        <option value="done">Completed</option>
+                        <option value="no_show">No Show</option>
+                        <option value="terminated">Terminated</option>
+                        <option value="expired">Expired</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
                 <div class="flex items-end">
-                    <x-button icon="fa-solid fa-file"
+                    <x-button icon="fa fa-filter"
                         class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        wire:click="exportReservationSummary">
-                        Export PDF
+                        wire:click="applyReservationFilter">
+                        Apply Filter
                     </x-button>
                 </div>
             </div>
@@ -44,6 +78,28 @@
             </span>
         </div>
         @else
+
+        @if(!empty($filteredTransactions))
+
+        {{-- EXPORT PDF BUTTON --}}
+        <div class="flex justify-end mb-2 space-x-2 mr-4">
+            <x-button icon="fa-solid fa-file"
+                class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:click="exportReservationSummary">
+                Export PDF
+            </x-button>
+
+            {{-- EXPORT CSV BUTTON --}}
+            <x-button icon="fa-solid fa-file"
+                class="inline-flex items-center text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:click="exportReservationCsv">
+                Export CSV
+            </x-button>
+        </div>
+
+
+
+
 
         <table class="w-full text-left">
             {{-- Start of Column Headers --}}
@@ -234,7 +290,7 @@
 
             {{-- Start of Table Body --}}
             <tbody class="text-left">
-                @forelse ($transactions as $transaction)
+                @forelse ($filteredTransactions as $transaction)
                 <tr class="border-b">
 
                     {{-- ID --}}
@@ -328,8 +384,10 @@
                 </tr>
 
                 @endforelse
+
             </tbody>
             {{-- End of Table Body --}}
+            @endif
         </table>
         @endif
 
