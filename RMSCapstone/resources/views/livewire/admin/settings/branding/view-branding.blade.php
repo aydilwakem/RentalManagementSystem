@@ -4,8 +4,7 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Branding</h2>
 
         @if (session('message'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
             {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
             {{ session('message') }}
         </div>
@@ -131,15 +130,30 @@
             <h3 class="font-semibold text-lg text-gray-900 mt-8 mb-2">Rental Settings</h3>
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
+                <!-- Enable Deposit Option -->
+                <div>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" id="enable_deposit" wire:model.live="enable_deposit_percentage"
+                            class="mr-2">
+                        <span class="text-sm text-gray-900">Enable Deposit Option for Bookings</span>
+                    </label>
+
+                    @error('enable_deposit_percentage')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Deposit Percentage -->
+                @if($enable_deposit_percentage)
                 <div>
                     <label for="deposit_percentage" class="block mb-2 text-sm font-medium text-gray-900">
                         Deposit Percentage (%)
                     </label>
                     <input type="number" min="0" max="100" step="0.01" wire:model="deposit_percentage"
                         id="deposit_percentage" placeholder="e.g., 50" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                   focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+            focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
+                @endif
 
                 <!-- Payment Proof Expiration Hours -->
                 <div>
@@ -150,11 +164,7 @@
                         id="payment_proof_expiration_hours" placeholder="e.g., 24" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                    focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                 </div>
-
             </div>
-
-
-
 
 
             <!-- Submit Button -->

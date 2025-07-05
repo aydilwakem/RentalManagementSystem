@@ -27,6 +27,7 @@ class ViewBranding extends Component
     public $rental_agreement;
     public $custom_css;
     public $custom_js;
+    public $enable_deposit_percentage = true;
     public $deposit_percentage;
     public $payment_proof_expiration_hours;
     public $settings;
@@ -49,6 +50,7 @@ class ViewBranding extends Component
             $this->rental_agreement = $this->settings->rental_agreement;
             $this->custom_css = $this->settings->custom_css;
             $this->custom_js = $this->settings->custom_js;
+            $this->enable_deposit_percentage = $this->settings->enable_deposit_percentage;
             $this->deposit_percentage = $this->settings->deposit_percentage;
             $this->payment_proof_expiration_hours = $this->settings->payment_proof_expiration_hours;
         } else {
@@ -79,6 +81,7 @@ class ViewBranding extends Component
                 'rental_agreement' => 'nullable|string',
                 'custom_css' => 'nullable|string',
                 'custom_js' => 'nullable|string',
+                'enable_deposit_percentage' => 'nullable|boolean',
                 'deposit_percentage' => 'nullable|numeric|min:0|max:100',
                 'payment_proof_expiration_hours' => 'nullable|integer|min:1',
             ]);
@@ -116,6 +119,7 @@ class ViewBranding extends Component
             'privacy_policy' => $this->privacy_policy,
             'refund_policy' => $this->refund_policy,
             'rental_agreement' => $this->rental_agreement,
+            'enable_deposit_percentage' => $this->enable_deposit_percentage,
             'deposit_percentage' => $this->deposit_percentage,
             'payment_proof_expiration_hours' => $this->payment_proof_expiration_hours,
             'custom_css' => $this->custom_css,

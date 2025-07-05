@@ -40,8 +40,8 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                 <div class="step-room">
-                    @include('livewire.guest.reservation.choose-activity')
-                    {{-- @include('livewire.guest.reservation.choose-room') --}}
+                    {{-- @include('livewire.guest.reservation.choose-activity') --}}
+                    @include('livewire.guest.reservation.choose-room')
                 </div>
                 @endif
 
@@ -274,12 +274,16 @@
                     <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
                 </div>
 
+                <!-- If deposit percentage is enabled -->
+                @if ($enable_deposit_percentage && $this->deposit > 0)
                 <!-- Deposit -->
                 <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
                     <div>Deposit</div>
                     <div class="font-semibold">
                         ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
                 </div>
+                @endif
+
             </div>
             @endif
 

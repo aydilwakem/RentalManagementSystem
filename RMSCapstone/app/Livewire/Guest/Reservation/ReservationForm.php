@@ -78,6 +78,7 @@ class ReservationForm extends Component
     public $terms = 0;
     public $terms_and_conditions;
     public $expirationHours;
+    public $enable_deposit_percentage = true;
 
     protected $queryString = ['currentStep'];
 
@@ -102,7 +103,6 @@ class ReservationForm extends Component
     public string $companyAddress;
     public string $facebookLink;
     public string $instagramLink;
-
 
     public $editingGuest = [
         'guest_first_name' => '',
@@ -370,10 +370,16 @@ class ReservationForm extends Component
 
     public function getDepositProperty()
     {
-        // Retrieve deposit percentage from database
-        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+        $setting = DB::table('st_settings')->first();
 
-        // Ensure computeTotalAmount() returns a valid amount
+        // If the enable_deposit_percentage setting is not enabled, return 0
+        if (!$setting || !$setting->enable_deposit_percentage) {
+            return 0;
+        }
+
+        // Otherwise, calculate the deposit using the percentage
+        $depositPercentage = $setting->deposit_percentage ?? 0;
+
         return $this->computeTotalAmount() * ($depositPercentage / 100);
     }
 
@@ -791,13 +797,19 @@ class ReservationForm extends Component
 
         $reservationData = []; // Initialize an empty array to store reservation data for email
 
-        // Get the payment_proof_expiration_hours from database
-        $setting = Setting::first();
-        $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
-
         // ---------------------- DB:TRANSACTION STARTS HERE ------------------------ //
 
         DB::transaction(function () use (&$reservationData) {
+
+            // If enable_deposit is true, retrieve the deposit percentage from the settings table
+            $setting = Setting::first();
+
+            $depositPercentage = $setting && $setting->enable_deposit_percentage
+                ? $setting->deposit_percentage
+                : 0;
+
+            // Set the expiration hours for payment proof
+            $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
 
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
@@ -810,8 +822,6 @@ class ReservationForm extends Component
                 'country' => $this->country,
                 'trn_user_type' => $this->trn_user_type,
             ]);
-
-            $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
 
             // Step 2: Create transaction
             $transaction = Transaction::create([

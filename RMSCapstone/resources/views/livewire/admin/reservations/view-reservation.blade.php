@@ -305,7 +305,8 @@
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
                     {{ __('Invoice Details') }}
                 </h2>
-                @if ($invoice)
+
+            @if ($invoice)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
                         <!-- Invoice Info -->
                         <div><strong>Invoice Number:</strong></div>
@@ -361,9 +362,123 @@
                         <div>
                             {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
                         </div>
+
+                       
                     </div>
 
+                     <!-- Items Table -->
+                    <div class="overflow-x-auto mt-4">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">#</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900">Item & Description</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Qty</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Days</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Unit Cost</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Amount</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white text-gray-700">
+                                
+                                {{-- Counter --}}
+                                @php $rowNumber = 1; @endphp
 
+                                {{-- Loop through Rooms --}}
+                                @foreach ($properties as $property)
+                                    @php
+                                        $hasExtraGuest = $property->pivot->extra_guest > 0;
+                                    @endphp
+
+                                    <tr>
+                                        {{-- Use rowspan if there's an extra guest --}}
+                                        <td class="border px-4 py-2" @if($hasExtraGuest) rowspan="2" @endif>
+                                            {{ $rowNumber++ }}
+                                        </td>
+                                        <td class="border px-4 py-2">Room – {{ $property->name_number }}</td>
+                                        <td class="border px-4 py-2 text-center">1</td>
+                                        <td class="border px-4 py-2 text-center">{{ $property->pivot->days }}</td>
+                                        <td class="border px-4 py-2 text-center">
+                                            ₱{{ number_format($property->amount, 2) }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-right">
+                                            ₱{{ number_format($property->pivot->amount, 2) }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-right">
+                                            
+                                        </td>
+                                    </tr>
+
+                                    {{-- Only show if there are extra guests --}}
+                                    @if ($hasExtraGuest)
+                                        <tr>
+                                            <td class="border px-4 py-2">Extra Guest</td>
+                                            <td class="border px-4 py-2 text-center">{{ $property->pivot->extra_guest }}</td>
+                                            <td class="border px-4 py-2 text-center">{{ $property->pivot->days }}</td>
+                                            <td class="border px-4 py-2 text-center">
+                                                ₱{{ number_format($property->extra_person_charge, 2) }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-right">
+                                                ₱{{ number_format($property->pivot->extra_charge, 2) }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-right">
+                                            
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+
+
+                                {{-- Loop through Add-on Services --}}
+                                @foreach ($activities as $activity)
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
+                                        <td class="border px-4 py-2">Activity - {{ $activity->name }}</td>
+                                        <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
+                                        <td class="border px-4 py-2 text-center"></td>
+                                        <td class="border px-4 py-2 text-center">₱{{ number_format($activity->amount, 2) }}</td>
+                                        <td class="border px-4 py-2 text-right">
+                                            ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
+                                        </td>
+
+                                        {{-- Action Buttons --}}
+                                        <td class="border px-4 py-2 text-center space-x-2">
+                                            {{-- Edit Button --}}
+                                            <button wire:click="" class="text-green-600 hover:text-green-800" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+
+                                            {{-- Delete Button --}}
+                                            <button wire:click="" class="text-red-600 hover:text-red-800" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                        {{-- End of Action Buttons --}}
+
+                                    </tr>
+                                @endforeach
+
+                                {{-- Add Item Button Row --}}
+                                <tr>
+                                    <td colspan="6" class="px-4 py-2 text-right">
+                                         <x-button wire:click="OpenCreatePaymentModal">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            Add Item
+                                        </x-button>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <!-- Grand Total -->
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Grand Total: ₱{{ number_format($invoice->sub_total, 2) }}
+                        </div>
+                    </div>
+
+                    
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
                     @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
                         <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled" class="mt-6">
@@ -390,10 +505,15 @@
                     @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
                         <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
                     @endif
+                    
             </div>
-        @else
+
+            @else
             <p class="text-gray-600 italic">No invoice found for this transaction.</p>
             @endif
+
+
+
 
             <!------------------------  GENERATE OFFICIAL RECEIPT ------------------------------------->
             @if ($transaction->transaction_status == 'done')

@@ -24,7 +24,12 @@ class Setting extends Model
         'rental_agreement',
         'custom_css',
         'custom_js',
+        'enable_deposit_percentage',
         'deposit_percentage',
         'payment_proof_expiration_hours'
+    ];
+
+    protected $casts = [
+        'enable_deposit_percentage' => 'boolean',
     ];
 }

@@ -196,12 +196,18 @@
                                 ₱{{ number_format($this->computeTotalAmount(), 2) }}</p>
                         </div>
 
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-semibold text-gray-700">Required Deposit</h3>
-                            {{-- <p class="text-xl font-bold text-green-700">₱4500</p> --}}
-                            <p class="text-2xl font-bold text-green-700">₱{{ number_format($this->deposit ?? 0, 2) }}
-                            </p>
-                        </div>
+
+                        <!-- If deposit percentage is enabled -->
+                        @if ($enable_deposit_percentage && $this->deposit > 0)
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-700">Required Deposit</h3>
+                                {{-- <p class="text-xl font-bold text-green-700">₱4500</p> --}}
+                                <p class="text-2xl font-bold text-green-700">₱{{ number_format($this->deposit ?? 0, 2) }}
+                                </p>
+                            </div>
+                        @endif
+
+
                     </div>
                 </div>
 
@@ -213,8 +219,8 @@
                                 <!-- Spinner -->
                                 <span wire:loading wire:target="decreaseStep()" class="mr-2">
                                     <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor"
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                         </path>
@@ -231,7 +237,9 @@
                         class="bg-green-600 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out">
                         Proceed to Payment
                     </x-button> --}}
-                    <div x-data="{ showModal: false, agreed: false }" x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))" @keydown.escape.window="showModal = false">
+                    <div x-data="{ showModal: false, agreed: false }"
+                        x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
+                        @keydown.escape.window="showModal = false">
 
                         <x-button type="button" icon="fas fa-check-circle" @click="showModal = true">
                             Proceed to Payment
