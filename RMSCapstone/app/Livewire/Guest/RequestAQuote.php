@@ -6,6 +6,7 @@ use App\Mail\EventQuotesMail;
 use App\Mail\RequestQuoteMail;
 use App\Models\Property;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -22,17 +23,17 @@ class RequestAQuote extends Component
     public $event_type;
     public $other_event_type;
     public $additional_requests;
-    public $halls; 
-    public $selected_hall; 
+    public $halls;
+    public $selected_hall;
 
     //Branding
     public string $companyName = 'Company'; //Default
-    public string $logoPath = ''; 
-    public string $companyEmail; 
-    public string $companyContact; 
-    public string $companyAddress; 
-    public string $facebookLink; 
-    public string $instagramLink; 
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
     public function mount(){
         $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
@@ -46,6 +47,11 @@ class RequestAQuote extends Component
             $this->facebookLink = $setting->facebook;
             $this->instagramLink = $setting->instagram;
         }
+
+        //Set default values
+        $now = Carbon::now('Asia/Manila');
+        $this->event_start = $now->format('Y-m-d\H:i');
+        $this->event_end = $now->copy()->addHours(4)->format('Y-m-d\H:i'); // Default to 4 hours later
     }
 
     public function render()
@@ -70,7 +76,7 @@ class RequestAQuote extends Component
         'other_event_type' => 'nullable|string',
         'additional_requests' => 'nullable|string|max:500',
     ]);
-    
+
     $hall = Property::find($this->selected_hall);
 
         $data = [

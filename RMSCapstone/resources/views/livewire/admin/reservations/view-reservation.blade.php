@@ -363,7 +363,7 @@
                             {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
                         </div>
 
-                       
+
                     </div>
 
                      <!-- Items Table -->
@@ -376,12 +376,12 @@
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center">Qty</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center">Days</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center">Unit Cost</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Amount</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Amount</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-gray-700">
-                                
+
                                 {{-- Counter --}}
                                 @php $rowNumber = 1; @endphp
 
@@ -402,11 +402,11 @@
                                         <td class="border px-4 py-2 text-center">
                                             ₱{{ number_format($property->amount, 2) }}
                                         </td>
-                                        <td class="border px-4 py-2 text-right">
+                                        <td class="border px-4 py-2 text-center">
                                             ₱{{ number_format($property->pivot->amount, 2) }}
                                         </td>
                                         <td class="border px-4 py-2 text-right">
-                                            
+
                                         </td>
                                     </tr>
 
@@ -423,7 +423,7 @@
                                                 ₱{{ number_format($property->pivot->extra_charge, 2) }}
                                             </td>
                                             <td class="border px-4 py-2 text-right">
-                                            
+
                                             </td>
                                         </tr>
                                     @endif
@@ -438,32 +438,30 @@
                                         <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
                                         <td class="border px-4 py-2 text-center"></td>
                                         <td class="border px-4 py-2 text-center">₱{{ number_format($activity->amount, 2) }}</td>
-                                        <td class="border px-4 py-2 text-right">
+                                        <td class="border px-4 py-2 text-center">
                                             ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
                                         </td>
 
                                         {{-- Action Buttons --}}
                                         <td class="border px-4 py-2 text-center space-x-2">
                                             {{-- Edit Button --}}
-                                            <button wire:click="" class="text-green-600 hover:text-green-800" title="Edit">
+                                            <button wire:click="" class="text-yellow-600 hover:text-yellow-700" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <button wire:click="" class="text-red-600 hover:text-red-800" title="Delete">
+                                            <button wire:click="" class="text-red-600 hover:text-red-700" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
                                         {{-- End of Action Buttons --}}
-
                                     </tr>
                                 @endforeach
 
                                 {{-- Add Item Button Row --}}
                                 <tr>
-                                    <td colspan="6" class="px-4 py-2 text-right">
-                                         <x-button wire:click="OpenCreatePaymentModal">
-                                            <i class="fas fa-plus mr-2"></i>
+                                    <td colspan="7" class="border px-4 py-2 text-center">
+                                         <x-button wire:click="OpenCreatePaymentModal" icon="fas fa-plus">
                                             Add Item
                                         </x-button>
                                     </td>
@@ -478,7 +476,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
                     @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
                         <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled" class="mt-6">
@@ -505,7 +503,7 @@
                     @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
                         <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
                     @endif
-                    
+
             </div>
 
             @else
@@ -726,7 +724,7 @@
                                                 {{ $payment->payment_date ?? 'N/A' }}</td>
                                             <td class="border px-4 py-2">
                                                 <span
-                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                                 {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
@@ -748,7 +746,7 @@
                                                         </a>
                                                     @elseif ($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                            class="inline-block bg-green-500 hover:bg-green-700 text-white font-semibold text-center py-2 px-4 rounded text-xs">
+                                                            class="inline-block py-1 px-2 rounded-md text-sm font-semibold bg-green-100 text-green-500 text-center hover:bg-green-200 hover:text-green-600">
                                                             View Receipt
                                                         </a>
                                                     @endif
@@ -796,13 +794,14 @@
                         class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                         <div
                             class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                            <h2 class="text-lg font-semibold mb-4 text-green-700">Add Payment</h2>
+                            <h2 class="text-xl font-bold mb-4 text-green-700 text-center">Add Payment</h2>
 
                             <!-- Amount Paid -->
                             <div class="mt-4">
-                                <label class="block text-sm text-gray-700">Amount Paid</label>
+                                <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model="amount_paid"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                    placeholder="Ex. 1,200.00"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
                                 @error('amount_paid')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -810,9 +809,9 @@
 
                             <!-- Payment Date -->
                             <div class="mt-4">
-                                <label class="block text-sm text-gray-700">Payment Date</label>
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Date <span class="text-red-500">*</span></label>
                                 <input type="date" wire:model="payment_date"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
                                 @error('payment_date')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -820,9 +819,9 @@
 
                             <!-- Payment Type -->
                             <div class="mt-4">
-                                <label class="block text-sm text-gray-700">Payment Type</label>
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Type <span class="text-red-500">*</span></label>
                                 <select wire:model="payment_type"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
                                     <option value="">Select Payment Type</option>
                                     <option value="Room Rent">Room Rent</option>
                                     <option value="House Rent">House Rent</option>
@@ -839,9 +838,10 @@
 
                             <!-- Notes -->
                             <div class="mt-4">
-                                <label class="block text-sm text-gray-700">Notes</label>
+                                <label class="block text-sm text-gray-700 font-semibold">Notes</label>
                                 <input type="text" wire:model="notes"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                    placeholder="Optionally add description of payment"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
                                 @error('notes')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror

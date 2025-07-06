@@ -25,6 +25,11 @@ class EventReports extends Component
         if (!session()->has('fake_ids_event-reports')) {
             session(['fake_ids_event-reports' => []]);
         }
+
+        // Set default date range to the current month
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->copy()->startOfMonth()->format('Y-m-d');
+        $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
     }
 
     public function getTransactionsProperty()

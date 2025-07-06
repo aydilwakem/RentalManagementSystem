@@ -28,10 +28,9 @@
                 </x-button>
 
                 {{-- Check-outs Today --}}
-                <x-button icon="fa fa-file" wire:click="exportCheckoutsToday"
-                    class="inline-flex items-center text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                <x-warning-button icon="fa fa-file" wire:click="exportCheckoutsToday">
                     Export All Check-outs Today
-                </x-button>
+                </x-warning-button>
             </div>
             @endcan
             <!-- Soft Deletes -->
@@ -432,19 +431,6 @@
                         </x-secondary-button>
                     </x-slot>
                 </x-dialog-modal>
-
-                {{-- <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-                    <div class="bg-white p-6 rounded shadow-lg w-96">
-                        <h2 class="text-lg font-semibold mb-4">Notice</h2>
-                        <p class="text-gray-700">Cannot mark as done. Invoice still has balance due.</p>
-                        <div class="mt-4 text-right">
-                            <button wire:click="$set('cannotMarkAsDoneModal', false)"
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div> --}}
                 @endif
             </div>
 

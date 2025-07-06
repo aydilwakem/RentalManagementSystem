@@ -66,9 +66,18 @@ class InvoiceReports extends Component
             })
         ->orderBy($this->sortField, $this->sortDirection)
         ->get();
-            
-            
+
+
         return view('livewire.admin.reports.invoice-reports');
+    }
+
+    //--------------------------------------------------------------- MOUNT ----------------------------------------- //
+    public function mount()
+    {
+        //Default date range current month
+        $now = Carbon::now('Asia/Manila');
+        $this->startDate = $now->copy()->startOfMonth()->format('Y-m-d');
+        $this->endDate = $now->copy()->endOfMonth()->format('Y-m-d');
     }
 
     // ------------------------------------------------------------------- SORT BY ----------------------------------------//
@@ -85,7 +94,7 @@ class InvoiceReports extends Component
 
     //--------------------------------------------------------------- EXPORT PDF ----------------------------------------- //
     public function exportInvoiceSummary(){
-    
+
         $start = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : null;
         $end = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : null;
 

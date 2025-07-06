@@ -91,6 +91,11 @@ class CreateLease extends Component
         $this->houses = Property::where('property_type_id', 2)->get();
 
         $this->houses = Property::ofType('House')->where('property_status', 'available')->get();
+
+        // Set default check-in/out dates
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->format('Y-m-d');
+        $this->end_date = $now->copy()->addMonths((3))->format('Y-m-d');
     }
 
     //------------------------------- DISPLAY MONTHLY RENT METHOD ----------------------------------//
@@ -143,7 +148,7 @@ class CreateLease extends Component
                 //'end_date' => 'required|date|after:start_date',
                 'total_amount' => 'required|numeric|min:0',
                 'pax' => 'required|numeric|min:1',
-                'transaction_status' => 'required|in:pending,confirmed,ongoing,terminated', 
+                'transaction_status' => 'required|in:pending,confirmed,ongoing,terminated',
 
             ]);
         } catch (ValidationException $e) {
@@ -170,7 +175,7 @@ class CreateLease extends Component
             ]);
 
             // Step 2: Generate invoice number
-            $invoiceNumber = 'INV-' . strtoupper(Str::random(8)); 
+            $invoiceNumber = 'INV-' . strtoupper(Str::random(8));
 
             // Step 3: Create invoice
             Invoice::create([
@@ -205,7 +210,7 @@ class CreateLease extends Component
         return redirect()->route('admin.leases');
     }
 
-    
+
     //------------------------------------GET TENANT METHOD ----------------------------------//
     public function getAvailableTenants()
     {

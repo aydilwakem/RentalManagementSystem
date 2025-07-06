@@ -15,22 +15,28 @@ class PaymentReports extends Component
     public $transaction;
     public $sortField = 'created_at'; // default sort column
     public $sortDirection = 'desc';   // or 'asc'
-    
+
     public $paymentTypeFilter = '';
     public $paymentStatusFilter = '';
 
     //To select date ranges
     public $startDate;
     public $endDate;
-    
+
     public $search = '';
-    
+
     public function mount()
     {
         $this->payments = Payment::with([
             'invoice.transaction.transactionUser',
             'paymentMethod'
         ])->get();
+
+
+        //Default date range current month
+        $now = Carbon::now('Asia/Manila');
+        $this->startDate = $now->startOfMonth()->format('Y-m-d');
+        $this->endDate = $now->endOfMonth()->format('Y-m-d');
     }
 
     public function sortBy($field)

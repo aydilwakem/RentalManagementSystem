@@ -24,6 +24,10 @@ class CreateMaintenance extends Component
     public function mount()
     {
         $this->properties = Property::where('property_type_id', 2)->get();
+
+        // Set default reported_at to today
+        $now = Carbon::now('Asia/Manila');
+        $this->reported_at = $now->format('Y-m-d');
     }
 
     public function confirmCreate()

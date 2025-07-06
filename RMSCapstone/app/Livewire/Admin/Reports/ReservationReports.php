@@ -16,20 +16,22 @@ class ReservationReports extends Component
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 2;
     public $sortBy = 'updated_at';
-    public $sortDir = 'DESC'; 
+    public $sortDir = 'DESC';
     public $search = '';
     public $perPage = 10;
 
     //------------------- FILTERS
     public $filteredTransactions = [];
     public $roomFilter = '';
-    public $rooms = []; 
+    public $rooms = [];
     public $reservationStatusFilter = '';
+    public $filterApplied = false;
+
 
     // ---FOR DATE RANGES INPUT ------ //
     public $start_date;
     public $end_date;
-    
+
 
     //------------------------ MOUNT METHOD --------------------//
     public function mount()
@@ -40,6 +42,11 @@ class ReservationReports extends Component
         if (!session()->has('fake_ids_transactions')) {
             session(['fake_ids_transactions' => []]);
         }
+
+        //Default date range current month
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->copy()->startOfMonth()->format(('Y-m-d'));
+        $this->end_date = $now->copy()->endOfMonth()->format(('Y-m-d'));
     }
 
     //------------------------ FILTER BUTTON METHOD ------------------------//
@@ -48,7 +55,7 @@ class ReservationReports extends Component
      *
      * Queries the database by doing table joins on all transaction
      * tables using where and filter variables
-     * 
+     *
      */
 
     public function applyReservationFilter()
@@ -79,6 +86,9 @@ class ReservationReports extends Component
     $this->filteredTransactions = $query
         ->orderBy($this->sortBy, $this->sortDir)
         ->get();
+
+    $this->filterApplied = true;
+
     }
 
     //----------------------- EXPORT PDF METHOD ------------------------------------- //
@@ -89,7 +99,7 @@ class ReservationReports extends Component
      * Queries the database and exports a DOM PDF File
      * to a dedicated pdf blade
      *
-     * 
+     *
      */
     public function exportReservationSummary()
     {
@@ -167,19 +177,19 @@ class ReservationReports extends Component
 }
 
 
-    // ----------------------- PDF Variables --------------------- // 
+    // ----------------------- PDF Variables --------------------- //
 
         //Passes all necessary variables to be defined in the blade
         $pdf = Pdf::loadView('livewire.admin.reports.reservations-report-summary', [
             'transactions' => $transactions,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'totalReservations' => $totalReservations,  
+            'totalReservations' => $totalReservations,
             'averageLength' => round($averageLength, 2),
             'totalAmountEarned' => $totalAmountEarned,
             'totalGuests' => $totalGuests,
             'rooms' => $this->rooms,
-            'roomFilter' => $this->roomFilter, //Added variables to pdf 
+            'roomFilter' => $this->roomFilter, //Added variables to pdf
             'reservationStatusFilter' => $this->reservationStatusFilter,
             'mostBookedRoom' => $mostBookedRoom //Pass variable to pdf for occupancy rate
         ]);
@@ -313,7 +323,7 @@ class ReservationReports extends Component
     }, 200, $headers);
 }
 
-    
+
 
     // -------------------------------- RENDER METHOD ------------------------- //
     public function render()

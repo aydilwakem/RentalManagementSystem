@@ -1,9 +1,10 @@
-<div class="p-6 rounded-lg shadow-md">
+<div class="p-6 rounded-lg shadow-md max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
     {{-- <canvas id="ratingChart" height="120"></canvas> --}}
 
     <!-- Feedback Chart -->
-    <h2 class="text-xl font-semibold mb-16">Feedback Chart</h2>
-    <div class="w-full  mx-auto mt-10 mb-4 px-4">
+    <div>
+        <h2 class="text-xl font-semibold mb-2">Feedback Chart</h2>
         <!-- Y-Axis Labels & Grid -->
         <div class="relative h-60 border-l border-b border-gray-300">
 
@@ -14,15 +15,19 @@
                     <div class="border-t border-dashed border-gray-300 w-full"></div>
                 </div>
                 <div class="flex items-center">
-                    <span class="w-10 text-right pr-2">4.5</span>
-                    <div class="border-t border-dashed border-gray-300 w-full"></div>
-                </div>
-                <div class="flex items-center">
                     <span class="w-10 text-right pr-2">4.0</span>
                     <div class="border-t border-dashed border-gray-300 w-full"></div>
                 </div>
                 <div class="flex items-center">
-                    <span class="w-10 text-right pr-2">3.5</span>
+                    <span class="w-10 text-right pr-2">3.0</span>
+                    <div class="border-t border-dashed border-gray-300 w-full"></div>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-10 text-right pr-2">2.0</span>
+                    <div class="border-t border-dashed border-gray-300 w-full"></div>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-10 text-right pr-2">1.0</span>
                     <div class="border-t border-dashed border-gray-300 w-full"></div>
                 </div>
             </div>
@@ -31,11 +36,11 @@
             <div class="absolute bottom-0 left-10 right-0 flex items-end justify-around h-full px-4">
                 <!-- Bar Item -->
                 @foreach ($feedbackRatingTypes as $ratingType)
-                <div class="flex flex-col items-center">
-                    <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
-                    <i class="fas fa-broom text-gray-600 mt-2 text-xs"></i>
-                    <span class="text-xs mt-1">{{ $ratingType->rating_name}}</span>
-                </div>
+                    <div class="flex flex-col items-center">
+                        <i class="fas fa-broom text-gray-600 mt-2 text-xs"></i>
+                        <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
+                        <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
+                    </div>
                 @endforeach
             </div>
 
@@ -44,102 +49,103 @@
     </div>
 
     <!-- Rating Types -->
-    <div class="bg-white rounded-lg w-full mx-auto">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Average Rating</h2>
-
+    <div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">Average Rating</h2>
+        <div class="mb-3">
+            <x-button wire:click="openRatingTypeModal" icon="fas fa-plus">
+                Add Rating Category
+            </x-button>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach ($feedbackRatingTypes as $ratingType)
-            <div class="flex items-center justify-between border p-4 rounded-md relative">
-                <!-- Remove Button -->
-                <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xs font-bold"
-                    wire:click="RemoveRatingType({{ $ratingType->id }})">
-                    ×
-                </button>
+                <div class="flex items-center justify-between border p-4 rounded-md relative">
+                    <!-- Remove Button -->
+                    <button type="button"
+                        class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xs font-bold"
+                        wire:click="RemoveRatingType({{ $ratingType->id }})">
+                        ×
+                    </button>
 
-                <div class="flex items-center space-x-2 text-gray-700 font-medium">
-                    <i class="fas fa-broom"></i>
-                    <span>{{ $ratingType->rating_name }}</span>
+                    <div class="flex items-center space-x-2 text-gray-700 font-medium">
+                        <i class="fas fa-broom"></i>
+                        <span>{{ $ratingType->rating_name }}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-sm text-gray-900 font-semibold">5.0</span>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-1">
-                    <span class="text-sm text-gray-900 font-semibold">5.0</span>
-                    <i class="fas fa-star text-yellow-400"></i>
-                </div>
-            </div>
             @endforeach
+        </div>
+        <div>
+            @if ($createRatingTypeModal)
+                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                        <h2 class="text-lg font-bold mb-4 text-green-700 text-center">Add Rating Category Name</h2>
+
+                        <!-- Amount Paid -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700">Rating Type Name</label>
+                            <input type="text" wire:model="rating_name"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                            @error('rating_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between items-center gap-2 mt-6">
+                            <x-button type="button" wire:click="CloseRatingTypeModal"
+                                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                Cancel
+                            </x-button>
+                            <x-button type="button" wire:click="CreateRatingType">
+                                Save Changes
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
-
-    <div class="mt-4">
-        <x-button wire:click="openRatingTypeModal" icon="fas fa-plus">
-            Add Rating Name
-        </x-button>
-    </div>
-
-
     <!-- Comments/Feedbacks -->
-    <div class="mt-10">
-        <h3 class="text-lg font-semibold mb-4">Comment Feedback</h3>
+    <div>
+        <h3 class="text-lg font-semibold mb-2">Comments and Reviews</h3>
         <ul class="space-y-4">
-            @foreach ($comments as $comment)
-            <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                <!-- Profile Image -->
-                <div class="flex-shrink-0">
-                    <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
-                        class="w-10 h-10 rounded-full object-cover">
-                </div>
+            @if ($comments->isEmpty())
+                <li class="text-gray-500 text-sm">No comments or reviews yet.</li>
+            @else
+                @foreach ($comments as $comment)
+                    <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <!-- Profile Image -->
+                        <div class="flex-shrink-0">
+                            <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
+                                class="w-10 h-10 rounded-full object-cover">
+                        </div>
 
-                <!-- Comment Content -->
-                <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm font-semibold text-gray-800">
-                            {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                            {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                        </p>
-                        <span class="text-xs text-gray-500">
-                            {{ $comment->created_at->diffForHumans() }}
-                        </span>
-                    </div>
-                    <p class="text-sm text-gray-700 mt-1">
-                        {{ $comment->comments }}
-                    </p>
-                </div>
-            </li>
-            @endforeach
+                        <!-- Comment Content -->
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-gray-800">
+                                    {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                                    {{ $comment->transaction->transactionUser->last_name ?? '' }}
+                                </p>
+                                <span class="text-xs text-gray-500">
+                                    {{ $comment->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">
+                                {{ $comment->comments }}
+                            </p>
+                        </div>
+                    </li>
+                @endforeach
+            @endif
         </ul>
     </div>
 
-    <div>
-        @if ($createRatingTypeModal)
-        <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                <h2 class="text-lg font-semibold mb-4 text-green-700">Add Rating Type</h2>
 
-                <!-- Amount Paid -->
-                <div class="mt-4">
-                    <label class="block text-sm text-gray-700">Rating Type Name</label>
-                    <input type="text" wire:model="rating_name"
-                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
-                    @error('rating_name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Actions -->
-                <div class="flex justify-between items-center gap-2 mt-6">
-                    <x-button type="button" wire:click="CloseRatingTypeModal"
-                        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                        Cancel
-                    </x-button>
-                    <x-button type="button" wire:click="CreateRatingType">
-                        Save Changes
-                    </x-button>
-                </div>
-
-            </div>
-        </div>
-        @endif
-    </div>
 
 </div>
 

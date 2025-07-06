@@ -14,6 +14,7 @@ use App\Mail\SendOfficialReceiptMail;
 use App\Mail\RequestRemainingBalanceMail;
 use App\Models\Invoice;
 use App\Models\Setting;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 #[Layout('layouts.app')]
@@ -73,6 +74,10 @@ class ViewReservation extends Component
     public function mount(Transaction $transaction)
     {
         $this->loadTransactionData($transaction);
+
+        // Set default dates for payment
+        $now = Carbon::now('Asia/Manila');
+        $this->payment_date = $now->format('Y-m-d');
     }
 
     public function loadTransactionData(Transaction $transaction)
