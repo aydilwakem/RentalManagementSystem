@@ -11,12 +11,14 @@ use App\Models\TransactionUser;
 use App\Models\Property;
 use App\Models\Invoice;
 use App\Models\EventType;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 
 
 class Transaction extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $table = 'trn_transactions';
 
@@ -39,6 +41,24 @@ class Transaction extends Model
         'start_datetime',
         'end_datetime'
     ];
+
+    /**
+     * Logging of Actions
+     * 
+     */
+
+    // Only attributes that have changed will be logged
+    protected static $logOnlyDirty = true;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['transaction_number', 'reservation_type_id', 'created_by', 'event_type_id', 'total_adults', 'total_kids', 'pax', 'total_amount', 'deposit_amount', 'terms', 'heard_from', 'reservation_source', 'transaction_status', 'actual_start_datetime', 'actual_end_datetime', 'start_datetime', 'end_datetime'])
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => "Transaction has been {$eventName}");
+    }
+
+
 
 
     // Automatically convert attributes to specific data types when retrieving or setting them

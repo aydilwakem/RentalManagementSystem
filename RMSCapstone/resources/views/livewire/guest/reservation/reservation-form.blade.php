@@ -49,6 +49,7 @@
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
                         @include('livewire.guest.reservation.choose-room')
+                          {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
                 @endif
 
@@ -313,7 +314,6 @@
                             </button>
                         @endif
                     </div>
-
 
                     <!-- Total Amount -->
                     <hr class="my-2 border-gray-200 mt-4">

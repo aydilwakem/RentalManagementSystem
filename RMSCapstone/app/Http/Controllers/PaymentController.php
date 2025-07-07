@@ -198,6 +198,11 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Server error.'], 500);
         }
     }
+
+    public function failed()
+    {
+        return view('guest.proof-of-payment-page');
+    }
 }
 
 

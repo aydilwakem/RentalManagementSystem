@@ -80,6 +80,9 @@ class ReservationForm extends Component
     public $terms_and_conditions;
     public $expirationHours;
     public $enable_deposit_percentage = true;
+    public $depositPercentage;
+    public $convenienceFeeInCentavos;
+    public $convenience_fee;
 
     protected $queryString = ['currentStep'];
 
@@ -186,7 +189,6 @@ class ReservationForm extends Component
         $now = Carbon::now('Asia/Manila');
         $this->check_in_date = $now->format('Y-m-d');
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
-
     }
 
     /**
@@ -465,6 +467,12 @@ class ReservationForm extends Component
         $this->total_amount  = max(0, $total);
         // dd($this->total_amount);
         return $this->total_amount;
+    }
+
+    public function computeConvenienceFee()
+    {
+        $this->convenience_fee =  $this->computeTotalAmount() * 0.03; // 3% convenience fee
+        return $this->convenience_fee;
     }
 
     public function applyPromoCode()
@@ -845,7 +853,7 @@ class ReservationForm extends Component
             // If enable_deposit is true, retrieve the deposit percentage from the settings table
             $setting = Setting::first();
 
-            $depositPercentage = $setting && $setting->enable_deposit_percentage
+            $this->depositPercentage = $setting && $setting->enable_deposit_percentage
                 ? $setting->deposit_percentage
                 : 0;
 
@@ -875,7 +883,7 @@ class ReservationForm extends Component
                 'total_kids' => collect($this->cart)->sum('kids'),
                 'pax' => $this->total_pax,
                 'total_amount' => $this->computeTotalAmount(),
-                'deposit_amount' => $this->computeTotalAmount() * ($depositPercentage / 100),
+                'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
                 'heard_from' => $this->heard_from,
                 'reservation_source' => $this->reservation_source,
                 'transaction_status' => $this->transaction_status,
@@ -943,8 +951,18 @@ class ReservationForm extends Component
             // Retrieves the PayMongo secret key from .env.
             $apiKey = env('PAYMONGO_SECRET_KEY');
 
-            // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
-            $amountInCentavos = intval($this->computeTotalAmount() * ($depositPercentage / 100) * 100);
+            // If depositPercentage is 0, we charge the full amount
+            $baseAmount = $this->depositPercentage > 0
+                ? $this->computeTotalAmount() * ($this->depositPercentage / 100)
+                : $this->computeTotalAmount();
+
+            $amountInCentavos = intval($baseAmount * 100);
+            $this->convenienceFeeInCentavos = intval($amountInCentavos * 0.03);
+
+            // Debuggers for amounts
+            Log::info('Total Amount with no deposit percentage: ' . $this->computeTotalAmount());
+            Log::info('Amount in centavos: ' . $amountInCentavos);
+            Log::info('Convenience fee in centavos: ' . $this->convenienceFeeInCentavos);
 
             try {
 
@@ -971,11 +989,19 @@ class ReservationForm extends Component
                                 'line_items' => [ // This is a list of what the user is paying for.
                                     [
                                         'currency' => 'PHP',
-                                        'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
-                                        'description' => 'Reservation ' . $transaction->transaction_number,
-                                        'name' => 'Deposit',
+                                        'amount' => $this->convenienceFeeInCentavos,  // e.g. 4500 for PHP 45.00 (3%)
+                                        'description' => 'Online payment processing fee via PayMongo',
+                                        'name' => 'PayMongo Convenience Fee',
                                         'quantity' => 1,
                                     ],
+                                    [
+                                        'currency' => 'PHP',
+                                        'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
+                                        'description' => 'Reservation ' . $transaction->transaction_number,
+                                        'name' => 'Reservation Fee',
+                                        'quantity' => 1,
+                                    ],
+
                                 ],
 
                                 'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name, // This is a general description for the transaction, shown to the payer.
@@ -1025,7 +1051,7 @@ class ReservationForm extends Component
                 'check_in' => $this->check_in_date,
                 'check_out' => $this->check_out_date,
                 'total_amount' => $this->computeTotalAmount(),
-                'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
+                'deposit' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
                 'expirationHours' => $this->expirationHours,
                 'payment_link' => $paymentLink,
 

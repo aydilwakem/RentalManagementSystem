@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationCompletedMail;
 use App\Models\Setting;
+use Spatie\Activitylog\Models\Activity as LogActivity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -93,8 +94,8 @@ class ReservationList extends Component
                             ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $this->search . '%']);
                     })
                     ->orWhereHas('properties', function ($subQuery) {
-                    $subQuery->where('name_number', 'like', '%' . $this->search . '%')
-                             ->where('property_type_id', 1);
+                        $subQuery->where('name_number', 'like', '%' . $this->search . '%')
+                            ->where('property_type_id', 1);
                     });
             })
             ->when($this->statusFilter !== '', function ($query) {
@@ -358,22 +359,23 @@ class ReservationList extends Component
 
 
     // ------------------------ ALL CHECKOUT EXPORT PDF METHOD ------------------------------- //
-    public function exportCheckoutsToday(){
-        
+    public function exportCheckoutsToday()
+    {
+
         //FOR TESTING - Add target date of checkout that's in your reservation-list
         //$today = Carbon::create(2025, 7, 8);
 
         $today = Carbon::today();
-        
+
         //Fetch all transactions with end_datetime today
         $transactions = Transaction::query()
-        ->select('trn_transactions.*')
-        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
-        ->with(['transactionUser', 'properties'])
-        ->whereDate('end_datetime', $today)
-        ->where('reservation_type_id', 2)
-        ->orderBy('end_datetime')
-        ->get();
+            ->select('trn_transactions.*')
+            ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+            ->with(['transactionUser', 'properties'])
+            ->whereDate('end_datetime', $today)
+            ->where('reservation_type_id', 2)
+            ->orderBy('end_datetime')
+            ->get();
 
         //Summary of transactions
         $totalCheckouts = $transactions->count();
@@ -382,22 +384,22 @@ class ReservationList extends Component
 
         //Pass variables in pdf
         $pdf = Pdf::loadView('livewire.admin.reports.checkouts-today-report', [
-        'transactions' => $transactions,
-        'date' => $today->toDateString(),
-        'totalCheckouts' => $totalCheckouts,
-        'totalGuests' => $totalGuests,
-        'totalAmountEarned' => $totalAmountEarned
-    ]);
+            'transactions' => $transactions,
+            'date' => $today->toDateString(),
+            'totalCheckouts' => $totalCheckouts,
+            'totalGuests' => $totalGuests,
+            'totalAmountEarned' => $totalAmountEarned
+        ]);
 
-     return response()->streamDownload(function () use ($pdf) {
-        echo $pdf->stream();
-    }, 'Checkouts-Today-' . $today->format('Ymd') . '.pdf');
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'Checkouts-Today-' . $today->format('Ymd') . '.pdf');
     }
 
 
 
 
-    // -------------------------------------- SORTING -------------------------------------- //
+    // -------------------------------------- SORTING --------------------------------------- //
 
     /**
      * Changes the sorting column and direction when a user selects a different column
@@ -410,5 +412,56 @@ class ReservationList extends Component
         }
         $this->sortBy = $sortByField;
         $this->sortDir = 'ASC'; // Default sorting direction when changing columns
+    }
+
+
+    // -------------------------------------- ROLLBACK OF STATUS ---------------------------- //
+    /**
+     * This method is used to rollback the status of a transaction.
+     * It is currently not implemented, but can be used in the future if needed.
+     */
+
+    public function rollbackStatus($id)
+    {
+        Log::info("Rollback status method called for transaction ID: {$id}");
+
+        // Find the transaction
+        $transaction = Transaction::find($id);
+
+        if (!$transaction) {
+            Log::warning("Transaction not found for ID: {$id}");
+            return back()->with('error', 'Transaction not found.');
+        }
+
+        $currentStatus = $transaction->transaction_status;
+
+        // Rollback map: define allowed one-step rollbacks
+        $rollbackMap = [
+            'done' => 'ongoing',
+            'ongoing' => 'confirmed',
+            'confirmed' => 'receipt_verified',
+            'receipt_verified' => 'reserved',
+            'reserved' => 'pending',
+
+            'cancelled' => 'reserved',
+
+            'no_show' => 'confirmed',
+            'terminated' => 'ongoing',
+        ];
+
+        // Determine previous status
+        $previousStatus = $rollbackMap[$currentStatus] ?? null;
+
+        if (!$previousStatus) {
+            return back()->with('error', 'No previous status available for rollback.');
+        }
+
+        // Update the transaction
+        $transaction->transaction_status = $previousStatus;
+        $transaction->save();
+
+        Log::info("Transaction ID {$id} rolled back from {$currentStatus} to {$previousStatus}");
+
+        return back()->with('success', "Status rolled back to: {$previousStatus}");
     }
 }
