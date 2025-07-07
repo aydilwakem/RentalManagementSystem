@@ -136,6 +136,11 @@ class CreateReservation extends Component
         $this->activities = Activity::availableActivities()->get();
         $this->paymentMethod = PaymentMethod::all();
         $this->guest_types = GuestType::all();
+
+        //Default dates
+        $now = Carbon::now('Asia/Manila');
+        $this->check_in_date = $now->format('Y-m-d');
+        $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
     }
 
 
@@ -660,7 +665,7 @@ class CreateReservation extends Component
 
             // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
 
-            // Creates a new HTTP client instance (likely from GuzzleHttp\Client). 
+            // Creates a new HTTP client instance (likely from GuzzleHttp\Client).
             // This client will be used to send HTTP requests to the PayMongo API.
             $client = new Client();
 
@@ -725,7 +730,7 @@ class CreateReservation extends Component
                 // $responseAllData = $responseData['data'] ?? [];
                 // dd($responseAllData);
 
-                // Retrieves the checkout_url from the response 
+                // Retrieves the checkout_url from the response
                 $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
 
                 // Save payment link to transaction (optional)

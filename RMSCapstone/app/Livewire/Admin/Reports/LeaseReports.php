@@ -12,7 +12,7 @@ class LeaseReports extends Component
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 1; //Filter lease transactions only
     public $sortBy = 'updated_at';
-    public $sortDir = 'DESC'; 
+    public $sortDir = 'DESC';
     public $search = '';
     public $perPage = 10;
 
@@ -25,11 +25,24 @@ class LeaseReports extends Component
         if (!session()->has('fake_ids_lease-reports')) {
             session(['fake_ids_lease-reports' => []]);
         }
+
+        //For default date range
+        $now = Carbon::now('Asia/Manila');
+
+        // Get the current quarter (bc minimum lease is 3 months)
+        $quarter = $now->quarter;
+        $startOfQuarter = Carbon::create($now->year, ($quarter - 1) * 3 + 1, 1)->startOfMonth();
+        $endOfQuarter = Carbon::create($now->year, $quarter * 3, 1)->endOfMonth();
+
+        //Start date is the first day of the quarter
+        //End date is the last day of the quarter
+        $this->start_date = $startOfQuarter->format('Y-m-d');
+        $this->end_date = $endOfQuarter->format('Y-m-d');
     }
 
     public function getTransactionsProperty()
     {
-        //-------- Querying database to select all from transactions 
+        //-------- Querying database to select all from transactions
         //-------- Where it's in between dinput date ranges
         $query = Transaction::query();
 
@@ -86,7 +99,7 @@ class LeaseReports extends Component
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'averageLength' => round($averageLength, 2),
-            'totalLeases' => $totalLeases, 
+            'totalLeases' => $totalLeases,
             'totalTenants' => $totalTenants,
             'totalAmountEarned' => $totalAmountEarned,
         ]);
@@ -118,7 +131,7 @@ class LeaseReports extends Component
         })
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
-        
+
         return view('livewire.admin.reports.lease-reports', compact('transactions'));
     }
 

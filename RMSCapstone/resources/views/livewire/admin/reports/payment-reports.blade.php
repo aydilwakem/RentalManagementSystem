@@ -1,6 +1,6 @@
 <div>
     {{-- Table --}}
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto p-3 mb-3">
         <div class="flex items-center justify-between p-4">
             <div class="flex gap-4 w-full">
                 <div class="relative w-full">
@@ -44,11 +44,17 @@
                 </div>
 
                 <div class="flex items-end">
-                    <x-button icon="fa-solid fa-file"
-                        class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        wire:click="exportPaymentSummary">
-                        Export PDF
-                    </x-button>
+                    <div class="relative">
+                        <x-button icon="fa-solid fa-file" wire:click="exportPaymentSummary" wire:loading.attr="disabled">
+                            Export PDF
+                        </x-button>
+
+                        <div wire:loading wire:target="exportPaymentSummary"
+                            class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                            <span class="text-sm text-green-700 font-semibold pt-1 text-center flex">Exporting
+                                PDF...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,9 +67,8 @@
         </div>
         @else
         <!-- Table Content -->
-        <div class="overflow-x-auto">
+        <div class=" bg-white rounded-lg shadow-md overflow-x-auto border">
             <table class="min-w-full text-left">
-
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
@@ -146,8 +151,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="15" class="text-center py-10 text-gray-500">
-                            No payments found.
+                        <td colspan="15" class="text-center py-10 text-green-700 font-semibold">
+                            No payments found for this date range.
                         </td>
                     </tr>
                     @endforelse

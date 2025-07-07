@@ -37,6 +37,11 @@ class EventReports extends Component
             session(['fake_ids_event-reports' => []]);
         }
 
+        // Set default date range to the current month
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->copy()->startOfMonth()->format('Y-m-d');
+        $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
+
         //Fetch all event halls
         $this->halls = Property::where('property_type_id', 3)->get();
     }
