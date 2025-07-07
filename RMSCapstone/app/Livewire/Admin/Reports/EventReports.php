@@ -28,6 +28,7 @@ class EventReports extends Component
     public $hallFilter = '';
     public $halls = []; 
     public $eventStatusFilter = '';
+    public $filterApplied = false;
 
 
     // ------------------------------- MOUNT ---------------------------------- //
@@ -76,6 +77,9 @@ class EventReports extends Component
         $this->filteredTransactions = $query
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
+
+        $this->filterApplied = true;
+
     }
 
     // ---------------------------- EXPORT PDF METHOD ------------------------------- //

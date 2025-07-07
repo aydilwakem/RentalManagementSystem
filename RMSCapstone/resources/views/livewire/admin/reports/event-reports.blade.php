@@ -62,29 +62,49 @@
 
                 {{-- Apply Filter --}}
                 <div class="flex items-end">
-                    <div class="relative">
-                        <x-button icon="fa-solid fa-file" wire:click="exportEventSummary" wire:loading.attr="disabled">
-                            Export PDF
-                        </x-button>
-
-                        <div wire:loading wire:target="exportEventSummary"
-                            class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                            <span class="text-sm text-green-700 font-semibold pt-1 text-center flex">Exporting
-                                PDF...</span>
-                        </div>
-                    </div>
+                    <x-button icon="fa fa-filter" wire:click="applyEventFilter">
+                        Apply Filter
+                    </x-button>
                 </div>
-
             </div>
         </div>
 
-        @if (empty($start_date) || empty($end_date))
+        @if (!$filterApplied)
         <div class="w-full text-center py-4">
             <span class="text-green-500 font-medium">
-                No events found. Select start date and end date to generate events summary.
+                Please apply filters first to generate the event bookings summary.
             </span>
         </div>
         @else
+
+        @if (!empty($filteredTransactions))
+        {{-- EXPORT PDF BUTTON --}}
+        <div class="flex justify-end mb-2 space-x-2 mr-4">
+            {{-- EXPORT PDF BUTTON --}}
+            <div class="relative">
+                <x-button icon="fa-solid fa-file" wire:click="exportEventSummary" wire:loading.attr="disabled">
+                    Export PDF
+                </x-button>
+
+                <div wire:loading wire:target="exportEventSummary"
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF...</span>
+                </div>
+            </div>
+
+            {{-- EXPORT CSV BUTTON --}}
+            <div class="relative">
+                <x-warning-button icon="fa-solid fa-file" wire:click="exportEventCsv" wire:loading.attr="disabled">
+                    Export CSV
+                </x-warning-button>
+
+                <div wire:loading wire:target="exportEventCsv"
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    <span class="text-sm text-yellow-700 font-semibold">Exporting CSV...</span>
+                </div>
+            </div>
+        </div>
+
         <div class=" bg-white rounded-lg shadow-md overflow-x-auto border">
             <table class="w-full text-left">
                 {{-- Start of Column Headers --}}
@@ -259,7 +279,7 @@
 
                 {{-- Start of Table Body --}}
                 <tbody class="text-left">
-                    @forelse ($transactions as $transaction)
+                    @forelse ($filteredTransactions as $transaction)
                     <tr class="border-b hover:bg-gray-50">
 
                         {{-- ID --}}
@@ -357,6 +377,7 @@
                     @endforelse
                 </tbody>
                 {{-- End of Table Body --}}
+                @endif
             </table>
         </div>
 
