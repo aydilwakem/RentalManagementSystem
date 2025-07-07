@@ -280,4 +280,11 @@ class CreateEvent extends Component
     {
         $this->computeTotalPax();
     }
+
+    // Accepts input like "50,000"; 
+    // Removes the comma and space for integer values 
+    public function updatedTotalAmount($value)
+    {
+        $this->total_amount = str_replace(',', '', $value);
+    }
 }

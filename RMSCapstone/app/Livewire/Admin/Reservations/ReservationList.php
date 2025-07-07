@@ -361,9 +361,9 @@ class ReservationList extends Component
     public function exportCheckoutsToday(){
         
         //FOR TESTING - Add target date of checkout that's in your reservation-list
-        $today = Carbon::create(2025, 7, 6);
+        //$today = Carbon::create(2025, 7, 8);
 
-        //$today = Carbon::today();
+        $today = Carbon::today();
         
         //Fetch all transactions with end_datetime today
         $transactions = Transaction::query()

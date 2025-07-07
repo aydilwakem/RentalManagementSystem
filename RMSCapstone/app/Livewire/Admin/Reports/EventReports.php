@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Admin\Reports;
 
+use App\Models\Property;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class EventReports extends Component
 {
+    // --------------------- DECLARATIONS -------------------------------------- //
     public $statusFilter = ''; // Filter transactions by status
     public $reservation_type_id = 3; //Filter event transactions only
     public $sortBy = 'updated_at';
@@ -16,24 +19,39 @@ class EventReports extends Component
     public $search = '';
     public $perPage = 10;
 
-    // ---FOR DATE RANGES INPUT ------ //
+    // ----------------------------- FOR DATE RANGES INPUT --------------------- //
     public $start_date;
     public $end_date;
 
+    //------------------- FILTERS ------------------ //
+    public $filteredTransactions = [];
+    public $hallFilter = '';
+    public $halls = []; 
+    public $eventStatusFilter = '';
+
+
+    // ------------------------------- MOUNT ---------------------------------- //
     public function mount(){
          // Initializes session variable if not already set
         if (!session()->has('fake_ids_event-reports')) {
             session(['fake_ids_event-reports' => []]);
         }
+
+        //Fetch all event halls
+        $this->halls = Property::where('property_type_id', 3)->get();
     }
 
-    public function getTransactionsProperty()
-    {
-        //-------- Querying database to select all from transactions
-        //-------- Where it's in between dinput date ranges
-        $query = Transaction::query();
 
-        if ($this->start_date) {
+    // --------------------------- APPLY FILTER METHOD --------------------------- //
+    public function applyEventFilter()
+    {
+        $query = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 3); //Fetch all events
+
+       if ($this->start_date) {
             $query->whereDate('start_datetime', '>=', $this->start_date);
         }
 
@@ -41,11 +59,21 @@ class EventReports extends Component
             $query->whereDate('start_datetime', '<=', $this->end_date);
         }
 
-        return $query
+        if ($this->hallFilter) {
+            $query->where('transaction_properties.property_id', $this->hallFilter);
+        }
+
+        $query->when($this->eventStatusFilter, function ($query) {
+            $query->where('transaction_status', $this->eventStatusFilter);
+        });
+
+        //use variable for filtering transactions
+        $this->filteredTransactions = $query
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
     }
 
+    // ---------------------------- EXPORT PDF METHOD ------------------------------- //
     public function exportEventSummary()
     {
         $transactions = Transaction::query()
@@ -61,6 +89,12 @@ class EventReports extends Component
                 $end = Carbon::parse($this->end_date)->endOfDay();
                 $query->where('start_datetime', '<=', $end);
             })
+            ->when($this->hallFilter, function ($query) { //Property filter
+                $query->where('transaction_properties.property_id', $this->hallFilter);
+            })
+            ->when($this->eventStatusFilter, function ($query) { //Status filter
+                $query->where('transaction_status', $this->eventStatusFilter);
+            })
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
@@ -68,7 +102,41 @@ class EventReports extends Component
             $totalGuests = $transactions->sum('pax');
             $totalAmountEarned = $transactions->sum('total_amount');
 
+            //----------------- Most Booked Hall within Date Range
+            $mostBookedHall = null;
 
+            if (!$this->hallFilter && $transactions->isNotEmpty()) {
+            $hallCounts = [];
+
+            foreach ($transactions as $transaction) {
+                foreach ($transaction->properties as $property) {
+                    $hallName = $property->name_number;
+
+                    if (!isset($hallCounts[$hallName])) {
+                        $hallCounts[$hallName] = 0;
+                    }
+
+                    $hallCounts[$hallName]++;
+                }
+            }
+
+            if (!empty($hallCounts)) {
+            arsort($hallCounts); // Sort descending by count
+            $topHall = array_key_first($hallCounts);
+            $count = $hallCounts[$topHall];
+
+            $mostBookedHall = $topHall . ' (' . $count . ' events)';
+            }
+
+            //For checking
+            Log::info("Most Booked Hall Count (from transactions):", [
+            'hallCounts' => $hallCounts,
+            'mostBookedHall' => $mostBookedHall,
+            ]);
+        }
+
+
+        // ------------------- PDF VARIABLES ---------------- //
         $pdf = Pdf::loadView('livewire.admin.reports.events-report-summary', [
             'transactions' => $transactions,
             'start_date' => $this->start_date,
@@ -76,6 +144,10 @@ class EventReports extends Component
             'totalEvents' => $totalEvents,
             'totalGuests' => $totalGuests,
             'totalAmountEarned' => $totalAmountEarned,
+            'halls' => $this->halls,
+            'hallFilter' => $this->hallFilter, //Added variables to pdf 
+            'eventStatusFilter' => $this->eventStatusFilter,
+            'mostBookedHall' => $mostBookedHall //Pass variable to pdf for occupancy rate
         ]);
 
         return response()->streamDownload(function () use ($pdf) {
@@ -83,6 +155,7 @@ class EventReports extends Component
         }, 'Event-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.pdf');
     }
 
+    // --------------------------- RENDER ------------------------------------------ //
     public function render()
     {
         //Query database, join tables for fks, and get all within date range
@@ -108,7 +181,7 @@ class EventReports extends Component
         return view('livewire.admin.reports.event-reports', compact('transactions'));
     }
 
-    //--------------------------- SORT BY FUNCTION -----------//
+    //------------------------------------------ SORT BY FUNCTION ------------------------//
     public function setSortBy($sortByField)
     {
         if ($this->sortBy == $sortByField) {

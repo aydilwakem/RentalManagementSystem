@@ -27,13 +27,48 @@
                     @enderror
                 </div>
 
+                {{-- Select A Hall --}}
+                <div class="w-full">
+                    <label for="select_hall" class="block mb-2 text-sm font-medium text-gray-900">Select a Hall
+                    </label>
+                    <select wire:model.live="hallFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="">All Halls</option>
+                        @foreach ($halls as $hall)
+                        <option value="{{ $hall->id }}">{{ $hall->name_number }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="w-full">
+                    <label for="event_status" class="block mb-2 text-sm font-medium text-gray-900">Event
+                        Status:</label>
+                    <select id="event_status" name="event_status" wire:model.live="eventStatusFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">All</option>
+                        <option value="pending">Awaiting Payment</option>
+                        <option value="reserved">Pending Verification</option>
+                        <option value="receipt_verified">Payment Verified</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="ongoing">On-going</option>
+                        <option value="done">Completed</option>
+                        <option value="no_show">No Show</option>
+                        <option value="terminated">Terminated</option>
+                        <option value="expired">Expired</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                {{-- Apply Filter --}}
                 <div class="flex items-end">
-                    <x-button icon="fa-solid fa-file"
+                    <x-button icon="fa fa-filter"
                         class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        wire:click="exportEventSummary">
-                        Export PDF
+                        wire:click="applyEventFilter">
+                        Apply Filter
                     </x-button>
                 </div>
+
             </div>
         </div>
 
@@ -45,6 +80,24 @@
         </div>
         @else
 
+        @if(!empty($filteredTransactions))
+        {{-- EXPORT PDF BUTTON --}}
+        <div class="flex justify-end mb-2 space-x-2 mr-4">
+            <x-button icon="fa-solid fa-file"
+                class="inline-flex items-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:click="exportEventSummary">
+                Export PDF
+            </x-button>
+
+            {{-- EXPORT CSV BUTTON --}}
+            <x-button icon="fa-solid fa-file"
+                class="inline-flex items-center text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                wire:click="exportEventCsv">
+                Export CSV
+            </x-button>
+        </div>
+
+        {{-- TABLE --}}
         <table class="w-full text-left">
             {{-- Start of Column Headers --}}
             <thead class="text-sm text-gray-700 bg-gray-200">
@@ -208,7 +261,7 @@
 
             {{-- Start of Table Body --}}
             <tbody class="text-left">
-                @forelse ($transactions as $transaction)
+                @forelse ($filteredTransactions as $transaction)
                 <tr class="border-b">
 
                     {{-- ID --}}
@@ -306,6 +359,7 @@
 
                 @endforelse
             </tbody>
+            @endif
             {{-- End of Table Body --}}
         </table>
         @endif

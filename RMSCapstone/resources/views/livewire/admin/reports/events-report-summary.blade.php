@@ -39,7 +39,7 @@
         }
 
         .date-range {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-size: 13px;
             color: #555;
         }
@@ -127,20 +127,32 @@
             All Records
             @endif
         </p>
+        <p class="date-range">
+            <strong>Hall:</strong>
+            {{ $hallFilter ? $halls->firstWhere('id', $hallFilter)?->name_number ?? 'Unknown Hall' : 'All Halls' }}
+
+        </p>
+        <p class="date-range">
+            <strong>Status:</strong>
+            {{ empty($eventStatusFilter) ? 'All Statuses' : $eventStatusFilter }}
+        </p>
     </header>
+
     <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
         <thead>
             <tr>
                 <th style="width: 6%;">#</th>
                 <th style="width: 13%;">Transaction No.</th>
-                <th style="width: 12%;">Booked By</th>
+                <th style="width: 10%;">Booked By</th>
+                <th style="width: 10%;">Company</th>
                 <th style="width: 10%;">Event Hall(s)</th>
                 <th style="width: 10%;">Event Type</th>
                 <th style="width: 9%;">Guests</th>
                 <th style="width: 14%;">Start Date & Time</th>
                 <th style="width: 14%;">End Date & Time</th>
-                <th style="width: 11%;">Amount</th>
+                <th style="width: 10%;">Amount</th>
+                <th style="width: 10%;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -150,6 +162,7 @@
                 <td>{{ $transaction->transaction_number }}</td>
                 <td>{{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
                 </td>
+                <td>{{ $transaction->transactionUser->company_name ?? 'N/A' }}</td>
                 <td>
                     @foreach ($transaction->properties as $property)
                     {{ $property->name_number ?? 'N/A' }}<br>
@@ -160,6 +173,7 @@
                 <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
                 <td>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y g:i A') }}</td>
                 <td>{{ number_format($transaction->total_amount, 2) }}</td>
+                <td>{{ $transaction->transaction_status }}</td>
             </tr>
             @empty
             <tr>
@@ -174,6 +188,10 @@
         <h2>Summary of Key Metrics:</h2>
         <p><strong>Total Events Conducted:</strong> {{ $totalEvents }}</p>
         <p><strong>Total Guests Accommodated:</strong> {{ $totalGuests }}</p>
+        @if (empty($hallFilter))
+        <p><strong>Most Booked Hall:</strong> {{ $mostBookedHall ?? 'No bookings found within the selected date range'
+            }}</p>
+        @endif
         <p><strong>Total Revenue Generated:</strong> PHP {{ number_format($totalAmountEarned, 2) }}</p>
     </div>
 
