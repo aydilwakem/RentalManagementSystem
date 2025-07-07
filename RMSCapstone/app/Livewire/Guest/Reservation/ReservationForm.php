@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
+use App\Models\PromoCode;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 
@@ -120,6 +121,7 @@ class ReservationForm extends Component
     ];
 
     //----------------------- PROMO CODE ------------------------ //
+    public $promo;
     public $promoCode;
     public $discountMessage;
     public $errorMessage;
@@ -477,30 +479,83 @@ class ReservationForm extends Component
 
     public function applyPromoCode()
     {
-        $this->reset(['discountMessage', 'errorMessage']); // Clear messages
+        Log::info('applyPromoCode method called with promoCode: ' . $this->promoCode);
 
-        if ($this->promoCode === 'TEST500') {
-            // fixed amount for testing lang
-            $this->promoDiscount = 500;
-            $this->total_amount -= $this->total_amount - $this->promoDiscount;
-            $this->discountMessage = 'Promo code applied! You saved ₱500.';
-        } else {
-            $this->promoDiscount = 0; // No discount
-            $this->total_amount = $this->computeTotalAmount();
-            $this->discountMessage = null;
-            $this->promoCode = '';
-            $this->errorMessage = 'Invalid promo code. Please try again.';
+        $this->reset(['discountMessage', 'errorMessage']);
+        $promo = PromoCode::where('code', $this->promoCode)->first();
+        $now = Carbon::now('Asia/Manila');
+
+        // Step 1: Validatess promo existence
+        if (!$promo) {
+            return $this->failPromo('Invalid promo code. Please try again.');
         }
+
+
+        // Step 2: Checks minimum booking amount
+        if ($this->total_amount < $promo->min_booking_amount) {
+            return $this->failPromo('This promo code requires a minimum booking amount of ₱' .
+                number_format((float) $promo->min_booking_amount, 2) . '.');
+        }
+
+        // Step 3: Check promo date validity if it has expiration
+        if ($promo->has_expiration && $promo->start_date && $promo->end_date) {
+            if (
+                $now->lt(Carbon::parse($promo->start_date)) ||
+                $now->gt(Carbon::parse($promo->end_date))
+            ) {
+                return $this->failPromo('This promo code has expired or is not yet active.');
+            }
+        }
+
+        // Step 4: Checks if the max uses has been reached
+        if ($promo->max_uses > 0 && $promo->uses_count >= $promo->max_uses) {
+            return $this->failPromo('This promo code has reached its maximum usage limit.');
+        }
+
+        // Step 5: Checks if the promo code is active
+        if (!$promo->is_active) {
+            return $this->failPromo('This promo code is currently inactive.');
+        }
+
+        // Step 6: Calculates discountg
+        $originalTotal = $this->computeTotalAmount();
+
+        switch ($promo->discount_type) {
+            case 'percentage':
+                $this->promoDiscount = ($promo->discount_value / 100) * $originalTotal;
+                break;
+            case 'fixed':
+                $this->promoDiscount = $promo->discount_value;
+                break;
+            default:
+                $this->promoDiscount = 0;
+                break;
+        }
+
+        $this->total_amount = $originalTotal - $this->promoDiscount;
+
+        $this->discountMessage = 'Promo code applied! You saved ₱' . number_format($this->promoDiscount, 2) . '.';
+        $this->errorMessage = null;
     }
 
     public function removePromoCode()
     {
+        Log::info('removePromoCode method called');
         $this->promoCode = '';
         $this->promoDiscount = 0;
         $this->discountMessage = null;
+        $this->total_amount = $this->computeTotalAmount();
         $this->errorMessage = null;
     }
 
+    private function failPromo(string $message)
+    {
+        $this->promoDiscount = 0;
+        $this->total_amount = $this->computeTotalAmount();
+        $this->discountMessage = null;
+        $this->promoCode = '';
+        $this->errorMessage = $message;
+    }
     // --------------------------------------------- VALIDATIONS ----------------------------------------------- //
 
     /**
@@ -811,10 +866,15 @@ class ReservationForm extends Component
             return $item['type'] === 'room';
         });
 
+
         // If there are no rooms in the cart, reset to the first step
         if (!$hasRoomItems) {
             $this->cart = [];
             $this->currentStep = 1; // Go back to the first step
+            $this->promoCode = '';
+            $this->promoDiscount = 0;
+            $this->discountMessage = null;
+            $this->errorMessage = null;
             // session()->flash('error', 'No rooms left in your cart. Returning to the first step.');
         }
     }
@@ -859,6 +919,9 @@ class ReservationForm extends Component
 
             // Set the expiration hours for payment proof
             $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+
+            // Find the promo code in the database
+            $promo = PromoCode::where('code', $this->promoCode)->first();
 
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
@@ -1032,6 +1095,9 @@ class ReservationForm extends Component
 
                 // Save payment link to transaction (optional)
                 $transaction->update(['payment_link' => $paymentLink]);
+
+                // If a promo code is used, increment the uses_count of Promo Code
+                $promo->increment('uses_count');
             } catch (\Exception $e) {
 
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());

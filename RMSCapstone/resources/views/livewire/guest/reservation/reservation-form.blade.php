@@ -294,21 +294,27 @@
                     @endphp
 
                     <div class="relative w-full mt-4">
-                        <input type="text" wire:model="promoCode"
-                            class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
-                            {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                            placeholder="Enter Promo Code">
+                         <input
+        type="text"
+        wire:model="promoCode"
+        wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+        class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+        placeholder="Enter Promo Code"
+        autocomplete="off"
+        {{ $hasCode ? 'disabled' : '' }} {{-- optional: disable when applied --}}
+    >
 
                         {{-- TODO: disable field when code is inputted, clear field when removed --}}
                         @if ($discountMessage)
                             {{-- does not work yet <33 --}}
-                            <button wire:click="removePromoCode"
+                            <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
                                 class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
                                 title="Remove Promo Code">
                                 &times;
                             </button>
                         @else
-                            <button wire:click="applyPromoCode"
+                            <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
                                 class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
                                 Apply
                             </button>

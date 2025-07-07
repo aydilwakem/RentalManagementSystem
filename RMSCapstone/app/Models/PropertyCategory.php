@@ -10,13 +10,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PropertyCategory extends Model
 {
     use SoftDeletes;
-    use HasFactory; 
+    use HasFactory;
 
     protected $fillable = ['name', 'description'];
 
     public function properties()
     {
         return $this->hasMany(Property::class, 'property_category_id');
+    }
+
+    public function promoCodes()
+    {
+        return $this->hasMany(PromoCode::class, 'property_category_id');
     }
 
     public function scopeSearch($query, $search)

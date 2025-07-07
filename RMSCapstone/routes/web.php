@@ -56,6 +56,7 @@ use App\Mail\ReservationCompletedMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\Transaction;
+use App\Models\PromoCode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity as LogActivity;
@@ -1187,3 +1188,18 @@ Route::get('/view-logs', function () {
 
     return response()->json($propertiesOnly);
 })->name('admin.view-logs');
+
+Route::get('/promo-codes', function () {
+    $promoCodes = PromoCode::all();
+    // I dont have view. just display
+    return $promoCodes->map(function ($promoCode) {
+        return [
+            'id' => $promoCode->id,
+            'code' => $promoCode->code,
+            'discount' => $promoCode->discount,
+            'start_date' => $promoCode->start_date,
+            'end_date' => $promoCode->end_date,
+            'status' => $promoCode->status ? 'Active' : 'Inactive',
+        ];
+    })->toArray();
+})->name('admin.promo-codes');
