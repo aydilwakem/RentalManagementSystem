@@ -12,6 +12,7 @@ use App\Models\TransactionUser;
 use App\Models\PropertyCategory;
 use App\Models\GuestDetail;
 use App\Models\Invoice;
+use App\Models\RoomRate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -129,6 +130,8 @@ class ReservationForm extends Component
     public $confirmReservationModal = false;
 
 
+
+
     public function confirmCreate()
     {
         $this->confirmReservationModal = true;
@@ -166,7 +169,19 @@ class ReservationForm extends Component
 
     public function mount()
     {
-        $this->rooms = Property::ofType('Room')->availableRooms()->get();
+        // $this->rooms = Property::ofType('Room')->availableRooms()->get();
+
+        $this->rooms = Property::ofType('Room')
+            ->availableRooms()
+            ->get()
+            ->map(function ($room) {
+                $rate = $this->getDynamicRate($room);
+                $room->dynamic_rate = $rate['amount'];
+                $room->rate_name = $rate['name'];
+                $room->rate_type = $rate['rate_type'];
+                return $room;
+            });
+
         $this->roomCategories = PropertyCategory::all();
         $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
@@ -192,6 +207,73 @@ class ReservationForm extends Component
         $this->check_in_date = $now->format('Y-m-d');
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
     }
+
+    public function getDynamicRate($room)
+    {
+        $date = now(); // or selected check-in date
+        $dayOfWeek = $date->dayOfWeek;
+
+        // 1. Check for Peak rate
+        $peakRate = RoomRate::where('property_id', $room->id)
+            ->where('rate_type', 'Peak')
+            ->where('is_active', true)
+            ->whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if ($peakRate) {
+            return [
+                'amount' => $peakRate->amount,
+                'name' => $peakRate->name ?? 'Peak Rate',
+                'rate_type' => 'Peak',
+            ];
+        }
+
+        Log::info('Peak Rate:', [$peakRate]);
+
+        // 2. Check for Holiday rate
+        $holidayRate = RoomRate::where('property_id', $room->id)
+            ->where('rate_type', 'Holiday')
+            ->where('is_active', true)
+            ->whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if ($holidayRate) {
+            return [
+                'amount' => $holidayRate->amount,
+                'name' => $holidayRate->name ?? 'Holiday Rate',
+                'rate_type' => 'Holiday',
+            ];
+        }
+        Log::info('Weekend/Weekdays Rate:', [$holidayRate]);
+
+
+
+        // 3. Determine Weekend or Weekday
+        $rateType = ($dayOfWeek === 0 || $dayOfWeek === 6) ? 'Weekend' : 'Weekdays';
+
+        // 4. Check for that rate
+        $rate = RoomRate::where('property_id', $room->id)
+            ->where('rate_type', $rateType)
+            ->where('is_active', true)
+            ->whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->whereNull('deleted_at')
+            ->first();
+
+        Log::info('Weekend/Weekdays Rate:', [$rate]);
+
+        // 5. Return found rate or fallback to base
+        return [
+            'amount' => $rate ? $rate->amount : $room->amount,
+            'name' => $rate ? $rate->name : null,
+            'rate_type' => $rate ? $rate->rate_type : null,
+        ];
+    }
+
 
     /**
      * Renders the Livewire reservation form view for guests.

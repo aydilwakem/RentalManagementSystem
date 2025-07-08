@@ -107,78 +107,78 @@
                     <p>No occupancy rules set.</p>
                     @endif
                 </div> --}}
-                </div>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center justify-between space-x-4 mt-6">
-                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
-                    href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
-                    Edit
-                </x-ghost-button>
-
-                <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $room->id }})">
-                    Delete
-                </x-danger-button>
-            </div>
-
-            <!-- Delete Confirmation Modal -->
-            <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
-                <x-slot name="title">
-                    {{ __('Delete Room') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __('Are you sure you want to delete this item?') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
-                    </x-secondary-button>
-
-                    <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})"
-                        wire:loading.attr="disabled">
-                        {{ __('Delete Room') }}
-                    </x-danger-button>
-                </x-slot>
-            </x-dialog-modal>
-
-            {{-- Cannot Delete Modal --}}
-            <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
-                <x-slot name="title">
-                    {{ __('Unable to Delete') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __('This room is currently in use and cannot be deleted.') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
-                        {{ __('OK') }}
-                    </x-secondary-button>
-                </x-slot>
-            </x-dialog-modal>
         </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between space-x-4 mt-6">
+            <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                href="{{ route('admin.edit-room', ['room' => $room->id]) }}">
+                Edit
+            </x-ghost-button>
+
+            <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $room->id }})">
+                Delete
+            </x-danger-button>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
+            <x-slot name="title">
+                {{ __('Delete Room') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('Are you sure you want to delete this item?') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ms-3" wire:click="deleteRoom({{ $room->id }})" wire:loading.attr="disabled">
+                    {{ __('Delete Room') }}
+                </x-danger-button>
+            </x-slot>
+        </x-dialog-modal>
+
+        {{-- Cannot Delete Modal --}}
+        <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
+            <x-slot name="title">
+                {{ __('Unable to Delete') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('This room is currently in use and cannot be deleted.') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                    {{ __('OK') }}
+                </x-secondary-button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
+</div>
 
-    <!-- Image Modal Script -->
-    <script>
-        function openModal(imageSrc) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImg');
-            modalImg.src = imageSrc;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
-        }
+<!-- Image Modal Script -->
+<script>
+    function openModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modalImg.src = imageSrc;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
 
-        function closeModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = ''; // Restore background scroll
-        }
-    </script>
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore background scroll
+    }
+</script>
 
-    {{-- @livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id]) --}}
+@livewire('admin.room-rates.view-individual-rates', ['roomId' => $room->id])
+
 </div>

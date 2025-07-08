@@ -9,6 +9,8 @@ use App\Models\Transaction;
 use App\Models\PropertyFeature;
 use App\Models\PropertyCategory;
 use App\Models\PropertyType;
+use App\Models\RoomRate;
+use App\Models\Maintenance;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -89,6 +91,12 @@ class Property extends Model
     public function features()
     {
         return $this->belongsToMany(PropertyFeature::class, 'property_features_pivot');
+    }
+
+    // A property can have many rates (for rooms, houses, and event halls)
+    public function rates()
+    {
+        return $this->hasMany(RoomRate::class, 'property_id');
     }
 
 

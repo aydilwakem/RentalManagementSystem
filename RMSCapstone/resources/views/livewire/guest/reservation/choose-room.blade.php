@@ -19,16 +19,16 @@
 
                 <!-- Room Category Filter -->
                 {{-- <div class="flex items-center">
-                <label for="property_category_id" class="w-32 text-sm font-medium text-gray-900">Room
-                    Category:</label>
-                <select id="property_category_id" name="property_category_id" wire:model.live="roomCategoryFilter"
-                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                    <option value="">All</option>
-                    @foreach ($roomCategories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div> --}}
+                    <label for="property_category_id" class="w-32 text-sm font-medium text-gray-900">Room
+                        Category:</label>
+                    <select id="property_category_id" name="property_category_id" wire:model.live="roomCategoryFilter"
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                        <option value="">All</option>
+                        @foreach ($roomCategories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div> --}}
                 <div class="flex items-center space-x-4 mb-3">
                     <div class="flex items-center">
                         <label for="property_category_id" class="text-sm font-medium text-gray-900 me-2">Room
@@ -44,8 +44,8 @@
 
                     {{-- Loading indicator --}}
                     {{-- <div wire:loading wire:target="roomCategoryFilter" class="text-sm text-gray-500">
-                    <i class="fas fa-spinner fa-spin"></i> Updating rooms...
-                </div> --}}
+                        <i class="fas fa-spinner fa-spin"></i> Updating rooms...
+                    </div> --}}
                 </div>
 
                 <div wire:loading wire:target="check_in_date,check_out_date,category" class="space-y-4">
@@ -57,8 +57,7 @@
                 <div wire:loading.remove wire:target="check_in_date,check_out_date,category" class="space-y-4">
                     @foreach ($rooms as $room)
                         <div class=" space-y-6" wire:key="room-{{ $room->id }}">
-                            <div
-                                class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
+                            <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                                 <div class="md:flex">
 
                                     <div class="md:w-1/3">
@@ -105,8 +104,13 @@
                                             </p>
                                             <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
                                             <p class="mt-4 text-lg font-medium">
-                                                Rate Per Night: <span
-                                                    class="text-green-700 font-bold">₱{{ number_format($room->amount, 2) }}</span>
+                                                Rate Per Night
+                                                @if ($room->rate_name || $room->rate_type)
+                                                    ({{ $room->rate_name }}{{ $room->rate_type ? ' - ' . $room->rate_type : '' }})
+                                                @endif:
+                                                <span class="text-green-700 font-bold">
+                                                    ₱{{ number_format($room->dynamic_rate, 2) }}
+                                                </span>
                                             </p>
 
                                             <!-- More details Bbtton -->
@@ -121,8 +125,7 @@
                                                 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                                                 <div
                                                     class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-4 relative max-h-[80vh] overflow-y-auto">
-                                                    <button type="button"
-                                                        onclick="closeRoomModal({{ $room->id }})"
+                                                    <button type="button" onclick="closeRoomModal({{ $room->id }})"
                                                         class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-2xl focus:outline-none">
                                                         <span
                                                             class="w-full h-full flex items-center justify-center pointer-events-none">&times;</span>
@@ -137,14 +140,12 @@
                                                             class="w-full h-80 object-cover rounded-lg shadow" />
                                                         @if (count($images) > 1)
                                                             <!-- Prev Button -->
-                                                            <button
-                                                                onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
+                                                            <button onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
                                                                 class="absolute left-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1">
                                                                 <i class="fa-solid fa-chevron-left"></i>
                                                             </button>
                                                             <!-- Next Button -->
-                                                            <button
-                                                                onclick="nextRoomImage({{ $room->id }}, {{ count($images) }})"
+                                                            <button onclick="nextRoomImage({{ $room->id }}, {{ count($images) }})"
                                                                 class="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1">
                                                                 <i class="fa-solid fa-chevron-right"></i>
                                                             </button>
@@ -177,6 +178,8 @@
                                                             </li>
                                                             <li><strong>Rate Per Night:</strong>
                                                                 ₱{{ number_format($room->amount, 2) }}</li>
+                                                            {{-- <li><strong>Rate Per Night:</strong> ₱{{
+                                                                number_format($room->dynamic_rate, 2) }}</li> --}}
                                                         </ul>
                                                         <!-- Room Amenities -->
                                                         <div class="mt-2 mb-4">
@@ -233,8 +236,7 @@
 
                                                 <!-- Adults -->
                                                 <div class="flex-1">
-                                                    <label
-                                                        class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                    <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                     <select wire:model.live="adults.{{ $room->id }}"
                                                         class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                         @for ($i = 1; $i <= $room->max_adults; $i++)
@@ -246,8 +248,7 @@
 
                                                 <!-- Kids -->
                                                 <div class="flex-1">
-                                                    <label
-                                                        class="block text-sm font-medium text-gray-700">Children</label>
+                                                    <label class="block text-sm font-medium text-gray-700">Children</label>
                                                     <select wire:model.live="kids.{{ $room->id }}"
                                                         class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                         @for ($i = 0; $i <= $room->max_kids; $i++)
@@ -266,9 +267,7 @@
 
                                                 @php
                                                     $cartCollection = collect($cart); // Convert array to collection
-                                                    $roomInCart = $cartCollection->contains(function ($item) use (
-                                                        $room,
-                                                    ) {
+                                                    $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
                                                         return $item['type'] === 'room' &&
                                                             $item['room_id'] == $room->id;
                                                     });
@@ -279,28 +278,23 @@
                                                 @if ($roomInCart)
                                                 @else
                                                     <x-button wire:click="addRoomToCart({{ $room->id }})"
-                                                        wire:loading.attr="disabled"
-                                                        wire:target="addRoomToCart({{ $room->id }})"
+                                                        wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"
                                                         class="relative h-10 w-full justify-center">
 
                                                         <div class="flex items-center justify-center relative w-full">
                                                             <!-- Spinner -->
-                                                            <span wire:loading
-                                                                class=" flex items-center justify-center"
+                                                            <span wire:loading class=" flex items-center justify-center"
                                                                 wire:target="addRoomToCart({{ $room->id }})">
-                                                                <svg class="animate-spin h-5 w-5 text-white"
-                                                                    viewBox="0 0 24 24">
-                                                                    <circle class="opacity-25" cx="12"
-                                                                        cy="12" r="10" stroke="currentColor"
-                                                                        stroke-width="4" />
+                                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                        stroke="currentColor" stroke-width="4" />
                                                                     <path class="opacity-75" fill="currentColor"
                                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                                 </svg>
                                                             </span>
 
                                                             <!-- Button Text -->
-                                                            <span wire:loading.remove
-                                                                wire:target="addRoomToCart({{ $room->id }})">
+                                                            <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
                                                                 Add Room
                                                             </span>
                                                         </div>

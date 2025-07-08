@@ -22,6 +22,11 @@ class EditRoomRate extends Component
     public $rate_type;
     public $rooms;
     public $roomRateId;
+    public $freebies;
+    public $priority;
+    public $is_active = true;
+    public $min_stay_nights;
+    public $max_stay_nights;
 
     public $confirmEditItem = false;
 
@@ -32,6 +37,7 @@ class EditRoomRate extends Component
 
     public function mount(RoomRate $roomRate)
     {
+        $this->rooms = Room::all();
         $this->roomRate = $roomRate;
         $this->roomRateId = $roomRate->id;
         $this->room_id = $roomRate->room_id;
@@ -39,11 +45,13 @@ class EditRoomRate extends Component
         $this->start_date = $roomRate->start_date;
         $this->end_date = $roomRate->end_date;
         $this->amount = $roomRate->amount;
-        $this->extra_person_charge = $roomRate->extra_person_charge;
-        $this->extended_stay_charge_per_hr = $roomRate->extended_stay_charge_per_hr;
         $this->description = $roomRate->description;
         $this->rate_type = $roomRate->rate_type;
-        $this->rooms = Room::all();
+        $this->freebies = $roomRate->freebies;
+        $this->priority = $roomRate->priority;
+        $this->is_active = $roomRate->is_active;
+        $this->min_stay_nights = $roomRate->min_stay_nights;
+        $this->max_stay_nights = $roomRate->max_stay_nights;
     }
 
     public function updateRoomRate()
@@ -55,10 +63,13 @@ class EditRoomRate extends Component
                 'start_date' => 'required|date|after_or_equal:today',
                 'end_date' => 'required|date|after:start_date',
                 'amount' => 'required|numeric|min:0',
-                'extra_person_charge' => 'nullable|numeric|min:0',
-                'extended_stay_charge_per_hr' => 'nullable|numeric|min:0',
                 'description' => 'nullable|string',
                 'rate_type' => 'required|string|max:50',
+                'freebies' => 'nullable|string|max:1000',
+                'priority' => 'nullable|integer|min:1|max:10',
+                'is_active' => 'required|boolean',
+                'min_stay_nights' => 'nullable|integer|min:1|max:30',
+                'max_stay_nights' => 'nullable|integer|min:1|max:90',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -72,10 +83,13 @@ class EditRoomRate extends Component
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'amount' => $this->amount,
-            'extra_person_charge' => $this->extra_person_charge,
-            'extended_stay_charge_per_hr' => $this->extended_stay_charge_per_hr,
             'description' => $this->description,
             'rate_type' => $this->rate_type,
+            'freebies' => $this->freebies,
+            'priority' => $this->priority,
+            'is_active' => $this->is_active,
+            'min_stay_nights' => $this->min_stay_nights,
+            'max_stay_nights' => $this->max_stay_nights,
         ]);
 
         session()->flash('message', 'Room Rate successfully updated!');

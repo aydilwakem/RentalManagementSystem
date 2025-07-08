@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\RoomRates;
 
 use Livewire\Component;
-use App\Models\Room;
+use App\Models\Property;
 use App\Models\RoomRate;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -23,11 +23,11 @@ class ViewIndividualRates extends Component
 
     public $perPage = 5;
     public $statusFilter = ''; // Holds the selected room status
-    public Room $room;
+    public Property $room;
 
     public function mount(int $roomId)
     {
-        $this->room = Room::findOrFail($roomId);
+        $this->room = Property::findOrFail($roomId);
     }
 
 
@@ -81,7 +81,7 @@ class ViewIndividualRates extends Component
 
     public function render()
     {
-        $roomRates = RoomRate::where('room_id', $this->room->id)
+        $roomRates = RoomRate::where('property_id', $this->room->id)
             ->when($this->statusFilter, function ($query) {
                 $query->where('rate_type', $this->statusFilter);
             })
@@ -95,9 +95,9 @@ class ViewIndividualRates extends Component
         $fakeIDs = session('fake_ids_roomRate', []);
 
         // Recalculate fake IDs if count mismatches
-        if (count($fakeIDs) !== RoomRate::where('room_id', $this->room->id)->count()) {
+        if (count($fakeIDs) !== RoomRate::where('property_id', $this->room->id)->count()) {
             $fakeIDs = [];
-            foreach (RoomRate::where('room_id', $this->room->id)->orderBy('created_at', 'ASC')->get() as $index => $rate) {
+            foreach (RoomRate::where('property_id', $this->room->id)->orderBy('created_at', 'ASC')->get() as $index => $rate) {
                 $fakeIDs[$rate->id] = 'RATE-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             }
             session(['fake_ids_roomRate' => $fakeIDs]);

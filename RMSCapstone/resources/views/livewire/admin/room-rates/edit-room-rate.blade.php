@@ -11,7 +11,7 @@
                     <input type="text" wire:model="name" id="name" required
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -22,11 +22,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                         <option value="">Select Room</option>
                         @foreach ($rooms as $room)
-                        <option value="{{ $room->id }}">{{ $room->name }}</option>
+                            <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
                     </select>
                     @error('room_id')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -36,7 +36,7 @@
                     <input type="date" wire:model="start_date" id="start_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('start_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -46,7 +46,7 @@
                     <input type="date" wire:model="end_date" id="end_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2">
                     @error('end_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -56,7 +56,7 @@
                     <input type="number" wire:model="amount" id="amount"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('amount')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -67,7 +67,7 @@
                     <input type="number" wire:model="extra_person_charge" id="extra_person_charge"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('extra_person_charge')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -78,7 +78,7 @@
                     <input type="number" wire:model="extended_stay_charge_per_hr" id="extended_stay_charge_per_hr"
                         class="block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500">
                     @error('extended_stay_charge_per_hr')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -93,9 +93,12 @@
                         <option value="Peak">Peak</option>
                     </select>
                     @error('rate_type')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+
+
+
 
                 <!-- Description -->
                 <div class="sm:col-span-2">
@@ -104,9 +107,69 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 resize-none"
                         rows="5"></textarea>
                     @error('description')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+
+                <!-- Freebies -->
+                <div class="sm:col-span-2">
+                    <label for="freebies" class="block mb-2 text-sm font-medium text-gray-900">Freebies</label>
+                    <textarea wire:model="freebies" id="freebies"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 resize-none"
+                        rows="3"></textarea>
+                    @error('freebies')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Priority -->
+                <div class="sm:col-span-1">
+                    <label for="priority" class="block mb-2 text-sm font-medium text-gray-900">Priority</label>
+                    <input type="number" wire:model="priority" id="priority"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                        min="1" max="10">
+                    @error('priority')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Is Active -->
+                <div class="sm:col-span-1 flex items-center">
+                    <input type="checkbox" wire:model="is_active" id="is_active"
+                        class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
+                    <label for="is_active" class="ml-2 text-sm text-gray-900">Is Active</label>
+                    @error('is_active')
+                        <span class="text-red-500 text-sm ml-2">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Min Stay -->
+                <div class="sm:col-span-1">
+                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Stay
+                        (nights)</label>
+                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                        min="1" max="30">
+                    @error('min_stay_nights')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Max Stay -->
+                <div class="sm:col-span-1">
+                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Stay
+                        (nights)</label>
+                    <input type="number" wire:model="max_stay_nights" id="max_stay_nights"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                        min="1" max="90">
+                    @error('max_stay_nights')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+
+
+
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">

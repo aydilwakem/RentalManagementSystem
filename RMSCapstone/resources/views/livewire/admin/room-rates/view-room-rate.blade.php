@@ -24,7 +24,7 @@
         <div class="mb-2 mt-3 flex items-center gap-2">
             <h3 class="text-lg font-semibold text-gray-900 leading-none">Room:</h3>
             <p class="font-semibold text-gray-600 leading-none">
-                {{ $roomRate->room->name ?? 'No Room Assigned' }}
+                {{ $roomRate->property->name_number ?? 'No Room Assigned' }}
             </p>
         </div>
 
@@ -37,7 +37,7 @@
                 <li><strong>Amount:</strong> ₱{{ number_format($roomRate->amount, 2) }}</li>
                 <li><strong>Extra Person Charge:</strong> ₱{{ number_format($roomRate->extra_person_charge, 2) }}</li>
                 <li><strong>Extended Stay Charge Per Hour:</strong> ₱{{
-                    number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li>
+    number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li>
             </ul>
         </div>
 
@@ -51,12 +51,24 @@
             <p class="font-light text-gray-500">{{ $roomRate->description }}</p>
         </div>
 
+        <!-- Additional Information -->
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Additional Information</h3>
+            <ul class="list-disc pl-5 text-gray-600">
+                <li><strong>Freebies:</strong> {{ $roomRate->freebies ?? 'None' }}</li>
+                <li><strong>Priority:</strong> {{ $roomRate->priority ? 'Yes' : 'No' }}</li>
+                <li><strong>Active:</strong> {{ $roomRate->is_active ? 'Yes' : 'No' }}</li>
+                <li><strong>Minimum Stay Nights:</strong> {{ $roomRate->min_stay_nights ?? 'Not Specified' }}</li>
+                <li><strong>Maximum Stay Nights:</strong> {{ $roomRate->max_stay_nights ?? 'Not Specified' }}</li>
+            </ul>
+        </div>
+
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">
             <!-- Edit -->
             <x-button type="button" icon="fas fa-pen-to-square"
                 class="!text-black inline-flex items-center !bg-gray-200 hover:!bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                wire:navigate href="{{ route('admin.edit-room-rate', ['roomRate' => $roomRate->id]) }}">
+                wire:navigate href="{{ route('admin.edit-individual-rate', ['roomRate' => $roomRate->id]) }}">
                 Edit
             </x-button>
 

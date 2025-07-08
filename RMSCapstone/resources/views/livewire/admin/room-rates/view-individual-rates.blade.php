@@ -198,63 +198,6 @@
                                 </button>
                             </th>
 
-                            {{-- Extra Person Charge --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('extra_person_charge')">
-                                <button class="flex items-center">
-                                    Extra Person Charge
-                                    @if ($sortBy !== 'extra_person_charge')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            {{-- Extended Stay Charge Per Hr --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('extended_stay_charge_per_hr')">
-                                <button class="flex items-center">
-                                    Extended Stay Charage Per Hr
-                                    @if ($sortBy !== 'extended_stay_charge_per_hr')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-
                             {{-- Rate Type --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('rate_type')">
                                 <button class="flex items-center">
@@ -296,15 +239,15 @@
                             {{-- Room Rate Name --}}
                             <td class="px-4 py-3">{{ $roomRate->name }}</td>
                             {{-- Start Date --}}
-                            <td class="px-4 py-3">{{ $roomRate->start_date }}</td>
+                            <td class="px-4 py-3">
+                                {{ \Carbon\Carbon::parse($roomRate->start_date)->format('F j, Y') }}
+                            </td>
                             {{-- End Date --}}
-                            <td class="px-4 py-3">{{ $roomRate->end_date }}</td>
+                            <td class="px-4 py-3">
+                                {{ \Carbon\Carbon::parse($roomRate->end_date)->format('F j, Y') }}
+                            </td>
                             {{-- Amount --}}
                             <td class="px-4 py-3">{{ $roomRate->amount }}</td>
-                            {{-- Extra Person Charge --}}
-                            <td class="px-4 py-3">{{ $roomRate->extra_person_charge }}</td>
-                            {{-- Extended Stay Charge Per Hr --}}
-                            <td class="px-4 py-3">{{ $roomRate->extended_stay_charge_per_hr }}</td>
                             {{-- Rate Type --}}
                             <td class="px-4 py-3">
                                 @if ($roomRate->rate_type === 'Weekdays')

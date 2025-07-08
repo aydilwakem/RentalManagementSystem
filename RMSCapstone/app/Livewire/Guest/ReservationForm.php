@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
 use App\Models\Activity;
+use App\Models\RoomRate;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -53,9 +54,35 @@ class ReservationForm extends Component
 
     public function mount()
     {
-        $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
+        // $this->rooms = Property::ofType('Room')->where('property_status', 'available')->get();
+
+        $this->rooms = Property::ofType('Room')
+            ->where('property_status', 'available')
+            ->get()
+            ->map(function ($room) {
+                $room->dynamic_rate = $this->getDynamicRate($room);
+                return $room;
+            });
+
         $this->activities = Activity::all();
         $this->currentStep = 1;
+    }
+
+    public function getDynamicRate($room)
+    {
+        $date = now(); // or use a selected check-in date if available
+        $dayOfWeek = $date->dayOfWeek; // 0 = Sun, 6 = Sat
+
+        $rateType = ($dayOfWeek === 0 || $dayOfWeek === 6) ? 'Weekend' : 'Weekdays';
+
+        $rate = RoomRate::where('property_id', $room->id)
+            ->where('rate_type', $rateType)
+            ->whereDate('start_date', '<=', $date)
+            ->whereDate('end_date', '>=', $date)
+            ->whereNull('deleted_at')
+            ->first();
+
+        return $rate ? $rate->amount : $room->amount;
     }
 
     public function increaseStep()

@@ -1,9 +1,10 @@
 <div class="border rounded-lg p-6 max-w-2xl mx-auto mb-6 mt-6">
     <div class="mx-auto max-w-2xl lg:py-2s">
-        <h2 class="mb-4 text-xl font-bold text-gray-900">Add new room rate for {{$room->name}}</h2>
+        <h2 class="mb-4 text-xl font-bold text-gray-900">Add new room rate for {{$room->name_number}}</h2>
 
         <form wire:submit.prevent="saveIndividualRoomRate">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
                 <!-- Room Rate Name -->
                 <div class="sm:col-span-2">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Room Rate Name</label>
@@ -46,30 +47,6 @@
                     @enderror
                 </div>
 
-                <!-- Extra Person Charge -->
-                <div>
-                    <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra
-                        Person Charge</label>
-                    <input type="number" wire:model="extra_person_charge" id="extra_person_charge"
-                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Enter total amount">
-                    @error('extra_person_charge')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Extended Stay Charge Per Hour -->
-                <div>
-                    <label for="extended_stay_charge_per_hr" class="block mb-2 text-sm font-medium text-gray-900">Extra
-                        Stay Charge Per Hour</label>
-                    <input type="number" wire:model="extended_stay_charge_per_hr" id="extended_stay_charge_per_hr"
-                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Enter total amount">
-                    @error('extended_stay_charge_per_hr')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
                 <!-- Rate Type -->
                 <div class="sm:col-span-2 mb-3">
                     <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900">Rate Type</label>
@@ -93,6 +70,62 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                     rows="5"></textarea>
                 @error('description')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Freebies -->
+            <div class="sm:col-span-2">
+                <label for="freebies" class="block mb-2 text-sm font-medium text-gray-900">Freebies</label>
+                <textarea wire:model="freebies" id="freebies"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 resize-none"
+                    rows="3"></textarea>
+                @error('freebies')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Priority -->
+            <div class="sm:col-span-1">
+                <label for="priority" class="block mb-2 text-sm font-medium text-gray-900">Priority</label>
+                <input type="number" wire:model="priority" id="priority"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                    min="1" max="10">
+                @error('priority')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Is Active -->
+            <div class="sm:col-span-1 flex items-center">
+                <input type="checkbox" wire:model="is_active" id="is_active"
+                    class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
+                <label for="is_active" class="ml-2 text-sm text-gray-900">Is Active</label>
+                @error('is_active')
+                    <span class="text-red-500 text-sm ml-2">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Min Stay -->
+            <div class="sm:col-span-1">
+                <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Stay
+                    (nights)</label>
+                <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                    min="1" max="30">
+                @error('min_stay_nights')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <!-- Max Stay -->
+            <div class="sm:col-span-1">
+                <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Stay
+                    (nights)</label>
+                <input type="number" wire:model="max_stay_nights" id="max_stay_nights"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                    min="1" max="90">
+                @error('max_stay_nights')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>

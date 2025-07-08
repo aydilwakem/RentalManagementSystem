@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();
             $table->enum('rate_type', ['Weekend', 'Weekdays', 'Holiday', 'Peak']);
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
