@@ -199,31 +199,96 @@
                                                             @endif
                                                         </div>
                                                         <hr>
+
+                                                        <!--------------------------- ROOM RATING -------------------------------->
                                                         <div class="mt-4">
-                                                            <!-- Room Rtaing -->
-                                                            <div class="border rounded-md p-4 mt-4">
-                                                                <h3 class="text-lg font-semibold">Room
-                                                                    Rating</h3>
-                                                                <div class="flex items-center gap-2 mb-2">
-                                                                    <span class="text-yellow-500">
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star-half-alt"></i>
-                                                                    </span>
-                                                                    <span class="text-gray-600">(4.5/5)</span>
-                                                                </div>
-                                                                <div>
-                                                                    <div class="border rounded-md p-2 mt-2">
-                                                                        <img src="{{ asset('images/canopy-logo.png') }}"
-                                                                            alt="User Avatar"
-                                                                            class="w-8 h-8 rounded-full inline-block">
-                                                                        <span class="text-gray-500">mabango d2</span>
-                                                                    </div>
-                                                                </div>
+                                                
+                                                        @php
+                                                            $allRatings = collect();
+                                                            $comments = [];
+
+                                                            foreach ($room->transactions as $transaction) {
+                                                                foreach ($transaction->feedbacks as $feedback) {
+                                                                    $feedbackRatings = $feedback->feedbackRatings;
+                                                                    $individualRatingValues = $feedbackRatings->pluck('rating_value');
+                                                                    $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
+
+                                                                    // Push all ratings for room average
+                                                                    $allRatings = $allRatings->merge($individualRatingValues);
+
+                                                                    if (!empty($feedback->comments)) {
+                                                                        $comments[] = [
+                                                                            'text' => $feedback->comments,
+                                                                            'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
+                                                                            'date' => \Carbon\Carbon::parse($feedback->created_at)->format('F j, Y'),
+                                                                            'rating' => $individualAvg,
+                                                                        ];
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            $averageRating = $allRatings->count() ? $allRatings->avg() : null;
+
+                                                        @endphp
+
+                                                        <!------------------- Avrage of Rating ---------------------->
+                                                        @if ($averageRating)
+                                                            <div class="flex items-center gap-2 mb-2">
+                                                                <span class="text-yellow-500">
+                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                        @if ($i <= floor($averageRating))
+                                                                            <i class="fas fa-star"></i>
+                                                                        @elseif ($i - $averageRating < 1)
+                                                                            <i class="fas fa-star-half-alt"></i>
+                                                                        @else
+                                                                            <i class="far fa-star"></i>
+                                                                        @endif
+                                                                    @endfor
+                                                                </span>
+                                                                <span class="text-gray-600">({{ number_format($averageRating, 1) }}/5)</span>
                                                             </div>
+                                                        @endif
+
+                                                        <!------------------------ Comments ---------------------->
+                                                        @if (count($comments))
+                                                          @foreach ($comments as $comment)
+                                                    <div class="border rounded-md p-2 mt-2">
+                                                        <img src="{{ asset('images/canopy-logo.png') }}"
+                                                            alt="User Avatar"
+                                                            class="w-8 h-8 rounded-full inline-block">
+                                                        <div class="inline-block align-middle ms-2">
+                                                            <p class="text-gray-700 font-semibold">
+                                                                {{ $comment['user'] }}
+                                                                <span class="text-sm text-gray-400">• {{ $comment['date'] }}</span>
+                                                            </p>
+
+                                                            <!-- Stars per feedback -->
+                                                            @if (!is_null($comment['rating']))
+                                                                <div class="text-yellow-500 text-sm mb-1">
+                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                        @if ($i <= floor($comment['rating']))
+                                                                            <i class="fas fa-star"></i>
+                                                                        @elseif ($i - $comment['rating'] < 1)
+                                                                            <i class="fas fa-star-half-alt"></i>
+                                                                        @else
+                                                                            <i class="far fa-star"></i>
+                                                                        @endif
+                                                                    @endfor
+                                                                    <span class="text-gray-500 ms-1">({{ number_format($comment['rating'], 1) }}/5)</span>
+                                                                </div>
+                                                            @endif
+
+                                                            <p class="text-gray-500">{{ $comment['text'] }}</p>
                                                         </div>
+                                                    </div>
+                                                @endforeach
+
+                                                        @else
+                                                            <p class="text-sm text-gray-400">No comments yet.</p>
+                                                        @endif
+                                                        </div>
+                                                        <!--------------------------- End kf Rating -------------------------------->
+
                                                     </div>
                                                 </div>
                                             </div>

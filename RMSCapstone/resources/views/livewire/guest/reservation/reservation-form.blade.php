@@ -173,8 +173,12 @@
 
                                             <!-- Charges Breakdown -->
                                             <div class="flex justify-between items-start gap-1">
+
                                                 <!-- Labels -->
                                                 <div>
+                                                     <div class="text-sm text-gray-600">
+                                                       {{ $item['roomRateName'] }} (per night × days):
+                                                    </div>
                                                     @if ($item['extra_charge'])
                                                         <div class="text-sm text-gray-600">Extra Person Charge:
                                                         </div>
@@ -184,6 +188,9 @@
 
                                                 <!-- Amounts -->
                                                 <div class="text-right">
+                                                     <div class="text-sm font-semibold text-gray-800">
+                                                        ₱{{ number_format($item['roomAmount'], 2) }}
+                                                    </div>
                                                     @if ($item['extra_charge'])
                                                         <div class="text-sm font-semibold text-gray-800">
                                                             ₱{{ number_format($item['extra_charge'], 2) }}

@@ -73,43 +73,33 @@ class ReservationForm extends Component
     public $transaction_number;
     public $paymentMethod;
 
+    // ------------------- OTHERS -------------------- //
+    public $terms = 0;
+    public $terms_and_conditions;
+    public $expirationHours;
+    protected $queryString = ['currentStep'];
+    public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
+    public $guest_gender, $guest_residency, $guest_country_of_origin;
+    public $guest_types = [];
+    public $guests = [];
+    public $editingGuestIndex = null;
+    public $roomCategoryFilter = '';
+
+
     // ------------------- NAVIGATION STEPS -------------------- //
 
     public $currentStep = 1;
     public $totalSteps = 4;
 
-    public $terms = 0;
-    public $terms_and_conditions;
-    public $expirationHours;
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
+    // --------------- PAYMENT INTEGRATION ------------------- //
     public $enable_deposit_percentage = true;
     public $depositPercentage;
     public $convenienceFeeInCentavos;
     public $convenience_fee;
 
-    protected $queryString = ['currentStep'];
-
-    public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
-    public $guest_gender, $guest_residency, $guest_country_of_origin;
-
-    public $guest_types = [];
-    public $guests = [];
-
-    public $showGuestModal = false;
-    public $editingGuestIndex = null;
-    public $showEditModal = false;
-    public $roomCategoryFilter = '';
-
-    protected $listeners = ['refreshComponent' => '$refresh'];
-
-    //----------------------- BRANDING ------------------------ //
-    public string $companyName = 'Company'; //Default
-    public string $logoPath = '';
-    public string $companyEmail;
-    public string $companyContact;
-    public string $companyAddress;
-    public string $facebookLink;
-    public string $instagramLink;
-
+    // --------------- EDITING GUEST DETAIL ------------------- //
     public $editingGuest = [
         'guest_first_name' => '',
         'guest_middle_name' => '',
@@ -121,14 +111,28 @@ class ReservationForm extends Component
         'guest_country_of_origin' => '',
     ];
 
+    // ---------------------- MODALS -------------------------- //
+    public $confirmReservationModal = false;
+    public $showEditModal = false;
+    public $showGuestModal = false;
+
+    //----------------------- BRANDING ------------------------ //
+    public string $companyName = 'Company'; //Default
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
+
     //----------------------- PROMO CODE ------------------------ //
+    public $originalTotal;
     public $promo;
     public $promoCode;
     public $discountMessage;
     public $errorMessage;
     public $promoDiscount = 0;
-    public $confirmReservationModal = false;
-
+    public $promo_discount_amount;
 
 
 
@@ -170,15 +174,16 @@ class ReservationForm extends Component
     public function mount()
     {
         // $this->rooms = Property::ofType('Room')->availableRooms()->get();
-
         $this->rooms = Property::ofType('Room')
             ->availableRooms()
+            ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
             ->get()
             ->map(function ($room) {
                 $rate = $this->getDynamicRate($room);
                 $room->dynamic_rate = $rate['amount'];
                 $room->rate_name = $rate['name'];
                 $room->rate_type = $rate['rate_type'];
+                $room->rate_id = $rate['rate_id'];
                 return $room;
             });
 
@@ -190,7 +195,7 @@ class ReservationForm extends Component
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
         $this->guest_types = GuestType::all();
 
-        //For Branding
+        // For Branding
         // Fetch the first row of the settings table
         $setting = Setting::first();
         if ($setting) {
@@ -208,10 +213,24 @@ class ReservationForm extends Component
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
     }
 
+    /**
+     * Get the dynamic rate for the given room based on date and rate type.
+     *
+     * @param mixed $room The room object for which to fetch the dynamic rate.
+     * @return array{amount: mixed, name: mixed, rate_type: mixed}
+     *
+     * This method checks for a valid rate based on priority:
+     * 1. Peak Rate
+     * 2. Holiday Rate
+     * 3. Weekend/Weekday Rate
+     * 
+     * If no matching rate is found, it defaults to the base amount from the room.
+     */
     public function getDynamicRate($room)
     {
-        $date = now(); // or selected check-in date
-        $dayOfWeek = $date->dayOfWeek;
+        // $date = now(); // or selected check-in date
+        $date = $this->check_in_date ? Carbon::parse($this->check_in_date) : now();
+        $dayOfWeek = $date->dayOfWeek; // $date->dayOfWeek returns an integer that represents the day of the week
 
         // 1. Check for Peak rate
         $peakRate = RoomRate::where('property_id', $room->id)
@@ -224,6 +243,7 @@ class ReservationForm extends Component
 
         if ($peakRate) {
             return [
+                'rate_id' => $peakRate ? $peakRate->id : null,
                 'amount' => $peakRate->amount,
                 'name' => $peakRate->name ?? 'Peak Rate',
                 'rate_type' => 'Peak',
@@ -243,6 +263,7 @@ class ReservationForm extends Component
 
         if ($holidayRate) {
             return [
+                'rate_id' => $holidayRate ? $holidayRate->id : null,
                 'amount' => $holidayRate->amount,
                 'name' => $holidayRate->name ?? 'Holiday Rate',
                 'rate_type' => 'Holiday',
@@ -269,8 +290,9 @@ class ReservationForm extends Component
         // 5. Return found rate or fallback to base
         return [
             'amount' => $rate ? $rate->amount : $room->amount,
-            'name' => $rate ? $rate->name : null,
+            'name' => $rate ? $rate->name : 'Base Rate',
             'rate_type' => $rate ? $rate->rate_type : null,
+            'rate_id' => $rate ? $rate->id : null,
         ];
     }
 
@@ -282,8 +304,10 @@ class ReservationForm extends Component
      */
     public function render()
     {
+        $this->getAvailableRooms();
         return view('livewire.guest.reservation.reservation-form');
     }
+
 
     // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
 
@@ -371,7 +395,9 @@ class ReservationForm extends Component
 
                     $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
                     $stayDuration = $this->getStayDurationProperty();
-                    $roomAmount = $room->amount * $stayDuration;
+                    $rate = $this->getDynamicRate($room);
+                    $roomAmount = $rate['amount'] * $stayDuration;
+                    $rate_id = $rate['rate_id'];
                     $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
                     $this->cart[$index]['adults'] = $adults;
@@ -379,19 +405,21 @@ class ReservationForm extends Component
                     $this->cart[$index]['extra_guest'] = $extraGuests;
                     $this->cart[$index]['extra_charge'] = $extraCharge;
                     $this->cart[$index]['roomAmount'] = $roomAmount;
+                    $this->cart[$index]['rate_id'] = $rate_id;
                     $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
                 }
             }
 
             // Triggers compute total pax method
             $this->computeTotalPax();
+            $this->getAvailableRooms();
         }
 
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
 
             $this->cart = [];
-            $this->currentStep = 1; // Balik sa step 1 kasi makulit ka
+            $this->currentStep = 1;
             $this->getAvailableRooms();
         }
     }
@@ -464,7 +492,15 @@ class ReservationForm extends Component
                     });
             })
             ->with('features')
-            ->get();
+            ->get()
+            ->map(function ($room) {
+                $rate = $this->getDynamicRate($room);
+                $room->dynamic_rate = $rate['amount'];
+                $room->rate_name = $rate['name'];
+                $room->rate_type = $rate['rate_type'];
+                return $room;
+            });
+        // ->get();
     }
 
     public function getDepositProperty()
@@ -600,11 +636,11 @@ class ReservationForm extends Component
         }
 
         // Step 6: Calculates discountg
-        $originalTotal = $this->computeTotalAmount();
+        $this->originalTotal = $this->computeTotalAmount();
 
         switch ($promo->discount_type) {
             case 'percentage':
-                $this->promoDiscount = ($promo->discount_value / 100) * $originalTotal;
+                $this->promoDiscount = ($promo->discount_value / 100) * $this->originalTotal;
                 break;
             case 'fixed':
                 $this->promoDiscount = $promo->discount_value;
@@ -614,10 +650,13 @@ class ReservationForm extends Component
                 break;
         }
 
-        $this->total_amount = $originalTotal - $this->promoDiscount;
+        $this->promo_discount_amount = $this->promoDiscount;
+        $this->total_amount = $this->originalTotal - $this->promoDiscount;
 
         $this->discountMessage = 'Promo code applied! You saved ₱' . number_format($this->promoDiscount, 2) . '.';
         $this->errorMessage = null;
+
+        $this->getAvailableRooms();
     }
 
     public function removePromoCode()
@@ -703,8 +742,8 @@ class ReservationForm extends Component
 
     public function addRoomToCart($roomId)
     {
-        Log::info('PHP ini loaded: ' . php_ini_loaded_file());
-        Log::info('curl.cainfo: ' . ini_get('curl.cainfo'));
+        // Log::info('PHP ini loaded: ' . php_ini_loaded_file());
+        // Log::info('curl.cainfo: ' . ini_get('curl.cainfo'));
         Log::info('addRoomToCart method called');
 
         // Resets any previous error messages
@@ -719,6 +758,10 @@ class ReservationForm extends Component
         // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
 
+        // Get the dynamic rate based on check-in/check-out
+        $rate = $this->getDynamicRate($room);
+        // dd('Rate used for cart:', $rate);
+
         // Check if the room is already in the cart
         foreach ($this->cart as $item) {
             if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
@@ -731,7 +774,10 @@ class ReservationForm extends Component
         $kids = (int) ($this->kids[$roomId] ?? 0);
         $stayDuration = $this->getStayDurationProperty();
         $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-        $roomAmount = $room->amount * $stayDuration;
+        $roomAmount = $rate['amount'] * $stayDuration;
+        $roomRateName = $rate['name'];
+        $rate_id = $rate['rate_id'];
+
         $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
         $this->cart[] = [
@@ -743,6 +789,8 @@ class ReservationForm extends Component
             'adults' => $adults,
             'kids' => $kids,
             'roomAmount' => $roomAmount, // base rate * days
+            'roomRateName' => $roomRateName,
+            'rate_id' => $rate_id,
             'extra_charge' => $extraCharge, // extra_guest * extra_person_charge * days
             'total_amount' => $roomAmount + $extraCharge,
         ];
@@ -752,6 +800,9 @@ class ReservationForm extends Component
 
         // Call a method to compute the total number of people (pax) in the cart after adding the room
         $this->computeTotalPax();
+
+        // Refresh room list with updated dynamic rates
+        $this->getAvailableRooms();
     }
 
 
@@ -942,6 +993,7 @@ class ReservationForm extends Component
         // Recalculate necessary values
         $this->computeTotalPax();
         $this->computeTotalAmount();
+        $this->getAvailableRooms();
 
         // Check if there are no "room" items left in the cart
         $hasRoomItems = collect($this->cart)->contains(function ($item) {
@@ -1022,11 +1074,14 @@ class ReservationForm extends Component
                 'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
                 'reservation_type_id' => $this->reservation_type_id,
                 'created_by' => $transactionUser->id,
+                'promo_id' => $promo?->id,
                 'start_datetime' => $this->check_in_date,
                 'end_datetime' => $this->check_out_date,
                 'total_adults' => collect($this->cart)->sum('adults'),
                 'total_kids' => collect($this->cart)->sum('kids'),
                 'pax' => $this->total_pax,
+                'original_amount' => $this->originalTotal,
+                'promo_discount_amount' => $this->promo_discount_amount,
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
                 'heard_from' => $this->heard_from,
@@ -1058,7 +1113,7 @@ class ReservationForm extends Component
                         'extra_charge' => $item['extra_charge'],
                         'amount' => $item['roomAmount'],
                         'total_amount' => $item['total_amount'],
-                        'extra_guest' => $item['extra_guest'],
+                        'room_rate_id' => $item['rate_id']
                     ]);
                 }
 

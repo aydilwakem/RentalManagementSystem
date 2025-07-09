@@ -76,7 +76,8 @@ class Property extends Model
                 'extra_charge',
                 'amount',
                 'days',
-                'total_amount'
+                'total_amount',
+                'room_rate_id'
             )
             ->withTimestamps();
     }

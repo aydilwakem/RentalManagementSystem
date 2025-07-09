@@ -1,5 +1,8 @@
 <?php
 
+
+// ------------------------- NOT THE CORRECT FILE ------------------------------- //
+
 namespace App\Livewire\Guest;
 
 use Livewire\Component;

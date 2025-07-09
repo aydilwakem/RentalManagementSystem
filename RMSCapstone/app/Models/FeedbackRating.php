@@ -23,6 +23,7 @@ class FeedbackRating extends Model
         return $this->belongsTo(Feedback::class, 'feedback_id', 'id');
     }
 
+
     public function ratingType()
     {
         return $this->belongsTo(FeedbackRatingType::class, 'rating_type_id', 'id');
