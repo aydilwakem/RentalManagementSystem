@@ -1,14 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Amenity') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Back Button -->
@@ -20,7 +20,7 @@
 
 
             <!-- Name -->
-            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8 pt-4">
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8 pt-4 dark:text-white">
                 Amenity: {{ $amenity->name }}
             </h1>
 

@@ -103,8 +103,9 @@ class CreateReservation extends Component
     public $activityModal = false;
     public $showGuestModal = false;
     public $showEditModal = false;
-
     public $addRoomFirstModal = false;
+    public $expandedActivity = null;
+
 
 
     // Summary
@@ -218,6 +219,11 @@ class CreateReservation extends Component
         } else {
             $this->activityModal = true;      // Show activity modal
         }
+    }
+
+    public function toggleActivityDescription($activityId)
+    {
+        $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
 

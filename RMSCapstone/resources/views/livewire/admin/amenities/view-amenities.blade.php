@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="min-h-[550px] container mx-auto p-6 max-w-full">
     @if ($amenities->isEmpty() && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
@@ -36,7 +36,8 @@
                 @endcan
             </div>
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     {{-- Search Tab --}}
@@ -51,14 +52,16 @@
                                 </svg>
                             </div>
                             <input wire:model.live.debounce.300ms="search" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
 
                         {{-- Bulk Actions Button --}}
                         <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                            dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
                                 <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,10 +71,11 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                            dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 <div class="py-1">
                                     <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                         Delete</a>
                                 </div>
                             </div>
@@ -79,11 +83,11 @@
                     </div>
                 </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox"
-                                       id="checkAll" class="accent-blue-600 w-4 h-4">
+                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
                                 <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
                                     <span>ID</span>
                                     @if ($sortBy !== 'ID')
@@ -96,17 +100,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -152,19 +154,20 @@
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="text-left">
+                    <tbody class="text-left dark:bg-gray-700">
                         @forelse ($amenities as $amenity)
-                            <tr class="border-b hover:bg-gray-50">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2">
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2 dark:text-gray-200">
                                     <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
                                         value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3 font-semibold text-gray-900">{{ $amenity->name }}</td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">{{ $amenity->name }}</td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3 dark:text-gray-200">
 
                                     @can('amenity-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
                                             wire:navigate
                                             href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
                                         </i>
@@ -172,14 +175,14 @@
 
 
                                     @can('amenity-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
                                             wire:navigate
                                             href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
                                         </i>
                                     @endcan
 
                                     @can('amenity-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
                                             wire:click="confirmDelete({{ $amenity->id }})" wire:loading.attr="disabled">
                                         </i>
                                     @endcan
@@ -189,19 +192,20 @@
                         @empty
                             <tr>
                                 <!-- No Match Search / Filter Result Message -->
-                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                <td colspan="15" class="text-center py-10 text-gray-500 dark:text-gray-200">
                                     No amenities found.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-                <div class="py-6 px-4 !bg-white rounded-xl shadow-sm">
+                <div class="py-6 px-4 bg-white shadow-sm dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center space-x-3">
-                            <label class="text-sm font-semibold text-gray-700">Per Page</label>
+                            <label class="text-sm font-semibold text-gray-700 dark:text-gray-200">Per Page</label>
                             <select wire:model.live="perPage"
-                                class="!bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 w-24">
+                                class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg p-2 w-24
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
@@ -231,8 +235,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteAmenity"
-                            wire:loading.attr="disabled">
+                        <x-danger-button class="ms-3" wire:click="deleteAmenity" wire:loading.attr="disabled">
                             {{ __('Delete Amenity') }}
                         </x-danger-button>
                     </x-slot>

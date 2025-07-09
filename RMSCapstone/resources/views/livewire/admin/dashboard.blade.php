@@ -9,7 +9,7 @@
 
         <!-- Greeting -->
         <div class="sm:col-span-3">
-            <h1 class="text-xl font-semibold">
+            <h1 class="text-xl font-semibold dark:text-white">
                 Hello, {{ $first_name }} {{ $last_name }}!
             </h1>
         </div>

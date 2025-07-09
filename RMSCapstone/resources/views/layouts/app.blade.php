@@ -20,6 +20,7 @@
 
     <!-- Calendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
     <!-- Text Editor -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix/dist/trix.css">
     <script type="text/javascript" src="https://unpkg.com/trix/dist/trix.umd.min.js"></script>
@@ -38,12 +39,12 @@
 
     <x-banner />
 
-    <div class="h-screen rounded-2xl flex bg-gray-100 dark:bg-[#1E1E1E]" x-data="{ sidebarWidth: 256 }"
+    <div class="h-screen rounded-2xl flex bg-gray-100 dark:bg-gray-900 dark:rounded-none" x-data="{ sidebarWidth: 256 }"
         x-init="$watch('sidebarWidth', value => document.documentElement.style.setProperty('--sidebar-width', `${value}px`))">
 
         <!-- Sidebar -->
         <livewire:sidebar x-ref="sidebar" x-on:resize.window="sidebarWidth = $refs.sidebar.offsetWidth"
-            class="fixed left-0 top-0 bottom-0 w-[var(--sidebar-width)] h-full flex flex-col bg-white dark:bg-[#2A2A2A] shadow-lg" />
+            class="fixed left-0 top-0 bottom-0 w-[var(--sidebar-width)] h-full flex flex-col bg-white shadow-lg" />
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col ml-[var(--sidebar-width)] transition-all duration-300">
@@ -52,7 +53,7 @@
             {{-- @livewire('navigation-menu') --}}
 
             @if (isset($header))
-                <header class="bg-white dark:bg-[#2A2A2A] shadow w-full px-6">
+                <header class="bg-white dark:bg-gray-800 shadow w-full px-6">
                     <div class="py-6">
                         {{ $header }}
                     </div>

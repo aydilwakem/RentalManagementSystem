@@ -1,39 +1,21 @@
-<div class="min-h-[550px] container mx-auto p-6 max-w-full">
-    <!--Header Buttons -->
-    <div class="flex items-center justify-between mb-4 animate-pulse">
-        <div class="h-9 w-32 bg-gray-200 rounded-lg"></div>
-        <div class="h-9 w-40 bg-gray-200 rounded-lg"></div>
-    </div>
-
-    <!-- Search and Filters -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border animate-pulse">
-        <div class="flex justify-between p-4 space-x-4">
-            <div class="flex space-x-2 w-full">
-                <div class="h-10 w-56 bg-gray-200 rounded-lg"></div>
-                <div class="h-10 w-24 bg-gray-200 rounded-lg"></div>
-            </div>
-            <div class="h-10 w-56 bg-gray-200 rounded-lg"></div>
-        </div>
-
-        <!-- Table Headers -->
+<div class="min-h-[550px] container mx-auto p-6 max-w-full" aria-busy="true">
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
                 <thead class="text-sm text-gray-700 bg-gray-200">
                     <tr>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-10 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-32 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-20 rounded"></div></th>
-                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-20 rounded"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-10 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-32 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-20 rounded animate-pulse"></div></th>
+                        <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-20 rounded animate-pulse"></div></th>
                     </tr>
                 </thead>
-
-                <!-- Table Rows -->
-                <tbody>
+                <tbody class="animate-pulse">
                     @for ($i = 0; $i < 5; $i++)
                         <tr class="border-b">
                             @for ($j = 0; $j < 9; $j++)

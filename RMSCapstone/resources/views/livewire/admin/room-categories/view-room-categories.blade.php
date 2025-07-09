@@ -1,6 +1,6 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="min-h-[550px] container mx-auto p-6 max-w-full">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Room Categories') }}
         </h2>
     </x-slot>
@@ -40,7 +40,7 @@
                 @endcan
             </div>
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     {{-- Search Tab --}}
@@ -55,14 +55,16 @@
                         </div>
                         {{-- Search --}}
                         <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
 
                     {{-- Bulk Actions Button --}}
                     <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                            dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                             Actions
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -72,10 +74,11 @@
                         </button>
 
                         <div x-show="open" @click.away="open = false"
-                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                            dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                             <div class="py-1">
                                 <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                     Delete</a>
                             </div>
                         </div>
@@ -85,7 +88,7 @@
 
                 <!-- Table Body-->
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- Checkboxes --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -151,64 +154,66 @@
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
+                    <tbody class="dark:bg-gray-700">
+                        @forelse ($roomCategories as $roomCategory)
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
+                                        value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
+                                    <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>
+                                </th>
+                                <td class="px-4 py-3">{{ $roomCategory->name }}</td>
+                                <td class="px-4 py-3">
+                                    @if (!empty($roomCategory->description))
+                                        {{ Str::limit($roomCategory->description, 80) }}
+                                    @else
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                                    <!-- View Icon -->
+                                    @can('room-category-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
+                                            href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
-                    @forelse ($roomCategories as $roomCategory)
-                        <tr class="border-b hover:bg-gray-50">
-                            <th scope="row"
-                                class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                                <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
-                                    value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
-                                <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>
-                            </th>
-                            <td class="px-4 py-3">{{ $roomCategory->name }}</td>
-                            <td class="px-4 py-3">
-                                @if (!empty($roomCategory->description))
-                                    {{ Str::limit($roomCategory->description, 80) }}
-                                @else
-                                    <em class="text-gray-600 leading-relaxed">No description provided.</em>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-2">
-                                <!-- View Icon -->
-                                @can('room-category-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
-                                @endcan
+                                    <!-- Edit Icon -->
+                                    @can('room-category-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
+                                            href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
-                                <!-- Edit Icon -->
-                                @can('room-category-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                    </i>
-                                @endcan
+                                    <!-- Delete Icon -->
+                                    @can('room-category-delete')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
+                                            wire:click="confirmDelete({{ $roomCategory->id }})" wire:loading.attr="disabled">
+                                        </i>
+                                    @endcan
 
-                                <!-- Delete Icon -->
-                                @can('room-category-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $roomCategory->id }})" wire:loading.attr="disabled">
-                                    </i>
-                                @endcan
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <!-- No Match Search / Filter Result Message -->
-                            <td colspan="15" class="text-center py-10 text-gray-500">
-                                No room categories found.
-                            </td>
-                        </tr>
-                    @endforelse
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <!-- No Match Search / Filter Result Message -->
+                                <td colspan="15" class="text-center py-10 text-gray-500 dark:text-white">
+                                    No room categories found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
 
                 {{-- Per Page --}}
-                <div class="py-4 px-3">
+                <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex ">
                         <div class="flex space-x-2 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live='perPage'
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

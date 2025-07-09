@@ -1,6 +1,6 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Reservation') }}
         </h2>
     </x-slot>
@@ -30,11 +30,11 @@
 
             </x-button>
             <!---------------------------- GUEST DETAILS ---------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Guest Details') }}
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
                     <div><strong>Guest Name:</strong></div>
                     <div>
                         {{ $transaction->transactionUser->first_name }}
@@ -54,36 +54,36 @@
             </div>
 
             <!---------------------------- ADDITIONAL GUESTS DETAILS ---------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Additional Guests Details') }}
                 </h2>
                 @if ($guestDetails->isNotEmpty())
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Full Name</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Gender</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Residency</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Country of Origin</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Full Name</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Gender</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Residency</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Country of Origin</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white">
+                            <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($guestDetails as $guestDetail)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700">
+                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ $guestDetail->first_name }}
                                             {{ $guestDetail->middle_name }}
                                             {{ $guestDetail->last_name }}
                                             {{ $guestDetail->suffix }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700">
+                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->gender) ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700">
+                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->residency) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700">
+                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->country_of_origin) }}</td>
                                     </tr>
                                 @endforeach
@@ -91,16 +91,16 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-600 italic">No additional guests found for this transaction.</p>
+                    <p class="text-gray-600 italic dark:text-gray-200">No additional guests found for this transaction.</p>
                 @endif
             </div>
 
             <!---------------------------- TRANSACTION DETAILS --------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Transaction Details') }}
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700 dark:text-gray-200">
                     <div class="col-span-full">
                         <strong>Transaction Status:</strong>
                         <div class="mt-1">
@@ -200,49 +200,49 @@
             </div>
 
             <!---------------------------- ROOM DETAILS ---------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Room Details') }}
                 </h2>
                 @if ($properties->isNotEmpty())
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Room</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Category</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">No. of Adults
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Room</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Category</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Adults
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">No. of Kids</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Stay Duration
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Kids</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Stay Duration
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Extra Guests</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Base Rate</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Extra Guest Charge
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Extra Guests</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Base Rate</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Extra Guest Charge
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Room Total</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Room Total</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white">
+                            <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($properties as $property)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700">{{ $property->name_number }}</td>
-                                       <td class="border px-4 py-2 text-gray-700">
+                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $property->name_number }}</td>
+                                       <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ optional($property->category)->name ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->adults ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right">
+                                        <td class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right">
+                                        <td class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
+                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
                                     </tr>
                                 @endforeach
@@ -258,31 +258,32 @@
             </div>
 
             <!---------------------------- ADD ON SERVICES ------------------------------------>
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Add-on Services/Activities') }}
                 </h2>
                 @if ($activities->isNotEmpty())
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-left">Activity Name</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Quantity</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Unit Cost</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right">Activity Total
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">Activity Name</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Quantity</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Unit Cost</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Activity Total
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white">
+                            <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($activities as $activity)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700 text-left">{{ $activity->name }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
+                                            {{ $activity->name }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->pivot->quantity ?? 'NA' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center">
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($activity->amount, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold">
+                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ $activity->pivot && $activity->pivot->quantity !== null
                                                 ? number_format($activity->amount * $activity->pivot->quantity, 2)
                                                 : 'NA' }}
@@ -301,13 +302,13 @@
             </div>
 
             <!---------------------------- INVOICE DETAILS ------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Invoice Details') }}
                 </h2>
 
             @if ($invoice)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
                         <!-- Invoice Info -->
                         <div><strong>Invoice ID:</strong></div>
                         <div>{{ $invoice->invoice_number }}</div>
@@ -369,18 +370,18 @@
                      <!-- Items Table -->
                     <div class="overflow-x-auto mt-4">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">#</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900">Item & Description</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Qty</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Days</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Unit Cost</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Amount</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center">Actions</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">#</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Item & Description</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Qty</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Days</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Unit Cost</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Amount</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white text-gray-700">
+                            <tbody class="bg-white text-gray-700 dark:bg-gray-600 dark:text-gray-200">
 
                                 {{-- Counter --}}
                                 @php $rowNumber = 1; @endphp
@@ -393,19 +394,19 @@
 
                                     <tr>
                                         {{-- Use rowspan if there's an extra guest --}}
-                                        <td class="border px-4 py-2" @if($hasExtraGuest) rowspan="2" @endif>
+                                        <td class="border px-4 py-2 dark:border-gray-500" @if($hasExtraGuest) rowspan="2" @endif>
                                             {{ $rowNumber++ }}
                                         </td>
-                                        <td class="border px-4 py-2">Room – {{ $property->name_number }}</td>
-                                        <td class="border px-4 py-2 text-center">1</td>
-                                        <td class="border px-4 py-2 text-center">{{ $property->pivot->days }}</td>
-                                        <td class="border px-4 py-2 text-center">
+                                        <td class="border px-4 py-2 dark:border-gray-500">Room – {{ $property->name_number }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">1</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $property->pivot->days }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($property->amount, 2) }}
                                         </td>
-                                        <td class="border px-4 py-2 text-center">
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->amount, 2) }}
                                         </td>
-                                        <td class="border px-4 py-2 text-right">
+                                        <td class="border px-4 py-2 text-right dark:border-gray-500">
 
                                         </td>
                                     </tr>
@@ -433,24 +434,24 @@
                                 {{-- Loop through Add-on Services --}}
                                 @foreach ($activities as $activity)
                                     <tr>
-                                        <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
-                                        <td class="border px-4 py-2">Activity - {{ $activity->name }}</td>
-                                        <td class="border px-4 py-2 text-center">{{ $activity->pivot->quantity }}</td>
-                                        <td class="border px-4 py-2 text-center"></td>
-                                        <td class="border px-4 py-2 text-center">₱{{ number_format($activity->amount, 2) }}</td>
-                                        <td class="border px-4 py-2 text-center">
+                                        <td class="border px-4 py-2 dark:border-gray-500">{{ $rowNumber++ }}</td>
+                                        <td class="border px-4 py-2 dark:border-gray-500">Activity - {{ $activity->name }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $activity->pivot->quantity }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500"></td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">₱{{ number_format($activity->amount, 2) }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
                                         </td>
 
                                         {{-- Action Buttons --}}
-                                        <td class="border px-4 py-2 text-center space-x-2">
+                                        <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
                                             {{-- Edit Button --}}
-                                            <button wire:click="" class="text-yellow-600 hover:text-yellow-700" title="Edit">
+                                            <button wire:click="" class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <button wire:click="" class="text-red-600 hover:text-red-700" title="Delete">
+                                            <button wire:click="" class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -460,7 +461,7 @@
 
                                 {{-- Add Item Button Row --}}
                                 <tr>
-                                    <td colspan="7" class="border px-4 py-2 text-center">
+                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
                                          <x-button wire:click="OpenCreatePaymentModal" icon="fas fa-plus">
                                             Add Item
                                         </x-button>
@@ -658,22 +659,16 @@
 
 
             <!---------------------------- PAYMENT DETAILS ---------------------------------------->
-
-
             <section id="payments">
-
-
-
-
-                <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                     <div class="justify-between flex items-center">
-                        <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4">
+                        <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                             Payments
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
                             <!-- Info Icon with Tooltip -->
                             <div class="relative group inline-block">
-                                <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer"></i>
+                                <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
 
                                 <!-- Tooltip -->
                                 <div
@@ -690,39 +685,39 @@
                     @if ($payments->isNotEmpty())
                         <div class="overflow-x-auto">
                             <table class="min-w-full border-collapse border border-gray-300 text-sm">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gray-50 dark:bg-gray-800">
                                     <tr>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Payment ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Invoice ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Method</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Amount Paid</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Type</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Reference No.</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Payment Date</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Status</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Notes</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900">Uploaded Receipt</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Payment ID</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Invoice ID</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Method</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Amount Paid</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Type</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Reference No.</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Payment Date</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Status</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Notes</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Verified At</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Uploaded Receipt</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white">
+                                <tbody class="bg-white dark:bg-gray-600 ">
                                     @foreach ($payments as $payment)
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="border px-4 py-2 text-gray-700">{{ $payment->id }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $payment->id }}</td>
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->invoice->invoice_number }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ $payment->mode_of_payment ?? $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
                                         </td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 ₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ ucfirst($payment->payment_type) }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_reference_number ?? 'N/A' }}</td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_date ?? 'N/A' }}</td>
-                                            <td class="border px-4 py-2">
+                                            <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-500">
                                                 <span
                                                     class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                                 {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
@@ -731,13 +726,13 @@
                                                     {{ ucfirst($payment->payment_status) }}
                                                 </span>
                                             </td>
-                                            <td class="border px-4 py-2 text-gray-700">{{ $payment->notes ?? '-' }}
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $payment->notes ?? '-' }}
                                             </td>
-                                            <td class="border px-4 py-2 text-gray-700">
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->verified_at ?? 'To be verified' }}</td>
-                                            <td class="border px-4 py-2 space-x-2">
+                                            <td class="border px-4 py-2 space-x-2 dark:text-gray-200 dark:border-gray-500">
                                                 @if (!$payment->payment_screenshot)
-                                                 <span class="text-gray-500 italic">Paid via PayMongo (no receipt required)</span>
+                                                 <span class="text-gray-500 italic dark:text-gray-200">Paid via PayMongo (no receipt required)</span>
                                                 @else
                                                     @if ($payment->payment_status === 'pending')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"

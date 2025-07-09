@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Amenity') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Amenity</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Amenity</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.amenities') }}'"
@@ -24,9 +24,10 @@
         <!-- Form Container -->
         <form wire:submit.prevent="" class="flex flex-col h-full space-y-6 min-h-[200px]">
             <div class="mt-4">
-                <label for="name" class="block mb-2 text-sm font-semibold text-gray-800">Amenity Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200">Amenity Name <span class="text-red-500">*</span></label>
                 <input type="text" wire:model.live="name" id="name"
-                    class="block w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-green-600 focus:border-green-600 focus:outline-none sm:text-base"
+                    class="block w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-green-600 focus:border-green-600 focus:outline-none sm:text-base
+                    dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:placeholder-gray-400"
                     placeholder="Ex. Free Wi-Fi, Toiletries, Kettle" required autocomplete="off">
                 @error('name')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

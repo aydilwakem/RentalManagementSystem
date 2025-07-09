@@ -73,32 +73,86 @@
 
                             <!-- Theme Toggle -->
                             <div class="sm:col-span-2 space-y-2">
-                                <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Theme
-                                    Mode</label>
-                                <div class="flex gap-4">
-                                    <button @click.prevent="darkMode = false"
-                                        class="w-20 h-20 border rounded-lg overflow-hidden">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-                                            class="w-full h-full">
-                                            <rect width="100" height="100" fill="#ffffff" />
-                                            <circle cx="50" cy="30" r="10" fill="#facc15" />
-                                            <rect x="20" y="50" width="60" height="30" rx="5"
-                                                fill="#e5e7eb" />
-                                        </svg>
-                                    </button>
+                                <div x-data="themeToggle()" x-init="init()" class="space-y-3">
+                                    <label class="block text-sm font-medium text-gray-900 dark:text-white">Theme
+                                        Mode</label>
 
-                                    <button @click.prevent="darkMode = true"
-                                        class="w-20 h-20 border rounded-lg overflow-hidden">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-                                            class="w-full h-full">
-                                            <rect width="100" height="100" fill="#1f2937" />
-                                            <path d="M60,30a15,15 0 1,0 -20,20a12,12 0 1,1 20,-20" fill="#facc15" />
-                                            <rect x="20" y="50" width="60" height="30" rx="5"
-                                                fill="#374151" />
-                                        </svg>
-                                    </button>
+                                    <div class="flex items-center gap-4">
+                                        <!-- Dark Mode -->
+                                        <button @click="setTheme('dark')"
+                                            :class="theme === 'dark' ? 'ring-2 ring-blue-500' : ''"
+                                            class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
+                                                viewBox="0 0 100 60">
+                                                <rect width="100" height="60" rx="8" fill="#1f2937" />
+                                                <rect x="10" y="15" width="20" height="8" rx="2"
+                                                    fill="#374151" />
+                                                <rect x="35" y="15" width="25" height="8" rx="2"
+                                                    fill="#374151" />
+                                                <rect x="65" y="15" width="20" height="8" rx="2"
+                                                    fill="#374151" />
+                                                <rect x="10" y="30" width="80" height="20" rx="4"
+                                                    fill="#374151" />
+                                                <circle cx="90" cy="10" r="3" fill="#10b981" />
+                                                <circle cx="80" cy="10" r="3" fill="#ef4444" />
+                                            </svg>
+                                            <p class="text-center text-sm mt-1">Dark</p>
+                                        </button>
+
+                                        <!-- System Default -->
+                                        <button @click="setTheme('system')"
+                                            :class="theme === 'system' ? 'ring-2 ring-blue-500' : ''"
+                                            class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
+                                                viewBox="0 0 100 60">
+                                                <defs>
+                                                    <linearGradient id="split" x1="0" y1="0"
+                                                        x2="100%" y2="0">
+                                                        <stop offset="50%" stop-color="#ffffff" />
+                                                        <stop offset="50%" stop-color="#1f2937" />
+                                                    </linearGradient>
+                                                </defs>
+                                                <rect width="100" height="60" rx="8" fill="url(#split)" />
+                                                <!-- Window items -->
+                                                <rect x="10" y="15" width="20" height="8" rx="2"
+                                                    fill="#9ca3af" />
+                                                <rect x="35" y="15" width="25" height="8" rx="2"
+                                                    fill="#9ca3af" />
+                                                <rect x="65" y="15" width="20" height="8" rx="2"
+                                                    fill="#9ca3af" />
+                                                <rect x="10" y="30" width="80" height="20" rx="4"
+                                                    fill="#6b7280" />
+                                                <circle cx="90" cy="10" r="3" fill="#10b981" />
+                                                <circle cx="80" cy="10" r="3" fill="#ef4444" />
+                                            </svg>
+                                            <p class="text-center text-sm mt-1">System Default</p>
+                                        </button>
+
+                                        <!-- Light Mode -->
+                                        <button @click="setTheme('light')"
+                                            :class="theme === 'light' ? 'ring-2 ring-blue-500' : ''"
+                                            class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
+                                                viewBox="0 0 100 60">
+                                                <rect width="100" height="60" rx="8" fill="#ffffff" />
+                                                <rect x="10" y="15" width="20" height="8" rx="2"
+                                                    fill="#d1d5db" />
+                                                <rect x="35" y="15" width="25" height="8" rx="2"
+                                                    fill="#d1d5db" />
+                                                <rect x="65" y="15" width="20" height="8" rx="2"
+                                                    fill="#d1d5db" />
+                                                <rect x="10" y="30" width="80" height="20" rx="4"
+                                                    fill="#e5e7eb" />
+                                                <circle cx="90" cy="10" r="3" fill="#10b981" />
+                                                <circle cx="80" cy="10" r="3" fill="#ef4444" />
+                                            </svg>
+                                            <p class="text-center text-sm mt-1 text-blue-600">Light</p>
+                                        </button>
+
+                                    </div>
                                 </div>
                             </div>
+
 
                             <!-- Font Size Selection -->
                             <div class="sm:col-span-2 space-y-2">
@@ -142,4 +196,34 @@
             </div>
         </div>
     </div>
+    <script>
+        function themeToggle() {
+            return {
+                theme: localStorage.getItem('theme') || 'system',
+
+                init() {
+                    this.applyTheme(this.theme);
+                },
+
+                setTheme(value) {
+                    this.theme = value;
+                    localStorage.setItem('theme', value);
+                    this.applyTheme(value);
+                },
+
+                applyTheme(value) {
+                    const html = document.documentElement;
+                    if (value === 'dark') {
+                        html.classList.add('dark');
+                    } else if (value === 'light') {
+                        html.classList.remove('dark');
+                    } else if (value === 'system') {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        prefersDark ? html.classList.add('dark') : html.classList.remove('dark');
+                    }
+                }
+            };
+        }
+    </script>
+
 </x-app-layout>

@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Room') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
             <div class="relative flex items-center mb-6">
                 <!-- Room Name -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Room: {{ $room->name_number }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Room: {{ $room->name_number }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.rooms') }}'"
@@ -61,8 +61,8 @@
 
                 <!-- Room Details -->
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Room Details</h3>
-                    <ul class="list-disc pl-5 text-gray-600 mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50">Room Details</h3>
+                    <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300">
                         <li><strong>Room Category:</strong> {{ $room->category->name ?? 'N/A' }}</li>
                         <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}</li>
                         <li><strong>Max Adults:</strong> {{ $room->max_adults }}</li>
@@ -73,7 +73,7 @@
                         <li><strong>Base Rate:</strong> {{ $room->amount }}</li>
                     </ul>
 
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Amenities</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-50">Amenities</h3>
                     @if ($room->features->isNotEmpty())
                         <div class="flex flex-wrap gap-2 mb-3">
                             @foreach ($room->features as $feature)
@@ -84,7 +84,7 @@
                             @endforeach
                         </div>
                     @else
-                        <p class="text-gray-500 mt-2">No amenities selected for this room.</p>
+                        <p class="text-gray-500 mt-2 dark:text-gray-200">No amenities selected for this room.</p>
                     @endif
 
                     <!-- Maximum Occupancy Rules -->

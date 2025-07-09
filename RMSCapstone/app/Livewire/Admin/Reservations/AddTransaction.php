@@ -23,6 +23,7 @@ class AddTransaction extends Component
     public $status = [];
     public $total_pax;
     public $requested_remaining_balance;
+    public $expandedActivity = null;
 
     public $availableActivities;
 
@@ -65,6 +66,11 @@ class AddTransaction extends Component
                 }
             }
         }
+    }
+
+    public function toggleActivityDescription($activityId)
+    {
+        $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
     public function loadTransactionData(Transaction $transaction)

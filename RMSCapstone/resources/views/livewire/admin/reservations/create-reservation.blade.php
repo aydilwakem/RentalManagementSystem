@@ -1,6 +1,6 @@
 <div>
     <div class="relative flex items-center mb-3 mt-3">
-        <h2 class="text-xl font-semibold text-green-700 w-full text-center">
+        <h2 class="text-xl font-bold text-green-700 w-full text-center dark:text-green-300">
             Reservation Dates
         </h2>
         <!-- Back Button -->
@@ -18,20 +18,22 @@
         <div class="justify-center items-center text-center">
             <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-3">
                 <div class="flex flex-col">
-                    <label class="text-sm font-medium text-gray-700 mb-1">Check-In</label>
+                    <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Check-In</label>
                     <input type="date" wire:model.live="check_in_date"
                         min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
-                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
+                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-green-600 focus:border-green-600
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Check-in">
                 </div>
 
-                <h1 class="mt-4"><i class="fas fa-arrow-right"></i></h1>
+                <h1 class="mt-4 dark:text-white"><i class="fas fa-arrow-right"></i></h1>
 
                 <div class="flex flex-col">
-                    <label class="text-sm font-medium text-gray-700 mb-1">Check-Out</label>
+                    <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Check-Out</label>
                     <input type="date" wire:model.live="check_out_date"
                         min="{{ isset($check_in_date) ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : \Carbon\Carbon::now('Asia/Manila')->addDay()->format('Y-m-d') }}"
-                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500"
+                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Check-out">
                 </div>
             </div>
@@ -43,16 +45,16 @@
             use Carbon\Carbon;
         @endphp
 
-        <div class="bg-white shadow-md rounded-lg border border-gray-200">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
             <h2
-                class="font-bold text-xl text-green-700 text-center leading-tight mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm">
+                class="font-bold text-xl text-green-700 text-center leading-tight mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
                 Reservation Summary
             </h2>
             <div class="px-6 py-2">
 
 
                 @if ($check_in_date)
-                    <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
+                    <div class="flex justify-center items-center text-md text-gray-800 space-x-4 dark:text-white">
                         <span>
                             {{ Carbon::parse($check_in_date)->format('F j, Y') }}
                         </span>
@@ -73,7 +75,7 @@
 
                 @if ($check_out_date)
                     <!-- Stay Duration -->
-                    <div class="flex justify-center items-center text-md text-gray-800 mb-4 space-x-4">
+                    <div class="flex justify-center items-center text-md text-gray-800 mb-4 space-x-4 dark:text-white">
                         <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
                     </div>
                 @endif
@@ -81,28 +83,30 @@
                 @if ($selectedRooms)
                     <hr class="my-2 border-gray-200">
 
-                    <p class="mt-4 text-gray-800 text-sm font-semibold mb-1">No. of Guests: {{ $this->total_pax }}</p>
+                    <p class="mt-4 text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
+                        {{ $this->total_pax }}</p>
 
                     <!-- Total Room Charge -->
-                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1">
+                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="text-sm">Room Subtotal: </div>
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
                     </div>
 
                     <!-- Total Activity Charge -->
-                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1">
+                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="text-sm">Acitivity Subtotal: </div>
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
                     </div>
 
                     <!-- Total Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                    <div
+                        class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
                         <div class="text-lg">Total</div>
                         <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
                     </div>
 
                     <!-- Deposit -->
-                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
                         <div>Required Deposit</div>
                         <div class="font-semibold">
                             ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
@@ -129,9 +133,9 @@
 
         <!---------------------------- ROOM DETAILS ------------------------------->
         <!-- Room Cart Table (Top) -->
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
                     Accomodations
                 </h2>
                 <!-- Add Room Button -->
@@ -142,35 +146,55 @@
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full border border-gray-300 text-sm text-left dark:border-gray-500">
+                    <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr class="text-center">
-                            <th class="border px-4 py-2 font-medium text-gray-900">Room Name</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">No. of Adults
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Room Name</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                No. of Adults
                             </th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">No. of Kids</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Extra Guests</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Base Rate</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Extra Guest Charge
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                No. of Kids</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Extra Guests</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Base Rate</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Extra Guest Charge
                             </th>
-                            <th class="border px-4 py-2 font-medium text-gray-900 text-center">Total</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900 text-center">Action</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                Total</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                Action</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white">
+                    <tbody class="bg-white dark:bg-gray-600">
                         @forelse($selectedRooms as $room)
                             <tr class="text-center">
-                                <td class="border px-4 py-2 text-gray-700">{{ $room['room_name'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $room['adults'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $room['kids'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $room['extra_guest'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $room['room_name'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $room['adults'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $room['kids'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $room['extra_guest'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['roomRate'], 2) }}</td>
-                                <td class="border px-4 py-2 text-gray-700">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['extra_charge'], 2) }}</td>
-                                <td class="border px-4 py-2 text-gray-700">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['total_amount'], 2) }}</td>
-                                <td class="border px-4 py-2 text-gray-700">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     <button wire:click="RemoveRoom({{ $room['room_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
@@ -178,14 +202,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+                                <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-300">
                                     No rooms added yet.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-                <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                <div class="text-right font-semibold text-base mt-2 text-gray-700 dark:text-white">
                     Total Room Charges: ₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}
                 </div>
             </div>
@@ -193,9 +217,9 @@
 
         <!---------------------------- ACTIVITY DETAILS ------------------------------->
         <!-- Activity Cart Table (Bottom) -->
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
                     Add Ons
                 </h2>
                 <!-- Add Room Button -->
@@ -206,24 +230,38 @@
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full border-collapse border border-gray-300 text-sm text-left dark:border-gray-500">
+                    <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr class="text-center">
-                            <th class="border px-4 py-2 font-medium text-gray-900">Activity Name</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Price</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Quantity</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Total Amount</th>
-                            <th class="border px-4 py-2 font-medium text-gray-900">Action</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Activity Name</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Price</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Quantity</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Total Amount</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Action</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white">
+                    <tbody class="bg-white dark:bg-gray-600">
                         @forelse($selectedActivities as $activity)
                             <tr class="text-center">
-                                <td class="border px-4 py-2 text-gray-700">{{ $activity['activity_name'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $activity['activity_rate'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $activity['quantity'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">{{ $activity['amount'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $activity['activity_name'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $activity['activity_rate'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $activity['quantity'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $activity['amount'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     <button wire:click="RemoveActivity({{ $activity['activity_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
@@ -232,14 +270,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+                                <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-300">
                                     No activities added yet.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-                <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                <div class="text-right font-semibold text-base mt-2 text-gray-700 dark:text-white">
                     Total Activity Charges: ₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}
                 </div>
             </div>
@@ -247,17 +285,18 @@
 
 
         <!------------------------- GUEST DETAIL SECTION ------------------------->
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6">
-            <h2 class="font-semibold text-xl text-green-700 leading-tight">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
                 Guest Details
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4 mb-4">
                 <!-- First Name -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">First Name <span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="first_name" placeholder="Ex. Juan"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('first_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -265,9 +304,10 @@
 
                 <!-- Middle Name -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Middle Name</label>
                     <input type="text" wire:model="middle_name" placeholder="Ex. Mercado"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('middle_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -275,10 +315,11 @@
 
                 <!-- Last Name -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Last Name <span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('last_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -286,10 +327,11 @@
 
                 <!-- Email -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Email <span
                             class="text-red-500">*</span></label>
                     <input type="email" wire:model="email" placeholder="Ex. juan.delacruz@example.com"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('email')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -297,10 +339,11 @@
 
                 <!-- Contact Number -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Contact Number <span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="contact_number" placeholder="Ex. 09123456789"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('contact_number')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -309,10 +352,11 @@
 
                 <!-- Country -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="country" placeholder="Ex. Philippines"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('country')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -320,9 +364,10 @@
 
                 <!-- Company Name -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Company Name</label>
                     <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('last_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -330,10 +375,11 @@
 
                 <div class="col-span-1">
                     <!-- Source of Hearing -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Heard From <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Heard From <span
                             class="text-red-500">*</span></label>
                     <select wire:model="heard_from"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="">Select an option</option>
                         <option value="Facebook">Facebook</option>
                         <option value="Instagram">Instagram</option>
@@ -348,9 +394,11 @@
 
                 <div class="col-span-1">
                     <!-- Source of Booking -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Reservation Source</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Reservation
+                        Source</label>
                     <select wire:model="reservation_source"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="">Select an option</option>
                         <option value="Airbnb">Airbnb</option>
                         <option value="WebApp">WebApp</option>
@@ -368,9 +416,9 @@
 
 
         <!-- Additional Guests Section (Optional) -->
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
             <div class="flex flex-col space-y-2 w-full">
-                <div class="font-semibold  text-xl text-green-700">
+                <div class="font-semibold  text-xl text-green-700 dark:text-green-200">
                     Additional Guests (Optional)
                 </div>
 
@@ -386,27 +434,35 @@
                 <!-- Displaying Added Guests -->
                 <div class="mt-6">
                     @if (count($guests) > 0)
-                        <ul class="space-y-2">
+                        <ol
+                            class="space-y-3 list-decimal pl-6 text-gray-700 mb-3 p-3 bg-white rounded-2xl border border-gray-300 dark:bg-gray-600 dark:border-gray-500">
                             @foreach ($guests as $guest)
-                                <li class="flex justify-between items-center p-2 bg-gray-100 rounded-md">
-                                    <span>{{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}</span>
-                                    <div class="space-x-4">
-                                        <button wire:click="editGuest({{ $loop->index }})"
-                                            class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150">
-                                            <i class="fas fa-edit mr-1"></i>
-                                            Edit
-                                        </button>
-                                        <button wire:click="deleteGuest({{ $loop->index }})"
-                                            class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-medium transition duration-150">
-                                            <i class="fas fa-trash-alt mr-1"></i>
-                                            Delete
-                                        </button>
+                                <li class="me-2 dark:text-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <div class="font-semibold text-gray-700 flex dark:text-gray-200">
+                                            {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
+                                        </div>
+                                        <div class="space-x-5 flex items-center">
+                                            <button wire:click="editGuest({{ $loop->index }})"
+                                                class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-sm transition duration-150
+                                                dark:text-indigo-400 dark:hover:text-indigo-600">
+                                                <i class="fas fa-edit mr-1"></i>
+                                                Edit
+                                            </button>
+
+                                            <button wire:click="deleteGuest({{ $loop->index }})"
+                                                class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-sm transition duration-150
+                                                dark:text-red-400 dark:hover:text-red-600">
+                                                <i class="fas fa-trash-alt mr-1"></i>
+                                                Remove
+                                            </button>
+                                        </div>
                                     </div>
                                 </li>
                             @endforeach
-                        </ul>
+                        </ol>
                     @else
-                        <p class="text-center text-gray-500 mt-6 mb-6">No guests added yet.</p>
+                        <p class="text-center text-gray-500 mt-6 mb-6 dark:text-gray-200">No guests added yet.</p>
                     @endif
                 </div>
 
@@ -418,18 +474,19 @@
         <!-- Room Modal -->
         @if ($roomModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
+                <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
 
                     @error('selectedRooms')
                         <span class="text-red-600">{{ $message }}</span>
                     @enderror
 
                     <!-- Header -->
-                    <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
-                        <h2 class="text-2xl font-semibold text-gray-800">Choose Rooms</h2>
+                    <div
+                        class="flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
+                        <h2 class="text-2xl font-semibold text-green-700 dark:text-green-200">Choose Rooms</h2>
 
                         <button wire:click="$set('roomModal', false)"
-                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none">
+                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
                             &times;
                         </button>
                     </div>
@@ -440,10 +497,11 @@
                             <div class="w-full flex justify-center">
                                 <div class="step-one w-full px-4">
                                     <div
-                                        class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
+                                        class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0 dark:bg-gray-500 dark:border-gray-400">
                                         <div class="p-4 text-center">
-                                            <h4 class="text-2xl font-semibold mb-2">No Rooms Available</h4>
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                            <h4 class="text-2xl font-semibold mb-2 dark:text-gray-200">No Rooms
+                                                Available</h4>
+                                            <p class="text-base font-normal text-gray-700 dark:text-gray-200">
                                                 Sorry, there are no rooms available for the selected dates.
                                             </p>
                                         </div>
@@ -454,38 +512,44 @@
                             <div>
                                 @foreach ($rooms as $room)
                                     <div wire:key="room-{{ $room->id }}"
-                                        class="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-6">
+                                        class="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-6 dark:bg-gray-500 dark:border-gray-400">
                                         <div class="flex flex-col md:flex-row md:space-x-6">
 
                                             <!-- Room Info -->
                                             <div class="md:w-2/3 space-y-2">
-                                                <h4 class="text-xl font-semibold text-gray-800">
+                                                <h4 class="text-xl font-semibold text-gray-800 dark:text-white">
                                                     {{ $room->name_number }}</h4>
 
-                                                <p class="text-sm text-gray-600 flex items-center">
-                                                    <i class="fas fa-user mr-2 text-gray-500"></i> Ideal Guests:
+                                                <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
+                                                    <i class="fas fa-user mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                    Ideal Guests:
                                                     {{ $room->ideal_guest }}
                                                 </p>
-                                                <p class="text-sm text-gray-600 flex items-center">
-                                                    <i class="fas fa-users mr-2 text-gray-500"></i> Max:
+                                                <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
+                                                    <i class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                    Max:
                                                     {{ $room->max_adults }}
                                                     Adults, {{ $room->max_kids }} Kids
                                                 </p>
-                                                <p class="text-sm text-gray-600 flex items-center">
-                                                    <i class="fas fa-plus mr-2 text-gray-500"></i> Extra Person Charge:
+                                                <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
+                                                    <i class="fas fa-plus mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                    Extra Person Charge:
                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                 </p>
-                                                <p class="text-sm text-gray-600 flex items-center">
-                                                    <i class="fas fa-utensils mr-2 text-gray-500"></i> Free breakfast
+                                                <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
+                                                    <i
+                                                        class="fas fa-utensils mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                    Free breakfast
                                                     included
                                                 </p>
-                                                <p class="text-xs italic text-gray-500 mt-1">{{ $room->description }}
+                                                <p class="text-xs italic text-gray-500 mt-1 dark:text-gray-200">
+                                                    {{ $room->description }}
                                                 </p>
 
-                                                <p class="mt-3 text-base font-medium">
+                                                <p class="mt-3 text-base font-medium dark:text-gray-900">
                                                     Rate Per Night:
                                                     <span
-                                                        class="text-green-700 font-bold">₱{{ number_format($room->amount, 2) }}</span>
+                                                        class="text-green-700 font-bold dark:text-green-400">₱{{ number_format($room->amount, 2) }}</span>
                                                 </p>
                                             </div>
 
@@ -495,9 +559,10 @@
                                                     <!-- Adults -->
                                                     <div class="w-1/2">
                                                         <label
-                                                            class="block text-sm font-medium text-gray-700">Adults</label>
+                                                            class="block text-sm font-medium text-gray-700 dark:text-gray-100">Adults</label>
                                                         <select wire:model.live="adults.{{ $room->id }}"
-                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 focus:ring-green-500 focus:border-green-500">
+                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 focus:ring-green-500 focus:border-green-500
+                                                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                                             @for ($i = 1; $i <= $room->max_adults; $i++)
                                                                 <option value="{{ $i }}">
                                                                     {{ $i }}</option>
@@ -508,9 +573,10 @@
                                                     <!-- Kids -->
                                                     <div class="w-1/2">
                                                         <label
-                                                            class="block text-sm font-medium text-gray-700">Children</label>
+                                                            class="block text-sm font-medium text-gray-700 dark:text-gray-100">Children</label>
                                                         <select wire:model.live="kids.{{ $room->id }}"
-                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 focus:ring-green-500 focus:border-green-500">
+                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 focus:ring-green-500 focus:border-green-500
+                                                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                                             @for ($i = 0; $i <= $room->max_kids; $i++)
                                                                 <option value="{{ $i }}">
                                                                     {{ $i }}</option>
@@ -569,18 +635,19 @@
         <!-- Activity Modal -->
         @if ($activityModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
 
                     @error('selectedActivities')
                         <span class="text-red-600">{{ $message }}</span>
                     @enderror
 
                     <!-- Header -->
-                    <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
-                        <h2 class="text-2xl font-semibold text-gray-800">Choose Activities</h2>
+                    <div
+                        class="flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-green-300">Choose Activities</h2>
 
                         <button wire:click="$set('activityModal', false)"
-                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none">
+                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
                             &times;
                         </button>
                     </div>
@@ -593,7 +660,8 @@
                                     <div
                                         class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                                         <div class="p-4 text-center">
-                                            <h4 class="text-2xl font-semibold mb-2">No Activities Available</h4>
+                                            <h4 class="text-2xl font-semibold mb-2 dark:text-gray-200">No Activities
+                                                Available</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -602,7 +670,7 @@
                             <div>
                                 @foreach ($activities as $activity)
                                     <div wire:key="activity-{{ $activity->id }}"
-                                        class="flex items-center justify-between bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4">
+                                        class="flex items-center justify-between bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
 
                                         <!-- Left: Image -->
                                         <div
@@ -613,13 +681,26 @@
 
                                         <!-- Middle: Name and Description -->
                                         <div class="flex-1 px-4">
-                                            <h4 class="text-xl font-semibold text-gray-800">{{ $activity->name }}</h4>
-                                            <p class="text-sm text-gray-600 mt-1">
-                                                @if (!empty($activity->description))
+                                            <h4 class="text-xl font-semibold text-gray-800 dark:text-white">
+                                                {{ $activity->name }}</h4>
+                                            <p class="text-sm text-gray-600 mt-1 dark:text-gray-200">
+                                                {{-- Show more / less when description is long --}}
+                                                @if (empty($activity->description))
+                                                    <span class="italic text-gray-400">No description provided</span>
+                                                @elseif ($expandedActivity === $activity->id)
                                                     {{ $activity->description }}
+                                                    <a href="#"
+                                                        wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                        less</a>
                                                 @else
-                                                    <em class="text-gray-500 leading-relaxed italic">No description
-                                                        provided.</em>
+                                                    {{ Str::limit($activity->description, 100, '...') }}
+                                                    @if (Str::length($activity->description) > 100)
+                                                        <a href="#"
+                                                            wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                            more</a>
+                                                    @endif
                                                 @endif
                                             </p>
                                         </div>
@@ -628,7 +709,7 @@
                                         <div class="flex flex-col md:flex-row md:space-x-12">
                                             <div class="flex flex-col">
                                                 <label for="quantity-{{ $activity->id }}"
-                                                    class="text-sm font-medium text-gray-700 mb-1">
+                                                    class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
                                                     Quantity:
                                                 </label>
 
@@ -636,19 +717,21 @@
                                                 <div class="flex items-center">
                                                     <button type="button"
                                                         wire:click.prevent="decrementActivity('{{ $activity->id }}')"
-                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
+                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                                         -
                                                     </button>
 
                                                     <span
-                                                        class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                        class="text-center w-16 py-1 bg-white border border-gray-300 rounded ">
                                                         {{ min($quantity[$activity->id] ?? 1, $total_pax) }}
                                                     </span>
 
                                                     @if (($quantity[$activity->id] ?? 1) < $total_pax)
                                                         <button type="button"
                                                             wire:click.prevent="incrementActivity('{{ $activity->id }}')"
-                                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                                             +
                                                         </button>
                                                     @endif
@@ -656,7 +739,7 @@
 
                                                 <!-- Max Message Below -->
                                                 @if (($quantity[$activity->id] ?? 1) >= $total_pax)
-                                                    <span class="text-gray-500 text-xs mt-1">
+                                                    <span class="text-gray-500 text-xs mt-1 dark:text-gray-200">
                                                         Maximum quantity reached
                                                     </span>
                                                 @endif
@@ -674,7 +757,7 @@
 
                                                 <button
                                                     wire:click="{{ $isSelected ? 'RemoveActivity' : 'SelectedActivities' }}({{ $activity->id }})"
-                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150"
+                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
                                                     wire:loading.attr="disabled">
 
                                                     <!-- Spinner -->
@@ -721,36 +804,45 @@
                     <!-- Guest Name -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700">First Name</label>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">First Name<span
+                                    class="text-red-500">*</span></label>
                             <input type="text" wire:model.defer="editingGuest.guest_first_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                placeholder="Ex. Juan"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                required>
                             @error('editingGuest.guest_first_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Middle Name</label>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Middle Name</label>
                             <input type="text" wire:model.defer="editingGuest.guest_middle_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             @error('editingGuest.guest_middle_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Last Name</label>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Last Name <span
+                                    class="text-red-500">*</span></label>
                             <input type="text" wire:model.defer="editingGuest.guest_last_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                required>
                             @error('editingGuest.guest_last_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Suffix</label>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Suffix</label>
                             <input type="text" wire:model.defer="editingGuest.guest_suffix"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             @error('editingGuest.guest_suffix')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -759,9 +851,11 @@
 
                     <!-- Guest Type -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Guest Type</label>
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type <span
+                                class="text-red-500">*</span></label>
                         <select wire:model.defer="editingGuest.guest_type_id"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Guest Type</option>
                             @foreach ($guest_types as $type)
                                 <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
@@ -774,9 +868,11 @@
 
                     <!-- Gender -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Gender</label>
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Gender <span
+                                class="text-red-500">*</span></label>
                         <select wire:model.defer="editingGuest.guest_gender"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -789,9 +885,11 @@
 
                     <!-- Residency -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Residency</label>
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Residency <span
+                                class="text-red-500">*</span></label>
                         <select wire:model.defer="editingGuest.guest_residency"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Residency</option>
                             <option value="local">Local</option>
                             <option value="foreigner">Foreigner</option>
@@ -803,8 +901,11 @@
 
                     <!-- Country of Origin -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Country of Origin</label>
-                        <input type="text" wire:model.defer="editingGuest.guest_country_of_origin"
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Country of Origin <span
+                                class="text-red-500">*</span></label>
+                        <input type="text"
+                            wire:model.defer="editingGuest.guest_country_of_origin
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                         @error('editingGuest.guest_country_of_origin')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -829,42 +930,51 @@
         <!-- Add Guest Modal -->
         @if ($showGuestModal)
             <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-lg font-semibold mb-4 text-green-700">Enter Guest Details</h2>
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700">
+                    <h2 class="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Enter Guest Details</h2>
 
                     <!-- Guest Name -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700">First Name</label>
-                            <input type="text" wire:model="guest_first_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">First Name <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" wire:model="guest_first_name" placeholder="Ex. Juan"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                required>
                             @error('guest_first_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Middle Name</label>
-                            <input type="text" wire:model="guest_middle_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Middle Name</label>
+                            <input type="text" wire:model="guest_middle_name" placeholder="Ex. Mercado"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             @error('guest_middle_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Last Name</label>
-                            <input type="text" wire:model="guest_last_name"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Last Name <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" wire:model="guest_last_name" placeholder="Ex. Dela Cruz"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                required>
                             @error('guest_last_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700">Suffix</label>
-                            <input type="text" wire:model="guest_suffix"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Suffix</label>
+                            <input type="text" wire:model="guest_suffix" placeholder="Ex. Jr., Sr., III"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             @error('guest_suffix')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -873,9 +983,11 @@
 
                     <!-- Guest Type -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Guest Type</label>
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type <span
+                                class="text-red-500">*</span></label>
                         <select wire:model="guest_type_id"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Guest Type</option>
                             @foreach ($guest_types as $type)
                                 <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
@@ -888,9 +1000,11 @@
 
                     <!-- Gender -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Gender</label>
+                        <label class="block text-sm text-gray-700  dark:text-gray-200">Gender <span
+                                class="text-red-500">*</span></label>
                         <select wire:model="guest_gender"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -903,9 +1017,11 @@
 
                     <!-- Residency -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Residency</label>
+                        <label class="block text-sm text-gray-700  dark:text-gray-200">Residency <span
+                                class="text-red-500">*</span></label>
                         <select wire:model="guest_residency"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Residency</option>
                             <option value="local">Local</option>
                             <option value="foreigner">Foreigner</option>
@@ -917,9 +1033,11 @@
 
                     <!-- Country of Origin -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700">Country of Origin</label>
-                        <input type="text" wire:model="guest_country_of_origin"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
+                        <label class="block text-sm text-gray-700 dark:text-gray-200">Country of Origin <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="guest_country_of_origin" placeholder="Ex. Philippines"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         @error('guest_country_of_origin')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
