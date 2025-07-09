@@ -43,29 +43,51 @@
                     </select>
                 </div>
 
+                {{-- Apply Filter Button --}}
                 <div class="flex items-end">
-                    <div class="relative">
-                        <x-button icon="fa-solid fa-file" wire:click="exportPaymentSummary" wire:loading.attr="disabled">
-                            Export PDF
-                        </x-button>
-
-                        <div wire:loading wire:target="exportPaymentSummary"
-                            class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                            <span class="text-sm text-green-700 font-semibold pt-1 text-center flex">Exporting
-                                PDF...</span>
-                        </div>
-                    </div>
+                    <x-button icon="fa fa-filter" wire:click="applyPaymentFilter">
+                        Apply Filter
+                    </x-button>
                 </div>
             </div>
         </div>
 
-        @if (empty($startDate) || empty($endDate))
+        @if (!$filterApplied)
         <div class="w-full text-center py-4">
             <span class="text-green-500 font-medium">
                 No payments found. Select start date and end date to generate payments summary.
             </span>
         </div>
         @else
+
+        @if (!empty($filteredPayments))
+        {{-- Export Buttons --}}
+        <div class="flex justify-end mb-2 space-x-2 mr-4">
+            {{-- EXPORT PDF BUTTON --}}
+            <div class="relative">
+                <x-button icon="fa-solid fa-file" wire:click="exportPaymentSummary" wire:loading.attr="disabled">
+                    Export PDF
+                </x-button>
+
+                <div wire:loading wire:target="exportPaymentSummary"
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF...</span>
+                </div>
+            </div>
+
+            {{-- EXPORT CSV BUTTON --}}
+            <div class="relative">
+                <x-warning-button icon="fa-solid fa-file" wire:click="exportPaymentCsv" wire:loading.attr="disabled">
+                    Export CSV
+                </x-warning-button>
+
+                <div wire:loading wire:target="exportPaymentCsv"
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    <span class="text-sm text-yellow-700 font-semibold">Exporting CSV...</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Table Content -->
         <div class=" bg-white rounded-lg shadow-md overflow-x-auto border">
             <table class="min-w-full text-left">
@@ -88,7 +110,7 @@
                 </thead>
 
                 <tbody>
-                    @forelse ($payments as $payment)
+                    @forelse ($filteredPayments as $payment)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
@@ -158,6 +180,7 @@
                     @endforelse
 
                 </tbody>
+                @endif
             </table>
         </div>
         @endif

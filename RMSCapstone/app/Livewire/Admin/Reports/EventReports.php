@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EventReports extends Component
 {
@@ -163,6 +164,128 @@ class EventReports extends Component
             echo $pdf->stream();
         }, 'Event-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.pdf');
     }
+
+
+    // ------------------------- EXPORT CSV METHOD ---------------//
+    public function exportEventCsv(){
+        //Query transactions and fetch all 
+        
+        $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 3) //Event ID
+        ->when($this->start_date, function ($query) {
+            $start = Carbon::parse($this->start_date)->startOfDay();
+            $query->where('start_datetime', '>=', $start);
+        })
+        ->when($this->end_date, function ($query) {
+            $end = Carbon::parse($this->end_date)->endOfDay();
+            $query->where('start_datetime', '<=', $end);
+        })
+        ->when($this->hallFilter, function ($query) {
+            $query->where('transaction_properties.property_id', $this->hallFilter);
+        })
+        ->when($this->eventStatusFilter, function ($query) {
+            $query->where('transaction_status', $this->eventStatusFilter);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->get();
+
+        //Calculations
+        $totalEvents = $transactions->count();
+        $totalGuests = $transactions->sum('pax');
+        $totalAmountEarned = $transactions->sum('total_amount');
+
+        $mostBookedHall = null;
+    if (!$this->hallFilter && $transactions->isNotEmpty()) {
+        $hallCounts = [];
+        foreach ($transactions as $transaction) {
+            foreach ($transaction->properties as $property) {
+                $hallName = $property->name_number;
+                $hallCounts[$hallName] = ($hallCounts[$hallName] ?? 0) + 1;
+            }
+        }
+
+        if (!empty($hallCounts)) {
+            arsort($hallCounts);
+            $topHall = array_key_first($hallCounts);
+            $count = $hallCounts[$topHall];
+            $mostBookedHall = $topHall . " ({$count} events)";
+        }
+    }
+
+    //CSV Filename
+    $filename = 'Event-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.csv';
+
+    //Headers csv
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=\"$filename\"",
+    ];
+
+    //Define variables in CSV 
+    return new StreamedResponse(function () use (
+        $transactions,
+        $totalEvents,
+        $totalGuests,
+        $mostBookedHall,
+        $totalAmountEarned
+    ) {
+        $handle = fopen('php://output', 'w');
+
+        // CSV Header Row
+        fputcsv($handle, [
+            'Transaction ID',
+            'Booked By',
+            'Company',
+            'Event Hall',
+            'Event Type', 
+            'Guests', 
+            'Start Date and Time',
+            'End Date and Time',
+            'Total Amount',
+            'Status',
+        ]);
+
+        // Transaction rows
+        foreach ($transactions as $transaction) {
+            $halls = $transaction->properties->pluck('name_number')->implode(', ');
+
+            $userName = optional($transaction->transactionUser)?->first_name . ' ' . optional($transaction->transactionUser)?->last_name ?? 'N/A';
+
+            fputcsv($handle, [
+                $transaction->transaction_number,
+                trim($userName),
+                $transaction->transactionUser->company_name,
+                $halls,
+                $transaction->event_type->name,
+                $transaction->pax,
+                Carbon::parse($transaction->start_datetime)->format('F j, Y g:iA'),
+                Carbon::parse($transaction->end_datetime)->format('F j, Y g:iA'),
+                number_format($transaction->total_amount, 2),
+                ucfirst($transaction->transaction_status),
+            ]);
+        }
+
+        // Summary section
+        fputcsv($handle, []); // blank line
+        fputcsv($handle, ['Summary of Key Metrics']);
+        fputcsv($handle, ['Total Reservations Within Date Range:', $totalEvents . ' reservations']);
+        fputcsv($handle, ['Total Guests:', $totalGuests . ' guests']);
+        fputcsv($handle, ['Most Booked Hall:', $mostBookedHall ?? 'N/A']);
+        fputcsv($handle, ['Total Amount Earned:', 'PHP ' . number_format($totalAmountEarned, 2)]);
+
+        fclose($handle);
+    }, 200, $headers);
+
+    }
+
+
+
+
+
+
 
     // --------------------------- RENDER ------------------------------------------ //
     public function render()
