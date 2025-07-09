@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Transaction;
 
 class PromoCode extends Model
 {
@@ -46,5 +47,10 @@ class PromoCode extends Model
     public function propertyCategory()
     {
         return $this->belongsTo(PropertyCategory::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'promo_id');
     }
 }

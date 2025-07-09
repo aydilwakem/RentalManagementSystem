@@ -39,7 +39,7 @@
         }
 
         .date-range {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-size: 13px;
             color: #555;
         }
@@ -127,6 +127,16 @@
             All Records
             @endif
         </p>
+        <p class="date-range">
+            <strong>Property:</strong>
+            {{ $propertyFilter ? $properties->firstWhere('id', $propertyFilter)?->name_number ?? 'Unknown Property' :
+            'All Properties' }}
+
+        </p>
+        <p class="date-range">
+            <strong>Status:</strong>
+            {{ empty($propertyStatusFilter) ? 'All Statuses' : $propertyStatusFilter }}
+        </p>
     </header>
     <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
     <table>
@@ -187,6 +197,11 @@
         <h2>Summary of Key Metrics:</h2>
         <p><strong>Total Leases Within Date Range: </strong>{{ $totalLeases }} leases</p>
         <p><strong>Average Lease Length (months): </strong>{{ $averageLength }} months </p>
+        @if (empty($propertyFilter))
+        <p><strong>Most Booked Property:</strong> {{ $mostBookedProperty ?? 'No leases found within the selected date
+            range'
+            }}</p>
+        @endif
         <p><strong>Total Tenants:</strong> {{ $totalTenants }} tenants </p>
         <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountEarned, 2) }}</p>
     </div>

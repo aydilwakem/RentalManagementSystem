@@ -39,7 +39,7 @@
         }
 
         .date-range {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-size: 13px;
             color: #555;
         }
@@ -149,6 +149,7 @@
                 <th style="width: 10%;">Payment Due Date</th>
                 <th style="width: 10%;">Amount Paid</th>
                 <th style="width: 13%;">Remaining Balance</th>
+                <th style="width: 13%;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -174,6 +175,7 @@
                 <td>{{ number_format($invoice->amount_paid, 2) }}</td>
 
                 <td>{{ number_format($invoice->balance_due, 2) }}</td>
+                <td>{{ $invoice->invoice_status }}</td>
             </tr>
             @empty
             <tr>

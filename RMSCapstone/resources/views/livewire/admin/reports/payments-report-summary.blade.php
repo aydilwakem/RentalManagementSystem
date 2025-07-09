@@ -141,6 +141,7 @@
                 <th style="width: 12%;">Guest Name</th>
                 <th style="width: 12%;">Transaction Number</th>
                 <th style="width: 10%;">Invoice Number</th>
+                <th style="width: 10%;">Payment Type</th>
                 <th style="width: 10%;">Payment Date</th>
                 <th style="width: 10%;">Amount Paid</th>
                 <th style="width: 13%;">Mode of Payment</th>
@@ -159,6 +160,10 @@
 
                 <td>
                     {{ $payment->invoice->invoice_number ?? 'N/A' }}
+                </td>
+
+                <td>
+                    {{ $payment->payment_type ?? 'N/A' }}
                 </td>
 
                 <td>

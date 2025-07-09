@@ -180,6 +180,28 @@
                         <strong>Total Guests:</strong>
                         <div>{{ $transaction->pax }}</div>
                     </div>
+
+                    <div>
+                        <strong>Original Amount:</strong>
+                        <div>₱{{ number_format($transaction->original_amount, 2) }}</div>
+                    </div>
+
+                    <div>
+                        <strong>Promo Applied:</strong>
+                        <div>
+                            {{ $transaction->promoCode->code ?? '' }}
+
+                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
+                              ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
+                            @elseif ($transaction->promoCode)
+                                {{-- Flat discount --}}
+                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
+                            @endif
+
+                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
+                        </div>
+                    </div>
+
                     <div>
                         <strong>Total Amount:</strong>
                         <div>₱{{ number_format($transaction->total_amount, 2) }}</div>
@@ -217,7 +239,7 @@
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Stay Duration
                                     </th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Extra Guests</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Base Rate</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Rate</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Extra Guest Charge
                                     </th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Room Total</th>
