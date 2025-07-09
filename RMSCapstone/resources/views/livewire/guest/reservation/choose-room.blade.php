@@ -199,184 +199,189 @@
                                                             @endif
                                                         </div>
                                                         <hr>
-
                                                         <!--------------------------- ROOM RATING -------------------------------->
-                                                        <div class="mt-4">
-                                                
-                                                        @php
-                                                            $allRatings = collect();
-                                                            $comments = [];
+                                                                <div class="mt-4">
 
-                                                            foreach ($room->transactions as $transaction) {
-                                                                foreach ($transaction->feedbacks as $feedback) {
-                                                                    $feedbackRatings = $feedback->feedbackRatings;
-                                                                    $individualRatingValues = $feedbackRatings->pluck('rating_value');
-                                                                    $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
+                                                                @php
+                                                                    $allRatings = collect();
+                                                                    $comments = [];
 
-                                                                    // Push all ratings for room average
-                                                                    $allRatings = $allRatings->merge($individualRatingValues);
+                                                                   foreach ($room->transactions as $transaction) {
+                                                                        foreach ($transaction->feedbacks as $feedback) {
+                                                                            
+                                                                            // Skips sfeedbacks that are not approved
+                                                                            if ($feedback->status !== 'approved') {
+                                                                                continue;
+                                                                            }
 
-                                                                    if (!empty($feedback->comments)) {
-                                                                        $comments[] = [
-                                                                            'text' => $feedback->comments,
-                                                                            'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
-                                                                            'date' => \Carbon\Carbon::parse($feedback->created_at)->format('F j, Y'),
-                                                                            'rating' => $individualAvg,
-                                                                        ];
+                                                                            $feedbackRatings = $feedback->feedbackRatings;
+                                                                            $individualRatingValues = $feedbackRatings->pluck('rating_value');
+                                                                            $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
+
+                                                                            // Push all ratings for room average
+                                                                            $allRatings = $allRatings->merge($individualRatingValues);
+
+                                                                          $comments[] = [
+                                                                                'text' => $feedback->comments ?? '',
+                                                                                'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
+                                                                                'date' => \Carbon\Carbon::parse($feedback->created_at)->format('F j, Y'),
+                                                                                'rating' => $individualAvg,
+                                                                            ];
+                                                                        }
                                                                     }
-                                                                }
-                                                            }
 
-                                                            $averageRating = $allRatings->count() ? $allRatings->avg() : null;
 
+                                                                    $averageRating = $allRatings->count() ? $allRatings->avg() : null;
+
+                                                                @endphp
+
+                                                                <!------------------- Avrage of Rating ---------------------->
+                                                                @if ($averageRating)
+                                                                    <div class="flex items-center gap-2 mb-2">
+                                                                        <span class="text-yellow-500">
+                                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                                @if ($i <= floor($averageRating))
+                                                                                    <i class="fas fa-star"></i>
+                                                                                @elseif ($i - $averageRating < 1)
+                                                                                    <i class="fas fa-star-half-alt"></i>
+                                                                                @else
+                                                                                    <i class="far fa-star"></i>
+                                                                                @endif
+                                                                            @endfor
+                                                                        </span>
+                                                                        <span class="text-gray-600">({{ number_format($averageRating, 1) }}/5)</span>
+                                                                    </div>
+                                                                @endif
+
+                                                                <!------------------------ Comments ---------------------->
+                                                                @if (count($comments))
+                                                                      @foreach ($comments as $comment)
+                                                                        <div class="border rounded-md p-2 mt-2">
+                                                                            <img src="{{ asset('images/canopy-logo.png') }}"
+                                                                                alt="User Avatar"
+                                                                                class="w-8 h-8 rounded-full inline-block">
+                                                                            <div class="inline-block align-middle ms-2">
+                                                                                <p class="text-gray-700 font-semibold">
+                                                                                    {{ $comment['user'] }}
+                                                                                    <span class="text-sm text-gray-400">• {{ $comment['date'] }}</span>
+                                                                                </p>
+
+                                                                                <!-- Stars per feedback -->
+                                                                                @if (!is_null($comment['rating']))
+                                                                                    <div class="text-yellow-500 text-sm mb-1">
+                                                                                        @for ($i = 1; $i <= 5; $i++)
+                                                                                            @if ($i <= floor($comment['rating']))
+                                                                                                <i class="fas fa-star"></i>
+                                                                                            @elseif ($i - $comment['rating'] < 1)
+                                                                                                <i class="fas fa-star-half-alt"></i>
+                                                                                            @else
+                                                                                                <i class="far fa-star"></i>
+                                                                                            @endif
+                                                                                        @endfor
+                                                                                        <span class="text-gray-500 ms-1">({{ number_format($comment['rating'], 1) }}/5)</span>
+                                                                                    </div>
+                                                                                @endif
+
+                                                                                <p class="text-gray-500">{{ $comment['text'] !== '' ? $comment['text'] : 'No comment provided.' }}</p>
+                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+
+                                                                @else
+                                                                    <p class="text-sm text-gray-400">No comments yet.</p>
+                                                                @endif
+                                                                </div>
+                                                                <!--------------------------- End kf Rating -------------------------------->
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- Room Booking Controls -->
+                                                <div class="mt-auto pt-2 flex flex-col justify-between">
+                                                    <div class="flex gap-4">
+
+                                                        <!-- Adults -->
+                                                        <div class="flex-1">
+                                                            <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                            <select wire:model.live="adults.{{ $room->id }}"
+                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                                @for ($i = 1; $i <= $room->max_adults; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}
+                                                                    </option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Kids -->
+                                                        <div class="flex-1">
+                                                            <label class="block text-sm font-medium text-gray-700">Children</label>
+                                                            <select wire:model.live="kids.{{ $room->id }}"
+                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                                @for ($i = 0; $i <= $room->max_kids; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}
+                                                                    </option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <div class="mt-4">
+
+
+
+                                                        @php
+                                                            $cartCollection = collect($cart); // Convert array to collection
+                                                            $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
+                                                                return $item['type'] === 'room' &&
+                                                                    $item['room_id'] == $room->id;
+                                                            });
                                                         @endphp
 
-                                                        <!------------------- Avrage of Rating ---------------------->
-                                                        @if ($averageRating)
-                                                            <div class="flex items-center gap-2 mb-2">
-                                                                <span class="text-yellow-500">
-                                                                    @for ($i = 1; $i <= 5; $i++)
-                                                                        @if ($i <= floor($averageRating))
-                                                                            <i class="fas fa-star"></i>
-                                                                        @elseif ($i - $averageRating < 1)
-                                                                            <i class="fas fa-star-half-alt"></i>
-                                                                        @else
-                                                                            <i class="far fa-star"></i>
-                                                                        @endif
-                                                                    @endfor
-                                                                </span>
-                                                                <span class="text-gray-600">({{ number_format($averageRating, 1) }}/5)</span>
-                                                            </div>
-                                                        @endif
+                                                        <!-- Room info here -->
 
-                                                        <!------------------------ Comments ---------------------->
-                                                        @if (count($comments))
-                                                          @foreach ($comments as $comment)
-                                                    <div class="border rounded-md p-2 mt-2">
-                                                        <img src="{{ asset('images/canopy-logo.png') }}"
-                                                            alt="User Avatar"
-                                                            class="w-8 h-8 rounded-full inline-block">
-                                                        <div class="inline-block align-middle ms-2">
-                                                            <p class="text-gray-700 font-semibold">
-                                                                {{ $comment['user'] }}
-                                                                <span class="text-sm text-gray-400">• {{ $comment['date'] }}</span>
-                                                            </p>
-
-                                                            <!-- Stars per feedback -->
-                                                            @if (!is_null($comment['rating']))
-                                                                <div class="text-yellow-500 text-sm mb-1">
-                                                                    @for ($i = 1; $i <= 5; $i++)
-                                                                        @if ($i <= floor($comment['rating']))
-                                                                            <i class="fas fa-star"></i>
-                                                                        @elseif ($i - $comment['rating'] < 1)
-                                                                            <i class="fas fa-star-half-alt"></i>
-                                                                        @else
-                                                                            <i class="far fa-star"></i>
-                                                                        @endif
-                                                                    @endfor
-                                                                    <span class="text-gray-500 ms-1">({{ number_format($comment['rating'], 1) }}/5)</span>
-                                                                </div>
-                                                            @endif
-
-                                                            <p class="text-gray-500">{{ $comment['text'] }}</p>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-
+                                                        @if ($roomInCart)
                                                         @else
-                                                            <p class="text-sm text-gray-400">No comments yet.</p>
+                                                            <x-button wire:click="addRoomToCart({{ $room->id }})"
+                                                                wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"
+                                                                class="relative h-10 w-full justify-center">
+
+                                                                <div class="flex items-center justify-center relative w-full">
+                                                                    <!-- Spinner -->
+                                                                    <span wire:loading class=" flex items-center justify-center"
+                                                                        wire:target="addRoomToCart({{ $room->id }})">
+                                                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                                stroke="currentColor" stroke-width="4" />
+                                                                            <path class="opacity-75" fill="currentColor"
+                                                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                                                                        </svg>
+                                                                    </span>
+
+                                                                    <!-- Button Text -->
+                                                                    <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
+                                                                        Add Room
+                                                                    </span>
+                                                                </div>
+                                                            </x-button>
                                                         @endif
-                                                        </div>
-                                                        <!--------------------------- End kf Rating -------------------------------->
 
                                                     </div>
                                                 </div>
                                             </div>
 
-                                        </div>
 
-                                        <!-- Room Booking Controls -->
-                                        <div class="mt-auto pt-2 flex flex-col justify-between">
-                                            <div class="flex gap-4">
-
-                                                <!-- Adults -->
-                                                <div class="flex-1">
-                                                    <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
-                                                    <select wire:model.live="adults.{{ $room->id }}"
-                                                        class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @for ($i = 1; $i <= $room->max_adults; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
-
-                                                <!-- Kids -->
-                                                <div class="flex-1">
-                                                    <label class="block text-sm font-medium text-gray-700">Children</label>
-                                                    <select wire:model.live="kids.{{ $room->id }}"
-                                                        class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @for ($i = 0; $i <= $room->max_kids; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="mt-4">
-
-
-
-                                                @php
-                                                    $cartCollection = collect($cart); // Convert array to collection
-                                                    $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
-                                                        return $item['type'] === 'room' &&
-                                                            $item['room_id'] == $room->id;
-                                                    });
-                                                @endphp
-
-                                                <!-- Room info here -->
-
-                                                @if ($roomInCart)
-                                                @else
-                                                    <x-button wire:click="addRoomToCart({{ $room->id }})"
-                                                        wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"
-                                                        class="relative h-10 w-full justify-center">
-
-                                                        <div class="flex items-center justify-center relative w-full">
-                                                            <!-- Spinner -->
-                                                            <span wire:loading class=" flex items-center justify-center"
-                                                                wire:target="addRoomToCart({{ $room->id }})">
-                                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                                        stroke="currentColor" stroke-width="4" />
-                                                                    <path class="opacity-75" fill="currentColor"
-                                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
-                                                                </svg>
-                                                            </span>
-
-                                                            <!-- Button Text -->
-                                                            <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
-                                                                Add Room
-                                                            </span>
-                                                        </div>
-                                                    </x-button>
-                                                @endif
-
-                                            </div>
                                         </div>
                                     </div>
-
-
                                 </div>
-                            </div>
-                        </div>
                     @endforeach
+                    </div>
                 </div>
-            </div>
         @endif
     </div>
     <script>

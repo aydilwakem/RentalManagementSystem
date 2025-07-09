@@ -60,6 +60,30 @@ class FeedbackChart extends Component
         $this->comments = $query->take(10)->get();
     }
 
+    public function approveComment($id)
+    {
+        $feedback = Feedback::find($id);
+
+        if ($feedback) {
+            $feedback->status = 'approved';
+            $feedback->save();
+            $this->loadComments();
+            session()->flash('message', 'Comment approved successfully.');
+        }
+    }
+
+    public function rejectComment($id)
+    {
+        $feedback = Feedback::find($id);
+
+        if ($feedback) {
+            $feedback->status = 'rejected';
+            $feedback->save();
+            $this->loadComments();
+            session()->flash('message', 'Comment rejected successfully.');
+        }
+    }
+
     public function openRatingTypeModal()
     {
 

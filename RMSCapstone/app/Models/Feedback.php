@@ -17,7 +17,13 @@ class Feedback extends Model
         'transaction_number',
         'submitted_at',
         'comments',
+        'is_approved',
     ];
+
+    protected $casts = [
+        'is_approved'        => 'boolean',
+    ];
+
 
     public function feedbackRatings()
     {

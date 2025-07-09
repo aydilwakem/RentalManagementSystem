@@ -49,7 +49,7 @@ class FeedbackForm extends Component
             'transaction_id' => $transaction ? $transaction->id : null,
             'transaction_number' => $this->transaction_number,
             'submitted_at' => now(),
-            'comments' => $this->comments,
+            'comments' => $this->comments ?: '',
         ]);
 
         foreach ($this->ratingValues as $typeId => $value) {
