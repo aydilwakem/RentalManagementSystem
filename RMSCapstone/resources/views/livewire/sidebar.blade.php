@@ -470,6 +470,12 @@
                             class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Appearance</h1>
                         </a>
+
+                        <a href="{{ route('admin.view-promo-codes') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.view-promo-codes') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Promo Codes</h1>
+                        </a>
+
                         @endcan
                     </div>
                 </div>
