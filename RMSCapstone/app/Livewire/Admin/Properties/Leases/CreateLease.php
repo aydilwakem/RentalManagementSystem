@@ -96,6 +96,11 @@ class CreateLease extends Component
         $now = Carbon::now('Asia/Manila');
         $this->start_date = $now->format('Y-m-d');
         $this->end_date = $now->copy()->addMonths((3))->format('Y-m-d');
+
+        $this->getAvailableHouses();
+        $this->getAvailableTenants(); 
+        $this->updatedMonthlyRent();
+       // $this->updatedHouseId($this->house_id); 
     }
 
     //------------------------------- DISPLAY MONTHLY RENT METHOD ----------------------------------//

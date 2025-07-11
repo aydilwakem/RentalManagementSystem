@@ -33,7 +33,7 @@
                         <input type="date" wire:model.live="start_date" id="start_date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                         @error('start_date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -45,7 +45,7 @@
                         <input type="date" wire:model.live="end_date" id="end_date"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                         @error('end_date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -54,19 +54,19 @@
                         <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">
                             Select House <span class="text-red-500">*</span>
                         </label>
-                        <select wire:model="house_id" id="house_id"
+                        <select wire:model.live="house_id" id="house_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                             <option value="">Select House</option>
                             @foreach ($houses as $house)
-                                <option value="{{ $house->id }}" @if ($house->isBooked) disabled @endif>
-                                    {{ $house->name_number }} @if ($house->isBooked)
-                                        - (Leased)
-                                    @endif
-                                </option>
+                            <option value="{{ $house->id }}" @if ($house->isBooked) disabled @endif>
+                                {{ $house->name_number }} @if ($house->isBooked)
+                                - (Leased)
+                                @endif
+                            </option>
                             @endforeach
                         </select>
                         @error('house_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -79,16 +79,16 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
                             <option value="">Select Tenant</option>
                             @foreach ($tenants as $tenant)
-                                <option value="{{ $tenant->id }}" @if ($tenant->isLeased) disabled @endif>
-                                    {{ $tenant->first_name }} {{ $tenant->last_name }}
-                                    @if ($tenant->isLeased)
-                                        - (Leased: {{ $tenant->leasedPropertyName ?? 'Unnamed Property' }})
-                                    @endif
-                                </option>
+                            <option value="{{ $tenant->id }}" @if ($tenant->isLeased) disabled @endif>
+                                {{ $tenant->first_name }} {{ $tenant->last_name }}
+                                @if ($tenant->isLeased)
+                                - (Leased: {{ $tenant->leasedPropertyName ?? 'Unnamed Property' }})
+                                @endif
+                            </option>
                             @endforeach
                         </select>
                         @error('selectedTenant')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -101,7 +101,7 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
                             placeholder="Ex. 5">
                         @error('pax')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -112,10 +112,10 @@
                             Monthly Rent <span class="text-red-500">*</span>
                         </label>
                         <input type="text" wire:model.live="monthly_rent" id="monthly_rent"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
-                            placeholder="Ex. 8,500.00">
+                            class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 cursor-not-allowed"
+                            placeholder="Ex. 8,500.00" disabled>
                         @error('monthly_rent')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -134,7 +134,7 @@
                             <option value="terminated">Terminated</option>
                         </select>
                         @error('transaction_status')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 

@@ -81,6 +81,8 @@ class CreateEvent extends Component
         // Current date, 8AM - 12PM (minimum 4hrs)
         $this->start_datetime = $now->copy()->setTime(8, 0)->format('Y-m-d H:i');
         $this->end_datetime = $now->copy()->setTime(12, 0)->format('Y-m-d H:i');
+
+        $this->getAvailableHalls();
     }
 
     public function confirmCreate()
