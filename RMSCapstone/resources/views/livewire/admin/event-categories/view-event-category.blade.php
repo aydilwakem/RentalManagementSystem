@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Event Category') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center"> {{ $eventCategory->name }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white"> {{ $eventCategory->name }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.event-categories') }}'"
@@ -23,15 +23,16 @@
 
             <!-- Description -->
             <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-2 mt-5">Description</h3>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2 mt-5 dark:text-gray-200">Description</h3>
 
                 @if (!empty($eventCategory->description))
                     <div
-                        class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700 leading-relaxed shadow-sm text-justify">
+                        class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700 leading-relaxed shadow-sm text-justify
+                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         {{ $eventCategory->description }}
                     </div>
                 @else
-                    <p class="text-gray-500 italic">No description provided.</p>
+                    <p class="text-gray-500 italic dark:text-gray-200">No description provided.</p>
                 @endif
             </div>
 

@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Event Hall') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Event Hall</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Event Hall</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.event-halls') }}'" wire:navigate
@@ -26,10 +26,11 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Event Hall -->
                     <div class="sm:col-span-2">
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Event Hall
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Amity Hall" required>
                         @error('name_number')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -39,9 +40,10 @@
                     <!-- Description -->
                     <div class="sm:col-span-2">
                         <label for="description"
-                            class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
                         <textarea wire:model="description" id="description" rows="3"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Enjoy our spacious hall with stunning outdoor access."></textarea>
                         @error('description')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -50,9 +52,10 @@
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate (first 4 hours) <span class="text-red-500">*</span></label>
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate (first 4 hours) <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="amount" id="amount" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 45,000.00"></input>
                         @error('amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -61,10 +64,11 @@
 
                     <!-- Capacity -->
                     <div>
-                        <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900">Maximum
+                        <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                             Capacity <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="capacity" id="capacity" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 100 Pax"></input>
                         @error('capacity')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -73,11 +77,12 @@
 
                     <!-- Extra Charge Per Hour -->
                     <div>
-                        <label for="extra_charge_per_hour" class="block mb-2 text-sm font-medium text-gray-900">Extra
+                        <label for="extra_charge_per_hour" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Charge Per Hour <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="extra_charge_per_hour" id="extra_charge_per_hour"
                             rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 7,000.00"></input>
                         @error('extra_charge_per_hour')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -85,10 +90,11 @@
                     </div>
 
                     <div>
-                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Event Hall
+                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
@@ -99,13 +105,13 @@
 
                     <!-- Available Amenities (Dynamic) -->
                     <div class="sm:col-span-2">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                                    <label class="ms-2 text-sm font-medium text-gray-900">
+                                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                         {{ $feature->name }}
                                     </label>
                                 </div>
@@ -118,7 +124,7 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900">Upload Event Hall
+                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload Event Hall
                             Image(s)</label>
                         <div class="flex flex-wrap gap-4">
                             @if ($images && count($images) > 0)

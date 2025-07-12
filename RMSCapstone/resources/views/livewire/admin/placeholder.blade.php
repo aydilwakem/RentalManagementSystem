@@ -18,7 +18,7 @@
         <!-- Table Headers -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 ">
+                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:border-t dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-10 rounded dark:bg-gray-600"></div></th>
                         <th class="px-4 py-3"><div class="h-6 bg-gray-300 w-24 rounded dark:bg-gray-600"></div></th>

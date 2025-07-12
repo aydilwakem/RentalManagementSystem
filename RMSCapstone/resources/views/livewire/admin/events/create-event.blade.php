@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Event') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Event</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Event</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.events') }}'" wire:navigate
@@ -27,7 +27,7 @@
 
                     {{-- GUEST DETAILS --}}
                     <div class="col-span-full md:col-span-2">
-                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-white">Booking Contact Details</h3>
+                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Booking Contact Details</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label for="first_name"
@@ -35,7 +35,7 @@
                                     Name <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="first_name"
                                     placeholder="Ex. Juan" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('first_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -47,7 +47,7 @@
                                     Name</label>
                                 <input type="text" wire:model="middle_name"
                                     placeholder="Ex. Mercado"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('middle_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -59,7 +59,7 @@
                                     Name <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="last_name"
                                     placeholder="Ex. Dela Cruz" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('last_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -72,7 +72,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="email" required
                                     placeholder="Ex. juan.delacruz@example.com"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('email')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -84,7 +84,7 @@
                                     Number <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="contact_number" required
                                     placeholder="Ex. 0912 3456 7890"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('contact_number')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -96,7 +96,7 @@
                                     Name <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="company_name" required
                                     placeholder="Ex. Event Management Inc."
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('company_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -109,7 +109,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City/Municipality <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="city_municipality"
                                     placeholder="Ex. Taguig City" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('city_municipality')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -120,7 +120,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="country"
                                     placeholder="Ex. Philippines" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('country')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -130,7 +130,7 @@
 
                     {{-- EVENT DETAILS --}}
                     <div class="col-span-full md:col-span-2 mt-4">
-                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-white">Event Details</h3>
+                        <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Event Details</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="start_datetime"
@@ -138,7 +138,7 @@
                                     Start
                                     Date and Time <span class="text-red-500">*</span></label>
                                 <input type="datetime-local" wire:model.live="start_datetime" id="start_datetime" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('start_datetime')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -150,7 +150,7 @@
                                     Date and Time <span class="text-red-500">*</span>
                                 </label>
                                 <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('end_datetime')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -161,7 +161,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
                                     Hall <span class="text-red-500">*</span></label>
                                 <select id="hall" wire:model="selected_hall" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Event Hall</option>
                                     @foreach ($halls as $hall)
                                         <option value="{{ $hall->id }}"
@@ -182,7 +182,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
                                     Type <span class="text-red-500">*</span></label>
                                 <select wire:model="event_type_id" id="event_type_id" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Event Type</option>
                                     @foreach ($eventTypes as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -202,7 +202,7 @@
                                 <input type="number" wire:model.live="total_adults" id="total_adults"
                                     min="0" onwheel="this.blur()" required
                                     placeholder="Ex. 100 Adults"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('total_adults')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -214,7 +214,7 @@
                                     Kids </label>
                                 <input type="number" wire:model.live="total_kids" id="total_kids" onwheel="this.blur()"
                                     placeholder="Ex. 50 Kids"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('total_kids')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -226,7 +226,8 @@
                                     Pax <span class="text-red-500">*</span></label>
                                 <input type="number" id="pax" min="0" disabled
                                     value="{{ $pax }}"
-                             class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('pax')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -238,7 +239,7 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
                                     Status <span class="text-red-500">*</span></label>
                                 <select wire:model="transaction_status" id="transaction_status" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">-- Select Event Status -- </option>
                                     <option value="confirmed">Confirmed</option>
                                     <option value="ongoing">On-going</option>
@@ -255,7 +256,8 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Agreed Event
                                     Cost <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="total_amount" id="total_amount" required
-                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600"
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
+                                    dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                     placeholder="Ex. 50,000.00">
                                 @error('total_amount')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>

@@ -1,18 +1,20 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Event Hall') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div
+            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
 
             <div class="relative flex items-center mb-6">
                 <!-- Room Name -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Event Hall: {{ $eventHall->name_number }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Event Hall: {{ $eventHall->name_number }}
+                </h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.event-halls') }}'"
@@ -61,14 +63,16 @@
                 </div>
 
                 <!-- Event Hall Details -->
-                <div class="bg-white p-6 rounded-xl space-y-3">
-                    <h3 class="text-xl font-semibold text-gray-800">Event Hall Details</h3>
-                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                <div
+                    class="bg-white p-6 rounded-xl space-y-3 dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500 border">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Event Hall Details</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-200">
                         <li><strong>Description:</strong>
                             @if (!empty($eventHall->description))
-                                <span class="block ml-2 text-gray-600">{{ $eventHall->description }}</span>
+                                <span
+                                    class="block ml-2 text-gray-600 dark:text-gray-200">{{ $eventHall->description }}</span>
                             @else
-                                <em class="text-gray-500 ml-2">No description provided.</em>
+                                <em class="text-gray-500 ml-2 dark:text-gray-200">No description provided.</em>
                             @endif
                         </li>
                         <li><strong>Rate:</strong> ₱{{ number_format($eventHall->amount, 2) }}</li>
@@ -79,15 +83,19 @@
                     </ul>
 
                     <div>
-                        <h3 class="text-xl font-semibold text-gray-800 mt-4">Amenities</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 mt-4 dark:text-white">Amenities</h3>
                         @if ($eventHall->features->isNotEmpty())
                             <ul class="list-disc list-inside mt-2 text-gray-700">
                                 @foreach ($eventHall->features as $feature)
-                                    <li>{{ $feature->name }}</li>
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                                        {{ $feature->name }}
+                                    </span>
                                 @endforeach
                             </ul>
                         @else
-                            <p class="text-gray-500 mt-2">No features selected for this event hall.</p>
+                            <p class="text-gray-500 mt-2 dark:text-gray-200">No features selected for this event hall.
+                            </p>
                         @endif
                     </div>
                 </div>
@@ -95,14 +103,13 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 mt-6 mb-3">
                 <!-- Edit -->
-                <x-ghost-button type="button" icon="fas fa-pen-to-square"
-                    wire:navigate href="{{ route('admin.edit-event-hall', ['eventHall' => $eventHall->id]) }}">
+                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                    href="{{ route('admin.edit-event-hall', ['eventHall' => $eventHall->id]) }}">
                     Edit
                 </x-ghost-button>
 
                 <!-- Delete -->
-                <x-danger-button type="button" icon="fas fa-trash"
-                    wire:click="confirmDelete({{ $eventHall->id }})">
+                <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $eventHall->id }})">
                     Delete
                 </x-danger-button>
             </div>

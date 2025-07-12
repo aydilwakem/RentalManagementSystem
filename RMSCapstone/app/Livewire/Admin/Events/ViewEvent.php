@@ -63,6 +63,10 @@ class ViewEvent extends Component
         $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
         $this->loadTransactionData($event);
+
+        //default date in create payment
+        $now = now('Asia/Manila');
+        $this->payment_date = $now->format('Y-m-d');
     }
 
     public function loadTransactionData(Transaction $transaction)

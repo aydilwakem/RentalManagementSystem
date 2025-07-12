@@ -29,7 +29,7 @@
                 @endcan
             </div>
             <!-- Table -->
-            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden border">
+            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 {{-- Display Session Message --}}
                 @if (session('message'))
                     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -53,13 +53,15 @@
                                 </svg>
                             </div>
                             <input wire:model.live.debounce.300ms="search"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
                         {{-- Bulk Actions Button --}}
                         <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
                                 <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -69,7 +71,8 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 <div class="py-1">
                                     <a wire:click.prevent="confirmDeleteInBulk" href="#"
                                         class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
@@ -82,9 +85,10 @@
                     {{-- Status Type --}}
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900">Hall Status:</label>
+                            <label class="w-40 text-sm font-medium text-gray-900 dark:text-white">Hall Status:</label>
                             <select wire:model.live="statusFilter"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">All</option>
                                 <option value="available">Available</option>
                                 <option value="out_of_service">Out of Service</option>
@@ -95,7 +99,7 @@
 
                 <!-- Table Body -->
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
@@ -233,72 +237,75 @@
                         </tr>
                     </thead>
 
-                    @forelse ($halls as $hall)
-                        <tr class="border-b hover:bg-gray-50">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                <input wire:model.live="selectedRows" type="checkbox" name="halls[]"
-                                    value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
-                                {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
-                            </th>
-                            <td class="px-4 py-3 text-gray-900 font-semibold"> {{ $hall->name_number }} </td>
-                            <td class="px-4 py-3">
-                                @if (!empty($hall->description))
-                                    {{ $hall->description }}
-                                @else
-                                    <em class="text-gray-600 leading-relaxed">No description provided.</em>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3"> {{ $hall->capacity }}</td>
-                            <td class="px-4 py-3"> {{ number_format($hall->amount, 2) }} </td>
-                            <td class="px-4 py-3"> {{ number_format($hall->extra_charge_per_hour, 2) }} </td>
-                            <td class="px-4 py-3">
-                                @if ($hall->property_status === 'available')
-                                    <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
-                                @elseif($hall->property_status === 'out_of_service')
-                                    <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out of Service</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                    <tbody class="dark:bg-gray-700">
+                        @forelse ($halls as $hall)
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="halls[]"
+                                        value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
+                                    {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
+                                </th>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white"> {{ $hall->name_number }} </td>
+                                <td class="px-4 py-3">
+                                    @if (!empty($hall->description))
+                                        {{ $hall->description }}
+                                    @else
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3"> {{ $hall->capacity }}</td>
+                                <td class="px-4 py-3"> {{ number_format($hall->amount, 2) }} </td>
+                                <td class="px-4 py-3"> {{ number_format($hall->extra_charge_per_hour, 2) }} </td>
+                                <td class="px-4 py-3">
+                                    @if ($hall->property_status === 'available')
+                                        <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
+                                    @elseif($hall->property_status === 'out_of_service')
+                                        <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out of Service</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
-                                <!-- View Icon -->
-                                @can('event-hall-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
-                                    </i>
-                                @endcan
+                                    <!-- View Icon -->
+                                    @can('event-hall-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
+                                            href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
+                                        </i>
+                                    @endcan
 
-                                <!-- Edit Icon -->
-                                @can('event-hall-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
-                                    </i>
-                                @endcan
+                                    <!-- Edit Icon -->
+                                    @can('event-hall-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
+                                            href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
+                                        </i>
+                                    @endcan
 
-                                <!-- Delete Icon -->
-                                @can('event-hall-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $hall->id }})" wire:loading.attr="disabled">
-                                    </i>
-                                @endcan
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="15" class="text-center py-10 text-gray-500">
-                                No event halls found.
-                            </td>
-                        </tr>
-                    @endforelse
+                                    <!-- Delete Icon -->
+                                    @can('event-hall-delete')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
+                                            wire:click="confirmDelete({{ $hall->id }})" wire:loading.attr="disabled">
+                                        </i>
+                                    @endcan
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No event halls found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
                 {{-- Pagination --}}
-                <div class="py-4 px-3">
+                <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live="perPage"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

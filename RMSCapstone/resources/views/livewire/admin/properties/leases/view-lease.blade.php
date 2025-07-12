@@ -146,7 +146,7 @@
                 </div>
 
                 <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
-                    <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
+                    <h2 class="font-bold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                         {{ __('Payments') }}
                     </h2>
                     @if ($payments->isNotEmpty())

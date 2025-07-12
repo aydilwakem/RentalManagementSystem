@@ -39,7 +39,7 @@
             @endif
 
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
                 <div class="flex items-center p-4">
                     {{-- Search Bar --}}
@@ -55,7 +55,8 @@
                                     </svg>
                                 </div>
                                 <input wire:model.live.debounce.300ms="search" type="text"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                     placeholder="Search" required="">
                             </div>
                         </div>
@@ -63,7 +64,8 @@
                         {{-- Bulk Actions Button --}}
                         <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
                                 <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -73,10 +75,11 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 <div class="py-1">
                                     <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                         Delete</a>
                                 </div>
                             </div>
@@ -84,7 +87,7 @@
                     </div>
                 </div>
                 <table class="w-full text-sm text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- Checkboxes --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -159,62 +162,65 @@
                         </th> --}}
                         </tr>
                     </thead>
-                    @forelse ($eventCategories as $eventCategory)
-                        <tr class="border-b hover:bg-gray-50">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                <input wire:model.live="selectedRows" type="checkbox" name="eventCategory[]"
-                                    value="{{ $eventCategory->id }}" class="accent-blue-600 w-4 h-4 me-2">
-                                {{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}
-                            </th>
-                            <td class="px-4 py-3 text-gray-900 font-semibold"> {{ $eventCategory->name }}</td>
-                            <td class="px-4 py-3">
-                                @if (!empty($eventCategory->description))
-                                    {{ Str::limit($eventCategory->description, 100) }}
-                                @else
-                                    <em class="text-gray-600 leading-relaxed">No description provided.</em>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 flex items-center justify-center space-x-3">
-                                <!-- View Icon -->
-                                @can('event-category-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.view-event-category', ['eventCategory' => $eventCategory->id]) }}">
-                                    </i>
-                                @endcan
+                    <tbody class="dark:bg-gray-700">
+                        @forelse ($eventCategories as $eventCategory)
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <input wire:model.live="selectedRows" type="checkbox" name="eventCategory[]"
+                                        value="{{ $eventCategory->id }}" class="accent-blue-600 w-4 h-4 me-2">
+                                    {{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}
+                                </th>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white"> {{ $eventCategory->name }}</td>
+                                <td class="px-4 py-3">
+                                    @if (!empty($eventCategory->description))
+                                        {{ Str::limit($eventCategory->description, 100) }}
+                                    @else
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                                    <!-- View Icon -->
+                                    @can('event-category-view')
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500" wire:navigate
+                                            href="{{ route('admin.view-event-category', ['eventCategory' => $eventCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
-                                <!-- Edit Icon -->
-                                @can('event-category-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
-                                        href="{{ route('admin.edit-event-category', ['eventCategory' => $eventCategory->id]) }}">
-                                    </i>
-                                @endcan
+                                    <!-- Edit Icon -->
+                                    @can('event-category-edit')
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500" wire:navigate
+                                            href="{{ route('admin.edit-event-category', ['eventCategory' => $eventCategory->id]) }}">
+                                        </i>
+                                    @endcan
 
-                                <!-- Delete Icon -->
-                                @can('event-category-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
-                                        wire:click="confirmDelete({{ $eventCategory->id }})"
-                                        wire:loading.attr="disabled">
-                                    </i>
-                                @endcan
+                                    <!-- Delete Icon -->
+                                    @can('event-category-delete')
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
+                                            wire:click="confirmDelete({{ $eventCategory->id }})"
+                                            wire:loading.attr="disabled">
+                                        </i>
+                                    @endcan
 
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="15" class="text-center py-10 text-gray-500">
-                                No event categories found.
-                            </td>
-                        </tr>
-                    @endforelse
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center py-10 text-gray-500">
+                                    No event categories found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
 
                 {{-- Pagination --}}
-                <div class="py-4 px-3">
+                <div class="py-4 px-3 dark:bg-gray-800 rounded-xl shadow-sm">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live="perPage"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
