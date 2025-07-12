@@ -1,12 +1,12 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Activity') }}
         </h2>
     </x-slot>
 
     <div class="py-6">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <!-- Back Button -->
             <div class="flex justify-end mb-4">
                 <button onclick="history.back()"
@@ -25,30 +25,30 @@
 
                 <div class="mb-4 space-y-3">
                     <!-- Activity Name -->
-                    <h2 class="mb-4 text-2xl md:text-3xl font-bold text-center text-gray-900">
-                        {{ $activity->name }}
+                    <h2 class="mb-4 text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white">
+                        Activity: {{ $activity->name }}
                     </h2>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Description</h3>
+                        <p class="text-gray-700 leading-relaxed dark:text-gray-200">
                             @if (!empty($activity->description))
                                 {{ $activity->description }}
                             @else
-                                <em class="text-gray-500 leading-relaxed italic">No description provided.</em>
+                                <em class="text-gray-500 leading-relaxed italic dark:text-white">No description provided.</em>
                             @endif
                         </p>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Amount</h3>
-                        <p class="text-gray-700 font-medium">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Amount</h3>
+                        <p class="text-gray-700 font-medium dark:text-gray-200">
                             {{ number_format($activity->amount, 2) }}
                         </p>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Inclusions</h3>
-                        <p class="text-gray-700 leading-relaxed">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Inclusions</h3>
+                        <p class="text-gray-700 leading-relaxed dark:text-gray-200">
                             @if (!empty($activity->inclusions))
                                 {{ $activity->inclusions }}
                             @else

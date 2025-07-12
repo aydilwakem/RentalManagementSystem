@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Payment Method') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Payment Method</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Payment Method</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.payments') }}'" wire:navigate
@@ -27,11 +27,12 @@
 
                     {{-- Payment Method Name --}}
                     <div class="sm:col-span-2">
-                        <label for="mode_of_payment_name" class="block mb-2 text-sm font-medium text-gray-900">Payment
+                        <label for="mode_of_payment_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Payment
                             Method
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="mode_of_payment_name" id="mode_of_payment_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Gcash E-Wallet" required>
                         @error('mode_of_payment_name')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -40,11 +41,12 @@
 
                     {{-- Account Name --}}
                     <div>
-                        <label for="account_name" class="block mb-2 text-sm font-medium text-gray-900">Account
+                        <label for="account_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="account_name" id="account_name"
                             placeholder="Ex. Juan Dela Cruz"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('account_name')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -52,11 +54,12 @@
 
                     {{-- Account Number --}}
                     <div>
-                        <label for="account_number" class="block mb-2 text-sm font-medium text-gray-900">Account
+                        <label for="account_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
                             Number <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="account_number" id="account_number"
                             placeholder="Ex. 09123456789"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('account_number')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -65,11 +68,12 @@
                     <!-- QR Image Upload -->
                     <div class="space-y-3">
                         <label for="mode_of_payment_qr_image"
-                            class="block mb-2 text-sm font-medium text-gray-900">Upload QR
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload QR
                             Image <span class="text-red-500">*</span></label>
                         <input accept="image/png, image/jpeg" type="file" wire:model="mode_of_payment_qr_image"
                             id="mode_of_payment_qr_image"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
 
                         <!-- Error Message -->
                         @error('image')

@@ -14,7 +14,7 @@
     </div> --}}
 
     <!-- Table BOdy -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
         <div class="flex items-center justify-between p-4">
             <div class="flex">
@@ -29,7 +29,8 @@
                     </div>
                     <!-- Search-->
                     <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Search" required="">
                 </div>
 
@@ -55,9 +56,10 @@
             <div class="flex items-center space-x-8">
                 <!-- Payment Type Filter -->
                 <div class="flex items-center">
-                    <label for="payment_type" class="w-32 text-sm font-medium text-gray-900">Payment Type:</label>
+                    <label for="payment_type" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Type:</label>
                     <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
                         <option value="Room Rent">Room Rent</option>
                         <option value="House Rent">House Rent</option>
@@ -71,9 +73,10 @@
 
                 <!-- Payment Status Filter -->
                 <div class="flex items-center">
-                    <label for="payment_status" class="w-32 text-sm font-medium text-gray-900">Payment Status:</label>
+                    <label for="payment_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Status:</label>
                     <select id="payment_status" name="payment_status" wire:model.live="paymentStatusFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
                         <option value="pending">Pending</option>
                         <option value="completed">Completed</option>
@@ -87,8 +90,7 @@
         <!-- Table Content -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-
-                <thead class="text-sm text-gray-700 bg-gray-200">
+                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
@@ -105,11 +107,10 @@
                         {{-- <th class="px-4 py-3">Actions</th> --}}
                     </tr>
                 </thead>
-
-                <tbody>
+                <tbody class="dark:bg-gray-700">
                     @forelse ($payments as $payment)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                    <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
                             <span>{{ $loop->iteration }}</span>
                         </td>

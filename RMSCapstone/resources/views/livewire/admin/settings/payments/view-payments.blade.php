@@ -32,17 +32,18 @@
                             </svg>
                         </span>
                         <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search" required
-                            class="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                            class="w-full pl-10 p-2 border border-gray-300 rounded-lg
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
-                    @can('room-create')
+                    @can('payment-method-create')
                         <x-button icon="fas fa-plus" href="{{ route('admin.create-payment') }}">
                             New Payment Method
                         </x-button>
                     @endcan
 
-                    @can('room-soft-delete')
+                    @can('payment-method-soft-delete')
                         <x-button
                             class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                             icon="fas fa-trash" href="{{ route('admin.deleted-payments') }}">
@@ -56,7 +57,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @forelse ($paymentMethod as $method)
                         <div x-data="{ blurred: true }"
-                            class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto">
+                            class="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-md mx-auto dark:bg-gray-600">
                             <div class="relative">
                                 <!-- QR Image -->
                                 <img :class="blurred ? 'blur' : ''"
@@ -72,11 +73,11 @@
                             </div>
 
                             <div class="p-6 text-center">
-                                <h5 class="text-2xl font-bold text-gray-900">
+                                <h5 class="text-2xl font-bold text-gray-900 dark:text-white">
                                     {{ $method->mode_of_payment_name }}
                                 </h5>
-                                <p class="text-gray-700">{{ $method->account_name }}</p>
-                                <p class="text-gray-700">{{ $method->account_number }}</p>
+                                <p class="text-gray-700 dark:text-gray-200">{{ $method->account_name }}</p>
+                                <p class="text-gray-700 dark:text-gray-200">{{ $method->account_number }}</p>
 
                                 <div class="mt-3 flex justify-center space-x-3">
                                     @can('payment-method-view')
@@ -101,26 +102,27 @@
                         </div>
                     @empty
                         <div
-                            class="flex flex-col items-center justify-center p-8 bg-white text-center max-w-md mx-auto col-span-3">
+                            class="flex flex-col items-center justify-center p-8 bg-white text-center max-w-md mx-auto col-span-3 dark:bg-gray-800">
                             <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                                 </path>
                             </svg>
-                            <p class="text-xl font-semibold text-gray-700 mb-2">No Payment Methods Found</p>
+                            <p class="text-xl font-semibold text-gray-700 mb-2 dark:text-gray-200">No Payment Methods Found</p>
                         </div>
                     @endforelse
                 </div>
 
             </div>
             {{-- Pagination --}}
-            <div class="py-4 px-3">
+            <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Per Page</label>
                         <select wire:model.live="perPage"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="10">10</option>
                             <option value="20">20</option>
                             <option value="50">50</option>

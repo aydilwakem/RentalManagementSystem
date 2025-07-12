@@ -1,19 +1,16 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Payment Method') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
-                <!-- Method Name -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">{{ $paymentMethod->name_number }}
-                </h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.payments') }}'"
@@ -22,8 +19,8 @@
                 </button>
             </div>
 
-            <!-- Event Hall Details -->
-            <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center">
+            <!-- Payment Method Details -->
+            <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center dark:text-white">
                 {{ $paymentMethod->mode_of_payment_name }}
             </h2>
 
@@ -36,16 +33,16 @@
 
             <!-- Account Name -->
             <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Account Name:</h3>
-                <p class=" text-gray-500">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Account Name:</h3>
+                <p class=" text-gray-500 dark:text-gray-200">
                     {{ $paymentMethod->account_name }}
                 </p>
             </div>
 
             <!-- Account Number -->
             <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">Account Details:</h3>
-                <p class=" text-gray-500">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Account Details:</h3>
+                <p class=" text-gray-500 dark:text-gray-200">
                     {{ $paymentMethod->account_number }}
                 </p>
             </div>

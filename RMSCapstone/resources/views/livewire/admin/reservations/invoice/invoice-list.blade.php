@@ -14,7 +14,7 @@
     </div> --}}
 
     <!-- Table BOdy -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
         <div class="flex items-center justify-between p-4">
             <div class="flex">
@@ -28,7 +28,8 @@
                     </div>
                     <!-- Search-->
                     <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Search" required="">
                 </div>
 
@@ -53,9 +54,10 @@
 
             <!-- Invoice Status Filter -->
             <div class="flex items-center">
-                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900">Invoice Status:</label>
+                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice Status:</label>
                 <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter"
-                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <option value="">All</option>
                     <option value="pending">Pending</option>
                     <option value="completed">Completed</option>
@@ -83,8 +85,7 @@
         <!-- Table Content -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-
-                <thead class="text-sm text-gray-700 bg-gray-200">
+                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
@@ -100,17 +101,15 @@
                         <th class="px-4 py-3">Status</th>
                         {{-- <th class="px-4 py-3">Actions</th> --}}
                     </tr>
-                </thead>
-
-
+                </thead class="dark:bg-gray-700">
                 <tbody>
                     @forelse ($invoices as $invoice)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                        <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
                                 <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 dark:text-gray-200">
                                 {{ $invoice->transaction->transactionUser->first_name ?? '' }}
                                 {{ $invoice->transaction->transactionUser->last_name ?? '' }}
                             </td>

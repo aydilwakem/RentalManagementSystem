@@ -35,7 +35,7 @@
                 @endcan
             </div>
 
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     <!-- Search Tab -->
@@ -50,7 +50,8 @@
                                 </svg>
                             </div>
                             <input wire:model.live.debounce.300ms="search" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
                     </div>
@@ -58,7 +59,8 @@
                     {{-- Bulk Actions Button --}}
                     <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
-                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                            dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                             Actions
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,10 +70,11 @@
                         </button>
 
                         <div x-show="open" @click.away="open = false"
-                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white focus:outline-none z-50
+                            dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                             <div class="py-1">
                                 <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                     Delete</a>
                             </div>
                         </div>
@@ -80,7 +83,7 @@
                 </div>
                 <!-- Table -->
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- ID --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -187,16 +190,16 @@
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="dark:bg-gray-700">
                         @forelse ($activities as $activity)
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
                                         value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$activity->id] ?? 'ACT-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold"> {{ $activity->name }}</td>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200"> {{ $activity->name }}</td>
                                 <td class="px-4 py-3">
                                     @if (!empty($activity->description))
                                         {{ Str::limit($activity->description, 50) }}
@@ -206,7 +209,7 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     @if ($activity->amount == 0)
-                                        <span class="text-green-600 font-semibold">FREE</span>
+                                        <span class="text-green-600 font-semibold dark:text-green-300">FREE</span>
                                     @else
                                         {{ number_format($activity->amount, 2) }}
                                     @endif
@@ -216,7 +219,7 @@
 
                                     <!-- View Icon -->
                                     @can('activity-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
                                             wire:navigate
                                             href="{{ route('admin.view-activity', ['activity' => $activity->id]) }}">
                                         </i>
@@ -224,7 +227,7 @@
 
                                     <!-- Edit Icon -->
                                     @can('activity-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer"
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
                                             wire:navigate
                                             href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
                                         </i>
@@ -232,7 +235,7 @@
 
                                     <!-- Delete Icon -->
                                     @can('activity-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
                                             wire:click="confirmDelete({{ $activity->id }})" wire:loading.attr="disabled">
                                         </i>
                                     @endcan
@@ -251,12 +254,13 @@
 
 
                 <!-- Pagination -->
-                <div class="py-4 px-3">
+                <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Per Page</label>
                             <select wire:model.live="perPage"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

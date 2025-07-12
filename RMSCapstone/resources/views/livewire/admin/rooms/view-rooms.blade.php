@@ -384,7 +384,7 @@
                 </table>
             </div>
             <!-- Pagination -->
-            <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
+            <div class="py-4 px-3">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center mb-3">
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>

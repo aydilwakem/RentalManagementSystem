@@ -43,7 +43,7 @@
                 <!-- Bar Item -->
                 @foreach ($feedbackRatingTypes as $ratingType)
                 <div class="flex flex-col items-center">
-                    <i class="fas fa-broom text-gray-600 mt-2 text-xs"></i>
+                    <i class="fas fa-broom text-gray-600 mt-2 text-xs dark:text-gray-200"></i>
                     <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
                     <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
                 </div>
@@ -64,14 +64,14 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach ($feedbackRatingTypes as $ratingType)
-            <div class="flex items-center justify-between border p-4 rounded-md relative">
+            <div class="flex items-center justify-between border p-4 rounded-md relative dark:bg-gray-700 dark:border-gray-600">
                 <!-- Remove Button -->
                 <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xs font-bold"
                     wire:click="RemoveRatingType({{ $ratingType->id }})">
                     ×
                 </button>
 
-                <div class="flex items-center space-x-2 text-gray-700 font-medium">
+                <div class="flex items-center space-x-2 text-gray-700 font-medium dark:text-white">
                     <i class="fas fa-broom"></i>
                     <span>{{ $ratingType->rating_name }}</span>
                 </div>
@@ -114,7 +114,7 @@
     </div>
 
     <!-- Pending Feedbacks -->
-    <h3 class="text-lg font-semibold text-yellow-600 mb-2">Pending Comments for Approval</h3>
+    <h3 class="text-lg font-semibold text-yellow-600">Pending Comments for Approval</h3>
     <p class="text-sm text-gray-500 mb-4">These comments were submitted by guests and are awaiting your review.</p>
     <div>
         <ul class="space-y-4">
@@ -160,7 +160,7 @@
     </div>
 
     <!-- Approved Feedbacks -->
-    <h3 class="text-lg font-semibold text-green-600 mt-8 mb-2">Approved Comments</h3>
+    <h3 class="text-lg font-semibold text-green-600 mt-8">Approved Comments</h3>
     <p class="text-sm text-gray-500 mb-4">These comments are visible to guests on the booking site.</p>
     <div>
         <ul class="space-y-4">
@@ -194,7 +194,7 @@
 
     <!-- Rejected Feedbacks -->
     <h3 class="text-lg font-semibold text-red-600 mt-8 mb-2">Rejected Comments</h3>
-    <p class="text-sm text-gray-500 mb-4">These comments were declined and will not be shown publicly.</p>
+    <p class="text-sm text-gray-500 ">These comments were declined and will not be shown publicly.</p>
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'rejected') as $comment)

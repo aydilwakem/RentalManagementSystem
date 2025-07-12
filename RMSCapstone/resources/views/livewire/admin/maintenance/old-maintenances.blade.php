@@ -4,13 +4,13 @@
         <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 border-gray-300">
             <li class="me-2">
                 <a href="{{ route('admin.maintenances') }}"
-                    class="inline-block p-4 {{ Route::is('admin.maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    class="inline-block p-4 {{ Route::is('admin.maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg dark:text-gray-200' }}">
                     Pending Maintenances
                 </a>
             </li>
             <li class="me-2">
                 <a href="{{ route('admin.old-maintenances') }}"
-                    class="inline-block p-4 {{ Route::is('admin.old-maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                    class="inline-block p-4 {{ Route::is('admin.old-maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg dark:text-gray-200' }}">
                     Old Maintenances
                 </a>
             </li>
@@ -44,13 +44,13 @@
                 <ul class="flex items-center text-sm font-medium text-center text-gray-600 border-gray-300">
                     <li class="me-2">
                         <a href="{{ route('admin.maintenances') }}"
-                            class="inline-block p-4 {{ Route::is('admin.maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                            class="inline-block p-4 {{ Route::is('admin.maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg dark:text-gray-200 border dark:border-gray-700' }}">
                             Pending Maintenances
                         </a>
                     </li>
                     <li class="me-2">
                         <a href="{{ route('admin.old-maintenances') }}"
-                            class="inline-block p-4 {{ Route::is('admin.old-maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg' }}">
+                            class="inline-block p-4 {{ Route::is('admin.old-maintenances') ? 'text-green-700 bg-green-100 font-semibold rounded-t-lg' : 'hover:text-green-700 hover:bg-green-50 rounded-t-lg dark:text-gray-200 border dark:border-gray-700' }}">
                             Old Maintenances
                         </a>
                     </li>
@@ -65,8 +65,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
-
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <div class="flex items-center justify-between d p-4">
                     <div class="flex">
                         <div class="relative w-full">
@@ -79,14 +78,16 @@
                                 </svg>
                             </div>
                             <input wire:model.live.debounce.300ms="search" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
 
                         {{-- Bulk Actions Button --}}
                         <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
                                 <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -96,10 +97,11 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 <div class="py-1">
                                     <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                         Delete</a>
                                 </div>
                             </div>
@@ -109,9 +111,10 @@
                     {{-- Maintenance Type Sort --}}
                     <div class="flex space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <label class="w-40 text-sm font-medium text-gray-900">Status :</label>
+                            <label class="text-sm font-medium text-gray-900 dark:text-gray-200">Status:</label>
                             <select wire:model.live="priorityStatus"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">All</option>
                                 <option value="emergency">Emergency</option>
                                 <option value="urgent">Urgent</option>
@@ -124,7 +127,7 @@
 
                 {{-- Table --}}
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2 mt-3">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
@@ -225,7 +228,7 @@
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('reported_at')">
                                 <button class="flex items-center">
-                                    Reported At
+                                    Date Reported
                                     @if ($sortBy !== 'reported_at')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -256,7 +259,7 @@
                             </th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('resolved_at')">
                                 <button class="flex items-center">
-                                    Resolved At
+                                    Date Resolved
                                     @if ($sortBy !== 'resolved_at')
                                         {{-- Default icon when sorting is not active --}}
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -322,19 +325,19 @@
                         </th> --}}
                         </tr>
                     </thead>
-                    <tbody class="text-left">
+                    <tbody class="text-left dark:bg-gray-700">
                         @forelse ($maintenances as $maintenance)
-                            <tr class="border-b">
+                            <tr class="border-b dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="maintenances[]"
                                         value="{{ $maintenance->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$maintenance->id] ?? 'MNT-???' }}</span>
                                 </th>
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-gray-200">
                                     {{ $maintenance->name }}
                                 </th>
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-gray-200">
                                     {{ $maintenance->property->name_number ?? 'No Assigned Property' }}
                                 </th>
                                 <td class="px-4 py-3"> {{ $maintenance->description }}</td>
@@ -350,20 +353,32 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     @if ($maintenance->priority_status === 'planned')
-                                        <span class="px-2 py-1 bg-green-600 text-white rounded">Planned</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-600">
+                                            Planned
+                                        </span>
                                     @elseif($maintenance->priority_status === 'routine')
-                                        <span class="px-2 py-1 bg-blue-600 text-white rounded">Routine</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
+                                            Routine
+                                        </span>
                                     @elseif($maintenance->priority_status === 'urgent')
-                                        <span class="px-2 py-1 bg-yellow-500 text-white rounded">Urgent</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
+                                            Urgent
+                                        </span>
                                     @elseif($maintenance->priority_status === 'emergency')
-                                        <span class="px-2 py-1 bg-red-600 text-white rounded">Emergency</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                            Emergency
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->
                                     @can('maintenance-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer"
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
                                             wire:navigate
                                             href="{{ route('admin.view-maintenance', ['maintenance' => $maintenance->id]) }}">
                                         </i>
@@ -371,7 +386,7 @@
 
                                     <!-- Delete Icon -->
                                     @can('maintenance-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
                                             wire:click="confirmDelete({{ $maintenance->id }})"
                                             wire:loading.attr="disabled">
                                         </i>
@@ -394,9 +409,10 @@
                 <div class="py-4 px-3">
                     <div class="flex ">
                         <div class="flex space-x-4 items-center mb-3">
-                            <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live="perPage"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

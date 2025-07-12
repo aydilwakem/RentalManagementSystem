@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Edit Activity') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Edit Activity Details</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Edit Activity Details</h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()"
@@ -26,10 +26,11 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Activity -->
                     <div>
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Activity Name <span
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
                                 class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Coffee Farm Tour" required>
 
                         @error('name')
@@ -40,10 +41,11 @@
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Amount <span
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
                                 class="text-red-500">*</span></label>
                         <input type="number" wire:model="amount" id="amount" step="0.01"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00">
                         @error('amount')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -53,9 +55,10 @@
                     <!-- Description -->
                     <div>
                         <label for="description"
-                            class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
                         <textarea wire:model="description" id="description" rows="4"
-                            class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
+                            class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Discover the journey from bean to cup on our immersive coffee farm tour."></textarea>
                         @error('description')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -64,9 +67,10 @@
 
                     <!-- Inclusions -->
                     <div>
-                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900">Inclusions</label>
+                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
                         <textarea wire:model="inclusions" id="inclusions" rows="3"
-                            class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none"
+                            class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Farm entrance fee, coffee tasting, light snacks, guide services."></textarea>
                         @error('inclusions')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -76,10 +80,11 @@
                     <!-- Image Upload -->
                     <div class="space-y-4">
                         <div>
-                            <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload
+                            <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload
                                 Image</label>
                             <input accept="image/png, image/jpeg" type="file" wire:model="image" id="image"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
 
                             <!-- Error Message -->
                             @error('image')

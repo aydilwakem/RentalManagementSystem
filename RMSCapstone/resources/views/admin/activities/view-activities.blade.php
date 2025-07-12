@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="bg-white dark:bg-[#2A2A2A]  overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg dark:bg-gray-800 dark:text-white">
         @livewire('admin.activities.view-activities', ['lazy' => true])
     </div>
 </x-app-layout>

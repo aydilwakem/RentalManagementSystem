@@ -1,14 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View  Maintenance Report') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-6">
                 <!-- Back Button -->
@@ -19,24 +19,24 @@
             </div>
 
             <!-- Maintenance Details -->
-            <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center transform -translate-y-2">
+            <h2 class="text-2xl md:text-3xl font-bold leading-tight text-gray-800 text-center transform -translate-y-2 dark:text-white">
                 {{ $maintenance->name }}
             </h2>
 
             <div class="space-y-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Assigned Property</h3>
-                    <p class="text-gray-600">{{ $maintenance->property->name_number ?? 'No Assigned Property' }}</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Assigned Property</h3>
+                    <p class="text-gray-600 dark:text-gray-200">{{ $maintenance->property->name_number ?? 'No Assigned Property' }}</p>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Description</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ $maintenance->description }}</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Description</h3>
+                    <p class="text-gray-600 leading-relaxed dark:text-gray-200">{{ $maintenance->description }}</p>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Priority Status</h3>
-                    <p class="text-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1 dark:text-white">Priority Status</h3>
+                    <p class="text-gray-600 dark:text-gray-200">
                         @if ($maintenance->priority_status === 'planned')
                             <span
                                 class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">
@@ -62,10 +62,10 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Report and Resolution Dates</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Report and Resolution Dates</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 border">
-                            <thead class="bg-gray-100">
+                        <table class="min-w-full divide-y divide-gray-200 border dark:border-gray-500 dark:divide-gray-500">
+                            <thead class="bg-gray-100 dark:bg-green-200">
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -77,16 +77,16 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-500">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $maintenance->reported_at->format('F j, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         @if ($maintenance->resolved_at)
                                             {{ $maintenance->resolved_at->format('F j, Y') }}
                                         @else
-                                            <span class="text-gray-500 italic">Not yet resolved</span>
+                                            <span class="text-gray-500 italic dark:text-gray-200">Not yet resolved</span>
                                         @endif
                                     </td>
                                 </tr>
