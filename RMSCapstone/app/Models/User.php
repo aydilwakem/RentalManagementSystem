@@ -11,6 +11,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -24,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use TwoFactorAuthenticatable;
     use HasRoles;
     use SoftDeletes; 
+    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -72,8 +75,32 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }   
+
+    // ---------------------- Activity Logs ------------- //
+    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            // 4.1 Specify which attributes to log
+            ->logOnly([ 
+                'name',
+                'middle_name',
+                'last_name',
+                'suffix',
+                'email',
+                'password'])
+            // 4.2 Automatically log only the attributes that have changed  
+            ->logOnlyDirty()
+            // 4.3 Set a custom description for the activity log event
+            ->setDescriptionForEvent(fn(string $eventName) => "User has been {$eventName}")
+            // 4.4 Optionally, you can set a custom log name for Property Model
+            ->useLogName('User');
     }
 
+
+    // ------------------------- Roles ------------------- //
     public function AnyRoles()
     {
         return $this->belongsToMany(

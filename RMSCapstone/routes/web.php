@@ -49,6 +49,8 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Settings\PromoCodes\EditPromoCode;
+use App\Livewire\Admin\Settings\PromoCodes\ViewPromoCode;
 use App\Mail\EventQuotesMail;
 use App\Mail\PaymentUploadedMail;
 use App\Mail\ReceiptRejectedMail;
@@ -484,6 +486,31 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })
         ->name('admin.deleted-payments')
         ->middleware('can:payment-method-soft-delete');
+
+
+    //Promo Codes
+    //List
+    Route::get('/settings/promo-codes', function () {
+        return view('admin.settings.promo-codes.view-promo-codes');
+    })->name('admin.view-promo-codes');
+
+    //Create
+    Route::get('/settings/create/promo-code', function () {
+        return view('admin.settings.promo-codes.create-promo-code');
+    })->name('admin.create-promo-code');
+
+    //View
+     Route::get('settings/view/promo-code/{promoCode}', ViewPromoCode::class)
+    ->name('admin.view-promo-code');
+
+    //Edit
+     Route::get('settings/edit/promo-code/{promoCode}', EditPromoCode::class)
+     ->name('admin.edit-promo-code');
+
+    //Soft Deletes
+    Route::get('deleted-promo-codes', function () {
+        return view('admin.settings.promo-codes.deleted-promo-codes');
+    })->name('admin.deleted-promo-codes');
 
     /**
      * Reservations

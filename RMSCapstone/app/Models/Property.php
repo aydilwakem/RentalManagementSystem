@@ -13,11 +13,14 @@ use App\Models\RoomRate;
 use App\Models\Maintenance;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Property extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use LogsActivity;
 
     // ----------------------------------------- Table ------------------------------------------------ //
     protected $table = 'properties';
@@ -52,6 +55,43 @@ class Property extends Model
         'occupancy_rules' => 'array',  // Automatically decode JSON to array
         'images' => 'array',           // Automatically decode JSON to array
     ];
+
+    // -------------------- Activity Logs --------------------- //
+    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            // 4.1 Specify which attributes to log
+            ->logOnly(['property_type_id',  'property_category_id',
+            'name_number',
+            'ideal_guest',
+            'capacity',
+            'max_adults',
+            'max_kids',
+            'occupancy_rules',
+            'turnover_duration',
+            'property_status',
+            'house_number',
+            'street',
+            'barangay',
+            'city_municipality',
+            'region',
+            'postal_code',
+            'country',
+            'amount',
+            'extra_charge_per_hour',
+            'extra_person_charge',
+            'image',
+            'images',
+            'description'])
+            // 4.2 Automatically log only the attributes that have changed  
+            ->logOnlyDirty()
+            // 4.3 Set a custom description for the activity log event
+            ->setDescriptionForEvent(fn(string $eventName) => "Property has been {$eventName}")
+            // 4.4 Optionally, you can set a custom log name for Property Model
+            ->useLogName('Property');
+    }
 
     // ----------------------------------------- Relationships -------------------------------------------- //
 
@@ -144,4 +184,6 @@ class Property extends Model
     {
         $query->where('name', 'like', "%{$search}%");
     }
+
+
 }
