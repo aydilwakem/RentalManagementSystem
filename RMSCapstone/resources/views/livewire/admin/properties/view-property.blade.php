@@ -1,16 +1,16 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Property') }}
         </h2>
     </x-slot>
 
     <div class="py-2">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">House: {{ $house->name_number }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">House: {{ $house->name_number }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()"
@@ -73,8 +73,8 @@
 
                 <!-- House Details -->
                 <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-900">House Details</h3>
-                    <ul class="list-disc pl-5 text-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">House Details</h3>
+                    <ul class="list-disc pl-5 text-gray-600 dark:text-gray-200">
                         {{-- <li><strong>Capacity:</strong> {{ $house->capacity }}</li>
                         <li><strong>Max Adults:</strong> {{ $house->max_adults }}</li>
                         <li><strong>Max Kids:</strong> {{ $house->max_kids }}</li> --}}
@@ -84,8 +84,8 @@
 
                     <!-- Address -->
                     <div>
-                        <h3 class="mt-3 text-lg font-semibold text-gray-900">Address</h3>
-                        <p class="text-gray-600">
+                        <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white">Address</h3>
+                        <p class="text-gray-600 dark:text-gray-200">
                             {{ $house->house_number }}, {{ $house->street }},
                             {{ $house->barangay }}, {{ $house->city_municipality }}, {{ $house->region }},
                             {{ $house->postal_code }}, {{ $house->country }}
@@ -93,7 +93,7 @@
                     </div>
 
                     <!-- house Amenities -->
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900">Amenities</h3>
+                    <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white">Amenities</h3>
                     @if ($house->features->isNotEmpty())
                         <div class="flex flex-wrap gap-2">
                             @foreach ($house->features as $feature)

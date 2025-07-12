@@ -1,18 +1,18 @@
  <div>
      <!-- Header -->
      <x-slot name="header">
-         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
              {{ __('Edit Lease') }}
          </h2>
      </x-slot>
 
      <!-- Body Container -->
      <div class="py-3">
-         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6">
+         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
              <div class="relative flex items-center mb-4">
                  <!-- Title -->
-                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Edit Lease Details</h2>
+                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Edit Lease Details</h2>
 
                  <!-- Back Button -->
                  <button onclick="history.back()" wire:navigate
@@ -27,9 +27,10 @@
 
                      <!-- Select House -->
                      <div>
-                         <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900">Select House</label>
+                         <label for="house_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Select House</label>
                          <select wire:model="house_id" id="house_id" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                              <option value="">Select House</option>
                              @foreach ($houses as $house)
                                  <option value="{{ $house->id }}"
@@ -48,10 +49,11 @@
 
                      <!-- Assigned Tenant -->
                      <div>
-                         <label for="selectedTenant" class="block mb-2 text-sm font-medium text-gray-900">Assign Tenant
+                         <label for="selectedTenant" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Assign Tenant
                          </label>
                          <select wire:model="selectedTenant" id="selectedTenant" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                              <option value="">Select Tenants</option>
                              @foreach ($tenants as $tenant)
                                  <option value="{{ $tenant->id }}"
@@ -70,10 +72,11 @@
 
                      <!-- Total Pax in House -->
                      <div>
-                         <label for="pax" class="block mb-2 text-sm font-medium text-gray-900">Total People in the
+                         <label for="pax" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Total People in the
                              House</label>
                          <input type="number" wire:model="pax" id="pax" min="0" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                          @error('pax')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
                          @enderror
@@ -82,10 +85,11 @@
 
                      <!-- Monthly Rent -->
                      <div>
-                         <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900">Monthly
+                         <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Monthly
                              Rent</label>
                          <input type="amount" wire:model.live="monthly_rent" id="monthly_rent" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                          @error('monthly_rent')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
                          @enderror
@@ -93,10 +97,11 @@
 
                      <!-- Start Date -->
                      <div>
-                         <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start
+                         <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
                              Lease</label>
                          <input type="date" wire:model.live="start_date" id="start_date" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                          @error('start_date')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
                          @enderror
@@ -104,10 +109,11 @@
 
                      <!-- End Date -->
                      <div>
-                         <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Lease Date
+                         <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">End Lease Date
                          </label>
                          <input type="date" wire:model.live="end_date" id="end_date" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                          @error('end_date')
                              <span class="text-red-500 text-sm">{{ $message }}</span>
                          @enderror
@@ -115,10 +121,11 @@
 
                      <!-- Transaction Status -->
                      <div class="mb-4">
-                         <label for="transaction_status" class="block mb-2 text-sm font-medium text-gray-900">Lease
+                         <label for="transaction_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Lease
                              Status <span class="text-red-500">*</span></label>
                          <select wire:model="transaction_status" id="transaction_status"
-                             class="bg-gray-50 border border-gray-300 text-gray-900 font-semibold text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                             class="bg-gray-50 border border-gray-300 text-gray-900 font-semibold text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                              <option value="">Select Lease Status</option>
                              <option value="pending">Pending</option>
                              <option value="confirmed">Confirmed</option>
@@ -133,9 +140,10 @@
 
                      <!-- Total Amount (calculated) -->
                      <div class="mb-4">
-                         <label class="block mb-2 text-sm font-medium text-gray-900">Total Rent for Lease Term</label>
+                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Total Rent for Lease Term</label>
                          <input type="text" value="₱{{ number_format($total_amount, 2) }}" disabled
-                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed">
+                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-gray-200 dark:placeholder-gray-400">
                      </div>
                  </div>
 

@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Edit Property') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Edit Property Details</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Edit Property Details</h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()" wire:navigate
@@ -26,9 +26,10 @@
 
                     <!-- Property Name -->
                     <div class="sm:col-span-2">
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">House Name <span class="text-red-500">*</span></label>
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">House Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. Grand Manor">
                         @error('name_number')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -37,10 +38,11 @@
 
                     <!-- Availability Status -->
                     <div>
-                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Select
+                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Select
                             Availability <span class="text-red-500">*</span></label>
                         <select wire:model.defer="property_status" id="property_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
@@ -52,9 +54,10 @@
 
                     <!-- Monthly Rent -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Monthly Rent <span class="text-red-500">*</span></label>
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Monthly Rent <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="amount" id="amount" required onwheel="this.blur()"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. 8,500.00">
                         @error('amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -96,10 +99,11 @@
 
                         <!-- House Number -->
                         <div>
-                            <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900">House
+                            <label for="house_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">House
                                 Number <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="house_number" id="house_number" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. 123, Blk 1 Lot 5">
                             @error('house_number')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -108,9 +112,10 @@
 
                         <!-- Street -->
                         <div>
-                            <label for="street" class="block mb-2 text-sm font-medium text-gray-900">Street <span class="text-red-500">*</span></label>
+                            <label for="street" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Street <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="street" id="street" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. Sampaguita Street">
                             @error('street')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -119,9 +124,10 @@
 
                         <!-- Barangay -->
                         <div>
-                            <label for="barangay" class="block mb-2 text-sm font-medium text-gray-900">Barangay <span class="text-red-500">*</span></label>
+                            <label for="barangay" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Barangay <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="barangay" id="barangay" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. Brgy. San Antonio">
                             @error('barangay')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -131,9 +137,10 @@
                         <!-- City/Municipality -->
                         <div>
                             <label for="city_municipality"
-                                class="block mb-2 text-sm font-medium text-gray-900">City/Municipality <span class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">City/Municipality <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="city_municipality" id="city_municipality" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. Taguig City">
                             @error('city_municipality')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -142,9 +149,10 @@
 
                         <!-- Region -->
                         <div>
-                            <label for="region" class="block mb-2 text-sm font-medium text-gray-900">Region <span class="text-red-500">*</span></label>
+                            <label for="region" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Region <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="region" id="region" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. NCR">
                             @error('region')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -153,10 +161,11 @@
 
                         <!-- Postal Code -->
                         <div>
-                            <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900">Postal
+                            <label for="postal_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Postal
                                 Code <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="postal_code" id="postal_code" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. 1630">
                             @error('postal_code')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -166,9 +175,10 @@
 
                     <!-- Country -->
                     <div>
-                        <label for="country" class="block mb-2 text-sm font-medium text-gray-900">Country <span class="text-red-500">*</span></label>
+                        <label for="country" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Country <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="country" id="country" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. Philippines">
                         @error('country')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -177,10 +187,11 @@
 
                     <!-- Property Description -->
                     <div>
-                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Property
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Property
                             Description</label>
                         <input type="text" wire:model="description" id="description" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 resize-none"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 resize-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Spacious 3-bedroom, 2-bath house with garden access and parking"/>
                         @error('description')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -189,13 +200,13 @@
 
                     <!-- Available Amenities (Dynamic) -->
                     <div class="sm:col-span-2">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                             @foreach ($house_features as $feature)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-green-600 focus:border-green-600">
-                                    <label class="ms-2 text-sm font-medium text-gray-900">
+                                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                         {{ $feature->name }}
                                     </label>
                                 </div>
@@ -210,7 +221,7 @@
                     <div class="space-y-4 col-span-2">
                         <!-- Image Upload -->
                         <div>
-                            <label for="newImages" class="block mb-2 text-sm font-medium text-gray-900">Upload New
+                            <label for="newImages" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload New
                                 Image
                                 (Optional)</label>
                             <input type="file" wire:model="newImages" id="image" multiple

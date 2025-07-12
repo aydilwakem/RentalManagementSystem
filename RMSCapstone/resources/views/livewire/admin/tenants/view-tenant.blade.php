@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Tenant') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
             <div class="relative flex items-center mb-6">
                 <!-- Room Name -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Tenant: {{ $tenant->first_name }}
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Tenant: {{ $tenant->first_name }}
                     {{ $tenant->last_name }}</h2>
 
                 <!-- Back Button -->
@@ -22,9 +22,9 @@
                 </button>
             </div>
 
-            <h3 class="text-lg font-bold text-green-800 mb-3">Personal Information</h3>
-            <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600">
+            <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Personal Information</h3>
+            <div class="bg-gray-50 rounded-lg p-6 mb-6 dark:bg-gray-600 dark:text-gray-200 border dark:border-gray-500">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600 dark:text-gray-200">
                     <div><strong>Full Name:</strong> {{ $tenant->first_name }} {{ $tenant->middle_name }}
                         {{ $tenant->last_name }} {{ $tenant->suffix }}
                     </div>
@@ -37,8 +37,8 @@
                 </div>
             </div>
 
-            <h3 class="text-lg font-bold text-green-800 mb-3">Address</h3>
-            <div class="bg-gray-50 rounded-lg p-6 mb-6 text-gray-600">
+            <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Address</h3>
+            <div class="bg-gray-50 rounded-lg p-6 mb-6 text-gray-600 dark:bg-gray-600 dark:text-gray-200 border dark:border-gray-500">
                 <div><strong>Assigned Property:</strong> @php $hasProperty = false; @endphp
                     @foreach ($tenant->transactions as $transaction)
                     @foreach ($transaction->properties as $property)
@@ -47,7 +47,7 @@
                     @endforeach
                     @endforeach
                     @if (!$hasProperty)
-                    <span class="italic text-gray-600">No property assigned</span>
+                    <span class="italic text-gray-600 dark:text-gray-200">No property assigned</span>
                     @endif
                 </div>
                 @if (empty($tenant->house_number) &&

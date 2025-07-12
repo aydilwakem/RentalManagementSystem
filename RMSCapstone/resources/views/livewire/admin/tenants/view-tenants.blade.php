@@ -38,7 +38,8 @@
         </div>
 
         <!-- Table Body -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+        <div
+            class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <div class="flex items-center justify-between p-4">
                 {{-- Search Tab --}}
                 <div class="relative">
@@ -52,14 +53,16 @@
                     </div>
                     {{-- Search --}}
                     <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Search" required="">
                 </div>
 
                 {{-- Bulk Actions Button --}}
                 <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                     <button @click="open = !open" type="button"
-                        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                        dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                         Actions
                         <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,17 +71,19 @@
                     </button>
 
                     <div x-show="open" @click.away="open = false"
-                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                        dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                         <div class="py-1">
                             <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
                                 Delete</a>
                         </div>
                     </div>
                 </div>
             </div>
             <table class="w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200">
+                <thead
+                    class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <!-- Checkbox -->
                         <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -152,16 +157,17 @@
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="dark:bg-gray-700">
                     @forelse ($tenants as $tenant)
-                        <tr class="border-b hover:bg-gray-50">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                        <tr
+                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <input wire:model.live="selectedRows" type="checkbox" name="tenant[]"
                                     value="{{ $tenant->id }}" class="accent-blue-600 w-4 h-4">
                                 <span> {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}</span>
                             </th>
 
-                            <td class="px-4 py-3 font-semibold text-gray-900">
+                            <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
                                 {{ $tenant->first_name }} {{ $tenant->last_name }}
                             </td>
                             <td class="px-4 py-3">
@@ -173,28 +179,28 @@
                                     @endforeach
                                 @endforeach
                                 @if (!$hasProperty)
-                                    <span class="italic text-gray-600">No property assigned</span>
+                                    <span class="italic text-gray-600 dark:text-gray-200">No property assigned</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
-                                {!! $tenant->email ?? '<span class="text-gray-600 italic">No email provided.</span>' !!} </td>
+                                {!! $tenant->email ?? '<span class="text-gray-600 italic dark:text-gray-200">No email provided.</span>' !!} </td>
                             </td>
                             <td class="px-4 py-3">
-                                {!! $tenant->contact_number ?? '<span class="text-gray-600 italic">No contact number provided.</span>' !!}
+                                {!! $tenant->contact_number ?? '<span class="text-gray-600 italic dark:text-gray-200">No contact number provided.</span>' !!}
                             </td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                 @can('tenant-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
                                         href="{{ route('admin.view-tenant', ['tenant' => $tenant->id]) }}">
                                     </i>
                                 @endcan
                                 @can('tenant-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
                                         href="{{ route('admin.edit-tenant', ['tenant' => $tenant->id]) }}">
                                     </i>
                                 @endcan
                                 @can('tenant-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
                                         wire:click="confirmDelete({{ $tenant->id }})">
                                     </i>
                                 @endcan
@@ -210,12 +216,13 @@
                     @endforelse
                 </tbody>
             </table>
-            <div class="py-4 px-3">
+            <div class="py-4 px-3 dark:bg-gray-800 dark:text-white">
                 <div class="flex items-center justify-between">
                     <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="10">10</option>
                             <option value="20">20</option>
                             <option value="50">50</option>
@@ -280,4 +287,5 @@
             </x-secondary-button>
         </x-slot>
     </x-dialog-modal>
+</div>
 </div>

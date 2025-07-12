@@ -33,7 +33,7 @@ class ViewLease extends Component
     public $currency;
     public $verified_at;
 
-    // ---------------------------- MODALS -------------------------- // 
+    // ---------------------------- MODALS -------------------------- //
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
     public $createPaymentModal = false;
@@ -47,6 +47,10 @@ class ViewLease extends Component
     public function mount(Transaction $transaction)
     {
         $this->loadTransactionData($transaction);
+
+        //default date in create payment modal
+        $now = Carbon::now('Asia/Manila');
+        $this->payment_date = $now->format('Y-m-d');
     }
 
     public function loadTransactionData(Transaction $transaction)
@@ -98,7 +102,7 @@ class ViewLease extends Component
          $transaction = Transaction::with([
             'invoice.payments',
         ])->findOrFail($this->transaction->id);
-    
+
         $pdf = Pdf::loadView('livewire.admin.properties.leases.lease-details', [
             'transaction' => $transaction,  // Pass the actual lease
             //pass the relationship
@@ -114,7 +118,7 @@ class ViewLease extends Component
 
     public function getMonthCount($startDatetime, $endDatetime)
     {
-        //parse the end and start date 
+        //parse the end and start date
         $start = Carbon::parse($startDatetime);
         $end = Carbon::parse($endDatetime);
 

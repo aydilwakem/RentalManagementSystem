@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Room') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Room</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Room</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.rooms') }}'" wire:navigate
@@ -26,9 +26,10 @@
                 <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
                     <!-- Room Name -->
                     <div>
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900">Room Name <span class="text-red-500">*</span></label>
+                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Solah, Mercy">
                         @error('name_number')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -37,10 +38,11 @@
 
                     <!-- Room Category -->
                     <div>
-                        <label for="property_category_id" class="block mb-2 text-sm font-medium text-gray-900">Room
+                        <label for="property_category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Category <span class="text-red-500">*</span></label>
                         <select wire:model="property_category_id" id="property_category_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Category</option>
                             @foreach ($roomCategories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -56,10 +58,11 @@
 
                         <!-- Ideal Guest -->
                         <div>
-                            <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900">Ideal
+                            <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Ideal
                                 Guest <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="ideal_guest" id="ideal_guest" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('ideal_guest')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -68,10 +71,11 @@
 
                         <!-- Max Adults -->
                         <div>
-                            <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900">Maximum
+                            <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Adults <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_adults" id="max_adults" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('max_adults')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -80,10 +84,11 @@
 
                         <!-- Max Kids -->
                         <div>
-                            <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900">Maximum
+                            <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Kids <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_kids" id="max_kids" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('max_kids')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -94,10 +99,11 @@
 
                     <!-- Turnover Duration -->
                     <div>
-                        <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900">Turnover
+                        <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Turnover
                             Duration (Hours) <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="turnover_duration" id="turnover_duration" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 3 hours" onwheel="this.blur()" />
                         @error('turnover_duration')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -106,10 +112,11 @@
 
                     <!-- Room Status -->
                     <div>
-                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900">Room
+                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
@@ -120,9 +127,10 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Base Rate <span class="text-red-500">*</span></label>
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="amount" id="amount" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 2,800.00" onwheel="this.blur()" />
 
                         @error('amount')
@@ -132,11 +140,12 @@
 
                     <!-- Extra Person Charge -->
                     <div>
-                        <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900">Extra
+                        <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Person Charge <span class="text-red-500">*</span>
                         </label>
                         <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00" onwheel="this.blur()" />
                         @error('extra_person_charge')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -145,13 +154,13 @@
 
                     <!-- Available Amenities -->
                     <div class="sm:col-span-2">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-green-600 focus:border-green-600 focus:outline-none">
-                                    <label class="ms-2 text-sm font-medium text-gray-900">
+                                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                         {{ $feature->name }}
                                     </label>
                                 </div>
@@ -208,7 +217,7 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900">Room
+                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Image(s)</label>
                         <div class="flex flex-wrap gap-4">
 
