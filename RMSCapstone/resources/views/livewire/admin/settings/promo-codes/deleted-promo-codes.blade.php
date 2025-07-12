@@ -3,7 +3,7 @@
     <!-- Back Button -->
     <div class="mb-4">
         <button onclick="window.history.back();"
-            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline">
+            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline dark:text-white dark:hover:text-gray-200">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />
@@ -28,7 +28,7 @@
 
     <div>
         <!-- Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <!-- Table Body-->
             <table class="w-full text-left">
                 <thead class="text-sm text-gray-700 bg-gray-200">
@@ -37,7 +37,7 @@
                         <th scope="col" class="px-4 py-3 text-left">ID</th>
 
                         <!-- Room Category Name -->
-                        <th scope="col" class="px-4 py-3 text-left">Promo Code Name</th>
+                        <th scope="col" class="px-4 py-3 text-left">Promo Code</th>
 
                         <!-- Actions -->
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
@@ -45,8 +45,8 @@
                 </thead>
                 <tbody class="text-center">
                     @foreach ($deletedPromoCodes as $promoCode)
-                    <tr class="border-b">
-                        <td class="px-4 py-3 font-medium text-gray-900 text-left">
+                    <tr>
+                        <td class="px-4 py-3 font-medium text-gray-900 text-left dark:text-white">
                             {{ $fakeIDs[$promoCode->id] ?? 'AMY-???' }}</td>
 
                         <td class="px-4 py-3 text-left">{{ $promoCode->code }}</td>
