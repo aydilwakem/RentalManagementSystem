@@ -1,12 +1,12 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg dark:bg-gray-700 dark:border-gray-600 border">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Edit Role details') }}
         </h2>
     </x-slot>
 
-    <div class="rounded-lg p-6 mx-auto mb-6 mt-6">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Role</h2>
+    <div class="rounded-lg p-6 mx-auto mb-6">
+        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">Edit Role</h2>
 
         {{-- Display Validation Errors --}}
         @if ($errors->any())
@@ -24,16 +24,17 @@
 
                 <!-- Name of Role -->
                 <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Role Name</label>
+                    <label for="name" class="block mb-2 text-md font-medium text-gray-900 dark:text-gray-200">Role Name</label>
                     <input type="text" wire:model="name" id="name"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
                                focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter Role" required>
                 </div>
 
                 <!-- Permissions List -->
                 <div class="sm:col-span-2">
-                    <label for="permissions" class="block mb-2 text-xl font-medium text-gray-900">Permissions</label>
+                    <label for="permissions" class="block mb-2 text-xl font-medium text-gray-900 dark:text-green-200">Permissions</label>
 
                     <div class="space-y-6">
                         @php
@@ -69,8 +70,7 @@
                                     'House Features' => fn($p) => str_starts_with($p->name, 'house-features'),
                                     'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
                                     'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
-                                     'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
-                                     
+                                    'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
                                 ],
                                 'Billing & Payments' => [
                                     'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
@@ -88,17 +88,18 @@
                                 'Activities' => [
                                     'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
                                 ],
-                                   'Reports' => [
-                                    'Reports' => fn($p) => str_starts_with($p->name, 'reports') || str_ends_with($p->name, 'reports'),
+                                'Reports' => [
+                                    'Reports' => fn($p) => str_starts_with($p->name, 'reports') ||
+                                        str_ends_with($p->name, 'reports'),
                                 ],
-                                   'Feedback' => [
-                                        'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
-                                    ],
+                                'Feedback' => [
+                                    'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
+                                ],
                             ];
                         @endphp
 
                         @foreach ($groupedPermissionGroups as $categoryLabel => $permissionGroups)
-                            <div class="border rounded-lg bg-gray-50" x-data="{ open: false }">
+                            <div class="border rounded-lg bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" x-data="{ open: false }">
                                 <button type="button" @click="open = !open"
                                     class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
                                     {{ $categoryLabel }}

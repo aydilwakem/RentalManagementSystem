@@ -1,23 +1,23 @@
-<div class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl p-8 max-w-5xl">
+<div class="mx-4 sm:mx-auto bg-white dark:bg-gray-700 dark:border-gray-600 rounded-2xl p-8 max-w-4xl">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Edit User') }}
         </h2>
     </x-slot>
-    <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit User</h2>
+    <h2 class="mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">Edit User</h2>
     <form wire:submit.prevent="">
         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
             <!-- Name -->
             <div class="sm:col-span-2">
-                <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Full Name</label>
-                <p class="text-gray-900 text-sm">{{ $name }} {{ $middle_name }} {{ $last_name }}</p>
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+                <p class="text-gray-900 text-sm dark:text-gray-200">{{ $name }} {{ $middle_name }} {{ $last_name }}</p>
             </div>
 
             <!-- Email -->
             <div class="sm:col-span-2">
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                <p class="text-gray-900 text-sm">{{ $email }}</p>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                <p class="text-gray-900 text-sm dark:text-gray-200">{{ $email }}</p>
             </div>
 
             <!-- Password -->
@@ -33,9 +33,10 @@
 
             <!-- Role Selection -->
             <div class="sm:col-span-2">
-                <label for="role" class="block mb-2 text-sm font-medium text-gray-900">Select Role</label>
+                <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Role</label>
                 <select id="role" wire:model="selectedRole"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     <option value={{ is_null($selectedRole) ? 'selected' : '' }}>Select a role
                     </option>
                     @foreach ($roles as $role)

@@ -2,7 +2,7 @@
     <div>
         <!-- Create User Button -->
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-lg text-gray-800">Manage Users</h2>
+            <h2 class="font-semibold text-lg text-gray-800 dark:text-white">Manage Users</h2>
 
             <div class="flex items-center gap-2">
                 @can('user-create')
@@ -29,7 +29,7 @@
             </div>
         @endif
         <!-- Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border mb-10">
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto border mb-10 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header -->
             <div class="flex items-center justify-between p-4">
                 <!-- Search Tab -->
@@ -44,7 +44,8 @@
                             </svg>
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
                 </div>
@@ -52,9 +53,10 @@
                 {{-- Role Filter --}}
                 <div class="flex space-x-3">
                     <div class="flex space-x-3 items-center">
-                        <label class="w-40 text-sm font-medium text-gray-900">Role Filter:</label>
+                        <label class="w-40 text-sm font-medium text-gray-900 dark:text-gray-200">Role Filter:</label>
                         <select wire:model.live="roleFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="Super Admin">Super Admin</option>
                             <option value="Admin">Admin</option>
@@ -65,7 +67,7 @@
             </div>
 
             <table class="w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200">
+                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         {{-- ID --}}
                         <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
@@ -193,10 +195,10 @@
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="dark:bg-gray-700">
                     @forelse ($users as $user)
-                        <tr class="border-b hover:bg-gray-50">
-                            <th scope="row" class="font-medium text-gray-900 px-3">
+                        <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <th scope="row" class="font-medium text-gray-900 px-3 dark:text-white">
                                 {{ $fakeIDs[$user->id] ?? 'USER-???' }}
                             </th>
                             <td class="p-2">{{ $user->name }} {{ $user->last_name }}</td>
@@ -206,7 +208,7 @@
                                     @forelse($user->getRoleNames() as $role)
                                         <li>{{ $role }}</li>
                                     @empty
-                                        <li class="text-gray-500">No role assigned.</li>
+                                        <li class="text-gray-500 dark:text-gray-400">No role assigned.</li>
                                     @endforelse
                                 </ul>
                             </td>
@@ -218,21 +220,21 @@
 
                                 <!-- View Icon -->
                                 @can('user-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
                                         href="{{ route('admin.view-user', ['user' => $user->id]) }}">
                                     </i>
                                 @endcan
 
                                 <!-- Delete Icon -->
                                 @can('user-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer" wire:navigate
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
                                         href="{{ route('admin.edit-user', ['user' => $user->id]) }}">
                                     </i>
                                 @endcan
 
                                 <!-- Delete Icon -->
                                 @can('user-delete')
-                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer"
+                                    <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
                                         wire:click="confirmDelete({{ $user->id }})">
                                     </i>
                                 @endcan
@@ -253,9 +255,10 @@
             <div class="py-4 px-3">
                 <div class="flex ">
                     <div class="flex space-x-4 items-center">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Per Page</label>
                         <select wire:model.live='perPage'
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="10">10</option>
                             <option value="20">20</option>
                             <option value="50">50</option>

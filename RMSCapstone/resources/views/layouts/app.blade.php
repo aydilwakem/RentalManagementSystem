@@ -24,6 +24,10 @@
     <!-- Text Editor -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix/dist/trix.css">
     <script type="text/javascript" src="https://unpkg.com/trix/dist/trix.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+
+
 
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])

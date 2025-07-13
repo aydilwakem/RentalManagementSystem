@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Create Role') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Add New Role</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Role</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.manage-users') }}'" wire:navigate
@@ -37,17 +37,18 @@
 
                     <!-- Name of Role -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Role Name <span
+                        <label for="name" class="block mb-2 text-md font-medium text-gray-900 dark:text-gray-200">Role Name <span
                                 class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Super Admin" required>
                     </div>
 
                     <!-- Permissions List -->
                     <div class="sm:col-span-2">
                         <label for="permissions"
-                            class="block mb-2 text-xl font-bold text-green-800">Permissions</label>
+                            class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Permissions</label>
                         <div class="space-y-4">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -121,10 +122,10 @@
 
                                 @foreach ($permissionGroups as $category => $group)
                                     <div class="mb-6">
-                                        <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ $category }}</h2>
+                                        <h2 class="text-lg font-semibold text-gray-800 mb-2 dark:text-gray-200">{{ $category }}</h2>
 
                                         @foreach ($group as $groupLabel => $filter)
-                                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50 mb-2">
+                                            <div x-data="{ open: false }" class="border rounded-lg bg-gray-50 mb-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                                 <button type="button" @click="open = !open"
                                                     class="w-full text-left px-4 py-2 flex justify-between items-center">
                                                     {{ $groupLabel }}

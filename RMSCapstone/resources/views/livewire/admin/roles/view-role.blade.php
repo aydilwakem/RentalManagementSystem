@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create User') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+            {{ __('View Role') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Role: {{ $role->name }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Role: {{ $role->name }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()"
@@ -103,21 +103,21 @@
             @endphp
 
             <div class="space-y-3">
-                <h3 class="text-xl font-bold text-green-800">Permissions</h3>
+                <h3 class="text-xl font-bold text-green-800 dark:text-green-300">Permissions</h3>
 
                 <div>
                     @if (empty($groupedUserPermissions))
-                        <div class="text-gray-500 text-center py-8">No permissions assigned.</div>
+                        <div class="text-gray-500 text-center py-8 dark:text-gray-300">No permissions assigned.</div>
                     @else
                         @foreach ($groupedUserPermissions as $category => $subgroups)
-                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-                                <h4 class="text-lg font-bold text-green-800 mb-4">{{ $category }}</h4>
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 shadow-sm dark:bg-gray-600 dark:border-gray-500">
+                                <h4 class="text-lg font-bold text-green-800 mb-4 dark:text-green-200">{{ $category }}</h4>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($subgroups as $subLabel => $perms)
-                                        <div class="bg-white border border-gray-200 rounded-md p-4 shadow-sm">
-                                            <h5 class="text-gray-800 font-medium mb-2">{{ $subLabel }}</h5>
-                                            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                        <div class="bg-white border border-gray-200 rounded-md p-4 shadow-sm dark:bg-gray-500 dark:border-gray-400">
+                                            <h5 class="text-gray-800 font-medium mb-2 dark:text-white">{{ $subLabel }}</h5>
+                                            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1 dark:text-gray-200">
                                                 @foreach ($perms as $perm)
                                                     <li>{{ ucfirst(str_replace('-', ' ', $perm)) }}</li>
                                                 @endforeach

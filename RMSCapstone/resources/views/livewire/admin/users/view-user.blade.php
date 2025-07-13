@@ -1,18 +1,18 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create User') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+            {{ __('View User') }}
         </h2>
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-full sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center">{{ $user->name }} {{ $user->last_name }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">{{ $user->name }} {{ $user->last_name }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.manage-users') }}'" wire:navigate
@@ -30,26 +30,26 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <!-- Left Column -->
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Email</h3>
-                    <p class=" text-gray-500 mb-3">{{ $user->email }}</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Email</h3>
+                    <p class=" text-gray-500 mb-3 dark:text-gray-200">{{ $user->email }}</p>
 
-                    <h3 class="text-lg font-semibold text-gray-900">Role</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Role</h3>
                     <ul>
                         @forelse($userRoles as $role)
                             <li>{{ $role }}</li>
                         @empty
-                            <li class="text-gray-500">No roles assigned.</li>
+                            <li class="text-gray-500 dark:text-gray-200">No roles assigned.</li>
                         @endforelse
                     </ul>
 
                     <div class="mt-6 mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">Email Verified At</h3>
-                        <p class=" text-gray-500">{{ $user->email_verified_at ?? 'Not Verified' }}</p>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Email Verified At</h3>
+                        <p class=" text-gray-500 dark:text-gray-200">{{ $user->email_verified_at ?? 'Not Verified' }}</p>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 border">
-                            <thead class="bg-gray-100">
+                        <table class="min-w-full divide-y divide-gray-200 border dark:border-gray-500 dark:divide-gray-500">
+                            <thead class="bg-gray-100 dark:bg-green-200">
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-sm font-medium text-gray-800 uppercase tracking-wider">
@@ -61,12 +61,12 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-500">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $user->created_at }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $user->updated_at }}
                                     </td>
                                 </tr>
@@ -155,16 +155,16 @@
                 @endphp
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Permissions</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-200">Permissions</h3>
 
-                    <div class="border rounded bg-gray-50 max-h-full overflow-y-auto divide-y divide-gray-200">
+                    <div class="border rounded bg-gray-50 max-h-full overflow-y-auto divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-500">
                         @if (empty($groupedUserPermissions))
                             <div class="p-4 text-gray-500">No permissions assigned.</div>
                         @else
                             @foreach ($groupedUserPermissions as $category => $subgroups)
                                 <div x-data="{ open: false }" class="px-4 py-2">
                                     <button type="button" @click="open = !open"
-                                        class="w-full flex justify-between items-center font-semibold text-gray-700 hover:text-green-600 focus:outline-none">
+                                        class="w-full flex justify-between items-center font-semibold text-gray-700 hover:text-green-600 focus:outline-none dark:text-green-300">
                                         {{ $category }}
                                         <svg :class="{ 'rotate-180': open }" class="h-5 w-5 transition-transform"
                                             fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -175,11 +175,11 @@
                                     </button>
 
                                     <div x-show="open" x-transition
-                                        class="mt-2 py-2 space-y-3 pl-4 pr-4 border-l border-gray-300 bg-white shadow">
+                                        class="mt-2 py-2 space-y-3 pl-4 pr-4 border-l border-gray-300 bg-white shadow dark:bg-gray-500 dark:divide-gray-400">
                                         @foreach ($subgroups as $subLabel => $perms)
                                             <div x-data="{ open: false }">
                                                 <button type="button" @click="open = !open"
-                                                    class="w-full flex justify-between items-center text-gray-600 hover:text-green-500 focus:outline-none font-medium">
+                                                    class="w-full flex justify-between items-center text-gray-600 hover:text-green-500 focus:outline-none font-medium dark:text-green-300">
                                                     {{ $subLabel }}
                                                     <svg :class="{ 'rotate-180': open }"
                                                         class="h-4 w-4 transition-transform" fill="none"
@@ -190,7 +190,7 @@
                                                     </svg>
                                                 </button>
                                                 <ul x-show="open" x-transition
-                                                    class="mt-1 pl-4 list-disc list-inside space-y-1 text-gray-700 border p-2 rounded ">
+                                                    class="mt-1 pl-4 list-disc list-inside space-y-1 text-gray-700 border p-2 rounded dark:text-gray-200">
                                                     @foreach ($perms as $perm)
                                                         <li>{{ ucfirst(str_replace('-', ' ', $perm)) }}</li>
                                                     @endforeach

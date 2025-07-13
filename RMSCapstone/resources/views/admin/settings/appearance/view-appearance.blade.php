@@ -2,18 +2,18 @@
     <div>
         <!-- Header -->
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-surface leading-tight">
+            <h2 class="font-semibold text-xl text-surface leading-tight dark:text-white">
                 {{ __('Brand Appearance') }}
             </h2>
         </x-slot>
 
         <!-- Body Container -->
         <div>
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
                 <div class="relative flex items-center">
                     <!-- Title -->
-                    <h2 class="text-2xl font-bold text-gray-900 w-full text-center">Customize Brand Appearance</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Customize Brand Appearance</h2>
 
                     <!-- Back Button -->
                     <button onclick="history.back()"
@@ -26,7 +26,7 @@
 
                 <!-- Wrap in Alpine for state management -->
                 <div x-data="{ darkMode: false, fontSize: 'text-base' }" :class="fontSize"
-                    class="mx-4 sm:mx-auto bg-white dark:bg-[#2A2A2A] rounded-2xl">
+                    class="mx-4 sm:mx-auto rounded-2xl">
 
                     <form wire:submit.prevent="">
                         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
