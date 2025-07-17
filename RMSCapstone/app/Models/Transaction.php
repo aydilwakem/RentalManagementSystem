@@ -46,10 +46,11 @@ class Transaction extends Model
         'total_adults',
         'total_kids',
         'pax',
-        'original_amount',
+        'sub_total',
+        'promo_discount_amount',
+        'convenience_fee',
         'total_amount',
         'deposit_amount',
-        'promo_discount_amount',
         'terms',
         'heard_from',
         'reservation_source',
@@ -67,10 +68,17 @@ class Transaction extends Model
      * This array defines the data types for specific attributes in the model.
      */
     protected $casts = [
-        'promo_amount_discount' => 'decimal:2',
-        'original_amount' => 'decimal:2',
+
+        // Decimals
+        'sub_total' => 'decimal:2',
+        'promo_discount_amount' => 'decimal:2',
+        'convenience_fee' => 'decimal:2',
         'total_amount' => 'decimal:2',
+
+        // Decimal (Optional)
         'deposit_amount' => 'decimal:2',
+
+        // Date
         'actual_start_datetime' => 'datetime',
         'actual_end_datetime' => 'datetime',
         'start_datetime' => 'datetime',

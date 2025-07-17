@@ -36,6 +36,7 @@ class ReservationForm extends Component
     public $check_in_date;
     public $check_out_date;
     public $roomCategories;
+    public $sub_total;
     // ----------------------- ROOMS ---------------------------- //
 
     // rooms - adults - kids - extra-guest - extra-charge - amount
@@ -126,12 +127,11 @@ class ReservationForm extends Component
     public string $instagramLink;
 
     //----------------------- PROMO CODE ------------------------ //
-    public $originalTotal;
     public $promo;
     public $promoCode;
     public $discountMessage;
     public $errorMessage;
-    public $promoDiscount = 0;
+    public $promoDiscount;
     public $promo_discount_amount;
 
 
@@ -433,16 +433,6 @@ class ReservationForm extends Component
      * @return int Duration of the stay in days.
      */
 
-    // public function getStayDurationProperty()
-    // {
-    //     // This allows you to access the method as a property
-    //     if ($this->check_in_date && $this->check_out_date) {
-    //         $in = Carbon::parse($this->check_in_date);
-    //         $out = Carbon::parse($this->check_out_date);
-    //         return $in->diffInDays($out);
-    //     }
-    //     return 0;
-    // }
 
     public function getStayDurationProperty()
     {
@@ -472,6 +462,37 @@ class ReservationForm extends Component
      * @return void
      */
 
+    // public function getAvailableRooms()
+    // {
+    //     if (!$this->check_in_date || !$this->check_out_date) {
+    //         return;
+    //     }
+
+    //     $checkIn = \Carbon\Carbon::parse($this->check_in_date);
+    //     $checkOut = \Carbon\Carbon::parse($this->check_out_date);
+
+    //     $this->rooms = Property::ofType('Room')->availableRooms()
+    //         ->where('property_status', 'available') // only explicitly include available
+    //         ->where('property_status', '!=', ['out_of_service', 'held', 'booked']) // explicitly exclude out_of_service
+    //         ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {
+    //             $query->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed', 'ongoing'])
+    //                 ->where(function ($q) use ($checkIn, $checkOut) {
+    //                     $q->where('start_datetime', '<', $checkOut) // Any booking that starts before the user checks out
+    //                         ->where('end_datetime', '>', $checkIn); // Ends after the user checks in
+    //                 });
+    //         })
+    //         ->with('features')
+    //         ->get()
+    //         ->map(function ($room) {
+    //             $rate = $this->getDynamicRate($room);
+    //             $room->dynamic_rate = $rate['amount'];
+    //             $room->rate_name = $rate['name'];
+    //             $room->rate_type = $rate['rate_type'];
+    //             return $room;
+    //         });
+    //     // ->get();
+    // }
+
     public function getAvailableRooms()
     {
         if (!$this->check_in_date || !$this->check_out_date) {
@@ -481,26 +502,29 @@ class ReservationForm extends Component
         $checkIn = \Carbon\Carbon::parse($this->check_in_date);
         $checkOut = \Carbon\Carbon::parse($this->check_out_date);
 
-        $this->rooms = Property::ofType('Room')->availableRooms()
-            ->where('property_status', 'available') // only explicitly include available
-            ->where('property_status', '!=', ['out_of_service', 'held', 'booked']) // explicitly exclude out_of_service
-            ->whereDoesntHave('transactions', function ($query) use ($checkIn, $checkOut) {
+        $this->rooms = Property::ofType('Room')
+            ->whereNotIn('property_status', ['out_of_service', 'held']) // still exclude truly unavailable
+            ->with(['features', 'transactions' => function ($query) use ($checkIn, $checkOut) {
                 $query->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed', 'ongoing'])
                     ->where(function ($q) use ($checkIn, $checkOut) {
-                        $q->where('start_datetime', '<', $checkOut) // Any booking that starts before the user checks out
-                            ->where('end_datetime', '>', $checkIn); // Ends after the user checks in
+                        $q->where('start_datetime', '<', $checkOut)
+                            ->where('end_datetime', '>', $checkIn);
                     });
-            })
-            ->with('features')
+            }])
             ->get()
-            ->map(function ($room) {
+            ->map(function ($room) use ($checkIn, $checkOut) {
+                $isBooked = $room->transactions->isNotEmpty();
                 $rate = $this->getDynamicRate($room);
+
+                $room->is_booked = $isBooked;
                 $room->dynamic_rate = $rate['amount'];
                 $room->rate_name = $rate['name'];
                 $room->rate_type = $rate['rate_type'];
+
                 return $room;
-            });
-        // ->get();
+            })
+
+            ->sortBy('is_booked'); // false (available) comes first, true (booked) later
     }
 
     public function getDepositProperty()
@@ -518,6 +542,7 @@ class ReservationForm extends Component
         return $this->computeTotalAmount() * ($depositPercentage / 100);
     }
 
+    // -------------------------------- COMPUTED PROPERTIES ------------------------------------------ //
 
 
     /**
@@ -580,20 +605,55 @@ class ReservationForm extends Component
         return $total;
     }
 
+    public function computeSubtotalAmount()
+    {
+        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+        $total = $baseSubtotal - $this->promoDiscount;
+        $this->sub_total = max(0, $total);
+
+        return $this->sub_total;
+    }
+
+    /**
+     * Computes the total amount including room fees, activity fees,
+     * a 3% convenience fee, and subtracts any promo discount.
+     *
+     * @return float The final total amount
+     */
     public function computeTotalAmount()
     {
-        $subtotal = $this->total_amount = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
-        $total = $subtotal - $this->promoDiscount;
-        $this->total_amount  = max(0, $total);
-        // dd($this->total_amount);
+        // Step 1: Calculate base subtotal (rooms + activities)
+        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+
+        // Step 2: Compute 3% convenience fee based on base subtotal
+        $this->convenience_fee = $this->sub_total * 0.03;
+
+        // Step 3: Add convenience fee to subtotal
+        $subtotalWithFee = $baseSubtotal + $this->convenience_fee;
+
+        // Step 4: Apply any promo discount
+        $total = $subtotalWithFee - $this->promoDiscount;
+
+        // Step 5: Ensure total amount is not negative
+        $this->total_amount = max(0, $total);
+
         return $this->total_amount;
     }
 
+    /**
+     * Always recalculates the convenience fee based on the latest subtotal.
+     *
+     * @return float The updated convenience fee
+     */
     public function computeConvenienceFee()
     {
-        $this->convenience_fee =  $this->computeTotalAmount() * 0.03; // 3% convenience fee
+        // Recompute to ensure the most current values
+        $this->computeTotalAmount();
+
         return $this->convenience_fee;
     }
+
+    // ------------------------------------------ PROMO CODE ------------------------------------------ //
 
     public function applyPromoCode()
     {
@@ -636,11 +696,11 @@ class ReservationForm extends Component
         }
 
         // Step 6: Calculates discountg
-        $this->originalTotal = $this->computeTotalAmount();
+        $this->sub_total = $this->computeSubtotalAmount();
 
         switch ($promo->discount_type) {
             case 'percentage':
-                $this->promoDiscount = ($promo->discount_value / 100) * $this->originalTotal;
+                $this->promoDiscount = ($promo->discount_value / 100) * $this->sub_total;
                 break;
             case 'fixed':
                 $this->promoDiscount = $promo->discount_value;
@@ -651,7 +711,7 @@ class ReservationForm extends Component
         }
 
         $this->promo_discount_amount = $this->promoDiscount;
-        $this->total_amount = $this->originalTotal - $this->promoDiscount;
+        $this->total_amount = $this->sub_total - $this->promoDiscount;
 
         $this->discountMessage = 'Promo code applied! You saved ₱' . number_format($this->promoDiscount, 2) . '.';
         $this->errorMessage = null;
@@ -1080,8 +1140,9 @@ class ReservationForm extends Component
                 'total_adults' => collect($this->cart)->sum('adults'),
                 'total_kids' => collect($this->cart)->sum('kids'),
                 'pax' => $this->total_pax,
-                'original_amount' => $this->originalTotal,
-                'promo_discount_amount' => $this->promo_discount_amount,
+                'sub_total' => $this->sub_total ?? 0,
+                'convenience_fee' => $this->convenience_fee ?? 0,
+                'promo_discount_amount' => $this->promo_discount_amount ?? 0,
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
                 'heard_from' => $this->heard_from,
@@ -1157,12 +1218,6 @@ class ReservationForm extends Component
                 : $this->computeTotalAmount();
 
             $amountInCentavos = intval($baseAmount * 100);
-            $this->convenienceFeeInCentavos = intval($amountInCentavos * 0.03);
-
-            // Debuggers for amounts
-            Log::info('Total Amount with no deposit percentage: ' . $this->computeTotalAmount());
-            Log::info('Amount in centavos: ' . $amountInCentavos);
-            Log::info('Convenience fee in centavos: ' . $this->convenienceFeeInCentavos);
 
             try {
 
@@ -1187,13 +1242,6 @@ class ReservationForm extends Component
                                 'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
 
                                 'line_items' => [ // This is a list of what the user is paying for.
-                                    [
-                                        'currency' => 'PHP',
-                                        'amount' => $this->convenienceFeeInCentavos,  // e.g. 4500 for PHP 45.00 (3%)
-                                        'description' => 'Online payment processing fee via PayMongo',
-                                        'name' => 'PayMongo Convenience Fee',
-                                        'quantity' => 1,
-                                    ],
                                     [
                                         'currency' => 'PHP',
                                         'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
@@ -1223,10 +1271,6 @@ class ReservationForm extends Component
                 // Converts the JSON response from the PayMongo API into a PHP array.
                 $responseData = json_decode($response->getBody(), true);
 
-                // Retrieves the 'data' key from the response, which contains the attributes of the created checkout session.
-                // $responseAllData = $responseData['data'] ?? [];
-                // dd($responseAllData);
-
                 // Retrieves the checkout_url from the response
                 $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
 
@@ -1234,7 +1278,9 @@ class ReservationForm extends Component
                 $transaction->update(['payment_link' => $paymentLink]);
 
                 // If a promo code is used, increment the uses_count of Promo Code
-                $promo->increment('uses_count');
+                if ($promo) {
+                    $promo->increment('uses_count');
+                }
             } catch (\Exception $e) {
 
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());
@@ -1242,10 +1288,11 @@ class ReservationForm extends Component
 
             }
 
-            // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
+            // ------------------------------------ EMAIL DATA ------------------------------------------ //
 
+            $total = $this->computeTotalAmount();
+            $deposit = $total * ($this->depositPercentage / 100);
 
-            // Step 7: Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
                 'transaction_number' => $transaction->transaction_number,
@@ -1253,12 +1300,13 @@ class ReservationForm extends Component
                 'invoice_number' => $invoice->invoice_number,
                 'check_in' => $this->check_in_date,
                 'check_out' => $this->check_out_date,
-                'total_amount' => $this->computeTotalAmount(),
-                'deposit' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
+                // 'sub_total' => $this->sub_total,
+                // 'convenience_fee' => $this->convenience_fee,
+                // 'promo_discount_amount' => $this->promo_discount_amount,
+                'total_amount' => $total,
+                'deposit' => $deposit,
                 'expirationHours' => $this->expirationHours,
                 'payment_link' => $paymentLink,
-
-                // Branding
                 'branding_company_name' => $this->companyName,
                 'logo_path' => $this->logoPath,
                 'branding_company_email' => $this->companyEmail,
@@ -1289,3 +1337,15 @@ class ReservationForm extends Component
         }
     }
 }
+
+
+ // public function getStayDurationProperty()
+    // {
+    //     // This allows you to access the method as a property
+    //     if ($this->check_in_date && $this->check_out_date) {
+    //         $in = Carbon::parse($this->check_in_date);
+    //         $out = Carbon::parse($this->check_out_date);
+    //         return $in->diffInDays($out);
+    //     }
+    //     return 0;
+    // }

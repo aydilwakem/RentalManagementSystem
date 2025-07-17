@@ -187,7 +187,7 @@
                 @endif
 
                 {{-- Disclaimer - flat rate --}}
-                <div style="
+                {{-- <div style="
     background-color: #fffacd;
     border: 1px solid #e6b300;
     border-left: 5px solid #e6b300;
@@ -216,55 +216,17 @@
                     After completing this reservation, we will send a link to your email where you can upload your proof
                     of payment.
 
-                </div>
-
-
-                {{-- Disclaimer - asynchronous charge --}}
-                {{-- <div style="
-    background-color: #fffacd;
-    border: 1px solid #e6b300;
-    border-left: 5px solid #e6b300;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 10px;
-    margin-bottom: 25px;
-    color: #333333;
-    font-size: 15px;
-    line-height: 1.4;">
-                    <strong>Note:</strong> If you choose to proceed with <strong>online payment</strong>, a convenience
-                    fee will be added based on your selected payment method. This fee is charged by our payment provider
-                    (PayMongo) and will be automatically included in the total amount during checkout.
-
-                    <br><br>
-                    <b>Online Payment Method Fees:</b>
-                    <ul style="margin-left: 20px; margin-top: 8px;">
-                        <li><strong>Credit/Debit Card:</strong> +2.9%</li>
-                        <li><strong>GCash / GrabPay:</strong> +2%</li>
-                        <li><strong>Bank Transfer (Instapay):</strong> +1%</li>
-                    </ul>
-
-                    <br><br>
-                    If you don’t want to pay the additional online payment fee, you can choose to pay through a manual
-                    bank transfer instead.
-                    After completing this reservation, we will send a link to your email where you can upload your proof
-                    of payment.
-
                 </div> --}}
-
-
-
 
                 <!-- Summary -->
                 <div class="border-t-2 border-gray-200 pt-6">
                     <div class="flex flex-col space-y-4">
 
                         <!-- Convenience Fee -->
-                        {{-- <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center">
                             <h3 class="text-lg font-semibold text-gray-700">Paymongo Convenience Fee</h3>
-                            {{-- <p class="text-xl font-bold text-green-700">₱4500</p> --}}
-                            {{-- <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
-
-                        </div> --}}
+                            <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                        </div>
 
                         <!-- Total Amount -->
                         <div class="flex justify-between items-center font-semibold text-green-700 mb-1">

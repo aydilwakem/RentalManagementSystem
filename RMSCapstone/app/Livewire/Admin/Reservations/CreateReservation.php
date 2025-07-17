@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\TransactionUser;
 use App\Models\GuestDetail;
 use App\Models\Invoice;
+use App\Models\PromoCode;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -109,7 +110,30 @@ class CreateReservation extends Component
 
 
     // Summary
+    public $sub_total;
     public $total_amount;
+    public $depositPercentage;
+    public $enable_deposit_percentage = true;
+
+    // Promo Discount
+    public $promo;
+    public $promoCode;
+    public $discountMessage;
+    public $errorMessage;
+    public $promoDiscount;
+    public $promo_discount_amount;
+
+    // Convenience Fee
+    public $convenience_fee;
+
+    //----------------------- BRANDING ------------------------ //
+    public string $companyName = 'Company'; //Default
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
 
 
@@ -138,10 +162,25 @@ class CreateReservation extends Component
         $this->paymentMethod = PaymentMethod::all();
         $this->guest_types = GuestType::all();
 
+        // For Branding
+        // Fetch the first row of the settings table
+        $setting = Setting::first();
+        if ($setting) {
+            $this->companyName = $setting->company_name;
+            $this->logoPath = $setting->logo;
+            $this->companyEmail = $setting->email;
+            $this->companyContact = $setting->contact_number;
+            $this->companyAddress = $setting->address;
+            $this->facebookLink = $setting->facebook;
+            $this->instagramLink = $setting->instagram;
+        }
+
         //Default dates
         $now = Carbon::now('Asia/Manila');
         $this->check_in_date = $now->format('Y-m-d');
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+
+        $this->getAvailableRooms();
     }
 
 
@@ -283,12 +322,55 @@ class CreateReservation extends Component
         return $total;
     }
 
+
+    public function computeSubtotalAmount()
+    {
+        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+        $total = $baseSubtotal - $this->promoDiscount;
+        $this->sub_total = max(0, $total);
+
+        return $this->sub_total;
+    }
+
+    /**
+     * Computes the total amount including room fees, activity fees,
+     * a 3% convenience fee, and subtracts any promo discount.
+     *
+     * @return float The final total amount
+     */
     public function computeTotalAmount()
     {
-        $this->total_amount = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
-        // dd($this->total_amount);
+        // Step 1: Calculate base subtotal (rooms + activities)
+        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities();
+
+        // Step 2: Compute 3% convenience fee based on base subtotal
+        $this->convenience_fee = $this->sub_total * 0.03;
+
+        // Step 3: Add convenience fee to subtotal
+        $subtotalWithFee = $baseSubtotal + $this->convenience_fee;
+
+        // Step 4: Apply any promo discount
+        $total = $subtotalWithFee - $this->promoDiscount;
+
+        // Step 5: Ensure total amount is not negative
+        $this->total_amount = max(0, $total);
+
         return $this->total_amount;
     }
+
+    /**
+     * Always recalculates the convenience fee based on the latest subtotal.
+     *
+     * @return float The updated convenience fee
+     */
+    public function computeConvenienceFee()
+    {
+        // Recompute to ensure the most current values
+        $this->computeTotalAmount();
+
+        return $this->convenience_fee;
+    }
+
 
     // ------------------------- ACCESSOR PROPERTIES ---------------------------- //
 
@@ -331,11 +413,102 @@ class CreateReservation extends Component
 
     public function getDepositProperty()
     {
-        // Retrieve deposit percentage from database
-        $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
+        $setting = DB::table('st_settings')->first();
 
-        // Ensure computeTotalAmount() returns a valid amount
+        // If the enable_deposit_percentage setting is not enabled, return 0
+        if (!$setting || !$setting->enable_deposit_percentage) {
+            return 0;
+        }
+
+        // Otherwise, calculate the deposit using the percentage
+        $depositPercentage = $setting->deposit_percentage ?? 0;
+
         return $this->computeTotalAmount() * ($depositPercentage / 100);
+    }
+
+    // ------------------------------------------ PROMO CODE ------------------------------------------ //
+
+    public function applyPromoCode()
+    {
+        Log::info('applyPromoCode method called with promoCode: ' . $this->promoCode);
+
+        $this->reset(['discountMessage', 'errorMessage']);
+        $promo = PromoCode::where('code', $this->promoCode)->first();
+        $now = Carbon::now('Asia/Manila');
+
+        // Step 1: Validatess promo existence
+        if (!$promo) {
+            return $this->failPromo('Invalid promo code. Please try again.');
+        }
+
+
+        // Step 2: Checks minimum booking amount
+        if ($this->total_amount < $promo->min_booking_amount) {
+            return $this->failPromo('This promo code requires a minimum booking amount of ₱' .
+                number_format((float) $promo->min_booking_amount, 2) . '.');
+        }
+
+        // Step 3: Check promo date validity if it has expiration
+        if ($promo->has_expiration && $promo->start_date && $promo->end_date) {
+            if (
+                $now->lt(Carbon::parse($promo->start_date)) ||
+                $now->gt(Carbon::parse($promo->end_date))
+            ) {
+                return $this->failPromo('This promo code has expired or is not yet active.');
+            }
+        }
+
+        // Step 4: Checks if the max uses has been reached
+        if ($promo->max_uses > 0 && $promo->uses_count >= $promo->max_uses) {
+            return $this->failPromo('This promo code has reached its maximum usage limit.');
+        }
+
+        // Step 5: Checks if the promo code is active
+        if (!$promo->is_active) {
+            return $this->failPromo('This promo code is currently inactive.');
+        }
+
+        // Step 6: Calculates discountg
+        $this->sub_total = $this->computeSubtotalAmount();
+
+        switch ($promo->discount_type) {
+            case 'percentage':
+                $this->promoDiscount = ($promo->discount_value / 100) * $this->sub_total;
+                break;
+            case 'fixed':
+                $this->promoDiscount = $promo->discount_value;
+                break;
+            default:
+                $this->promoDiscount = 0;
+                break;
+        }
+
+        $this->promo_discount_amount = $this->promoDiscount;
+        $this->total_amount = $this->sub_total - $this->promoDiscount;
+
+        $this->discountMessage = 'Promo code applied! You saved ₱' . number_format($this->promoDiscount, 2) . '.';
+        $this->errorMessage = null;
+
+        $this->getAvailableRooms();
+    }
+
+    public function removePromoCode()
+    {
+        Log::info('removePromoCode method called');
+        $this->promoCode = '';
+        $this->promoDiscount = 0;
+        $this->discountMessage = null;
+        $this->total_amount = $this->computeTotalAmount();
+        $this->errorMessage = null;
+    }
+
+    private function failPromo(string $message)
+    {
+        $this->promoDiscount = 0;
+        $this->total_amount = $this->computeTotalAmount();
+        $this->discountMessage = null;
+        $this->promoCode = '';
+        $this->errorMessage = $message;
     }
 
 
@@ -503,8 +676,8 @@ class CreateReservation extends Component
             'guest_last_name' => 'required|string',
             'guest_suffix' => 'nullable|string|max:10',
             'guest_gender' => 'nullable|in:male,female,other',
-            'guest_residency' => 'nullable|in:local,foreigner',
-            'guest_country_of_origin' => 'nullable|string|max:100',
+            'guest_residency' => 'required|in:local,foreigner',
+            'guest_country_of_origin' => 'required|string|max:100',
             'guest_type_id' => 'required|exists:trn_guest_type,id',
         ]);
 
@@ -551,10 +724,6 @@ class CreateReservation extends Component
     }
 
 
-    public function debug()
-    {
-        dd($this->selectedActivities);
-    }
 
     public function validateData()
     {
@@ -575,12 +744,27 @@ class CreateReservation extends Component
 
     public function CreateReservation()
     {
+        $this->validateData();
 
-        $this->resetErrorBag(); // Reset any previous error messages
+        $this->resetErrorBag();
 
         $reservationData = []; // Initialize an empty array to store reservation data for email
 
         DB::transaction(function () use (&$reservationData) {
+
+            // If enable_deposit is true, retrieve the deposit percentage from the settings table
+            $setting = Setting::first();
+
+            // Set the expiration hours for payment proof
+            $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+
+            $this->depositPercentage = $setting && $setting->enable_deposit_percentage
+                ? $setting->deposit_percentage
+                : 0;
+
+            // Find the promo code in the database
+            $promo = PromoCode::where('code', $this->promoCode)->first();
+
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
@@ -600,11 +784,15 @@ class CreateReservation extends Component
                 'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
                 'reservation_type_id' => $this->reservation_type_id,
                 'created_by' => $transactionUser->id,
+                'promo_id' => $promo?->id,
                 'start_datetime' => $this->check_in_date,
                 'end_datetime' => $this->check_out_date,
                 'total_adults' => collect($this->selectedRooms)->sum('adults'),
                 'total_kids' => collect($this->selectedRooms)->sum('kids'),
                 'pax' => $this->total_pax,
+                'sub_total' => $this->sub_total ?? 0,
+                'convenience_fee' => $this->convenience_fee ?? 0,
+                'promo_discount_amount' => $this->promo_discount_amount ?? 0,
                 'total_amount' => $this->computeTotalAmount(),
                 'deposit_amount' => $this->computeTotalAmount() * ($depositPercentage / 100),
                 'heard_from' => $this->heard_from,
@@ -620,7 +808,7 @@ class CreateReservation extends Component
             // Step 5: Create invoice
             $invoice = Invoice::create([
                 'transaction_id' => $transaction->id,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
                 'invoice_type' => 'Room',
                 'sub_total' => $this->computeTotalAmount(),
                 'deposit_paid' => 0,
@@ -741,6 +929,11 @@ class CreateReservation extends Component
 
                 // Save payment link to transaction (optional)
                 $transaction->update(['payment_link' => $paymentLink]);
+
+                // If a promo code is used, increment the uses_count of Promo Code
+                if ($promo) {
+                    $promo->increment('uses_count');
+                }
             } catch (\Exception $e) {
 
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());
@@ -751,6 +944,9 @@ class CreateReservation extends Component
             // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
 
 
+            $total = $this->computeTotalAmount();
+            $deposit = $total * ($this->depositPercentage / 100);
+
             // Prepare data for the email (accessible outside transaction)
             $reservationData = [
                 'name' => $this->first_name . ' ' . $this->last_name,
@@ -759,10 +955,17 @@ class CreateReservation extends Component
                 'invoice_number' => $invoiceNumber,
                 'check_in' => $this->check_in_date,
                 'check_out' => $this->check_out_date,
-                'total_amount' => $this->computeTotalAmount(),
-                'deposit' => $this->computeTotalAmount() * ($depositPercentage / 100),
+                'total_amount' => $total,
+                'deposit' => $deposit,
                 'expirationHours' => $this->expirationHours,
                 'payment_link' => $paymentLink,
+                'branding_company_name' => $this->companyName,
+                'logo_path' => $this->logoPath,
+                'branding_company_email' => $this->companyEmail,
+                'branding_company_contact' => $this->companyContact,
+                'company_address' => $this->companyAddress,
+                'facebook_link' => $this->facebookLink,
+                'instagram_link' => $this->instagramLink,
             ];
         });
 

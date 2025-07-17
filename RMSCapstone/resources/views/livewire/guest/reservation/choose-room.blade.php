@@ -333,8 +333,6 @@
 
                                                     <div class="mt-4">
 
-
-
                                                         @php
                                                             $cartCollection = collect($cart); // Convert array to collection
                                                             $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
@@ -346,6 +344,14 @@
                                                         <!-- Room info here -->
 
                                                         @if ($roomInCart)
+                                                        <span class="block w-full text-center py-2 bg-yellow-300 text-gray-800 font-semibold rounded">
+                                                            In Cart
+                                                        </span>
+                                                        @elseif ($room->is_booked)
+                                                        <span class="block w-full text-center py-2 bg-red-500 text-white-100 font-semibold rounded">
+                                                            Sold Out
+                                                        </span>
+
                                                         @else
                                                             <x-button wire:click="addRoomToCart({{ $room->id }})"
                                                                 wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"

@@ -56,6 +56,7 @@
                 <!-- Choose an Activity -->
                 @if ($currentStep == 2)
                     <div class="step-activity md:px-12">
+                        {{-- @include('livewire.guest.reservation.review') --}}
                         @include('livewire.guest.reservation.choose-activity')
                     </div>
                 @endif
@@ -328,22 +329,37 @@
                         @endif
                     </div>
 
+                    <!-- Subtotal Amount -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Subtotal</div>
+                        <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                    </div>
+
+                    <!-- Convenience Fee -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Convenience Fee</div>
+                        <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                    </div>
+
+                    
+                 
+
                     <!-- Total Amount -->
                     <hr class="my-2 border-gray-200 mt-4">
                     <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
                         <div class="text-lg">Total</div>
-                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
+                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>          
                     </div>
 
-                       <!-- If deposit percentage is enabled -->
-                @if ($enable_deposit_percentage && $this->deposit > 0)
-                <!-- Deposit -->
-                <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
-                    <div>Deposit</div>
-                    <div class="font-semibold">
-                        ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
-                </div>
-                @endif
+                    <!-- If deposit percentage is enabled -->
+                    @if ($enable_deposit_percentage && $this->deposit > 0)
+                    <!-- Deposit -->
+                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                        <div>Deposit</div>
+                        <div class="font-semibold">
+                            ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
+                    </div>
+                    @endif
 
                 </div>
                 @endif

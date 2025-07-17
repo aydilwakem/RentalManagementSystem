@@ -98,19 +98,79 @@
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
                     </div>
 
-                    <!-- Total Amount -->
+                   
+
+                    <!-- Deposit -->
+                    @if ($enable_deposit_percentage && $this->deposit > 0)
+                    <!-- Deposit -->
+                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
+                            <div>Required Deposit</div>
+                            <div class="font-semibold">
+                                ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
+                        </div>
+                    @endif
+
+                       <!-- Discount Code -->
+                    <hr class="my-2 border-gray-200">
+                    @if ($discountMessage)
+                        <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
+                    @endif
+
+                    @if ($errorMessage)
+                        <p class="text-sm mt-1 text-red-500">{{ $errorMessage }}</p>
+                    @endif
+
+                    @php
+                        $hasCode = !empty($promoCode) && empty($discountMessage) === false;
+                    @endphp
+
+                    <div class="relative w-full mt-4">
+                         <input
+        type="text"
+        wire:model="promoCode"
+        wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+        class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+        placeholder="Enter Promo Code"
+        autocomplete="off"
+        {{ $hasCode ? 'disabled' : '' }} {{-- optional: disable when applied --}}
+    >
+
+                        {{-- TODO: disable field when code is inputted, clear field when removed --}}
+                        @if ($discountMessage)
+                            {{-- does not work yet <33 --}}
+                            <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
+                                title="Remove Promo Code">
+                                &times;
+                            </button>
+                        @else
+                            <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
+                                Apply
+                            </button>
+                        @endif
+                    </div>
+
+                      <!-- Subtotal Amount -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Subtotal</div>
+                        <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                    </div>
+
+                    <!-- Convenience Fee -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Convenience Fee</div>
+                        <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                    </div>
+
+                     <!-- Total Amount -->
                     <div
                         class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
                         <div class="text-lg">Total</div>
                         <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
                     </div>
 
-                    <!-- Deposit -->
-                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
-                        <div>Required Deposit</div>
-                        <div class="font-semibold">
-                            ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
-                    </div>
                 @endif
 
                 <!-- Empty message -->
@@ -207,6 +267,8 @@
                                 </td>
                             </tr>
                         @endforelse
+
+
                     </tbody>
                 </table>
                 <div class="text-right font-semibold text-base mt-2 text-gray-700 dark:text-white">

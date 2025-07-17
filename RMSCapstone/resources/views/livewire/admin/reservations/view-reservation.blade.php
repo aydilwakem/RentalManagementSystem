@@ -182,8 +182,13 @@
                     </div>
 
                     <div>
-                        <strong>Original Amount:</strong>
-                        <div>₱{{ number_format($transaction->original_amount, 2) }}</div>
+                        <strong>Subtotal:</strong>
+                        <div>₱{{ number_format($transaction->sub_total, 2) }}</div>
+                    </div>
+
+                    <div>
+                        <strong>Convenience Fee (3%):</strong>
+                        <div>₱{{ number_format($transaction->convenience_fee, 2) }}</div>
                     </div>
 
                     <div>
