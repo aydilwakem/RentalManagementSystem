@@ -8,7 +8,8 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        <div
+            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -26,7 +27,9 @@
                 <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
                     <!-- Room Name -->
                     <div>
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room Name <span class="text-red-500">*</span></label>
+                        <label for="name_number"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room Name <span
+                                class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
@@ -38,7 +41,8 @@
 
                     <!-- Room Category -->
                     <div>
-                        <label for="property_category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                        <label for="property_category_id"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Category <span class="text-red-500">*</span></label>
                         <select wire:model="property_category_id" id="property_category_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -58,7 +62,8 @@
 
                         <!-- Ideal Guest -->
                         <div>
-                            <label for="ideal_guest" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Ideal
+                            <label for="ideal_guest"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Ideal
                                 Guest <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="ideal_guest" id="ideal_guest" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -71,7 +76,8 @@
 
                         <!-- Max Adults -->
                         <div>
-                            <label for="max_adults" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
+                            <label for="max_adults"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Adults <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_adults" id="max_adults" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -84,7 +90,8 @@
 
                         <!-- Max Kids -->
                         <div>
-                            <label for="max_kids" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
+                            <label for="max_kids"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Kids <span class="text-red-500">*</span></label>
                             <input type="number" wire:model="max_kids" id="max_kids" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -99,7 +106,8 @@
 
                     <!-- Turnover Duration -->
                     <div>
-                        <label for="turnover_duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Turnover
+                        <label for="turnover_duration"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Turnover
                             Duration (Hours) <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="turnover_duration" id="turnover_duration" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -112,7 +120,8 @@
 
                     <!-- Room Status -->
                     <div>
-                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                        <label for="property_status"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -127,7 +136,9 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate <span class="text-red-500">*</span></label>
+                        <label for="amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate <span
+                                class="text-red-500">*</span></label>
                         <input type="text" wire:model="amount" id="amount" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
@@ -140,7 +151,8 @@
 
                     <!-- Extra Person Charge -->
                     <div>
-                        <label for="extra_person_charge" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
+                        <label for="extra_person_charge"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Person Charge <span class="text-red-500">*</span>
                         </label>
                         <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required
@@ -152,9 +164,32 @@
                         @enderror
                     </div>
 
+                    <!-- Free Breakfast Inclusion -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Free Breakfast Inclusion
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-800 dark:text-gray-200 text-sm">Not Included</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model="freebies" id="freebies" value="1"
+                                    class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                    ">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                </div>
+                            </label>
+                            <span class="text-gray-800 dark:text-gray-200 text-sm">Included</span>
+                        </div>
+                    </div>
+
                     <!-- Available Amenities -->
                     <div class="sm:col-span-2">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
+                        <label
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
@@ -217,7 +252,8 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                        <label for="images"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Image(s)</label>
                         <div class="flex flex-wrap gap-4">
 

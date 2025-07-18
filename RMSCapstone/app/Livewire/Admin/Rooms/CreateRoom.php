@@ -30,9 +30,10 @@ class CreateRoom extends Component
     public $image; // Single image
     public $extra_person_charge;
     public $selectedFeatures = []; // Selected feature IDs
-    public $features = []; // All features to show in UI
+    public $features = []; // All features
     public $roomCategories; // All room categories
     public $confirmCreateItem = false;
+    public $freebies = false;
 
     public function confirmCreate()
     {
@@ -76,7 +77,7 @@ class CreateRoom extends Component
                 'name_number' => 'required|string|max:100|unique:properties,name_number',
                 'property_category_id' => 'required|exists:property_categories,id',
                 'property_type_id' => 'required|exists:property_types,id',
-                
+
                 'ideal_guest' => [
                     'required',
                     'integer',
@@ -102,6 +103,7 @@ class CreateRoom extends Component
                 'occupancy_rules' => 'required|array',
                 'occupancy_rules.*.adults' => 'required|integer|min:0',
                 'occupancy_rules.*.kids' => 'required|integer|min:0',
+                'freebies' => 'nullable|boolean'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmCreateItem = false;
@@ -142,11 +144,12 @@ class CreateRoom extends Component
             'image' => $imagePath,
             'images' => array_merge($imagePaths, $this->storedImages),
             'occupancy_rules' => $this->occupancy_rules,
+            'freebies' => (bool) $this->freebies,
         ]);
 
         // Attach selected features to pivot
-        if (!empty($this->features)) {
-            $room->features()->attach($this->features);
+        if (!empty($this->selectedFeatures)) {
+            $room->features()->attach($this->selectedFeatures);
         }
 
         // Reset the form
@@ -163,7 +166,9 @@ class CreateRoom extends Component
             'image',
             'images',
             'selectedFeatures',
-            'occupancy_rules']);
+            'occupancy_rules',
+            'freebies'
+        ]);
 
         session()->flash('message', 'Room successfully created!');
         return redirect()->route('admin.rooms');

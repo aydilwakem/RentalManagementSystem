@@ -146,7 +146,7 @@ class CreateProperty extends Component
         ]);
 
         // Attach selected features to pivot
-        if (!empty($this->features)) {
+        if (!empty($this->selectedFeatures)) {
             $house->features()->attach($this->selectedFeatures);
         }
 

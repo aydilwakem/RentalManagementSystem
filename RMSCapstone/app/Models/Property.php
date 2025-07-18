@@ -49,6 +49,7 @@ class Property extends Model
         'image',
         'images',
         'description',
+        'freebies',
     ];
 
     protected $casts = [
@@ -57,7 +58,7 @@ class Property extends Model
     ];
 
     // -------------------- Activity Logs --------------------- //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; //Only changed attributes are logged
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -85,7 +86,7 @@ class Property extends Model
             'image',
             'images',
             'description'])
-            // 4.2 Automatically log only the attributes that have changed  
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "Property has been {$eventName}")

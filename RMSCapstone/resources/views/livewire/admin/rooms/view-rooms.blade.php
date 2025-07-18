@@ -349,7 +349,7 @@
                                         value="{{ $room->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$room->id] ?? 'RM-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3">{{ $room->name_number }}</td>
+                                <td class="px-4 py-3 capitalize">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
                                 <td class="px-4 py-3">{{ $room->max_adults }}</td>

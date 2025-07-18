@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 ">
+<div class="min-h-[550px] container mx-auto border-t border-gray-300">
     @if ($roomRates->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
@@ -173,7 +173,7 @@
                             {{-- Amount --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('amount')">
                                 <button class="flex items-center">
-                                    Amount
+                                    Rate Amount
                                     @if ($sortBy !== 'amount')
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
@@ -237,7 +237,7 @@
                                 {{ $fakeIDs[$roomRate->id] ?? 'RATE-???' }}
                             </th>
                             {{-- Room Rate Name --}}
-                            <td class="px-4 py-3">{{ $roomRate->name }}</td>
+                            <td class="px-4 py-3 capitalize">{{ $roomRate->name }}</td>
                             {{-- Start Date --}}
                             <td class="px-4 py-3">
                                 {{ \Carbon\Carbon::parse($roomRate->start_date)->format('F j, Y') }}
@@ -247,7 +247,7 @@
                                 {{ \Carbon\Carbon::parse($roomRate->end_date)->format('F j, Y') }}
                             </td>
                             {{-- Amount --}}
-                            <td class="px-4 py-3">{{ $roomRate->amount }}</td>
+                            <td class="px-4 py-3">₱{{ number_format($roomRate->amount, 2) }}</td>
                             {{-- Rate Type --}}
                             <td class="px-4 py-3">
                                 @if ($roomRate->rate_type === 'Weekdays')

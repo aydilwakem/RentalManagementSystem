@@ -12,7 +12,7 @@ class ViewRoom extends Component
 {
     // Create a public property
     public Property $room;
-
+    public $selectedFeatures = [];
     public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
 
