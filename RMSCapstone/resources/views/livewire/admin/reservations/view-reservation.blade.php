@@ -347,7 +347,7 @@
 
                         <!-- COst Summary -->
                         <div><strong>Grand Total:</strong></div>
-                        <div class="font-semibold">₱{{ number_format($invoice->sub_total, 2) }}</div>
+                        <div class="font-semibold">₱{{ number_format($this->invoice->sub_total, 2) }}</div>
 
                         <div><strong>Required Deposit:</strong></div>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
@@ -356,7 +356,7 @@
                         <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
 
                         <div><strong>Balance Due:</strong></div>
-                        <div>₱{{ number_format($invoice->balance_due, 2) }}</div>
+                        <div>₱{{ number_format($this->invoice->balance_due, 2) }}</div>
 
                         <!-- Payment Status -->
                         <div><strong>Invoice Status:</strong></div>
@@ -405,6 +405,8 @@
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Days</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Unit Cost</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Amount</th>
+                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Timestamp</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Status</th>                  
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Actions</th>
                                 </tr>
                             </thead>
@@ -433,9 +435,31 @@
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->amount, 2) }}
                                         </td>
-                                        <td class="border px-4 py-2 text-right dark:border-gray-500">
-
+                                       
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            <span class="" title="{{ $property->pivot->created_at->format('F j, Y - g:i A') }}">
+                                                {{ $property->pivot->created_at->diffForHumans() }}
+                                            </span>
                                         </td>
+                                          <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                           {{ $property->pivot->payment_status }}
+                                        </td>
+                                            
+                                       @if($property->pivot->payment_status !== 'paid')
+                                            {{-- Editable: Show Action Buttons --}}
+                                            <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
+                                                {{-- Edit Button --}}
+                                                <button wire:click="editProperty({{ $property->id }})" class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        @else
+                                            {{-- Not Editable: Show Text or Icon --}}
+                                            <td class="border px-4 py-2 text-center text-gray-400 italic dark:border-gray-500">
+                                                <i class="fas fa-lock mr-1"></i>
+                                            </td>
+                                        @endif
+
                                     </tr>
 
                                     {{-- Only show if there are extra guests --}}
@@ -447,12 +471,33 @@
                                             <td class="border px-4 py-2 text-center">
                                                 ₱{{ number_format($property->extra_person_charge, 2) }}
                                             </td>
-                                            <td class="border px-4 py-2 text-right">
+                                            <td class="border px-4 py-2 text-center">
                                                 ₱{{ number_format($property->pivot->extra_charge, 2) }}
                                             </td>
-                                            <td class="border px-4 py-2 text-right">
-
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            <span class="" title="{{ $property->pivot->created_at->format('F j, Y - g:i A') }}">
+                                                {{ $property->pivot->created_at->diffForHumans() }}
+                                            </span>
+                                        </td>
+                                          <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                          {{ $property->pivot->payment_status }}
+                                        </td>
+                                         
+                                       @if($property->pivot->payment_status !== 'paid')
+                                            {{-- Editable: Show Action Buttons --}}
+                                            <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
+                                                {{-- Edit Button --}}
+                                                <button wire:click="" class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
                                             </td>
+                                        @else
+                                            {{-- Not Editable: Show Text or Icon --}}
+                                            <td class="border px-4 py-2 text-center text-gray-400 italic dark:border-gray-500">
+                                                <i class="fas fa-lock mr-1"></i>
+                                            </td>
+                                        @endif
+
                                         </tr>
                                     @endif
                                 @endforeach
@@ -469,40 +514,87 @@
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}
                                         </td>
-
-                                        {{-- Action Buttons --}}
-                                        <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
-                                            {{-- Edit Button --}}
-                                            <button wire:click="" class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500" title="Edit">
+                                       <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            <span class="" title="{{ $activity->pivot->created_at->format('F j, Y - g:i A') }}">
+                                                {{ $activity->pivot->created_at->diffForHumans() }}
+                                            </span>
+                                        </td>
+                                          <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                           {{ $activity->pivot->payment_status }}
+                                        </td>
+                                           
+                                         @if($activity->pivot->payment_status !== 'paid')
+                                            {{-- Editable: Show Action Buttons --}}
+                                            <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
+                                                 {{-- Edit Button --}}
+                                           <button wire:click="editActivity({{ $activity->pivot->id }})"
+                                                    class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+                                                    title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <button wire:click="" class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600" title="Delete">
+                                            <button wire:click="deleteActivity({{ $activity->pivot->id }})" class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
-                                        </td>
-                                        {{-- End of Action Buttons --}}
+                                            </td>
+                                        @else
+                                            {{-- Not Editable: Show Text or Icon --}}
+                                            <td class="border px-4 py-2 text-center text-gray-400 italic dark:border-gray-500">
+                                                <i class="fas fa-lock mr-1"></i>
+                                            </td>
+                                        @endif
+
                                     </tr>
                                 @endforeach
 
-                                {{-- Add Item Button Row --}}
-                                <tr>
-                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
-                                         <x-button wire:click="OpenCreatePaymentModal" icon="fas fa-plus">
-                                            Add Item
-                                        </x-button>
-                                    </td>
-                                </tr>
+                               
 
                             </tbody>
                         </table>
 
+                         <!-- Sub Total -->
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Subtotal: ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                        </div>
+
+                         <!-- Convenience Fee -->
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Convenience Fee: ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
+                        </div>
+
                         <!-- Grand Total -->
                         <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Grand Total: ₱{{ number_format($invoice->sub_total, 2) }}
+                            Grand Total: ₱{{ number_format($this->invoice->sub_total, 2) }}
+                        </div>
+
+                         <!-- Amount Paid -->
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Amount Paid: ₱{{ number_format($this->invoice->amount_paid, 2) }}
+                        </div>
+
+                         <!-- Balance Due -->
+                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
+                            Balance Due: ₱{{ number_format($this->invoice->balance_due, 2) }}
                         </div>
                     </div>
+
+                     {{-- Add Item Button Row --}}
+                                <tr>
+                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
+                                         <x-button wire:click="OpenAddActivityModal" icon="fas fa-plus">
+                                            Add Activity
+                                        </x-button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
+                                         <x-button wire:click="OpenCreatePaymentModal" icon="fas fa-plus">
+                                            Add Other Charges
+                                        </x-button>
+                                    </td>
+                                </tr>
 
 
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
@@ -718,6 +810,7 @@
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Invoice ID</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Method</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Amount Paid</th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Convenience Fee</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Type</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Reference No.</th>
                                         <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Payment Date</th>
@@ -739,6 +832,8 @@
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 ₱{{ number_format($payment->amount_paid, 2) }}</td>
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                ₱{{ number_format($payment->convenience_fee, 2) ?? 'N/A' }}</td>
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ ucfirst($payment->payment_type) }}</td>
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_reference_number ?? 'N/A' }}</td>
@@ -759,7 +854,11 @@
                                                 {{ $payment->verified_at ?? 'To be verified' }}</td>
                                             <td class="border px-4 py-2 space-x-2 dark:text-gray-200 dark:border-gray-500">
                                                 @if (!$payment->payment_screenshot)
-                                                 <span class="text-gray-500 italic dark:text-gray-200">Paid via PayMongo (no receipt required)</span>
+                                                @if ($payment->mode_of_payment === 'cash')
+                                                    <span class="text-gray-500 italic dark:text-gray-200">Cash payment (no receipt uploaded)</span>
+                                                @else
+                                                   <span class="text-gray-500 italic dark:text-gray-200">Paid via PayMongo (no screenshot required)</span>
+                                                @endif
                                                 @else
                                                     @if ($payment->payment_status === 'pending')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
@@ -773,7 +872,7 @@
                                                         </a>
                                                     @endif
                                                 @endif
-                                            </td>
+                                                </td>
 
                                         </tr>
                                     @endforeach
@@ -884,6 +983,180 @@
                     </div>
                 @endif
             </div>
+
+
+
+                <!-- Activity Modal -->
+                <div>
+                @if ($addActivityModal)
+                    <div id="guestModal"
+                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                            <h2 class="text-xl font-bold mb-4 text-green-700 text-center">Add Activity</h2>
+
+                      
+                               @foreach ($availableActivities as $activity)
+                                    <div
+                                        class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-0 flex flex-col md:flex-row
+                                        dark:bg-gray-700 dark:border-gray-600">
+                                        <div class="md:w-1/2">
+                                            @if ($activity->image)
+                                                <img class="w-full h-56      object-cover" src="{{ asset('storage/' . $activity->image) }}"
+                                                    alt="{{ $activity->name }}">
+                                            @else
+                                                <img class="w-full h-56 object-cover" src="{{ asset('images/rms-default.png') }}"
+                                                    alt="{{ $activity->name }}">
+                                            @endif
+                                        </div>
+
+                                        <div class="md:w-1/2 p-4 flex flex-col justify-between">
+                                            <div>
+                                                <h2 class="text-xl font-semibold text-gray-800 dark:text-white"> {{ $activity->name }}</h2>
+                                                <p class="text-gray-600 text-sm mb-2 text-justify dark:text-gray-200">
+                                                    {{-- Show more / less when description is long --}}
+                                                    @if (empty($activity->description))
+                                                        <span class="italic text-gray-400">No description provided</span>
+                                                    @elseif ($expandedActivity === $activity->id)
+                                                        {{ $activity->description }}
+                                                        <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                            less</a>
+                                                    @else
+                                                        {{ Str::limit($activity->description, 100, '...') }}
+                                                        @if (Str::length($activity->description) > 100)
+                                                            <a href="#"
+                                                                wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                                class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                                more</a>
+                                                        @endif
+                                                    @endif
+                                                </p>
+                                                <div class="text-lg font-semibold text-green-600 dark:text-green-300">
+                                                    @if ($activity->amount == 0)
+                                                        <span class="text-green-600 font-semibold">FREE</span>
+                                                    @else
+                                                        ₱{{ number_format($activity->amount, 2) }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+                                                <div class="flex items-center gap-2">
+                                                    <!-- Counter -->
+                                                    <div class="flex flex-col">
+                                                        <label for="quantity-{{ $activity->id }}"
+                                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+
+                                                        <!-- Counter Buttons -->
+                                                        <div class="flex items-center">
+                                                            <button type="button"
+                                                                wire:click.prevent="decrementActivity('{{ $activity->id }}')"
+                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
+                                                                -
+                                                            </button>
+
+                                                            <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                                {{ ($quantity[$activity->id] ?? 1) }}
+                                                            </span>
+
+                                                
+                                                                <button type="button"
+                                                                    wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                                                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                                                    +
+                                                                </button>
+                                                    
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    @php
+                                                        $cartCollection = collect($cart); // Convert array to collection
+                                                        $activityInCart = $cartCollection->contains(function ($item) use ($activity) {
+                                                            return $item['type'] === 'activity' && $item['activity_id'] == $activity->id;
+                                                        });
+                                                    @endphp
+
+
+                                                    @if ($activityInCart)
+                                                    @else
+                                                        <button wire:click="addActivityToCart({{ $activity->id }})"
+                                                            class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                                            wire:loading.attr="disabled">
+                                                            <div class="flex items-center justify-center">
+                                                                <!-- Spinner -->
+                                                                <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
+                                                                    class="mr-2">
+                                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                            stroke="currentColor" stroke-width="4"></circle>
+                                                                        <path class="opacity-75" fill="currentColor"
+                                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                                        </path>
+                                                                    </svg>
+                                                                </span>
+
+                                                                <!-- Button Text -->
+                                                                <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
+                                                                    Add Transaction
+                                                                </span>
+                                                            </div>
+                                                        </button>
+                                                    @endif
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center gap-2 mt-6">
+                                <x-button type="button" wire:click="CloseAddActivityModal"
+                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                    Cancel
+                                </x-button>
+                                <x-button type="button" wire:click="saveActivity">
+                                    Save Changes
+                                </x-button>
+                            </div>
+
+                        </div>
+                    </div>
+                @endif
+                </div>
+
+                @if($showEditActivityModal)
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                        <h2 class="text-lg font-semibold mb-4">Edit Activity Quantity</h2>
+
+                        <div class="mb-4">
+                            <label class="block mb-1">Quantity</label>
+                            <input type="number" wire:model="activityQuantity" min="1"
+                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+
+                                   @error('activityQuantity')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button wire:click="$set('showEditActivityModal', false)"
+                                class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
+                            <button wire:click="updateActivity"
+                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+
+           
 
             <!-------------------------- END OF MODALS ---------------------------------->
 

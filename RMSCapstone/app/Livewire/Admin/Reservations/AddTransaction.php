@@ -154,8 +154,6 @@ class AddTransaction extends Component
         $this->cart = array_values($this->cart);
     }
 
-
-
     public function incrementActivity($activityId)
     {
         $activity = Activity::find($activityId);
@@ -177,8 +175,6 @@ class AddTransaction extends Component
             }
         }
     }
-
-
 
     public function decrementActivity($activityId)
     {

@@ -777,8 +777,6 @@ class CreateReservation extends Component
                 'trn_user_type' => $this->trn_user_type,
             ]);
 
-            $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
-
             // Step 2: Create transaction
             $transaction = Transaction::create([
                 'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
@@ -794,7 +792,7 @@ class CreateReservation extends Component
                 'convenience_fee' => $this->convenience_fee ?? 0,
                 'promo_discount_amount' => $this->promo_discount_amount ?? 0,
                 'total_amount' => $this->computeTotalAmount(),
-                'deposit_amount' => $this->computeTotalAmount() * ($depositPercentage / 100),
+                'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
                 'heard_from' => $this->heard_from,
                 'reservation_source' => $this->reservation_source,
                 'transaction_status' => $this->transaction_status,
@@ -867,7 +865,7 @@ class CreateReservation extends Component
             $apiKey = env('PAYMONGO_SECRET_KEY');
 
             // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
-            $amountInCentavos = intval($this->computeTotalAmount() * ($depositPercentage / 100) * 100);
+            $amountInCentavos = intval($this->computeTotalAmount() * ($this->depositPercentage / 100) * 100);
 
             try {
 

@@ -212,8 +212,10 @@ class Transaction extends Model
     public function properties()
     {
         return $this->belongsToMany(Property::class, 'transaction_properties')
-            ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')
-            ->withTimestamps();
+            ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'payment_status', 'paid_at', 'remarks')
+            ->withTimestamps()
+            ->as('pivot')
+            ->orderByPivot('created_at');
     }
 
     /**
@@ -230,8 +232,10 @@ class Transaction extends Model
     public function activities()
     {
         return $this->belongsToMany(Activity::class, 'transaction_activities')
-            ->withPivot('quantity', 'amount', 'activity_datetime', 'status')
-            ->withTimestamps();
+            ->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
+            ->withTimestamps()
+            ->as('pivot')
+            ->orderByPivot('created_at');
     }
 
 

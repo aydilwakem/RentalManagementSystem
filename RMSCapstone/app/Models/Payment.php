@@ -11,8 +11,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Payment extends Model
 {
     use SoftDeletes;
-    use HasFactory; 
-    use LogsActivity; 
+    use HasFactory;
+    use LogsActivity;
 
     protected $table = 'trn_payments';
 
@@ -30,9 +30,11 @@ class Payment extends Model
         'notes',
         'verified_at',
         'currency',
+        'convenience_fee'
     ];
     protected $casts = [
         'amount_paid' => 'decimal:2',
+        'convenience_fee' => 'decimal:2',
         'payment_date' => 'datetime',
         'verified_at' => 'datetime',
     ];
@@ -44,19 +46,21 @@ class Payment extends Model
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-        ->logOnly(['invoice_id',
-            'payment_method_id',
-            'mode_of_payment',
-            'amount_paid',
-            'payment_type',
-            'payment_screenshot',
-            'payment_reference_number',
-            'payment_date',
-            'payment_status',
-            'rejection_reason',
-            'notes',
-            'verified_at',
-            'currency'])
+            ->logOnly([
+                'invoice_id',
+                'payment_method_id',
+                'mode_of_payment',
+                'amount_paid',
+                'payment_type',
+                'payment_screenshot',
+                'payment_reference_number',
+                'payment_date',
+                'payment_status',
+                'rejection_reason',
+                'notes',
+                'verified_at',
+                'currency'
+            ])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
