@@ -35,7 +35,8 @@
                 @endcan
             </div>
 
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     <!-- Search Tab -->
@@ -82,8 +83,22 @@
                     {{-- <span class="ml-2">Selected 10 activities</span> --}}
                 </div>
                 <!-- Table -->
+                <div wire:loading wire:target="search"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- ID --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -190,16 +205,18 @@
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
                         @forelse ($activities as $activity)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
                                         value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$activity->id] ?? 'ACT-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200"> {{ $activity->name }}</td>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
+                                    {{ $activity->name }}</td>
                                 <td class="px-4 py-3">
                                     @if (!empty($activity->description))
                                         {{ Str::limit($activity->description, 50) }}
@@ -288,8 +305,7 @@
                             {{ __('Cancel') }}
                         </x-secondary-button>
 
-                        <x-danger-button class="ms-3" wire:click="deleteActivity"
-                            wire:loading.attr="disabled">
+                        <x-danger-button class="ms-3" wire:click="deleteActivity" wire:loading.attr="disabled">
                             {{ __('Delete Activity') }}
                         </x-danger-button>
                     </x-slot>

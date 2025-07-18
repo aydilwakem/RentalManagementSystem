@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('dark-mode') === 'true' }" :class="{ 'dark': darkMode }"
-    x-init="$watch('darkMode', value => localStorage.setItem('dark-mode', value))">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 
 <head>
     <meta charset="utf-8">
@@ -22,24 +22,17 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 
     <!-- Text Editor -->
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix/dist/trix.css">
-    <script type="text/javascript" src="https://unpkg.com/trix/dist/trix.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 
-
-
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
 
     <!-- Styles -->
     @livewireStyles
+
 </head>
 
-<body x-data="{ theme: localStorage.getItem('theme') || 'theme-dark' }"
-      x-init="$el.classList.add(theme)"
-      x-effect="document.body.className = theme">
+<body x-data="themeToggle()" x-init="init()" class="transition duration-300">
 
     <x-banner />
 
@@ -83,6 +76,83 @@
     @stack('modals')
 
     @livewireScripts
+
+    <script>
+        function themeManager() {
+            return {
+                colorTheme: localStorage.getItem('colorTheme') || 'root', // default color theme
+                // Initialize darkMode from localStorage, defaulting to 'light'
+                currentDarkModeSetting: localStorage.getItem('darkMode') || 'light',
+
+                init() {
+                    this.applyColorTheme();
+                    this.applyDarkMode(); // Apply on init
+
+                    // Watch for system preference changes
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                        if (this.currentDarkModeSetting === 'system') {
+                            this.applyDarkMode(); // Re-apply if system mode is active
+                        }
+                    });
+
+                    // Watch for changes to currentDarkModeSetting from within Alpine
+                    this.$watch('currentDarkModeSetting', () => {
+                        this.applyDarkMode();
+                    });
+                },
+
+                // Set and apply theme color
+                setColorTheme(theme) {
+                    this.colorTheme = theme;
+                    localStorage.setItem('colorTheme', theme);
+                    this.applyColorTheme();
+                },
+
+                applyColorTheme() {
+                    const html = document.documentElement;
+                    // Remove old color classes
+                    html.classList.remove('root', 'theme-rose', 'theme-blue', 'theme-purple', 'theme-red', 'theme-yellow',
+                        'theme-black');
+                    html.classList.add(this.colorTheme);
+                },
+
+                // Set the dark mode preference (dark or light)
+                setDarkMode(mode) {
+                    this.currentDarkModeSetting = mode;
+                    localStorage.setItem('darkMode', mode);
+                    // The $watch 'currentDarkModeSetting' will call applyDarkMode()
+                },
+
+                // Apply the 'dark' class to the html element based on the current setting
+                applyDarkMode() {
+                    const html = document.documentElement;
+                    if (this.currentDarkModeSetting === 'dark' ||
+                        (this.currentDarkModeSetting === 'system' && window.matchMedia('(prefers-color-scheme: dark)')
+                            .matches)) {
+                        html.classList.add('dark');
+                    } else {
+                        html.classList.remove('dark');
+                    }
+                },
+
+                // Helper to check the active dark mode setting for button styling
+                isMode(mode) {
+                    return this.currentDarkModeSetting === mode;
+                },
+
+                isColor(theme) {
+                    return this.colorTheme === theme;
+                }
+            };
+        }
+
+        // Initialize the theme manager globally if it's not already on the body
+        // This ensures it runs even if the body's x-data isn't the first to load.
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('themeToggle',
+                themeManager); // Connects themeToggle component from the HTML to the manager.
+        });
+    </script>
 
 </body>
 

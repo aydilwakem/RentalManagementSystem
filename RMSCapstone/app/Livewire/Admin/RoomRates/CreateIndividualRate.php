@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\RoomRates;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\RoomRate;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
@@ -22,11 +23,10 @@ class CreateIndividualRate extends Component
     public $description;
     public $rate_type = 'Weekdays';
     public $freebies;
-    public $priority;
+    public int $priority = 1;
     public $is_active = true;
     public $min_stay_nights;
     public $max_stay_nights;
-
 
     public function render()
     {
@@ -39,6 +39,9 @@ class CreateIndividualRate extends Component
     {
         $this->roomId = (int) $roomId;
         $this->room = Property::findOrFail($this->roomId);
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->copy()->startOfMonth()->format('Y-m-d');
+        $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
     }
 
     public function saveIndividualRoomRate()
@@ -51,7 +54,7 @@ class CreateIndividualRate extends Component
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'rate_type' => 'required|in:Weekdays,Weekend,Holiday,Peak',
-            'freebies' => 'nullable|string|max:1000',
+            'freebies' => 'nullable|boolean',
             'priority' => 'nullable|integer|min:1|max:10',
             'is_active' => 'required|boolean',
             'min_stay_nights' => 'nullable|integer|min:1|max:30',
@@ -67,7 +70,7 @@ class CreateIndividualRate extends Component
             'amount' => $this->amount,
             'rate_type' => $this->rate_type,
             'description' => $this->description,
-            'freebies' => $this->freebies,
+            'freebies' => (bool) $this->freebies,
             'priority' => $this->priority,
             'is_active' => $this->is_active,
             'min_stay_nights' => $this->min_stay_nights,
@@ -82,5 +85,19 @@ class CreateIndividualRate extends Component
 
         // Redirect to the room view page
         return redirect()->route('admin.view-room', ['room' => $this->roomId]);
+    }
+
+    public function increment()
+    {
+        if ($this->priority < 10) {
+            $this->priority++;
+        }
+    }
+
+    public function decrement()
+    {
+        if ($this->priority > 1) {
+            $this->priority--;
+        }
     }
 }

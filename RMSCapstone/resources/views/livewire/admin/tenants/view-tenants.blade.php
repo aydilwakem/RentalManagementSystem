@@ -81,8 +81,21 @@
                     </div>
                 </div>
             </div>
+            <div wire:loading wire:target="search"
+                class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <!-- Spinner -->
+                    <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                    </svg>
+                    <span class="text-green-700 text-sm">Loading...</span>
+                </div>
+            </div>
             <table class="w-full text-left">
-                <thead
+                <thead wire:loading.remove wire:target="search"
                     class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <!-- Checkbox -->
@@ -157,11 +170,12 @@
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="dark:bg-gray-700">
+                <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
                     @forelse ($tenants as $tenant)
                         <tr
                             class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <th scope="row"
+                                class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <input wire:model.live="selectedRows" type="checkbox" name="tenant[]"
                                     value="{{ $tenant->id }}" class="accent-blue-600 w-4 h-4">
                                 <span> {{ $fakeIDs[$tenant->id] ?? 'TNT-???' }}</span>
@@ -186,17 +200,18 @@
                                 {!! $tenant->email ?? '<span class="text-gray-600 italic dark:text-gray-200">No email provided.</span>' !!} </td>
                             </td>
                             <td class="px-4 py-3">
-                                {!! $tenant->contact_number ?? '<span class="text-gray-600 italic dark:text-gray-200">No contact number provided.</span>' !!}
+                                {!! $tenant->contact_number ??
+                                    '<span class="text-gray-600 italic dark:text-gray-200">No contact number provided.</span>' !!}
                             </td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                 @can('tenant-view')
-                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
-                                        href="{{ route('admin.view-tenant', ['tenant' => $tenant->id]) }}">
+                                    <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                        wire:navigate href="{{ route('admin.view-tenant', ['tenant' => $tenant->id]) }}">
                                     </i>
                                 @endcan
                                 @can('tenant-edit')
-                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
-                                        href="{{ route('admin.edit-tenant', ['tenant' => $tenant->id]) }}">
+                                    <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                        wire:navigate href="{{ route('admin.edit-tenant', ['tenant' => $tenant->id]) }}">
                                     </i>
                                 @endcan
                                 @can('tenant-delete')

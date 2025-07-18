@@ -39,10 +39,11 @@ class RoomRate extends Model
         'amount' => 'decimal:2',
         'priority' => 'integer',
         'is_active' => 'boolean',
+        'freebies' => 'boolean',
     ];
 
     // --------------------------- Activity Logs --------------------- //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; //Only changed attributes are logged
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -61,7 +62,7 @@ class RoomRate extends Model
                 'is_active',
                 'min_stay_nights',
                 'max_stay_nights'])
-            // 4.2 Automatically log only the attributes that have changed  
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "Room Rate has been {$eventName}")

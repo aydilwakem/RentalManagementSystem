@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Room;
 use App\Models\RoomRate;
+use Carbon\Carbon;
 
 class CreateRoomRate extends Component
 {
@@ -33,6 +34,7 @@ class CreateRoomRate extends Component
     public function mount()
     {
         $this->rooms = Room::all();
+
     }
 
     public function saveRoomRate()

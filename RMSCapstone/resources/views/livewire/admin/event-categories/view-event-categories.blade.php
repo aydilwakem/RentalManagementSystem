@@ -39,7 +39,8 @@
             @endif
 
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
                 <div class="flex items-center p-4">
                     {{-- Search Bar --}}
@@ -86,8 +87,22 @@
                         </div>
                     </div>
                 </div>
+                <div wire:loading wire:target="search"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-sm text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- Checkboxes --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -162,33 +177,39 @@
                         </th> --}}
                         </tr>
                     </thead>
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
                         @forelse ($eventCategories as $eventCategory)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="eventCategory[]"
                                         value="{{ $eventCategory->id }}" class="accent-blue-600 w-4 h-4 me-2">
                                     {{ $fakeIDs[$eventCategory->id] ?? 'ECT-???' }}
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white"> {{ $eventCategory->name }}</td>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white">
+                                    {{ $eventCategory->name }}</td>
                                 <td class="px-4 py-3">
                                     @if (!empty($eventCategory->description))
                                         {{ Str::limit($eventCategory->description, 100) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                            provided.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
                                     <!-- View Icon -->
                                     @can('event-category-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
+                                            wire:navigate
                                             href="{{ route('admin.view-event-category', ['eventCategory' => $eventCategory->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('event-category-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
+                                            wire:navigate
                                             href="{{ route('admin.edit-event-category', ['eventCategory' => $eventCategory->id]) }}">
                                         </i>
                                     @endcan

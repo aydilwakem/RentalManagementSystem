@@ -56,34 +56,49 @@
                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
+                    </div>
 
-                        {{-- Bulk Actions Button --}}
-                        <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                            <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                    {{-- Bulk Actions Button --}}
+                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
                             dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                                Actions
-                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                            <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
                             dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                                <div class="py-1">
-                                    <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
-                                        Delete</a>
-                                </div>
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
+                                    Delete</a>
                             </div>
                         </div>
                     </div>
                 </div>
+                {{-- Table Body --}}
+                <div wire:loading wire:target="search, statusFilter"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead  wire:loading.remove wire:target="search"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
@@ -154,16 +169,18 @@
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="text-left dark:bg-gray-700">
+                    <tbody  wire:loading.remove wire:target="search" class="text-left dark:bg-gray-700">
                         @forelse ($amenities as $amenity)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2 dark:text-gray-200">
                                     <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
                                         value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">{{ $amenity->name }}</td>
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                    {{ $amenity->name }}</td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3 dark:text-gray-200">
 
                                     @can('amenity-view')

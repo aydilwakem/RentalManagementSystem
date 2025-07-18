@@ -104,13 +104,12 @@
                                             </p>
                                             <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
                                             <p class="mt-4 text-lg font-medium">
-                                                Rate Per Night
+                                                Rate Per Night:
                                                 @if ($room->rate_name || $room->rate_type)
-                                                    ({{ $room->rate_name }}{{ $room->rate_type ? ' - ' . $room->rate_type : '' }})
-                                                @endif:
-                                                <span class="text-green-700 font-bold">
-                                                    ₱{{ number_format($room->dynamic_rate, 2) }}
-                                                </span>
+                                                    <span class="text-green-700 font-bold">
+                                                        ₱{{ number_format($room->dynamic_rate, 2) }}
+                                                    </span> <span class="text-xs text-gray-500">/ ({{ $room->rate_name }}{{ $room->rate_type ? ' Rate - ' . $room->rate_type : '' }}) </span>
+                                                @endif
                                             </p>
 
                                             <!-- More details Bbtton -->
@@ -208,7 +207,7 @@
 
                                                                    foreach ($room->transactions as $transaction) {
                                                                         foreach ($transaction->feedbacks as $feedback) {
-                                                                            
+
                                                                             // Skips sfeedbacks that are not approved
                                                                             if ($feedback->status !== 'approved') {
                                                                                 continue;
@@ -283,7 +282,7 @@
                                                                                 @endif
 
                                                                                 <p class="text-gray-500">{{ $comment['text'] !== '' ? $comment['text'] : 'No comment provided.' }}</p>
-                                                                                
+
                                                                             </div>
                                                                         </div>
                                                                     @endforeach

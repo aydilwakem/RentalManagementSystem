@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 max-w-full">
+<div class=" container mx-auto p-6 max-w-full">
 
     <!-- Action Buttons -->
     {{-- <div class="flex items-center justify-between mb-4">
@@ -14,7 +14,8 @@
     </div> --}}
 
     <!-- Table BOdy -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+    <div
+        class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
         <div class="flex items-center justify-between p-4">
             <div class="flex">
@@ -56,7 +57,8 @@
             <div class="flex items-center space-x-8">
                 <!-- Payment Type Filter -->
                 <div class="flex items-center">
-                    <label for="payment_type" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Type:</label>
+                    <label for="payment_type" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment
+                        Type:</label>
                     <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter"
                         class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -73,7 +75,8 @@
 
                 <!-- Payment Status Filter -->
                 <div class="flex items-center">
-                    <label for="payment_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Status:</label>
+                    <label for="payment_status"
+                        class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Status:</label>
                     <select id="payment_status" name="payment_status" wire:model.live="paymentStatusFilter"
                         class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -88,9 +91,23 @@
         </div>
 
         <!-- Table Content -->
+        <div wire:loading wire:target="search, paymentTypeFilter, paymentStatusFilter"
+            class="w-full flex items-center justify-center min-h-[50px] relative mt-24 mb-24">
+            <div class="flex flex-col items-center justify-center text-center">
+                <!-- Spinner -->
+                <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                </svg>
+                <span class="text-green-700 text-sm">Loading...</span>
+            </div>
+        </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                <thead wire:loading.remove wire:target="search, paymentTypeFilter, paymentStatusFilter"
+                    class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
@@ -107,59 +124,61 @@
                         {{-- <th class="px-4 py-3">Actions</th> --}}
                     </tr>
                 </thead>
-                <tbody class="dark:bg-gray-700">
+                <tbody wire:loading.remove wire:target="search, paymentTypeFilter, paymentStatusFilter"
+                    class="dark:bg-gray-700">
                     @forelse ($payments as $payment)
-                    <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
-                            <span>{{ $loop->iteration }}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
-                            {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->invoice->invoice_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            ₱{{ number_format($payment->amount_paid, 2) }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ ucfirst($payment->payment_type ?? 'Unknown') }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ $payment->payment_reference_number ?? 'N/A' }}
-                        </td>
-                        <td class="px-4 py-3">
-                            {{ ucfirst($payment->mode_of_payment?? 'N/A') }}
-                        </td>
-                        <td class="px-4 py-3">
-                            @if ($payment->payment_status === 'pending')
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">
-                                Pending
-                            </span>
-                            @elseif ($payment->payment_status === 'completed')
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-500">
-                                Completed
-                            </span>
-                            @elseif ($payment->payment_status === 'failed')
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-500">
-                                Failed
-                            </span>
-                            @else
-                            <span
-                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
-                                Unknown Status
-                            </span>
-                            @endif
-                        </td>
-                        {{-- <td class="px-4 py-3 space-x-1">
+                        <tr
+                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
+                                <span>{{ $loop->iteration }}</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
+                                {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->invoice->invoice_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                ₱{{ number_format($payment->amount_paid, 2) }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ ucfirst($payment->payment_type ?? 'Unknown') }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ $payment->payment_reference_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ ucfirst($payment->mode_of_payment ?? 'N/A') }}
+                            </td>
+                            <td class="px-4 py-3">
+                                @if ($payment->payment_status === 'pending')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">
+                                        Pending
+                                    </span>
+                                @elseif ($payment->payment_status === 'completed')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-green-100 text-green-500">
+                                        Completed
+                                    </span>
+                                @elseif ($payment->payment_status === 'failed')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-red-100 text-red-500">
+                                        Failed
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+                                        Unknown Status
+                                    </span>
+                                @endif
+                            </td>
+                            {{-- <td class="px-4 py-3 space-x-1">
                             <!-- View Icon -->
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
                                 href="#">
@@ -168,13 +187,13 @@
                             <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
                             </i>
                         </td> --}}
-                    </tr>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="15" class="text-center py-10 text-gray-500">
-                            No payments found.
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="15" class="text-center py-10 text-gray-500">
+                                No payments found.
+                            </td>
+                        </tr>
                     @endforelse
 
                 </tbody>

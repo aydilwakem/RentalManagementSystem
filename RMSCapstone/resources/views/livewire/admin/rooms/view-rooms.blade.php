@@ -38,7 +38,8 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+        <div
+            class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
             <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
                 <!-- Search Tab -->
@@ -101,9 +102,23 @@
             </div>
 
             <!-- Table Body-->
+            <div wire:loading wire:target="search, statusFilter"
+                class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <!-- Spinner -->
+                    <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                    </svg>
+                    <span class="text-green-700 text-sm">Loading...</span>
+                </div>
+            </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search, statusFilter"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <!-- Select All Checkbox -->
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -126,8 +141,9 @@
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -323,16 +339,17 @@
                             <th scope="col" class="px-4 py-3">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search, statusFilter" class="dark:bg-gray-700">
                         @forelse ($rooms as $room)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="room[]"
                                         value="{{ $room->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$room->id] ?? 'RM-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3">{{ $room->name_number }}</td>
+                                <td class="px-4 py-3 capitalize">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
                                 <td class="px-4 py-3">{{ $room->max_adults }}</td>
