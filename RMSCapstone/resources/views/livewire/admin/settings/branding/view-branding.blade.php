@@ -107,38 +107,44 @@
                 </div>
             </div>
 
+            {{-- TODO: Add indicator for unsaved changes --}}
             <!-- Legal Information -->
-            <h3 class="font-bold text-lg text-green-700 mt-8 dark:text-green-300">Legal Information</h3>
+            <!-- Info Icon with Tooltip -->
+            <div class="relative group inline-flex items-center">
+                <h3 class="font-bold text-lg text-green-700 mt-8 dark:text-green-300 mr-2">Legal Information</h3>
+                <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200 mt-8"></i>
+                <div
+                    class=" mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                    Refresh the page to enable editing.
+                </div>
+            </div>
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-
                 <!-- Terms and Conditions -->
                 <div wire:ignore>
                     <label for="terms_and_conditions"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Terms and
-                        Conditions</label>
-                    <input id="terms_and_conditions" type="hidden" name="terms_and_conditions"
-                        wire:model.lazy="terms_and_conditions">
-                    <trix-editor input="terms_and_conditions"></trix-editor>
-                </div>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Terms and Conditions
+                    </label>
 
-                {{-- <div>
-                    <label for="terms_and_conditions"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Terms and
-                        Conditions</label>
-                    <input id="terms_and_conditions" type="hidden" name="terms_and_conditions"
+                    <input type="hidden" id="terms_and_conditions" name="terms_and_conditions"
                         wire:model.lazy="terms_and_conditions">
-                    <div id="editor">
+
+                    <div id="editor-terms" class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
+                        {!! $terms_and_conditions !!}
                     </div>
-                </div> --}}
-
+                </div>
 
                 <!-- Privacy Policy -->
                 <div wire:ignore>
-                    <label for="privacy_policy"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Privacy
-                        Policy</label>
-                    <input id="privacy_policy" type="hidden" name="privacy_policy" wire:model.lazy="privacy_policy">
-                    <trix-editor input="privacy_policy"></trix-editor>
+                    <label for="privacy_policy" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Privacy Policy
+                    </label>
+
+                    <input type="hidden" id="privacy_policy" name="privacy_policy" wire:model.lazy="privacy_policy">
+
+                    <div id="editor-privacy" class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
+                        {!! $privacy_policy !!}
+                    </div>
                 </div>
 
                 <!-- Refund Policy -->
@@ -146,8 +152,12 @@
                     <label for="refund_policy"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Refund
                         Policy</label>
+
                     <input id="refund_policy" type="hidden" name="refund_policy" wire:model.lazy="refund_policy">
-                    <trix-editor input="refund_policy"></trix-editor>
+
+                    <div id="editor-refund" class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
+                        {!! $refund_policy !!}
+                    </div>
                 </div>
 
                 <!-- Rental Agreement -->
@@ -155,15 +165,19 @@
                     <label for="rental_agreement"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Rental
                         Agreement</label>
+
                     <input id="rental_agreement" type="hidden" name="rental_agreement"
                         wire:model.lazy="rental_agreement">
-                    <trix-editor input="rental_agreement"></trix-editor>
+
+                    <div id="editor-rental" class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
+                        {!! $rental_agreement !!}
+                    </div>
                 </div>
 
             </div>
 
             <!-- Rental Settings -->
-            <h3 class="font-bold text-lg text-gray-900 mt-8 mb-2 dark:text-green-300">Rental Settings</h3>
+            <h3 class="font-bold text-lg text-green-700 mt-8 mb-2 dark:text-green-300">Rental Settings</h3>
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                 <!-- Enable Deposit Option -->
@@ -234,12 +248,6 @@
                 @endif
             </div>
 
-            {{-- <div id="editor">
-                <p>Hello World!</p>
-                <p>Some initial <strong>bold</strong> text</p>
-                <p><br /></p>
-            </div> --}}
-
             <!-- Submit Button -->
             <div class="flex justify-between items-center space-y-2 mt-6">
                 <x-button onclick="history.back()" type="button"
@@ -275,11 +283,61 @@
         </x-slot>
     </x-dialog-modal>
 
-
-
     <script>
-        const quill = new Quill('#editor', {
-            theme: 'snow'
+        document.addEventListener('DOMContentLoaded', function() {
+            // TERMS
+            const quillTerms = new Quill('#editor-terms', {
+                theme: 'snow'
+            });
+            const inputTerms = document.getElementById('terms_and_conditions');
+            if (inputTerms.value) {
+                quillTerms.root.innerHTML = inputTerms.value;
+            }
+            quillTerms.on('text-change', function() {
+                inputTerms.value = quillTerms.root.innerHTML;
+                inputTerms.dispatchEvent(new Event('input'));
+            });
+
+            // PRIVACY
+            const quillPrivacy = new Quill('#editor-privacy', {
+                theme: 'snow'
+            });
+            const inputPrivacy = document.getElementById('privacy_policy');
+            if (inputPrivacy.value) {
+                quillPrivacy.root.innerHTML = inputPrivacy.value;
+            }
+            quillPrivacy.on('text-change', function() {
+                inputPrivacy.value = quillPrivacy.root.innerHTML;
+                inputPrivacy.dispatchEvent(new Event('input'));
+            });
+
+            // REFUND
+            const quillRefund = new Quill('#editor-refund', {
+                theme: 'snow'
+            });
+            const inputRefund = document.getElementById('refund_policy');
+            if (inputRefund.value) {
+                quillRefund.root.innerHTML = inputRefund.value;
+            }
+            quillRefund.on('text-change', function() {
+                inputRefund.value = quillRefund.root.innerHTML;
+                inputRefund.dispatchEvent(new Event('input'));
+            });
+
+            // RENTAL
+            const quillRental = new Quill('#editor-rental', {
+                theme: 'snow'
+            });
+            const inputRental = document.getElementById('rental_agreement');
+            if (inputRental.value) {
+                quillRental.root.innerHTML = inputRental.value;
+            }
+            quillRental.on('text-change', function() {
+                inputRental.value = quillRental.root.innerHTML;
+                inputRental.dispatchEvent(new Event('input'));
+            });
         });
     </script>
+
+
 </div>

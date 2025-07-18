@@ -9,11 +9,13 @@
 
         <!-- Body Container -->
         <div>
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
+            <div
+                class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
                 <div class="relative flex items-center">
                     <!-- Title -->
-                    <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Customize Brand Appearance</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Customize Brand
+                        Appearance</h2>
 
                     <!-- Back Button -->
                     <button onclick="history.back()"
@@ -25,8 +27,7 @@
                 <!-- Form container -->
 
                 <!-- Wrap in Alpine for state management -->
-                <div x-data="{ darkMode: false, fontSize: 'text-base' }" :class="fontSize"
-                    class="mx-4 sm:mx-auto rounded-2xl">
+                <div x-data="{ darkMode: false, fontSize: 'text-base' }" :class="fontSize" class="mx-4 sm:mx-auto rounded-2xl">
 
                     <form wire:submit.prevent="">
                         <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -37,38 +38,71 @@
                                     Selector</label>
 
                                 <!-- Theme Selector -->
-                                <div class="p-6 rounded-lg border border-text-secondary  mb-8 ">
+                                <div class="p-6 rounded-lg border border-text-secondary mb-8">
                                     <div class="flex flex-wrap gap-3">
-                                        <button @click="theme = 'root'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+                                        <!-- Green Theme -->
+                                        <button @click="setColorTheme('root')"
+                                            :class="isColor('root') ? 'ring-2 ring-green-500 bg-green-500 text-white' :
+                                                'bg-white text-black hover:bg-green-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Green Theme
                                         </button>
-                                        <button @click="theme = 'theme-rose'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Rose Theme -->
+                                        <button @click="setColorTheme('theme-rose')"
+                                            :class="isColor('theme-rose') ? 'ring-2 ring-rose-500 bg-rose-500 text-white' :
+                                                'bg-white text-black hover:bg-rose-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Rose Theme
                                         </button>
-                                        <button @click="theme = 'theme-blue'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Blue Theme -->
+                                        <button @click="setColorTheme('theme-blue')"
+                                            :class="isColor('theme-blue') ?
+                                                'ring-2 ring-blue-500 bg-blue-500 text-white' :
+                                                'bg-white text-black hover:bg-blue-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Blue Theme
                                         </button>
-                                        <button @click="theme = 'theme-purple'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Purple Theme -->
+                                        <button @click="setColorTheme('theme-purple')"
+                                            :class="isColor('theme-purple') ?
+                                                'ring-2 ring-purple-500 bg-purple-500 text-white' :
+                                                'bg-white text-black hover:bg-purple-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Purple Theme
                                         </button>
-                                        <button @click="theme = 'theme-red'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Red Theme -->
+                                        <button @click="setColorTheme('theme-red')"
+                                            :class="isColor('theme-red') ?
+                                                'ring-2 ring-red-500 bg-red-500 text-white' :
+                                                'bg-white text-black hover:bg-red-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Red Theme
                                         </button>
-                                        <button @click="theme = 'theme-yellow'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Yellow Theme -->
+                                        <button @click="setColorTheme('theme-yellow')"
+                                            :class="isColor('theme-yellow') ?
+                                                'ring-2 ring-yellow-400 bg-yellow-400 text-black' :
+                                                'bg-white text-black hover:bg-yellow-100'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Yellow Theme
                                         </button>
-                                        <button @click="theme = 'theme-black'; localStorage.setItem('theme', theme)"
-                                            class="bg-primary text-black px-4 py-2 rounded hover:bg-primary-600 transition-colors">
+
+                                        <!-- Black Theme -->
+                                        <button @click="setColorTheme('theme-black')"
+                                            :class="isColor('theme-black') ?
+                                                'ring-2 ring-gray-900 bg-black text-white' :
+                                                'bg-white text-black hover:bg-gray-300'"
+                                            class="px-4 py-2 rounded transition-colors border">
                                             Black Theme
                                         </button>
                                     </div>
                                 </div>
+
                             </div>
 
                             <!-- Theme Toggle -->
@@ -79,8 +113,9 @@
 
                                     <div class="flex items-center gap-4">
                                         <!-- Dark Mode -->
-                                        <button @click="setTheme('dark')"
-                                            :class="theme === 'dark' ? 'ring-2 ring-blue-500' : ''"
+                                        <button @click="setDarkMode('dark')"
+                                            :class="isMode('dark') ? 'ring-2 ring-blue-500 bg-gray-800 text-white' :
+                                                'bg-gray-700 hover:bg-gray-800 text-gray-300'"
                                             class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
                                                 viewBox="0 0 100 60">
@@ -96,41 +131,13 @@
                                                 <circle cx="90" cy="10" r="3" fill="#10b981" />
                                                 <circle cx="80" cy="10" r="3" fill="#ef4444" />
                                             </svg>
-                                            <p class="text-center text-sm mt-1">Dark</p>
-                                        </button>
-
-                                        <!-- System Default -->
-                                        <button @click="setTheme('system')"
-                                            :class="theme === 'system' ? 'ring-2 ring-blue-500' : ''"
-                                            class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
-                                                viewBox="0 0 100 60">
-                                                <defs>
-                                                    <linearGradient id="split" x1="0" y1="0"
-                                                        x2="100%" y2="0">
-                                                        <stop offset="50%" stop-color="#ffffff" />
-                                                        <stop offset="50%" stop-color="#1f2937" />
-                                                    </linearGradient>
-                                                </defs>
-                                                <rect width="100" height="60" rx="8" fill="url(#split)" />
-                                                <!-- Window items -->
-                                                <rect x="10" y="15" width="20" height="8" rx="2"
-                                                    fill="#9ca3af" />
-                                                <rect x="35" y="15" width="25" height="8" rx="2"
-                                                    fill="#9ca3af" />
-                                                <rect x="65" y="15" width="20" height="8" rx="2"
-                                                    fill="#9ca3af" />
-                                                <rect x="10" y="30" width="80" height="20" rx="4"
-                                                    fill="#6b7280" />
-                                                <circle cx="90" cy="10" r="3" fill="#10b981" />
-                                                <circle cx="80" cy="10" r="3" fill="#ef4444" />
-                                            </svg>
-                                            <p class="text-center text-sm mt-1">System Default</p>
+                                            <p class="text-center text-sm mt-1 dark:text-white">Dark</p>
                                         </button>
 
                                         <!-- Light Mode -->
-                                        <button @click="setTheme('light')"
-                                            :class="theme === 'light' ? 'ring-2 ring-blue-500' : ''"
+                                        <button @click="setDarkMode('light')"
+                                            :class="isMode('light') ? 'ring-2 ring-blue-500 bg-white text-gray-800' :
+                                                'bg-gray-200 hover:bg-gray-100 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-800 dark:text-gray-300'"
                                             class="rounded-xl border w-28 h-20 overflow-hidden focus:outline-none transition-all flex flex-col items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-10"
                                                 viewBox="0 0 100 60">
@@ -146,9 +153,8 @@
                                                 <circle cx="90" cy="10" r="3" fill="#10b981" />
                                                 <circle cx="80" cy="10" r="3" fill="#ef4444" />
                                             </svg>
-                                            <p class="text-center text-sm mt-1 text-blue-600">Light</p>
+                                            <p class="text-center text-sm mt-1 text-gray-800 dark:text-white">Light
                                         </button>
-
                                     </div>
                                 </div>
                             </div>
@@ -196,34 +202,4 @@
             </div>
         </div>
     </div>
-    <script>
-        function themeToggle() {
-            return {
-                theme: localStorage.getItem('theme') || 'system',
-
-                init() {
-                    this.applyTheme(this.theme);
-                },
-
-                setTheme(value) {
-                    this.theme = value;
-                    localStorage.setItem('theme', value);
-                    this.applyTheme(value);
-                },
-
-                applyTheme(value) {
-                    const html = document.documentElement;
-                    if (value === 'dark') {
-                        html.classList.add('dark');
-                    } else if (value === 'light') {
-                        html.classList.remove('dark');
-                    } else if (value === 'system') {
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        prefersDark ? html.classList.add('dark') : html.classList.remove('dark');
-                    }
-                }
-            };
-        }
-    </script>
-
 </x-app-layout>

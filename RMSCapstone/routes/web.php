@@ -57,8 +57,10 @@ use App\Mail\ReceiptRejectedMail;
 use App\Mail\ReservationCompletedMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Mail\ReservationSubmittedMail;
+use App\Mail\SendOfficialReceiptMail;
 use App\Models\Transaction;
 use App\Models\PromoCode;
+use App\Models\Receipt;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity as LogActivity;
@@ -1149,6 +1151,116 @@ Route::get('/event-details-preview/{event}', function ($eventId) {
 
     return $pdf->stream('event-details-' . $event->start_datetime . '.pdf');
 });
+
+Route::get('/preview-receipt-email', function () {
+    // Mock data
+    $receipt = (object)[
+        'receipt_number' => '15',
+        'created_at' => now(),
+        'total_amount' => 2500.00,
+    ];
+
+    $transaction = (object)[
+        'id' => 1,
+        'payment_method' => 'GCash',
+        'reference_number' => 'GC123456789',
+    ];
+
+    $transactionUser = (object)[
+        'name' => 'Juan Dela Cruz',
+        'email' => 'juan@example.com',
+    ];
+
+    $invoice = (object)[
+        'invoice_number' => 'INV-2025-0001',
+        'billing_period' => 'July 2025',
+    ];
+
+    $properties = collect([
+        (object)['name' => 'Cabin A', 'rate' => 1200],
+        (object)['name' => 'Cabin B', 'rate' => 1300],
+    ]);
+
+    $activities = collect([
+        (object)['name' => 'Zipline', 'amount' => 500],
+        (object)['name' => 'Bonfire', 'amount' => 300],
+    ]);
+
+    $data = [
+        'receipt' => $receipt,
+        'transaction' => $transaction,
+        'invoice' => $invoice,
+        'transactionUser' => $transactionUser,
+        'properties' => $properties,
+        'activities' => $activities,
+        'branding_company_name' => 'Canopy Farm PH',
+        'branding_company_contact' => '0917-123-4567',
+        'company_address' => 'Brgy. Example Address, Tanay, Rizal',
+        'facebook_link' => 'https://facebook.com/canopyfarmph',
+        'instagram_link' => 'https://instagram.com/canopyfarmph',
+        'logo_path' => 'images/canopy-logo.png',
+    ];
+
+    $pdf = Pdf::loadView('guest.emails.official-receipt', $data);
+    $pdfContent = $pdf->output();
+
+    $email = new SendOfficialReceiptMail($pdfContent, $receipt->receipt_number, $transactionUser, $data);
+
+    return $email->render(); // Show email preview in browser
+})->name('preview.receipt.email');
+
+Route::get('/receipt-preview', function () {
+    $receipt = (object)[
+        'receipt_number' => 'RCPT-00123',
+        'created_at' => now(),
+    ];
+
+    $transaction = (object)[
+        'payment_method' => 'GCash',
+        'total_amount' => 3500,
+    ];
+
+    $transactionUser = (object)[
+        'name' => 'Juan Dela Cruz',
+        'email' => 'juan@example.com',
+    ];
+
+    $invoice = (object)[
+        'invoice_number' => 'INV-00001',
+        'billing_period' => 'July 2025',
+    ];
+
+    $properties = collect([
+        (object)['name' => 'Unit A101', 'monthly_rent' => 3500],
+    ]);
+
+    $activities = collect([
+        (object)['description' => 'Rent Payment', 'amount' => 3500],
+    ]);
+
+    $data = [
+        'receipt' => $receipt,
+        'transaction' => $transaction,
+        'invoice' => $invoice,
+        'transactionUser' => $transactionUser,
+        'properties' => $properties,
+        'activities' => $activities,
+        'branding_company_name' => 'Canopy Farm PH',
+        'branding_company_contact' => '0917-123-4567',
+        'company_address' => 'Brgy. Example Address, Tanay, Rizal',
+        'facebook_link' => 'https://facebook.com/canopyfarmph',
+        'instagram_link' => 'https://instagram.com/canopyfarmph',
+        'logo_path' => 'images/canopy-logo.png',
+    ];
+
+    // We won't use a real PDF here, just fake string (not attached)
+    $dummyPdf = 'dummy-binary';
+
+    $email = new SendOfficialReceiptMail($dummyPdf, $receipt->receipt_number, $transactionUser, $data);
+
+    return $email->render();
+})->name('receipt.preview');
+
 
 // ----------------------------- GUEST PAGES ----------------------------------------- //
 

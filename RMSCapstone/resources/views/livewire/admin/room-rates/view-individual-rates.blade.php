@@ -2,7 +2,7 @@
     @if ($roomRates->isEmpty())
         <!-- Empty Table Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No rooms rates for {{ $room->name}}. <br> Click "Create Room
+            <p class="text-gray-500 text-lg font-semibold">No rooms rates for Room: {{ $room->name_number}}. <br> Click "Create Room
                 Rate" to add a new
                 room rate.</p>
             <x-button class="mt-4" href="{{ route('admin.create-individual-rate', ['roomId' => $room->id]) }}"
@@ -251,17 +251,25 @@
                             {{-- Rate Type --}}
                             <td class="px-4 py-3">
                                 @if ($roomRate->rate_type === 'Weekdays')
-                                    <span class="px-2 py-1 bg-green-700 text-white rounded">Weekdays</span>
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
+                                        Weekdays
+                                    </span>
                                 @elseif($roomRate->rate_type === 'Weekend')
-                                    <span class="px-2 py-1 bg-yellow-700 text-white rounded">Weekend</span>
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
+                                        Weekend
+                                    </span>
                                 @elseif($roomRate->rate_type === 'Holiday')
-                                    <span class="px-2 py-1 bg-blue-700 text-white rounded">Holiday</span>
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-600">
+                                        Holiday
+                                    </span>
                                 @elseif($roomRate->rate_type === 'Peak')
-                                    <span class="px-2 py-1 bg-red-700 text-white rounded">Peak</span>
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                        Peak
+                                    </span>
                                 @endif
                             </td>
 
-                            <td class="px-4 py-3 flex items-center justify-center space-x-3">
+                            <td class="px-4 py-3 flex items-center justify-center space-x-2">
                                 <!-- View Icon -->
                                 @can('room-rate-view')
                                     <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate

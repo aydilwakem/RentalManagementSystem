@@ -29,7 +29,8 @@
                 @endcan
             </div>
             <!-- Table -->
-            <div class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+            <div
+                class=" bg-white-500 relative shadow-md sm:rounded-lg overflow-hidden border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 {{-- Display Session Message --}}
                 @if (session('message'))
                     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
@@ -98,8 +99,22 @@
                 </div>
 
                 <!-- Table Body -->
+                <div wire:loading wire:target="search, statusFilter"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search, statusFilter"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
@@ -123,8 +138,9 @@
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -236,21 +252,24 @@
                         </th> --}}
                         </tr>
                     </thead>
-
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search, statusFilter" class="dark:bg-gray-700">
                         @forelse ($halls as $hall)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="halls[]"
                                         value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
                                     {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white"> {{ $hall->name_number }} </td>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white">
+                                    {{ $hall->name_number }} </td>
                                 <td class="px-4 py-3">
                                     @if (!empty($hall->description))
-                                        {{ $hall->description }}
+                                        {{ Str::limit($hall->description, 40, '...') }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                            provided.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3"> {{ $hall->capacity }}</td>
@@ -259,24 +278,27 @@
                                 <td class="px-4 py-3">
                                     @if ($hall->property_status === 'available')
                                         <span
-                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
                                     @elseif($hall->property_status === 'out_of_service')
                                         <span
-                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out of Service</span>
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out
+                                            of Service</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
                                     <!-- View Icon -->
                                     @can('event-hall-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                            wire:navigate
                                             href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('event-hall-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                            wire:navigate
                                             href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
                                         </i>
                                     @endcan

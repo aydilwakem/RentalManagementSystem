@@ -2,10 +2,11 @@
     @if ($allHouses->isEmpty() && !$statusFilter && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No houses yet.<br> Click "Create House" to add a new house.
+            <p class="text-gray-500 text-lg font-semibold">No properties yet.<br> Click "Create Property" to add a new
+                property.
             </p>
             <x-button class="mt-4" href="{{ route('admin.create-property') }}" icon="fas fa-plus">
-                Create House
+                Create Property
             </x-button>
         </div>
     @else
@@ -23,7 +24,7 @@
                 @can('house-create')
                     <div class="flex justify-between items-center mb-4">
                         <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-property') }}'">
-                            New House
+                            New Property
                         </x-button>
                     </div>
                 @endcan
@@ -32,7 +33,7 @@
                     <x-button
                         class=" mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                         icon="fas fa-trash" href="{{ route('admin.deleted-properties') }}">
-                        Deleted Houses
+                        Deleted Properties
                     </x-button>
                 @endcan
             </div>
@@ -40,7 +41,8 @@
     </div>
 
     <!-- Table Container -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+    <div
+        class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header-->
         <div class="flex items-center justify-between d p-4 dark:bg-gray-800 rounded-lg">
             <!-- Search Tab -->
@@ -88,7 +90,7 @@
             <!-- Status Filter -->
             <div class="flex space-x-3">
                 <div class="flex space-x-3 items-center">
-                    <label class="w-40 text-sm font-medium text-gray-900 dark:text-white">House Status:</label>
+                    <label class=" text-sm font-medium text-gray-900 dark:text-white">Property Status:</label>
                     <select wire:model.live="statusFilter"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -101,9 +103,23 @@
         </div>
 
         <!-- Table Body-->
+        <div wire:loading wire:target="search, statusFilter"
+            class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+            <div class="flex flex-col items-center justify-center text-center">
+                <!-- Spinner -->
+                <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                </svg>
+                <span class="text-green-700 text-sm">Loading...</span>
+            </div>
+        </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                <thead wire:loading.remove wire:target="search, statusFilter"
+                    class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <!-- Select All Checkbox-->
                         <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -126,8 +142,9 @@
                                                 d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                         </svg>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            class="size-4 ml-1">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                         </svg>
@@ -231,9 +248,10 @@
                         <th scope="col" class="px-4 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="dark:bg-gray-700">
+                <tbody wire:loading.remove wire:target="search, statusFilter" class="dark:bg-gray-700">
                     @forelse ($houses as $house)
-                        <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                        <tr
+                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                             <th scope="row"
                                 class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                 <input wire:model.live="selectedRows" type="checkbox" name="houses[]"
@@ -244,11 +262,13 @@
                             <td class="px-4 py-3">{{ number_format($house->amount, 2) }}</td>
                             <td class="px-4 py-3">
                                 @if ($house->property_status === 'available')
-                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
                                         Available
                                     </span>
                                 @elseif($house->property_status === 'out_of_service')
-                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                         Out of Service
                                     </span>
                                 @endif

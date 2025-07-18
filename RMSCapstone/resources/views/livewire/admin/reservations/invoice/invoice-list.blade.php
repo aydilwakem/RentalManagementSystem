@@ -14,7 +14,8 @@
     </div> --}}
 
     <!-- Table BOdy -->
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+    <div
+        class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
         <div class="flex items-center justify-between p-4">
             <div class="flex">
@@ -54,7 +55,8 @@
 
             <!-- Invoice Status Filter -->
             <div class="flex items-center">
-                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice Status:</label>
+                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
+                    Status:</label>
                 <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter"
                     class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -65,8 +67,6 @@
                     <option value="overdue">Overdue</option>
                 </select>
             </div>
-
-
             <!-- Invoice Type Filter -->
             {{-- <div class="flex items-center mt-4">
                 <label for="invoice_type" class="w-32 text-sm font-medium text-gray-900">Invoice Type:</label>
@@ -78,14 +78,26 @@
                     @endforeach
                 </select>
             </div> --}}
-
-
         </div>
 
         <!-- Table Content -->
+        <div wire:loading wire:target="search, invoiceStatusFilter"
+            class="w-full flex items-center justify-center min-h-[50px] relative mt-24 mb-24">
+            <div class="flex flex-col items-center justify-center text-center">
+                <!-- Spinner -->
+                <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                </svg>
+                <span class="text-green-700 text-sm">Loading...</span>
+            </div>
+        </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-left">
-                <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                <thead wire:loading.remove wire:target="search, invoiceStatusFilter"
+                    class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
@@ -102,9 +114,10 @@
                         {{-- <th class="px-4 py-3">Actions</th> --}}
                     </tr>
                 </thead class="dark:bg-gray-700">
-                <tbody>
+                <tbody wire:loading.remove wire:target="search, invoiceStatusFilter">
                     @forelse ($invoices as $invoice)
-                        <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                        <tr
+                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                             <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
                                 <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
@@ -128,15 +141,15 @@
                             <td class="px-4 py-3">
                                 <span
                                     class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $invoice->invoice_status === 'pending'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ? 'bg-yellow-100 text-yellow-500'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    : ($invoice->invoice_status === 'completed'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ? 'bg-green-100 text-green-500'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        : ($invoice->invoice_status === 'failed'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ? 'bg-red-100 text-red-500'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            : ($invoice->invoice_status === 'overdue'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ? 'bg-pink-100 text-pink-500'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                : 'bg-gray-100 text-gray-500'))) }}">
+                                    {{ $invoice->invoice_status === 'pending'
+                                       ? 'bg-yellow-100 text-yellow-500'
+                                       : ($invoice->invoice_status === 'completed'
+                                        ? 'bg-green-100 text-green-500'
+                                        : ($invoice->invoice_status === 'failed'
+                                        ? 'bg-red-100 text-red-500'
+                                        : ($invoice->invoice_status === 'overdue'
+                                        ? 'bg-pink-100 text-pink-500'
+                                        : 'bg-gray-100 text-gray-500'))) }}">
                                     {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
                                 </span>
                             </td>
@@ -158,9 +171,6 @@
                         </tr>
                     @endforelse
                 </tbody>
-
-
-
             </table>
         </div>
     </div>

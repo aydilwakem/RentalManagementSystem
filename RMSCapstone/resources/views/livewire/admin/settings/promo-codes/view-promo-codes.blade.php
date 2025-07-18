@@ -32,7 +32,8 @@
                 </x-button>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
                     <!-- Search Tab -->
@@ -79,8 +80,22 @@
                     {{-- <span class="ml-2">Selected 10 activities</span> --}}
                 </div>
                 <!-- Table -->
+                <div wire:loading wire:target="search"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- ID --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -115,40 +130,10 @@
                                 </div>
                             </th>
 
-                            {{-- Name --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('code')">
-                                <button class="flex items-center">
-                                    Discount Code
-                                    @if ($sortBy !== 'code')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            {{-- Code --}}
+                            <th scope="col" class="px-4 py-3 ">Discount Code</th>
 
-                            {{-- Description --}}
+                            {{-- Details --}}
                             <th scope="col" class="px-4 py-3 ">Name/Description</th>
                             <th scope="col" class="px-4 py-3 ">Discount Value</th>
                             <th scope="col" class="px-4 py-3 ">Code Uses</th>
@@ -158,21 +143,24 @@
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
                         @forelse ($promoCodes as $promoCode)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="promoCodes[]"
                                         value="{{ $promoCode->id }}" class="accent-blue-600 w-4 h-4">
                                     <span>{{ $fakeIDs[$promoCode->id] ?? 'CODE-???' }}</span>
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200"> {{ $promoCode->code }}</td>
+                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
+                                    {{ $promoCode->code }}</td>
                                 <td class="px-4 py-3">
                                     @if (!empty($promoCode->description))
                                         {{ Str::limit($promoCode->description, 50) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                            provided.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -200,11 +188,13 @@
                                     {{ $promoCode->propertyCategory->name ?? 'No Assigned Property' }}</td>
                                 <td class="px-4 py-3">
                                     @if ($promoCode->is_active)
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
                                             Active
                                         </span>
                                     @else
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
                                             Inactive
                                         </span>
                                     @endif

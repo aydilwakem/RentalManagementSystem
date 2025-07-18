@@ -40,7 +40,8 @@
                 @endcan
             </div>
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     {{-- Search Tab --}}
@@ -87,8 +88,22 @@
 
 
                 <!-- Table Body-->
+                <div wire:loading wire:target="search"
+                    class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <!-- Spinner -->
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                        </svg>
+                        <span class="text-green-700 text-sm">Loading...</span>
+                    </div>
+                </div>
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead wire:loading.remove wire:target="search"
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             {{-- Checkboxes --}}
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
@@ -154,9 +169,10 @@
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="dark:bg-gray-700">
+                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
                         @forelse ($roomCategories as $roomCategory)
-                            <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 <th scope="row"
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
                                     <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
@@ -168,20 +184,23 @@
                                     @if (!empty($roomCategory->description))
                                         {{ Str::limit($roomCategory->description, 80) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description provided.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                            provided.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-2">
                                     <!-- View Icon -->
                                     @can('room-category-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500" wire:navigate
+                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                            wire:navigate
                                             href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('room-category-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500" wire:navigate
+                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                            wire:navigate
                                             href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
                                         </i>
                                     @endcan
@@ -189,7 +208,8 @@
                                     <!-- Delete Icon -->
                                     @can('room-category-delete')
                                         <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
-                                            wire:click="confirmDelete({{ $roomCategory->id }})" wire:loading.attr="disabled">
+                                            wire:click="confirmDelete({{ $roomCategory->id }})"
+                                            wire:loading.attr="disabled">
                                         </i>
                                     @endcan
 
@@ -240,8 +260,7 @@
                         {{ __('Cancel') }}
                     </x-secondary-button>
 
-                    <x-danger-button class="ms-3" wire:click="deleteRoomCategory"
-                        wire:loading.attr="disabled">
+                    <x-danger-button class="ms-3" wire:click="deleteRoomCategory" wire:loading.attr="disabled">
                         {{ __('Delete Room Category') }}
                     </x-danger-button>
                 </x-slot>

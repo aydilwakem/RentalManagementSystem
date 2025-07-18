@@ -22,36 +22,42 @@
 <body style="background-color: #f8f8f8; font-family: Poppins, sans-serif; margin: 0; padding: 0; color: #333;">
     <div
         style="max-width: 800px; margin: 30px auto; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
-        {{-- Header --}} <div
+        {{-- Header --}}
+        <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
 
-            <img src="{{ asset('storage/' .   $logo_path ) }}" alt="{{ $branding_company_name }}"
+            <img src="{{ asset('storage/' . $logo_path) }}" alt="{{ $branding_company_name }}"
                 style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px; color:#fff;">
-                Your Official Receipt From {{ $branding_company_name }}
+                Transaction Completed!
             </h1>
-            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">See attachment for the official receipt.
+            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">Your official receipt is attached for your
+                records.
             </p>
         </div>
 
         <div style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
 
-            <p style="margin-bottom: 15px;"><strong>Dear {{ $transactionUser->first_name ?? 'Customer' }} {{
-                    $transactionUser->last_name ?? 'Last Name' }},</strong></p>
+            <p style="margin-bottom: 15px;"><strong>Dear
+                    {{ $transactionUser->first_name ?? 'Customer' }}
+                    {{ $transactionUser->last_name ?? 'Last Name' }},
+                </strong>
+            </p>
 
-            <p style="margin-bottom: 20px;">Thank you for your recent transaction with us. Please find your official
-                receipt
-                attached as a PDF.</p>
+            <p style="margin-bottom: 20px;">Thank you for your recent transaction with {{ $branding_company_name }}!
+                Please find your official
+                receipt attached as a PDF for your reference.</p>
 
-            <p style="margin-bottom: 10px;"><strong>Receipt Number:</strong> {{ $receiptNumber }}</p>
+            <p style="color:#166534"><strong>Receipt Number:</strong>
+                {{ $receiptNumber }}
+            </p>
 
-            <p style="margin-bottom: 20px;">If you have any questions or need further assistance, please don't hesitate
-                to
-                contact us.</p>
+            <p>If you have any questions or need further assistance, please don't hesitate
+                to contact us.</p>
 
-            <br>
             <p style="margin-top: 20px;">Best regards,<br>
-                {{$branding_company_name}}</p>
+                {{ $branding_company_name }}
+            </p>
         </div>
 
         {{-- Footer --}}
@@ -76,15 +82,19 @@
             </div>
 
             <div style="font-size: 0.9em; margin-bottom: 15px; line-height: 1.6; color:#fff;">
-                <p style="margin: 0; color:#fff;">Phone: <span style="font-weight: 500;">{{ $branding_company_contact }}
+                <p style="margin: 0; color:#fff;">Phone: <span style="font-weight: 500;">
+                        {{ $branding_company_contact }}
                     </span>
                 </p>
-                <p style="margin: 0; color:#fff;">Address: {{ $company_address }}</p>
+                <p style="margin: 0; color:#fff;">Address:
+                    {{ $company_address }}
+                </p>
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-                $branding_company_name }}. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }}
+                {{ $branding_company_name }}.
+                All rights reserved.</span>
 
         </div>
     </div>

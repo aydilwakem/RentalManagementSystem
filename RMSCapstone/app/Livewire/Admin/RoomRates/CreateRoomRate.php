@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Room;
 use App\Models\RoomRate;
+use Carbon\Carbon;
 
 class CreateRoomRate extends Component
 {
@@ -33,6 +34,9 @@ class CreateRoomRate extends Component
     public function mount()
     {
         $this->rooms = Room::all();
+        $now = Carbon::now('Asia/Manila');
+        $this->start_date = $now->format('Y-m-d');
+        $this->end_date = $now->copy()->addDay()->format('Y-m-d');
     }
 
     public function saveRoomRate()
