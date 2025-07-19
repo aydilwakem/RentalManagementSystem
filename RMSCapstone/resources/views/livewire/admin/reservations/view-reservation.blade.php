@@ -1043,6 +1043,7 @@
                                             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
                                                 <div class="flex items-center gap-2">
+
                                                     <!-- Counter -->
                                                     <div class="flex flex-col">
                                                         <label for="quantity-{{ $activity->id }}"
@@ -1061,11 +1062,11 @@
                                                             </span>
 
                                                 
-                                                                <button type="button"
-                                                                    wire:click.prevent="incrementActivity('{{ $activity->id }}')"
-                                                                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
-                                                                    +
-                                                                </button>
+                                                            <button type="button"
+                                                                wire:click.prevent="incrementActivity('{{ $activity->id }}')"
+                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                                                +
+                                                            </button>
                                                     
                                                         </div>
 
@@ -1082,7 +1083,7 @@
 
                                                     @if ($activityInCart)
                                                     @else
-                                                        <button wire:click="addActivityToCart({{ $activity->id }})"
+                                                        <button wire:click="addActivityToCart({{ $activity->id }})" 
                                                             class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                                             wire:loading.attr="disabled">
                                                             <div class="flex items-center justify-center">

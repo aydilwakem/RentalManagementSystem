@@ -8,7 +8,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Receipt extends Model
 {
-    use LogsActivity; 
+    use LogsActivity;
 
     protected $table = 'trn_receipts';
 
@@ -36,7 +36,8 @@ class Receipt extends Model
                 'receipt_number',
                 'amount_received',
                 'notes',
-                'receipt_date'])
+                'receipt_date'
+            ])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

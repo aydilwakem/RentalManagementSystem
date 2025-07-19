@@ -19,6 +19,23 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\EmailService;
+use App\Services\BrandingService;
+use App\Services\PayMongoService;
+use App\Services\ServiceBag;
+use App\Services\TransactionLoader;
+use App\Services\ActivityCartService;
+use App\Services\RoomCartService;
+use App\Services\ActivityTransactionService;
+use App\Services\InvoiceService;
+use App\Services\NotificationService;
+use App\Services\ReceiptService;
+use App\Services\PaymentService;
+
+
+
+
+
 
 #[Layout('layouts.app')]
 class ViewReservation extends Component
@@ -87,7 +104,18 @@ class ViewReservation extends Component
     public $activityQuantity;
     public $showEditActivityModal = false;
 
-
+    protected ServiceBag $service;
+    protected TransactionLoader $loader;
+    protected ActivityCartService $activityCartService;
+    protected RoomCartService $roomCartService;
+    protected ActivityTransactionService $activityTransactionService;
+    protected InvoiceService $invoiceService;
+    protected EmailService $emailService;
+    protected BrandingService $brandingService;
+    protected NotificationService $notificationService;
+    protected PaymongoService $payMongoService;
+    protected ReceiptService $receiptService;
+    protected PaymentService $paymentService;
 
 
     public function render()
@@ -102,88 +130,61 @@ class ViewReservation extends Component
         ]);
     }
 
+    public function boot(ServiceBag $services)
+    {
+        $this->loader = $services->loader;
+        $this->activityCartService = $services->activityCartService;
+        $this->roomCartService = $services->roomCartService;
+        $this->activityTransactionService = $services->activityTransactionService;
+        $this->invoiceService = $services->invoiceService;
+        $this->emailService = $services->emailService;
+        $this->brandingService = $services->brandingService;
+        $this->payMongoService = $services->payMongoService;
+        $this->notificationService = $services->notificationService;
+        $this->receiptService = $services->receiptService;
+        $this->paymentService = $services->paymentService;
+    }
+
+
+
+
     public function mount(Transaction $transaction)
     {
-        $this->loadTransactionData($transaction);
+
+        $data = $this->loader->load($transaction);
+        $this->transaction = $data['transaction'];
+        $this->transactionUser = $data['transactionUser'];
+        $this->invoice = $data['invoice'];
+        $this->guestDetails = $data['guestDetails'];
+        $this->activities = $data['activities'];
+        $this->properties = $data['properties'];
+        $this->payments = $data['payments'];
+        $this->totalRooms = $data['totalRooms'];
+        $this->totalAddons = $data['totalAddons'];
 
         // Set default dates for payment
         $now = Carbon::now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
 
-
         $this->availableActivities = Activity::all();
     }
 
-    public function loadTransactionData(Transaction $transaction)
-    {
-        // Eager-load related models to avoid N+1 query problem.
-        // This loads relationships only if they haven't already been loaded.
-        $transaction->loadMissing([
-            'invoice.payments',     // Load the invoice and its related payments
-            'transactionUser',      // Load the user related to the transaction
-            'guestDetails',         // Load additional guest details associated with the transaction
-            'properties',           // Load the properties (e.g., rooms) included in the transaction
-            'activities',           // Load activities (e.g., addons or services) related to the transaction
-        ]);
-
-        // If there's no invoice associated with the transaction, abort and return a 404 error.
-        if (!$transaction->invoice) {
-            abort(404, 'Invoice not found for this transaction.');
-        }
-
-        // Assign the loaded models to the component's public properties for use in the Blade view
-        $this->transaction = $transaction;
-        $this->transactionUser = $transaction->transactionUser;                // Store the full transaction
-        $this->invoice = $transaction->invoice;            // Store the invoice details
-        $this->guestDetails = $transaction->guestDetails;  // Store guest details for display
-        $this->activities = $transaction->activities;      // Store activities (addons/services)
-        $this->properties = $transaction->properties;      // Store properties (rooms)
-
-        // Store payment records from the invoice, or an empty collection if none
-        $this->payments = $this->invoice->payments ?? collect();
-
-        // Get computed totals from model accessors (defined in the Transaction model)
-        $this->totalRooms = $transaction->total_rooms;     // Total cost from rooms (via accessor)
-        $this->totalAddons = $transaction->total_addons;   // Total cost from addons (via accessor)
-    }
-
-    public function updated($property)
-    {
-        if (Str::startsWith($property, 'quantity.')) {
-            // Extract the activity ID from the property name
-            $activityId = explode('.', $property)[1];
-
-
-            // Find activities
-            $activity = Activity::find($activityId);
-            if (!$activity) {
-                return;
-            }
-
-
-            // Update the cart item's quantity dynamically
-            foreach ($this->cart as $index => $item) {
-                if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                    $quantity = (int) ($this->quantity[$activityId] ?? 0);
-                    $activityAmount = $activity->amount * $quantity; // Calculate the new amount based on the new quantity
-
-                    $this->cart[$index]['quantity'] = $quantity;
-                    $this->cart[$index]['amount'] = $activityAmount; // Update the amount in the cart
-                }
-            }
-        }
-    }
-
-    public function refreshInvoice()
-    {
-        $this->invoice = $this->invoice->fresh();
-        $this->sub_total = $this->invoice->sub_total;
-        $this->balance_due = $this->invoice->balance_due;
-    }
-
-
-    // ------------ ADD TRANSACTION:ACTIVITY --------------------- // 
-
+    /**
+     * ------------------------- ACTIVITY CART MANAGEMENT -------------------------------
+     * 
+     * Handles activity cart management such as adding, removing, and updating quantities.
+     *
+     * These methods interact with the activity cart:
+     * - `addActivityToCart`: Adds an activity to the cart using the ActivityCartService.
+     * - `removeFromCart`: Removes either an activity or a room from the cart.
+     * - `incrementActivity`: Increases the quantity of a selected activity in the cart.
+     * - `decrementActivity`: Decreases the quantity of a selected activity (minimum of 1).
+     *
+     * The cart is stored in `$this->cart` and synced with the UI in real time.
+     * Quantity per activity is tracked using `$this->quantity[activityId]`.
+     * 
+     * ----------------------------------------------------------------------------------
+     */
     public function toggleActivityDescription($activityId)
     {
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
@@ -191,136 +192,113 @@ class ViewReservation extends Component
 
     public function addActivityToCart($activityId)
     {
-        // Resets any previous error messages
+        // Clears any previous validation errors before processing the new request
         $this->resetErrorBag();
 
-        // Find the activity using the provided activityId, or fail if it doesn't exist
-        $activity = Activity::findOrFail($activityId);
+        // Attempt to add the selected activity to the cart using the ActivityCartService
+        // Pass in the current cart and relevant form data (quantity, status, payment status)
+        $newActivityInCart = $this->activityCartService->addActivity(
+            $this->cart, // Pass as array or object as required by the service
+            $activityId,
+            $this->quantity,
+            $this->status,
+            $this->activityPaymentStatus
+        );
 
-        // If the activity is already in the cart, show an error and return
-        foreach ($this->cart as $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $this->addError('cart', 'This activity is already in the cart.');
-                return; // Exit the function to avoid adding the same activity again
-            }
+        // If the activity is already in the cart, stop and show an error message
+        if ($newActivityInCart === false) {
+            $this->addError('cart', 'This activity is already in the cart.');
+            return;
         }
 
-        // Calculate the total amount for the activity based on the quantity
-        $quantity = (int) ($this->quantity[$activityId] ?? 1); // Default to 1 if not set
-        $activityAmount = $activity->amount * $quantity; // Calculate the total amount for the activity
-        $activitystatus = $this->status[$activityId] = 'pending'; // Set the status of the activity to 'pending'
-        $activityPaymentStatus = $this->activityPaymentStatus[$activityId] = 'unpaid'; // Set the payment status of the activity to 'unpaid'
-
-        // Add the activity to the cart if it isn't already present
-        $this->cart[] = [
-            'type' => 'activity',  // Define the type as 'activity'
-            'activity_id' => $activity->id,  // Set the activity ID from the activity object
-            'activity_name' => $activity->name,  // Set the activity name
-            'quantity' => $quantity,  // Set the quantity from the input or default to 1
-            'amount' => $activityAmount,  // Set the calculated amount for the activity
-            'status' => $activitystatus,  // Set the status of the activity
-            'payment_status' => $activityPaymentStatus,  // Set the payment status of the activity
-        ];
-
-        //  dd($this->cart);
-
-        // $this->computeTotalAmount();
+        // If the activity was added successfully, update the cart with the new data
+        $this->cart = $newActivityInCart;
     }
 
     public function removeFromCart($type, $itemId)
     {
+        // Remove from cart if item type is 'Activity'
+        if ($type === 'activity') {
+            $this->cart = $this->activityCartService->removeActivity($this->cart, $itemId);
+        }
 
-        // Filter the cart items to exclude the one with the matching type and ID
-        $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
-            if ($type === 'activity') {
-                return $item['type'] !== 'activity' || $item['activity_id'] != $itemId;
-            }
-
-            // If the type is 'room', filter out the matching room ID
-            if ($type === 'room') {
-                return $item['type'] !== 'room' || $item['room_id'] != $itemId;
-            }
-
-            return true; // Fallback case (this should rarely be hit)
-        });
-
-        // Reindex the array after filtering to ensure keys are sequential
-        $this->cart = array_values($this->cart);
+        // Remove from cart if item type is 'Room'
+        if ($type == 'room') {
+            $this->cart = $this->roomCartService->removeRoom($this->cart, $itemId);
+        }
     }
 
     public function incrementActivity($activityId)
     {
-        $activity = Activity::find($activityId);
-        if (!$activity) return;
-
-        // Get the current quantity or default to 1
         $currentQuantity = $this->quantity[$activityId] ?? 1;
+        $newQuantity = $currentQuantity + 1;
+        $this->quantity[$activityId] = $newQuantity;
 
-
-        $this->quantity[$activityId] = $currentQuantity + 1;
-
-        foreach ($this->cart as $index => $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $quantity = $this->quantity[$activityId];
-                $this->cart[$index]['quantity'] = $quantity;
-                $this->cart[$index]['amount'] = $activity->amount * $quantity;
-            }
-        }
+        $this->activityTransactionService->updateActivityQuantity($activityId, $newQuantity, $this->transaction);
     }
 
     public function decrementActivity($activityId)
     {
-        $activity = Activity::find($activityId);
-        if (!$activity) return;
+        $newQuantity = max(1, ($this->quantity[$activityId] ?? 1) - 1);
+        $this->quantity[$activityId] = $newQuantity;
 
-        // Decrease the quantity, but prevent going below 1
-        $this->quantity[$activityId] = max(1, ($this->quantity[$activityId] ?? 1) - 1);
+        $this->activityTransactionService->updateActivityQuantity($activityId, $newQuantity, $this->transaction);
+    }
 
-        // Update the cart with the new quantity and amount
-        foreach ($this->cart as $index => $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $quantity = $this->quantity[$activityId];
-                $this->cart[$index]['quantity'] = $quantity;
-                $this->cart[$index]['amount'] = $activity->amount * $quantity;
-            }
-        }
+
+    /**
+     * ------------------------- ACTIVITY TRANSACTION MANAGEMENT ---------------------------
+     *
+     * Handles database operations for activity transactions tied to a reservation.
+     *
+     * These methods interact with the persistent transaction and invoice data:
+     * - `saveActivity`: Persists activities from the cart, resets the cart, and recalculates the invoice.
+     * - `deleteActivity`: Removes an activity from the transaction and updates the invoice.
+     * - `updateActivity`: Updates the quantity of an activity in the transaction with validation.
+     * - `editActivity`: Opens the modal for editing activity.
+     *
+     * After each operation, the invoice totals and status are recalculated via `recalculateInvoice()`
+     * and refreshed for display via `refreshInvoice()`.
+     *
+     * -------------------------------------------------------------------------------------
+     */
+    public function saveActivity()
+    {
+        $this->resetErrorBag();
+
+        $this->activityTransactionService->saveActivities($this->cart, $this->transaction, $this->invoice);
+
+        $this->recalculateInvoice();
+        $this->cart = [];
+        $this->addActivityModal = false;
     }
 
     public function deleteActivity($pivotId)
     {
-        $pivot = DB::table('transaction_activities')->where('id', $pivotId)->first();
-
-        if (! $pivot) {
-            return;
-        }
-
-        DB::transaction(function () use ($pivotId) {
-            // Delete the activity from the pivot table
-            DB::table('transaction_activities')->where('id', $pivotId)->delete();
-
-            // Refresh transaction relationships to reflect deletion
-            $this->transaction->refresh();
-            $this->transaction->loadMissing(['activities', 'properties']);
-
-            // Recalculate everything
-            $this->recalculateInvoice();
-
-            // Reset manual override if any
-            $this->invoice->update(['requested_remaining_balance' => false]);
-
-            // Optionally re-evaluate invoice status
-            if (
-                $this->invoice->balance_due > 0 &&
-                $this->invoice->invoice_status === 'completed'
-            ) {
-                $this->invoice->invoice_status = 'pending';
-                $this->invoice->save();
-            }
-        });
-
-        $this->refreshInvoice();
+        $this->activityTransactionService->deleteActivity($pivotId, $this->transaction, $this->invoice);
+        $this->recalculateInvoice();
     }
 
+    public function updateActivity()
+    {
+        $this->validate([
+            'activityQuantity' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $this->activityTransactionService->updateActivityQuantity(
+                $this->editingActivityId,
+                $this->activityQuantity,
+                $this->transaction
+            );
+
+            $this->recalculateInvoice();
+            $this->showEditActivityModal = false;
+            $this->dispatch('activity-updated');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
 
     public function editActivity($pivotId)
     {
@@ -336,148 +314,40 @@ class ViewReservation extends Component
         }
     }
 
-    public function updateActivity()
-    {
-        // Validate input
-        $this->validate([
-            'activityQuantity' => 'required|integer|min:1',
-        ], [
-            'activityQuantity.min' => 'Quantity must be at least 1.',
-            'activityQuantity.required' => 'Quantity is required.',
-        ]);
 
-        // Fetch the original activity amount
-        $activity = $this->transaction->activities->firstWhere('pivot.id', $this->editingActivityId);
 
-        if (!$activity) {
-            session()->flash('error', 'Activity not found.');
-            return;
-        }
-
-        $newAmount = $this->activityQuantity * $activity->amount;
-
-        DB::table('transaction_activities')
-            ->where('id', $this->editingActivityId)
-            ->update([
-                'quantity' => $this->activityQuantity,
-                'amount' => $newAmount,
-                'updated_at' => now(),
-            ]);
-
-        // Reload updated transaction data before recalculating
-        $this->transaction->refresh(); // Refreshes relationships too if eager-loaded
-        $this->transaction->loadMissing(['activities', 'properties']);
-
-        // Recalculate subtotal and balance due
-        $this->recalculateInvoice();
-
-        $this->showEditActivityModal = false;
-        $this->dispatch('activity-updated');
-    }
-
-    // ------------------------ INVOICE UPDATES -------------------------- //
-
-    public function updateInvoiceGrandTotal()
-    {
-        $activities = $this->transaction->activities ?? collect();
-        $properties = $this->transaction->properties ?? collect();
-
-        $activitiesTotal = $activities->map(function ($activity) {
-            return $activity->pivot->quantity * $activity->amount;
-        })->sum();
-
-        $roomsTotal = $properties->map(function ($property) {
-            return $property->pivot->total_amount;
-        })->sum();
-
-        // Fetch the convenience fee total
-        $this->convenienceFeeTotal = $this->computeConvenienceFeeTotal();
-
-        $subtotal = $activitiesTotal + $roomsTotal + $this->convenienceFeeTotal;
-
-        $this->invoice->update([
-            'sub_total' => $subtotal,
-        ]);
-    }
-
-    public function updateInvoiceBalanceDue()
-    {
-        // Get the latest payments related to the invoice
-        $payments = $this->payments ?? collect();
-
-        // Sum only successful or completed payments
-        $totalPaid = $payments->where('payment_status', 'completed')->sum('amount_paid');
-
-        // Get the latest subtotal from the invoice
-        $subTotal = $this->invoice->sub_total;
-
-        // Compute the remaining balance with floor at 0
-        $balanceDue = max($subTotal - $totalPaid, 0);
-
-        // Update the invoice
-        $this->invoice->update([
-            'balance_due' => $balanceDue,
-            'amount_paid' => $totalPaid,
-        ]);
-    }
-
-    public function updateInvoiceStatus()
-    {
-        $invoice = $this->invoice;
-
-        if ($invoice->balance_due <= 0) {
-            // Fully paid
-            if (!$invoice->completed_at) {
-                $invoice->update([
-                    'invoice_status' => 'completed',
-                    'completed_at' => now(),
-                ]);
-            }
-        } elseif ($invoice->balance_due > 0 && $invoice->sub_total > 0) {
-            // Has remaining balance
-            $invoice->update([
-                'invoice_status' => 'pending',
-                'completed_at' => null,
-            ]);
-        } else {
-            // No subtotal or unpaid
-            $invoice->update([
-                'invoice_status' => 'failed',
-                'completed_at' => null,
-            ]);
-        }
-    }
-    public function updatePaymentStatus()
-    {
-        // Update unpaid activities to 'paid'
-        DB::table('transaction_activities')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        // Update unpaid properties (rooms) to 'paid'
-        DB::table('transaction_properties')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        // Optional: reload fresh data
-        $this->transaction->load('activities', 'properties');
-
-        Log::info("All unpaid items for transaction {$this->transaction->id} marked as paid.");
-    }
-
+    /**
+     * --------------------------------- INVOICE RECALCULATION ---------------------------------
+     *
+     * Recalculates the invoice totals and updates the component's state accordingly.
+     *
+     * This method performs the following actions:
+     * - Updates the invoice grand total based on the latest cart or charges.
+     * - Recomputes the balance due after payments or adjustments.
+     * - Updates the invoice status (e.g., Paid, Unpaid, Partial) based on the balance.
+     * - Refreshes the Livewire component's state by pulling fresh values from the database.
+     *
+     * Ensures that both the backend (database) and frontend (Livewire view) reflect
+     * the most current invoice data after any changes (e.g., adding/removing items).
+     * ------------------------------------------------------------------------------------------
+     */
     public function recalculateInvoice()
     {
-        $this->updateInvoiceGrandTotal();
-        $this->updateInvoiceBalanceDue();
-        $this->updateInvoiceStatus();
+        $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateBalanceDue($this->invoice);
+        $this->invoiceService->updateStatus($this->invoice);
+
+        $this->refreshInvoice();
+    }
+
+    /**
+     * Reloads the invoice and updates related UI-bound properties.
+     */
+    public function refreshInvoice()
+    {
+        $this->invoice = $this->invoice->fresh();
+        $this->sub_total = $this->invoice->sub_total;
+        $this->balance_due = $this->invoice->balance_due;
     }
 
     // ------------------------ COMPUTATIONS -------------------------- //
@@ -507,203 +377,200 @@ class ViewReservation extends Component
         return $activitiesTotal + $roomsTotal;
     }
 
+    public function updatePaymentStatus()
+    {
+        // Update unpaid activities to 'paid'
+        DB::table('transaction_activities')
+            ->where('transaction_id', $this->transaction->id)
+            ->where('payment_status', 'unpaid')
+            ->update([
+                'payment_status' => 'paid',
+                'updated_at' => now(),
+            ]);
+
+        // Update unpaid properties (rooms) to 'paid'
+        DB::table('transaction_properties')
+            ->where('transaction_id', $this->transaction->id)
+            ->where('payment_status', 'unpaid')
+            ->update([
+                'payment_status' => 'paid',
+                'updated_at' => now(),
+            ]);
+
+        // Optional: reload fresh data
+        $this->transaction->load('activities', 'properties');
+
+        Log::info("All unpaid items for transaction {$this->transaction->id} marked as paid.");
+    }
 
 
-
-    // ------------------ EMAIL SENDING ------------------------ // 
-
-    public function sendReceiptToEmail()
+    /**
+     * -------------------------- SEND OFFICIAL RECEIPT TO EMAIL ----------------------------------
+     *
+     * Sends the official receipt to the guest's email address.
+     * Uses the EmailService and BrandingService to generate the PDF and send it.
+     *
+     * ---------------------------------------------------------------------------------------------
+     */
+    public function sendReceiptToEmail(EmailService $emailService, BrandingService $brandingService)
     {
         Log::info('Send Receipt To Email Method called.');
 
+        // Ensure all required data is available before proceeding
         if (!$this->receipt || !$this->invoice || !$this->transaction) {
             Log::error('Missing data for sending official receipt.');
             abort(404, 'Missing data for generating the official receipt.');
         }
 
-        // Get related data for PDF
-        $activities = $this->transaction->activities()->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
-        $properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
+        // Fetch related activities tied to the transaction, including pivot data
+        $activities = $this->transaction->activities()->withPivot(
+            'quantity',
+            'amount',
+            'activity_datetime',
+            'status'
+        )->get();
 
-        //Mount the branding
-        $setting = Setting::first();
+        // Fetch related properties tied to the transaction, including pivot data
+        $properties = $this->transaction->properties()->withPivot(
+            'adults',
+            'kids',
+            'extra_guest',
+            'extra_charge',
+            'amount',
+            'total_amount',
+            'days'
+        )->get();
 
-        $data = [
+        // Merge all necessary data for the PDF and email
+        $data = array_merge([
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
             'transactionUser' => $this->transactionUser,
             'properties' => $properties,
             'activities' => $activities,
+        ], $brandingService->getBrandingData());
 
-            // Branding
-            'branding_company_name' => $setting->company_name,
-            'logo_path' => $setting->logo,
-            'branding_company_email' => $setting->email,
-            'branding_company_contact' => $setting->contact_number,
-            'company_address' => $setting->address,
-            'facebook_link' => $setting->facebook,
-            'instagram_link' => $setting->instagram,
-        ];
-
-        // Generate PDF from view with data
+        // Generate the receipt PDF using a Blade view
         $pdf = Pdf::loadView('admin.pdf.reservations.receipts.officialReceipt', $data);
-        $pdfContent = $pdf->output();
+        $pdfContent = $pdf->output(); // Get the raw PDF content
 
-        // Send mail with attachment
-        Mail::to($this->transactionUser->email)->send(new SendOfficialReceiptMail($pdfContent, $this->receipt->receipt_number, $this->transactionUser, $data));
+        // Send the PDF to the user's email using the EmailService
+        $emailService->sendOfficialReceipt(
+            $this->transactionUser->email,
+            $pdfContent,
+            $this->receipt->receipt_number,
+            $this->transactionUser,
+            $data
+        );
 
+        // Notify user and log the success
         session()->flash('message', 'Official receipt has been sent to guest\'s email!');
-
         Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
     }
 
-    public function requestRemainingBalance()
+
+    /**
+     * ------------------------- REQUEST REMAINING BALANCE RECEIPT ----------------------------------
+     *
+     * Sends a payment link to the guest for paying the remaining balance of their reservation.
+     * Uses PayMongoService to generate a checkout session and NotificationService to email the guest.
+     *
+     * ---------------------------------------------------------------------------------------------
+     */
+    public function requestRemainingBalance(PayMongoService $payMongo, NotificationService $notifier)
     {
         Log::info('Request Remaining Balance method called.');
 
-
         $transaction = $this->transaction;
         $invoice = $this->invoice;
-        $transactionUser = $this->transactionUser;
+        $user = $this->transactionUser;
 
-        $client = new Client();
-        $apiKey = env('PAYMONGO_SECRET_KEY');
-        $remainingBalanceInCentavos = intval($invoice->balance_due * 100);
-
-        try {
-            $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic ' . base64_encode($apiKey . ':'),
-                ],
-                'json' => [
-                    'data' => [
-                        'attributes' => [
-                            'send_email_receipt' => true,
-                            'show_description' => true,
-                            'show_line_items' => true,
-                            'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya'],
-                            'success_url' => route('guest.thank-you-page'),
-                            'cancel_url' => url('/payment-failed'),
-                            'line_items' => [[
-                                'currency' => 'PHP',
-                                'amount' => $remainingBalanceInCentavos,
-                                'description' => 'Reservation ' . $transaction->transaction_number,
-                                'name' => 'Canopy Farm PH',
-                                'quantity' => 1,
-                            ]],
-                            'description' => 'Reservation for ' . $transactionUser->first_name . ' ' . $transactionUser->last_name,
-                            'metadata' => [
-                                'invoice_id' => (string) $invoice->id,
-                                'payment_type' => 'Remaining Balance',
-                                'notes' => 'Payment for Remaining Balance',
-                            ],
-                        ],
+        // Build the payload required by PayMongo for the checkout session
+        $payload = [
+            'data' => [
+                'attributes' => [
+                    'send_email_receipt' => true,
+                    'show_description' => true,
+                    'show_line_items' => true,
+                    'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya'],
+                    'success_url' => route('guest.thank-you-page'), // Redirect after successful payment
+                    'cancel_url' => url('/payment-failed'), // Redirect if payment is cancelled
+                    'line_items' => [[
+                        'currency' => 'PHP',
+                        'amount' => intval($invoice->balance_due * 100), // PayMongo expects amount in centavos
+                        'description' => 'Reservation ' . $transaction->transaction_number,
+                        'name' => 'Canopy Farm PH',
+                        'quantity' => 1,
+                    ]],
+                    'description' => 'Reservation for ' . $user->first_name . ' ' . $user->last_name,
+                    'metadata' => [
+                        'invoice_id' => (string) $invoice->id,
+                        'payment_type' => 'Remaining Balance',
+                        'notes' => 'Payment for Remaining Balance',
                     ],
                 ],
-            ]);
-
-            $responseData = json_decode($response->getBody(), true);
-            $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
-
-            if ($paymentLink) {
-                $this->transaction->update(['payment_link' => $paymentLink]);
-            }
-        } catch (\Exception $e) {
-            Log::error('PayMongo link creation failed: ' . $e->getMessage());
-            $paymentLink = null; // fallback
-        }
-
-        // Update the invoice to flag that the request has been sent
-        $this->invoice->requested_remaining_balance = true;
-        $this->invoice->save();
-
-        //Call setting
-        $setting = Setting::first();
-
-        $reservationData = [
-            'name' => trim($transactionUser->first_name . ' ' . $transactionUser->last_name),
-            'transaction_number' => $transaction->transaction_number,
-            'email' => $transactionUser->email ?? 'no-reply@example.com',
-            'invoice_number' => $invoice->invoice_number,
-            'check_in' => $transaction->start_datetime->format('Y-m-d'),
-            'check_out' => $transaction->end_datetime->format('Y-m-d'),
-            'sub_total' => $invoice->sub_total,
-            'amount_paid' => $invoice->amount_paid,
-            'remaining_balance' => $invoice->balance_due,
-            'payment_link' => $paymentLink,
-
-            // Branding
-            'branding_company_name' => $setting->company_name,
-            'logo_path' => $setting->logo,
-            'branding_company_email' => $setting->email,
-            'branding_company_contact' => $setting->contact_number,
-            'company_address' => $setting->address,
-            'facebook_link' => $setting->facebook,
-            'instagram_link' => $setting->instagram,
+            ],
         ];
 
-        try {
-            Mail::to($reservationData['email'])->send(new RequestRemainingBalanceMail($reservationData));
-        } catch (\Exception $e) {
-            Log::error('Email send failed: ' . $e->getMessage());
-            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // Create the checkout session through PayMongo
+        $response = $payMongo->createCheckoutSession($payload);
+
+        // Extract the payment link from the response
+        $paymentLink = $response['data']['attributes']['checkout_url'] ?? null;
+
+        // Save the payment link in the transaction record if it exists
+        if ($paymentLink) {
+            $transaction->update(['payment_link' => $paymentLink]);
         }
 
-        return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id]);
+        // Mark that the invoice has requested for remaining balance
+        $invoice->requested_remaining_balance = true;
+        $invoice->save();
+
+        // Attempt to send email notification to guest with the payment link
+        try {
+            $notifier->sendRemainingBalanceEmail($user, $transaction, $invoice, $paymentLink);
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage()); // Show error message in UI
+        }
+
+        // Redirect back to the reservation view page
+        return redirect()->route('admin.view-reservation', ['transaction' => $transaction->id]);
     }
 
 
-
-
-    // --------------- OFFICIAL RECEIPT ----------------------- // 
+    /**
+     * --------------------------------- OFFICIAL RECEIPT GENERATION ---------------------------------
+     *
+     * Triggers the generation of an official receipt for a completed invoice
+     * -----------------------------------------------------------------------------------------------
+     */
     public function GenerateReceipt()
     {
         Log::info('Show Generate Official Receipt Modal method triggered.');
 
-        // Ensure invoice is available
         if (!$this->invoice) {
             abort(404, 'No invoice found. Please reload the page.');
         }
 
-        // Prevent generating receipt for unpaid invoices
-        if ($this->invoice->invoice_status != 'completed') {
+        $receipt = $this->receiptService->generateReceipt($this->invoice);
+
+        if (!$receipt) {
             $this->cannotGenerateReceiptModal = true;
-            Log::warning("Attempt to generate receipt for unpaid invoice ID: {$this->invoice->id}");
             return;
         }
 
-        // Check if receipt already exists
-        $existing = Receipt::where('invoice_id', $this->invoice->id)->first();
-        if ($existing) {
-            $this->receipt = $existing;
-            Log::info('Receipt already exists for invoice ID: ' . $this->invoice->id);
-        } else {
-            // Generate unique receipt number
-            $datePart = now()->format('Ymd');
-            $lastReceipt = Receipt::whereDate('created_at', now()->toDateString())
-                ->orderBy('id', 'desc')->first();
-
-            $newNumber = $lastReceipt
-                ? str_pad(((int) substr($lastReceipt->receipt_number, -4)) + 1, 4, '0', STR_PAD_LEFT)
-                : '0001';
-
-            $receiptNumber = "OR-{$datePart}-{$newNumber}";
-
-            $this->receipt = Receipt::create([
-                'invoice_id'      => $this->invoice->id,
-                'receipt_number'  => $receiptNumber,
-                'amount_received' => $this->invoice->amount_paid,
-                'receipt_date'    => now(),
-                'notes'           => 'Official receipt generated via system',
-            ]);
-
-            Log::info("Receipt created: {$receiptNumber} for Invoice ID {$this->invoice->id}");
-        }
+        $this->receipt = $receipt;
     }
 
+    /**
+     * ---------------------------------- OFFICIAL RECEIPT PRINTING ----------------------------------
+     *
+     * Generates and streams a PDF version of the official receipt.
+     *
+     * -----------------------------------------------------------------------------------------------
+     */
     public function printOfficialReceipt()
     {
         Log::info('Print Official Receipt method called.');
@@ -712,8 +579,11 @@ class ViewReservation extends Component
             abort(404, 'Missing data for generating the official receipt.');
         }
 
-        $this->activities = $this->transaction->activities()->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
-        $this->properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
+        $this->activities = $this->transaction->activities()
+            ->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
+
+        $this->properties = $this->transaction->properties()
+            ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
         $data = [
             'receipt' => $this->receipt,
@@ -724,18 +594,26 @@ class ViewReservation extends Component
             'activities' => $this->activities,
         ];
 
-        $pdf = Pdf::loadView('admin.pdf.reservations.receipts.officialReceipt', $data);
+        $pdfOutput = $this->receiptService->generatePdf($data, $this->receipt->receipt_number);
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
+        return response()->streamDownload(function () use ($pdfOutput) {
+            echo $pdfOutput;
         }, 'official_receipt_' . $this->receipt->receipt_number . '.pdf');
     }
 
 
-
-
-    // -------------------- REPORTS --------------------------- // 
-
+    /**
+     * -------------------- EXPORT RESERVATION DETAILS REPORT --------------------
+     *
+     * Generates a detailed PDF report of a reservation, including:
+     * - Guest details
+     * - Invoice and payment records
+     * - Booked properties
+     * - Added activities and their respective pivot data
+     * - Totals for rooms and add-ons
+     * 
+     * ----------------------------------------------------------------------------
+     */
     public function exportReservationDetails()
     {
         $transaction = Transaction::with([
@@ -767,10 +645,16 @@ class ViewReservation extends Component
     }
 
 
-
-
-    // --------------------- MODALS --------------------------- // 
-
+    /**
+     * ---------------------------- MODALS ----------------------------------------
+     *
+     * Handles the opening and closing of modals related to:
+     * - Receipt viewing
+     * - Payment creation
+     * - Activity addition
+     *
+     * ----------------------------------------------------------------------------
+     */
     public function ShowReceipt()
     {
         Log::info('Show Receipt method called.');
@@ -822,15 +706,13 @@ class ViewReservation extends Component
     }
 
 
-
-
     // --------------------- DATABASE INSERTION --------------------------- // 
 
-    public function CreatePayment()
+
+    public function CreatePayment(PaymentService $paymentService)
     {
         Log::info('Create Payment method called.');
 
-        // Validate the input data
         $this->validate([
             'amount_paid' => 'required|numeric|min:0',
             'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
@@ -838,56 +720,21 @@ class ViewReservation extends Component
             'notes' => 'nullable|string|max:500',
         ]);
 
-        // Ensure the invoice exists
         if (!$this->invoice) {
-            abort(404, 'No invoice found for this transaction.');
+            abort(404, 'No invoice found.');
         }
 
-        // Create the payment record
-        Payment::create([
-            'invoice_id' => $this->invoice->id,
-            'amount_paid' => $this->amount_paid,
-            'mode_of_payment' => 'cash',
-            'payment_type' => $this->payment_type,
-            'payment_date' => $this->payment_date,
-            'payment_status' => 'completed',
-            'notes' => $this->notes,
-            'currency' => 'PHP',
-            'verified_at' => now(),
+        $paymentService->create([
+            'invoice'       => $this->invoice,
+            'transaction'   => $this->transaction,
+            'amount_paid'   => $this->amount_paid,
+            'payment_type'  => $this->payment_type,
+            'payment_date'  => $this->payment_date,
+            'notes'         => $this->notes,
         ]);
-
-
-
-        // Update the invoice with the new amount paid and balance due
-        $newAmountPaid = $this->invoice->amount_paid + $this->amount_paid;
-        $newBalanceDue = max($this->invoice->sub_total - $newAmountPaid, 0);
-
-        $this->invoice->update([
-            'amount_paid' => $newAmountPaid,
-            'balance_due' => $newBalanceDue,
-        ]);
-
-        // If the balance is 0, update invoice status to 'completed'
-        if ($newBalanceDue == 0) {
-            $this->invoice->update([
-                'invoice_status' => 'completed',
-                'completed_at' => now(),
-            ]);
-
-            // Log status change
-            Log::info("Invoice status updated to 'completed' because balance due is 0.");
-        }
-
-        // If the new amount paid is greater than or equal to the deposit amount, update transaction status to 'receipt_verified'
-        if ($newAmountPaid >= $this->transaction->deposit_amount) {
-            $this->transaction->update(['transaction_status' => 'receipt_verified']);
-            Log::info("Transaction status updated to 'reserved' because amount paid is greater than or equal to deposit amount.");
-        }
 
         $this->updatePaymentStatus();
 
-
-        // Reset the form fields after successful creation
         $this->reset([
             'amount_paid',
             'mode_of_payment',
@@ -896,57 +743,10 @@ class ViewReservation extends Component
             'payment_status',
             'notes',
             'currency',
-            'verified_at',
+            'verified_at'
         ]);
 
-        // Redirect to the same reservation view to refresh data
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
             ->with('success', 'Payment created successfully.');
-    }
-
-    public function saveActivity()
-    {
-        $this->resetErrorBag();
-
-        DB::transaction(function () {
-            foreach ($this->cart as $item) {
-                if ($item['type'] === 'activity') {
-                    DB::table('transaction_activities')->insert([
-                        'transaction_id' => $this->transaction->id,
-                        'activity_id' => $item['activity_id'],
-                        'quantity' => $item['quantity'],
-                        'amount' => $item['amount'],
-                        'payment_status' => $item['payment_status'] ?? 'pending',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
-            // Refresh relationships to include newly added activities
-            $this->transaction->refresh();
-            $this->transaction->loadMissing(['activities', 'properties']);
-
-            // Centralized logic to update invoice values
-            $this->recalculateInvoice();
-
-            // Reset any requested manual override
-            $this->invoice->update([
-                'requested_remaining_balance' => false,
-            ]);
-
-            // Sync invoice status
-            if (
-                $this->invoice->balance_due > 0 &&
-                $this->invoice->invoice_status === 'completed'
-            ) {
-                $this->invoice->invoice_status = 'pending';
-                $this->invoice->save();
-            }
-        });
-
-        $this->cart = [];
-        $this->addActivityModal = false;
-        $this->refreshInvoice();
     }
 }

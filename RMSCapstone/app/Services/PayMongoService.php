@@ -2,64 +2,30 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class PayMongoService
 {
-    protected $secret;
-
-    public function __construct()
+    public function createCheckoutSession(array $payload)
     {
-        $this->secret = config('services.paymongo.secret');
-    }
+        $client = new Client();
+        $apiKey = env('PAYMONGO_SECRET_KEY');
 
-    public function createGcashPaymentIntent($amount, $description = 'Test Payment')
-    {
-        // Step 1: Payment Intent
-        $intent = Http::withBasicAuth($this->secret, '')
-            ->post('https://api.paymongo.com/v1/payment_intents', [
-                'data' => [
-                    'attributes' => [
-                        'amount' => $amount,
-                        'payment_method_allowed' => ['gcash'],
-                        'payment_method_options' => ['gcash'],
-                        'currency' => 'PHP',
-                        'description' => $description
-                    ]
-                ]
-            ])
-            ->json();
+        try {
+            $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode($apiKey . ':'),
+                ],
+                'json' => $payload,
+            ]);
 
-        $intentId = $intent['data']['id'];
-        $clientKey = $intent['data']['attributes']['client_key'];
-
-        // Step 2: Payment Method
-        $method = Http::withBasicAuth($this->secret, '')
-            ->post('https://api.paymongo.com/v1/payment_methods', [
-                'data' => [
-                    'attributes' => [
-                        'type' => 'gcash',
-                        'amount' => $amount,
-                        'currency' => 'PHP'
-                    ]
-                ]
-            ])
-            ->json();
-
-        $methodId = $method['data']['id'];
-
-        // Step 3: Attach
-        $attach = Http::withBasicAuth($this->secret, '')
-            ->post("https://api.paymongo.com/v1/payment_intents/$intentId/attach", [
-                'data' => [
-                    'attributes' => [
-                        'payment_method' => $methodId,
-                        'client_key' => $clientKey
-                    ]
-                ]
-            ])
-            ->json();
-
-        return $attach['data']['attributes']['next_action']['redirect']['url'] ?? null;
+            return json_decode($response->getBody(), true);
+        } catch (\Exception $e) {
+            Log::error('PayMongo link creation failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }
