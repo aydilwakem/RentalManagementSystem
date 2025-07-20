@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentUploadedMail;
 use Illuminate\Support\Facades\Log;
+use App\Services\PaymentService;
+use App\Services\EmailService;
+
 
 
 class ProofOfPaymentPage extends Component
@@ -31,12 +34,13 @@ class ProofOfPaymentPage extends Component
     public $transactionExpired = false;
     public $transactionNotFound = false;
     public $confirmCreateItem = false;
+    protected PaymentService $paymentService;
+    protected EmailService $emailService;
 
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
     }
-
 
     public function render()
     {
@@ -70,83 +74,55 @@ class ProofOfPaymentPage extends Component
         }
     }
 
-
-    public function submitProofOfPayment()
+    protected function validateInput(): void
     {
-        if ($this->transactionExpired) {
-            session()->flash('error', 'Your transaction has expired. You cannot upload proof of payment.');
-            return;
+        $this->validate([
+            'payment_method_id' => 'required|exists:pm_payment_methods,id',
+            'transaction_number' => 'required|exists:trn_transactions,transaction_number',
+            'payment_reference_number' => 'required|string|max:255',
+            'payment_screenshot' => 'required|image|max:2048',
+        ]);
+    }
+
+    protected function uploadScreenshot(): string
+    {
+        // Error handling of failed upload
+        if (!$this->payment_screenshot || !$this->payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
         }
 
-        // Validate input
-        try {
-            $this->validate([
-                'payment_method_id' => 'required|exists:pm_payment_methods,id',
-                'transaction_number' => 'required|exists:trn_transactions,transaction_number',
-                'payment_reference_number' => 'required|string|max:255',
-                'payment_screenshot' => 'required|image|max:2048',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->confirmCreateItem = false;
-            throw $e;
-        }
+        // Returns the screenshot path where the screenshot is saved.
+        return $this->payment_screenshot->store('proof-of-payments', 'public');
+    }
 
-        $paymentDetails = [];
+    protected function getTransactionWithRelations()
+    {
+        return Transaction::with(['invoice', 'transactionUser'])
+            ->where('transaction_number', $this->transaction_number)
+            ->firstOrFail();
+    }
 
-        DB::transaction(function () use (&$paymentDetails) {
-            // Handle image upload
-            if (!$this->payment_screenshot || !$this->payment_screenshot->isValid()) {
-                throw new \Exception('Image upload failed. Please try again.');
-            }
+    protected function prepareEmailData($transaction, string $screenshotPath): array
+    {
+        $user = $transaction->transactionUser;
 
-            $screenshotPath = $this->payment_screenshot->store('proof-of-payments', 'public');
+        return [
+            'full_name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'payment_method_id' => $this->payment_method_id,
+            'transaction_id' => $transaction->id,
+            'payment_reference_number' => $this->payment_reference_number,
+            'screenshot_path' => $screenshotPath,
+            'notes' => $this->notes,
+            'check_in' => $transaction->start_datetime,
+            'check_out' => $transaction->end_datetime,
+            'total_amount' => $transaction->total_amount,
+            'deposit' => $transaction->deposit_amount,
+        ];
+    }
 
-            // Fetch transaction with relationships
-            $transaction = Transaction::with(['invoice', 'transactionUser'])
-                ->where('transaction_number', $this->transaction_number)
-                ->firstOrFail();
-
-            // Ensure invoice exists
-            $invoice = $transaction->invoice;
-            if (!$invoice) {
-                throw new \Exception('Invoice not found for this transaction.');
-            }
-
-            // Create payment record
-            Payment::create([
-                'invoice_id' => $invoice->id,
-                'payment_method_id' => $this->payment_method_id,
-                'amount_paid' => 0,
-                'payment_screenshot' => $screenshotPath,
-                'payment_reference_number' => $this->payment_reference_number,
-                'payment_status' => 'pending',
-                'notes' => $this->notes,
-                'currency' => $this->currency,
-            ]);
-
-            // Update transaction status if needed
-            if ($transaction->transaction_status === 'pending') {
-                $transaction->update(['transaction_status' => 'reserved']);
-            }
-
-            // Prepare payment details for email
-            $user = $transaction->transactionUser;
-            $paymentDetails = [
-                'full_name' => $user->first_name . ' ' . $user->last_name,
-                'email' => $user->email,
-                'payment_method_id' => $this->payment_method_id,
-                'transaction_id' => $transaction->id,
-                'payment_reference_number' => $this->payment_reference_number,
-                'screenshot_path' => $screenshotPath,
-                'notes' => $this->notes,
-                'check_in' => $transaction->start_datetime,
-                'check_out' => $transaction->end_datetime,
-                'total_amount' => $transaction->total_amount,
-                'deposit' => $transaction->deposit_amount,
-            ];
-        });
-
-        // Reset form inputs
+    protected function resetInputFields(): void
+    {
         $this->reset([
             'payment_method_id',
             'transaction_id',
@@ -155,17 +131,80 @@ class ProofOfPaymentPage extends Component
             'notes',
             'currency',
         ]);
+    }
 
-        // Send confirmation email
-        try {
-            Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
-        } catch (\Exception $e) {
-            logger()->error('Email send failed: ' . $e->getMessage());
-            session()->flash('error', 'Payment is saved, but payment upload email failed to send.');
+    public function submitProofOfPayment(PaymentService $paymentService, EmailService $emailService)
+    {
+        // Declines payment if the transaction is marked as 'expired'.
+        if ($this->transactionExpired) {
+            session()->flash('error', 'Your transaction has expired. You cannot upload proof of payment.');
+            return;
         }
 
-        // Notify user
-        session()->flash('message', 'Payment submitted successfully!');
-        return redirect()->route('guest.thank-you-page');
+        try {
+
+            // Validate user inputs
+            $this->validateInput();
+
+            // Stores payment details
+            $paymentDetails = [];
+
+            DB::transaction(function () use (&$paymentDetails, $paymentService) {
+
+                // Gets the screenshotpath of the image
+                $screenshotPath = $this->uploadScreenshot();
+
+                // Get transaction relations: transaction->invoice
+                $transaction = $this->getTransactionWithRelations();
+                $invoice = $transaction->invoice;
+
+                // Error handling for non-existing invoice
+                if (!$invoice) {
+                    throw new \Exception('Invoice not found for this transaction.');
+                }
+
+                // Creates payment usint the PaymentService class (create)
+                $paymentService->create([
+                    'invoice' => $invoice,
+                    'transaction' => $transaction,
+                    'payment_method_id' => $this->payment_method_id,
+                    'payment_reference_number' => $this->payment_reference_number,
+                    'payment_screenshot' => $screenshotPath,
+                    'payment_status' => 'pending',
+                    'currency' => $this->currency,
+                    'notes' => $this->notes,
+                    'mode_of_payment' => 'manual_upload',
+                    'amount_paid' => 0,
+                ]);
+
+                // Updates transaction status if pending
+                if ($transaction->transaction_status === 'pending') {
+                    $transaction->update(['transaction_status' => 'reserved']);
+                }
+
+                // Prepares the email data
+                $paymentDetails = $this->prepareEmailData($transaction, $screenshotPath);
+            });
+
+            // resetInputFields
+            $this->resetInputFields();
+
+            // Send confirmation email using EmailService class (sendPaymentUploadedMail)
+            try {
+                $emailService->sendPaymentUploadedMail($paymentDetails['email'], $paymentDetails);
+            } catch (\Exception $e) {
+                logger()->error('Email send failed: ' . $e->getMessage());
+                session()->flash('error', 'Payment saved, but email failed to send.');
+            }
+
+            session()->flash('message', 'Payment submitted successfully!');
+            return redirect()->route('guest.thank-you-page');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->confirmCreateItem = false;
+            throw $e;
+        } catch (\Exception $e) {
+            logger()->error('Payment submission failed: ' . $e->getMessage());
+            session()->flash('error', 'An error occurred during payment submission.');
+        }
     }
 }

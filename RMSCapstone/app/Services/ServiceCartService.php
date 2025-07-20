@@ -2,33 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\Activity;
+use App\Models\Service;
 
-class ActivityCartService
+class ServiceCartService
 {
-    public function addActivity(array $cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [])
-    {
-        $activity = Activity::findOrFail($itemId);
 
-        // Loops in each item in the cart and find if the activity is existing
+    public function addService(array &$cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [])
+    {
+        $service = Service::findOrFail($itemId);
+
+        // Prevent duplicate service
         foreach ($cart as $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $itemId) {
-                // Returns false if the activity exists
+            if ($item['type'] === 'service' && $item['service_id'] == $itemId) {
                 return false;
             }
         }
 
-        // Sets the values for the activity
         $qty = (int) ($quantity[$itemId] ?? 1);
-        $amount = $activity->amount * $qty;
+        $amount = $service->amount * $qty;
         $status[$itemId] = 'pending';
         $paymentStatus[$itemId] = 'unpaid';
 
-        // Inserts the activity to the cart
         $cart[] = [
-            'type' => 'activity',
-            'activity_id' => $activity->id,
-            'activity_name' => $activity->name,
+            'type' => 'service',
+            'service_id' => $service->id,
+            'service_name' => $service->name,
             'quantity' => $qty,
             'amount' => $amount,
             'status' => $status[$itemId],
@@ -39,10 +37,11 @@ class ActivityCartService
     }
 
 
+
     /**
      * Removes a specific activity from the cart.
      */
-    public function removeActivity(array $cart, int $activityId)
+    public function removeService(array $cart, int $serviceId)
     {
         // Filter the cart: keep all items that are NOT the target activity
         $updatedCart = array_filter(
@@ -50,8 +49,8 @@ class ActivityCartService
             $cart,
 
             // Callback function that returns a value and pass to the array_filter
-            function ($item) use ($activityId) {
-                return $item['type'] !== 'activity' || $item['activity_id'] != $activityId;
+            function ($item) use ($serviceId) {
+                return $item['type'] !== 'service' || $item['service_id'] != $serviceId;
             }
 
         );
@@ -73,14 +72,14 @@ class ActivityCartService
      * @param int $quantity The new quantity to set for the activity.
      * @return array The updated cart with the modified activity item.
      */
-    public function updateQuantity(array $cart, int $activityId, int $quantity)
+    public function updateServiceQuantity(array $cart, int $serviceId, int $quantity)
     {
         foreach ($cart as $index => $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $activity = Activity::find($activityId);
-                if ($activity) {
+            if ($item['type'] === 'service' && $item['service_id'] == $serviceId) {
+                $service = Service::find($serviceId);
+                if ($service) {
                     $cart[$index]['quantity'] = $quantity;
-                    $cart[$index]['amount'] = $activity->amount * $quantity;
+                    $cart[$index]['amount'] = $service->amount * $quantity;
                 }
             }
         }

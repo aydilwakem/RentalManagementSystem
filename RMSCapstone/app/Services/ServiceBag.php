@@ -16,5 +16,6 @@ class ServiceBag
         public NotificationService $notificationService,
         public ReceiptService $receiptService,
         public PaymentService $paymentService,
+        public CartService $cartService,
     ) {}
 }

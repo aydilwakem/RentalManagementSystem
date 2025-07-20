@@ -524,9 +524,10 @@
                                         </td>
                                            
                                          @if($activity->pivot->payment_status !== 'paid')
+
                                             {{-- Editable: Show Action Buttons --}}
                                             <td class="border px-4 py-2 text-center space-x-2 dark:border-gray-500">
-                                                 {{-- Edit Button --}}
+                                            {{-- Edit Button --}}
                                            <button wire:click="editActivity({{ $activity->pivot->id }})"
                                                     class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                     title="Edit">
@@ -580,13 +581,23 @@
                     </div>
 
                      {{-- Add Item Button Row --}}
+                     
                                 <tr>
                                     <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
-                                         <x-button wire:click="OpenAddActivityModal" icon="fas fa-plus">
+                                         <x-button wire:click="openModal('activity')" icon="fas fa-plus">
                                             Add Activity
                                         </x-button>
                                     </td>
                                 </tr>
+
+                                    <tr>
+                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
+                                         <x-button wire:click="openModal('service')" icon="fas fa-plus">
+                                            Add Services
+                                        </x-button>
+                                    </td>
+                                </tr>
+     
 
                                 <tr>
                                     <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
@@ -595,6 +606,8 @@
                                         </x-button>
                                     </td>
                                 </tr>
+
+                            
 
 
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
@@ -984,11 +997,85 @@
                 @endif
             </div>
 
+                <!-- Service Modal -->
+                @if ($activeModal === 'service')
+                    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                            <h2 class="text-xl font-bold mb-4 text-blue-700 text-center">Add Service</h2>
+
+                            @foreach ($availableServices as $service)
+                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-4 dark:bg-gray-700 dark:border-gray-600">
+                                    <div class="p-4 flex flex-col gap-2">
+                                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $service->name }}</h2>
+
+                                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                                            {{ $service->description ?? 'No description provided.' }}
+                                        </p>
+
+                                        <div class="text-md font-semibold text-blue-600 dark:text-blue-300">
+                                            ₱{{ number_format($service->amount, 2) }} <span class="text-sm text-gray-500">({{ $service->unit }})</span>
+                                        </div>
+
+                                        {{-- Quantity & Button --}}
+                                        <div class="flex items-center justify-between mt-2 gap-4">
+
+                                                <!-- Quantity Counter -->
+                                                    <div class="flex flex-col">
+                                                        <label for="quantity-{{ $service->id }}"
+                                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+
+                                                        <!-- Quantity Counter Buttons -->
+                                                        <div class="flex items-center">
+                                                              <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
+                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
+
+                                                                <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                                    {{ $quantity[$service->id] ?? 1 }}
+                                                                </span>
+
+                                                                <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
+                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+
+                                                                <!-- Hidden input to bind the quantity -->
+                                                                <input type="hidden" wire:model="quantity.{{ $service->id }}">     
+                                                        </div>
+                                                    </div>
+                                        
+
+                                            {{-- Add/Remove Button --}}
+                                            @php
+                                                $inCart = collect($cart)->contains(function ($item) use ($service) {
+                                                    return $item['type'] === 'service' && $item['service_id'] == $service->id;
+                                                });
+                                            @endphp
+                                            <button wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
+                                                    class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700' }} text-white rounded text-sm font-semibold uppercase transition duration-150 ease-in-out">
+                                                {{ $inCart ? 'Remove' : 'Add' }}   
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center gap-2 mt-6">
+                                <x-button type="button" wire:click="closeModal"
+                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                    Cancel
+                                </x-button>
+                                <x-button type="button" wire:click="saveServices">
+                                    Save Changes
+                                </x-button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
 
 
                 <!-- Activity Modal -->
                 <div>
-                @if ($addActivityModal)
+                @if ($activeModal === 'activity')
                     <div id="guestModal"
                         class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                         <div
@@ -1000,6 +1087,8 @@
                                     <div
                                         class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-0 flex flex-col md:flex-row
                                         dark:bg-gray-700 dark:border-gray-600">
+
+                                        {{-- Image of the Activity --}}
                                         <div class="md:w-1/2">
                                             @if ($activity->image)
                                                 <img class="w-full h-56      object-cover" src="{{ asset('storage/' . $activity->image) }}"
@@ -1012,7 +1101,10 @@
 
                                         <div class="md:w-1/2 p-4 flex flex-col justify-between">
                                             <div>
+                                                {{-- Activity Name --}}
                                                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white"> {{ $activity->name }}</h2>
+                                              
+                                                {{-- Activity Description --}}
                                                 <p class="text-gray-600 text-sm mb-2 text-justify dark:text-gray-200">
                                                     {{-- Show more / less when description is long --}}
                                                     @if (empty($activity->description))
@@ -1032,6 +1124,8 @@
                                                         @endif
                                                     @endif
                                                 </p>
+
+                                                 {{-- Activity Amount --}}
                                                 <div class="text-lg font-semibold text-green-600 dark:text-green-300">
                                                     @if ($activity->amount == 0)
                                                         <span class="text-green-600 font-semibold">FREE</span>
@@ -1040,39 +1134,45 @@
                                                     @endif
                                                 </div>
                                             </div>
+
+
+                                            {{-------------- QUANTITY COUNTER AND ADD/REMOVE ACTIVITY BUTTONS ---------------}}
                                             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
+                                               
                                                 <div class="flex items-center gap-2">
 
-                                                    <!-- Counter -->
+                                                    <!-- Quantity Counter -->
                                                     <div class="flex flex-col">
                                                         <label for="quantity-{{ $activity->id }}"
                                                             class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
 
-                                                        <!-- Counter Buttons -->
-                                                        <div class="flex items-center">
-                                                            <button type="button"
-                                                                wire:click.prevent="decrementActivity('{{ $activity->id }}')"
-                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
-                                                                -
-                                                            </button>
+                                                            <!-- Quantity Counter -->
+                                                            <div class="flex flex-col">
+                                                                <label for="quantity-{{ $activity->id }}"
+                                                                    class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
 
-                                                            <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
-                                                                {{ ($quantity[$activity->id] ?? 1) }}
-                                                            </span>
+                                                                <!-- Quantity Counter Buttons -->
+                                                                <div class="flex items-center">
+                                                                    <button wire:click="decrementItemQuantity('activity', {{ $activity->id }})"
+                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
 
-                                                
-                                                            <button type="button"
-                                                                wire:click.prevent="incrementActivity('{{ $activity->id }}')"
-                                                                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
-                                                                +
-                                                            </button>
-                                                    
-                                                        </div>
+                                                                    <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                                        {{ $quantity[$activity->id] ?? 1 }}
+                                                                    </span>
 
+                                                                    <button wire:click="incrementItemQuantity('activity', {{ $activity->id }})"
+                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+
+                                                                    <!-- Hidden input to bind the quantity -->
+                                                                    <input type="hidden" wire:model="quantity.{{ $activity->id }}">
+                                                                </div>
+                                                            </div>
+                                                      
                                                     </div>
 
 
+                                                    {{-- Cart Collection for Activity --}}
                                                     @php
                                                         $cartCollection = collect($cart); // Convert array to collection
                                                         $activityInCart = $cartCollection->contains(function ($item) use ($activity) {
@@ -1080,36 +1180,45 @@
                                                         });
                                                     @endphp
 
+                                                    {{-- Add and Remove buttons for Activity --}}
+                                                    <button
+                                                        wire:click="{{ $activityInCart ? 'removeItemFromCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
+                                                        class="w-full px-4 py-2 {{ $activityInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
+                                                        wire:loading.attr="disabled"
+                                                    >
+                                                        <div class="flex items-center justify-center">
+                                                            <!-- Spinner -->
+                                                            <span
+                                                                wire:loading
+                                                                wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
+                                                                class="mr-2"
+                                                            >
+                                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                                                    <path class="opacity-75" fill="currentColor"
+                                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                                                                </svg>
+                                                            </span>
 
-                                                    @if ($activityInCart)
-                                                    @else
-                                                        <button wire:click="addActivityToCart({{ $activity->id }})" 
-                                                            class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
-                                                            wire:loading.attr="disabled">
-                                                            <div class="flex items-center justify-center">
-                                                                <!-- Spinner -->
-                                                                <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
-                                                                    class="mr-2">
-                                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                                            stroke="currentColor" stroke-width="4"></circle>
-                                                                        <path class="opacity-75" fill="currentColor"
-                                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
+                                                            <!-- Button Text -->
+                                                            <span
+                                                                wire:loading.remove
+                                                                wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
+                                                            >
+                                                                {{ $activityInCart ? 'Remove' : 'Add' }}
+                                                            </span>
+                                                        </div>
+                                                    </button>
 
-                                                                <!-- Button Text -->
-                                                                <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
-                                                                    Add Transaction
-                                                                </span>
-                                                            </div>
-                                                        </button>
-                                                    @endif
+                                    
+
 
 
                                                 </div>
+
                                             </div>
+
+
                                         </div>
                                     </div>
                                 @endforeach
@@ -1117,7 +1226,7 @@
 
                             <!-- Actions -->
                             <div class="flex justify-between items-center gap-2 mt-6">
-                                <x-button type="button" wire:click="CloseAddActivityModal"
+                                <x-button type="button" wire:click="closeModal"
                                     class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
                                     Cancel
                                 </x-button>
@@ -1154,7 +1263,8 @@
                         </div>
                     </div>
                 </div>
-            @endif
+          
+                @endif
 
 
            
@@ -1308,3 +1418,42 @@
 @else
 <p>No payments found for this invoice.</p>
 @endif --}}
+
+
+
+{{-- 
+                                                    @if ($activityInCart)
+                                                    
+                                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                            <button wire:click="RemoveActivity({{ $activity['activity_id'] }})"
+                                                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                                                Remove
+                                                            </button>
+                                                        </td>
+
+                                                    @else
+                                                        <button wire:click="addActivityToCart({{ $activity->id }})" 
+                                                            class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                                                            wire:loading.attr="disabled">
+                                                            <div class="flex items-center justify-center">
+
+                                                                <!-- Spinner -->
+                                                                <span wire:loading wire:target="addActivityToCart({{ $activity->id }})"
+                                                                    class="mr-2">
+                                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                            stroke="currentColor" stroke-width="4"></circle>
+                                                                        <path class="opacity-75" fill="currentColor"
+                                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                                        </path>
+                                                                    </svg>
+                                                                </span>
+
+                                                                <!-- Button Text -->
+                                                                <span wire:loading.remove wire:target="addActivityToCart({{ $activity->id }})">
+                                                                    Add Activity
+                                                                </span>
+
+                                                            </div>
+                                                        </button>
+                                                    @endif --}}

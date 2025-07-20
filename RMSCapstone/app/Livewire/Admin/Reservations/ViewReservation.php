@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\Receipt;
 use App\Models\Payment;
 use App\Models\Activity;
+use App\Models\Service;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -31,6 +32,7 @@ use App\Services\InvoiceService;
 use App\Services\NotificationService;
 use App\Services\ReceiptService;
 use App\Services\PaymentService;
+use App\Services\CartService;
 
 
 
@@ -50,6 +52,8 @@ class ViewReservation extends Component
     public $activities;
     public $properties;
     public $payments;
+    public $services;
+
 
     // ---------------- COMPUTATIONS ------------------ //
     public $totalAddons;
@@ -91,6 +95,12 @@ class ViewReservation extends Component
     public $activityAmount = [];
     public $status = [];
     public $activityPaymentStatus = [];
+
+    // -------------- SERVICES ------------------- // 
+
+    public $servicePaymentStatus = [];
+
+    public $availableServices;
     // ---------------- INVOICE ------------------ //
     public $sub_total;
     public $balance_due;
@@ -116,6 +126,7 @@ class ViewReservation extends Component
     protected PaymongoService $payMongoService;
     protected ReceiptService $receiptService;
     protected PaymentService $paymentService;
+    protected CartService $cartService;
 
 
     public function render()
@@ -143,6 +154,7 @@ class ViewReservation extends Component
         $this->notificationService = $services->notificationService;
         $this->receiptService = $services->receiptService;
         $this->paymentService = $services->paymentService;
+        $this->cartService = $services->cartService;
     }
 
 
@@ -151,6 +163,7 @@ class ViewReservation extends Component
     public function mount(Transaction $transaction)
     {
 
+        // Loads all transaction-related relationships
         $data = $this->loader->load($transaction);
         $this->transaction = $data['transaction'];
         $this->transactionUser = $data['transactionUser'];
@@ -162,87 +175,84 @@ class ViewReservation extends Component
         $this->totalRooms = $data['totalRooms'];
         $this->totalAddons = $data['totalAddons'];
 
-        // Set default dates for payment
+        // Sets default dates for payment
         $now = Carbon::now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
 
+        // Retrieves all activities (Code Suggestion: Return a model accessor for available activities)
         $this->availableActivities = Activity::all();
+        $this->availableServices = Service::all();
     }
 
     /**
-     * ------------------------- ACTIVITY CART MANAGEMENT -------------------------------
-     * 
-     * Handles activity cart management such as adding, removing, and updating quantities.
+     * ----------------------------- ITEM CART MANAGEMENT ------------------------------
      *
-     * These methods interact with the activity cart:
-     * - `addActivityToCart`: Adds an activity to the cart using the ActivityCartService.
-     * - `removeFromCart`: Removes either an activity or a room from the cart.
-     * - `incrementActivity`: Increases the quantity of a selected activity in the cart.
-     * - `decrementActivity`: Decreases the quantity of a selected activity (minimum of 1).
+     * Manages the cart functionality for different item types (e.g., services, activities).
      *
-     * The cart is stored in `$this->cart` and synced with the UI in real time.
-     * Quantity per activity is tracked using `$this->quantity[activityId]`.
-     * 
-     * ----------------------------------------------------------------------------------
+     * Core responsibilities:
+     * - `addItemToCart`: Adds an item (e.g., activity or service) to the cart using CartService.
+     * - `removeItemFromCart`: Removes a specific item from the cart based on its type and ID.
+     * - `incrementItemQuantity`: Increases the quantity of a given item in the cart.
+     * - `decrementItemQuantity`: Decreases the quantity (with a minimum limit of 1).
+     *
+     * State Management:
+     * - Cart contents are stored in `$this->cart` and synced with the UI.
+     * - Item quantities are managed through `$this->quantity[itemId]`.
+     * - Status and payment status are also handled and passed to the CartService.
+     *
+     * ---------------------------------------------------------------------------------
      */
     public function toggleActivityDescription($activityId)
     {
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
-    public function addActivityToCart($activityId)
+    public function addItemToCart($type, $itemId)
     {
-        // Clears any previous validation errors before processing the new request
-        $this->resetErrorBag();
-
-        // Attempt to add the selected activity to the cart using the ActivityCartService
-        // Pass in the current cart and relevant form data (quantity, status, payment status)
-        $newActivityInCart = $this->activityCartService->addActivity(
-            $this->cart, // Pass as array or object as required by the service
-            $activityId,
+        $newCart = $this->cartService->addItem(
+            $type,
+            $itemId,
+            $this->cart,
             $this->quantity,
             $this->status,
             $this->activityPaymentStatus
         );
 
-        // If the activity is already in the cart, stop and show an error message
-        if ($newActivityInCart === false) {
-            $this->addError('cart', 'This activity is already in the cart.');
+        if ($newCart === false) {
+            $this->addError('cart', 'This item is already in the cart.');
             return;
         }
 
-        // If the activity was added successfully, update the cart with the new data
-        $this->cart = $newActivityInCart;
+        $this->cart = $newCart;
     }
 
-    public function removeFromCart($type, $itemId)
+    public function removeItemFromCart($type, $itemId)
     {
-        // Remove from cart if item type is 'Activity'
-        if ($type === 'activity') {
-            $this->cart = $this->activityCartService->removeActivity($this->cart, $itemId);
+        $this->cart = $this->cartService->removeItem($type, $itemId, $this->cart);
+    }
+
+    public function incrementItemQuantity($type, $itemId)
+    {
+        if (!isset($this->quantity[$itemId])) {
+            $this->quantity[$itemId] = 1;
         }
 
-        // Remove from cart if item type is 'Room'
-        if ($type == 'room') {
-            $this->cart = $this->roomCartService->removeRoom($this->cart, $itemId);
+        $newQuantity = $this->quantity[$itemId] + 1;
+        $this->quantity[$itemId] = $newQuantity;
+
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
+    }
+
+    public function decrementItemQuantity($type, $itemId)
+    {
+        if (!isset($this->quantity[$itemId])) {
+            $this->quantity[$itemId] = 1;
         }
-    }
 
-    public function incrementActivity($activityId)
-    {
-        $currentQuantity = $this->quantity[$activityId] ?? 1;
-        $newQuantity = $currentQuantity + 1;
-        $this->quantity[$activityId] = $newQuantity;
+        $newQuantity = max(1, $this->quantity[$itemId] - 1);
+        $this->quantity[$itemId] = $newQuantity;
 
-        $this->activityTransactionService->updateActivityQuantity($activityId, $newQuantity, $this->transaction);
-    }
-
-    public function decrementActivity($activityId)
-    {
-        $newQuantity = max(1, ($this->quantity[$activityId] ?? 1) - 1);
-        $this->quantity[$activityId] = $newQuantity;
-
-        $this->activityTransactionService->updateActivityQuantity($activityId, $newQuantity, $this->transaction);
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
     }
 
 
@@ -270,7 +280,7 @@ class ViewReservation extends Component
 
         $this->recalculateInvoice();
         $this->cart = [];
-        $this->addActivityModal = false;
+        $this->activeModal = false;
     }
 
     public function deleteActivity($pivotId)
@@ -285,14 +295,19 @@ class ViewReservation extends Component
             'activityQuantity' => 'required|integer|min:1',
         ]);
 
+        // Passes the value from editActivity() to update the quantity
         try {
+
             $this->activityTransactionService->updateActivityQuantity(
                 $this->editingActivityId,
                 $this->activityQuantity,
                 $this->transaction
             );
 
+            // Recalculate all amounts in invoice
             $this->recalculateInvoice();
+
+            // Closes the modal
             $this->showEditActivityModal = false;
             $this->dispatch('activity-updated');
         } catch (\Exception $e) {
@@ -312,6 +327,13 @@ class ViewReservation extends Component
             $this->activityQuantity = $pivot->quantity;
             $this->showEditActivityModal = true;
         }
+    }
+
+
+    public function saveServices()
+    {
+        $this->resetErrorBag();
+        dd($this->cart);
     }
 
 
@@ -442,14 +464,17 @@ class ViewReservation extends Component
         )->get();
 
         // Merge all necessary data for the PDF and email
-        $data = array_merge([
-            'receipt' => $this->receipt,
-            'invoice' => $this->invoice,
-            'transaction' => $this->transaction,
-            'transactionUser' => $this->transactionUser,
-            'properties' => $properties,
-            'activities' => $activities,
-        ], $brandingService->getBrandingData());
+        $data = array_merge(
+            [
+                'receipt' => $this->receipt,
+                'invoice' => $this->invoice,
+                'transaction' => $this->transaction,
+                'transactionUser' => $this->transactionUser,
+                'properties' => $properties,
+                'activities' => $activities,
+            ],
+            $brandingService->getBrandingData()
+        );
 
         // Generate the receipt PDF using a Blade view
         $pdf = Pdf::loadView('admin.pdf.reservations.receipts.officialReceipt', $data);
@@ -691,19 +716,24 @@ class ViewReservation extends Component
         $this->createPaymentModal = false;
     }
 
-    public function OpenAddActivityModal()
-    {
+    public $activeModal;
 
-        Log::info('Open Add Activity Modal method called.');
-        $this->addActivityModal = true;
+    public function openModal(string $modalType)
+    {
+        Log::info("Open modal: $modalType");
+        $this->activeModal = $modalType;
     }
 
-    public function CloseAddActivityModal()
+    public function closeModal()
     {
+        $this->activeModal = '';
 
-        Log::info('Close Add Activity Modal called.');
-        $this->addActivityModal = false;
+        // Resets the input quantity
+        $this->quantity = [];
+        $this->cart = [];
     }
+
+
 
 
     // --------------------- DATABASE INSERTION --------------------------- // 
@@ -728,12 +758,18 @@ class ViewReservation extends Component
             'invoice'       => $this->invoice,
             'transaction'   => $this->transaction,
             'amount_paid'   => $this->amount_paid,
-            'payment_type'  => $this->payment_type,
+            'payment_type'    => $this->payment_type,
+            'mode_of_payment'  => 'cash',
             'payment_date'  => $this->payment_date,
             'notes'         => $this->notes,
+            'payment_status' => 'completed',
+            'currency'         => 'PHP',
+            'verified_at'      => now(),
         ]);
 
+        // Change the payment status of the items
         $this->updatePaymentStatus();
+        $this->recalculateInvoice();
 
         $this->reset([
             'amount_paid',
