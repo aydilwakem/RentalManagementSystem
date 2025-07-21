@@ -101,7 +101,7 @@ class ViewReceipt extends Component
     }
 
     // Confirm Receipt
-    public function confirmReceipt()
+    public function confirmReceipt(PaymentService $paymentService)
     {
         $this->validate([
             'amount_paid' => 'required|numeric|min:0|max:1000000.00',
@@ -110,7 +110,7 @@ class ViewReceipt extends Component
 
         try {
             $this->paymentService->confirmUploadedPaymentReceipt($this->payment, (float) $this->amount_paid, $this->payment_type);
-            $this->updatePaymentStatus();
+            $this->updatePaymentStatus($paymentService);
         } catch (\Exception $e) {
             Log::error('Confirm Receipt Failed: ' . $e->getMessage());
             session()->flash('error', 'Failed to confirm receipt.');
@@ -144,27 +144,11 @@ class ViewReceipt extends Component
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }
 
-    public function updatePaymentStatus()
+    public function updatePaymentStatus(PaymentService $paymentService)
     {
 
-        // Update unpaid activities to 'paid'
-        DB::table('transaction_activities')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
+        $paymentService->markAllUnpaidItemsAsPaid($this->transaction);
 
-        // Update unpaid properties (rooms) to 'paid'
-        DB::table('transaction_properties')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        Log::info("All unpaid items for transaction {$this->transaction->id} marked as paid.");
+        $this->transaction->load('activities', 'properties', 'services');
     }
 }

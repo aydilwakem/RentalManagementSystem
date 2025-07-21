@@ -23,9 +23,14 @@ use App\Models\GuestType;
 use App\Models\PromoCode;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use App\Services\CartService;
+use App\Services\ServiceBag;
 
 class ReservationForm extends Component
 {
+
+    protected CartService $cartService;
+    public $paymentStatus = [];
     public $reservation_type_id = 2; // This reservation is for Rooms
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
     public $reservation_source = 'WebApp';
@@ -133,6 +138,11 @@ class ReservationForm extends Component
     public $errorMessage;
     public $promoDiscount;
     public $promo_discount_amount;
+
+    public function boot(ServiceBag $services)
+    {
+        $this->cartService = $services->cartService;
+    }
 
 
 
@@ -657,6 +667,8 @@ class ReservationForm extends Component
 
     public function applyPromoCode()
     {
+
+        dd($this->cart);
         Log::info('applyPromoCode method called with promoCode: ' . $this->promoCode);
 
         $this->reset(['discountMessage', 'errorMessage']);
@@ -799,71 +811,73 @@ class ReservationForm extends Component
      * @param int $roomId The ID of the room to be added to the cart.
      * @return void This method does not return any value but modifies the cart.
      */
-
     public function addRoomToCart($roomId)
     {
-        // Log::info('PHP ini loaded: ' . php_ini_loaded_file());
-        // Log::info('curl.cainfo: ' . ini_get('curl.cainfo'));
         Log::info('addRoomToCart method called');
 
-        // Resets any previous error messages
         $this->resetErrorBag();
 
-        // Check if check-in and check-out dates are provided
+        // Validate date input
         if (!$this->check_in_date || !$this->check_out_date) {
             $this->addError('cart', 'Please select check-in and check-out dates before adding a room.');
-            return; // Exit the function if dates are not set
+            return;
         }
 
-        // Find the room using the provided roomId, or fail if it doesn't exist
         $room = Property::findOrFail($roomId);
 
-        // Get the dynamic rate based on check-in/check-out
-        $rate = $this->getDynamicRate($room);
-        // dd('Rate used for cart:', $rate);
-
-        // Check if the room is already in the cart
+        // Prevent duplicates
         foreach ($this->cart as $item) {
             if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
                 $this->addError('cart', 'This room is already in the cart.');
-                return; // Exit the function to prevent adding a duplicate room
+                return;
             }
         }
 
+        // Gather required data
+        $rate = $this->getDynamicRate($room);
         $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
         $stayDuration = $this->getStayDurationProperty();
         $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
         $roomAmount = $rate['amount'] * $stayDuration;
-        $roomRateName = $rate['name'];
-        $rate_id = $rate['rate_id'];
-
         $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
-        $this->cart[] = [
-            'type' => 'room',
-            'room_id' => $room->id,
-            'room_name' => $room->name_number,
-            'extra_guest' => $extraGuests,
-            'days' => $stayDuration,
-            'adults' => $adults,
-            'kids' => $kids,
-            'roomAmount' => $roomAmount, // base rate * days
-            'roomRateName' => $roomRateName,
-            'rate_id' => $rate_id,
-            'extra_charge' => $extraCharge, // extra_guest * extra_person_charge * days
-            'total_amount' => $roomAmount + $extraCharge,
+        // Prepare the context data for CartService
+        $context = [
+            'room_name'     => $room->name_number,
+            'extra_guest'   => $extraGuests,
+            'days'          => $stayDuration,
+            'adults'        => $adults,
+            'kids'          => $kids,
+            'roomAmount'    => $roomAmount,
+            'roomRateName'  => $rate['name'],
+            'rate_id'       => $rate['rate_id'],
+            'extra_charge'  => $extraCharge,
+            'total_amount'  => $roomAmount + $extraCharge,
         ];
 
-        // Optional debugging line to inspect the cart's content (can be removed in production)
-        // dd($this->cart);
+        // Add item using cart service
+        $added = $this->cartService->addItem(
+            'room',
+            $roomId,
+            $this->cart,
+            $this->quantity,
+            $this->status,
+            $this->paymentStatus,
+            $context
+        );
 
-        // Call a method to compute the total number of people (pax) in the cart after adding the room
+        if (!$added) {
+            $this->addError('cart', 'Failed to add room to cart.');
+            return;
+        }
+
+        // Post-processing
         $this->computeTotalPax();
-
-        // Refresh room list with updated dynamic rates
         $this->getAvailableRooms();
     }
+
+
 
 
     /**
@@ -877,78 +891,49 @@ class ReservationForm extends Component
      * @param int $activityId The ID of the activity to be added to the cart.
      * @return void This method modifies the cart but does not return any value.
      */
-    public function addActivityToCart($activityId)
+
+
+    public function addItemToCart($type, $itemId)
     {
-        // Resets any previous error messages
-        $this->resetErrorBag();
+        $newCart = $this->cartService->addItem(
+            $type,
+            $itemId,
+            $this->cart,
+            $this->quantity,
+            $this->status,
+            $this->paymentStatus
+        );
 
-        // Find the activity using the provided activityId, or fail if it doesn't exist
-        $activity = Activity::findOrFail($activityId);
-
-        // If the activity is already in the cart, show an error and return
-        foreach ($this->cart as $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $this->addError('cart', 'This activity is already in the cart.');
-                return; // Exit the function to avoid adding the same activity again
-            }
+        if ($newCart === false) {
+            $this->addError('cart', 'This item is already in the cart.');
+            return;
         }
 
-        // Calculate the total amount for the activity based on the quantity
-        $quantity = (int) ($this->quantity[$activityId] ?? 1); // Default to 1 if not set
-        $activityAmount = $activity->amount * $quantity; // Calculate the total amount for the activity
-        $activitystatus = $this->status[$activityId] = 'pending'; // Set the status of the activity to 'pending'
-
-        // Add the activity to the cart if it isn't already present
-        $this->cart[] = [
-            'type' => 'activity', // Define the type as 'activity'
-            'activity_id' => $activity->id, // Set the activity ID from the activity object
-            'activity_name' => $activity->name, // Set the activity name
-            'quantity' => $quantity, // Set the quantity from the input or default to 1
-            'amount' => $activityAmount, // Set the calculated amount for the activity
-            'status' => $activitystatus, // Set the status of the activity
-        ];
-
-        // $this->computeTotalAmount();
+        $this->cart = $newCart;
     }
 
-    public function incrementActivity($activityId)
+    public function incrementItemQuantity($type, $itemId)
     {
-        $activity = Activity::find($activityId);
-        if (!$activity) return;
-
-        // Get the current quantity or default to 1
-        $currentQuantity = $this->quantity[$activityId] ?? 1;
-
-        // Check if the current quantity is less than total_pax before incrementing
-        if ($currentQuantity < $this->total_pax) {
-            $this->quantity[$activityId] = $currentQuantity + 1;
-
-            foreach ($this->cart as $index => $item) {
-                if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                    $quantity = $this->quantity[$activityId];
-                    $this->cart[$index]['quantity'] = $quantity;
-                    $this->cart[$index]['amount'] = $activity->amount * $quantity;
-                }
-            }
+        if (!isset($this->quantity[$itemId])) {
+            $this->quantity[$itemId] = 1;
         }
+
+        $newQuantity = $this->quantity[$itemId] + 1;
+        $this->quantity[$itemId] = $newQuantity;
+
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
     }
 
-    public function decrementActivity($activityId)
+    public function decrementItemQuantity($type, $itemId)
     {
-        $activity = Activity::find($activityId);
-        if (!$activity) return;
-
-        // Decrease the quantity, but prevent going below 1
-        $this->quantity[$activityId] = max(1, ($this->quantity[$activityId] ?? 1) - 1);
-
-        // Update the cart with the new quantity and amount
-        foreach ($this->cart as $index => $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $activityId) {
-                $quantity = $this->quantity[$activityId];
-                $this->cart[$index]['quantity'] = $quantity;
-                $this->cart[$index]['amount'] = $activity->amount * $quantity;
-            }
+        if (!isset($this->quantity[$itemId])) {
+            $this->quantity[$itemId] = 1;
         }
+
+        $newQuantity = max(1, $this->quantity[$itemId] - 1);
+        $this->quantity[$itemId] = $newQuantity;
+
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
     }
 
 
@@ -1028,27 +1013,57 @@ class ReservationForm extends Component
      * @return void This method does not return any value, it modifies the cart directly.
      */
 
+    // public function removeFromCart($type, $itemId)
+    // {
+
+    //     Log::info('removeFromCart method called');
+
+    //     // Filter the cart items to exclude the one with the matching type and ID
+    //     $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
+    //         if ($type === 'activity') {
+    //             return $item['type'] !== 'activity' || $item['activity_id'] != $itemId;
+    //         }
+
+    //         // If the type is 'room', filter out the matching room ID
+    //         if ($type === 'room') {
+    //             return $item['type'] !== 'room' || $item['room_id'] != $itemId;
+    //         }
+
+    //         return true; // Fallback case (this should rarely be hit)
+    //     });
+
+    //     // Reindex the array after filtering to ensure keys are sequential
+    //     $this->cart = array_values($this->cart);
+
+    //     // Recalculate necessary values
+    //     $this->computeTotalPax();
+    //     $this->computeTotalAmount();
+    //     $this->getAvailableRooms();
+
+    //     // Check if there are no "room" items left in the cart
+    //     $hasRoomItems = collect($this->cart)->contains(function ($item) {
+    //         return $item['type'] === 'room';
+    //     });
+
+
+    //     // If there are no rooms in the cart, reset to the first step
+    //     if (!$hasRoomItems) {
+    //         $this->cart = [];
+    //         $this->currentStep = 1; // Go back to the first step
+    //         $this->promoCode = '';
+    //         $this->promoDiscount = 0;
+    //         $this->discountMessage = null;
+    //         $this->errorMessage = null;
+    //         // session()->flash('error', 'No rooms left in your cart. Returning to the first step.');
+    //     }
+    // }
+
     public function removeFromCart($type, $itemId)
     {
-
         Log::info('removeFromCart method called');
 
-        // Filter the cart items to exclude the one with the matching type and ID
-        $this->cart = array_filter($this->cart, function ($item) use ($type, $itemId) {
-            if ($type === 'activity') {
-                return $item['type'] !== 'activity' || $item['activity_id'] != $itemId;
-            }
-
-            // If the type is 'room', filter out the matching room ID
-            if ($type === 'room') {
-                return $item['type'] !== 'room' || $item['room_id'] != $itemId;
-            }
-
-            return true; // Fallback case (this should rarely be hit)
-        });
-
-        // Reindex the array after filtering to ensure keys are sequential
-        $this->cart = array_values($this->cart);
+        // Delegate to the CartService, which internally calls the appropriate service
+        $this->cart = $this->cartService->removeItem($type, $itemId, $this->cart);
 
         // Recalculate necessary values
         $this->computeTotalPax();
@@ -1060,18 +1075,17 @@ class ReservationForm extends Component
             return $item['type'] === 'room';
         });
 
-
         // If there are no rooms in the cart, reset to the first step
         if (!$hasRoomItems) {
             $this->cart = [];
-            $this->currentStep = 1; // Go back to the first step
+            $this->currentStep = 1;
             $this->promoCode = '';
             $this->promoDiscount = 0;
             $this->discountMessage = null;
             $this->errorMessage = null;
-            // session()->flash('error', 'No rooms left in your cart. Returning to the first step.');
         }
     }
+
 
 
     // ------------------------------------------ DATABASE INSERTION -------------------------------------- //
@@ -1317,14 +1331,14 @@ class ReservationForm extends Component
             ];
         });
 
-        // Step 8: Send confirmation email
-        try {
-            Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
-            Mail::to('rmscapstone26@gmail.com')->send(new NewReservationMail($reservationData));
-        } catch (\Exception $e) {
-            logger()->error('Email send failed: ' . $e->getMessage());
-            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        }
+        // // Step 8: Send confirmation email
+        // try {
+        //     Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+        //     Mail::to('rmscapstone26@gmail.com')->send(new NewReservationMail($reservationData));
+        // } catch (\Exception $e) {
+        //     logger()->error('Email send failed: ' . $e->getMessage());
+        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // }
 
         // Step 9: Flash success message and redirect
         session()->flash('success', 'Reservation successfully submitted!');

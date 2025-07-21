@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Transaction;
+use App\Models\TransactionProperty;
 use App\Models\GuestType;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -12,11 +13,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class GuestDetail extends Model
 {
     use SoftDeletes;
-    use LogsActivity; 
+    use LogsActivity;
 
     protected $table = 'trn_guest_details';
 
-    protected $fillable = ['transaction_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'residency', 'country_of_origin'];
+    protected $fillable = ['transaction_id', 'transaction_property_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'residency', 'country_of_origin'];
 
     // ---------------------- Activity Log --------------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
@@ -33,7 +34,7 @@ class GuestDetail extends Model
             // 4.4 Optionally, you can set a custom log name for Property Model
             ->useLogName('Guest Detail');
     }
-    
+
     // ---------------------- Relationships --------------------- //
     // One Guest Detail belongs to one transaction
     public function transaction()
@@ -45,5 +46,10 @@ class GuestDetail extends Model
     public function guestType()
     {
         return $this->belongsTo(GuestType::class, 'guest_type_id');
+    }
+
+    public function transactionProperty()
+    {
+        return $this->belongsTo(TransactionProperty::class, 'transaction_property_id');
     }
 }

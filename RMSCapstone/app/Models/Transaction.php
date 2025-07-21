@@ -218,6 +218,11 @@ class Transaction extends Model
             ->orderByPivot('created_at');
     }
 
+    public function transactionProperties()
+    {
+        return $this->hasMany(TransactionProperty::class);
+    }
+
     /**
      * One transaction can have many activities.
      *
@@ -233,6 +238,15 @@ class Transaction extends Model
     {
         return $this->belongsToMany(Activity::class, 'transaction_activities')
             ->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
+            ->withTimestamps()
+            ->as('pivot')
+            ->orderByPivot('created_at');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'transaction_services')
+            ->withPivot('id', 'quantity', 'amount', 'service_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
             ->withTimestamps()
             ->as('pivot')
             ->orderByPivot('created_at');

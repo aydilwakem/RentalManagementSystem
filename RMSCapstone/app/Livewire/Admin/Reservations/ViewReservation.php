@@ -4,10 +4,13 @@ namespace App\Livewire\Admin\Reservations;
 
 use Livewire\Component;
 use App\Models\Transaction;
+use App\Models\GuestType;
 use App\Models\Receipt;
 use App\Models\Payment;
+use App\Models\TransactionProperty;
 use App\Models\Activity;
 use App\Models\Service;
+use App\Models\GuestDetail;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -28,13 +31,13 @@ use App\Services\TransactionLoader;
 use App\Services\ActivityCartService;
 use App\Services\RoomCartService;
 use App\Services\ActivityTransactionService;
+use App\Services\ServiceTransactionService;
 use App\Services\InvoiceService;
 use App\Services\NotificationService;
 use App\Services\ReceiptService;
 use App\Services\PaymentService;
 use App\Services\CartService;
-
-
+use App\Services\GuestDetailService;
 
 
 
@@ -53,6 +56,8 @@ class ViewReservation extends Component
     public $properties;
     public $payments;
     public $services;
+    public $guestTypes;
+    public $transactionProperties;
 
 
     // ---------------- COMPUTATIONS ------------------ //
@@ -94,11 +99,12 @@ class ViewReservation extends Component
     public $activity_datetime = [];
     public $activityAmount = [];
     public $status = [];
-    public $activityPaymentStatus = [];
+
+    public $paymentStatus = [];
 
     // -------------- SERVICES ------------------- // 
 
-    public $servicePaymentStatus = [];
+
 
     public $availableServices;
     // ---------------- INVOICE ------------------ //
@@ -110,15 +116,41 @@ class ViewReservation extends Component
     public $receipt;
     public $receiptNumber;
 
+    public $activeModal;
+
+    // ---------------- EDITING ------------------ //
+
     public $editingActivityId;
     public $activityQuantity;
     public $showEditActivityModal = false;
+    public $showEditGuestModal = false;
+
+
+    public $editingServiceId;
+    public $serviceQuantity;
+    public $showEditServiceModal = false;
+
+    // ---------------- GUEST EDITING FIELDS ------------------ //
+    public $editingGuestId, $editingFirstName, $editingMiddleName, $editingLastName, $editingSuffix, $editingGender, $editingResidency, $editingCountryOfOrigin, $editingGuestTypeId, $editingTransactionPropertyId;
+
+    public $guest = [
+        'first_name' => '',
+        'middle_name' => '',
+        'last_name' => '',
+        'suffix' => '',
+        'gender' => '',
+        'residency' => '',
+        'country_of_origin' => '',
+        'transaction_property_id' => '',
+        'guest_type_id' => '', // Optional if handled in service
+    ];
 
     protected ServiceBag $service;
     protected TransactionLoader $loader;
     protected ActivityCartService $activityCartService;
     protected RoomCartService $roomCartService;
     protected ActivityTransactionService $activityTransactionService;
+    protected ServiceTransactionService $serviceTransactionService;
     protected InvoiceService $invoiceService;
     protected EmailService $emailService;
     protected BrandingService $brandingService;
@@ -126,18 +158,24 @@ class ViewReservation extends Component
     protected PaymongoService $payMongoService;
     protected ReceiptService $receiptService;
     protected PaymentService $paymentService;
+    protected GuestDetailService $guestDetailService;
     protected CartService $cartService;
+
+    public $allItems = [];
 
 
     public function render()
     {
         $this->activities = $this->transaction->activities()->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status')->get();
         $this->properties = $this->transaction->properties()->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'room_rate_id')->get();
+        $this->services = $this->transaction->services()->withPivot('id', 'quantity', 'amount', 'service_datetime', 'status')->get();
 
 
         return view('livewire.admin.reservations.view-reservation', [
             'activities' => $this->activities,  // Pass activities to the view properly
             'properties' => $this->properties,  // Pass activities to the view properly
+            'services' => $this->services,
+            'transaction_properties' => $this->transactionProperties,
         ]);
     }
 
@@ -147,6 +185,7 @@ class ViewReservation extends Component
         $this->activityCartService = $services->activityCartService;
         $this->roomCartService = $services->roomCartService;
         $this->activityTransactionService = $services->activityTransactionService;
+        $this->serviceTransactionService = $services->serviceTransactionService;
         $this->invoiceService = $services->invoiceService;
         $this->emailService = $services->emailService;
         $this->brandingService = $services->brandingService;
@@ -155,6 +194,7 @@ class ViewReservation extends Component
         $this->receiptService = $services->receiptService;
         $this->paymentService = $services->paymentService;
         $this->cartService = $services->cartService;
+        $this->guestDetailService = $services->guestDetailService;
     }
 
 
@@ -162,7 +202,6 @@ class ViewReservation extends Component
 
     public function mount(Transaction $transaction)
     {
-
         // Loads all transaction-related relationships
         $data = $this->loader->load($transaction);
         $this->transaction = $data['transaction'];
@@ -171,9 +210,14 @@ class ViewReservation extends Component
         $this->guestDetails = $data['guestDetails'];
         $this->activities = $data['activities'];
         $this->properties = $data['properties'];
+        $this->services = $data['services'];
         $this->payments = $data['payments'];
         $this->totalRooms = $data['totalRooms'];
         $this->totalAddons = $data['totalAddons'];
+
+        $this->transactionProperties = TransactionProperty::with('property')
+            ->where('transaction_id', $this->transaction->id)
+            ->get();
 
         // Sets default dates for payment
         $now = Carbon::now('Asia/Manila');
@@ -182,6 +226,73 @@ class ViewReservation extends Component
         // Retrieves all activities (Code Suggestion: Return a model accessor for available activities)
         $this->availableActivities = Activity::all();
         $this->availableServices = Service::all();
+        $this->guestTypes = GuestType::all();
+
+        $this->loadAllInvoiceItems();
+    }
+
+    public function loadAllInvoiceItems()
+    {
+        $items = [];
+
+        foreach ($this->transaction->properties as $property) {
+            $items[] = [
+                'type' => 'property',
+                'name' => 'Room – ' . $property->name_number,
+                'quantity' => 1,
+                'days' => $property->pivot->days,
+                'extra_guest' => $property->pivot->extra_guest,
+                'extra_charge' => $property->pivot->extra_charge,
+                'amount' => $property->amount,
+                'total' => $property->pivot->amount,
+                'created_at' => $property->pivot->created_at,
+                'payment_status' => $property->pivot->payment_status,
+                'id' => $property->id,
+                'pivot_id' => $property->pivot->id,
+            ];
+        }
+
+        foreach ($this->transaction->activities as $activity) {
+            $items[] = [
+                'type' => 'activity',
+                'name' => $activity->name,
+                'quantity' => $activity->pivot->quantity,
+                'days' => null,
+                'extra_guest' => 0,
+                'extra_charge' => 0,
+                'amount' => $activity->amount,
+                'total' => $activity->amount * $activity->pivot->quantity,
+                'created_at' => $activity->pivot->created_at,
+                'payment_status' => $activity->pivot->payment_status,
+                'id' => $activity->id,
+                'pivot_id' => $activity->pivot->id,
+            ];
+        }
+
+        foreach ($this->transaction->services as $service) {
+            $items[] = [
+                'type' => 'service',
+                'name' => $service->name,
+                'quantity' => $service->pivot->quantity,
+                'days' => null,
+                'extra_guest' => 0,
+                'extra_charge' => 0,
+                'amount' => $service->amount,
+                'total' => $service->amount * $service->pivot->quantity,
+                'created_at' => $service->pivot->created_at,
+                'payment_status' => $service->pivot->payment_status,
+                'unit' => $service->unit,
+                'id' => $service->id,
+                'pivot_id' => $service->pivot->id,
+            ];
+        }
+
+        // Sort by created_at
+        usort($items, function ($a, $b) {
+            return $a['created_at']->timestamp <=> $b['created_at']->timestamp;
+        });
+
+        $this->allItems = $items;
     }
 
     /**
@@ -207,6 +318,8 @@ class ViewReservation extends Component
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
+
+
     public function addItemToCart($type, $itemId)
     {
         $newCart = $this->cartService->addItem(
@@ -215,7 +328,7 @@ class ViewReservation extends Component
             $this->cart,
             $this->quantity,
             $this->status,
-            $this->activityPaymentStatus
+            $this->paymentStatus
         );
 
         if ($newCart === false) {
@@ -276,17 +389,29 @@ class ViewReservation extends Component
     {
         $this->resetErrorBag();
 
+
+        // Basic validation
+        if (empty($this->cart)) {
+            $this->addError('cart', 'Please select at least one activity.');
+            return;
+        }
+
         $this->activityTransactionService->saveActivities($this->cart, $this->transaction, $this->invoice);
 
         $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+        $this->quantity = [];
         $this->cart = [];
         $this->activeModal = false;
     }
+
 
     public function deleteActivity($pivotId)
     {
         $this->activityTransactionService->deleteActivity($pivotId, $this->transaction, $this->invoice);
         $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+        session()->flash('message', 'Activity deleted successfully.');
     }
 
     public function updateActivity()
@@ -306,6 +431,7 @@ class ViewReservation extends Component
 
             // Recalculate all amounts in invoice
             $this->recalculateInvoice();
+            $this->loadAllInvoiceItems();
 
             // Closes the modal
             $this->showEditActivityModal = false;
@@ -330,12 +456,219 @@ class ViewReservation extends Component
     }
 
 
-    public function saveServices()
+    public function editGuest($guestId)
     {
-        $this->resetErrorBag();
-        dd($this->cart);
+        Log::info("Edit Guest method called.");
+
+        $guest = DB::table('trn_guest_details')->where('id', $guestId)->first();
+
+        if ($guest) {
+            $this->editingGuestId = $guestId;
+            $this->editingTransactionPropertyId = $guest->transaction_property_id;
+            $this->editingGuestTypeId = $guest->guest_type_id;
+            $this->editingFirstName = $guest->first_name;
+            $this->editingMiddleName = $guest->middle_name;
+            $this->editingLastName = $guest->last_name;
+            $this->editingSuffix = $guest->suffix;
+            $this->editingGender = $guest->gender;
+            $this->editingResidency = $guest->residency;
+            $this->editingCountryOfOrigin = $guest->country_of_origin;
+            $this->showEditGuestModal = true;
+        } else {
+            Log::warning("Guest not found for ID: $guestId");
+        }
     }
 
+    public function updateGuest()
+    {
+        $this->validate([
+            'editingFirstName' => 'required|string|max:255',
+            'editingMiddleName' => 'nullable|string|max:255',
+            'editingLastName' => 'required|string|max:255',
+            'editingSuffix' => 'nullable|string|max:255',
+            'editingGender' => 'required|in:male,female,other',
+            'editingResidency' => 'required|in:local,foreigner',
+            'editingCountryOfOrigin' => 'required|string|max:255',
+            'editingGuestTypeId' => 'required|exists:trn_guest_type,id',
+            'editingTransactionPropertyId' => 'required|exists:transaction_properties,id',
+        ]);
+
+
+        DB::table('trn_guest_details')
+            ->where('id', $this->editingGuestId)
+            ->update([
+                'first_name' => $this->editingFirstName,
+                'middle_name' => $this->editingMiddleName,
+                'last_name' => $this->editingLastName,
+                'suffix' => $this->editingSuffix,
+                'gender' => $this->editingGender,
+                'residency' => $this->editingResidency,
+                'country_of_origin' => $this->editingCountryOfOrigin,
+                'guest_type_id' => $this->editingGuestTypeId,
+                'transaction_property_id' => $this->editingTransactionPropertyId,
+                'updated_at' => now(),
+            ]);
+
+        $this->reset([
+            'editingGuestId',
+            'editingFirstName',
+            'editingMiddleName',
+            'editingLastName',
+            'editingSuffix',
+            'editingGender',
+            'editingResidency',
+            'editingCountryOfOrigin',
+            'editingGuestTypeId',
+            'editingTransactionPropertyId',
+            'showEditGuestModal',
+        ]);
+
+        $this->loadGuestDetails();
+        $this->recalculateInvoice();
+
+        session()->flash('message', 'Guest updated successfully.');
+    }
+
+    public function deleteGuest($guestId)
+    {
+        $guestDetail = GuestDetail::findOrFail($guestId);
+        $transactionProperty = $guestDetail->transactionProperty()->first();
+
+        $this->guestDetailService->deleteGuest($guestId, $this->transaction);
+
+        if ($transactionProperty) {
+            $this->recalculateTransactionProperty($transactionProperty->id);
+        }
+
+        $this->loadGuestDetails();
+        $this->recalculateInvoice();
+
+        session()->flash('message', 'Guest deleted successfully.');
+    }
+
+
+
+
+    public function saveGuest()
+    {
+        Log::info('Save Guest method called.');
+
+        $this->resetErrorBag();
+
+        $this->validate([
+            'guest.first_name' => 'required|string|max:255',
+            'guest.last_name' => 'required|string|max:255',
+            'guest.gender' => 'nullable|in:male,female',
+            'guest.transaction_property_id' => 'required|exists:transaction_properties,id',
+            'guest.guest_type_id' => 'nullable|exists:trn_guest_type,id',
+            'guest.middle_name' => 'nullable|string|max:255',
+            'guest.suffix' => 'nullable|string|max:10',
+            'guest.residency' => 'nullable|string|max:255',
+            'guest.country_of_origin' => 'nullable|string|max:255',
+        ]);
+
+        $transactionPropertyId = $this->guest['transaction_property_id'];
+
+        $data = [
+            'transaction_id' => $this->transaction->id,
+            'first_name' => $this->guest['first_name'],
+            'middle_name' => $this->guest['middle_name'] ?? null,
+            'last_name' => $this->guest['last_name'],
+            'suffix' => $this->guest['suffix'] ?? null,
+            'gender' => $this->guest['gender'] ?? null,
+            'residency' => $this->guest['residency'] ?? null,
+            'country_of_origin' => $this->guest['country_of_origin'] ?? null,
+            'guest_type_id' => $this->guest['guest_type_id'] ?? null,
+            'transaction_property_id' => $transactionPropertyId,
+        ];
+
+        $this->guestDetailService->saveGuest($data);
+
+        $this->recalculateTransactionProperty($transactionPropertyId);
+        $this->loadGuestDetails();
+        $this->recalculateInvoice();
+        $this->activeModal = false;
+    }
+
+
+
+
+
+
+    public function loadGuestDetails()
+    {
+        $this->guestDetails = GuestDetail::where('transaction_id', $this->transaction->id)->get();
+    }
+
+
+
+
+
+
+    public function saveService()
+    {
+        Log::info('Save Service method called.');
+
+        $this->resetErrorBag();
+
+        $this->serviceTransactionService->saveServices($this->cart, $this->transaction, $this->invoice);
+        $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+        $this->quantity = [];
+        $this->cart = [];
+        $this->activeModal = false;
+    }
+
+    public function deleteService($pivotId)
+    {
+
+        Log::info('Delete Service method called.');
+
+        $this->serviceTransactionService->deleteService($pivotId, $this->transaction, $this->invoice);
+        $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+    }
+
+
+    public function editService($pivotId)
+    {
+
+        Log::info("Edit Service method called.");
+
+        $pivot = DB::table('transaction_services')->where('id', $pivotId)->first();
+
+        if ($pivot) {
+            $this->editingServiceId = $pivotId;
+            $this->serviceQuantity = $pivot->quantity;
+            $this->showEditServiceModal = true;
+        }
+    }
+
+    public function updateService()
+    {
+        $this->validate([
+            'serviceQuantity' => 'required|integer|min:1',
+        ]);
+
+        // Passes the value from editService() to update the quantity
+        try {
+
+            $this->serviceTransactionService->updateServiceQuantity(
+                $this->editingServiceId,
+                $this->serviceQuantity,
+                $this->transaction
+            );
+
+            // Recalculate all amounts in invoice
+            $this->recalculateInvoice();
+
+            // Closes the modal
+            $this->showEditServiceModal = false;
+            $this->dispatch('service-updated');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
 
 
     /**
@@ -372,6 +705,34 @@ class ViewReservation extends Component
         $this->balance_due = $this->invoice->balance_due;
     }
 
+    public function recalculateTransactionProperty($transactionPropertyId)
+    {
+        $transactionProperty = TransactionProperty::with('property')->find($transactionPropertyId);
+
+        if (!$transactionProperty || !$transactionProperty->property) {
+            return;
+        }
+
+        $guestCount = GuestDetail::where('transaction_property_id', $transactionPropertyId)->count();
+        $allowedGuests = $transactionProperty->adults + $transactionProperty->kids;
+        $extraGuests = max(0, $guestCount - $allowedGuests);
+
+        $days = $transactionProperty->days ?? 1; // Fallback to 1 to avoid zero multiplication
+        $rate = $transactionProperty->property->amount;
+        $extraChargeRate = $transactionProperty->property->extra_person_charge;
+
+        $extraCharge = $extraGuests * $days * $extraChargeRate;
+        $amount = $days * $rate;
+        $totalAmount = $amount + $extraCharge;
+
+        $transactionProperty->extra_guest = $extraGuests;
+        $transactionProperty->extra_charge = $extraCharge;
+        $transactionProperty->amount = $amount;
+        $transactionProperty->total_amount = $totalAmount;
+
+        $transactionProperty->save();
+    }
+
     // ------------------------ COMPUTATIONS -------------------------- //
 
     public function computeConvenienceFeeTotal()
@@ -383,47 +744,56 @@ class ViewReservation extends Component
             ->sum('convenience_fee');
     }
 
+    public function computeRoomsTotal()
+    {
+        $properties = $this->transaction->properties ?? collect();
+
+        $roomsTotal = $properties->map(function ($property) {
+            return $property->pivot->total_amount;
+        })->sum();
+
+        return $roomsTotal;
+    }
+
+    public function computeActivitiesTotal()
+    {
+        $activities = $this->transaction->activities ?? collect();
+
+        $activitiesTotal = $activities->map(function ($activity) {
+            return $activity->pivot->quantity * $activity->amount;
+        })->sum();
+
+        return $activitiesTotal;
+    }
+
     public function computeBaseSubtotal()
     {
         $activities = $this->transaction->activities ?? collect();
         $properties = $this->transaction->properties ?? collect();
+        $services = $this->transaction->services ?? collect();
 
         $activitiesTotal = $activities->map(function ($activity) {
             return $activity->pivot->quantity * $activity->amount;
+        })->sum();
+
+        $servicesTotal = $services->map(function ($service) {
+            return $service->pivot->quantity * $service->amount;
         })->sum();
 
         $roomsTotal = $properties->map(function ($property) {
             return $property->pivot->total_amount;
         })->sum();
 
-        return $activitiesTotal + $roomsTotal;
+        return $activitiesTotal + $roomsTotal + $servicesTotal;
     }
 
-    public function updatePaymentStatus()
+    public function updatePaymentStatus(PaymentService $paymentService)
     {
-        // Update unpaid activities to 'paid'
-        DB::table('transaction_activities')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
+        $paymentService->markAllUnpaidItemsAsPaid($this->transaction);
 
-        // Update unpaid properties (rooms) to 'paid'
-        DB::table('transaction_properties')
-            ->where('transaction_id', $this->transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        // Optional: reload fresh data
-        $this->transaction->load('activities', 'properties');
-
-        Log::info("All unpaid items for transaction {$this->transaction->id} marked as paid.");
+        $this->transaction->load('activities', 'properties', 'services');
     }
+
 
 
     /**
@@ -716,8 +1086,6 @@ class ViewReservation extends Component
         $this->createPaymentModal = false;
     }
 
-    public $activeModal;
-
     public function openModal(string $modalType)
     {
         Log::info("Open modal: $modalType");
@@ -768,7 +1136,7 @@ class ViewReservation extends Component
         ]);
 
         // Change the payment status of the items
-        $this->updatePaymentStatus();
+        $this->updatePaymentStatus($paymentService);
         $this->recalculateInvoice();
 
         $this->reset([

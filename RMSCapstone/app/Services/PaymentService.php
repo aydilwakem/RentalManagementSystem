@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Payment;
+use App\Models\Transaction;
 use App\Mail\ReceiptRejectedMail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class PaymentService
@@ -29,54 +31,6 @@ class PaymentService
             'payment_type' => $payment->payment_type,
         ];
     }
-
-    // public function create(array $data)
-    // {
-    //     Log::info('Creating payment via PaymentService.');
-
-    //     $invoice = $data['invoice'];
-    //     $transaction = $data['transaction'];
-
-    //     // Create payment
-    //     Payment::create([
-    //         'invoice_id'       => $invoice->id,
-    //         'amount_paid'      => $data['amount_paid'],
-    //         'mode_of_payment'  => 'cash',
-    //         'payment_type' => $data['payment_type'] ?? null,
-    //         'payment_date'     => $data['payment_date'] ?? null,
-    //         'payment_status'   => 'completed',
-    //         'notes'            => $data['notes'] ?? null,
-    //         'currency'         => 'PHP',
-    //         'verified_at'      => now(),
-    //     ]);
-
-    //     // Update invoice
-    //     $newAmountPaid = $invoice->amount_paid + $data['amount_paid'];
-    //     $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
-
-    //     $invoice->update([
-    //         'amount_paid'  => $newAmountPaid,
-    //         'balance_due'  => $newBalanceDue,
-    //     ]);
-
-    //     if ($newBalanceDue === 0) {
-    //         $invoice->update([
-    //             'invoice_status' => 'completed',
-    //             'completed_at'   => now(),
-    //         ]);
-    //     }
-
-    //     // Update transaction status
-    //     if (
-    //         in_array($transaction->transaction_status, ['pending', 'reserved']) &&
-    //         $newAmountPaid >= $transaction->deposit_amount
-    //     ) {
-    //         $transaction->update(['transaction_status' => 'receipt_verified']);
-    //     }
-    // }
-
-
-
 
     public function create(array $data)
     {
@@ -137,7 +91,6 @@ class PaymentService
         return $payment;
     }
 
-
     public function confirmUploadedPaymentReceipt(Payment $payment, float $amountPaid, string $paymentType): void
     {
         $invoice = $payment->invoice;
@@ -196,5 +149,37 @@ class PaymentService
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
         ]));
+    }
+
+    public function markAllUnpaidItemsAsPaid(Transaction $transaction): void
+    {
+        // Update unpaid activities
+        DB::table('transaction_activities')
+            ->where('transaction_id', $transaction->id)
+            ->where('payment_status', 'unpaid')
+            ->update([
+                'payment_status' => 'paid',
+                'updated_at' => now(),
+            ]);
+
+        // Update unpaid properties
+        DB::table('transaction_properties')
+            ->where('transaction_id', $transaction->id)
+            ->where('payment_status', 'unpaid')
+            ->update([
+                'payment_status' => 'paid',
+                'updated_at' => now(),
+            ]);
+
+        // Update unpaid services
+        DB::table('transaction_services')
+            ->where('transaction_id', $transaction->id)
+            ->where('payment_status', 'unpaid')
+            ->update([
+                'payment_status' => 'paid',
+                'updated_at' => now(),
+            ]);
+
+        Log::info("All unpaid items for transaction {$transaction->id} marked as paid.");
     }
 }
