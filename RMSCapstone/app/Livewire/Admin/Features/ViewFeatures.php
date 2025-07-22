@@ -9,7 +9,7 @@ use Livewire\WithPagination;
 
 class ViewFeatures extends Component
 {
-    //Declarations for pagination and sorting
+    //---------------- Declarations ----------- //
     use WithPagination;
 
     #[Url(history: true)]
@@ -24,10 +24,11 @@ class ViewFeatures extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
-    //Public declaration for confirmation modal
+    //------------------ Modals ---------------- //
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false;
     public $selectedFeatureId = null;
+    public $cannotDeleteItem = false;
 
 
     //public declaration for bulk actions
@@ -60,9 +61,30 @@ class ViewFeatures extends Component
     }
 
     public function deleteSelectedRows(){
+       try {
+        $features = PropertyFeature::whereIn('id', $this->selectedRows)->get();
+
+        //Check for active
+        foreach ($features as $feature) {
+            if ($feature->is_active) {
+                $this->cannotDeleteItem = true;
+                $this->confirmBulkDelete = false;
+                return;
+            }
+        }
+
+        // Bulk Delete
         PropertyFeature::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected features got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e;
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -97,6 +119,13 @@ class ViewFeatures extends Component
     {
         $feature = PropertyFeature::find($this->selectedFeatureId);
 
+        if ($feature->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
+            return;
+        }
+        
+        try{
         if ($feature) {
             if ($this->confirmItemDelete) {
                 PropertyFeature::find($this->confirmItemDelete)?->delete();
@@ -121,6 +150,13 @@ class ViewFeatures extends Component
                 session()->flash('message', 'Feature successfully deleted!');
             }
         }
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
+        }
+    }
     }
 
     /**

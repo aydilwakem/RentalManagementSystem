@@ -50,8 +50,10 @@ class CreateProperty extends Component
 
     public function mount()
     {
-        //only mount house features
-        $this->features = PropertyFeature::where('property_type_id', 2)->get();
+        //only mount active house features
+        $this->features = PropertyFeature::where('property_type_id', 2)
+        ->where('is_active', true)
+        ->get();
     }
 
     public function removeImage($index)

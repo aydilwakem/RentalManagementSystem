@@ -14,8 +14,17 @@ class PropertyFeature extends Model
     use HasFactory; 
     use LogsActivity; 
 
-    protected $fillable = ['name', 
-    'property_type_id'];
+    protected $fillable = [
+        'name', 
+        'property_type_id', 
+        'quanity',
+        'property_feature_type',  
+        'is_active'];
+
+    protected $casts = [
+        'quantity'     => 'integer',
+        'is_active'    => 'boolean',
+    ];
 
     // ------------------- Activity Logs ---------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 

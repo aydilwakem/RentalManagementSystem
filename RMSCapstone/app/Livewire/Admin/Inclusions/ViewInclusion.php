@@ -11,6 +11,7 @@ class ViewInclusion extends Component
 {
     public PropertyFeature $inclusion;
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -31,6 +32,12 @@ class ViewInclusion extends Component
 
         if (!$inclusion) {
             session()->flash('error', 'Inclusion not found!');
+            return;
+        }
+
+        if ($inclusion->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
             return;
         }
 

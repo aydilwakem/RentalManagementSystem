@@ -14,6 +14,9 @@ class EditInclusion extends Component
     public $name;
     public $inclusionId;
     public $property_type_id; 
+    public $quantity;
+    public $property_feature_type; 
+    public $is_active = false;
 
     //Public declaration of modal
     public $confirmEditItem = false;
@@ -30,6 +33,9 @@ class EditInclusion extends Component
         $this->inclusion = $inclusion;
         $this->inclusionId = $inclusion->id;
         $this->name = $inclusion->name;
+        $this->quantity = $inclusion->quantity; 
+        $this->property_feature_type = $inclusion->property_feature_type;
+        $this->is_active = $inclusion->is_active; 
     }
 
     /**
@@ -45,6 +51,9 @@ class EditInclusion extends Component
         try {
             $this->validate([
                 'name' => 'required|string|max:255',
+                'quantity' => 'required|numeric|min:1|max:30',
+                'property_feature_type' => 'required|in:appliance,equipment,utility,entertainment,service,fixture',
+                'is_active' => 'required|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -56,6 +65,9 @@ class EditInclusion extends Component
         $this->inclusion->update([
             'name' => $this->name,
             'property_type_id' => 3, //Type 3 for event hall 
+            'quantity' => $this->quantity, 
+            'property_feature_type' => $this->property_feature_type, 
+            'is_active' => $this->is_active
         ]);
 
         session()->flash('message', 'Inclusion successfully updated!');

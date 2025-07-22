@@ -11,6 +11,7 @@ class ViewAmenity extends Component
 {
     public PropertyFeature $amenity;
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -31,6 +32,12 @@ class ViewAmenity extends Component
 
         if (!$amenity) {
             session()->flash('error', 'Amenity not found!');
+            return;
+        }
+
+        if ($amenity->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
             return;
         }
 
