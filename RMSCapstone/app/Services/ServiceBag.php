@@ -19,5 +19,8 @@ class ServiceBag
         public PaymentService $paymentService,
         public CartService $cartService,
         public GuestDetailService $guestDetailService,
+        public RoomRateService $roomRateService,
+        public RoomAvailabilityService $roomAvailabilityService,
+        public PromoCodeService $promoCodeService,
     ) {}
 }

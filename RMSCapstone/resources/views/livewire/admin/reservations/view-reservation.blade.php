@@ -221,6 +221,11 @@
                         <div>{{ $transaction->pax }}</div>
                     </div>
 
+                     <div>
+                        <strong>Total Pets:</strong>
+                       <div>{{ $transaction->guestPets->sum('pet_count') }}</div>
+                    </div>
+
                     <div>
                         <strong>Subtotal:</strong>
                         <div>₱{{ number_format($transaction->sub_total, 2) }}</div>

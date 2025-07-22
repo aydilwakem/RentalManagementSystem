@@ -127,6 +127,78 @@
                     </div>
                 </div>
 
+
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Are you bringing in pets?
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-700 dark:text-gray-200">No</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets" value="1"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
+                            </div>
+                            <div
+                                class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                            </div>
+                        </label>
+                        <span class="text-gray-700 dark:text-gray-200">Yes</span>
+
+                        <!-- Tooltip -->
+                        <div class="relative group">
+                            <svg class="w-4 h-4 text-blue-500 cursor-pointer" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 2a8 8 0 108 8 8 8 0 00-8-8zm.93 12.41h-1.86v-1.86h1.86zm0-3.72h-1.86V7.59h1.86z" />
+                            </svg>
+                            <div
+                                class="absolute z-10 hidden w-72 p-2 mt-2 text-sm text-white bg-gray-800 rounded shadow-lg group-hover:block">
+                                *Please note that there is a pet fee of PHP300/pet/night and we require that pets are
+                                vaccinated and on a leash when outdoors for safety of all guests. Kindly send a soft
+                                copy of the vaccination card @thecanopyfarmph.
+                            </div>
+                        </div>
+                    </div>
+                    @error('bringingPets')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                @if ($bringingPets)
+                    <div class="mt-4">
+                        <label for="pet_count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            How many pets?
+                        </label>
+                        <input type="number" id="pet_count" wire:model.live="pet_count" min="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="e.g., 2">
+                        @error('pet_count')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    @for ($i = 0; $i < $pet_count; $i++)
+                        <div class="mt-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Breed for Pet #{{ $i + 1 }}
+                            </label>
+                            <input type="text" wire:model="pet_breed.{{ $i }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                placeholder="e.g., Labrador, Shih Tzu">
+                            @error("pet_breed.$i")
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endfor
+
+                @endif
+
+
+
+
+
+
                 <!-- Additional Guests Section (Optional) -->
                 <div class="flex flex-col space-y-2 w-full">
                     <div class="font-semibold text-gray-700">
@@ -325,8 +397,7 @@
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Middle Name</label>
-                                        <input type="text" wire:model="guest_middle_name"
-                                            placeholder="Ex. Mercado"
+                                        <input type="text" wire:model="guest_middle_name" placeholder="Ex. Mercado"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         @error('guest_middle_name')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -336,8 +407,7 @@
                                     <div>
                                         <label class="block text-sm text-gray-700">Last Name <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" wire:model="guest_last_name"
-                                            placeholder="Ex. Dela Cruz"
+                                        <input type="text" wire:model="guest_last_name" placeholder="Ex. Dela Cruz"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                                         @error('guest_last_name')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -346,8 +416,7 @@
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Suffix</label>
-                                        <input type="text" wire:model="guest_suffix"
-                                            placeholder="Ex. Jr., Sr., III"
+                                        <input type="text" wire:model="guest_suffix" placeholder="Ex. Jr., Sr., III"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         @error('guest_suffix')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -406,8 +475,7 @@
                                 <div class="mt-4">
                                     <label class="block text-sm text-gray-700">Country of Origin <span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" wire:model="guest_country_of_origin"
-                                        placeholder="Ex. Philippines"
+                                    <input type="text" wire:model="guest_country_of_origin" placeholder="Ex. Philippines"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                     @error('guest_country_of_origin')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -423,14 +491,13 @@
                                     </x-ghost-button>
 
                                     <!-- Add Guest Button -->
-                                    <x-button type="button" wire:click="addMultipleGuests"
-                                        wire:loading.attr="disabled">
+                                    <x-button type="button" wire:click="addMultipleGuests" wire:loading.attr="disabled">
                                         <div class="flex items-center justify-center">
                                             <!-- Spinner -->
                                             <span wire:loading class="mr-2" wire:target="addMultipleGuests">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4"></circle>
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                                     </path>

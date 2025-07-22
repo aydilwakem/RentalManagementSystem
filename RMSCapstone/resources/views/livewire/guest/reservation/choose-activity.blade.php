@@ -95,15 +95,15 @@
 
                                 @if ($activityInCart)
                                 @else
-                                    <x-button wire:click="addItemToCart('activity', {{ $activity->id }})"
+                                    <x-button wire:click="addActivityToCart('activity', {{ $activity->id }})"
                                         wire:loading.attr="disabled"
-                                        wire:target="addItemToCart('activity', {{ $activity->id }})"
+                                        wire:target="addActivityToCart('activity', {{ $activity->id }})"
                                         class="relative h-10 w-full justify-center mt-5">
 
                                         <div class="flex items-center justify-center relative w-full">
                                             <!-- Spinner -->
                                             <span wire:loading class=" flex items-center justify-center"
-                                                wire:target="addItemToCart('activity', {{ $activity->id }})">
+                                                wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                                         stroke-width="4" />
@@ -114,7 +114,7 @@
 
                                             <!-- Button Text -->
                                             <span wire:loading.remove
-                                                wire:target="addItemToCart('activity', {{ $activity->id }})">
+                                                wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 Add Activity
                                             </span>
                                         </div>

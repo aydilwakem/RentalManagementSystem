@@ -31,6 +31,7 @@ class RoomCartService
             'rate_id'        => $context['rate_id'] ?? null,
             'extra_charge'   => $context['extra_charge'] ?? 0,
             'total_amount'   => $context['total_amount'] ?? 0,
+            'payment_status' => $context['payment_status'] ?? 'unpaid',
         ];
 
         return true;

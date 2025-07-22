@@ -25,7 +25,8 @@ class TransactionLoader
             'guestDetails',         // Guest info (if applicable)
             'properties',           // Rooms or properties included in transaction
             'activities',
-            'services',      // Additional services or activities booked
+            'services',
+            'guestPets',     // Additional services or activities booked
         ]);
 
         // Abort with 404 if invoice is missing
@@ -42,6 +43,7 @@ class TransactionLoader
             'activities' => $transaction->activities,
             'properties' => $transaction->properties,
             'services' => $transaction->services,
+            'guestPets' => $transaction->guestPets,
             'payments' => $transaction->invoice->payments ?? collect(), // fallback to empty collection
             'totalRooms' => $transaction->total_rooms,   // Uses accessor
             'totalAddons' => $transaction->total_addons, // Uses accessor

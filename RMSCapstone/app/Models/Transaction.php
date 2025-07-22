@@ -12,6 +12,7 @@ use App\Models\Property;
 use App\Models\Invoice;
 use App\Models\EventType;
 use App\Models\PromoCode;
+use App\Models\GuestPet;
 use Spatie\Activitylog\Traits\LogsActivity; // 1. Add this line to use activity Logging
 use Spatie\Activitylog\LogOptions; // 2. Import LogOptions for activity logging
 
@@ -183,6 +184,11 @@ class Transaction extends Model
     public function guestDetails()
     {
         return $this->hasMany(GuestDetail::class, 'transaction_id');
+    }
+
+    public function guestPets()
+    {
+        return $this->hasMany(GuestPet::class, 'transaction_id');
     }
 
     /**

@@ -57,6 +57,7 @@ class ViewReservation extends Component
     public $payments;
     public $services;
     public $guestTypes;
+    public $guestPets;
     public $transactionProperties;
 
 
@@ -211,6 +212,7 @@ class ViewReservation extends Component
         $this->activities = $data['activities'];
         $this->properties = $data['properties'];
         $this->services = $data['services'];
+        $this->guestPets = $data['guestPets'];
         $this->payments = $data['payments'];
         $this->totalRooms = $data['totalRooms'];
         $this->totalAddons = $data['totalAddons'];
@@ -546,9 +548,6 @@ class ViewReservation extends Component
         session()->flash('message', 'Guest deleted successfully.');
     }
 
-
-
-
     public function saveGuest()
     {
         Log::info('Save Guest method called.');
@@ -599,8 +598,6 @@ class ViewReservation extends Component
     {
         $this->guestDetails = GuestDetail::where('transaction_id', $this->transaction->id)->get();
     }
-
-
 
 
 
