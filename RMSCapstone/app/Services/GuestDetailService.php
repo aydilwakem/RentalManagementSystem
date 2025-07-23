@@ -29,6 +29,7 @@ class GuestDetailService
             'last_name' => $data['last_name'],
             'suffix' => $data['suffix'],
             'gender' => $data['gender'],
+            'birthdate' => $data['birthdate'],
             'residency' => $data['residency'],
             'country_of_origin' => $data['country_of_origin'],
         ]);

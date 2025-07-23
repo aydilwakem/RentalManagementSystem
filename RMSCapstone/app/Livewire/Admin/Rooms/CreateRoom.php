@@ -7,7 +7,8 @@ use Livewire\WithFileUploads;
 use App\Models\Property;
 use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
-use Livewire\Attributes\Rule;
+use Illuminate\Validation\Rule;
+
 
 class CreateRoom extends Component
 {
@@ -43,11 +44,11 @@ class CreateRoom extends Component
     public function mount()
     {
         $this->roomCategories = PropertyCategory::all(); // Load categories
-        
+
         //mount only active room inclusions
-       $this->features = PropertyFeature::where('property_type_id', 1)
-        ->where('is_active', true)
-        ->get();
+        $this->features = PropertyFeature::where('property_type_id', 1)
+            ->where('is_active', true)
+            ->get();
     }
 
     public function removeImage($index)
@@ -75,9 +76,19 @@ class CreateRoom extends Component
 
     public function saveRoom()
     {
+
         try {
             $this->validate([
-                'name_number' => 'required|string|max:100|unique:properties,name_number',
+                'name_number' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    Rule::unique('properties', 'name_number')
+                        ->where(function ($query) {
+                            return $query->where('property_type_id', $this->property_type_id)
+                                ->whereNull('deleted_at'); // Ignore soft-deleted properties
+                        }),
+                ],
                 'property_category_id' => 'required|exists:property_categories,id',
                 'property_type_id' => 'required|exists:property_types,id',
 
@@ -112,6 +123,7 @@ class CreateRoom extends Component
             $this->confirmCreateItem = false;
             throw $e;
         }
+
 
         if ($this->image && $this->image->isValid()) {
             $imagePath = $this->image->store('rooms', 'public');

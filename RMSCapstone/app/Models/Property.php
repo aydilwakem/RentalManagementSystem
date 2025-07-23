@@ -65,28 +65,31 @@ class Property extends Model
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly(['property_type_id',  'property_category_id',
-            'name_number',
-            'ideal_guest',
-            'capacity',
-            'max_adults',
-            'max_kids',
-            'occupancy_rules',
-            'turnover_duration',
-            'property_status',
-            'house_number',
-            'street',
-            'barangay',
-            'city_municipality',
-            'region',
-            'postal_code',
-            'country',
-            'amount',
-            'extra_charge_per_hour',
-            'extra_person_charge',
-            'image',
-            'images',
-            'description'])
+            ->logOnly([
+                'property_type_id',
+                'property_category_id',
+                'name_number',
+                'ideal_guest',
+                'capacity',
+                'max_adults',
+                'max_kids',
+                'occupancy_rules',
+                'turnover_duration',
+                'property_status',
+                'house_number',
+                'street',
+                'barangay',
+                'city_municipality',
+                'region',
+                'postal_code',
+                'country',
+                'amount',
+                'extra_charge_per_hour',
+                'extra_person_charge',
+                'image',
+                'images',
+                'description'
+            ])
             // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
@@ -114,6 +117,7 @@ class Property extends Model
             ->withPivot(
                 'adults',
                 'kids',
+                'non_chargeable_guests',
                 'extra_guest',
                 'extra_charge',
                 'amount',
@@ -207,5 +211,4 @@ class Property extends Model
     {
         return Barangay::where('PSGC_BRGY_CODE', $this->barangay)->value('PSGC_BRGY_DESC');
     }
-
 }

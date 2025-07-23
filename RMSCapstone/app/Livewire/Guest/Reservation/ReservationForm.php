@@ -510,7 +510,6 @@ class ReservationForm extends Component
     public function applyPromoCode()
     {
 
-        dd($this->pet_breed);
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
 
         $this->reset(['discountMessage', 'errorMessage']);
@@ -917,13 +916,13 @@ class ReservationForm extends Component
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // // Attempt to send confirmation emails to guest and admin
-        // try {
-        //     $emailService->sendReservationEmails($reservationData);
-        // } catch (\Exception $e) {
-        //     // If email sending fails, flash error but still continue
-        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        // }
+        // Attempt to send confirmation emails to guest and admin
+        try {
+            $emailService->sendReservationEmails($reservationData);
+        } catch (\Exception $e) {
+            // If email sending fails, flash error but still continue
+            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        }
 
         // Show success flash message
         session()->flash('success', 'Reservation successfully submitted!');
@@ -1088,8 +1087,6 @@ class ReservationForm extends Component
             ]);
         }
     }
-
-
     protected function insertGuestPetDetails(Transaction $transaction): void
     {
         if (!$this->bringingPets) {
@@ -1243,36 +1240,6 @@ class ReservationForm extends Component
             'total_amount'  => $roomAmount + $extraCharge,
         ];
     }
-    protected function makeGuestArray()
-    {
-        return [
-            'guest_first_name' => $this->guest_first_name,
-            'guest_middle_name' => $this->guest_middle_name,
-            'guest_last_name' => $this->guest_last_name,
-            'guest_suffix' => $this->guest_suffix,
-            'guest_type_id' => $this->guest_type_id,
-            'guest_gender' => $this->guest_gender,
-            'guest_residency' => $this->guest_residency,
-            'guest_country_of_origin' => $this->guest_country_of_origin,
-        ];
-    }
-    protected function resetGuestInputFields(): void
-    {
-        $this->reset([
-            'guest_first_name',
-            'guest_middle_name',
-            'guest_last_name',
-            'guest_suffix',
-            'guest_type_id',
-            'guest_gender',
-            'guest_residency',
-            'guest_country_of_origin',
-        ]);
-    }
-    protected function generateInvoiceNumber(): string
-    {
-        return 'INV-' . strtoupper(Str::random(8));
-    }
     protected function prepareReservationData(Transaction $transaction, Invoice $invoice, float $total, float $deposit): array
     {
         return [
@@ -1325,5 +1292,35 @@ class ReservationForm extends Component
                 ],
             ],
         ];
+    }
+    protected function makeGuestArray()
+    {
+        return [
+            'guest_first_name' => $this->guest_first_name,
+            'guest_middle_name' => $this->guest_middle_name,
+            'guest_last_name' => $this->guest_last_name,
+            'guest_suffix' => $this->guest_suffix,
+            'guest_type_id' => $this->guest_type_id,
+            'guest_gender' => $this->guest_gender,
+            'guest_residency' => $this->guest_residency,
+            'guest_country_of_origin' => $this->guest_country_of_origin,
+        ];
+    }
+    protected function resetGuestInputFields(): void
+    {
+        $this->reset([
+            'guest_first_name',
+            'guest_middle_name',
+            'guest_last_name',
+            'guest_suffix',
+            'guest_type_id',
+            'guest_gender',
+            'guest_residency',
+            'guest_country_of_origin',
+        ]);
+    }
+    protected function generateInvoiceNumber(): string
+    {
+        return 'INV-' . strtoupper(Str::random(8));
     }
 }

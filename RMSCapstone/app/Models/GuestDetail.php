@@ -17,7 +17,7 @@ class GuestDetail extends Model
 
     protected $table = 'trn_guest_details';
 
-    protected $fillable = ['transaction_id', 'transaction_property_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'residency', 'country_of_origin'];
+    protected $fillable = ['transaction_id', 'transaction_property_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'birthdate', 'residency', 'country_of_origin'];
 
     // ---------------------- Activity Log --------------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
@@ -26,7 +26,7 @@ class GuestDetail extends Model
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly(['transaction_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'residency', 'country_of_origin'])
+            ->logOnly(['transaction_id', 'guest_type_id', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'birthdate', 'residency', 'country_of_origin'])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

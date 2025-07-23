@@ -218,7 +218,7 @@ class Transaction extends Model
     public function properties()
     {
         return $this->belongsToMany(Property::class, 'transaction_properties')
-            ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'payment_status', 'paid_at', 'remarks')
+            ->withPivot('adults', 'kids', 'non_chargeable_guests', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'payment_status', 'paid_at', 'remarks')
             ->withTimestamps()
             ->as('pivot')
             ->orderByPivot('created_at');

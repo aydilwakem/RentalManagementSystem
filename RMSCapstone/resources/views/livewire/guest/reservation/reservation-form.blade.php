@@ -330,11 +330,16 @@
                         @endif
                     </div>
 
-                    <!-- Pet Fee Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Pet fee</div>
-                        <div class="text-lg">₱{{ number_format($this->computePetTotal(), 2) }}</div>
-                    </div>
+                   @if ($bringingPets)
+                        <!-- Pet Fee Amount -->
+                        <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                            <div class="text-lg">Pet fee</div>
+                            <div class="text-lg">₱{{ number_format($this->computePetTotal(), 2) }}</div>
+                        </div>
+                    @else
+                        <!-- Optional: fallback UI -->
+                        {{-- <div class="text-gray-500 text-sm italic">No pets included in this reservation.</div> --}}
+                    @endif
 
 
                     <!-- Subtotal Amount -->
@@ -345,12 +350,14 @@
 
                     <!-- Convenience Fee -->
                     <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Convenience Fee</div>
+                        <div class="text-lg flex items-center">
+                            Convenience Fee
+                            <span class="ml-2 text-sm text-gray-500" title="This 3% fee covers PayMongo's online payment processing charges.">
+                                ⓘ
+                            </span>
+                        </div>
                         <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                     </div>
-
-                    
-                 
 
                     <!-- Total Amount -->
                     <hr class="my-2 border-gray-200 mt-4">

@@ -99,7 +99,7 @@
                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->country_of_origin) }}</td>
                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                            {{ ucfirst(optional(optional($guestDetail->transactionProperty)->property)->name_number) }}</td>
+                                            {{ ucfirst(optional(optional($guestDetail->transactionProperty)->property)->name_number) ?? 'No assigned room' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                            
                                             <button wire:click="editGuest({{ $guestDetail->id }})"
@@ -289,6 +289,7 @@
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Adults
                                     </th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Kids</th>
+                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Infants (free)</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Stay Duration
                                     </th>
                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Extra Guests</th>
@@ -309,6 +310,8 @@
                                             {{ $property->pivot->adults ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
+                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                           {{ $property->pivot->non_chargeable_guests ?? 'N/A' }}</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
                                         <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
@@ -469,12 +472,10 @@
 
                                   @php $rowNumber = 1; @endphp
 
-                                @foreach ($allItems as $item)
+                                  @foreach ($allItems as $item)
                                     <tr>
                                         <td class="border px-4 py-2 dark:border-gray-500">{{ $rowNumber++ }}</td>
-                                        <td class="border px-4 py-2 dark:border-gray-500">
-                                            {{ $item['name'] }}
-                                        </td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $item['name'] }}</td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $item['quantity'] }}</td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             {{ $item['days'] ?? '-' }}
@@ -524,7 +525,27 @@
                                             @endif
                                         </td>
                                     </tr>
-                                @endforeach
+
+                                    @if($item['type'] === 'property' && $item['extra_guest'] > 0)
+                                    <tr class="bg-gray-50 dark:bg-gray-800 text-sm">
+                                        <td class="border px-4 py-2 dark:border-gray-500"></td>
+                                        <td class="border px-4 py-2 dark:border-gray-500 text-gray-600 dark:text-gray-300 italic text-center">
+                                            Extra Guest(s)
+                                        </td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            {{ $item['extra_guest'] }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500"> N/A </td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            ₱{{ number_format($item['extra_charge'], 2) }}
+                                        </td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            ₱{{ number_format($item['extra_guest'] * $item['extra_charge'], 2) }}
+                                        </td>
+                                        <td colspan="3" class="border px-4 py-2 text-center dark:border-gray-500"></td>
+                                    </tr>
+                                    @endif
+                                  @endforeach
 
                             </tbody>
                         </table>
@@ -1282,6 +1303,14 @@
                                 </select>
                             </div>
 
+                           <!-- Birthdate -->
+                            <div class="mb-4">
+                                <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
+                                <input type="date"
+                                    wire:model.live="guest.birthdate"
+                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
 
                             <!-- Country of Origin -->
                             <div class="mb-4">
@@ -1292,18 +1321,22 @@
 
                             <!-- Optional: Guest Type (can be hidden or locked to a default) -->
                             {{-- If you want admin to skip selecting guest type, skip this field --}}
-                            @if(auth()->user()->role !== 'admin')
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type</label>
-                                <select wire:model.defer="guest.guest_type_id"
-                                        class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="">Select Guest Type</option>
-                                    @foreach ($guestTypes as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            @endif
+                          
+                                <div class="mb-4">
+                                    <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type</label>
+                                    <select wire:model.defer="guest.guest_type_id"
+                                            class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Select Guest Type</option>
+                                        @foreach ($filteredGuestTypes as $type)
+                                            <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
+                                    <span class="text-sm text-gray-500">(Free of charge)</span>
+                                @endif
+                        
 
                             <!-- Actions -->
                             <div class="flex justify-between items-center gap-2 mt-6">
@@ -1417,6 +1450,14 @@
                             @error('editingGender') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
+                          <!-- Birthdate -->
+                            <div class="mb-4">
+                                <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
+                                <input type="date"
+                                    wire:model.live="editingBirthDate"
+                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+
                         <div class="mb-4">
                             <label class="block mb-1">Residency</label>
                             <select wire:model="editingResidency"
@@ -1435,12 +1476,12 @@
                             @error('editingCountryOfOrigin') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="mb-4">
+                      <div class="mb-4">
                             <label class="block mb-1">Guest Type</label>
                             <select wire:model="editingGuestTypeId"
                                 class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
                                 <option value="">Select</option>
-                                @foreach ($guestTypes as $type)
+                                @foreach ($filteredGuestTypes as $type)
                                     <option value="{{ $type->id }}">{{ $type->name }}</option>
                                 @endforeach
                             </select>

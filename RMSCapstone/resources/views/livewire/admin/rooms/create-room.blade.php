@@ -30,8 +30,7 @@
                         <label for="name_number"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room Name <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name_number" id="name_number" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                        <input type="text" wire:model="name_number" id="name_number" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Solah, Mercy">
                         @error('name_number')
@@ -44,8 +43,7 @@
                         <label for="property_category_id"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Category <span class="text-red-500">*</span></label>
-                        <select wire:model="property_category_id" id="property_category_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="property_category_id" id="property_category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Category</option>
                             @foreach ($roomCategories as $category)
@@ -65,8 +63,7 @@
                             <label for="ideal_guest"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Ideal
                                 Guest <span class="text-red-500">*</span></label>
-                            <input type="number" wire:model="ideal_guest" id="ideal_guest" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="number" wire:model="ideal_guest" id="ideal_guest" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('ideal_guest')
@@ -79,8 +76,7 @@
                             <label for="max_adults"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Adults <span class="text-red-500">*</span></label>
-                            <input type="number" wire:model="max_adults" id="max_adults" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="number" wire:model="max_adults" id="max_adults" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('max_adults')
@@ -93,8 +89,7 @@
                             <label for="max_kids"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                                 Kids <span class="text-red-500">*</span></label>
-                            <input type="number" wire:model="max_kids" id="max_kids" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="number" wire:model="max_kids" id="max_kids" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('max_kids')
@@ -109,8 +104,7 @@
                         <label for="turnover_duration"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Turnover
                             Duration (Hours) <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="turnover_duration" id="turnover_duration" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="number" wire:model="turnover_duration" id="turnover_duration" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 3 hours" onwheel="this.blur()" />
                         @error('turnover_duration')
@@ -123,8 +117,7 @@
                         <label for="property_status"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Status <span class="text-red-500">*</span></label>
-                        <select wire:model="property_status" id="property_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="property_status" id="property_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
@@ -136,13 +129,11 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" wire:model="amount" id="amount" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base
+                            Rate <span class="text-red-500">*</span></label>
+                        <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 2,800.00" onwheel="this.blur()" />
+                            placeholder="Ex. 2800.00" onwheel="this.blur()" />
 
                         @error('amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -155,8 +146,7 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Person Charge <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
+                        <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00" onwheel="this.blur()" />
                         @error('extra_person_charge')
@@ -174,8 +164,7 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="freebies" id="freebies" value="1"
                                     class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                     ">
                                 </div>
                                 <div
@@ -188,8 +177,7 @@
 
                     <!-- Available Amenities -->
                     <div class="sm:col-span-2">
-                        <label
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
@@ -206,54 +194,53 @@
 
                     <!-- Max Occupancy Rules -->
                     {{-- <div class=" col-span-2">
-                    <h3 class="block mb-2 text-sm font-semibold text-gray-900">Occupancy Rules</h3>
-                    <div class="mt-2 flex flex-start mb-2">
-                        <button type="button" wire:click="addRule"
-                            class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-all duration-200 text-sm">
-                            Add Rule
-                        </button>
-                    </div>
-                    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
-                        @foreach ($occupancy_rules as $index => $rule)
-                        <div class="bg-white border border-gray-200 rounded-md shadow-sm p-3">
-                            <div class="grid grid-cols-2 gap-2 sm:gap-4">
-                                <div>
-                                    <label for="adults_{{ $index }}"
-                                        class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
-                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
-                                        id="adults_{{ $index }}" min="0"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
-                                    @error("occupancy_rules.{$index}.adults")
-                                    <span class="text-red-500 text-xs">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="kids_{{ $index }}"
-                                        class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
-                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
-                                        id="kids_{{ $index }}" min="0"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
-                                    @error("occupancy_rules.{$index}.kids")
-                                    <span class="text-red-500 text-xs">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="mt-2 flex justify-end">
-                                <button type="button" wire:click="removeRule({{ $index }})"
-                                    class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-all duration-200 text-xs">
-                                    Remove
-                                </button>
-                            </div>
+                        <h3 class="block mb-2 text-sm font-semibold text-gray-900">Occupancy Rules</h3>
+                        <div class="mt-2 flex flex-start mb-2">
+                            <button type="button" wire:click="addRule"
+                                class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-all duration-200 text-sm">
+                                Add Rule
+                            </button>
                         </div>
-                        @endforeach
-                    </div>
-                </div> --}}
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                            @foreach ($occupancy_rules as $index => $rule)
+                            <div class="bg-white border border-gray-200 rounded-md shadow-sm p-3">
+                                <div class="grid grid-cols-2 gap-2 sm:gap-4">
+                                    <div>
+                                        <label for="adults_{{ $index }}"
+                                            class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
+                                        <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
+                                            id="adults_{{ $index }}" min="0"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
+                                        @error("occupancy_rules.{$index}.adults")
+                                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="kids_{{ $index }}"
+                                            class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
+                                        <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
+                                            id="kids_{{ $index }}" min="0"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
+                                        @error("occupancy_rules.{$index}.kids")
+                                        <span class="text-red-500 text-xs">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex justify-end">
+                                    <button type="button" wire:click="removeRule({{ $index }})"
+                                        class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-all duration-200 text-xs">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div> --}}
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="images"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Image(s)</label>
                         <div class="flex flex-wrap gap-4">
 
@@ -285,8 +272,8 @@
                                     wire:target="images">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -300,8 +287,8 @@
                                     wire:target="images">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -312,8 +299,8 @@
 
                             <!-- Hidden file input for image uploads -->
                             <input multiple type="file" wire:model="images" id="imageInput"
-                                accept="image/png, image/jpeg" class="hidden"
-                                @if (!$images || count($images) < 5)  @endif>
+                                accept="image/png, image/jpeg" class="hidden" @if (!$images || count($images) < 5)
+                                @endif>
 
                             @error('images.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -324,8 +311,8 @@
                         <div wire:loading wire:target="images" class="flex items-center justify-start mt-2">
                             <!-- Spinner -->
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4">
                                 </circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
