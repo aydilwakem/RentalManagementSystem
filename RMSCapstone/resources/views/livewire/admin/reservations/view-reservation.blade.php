@@ -1,13 +1,19 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View Reservation') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Reservations', 'url' => route('admin.reservations-list')],
+            [
+                'label' => 'View Reservation',
+                'url' => route('admin.view-reservation', ['transaction' => $transaction->id]),
+            ],
+        ]" />
     </x-slot>
-
-
     <div class="py-1">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 space-y-6">
 
 
             <!---------------------------- EXPORT DETAILS ---------------------------------------->
@@ -67,41 +73,63 @@
                 </h2>
                 @if ($guestDetails->isNotEmpty())
                     <div class="overflow-x-auto">
-                        <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm text-center">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Full Name</th>
-                                                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Type</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Gender</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Citizenship</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Country</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Assigned Room</th>
-                                      <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Actions</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500 text-left">
+                                        Full Name</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Type</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Gender</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Citizenship</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Country</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Assigned Room</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($guestDetails as $guestDetail)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-left">
                                             {{ $guestDetail->first_name }}
                                             {{ $guestDetail->middle_name }}
                                             {{ $guestDetail->last_name }}
                                             {{ $guestDetail->suffix }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                            {{ $guestDetail->guestType->name ?? 'N/A' }}
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            {{ ucfirst($guestDetail->guestType->name) ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->gender) ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->residency) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ ucfirst($guestDetail->country_of_origin) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                            {{ ucfirst(optional(optional($guestDetail->transactionProperty)->property)->name_number) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                           
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            {{ ucfirst(optional(optional($guestDetail->transactionProperty)->property)->name_number) }}
+                                        </td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 space-x-3">
+
                                             <button wire:click="editGuest({{ $guestDetail->id }})"
                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                 title="Edit">
@@ -120,14 +148,15 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-600 italic dark:text-gray-200">No additional guests found for this transaction.</p>
+                    <p class="text-gray-600 italic dark:text-gray-200">No additional guests found for this transaction.
+                    </p>
                 @endif
             </div>
 
             <tr>
                 <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
                     <x-button wire:click="openModal('guest')" icon="fas fa-plus">
-                            Add Guest
+                        Add Guest
                     </x-button>
                 </td>
             </tr>
@@ -221,9 +250,9 @@
                         <div>{{ $transaction->pax }}</div>
                     </div>
 
-                     <div>
+                    <div>
                         <strong>Total Pets:</strong>
-                       <div>{{ $transaction->guestPets->sum('pet_count') }}</div>
+                        <div>{{ $transaction->guestPets->sum('pet_count') }}</div>
                     </div>
 
                     <div>
@@ -242,7 +271,7 @@
                             {{ $transaction->promoCode->code ?? '' }}
 
                             @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
-                              ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
+                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
                             @elseif ($transaction->promoCode)
                                 {{-- Flat discount --}}
                                 (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
@@ -264,7 +293,7 @@
                         <strong>Heard From:</strong>
                         <div>{{ $transaction->heard_from }}</div>
                     </div>
-                      <div>
+                    <div>
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
@@ -284,40 +313,68 @@
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Room</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Category</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Adults
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Room</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Category</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        No. of Adults
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">No. of Kids</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Stay Duration
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        No. of Kids</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Stay Duration
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Extra Guests</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Rate</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Extra Guest Charge
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Extra Guests</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
+                                        Rate</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
+                                        Extra Guest Charge
                                     </th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Room Total</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
+                                        Room Total</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($properties as $property)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $property->name_number }}</td>
-                                       <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            {{ $property->name_number }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             {{ optional($property->category)->name ?? 'N/A' }}
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->adults ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
                                     </tr>
                                 @endforeach
@@ -345,23 +402,35 @@
                         <table class="min-w-full border-collapse border border-gray-300 text-sm">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">Activity Name</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Quantity</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Unit Cost</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">Activity Total
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
+                                        Activity Name</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Quantity</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Unit Cost</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
+                                        Activity Total
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-600">
                                 @foreach ($activities as $activity)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->name }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->pivot->quantity ?? 'NA' }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($activity->amount, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ $activity->pivot && $activity->pivot->quantity !== null
                                                 ? number_format($activity->amount * $activity->pivot->quantity, 2)
                                                 : 'NA' }}
@@ -383,91 +452,134 @@
 
 
             <!----------------------------- INVOICE -------------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <div
+                class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Invoice Details') }}
                 </h2>
 
-            @if ($invoice)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
+                @if ($invoice)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700 dark:text-gray-200">
                         <!-- Invoice Info -->
-                        <div><strong>Invoice ID:</strong></div>
-                        <div>{{ $invoice->invoice_number }}</div>
-
-                        <div><strong>Due Date:</strong></div>
                         <div>
-                            {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set' }}
+                            <div><strong>Invoice ID:</strong></div>
+                            <div>{{ $invoice->invoice_number }}</div>
+                        </div>
+
+                        <div>
+                            <div><strong>Due Date:</strong></div>
+                            <div>
+                                {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set' }}
+                            </div>
                         </div>
 
                         <!-- COst Summary -->
-                        <div><strong>Grand Total:</strong></div>
-                        <div class="font-semibold">₱{{ number_format($this->invoice->sub_total, 2) }}</div>
+                        <div>
+                            <div><strong>Grand Total:</strong></div>
+                            <div class="font-semibold">₱{{ number_format($this->invoice->sub_total, 2) }}</div>
+                        </div>
 
-                        <div><strong>Required Deposit:</strong></div>
-                        <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
+                        <div>
+                            <div><strong>Required Deposit:</strong></div>
+                            <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
+                        </div>
 
-                        <div><strong>Amount Paid:</strong></div>
-                        <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
+                        <div>
+                            <div><strong>Amount Paid:</strong></div>
+                            <div>₱{{ number_format($invoice->amount_paid, 2) }}</div>
+                        </div>
 
-                        <div><strong>Balance Due:</strong></div>
-                        <div>₱{{ number_format($this->invoice->balance_due, 2) }}</div>
+                        <div>
+                            <div><strong>Balance Due:</strong></div>
+                            <div>₱{{ number_format($this->invoice->balance_due, 2) }}</div>
+                        </div>
 
                         <!-- Payment Status -->
-                        <div><strong>Invoice Status:</strong></div>
                         <div>
-                            @if ($invoice->invoice_status === 'pending')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
-                                    Pending
-                                </span>
-                            @elseif ($invoice->invoice_status === 'complete' || $invoice->invoice_status === 'completed')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
-                                    Completed
-                                </span>
-                            @elseif ($invoice->invoice_status === 'failed')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
-                                    Failed
-                                </span>
-                            @elseif ($invoice->invoice_status === 'overdue')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-600">
-                                    Overdue
-                                </span>
-                            @endif
+                            <div><strong>Invoice Status:</strong></div>
+                            <div>
+                                @if ($invoice->invoice_status === 'pending')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
+                                        Pending
+                                    </span>
+                                @elseif ($invoice->invoice_status === 'complete' || $invoice->invoice_status === 'completed')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
+                                        Completed
+                                    </span>
+                                @elseif ($invoice->invoice_status === 'failed')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                        Failed
+                                    </span>
+                                @elseif ($invoice->invoice_status === 'overdue')
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-600">
+                                        Overdue
+                                    </span>
+                                @endif
+                            </div>
                         </div>
-
 
                         <!-- Timeline -->
-                        <div><strong>Completed At:</strong></div>
                         <div>
-                            {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
+
+                            <div><strong>Completed At:</strong></div>
+                            <div>
+                                {{ $invoice->completed_at ? \Carbon\Carbon::parse($invoice->completed_at)->format('F j, Y') : 'Not yet completed' }}
+                            </div>
                         </div>
+                    </div>
+                    <hr class="py-2 mt-4">
+                    <!-- Items Table -->
+                    <div class="flex justify-between">
+                        <x-button wire:click="openModal('activity')" icon="fas fa-plus">
+                            Add Activity
+                        </x-button>
 
-
+                        <x-button wire:click="openModal('service')" icon="fas fa-plus">
+                            Add Other Charges
+                        </x-button>
                     </div>
 
-                     <!-- Items Table -->
-                    <div class="overflow-x-auto mt-4">
+                    <div class=" mt-4">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">#</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Item & Description</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Qty</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Days</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Unit Cost</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Amount</th>
-                                     <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Timestamp</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Status</th>                  
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Actions</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        #</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Item & Description</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Qty</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Days</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Unit Cost</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Amount</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Timestamp</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Status</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Actions</th>
                                 </tr>
                             </thead>
 
                             <tbody class="bg-white text-gray-700 dark:bg-gray-600 dark:text-gray-200">
 
-                                  @php $rowNumber = 1; @endphp
+                                @php $rowNumber = 1; @endphp
 
                                 @foreach ($allItems as $item)
                                     <tr>
@@ -475,13 +587,16 @@
                                         <td class="border px-4 py-2 dark:border-gray-500">
                                             {{ $item['name'] }}
                                         </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $item['quantity'] }}</td>
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                            {{ $item['quantity'] }}</td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             {{ $item['days'] ?? '-' }}
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            ₱{{ number_format($item['amount'], 2) }} 
-                                            @if($item['type'] === 'service') ({{ $item['unit'] ?? '' }}) @endif
+                                            ₱{{ number_format($item['amount'], 2) }}
+                                            @if ($item['type'] === 'service')
+                                                ({{ $item['unit'] ?? '' }})
+                                            @endif
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($item['total'], 2) }}
@@ -492,27 +607,31 @@
                                             </span>
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            {{ $item['payment_status'] }}
+                                            <span
+                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                                {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
+                                                {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
+                                                {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
+                                                    {{ ucfirst($item['payment_status']) }}
+                                                </span>
                                         </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            @if($item['payment_status'] !== 'paid')
-                                                <button 
+                                        <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
+                                            @if ($item['payment_status'] !== 'paid')
+                                                <button
                                                     wire:click="
-                                                        @if($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
-                                                        @elseif($item['type'] === 'service') editService({{ $item['pivot_id'] }})
-                                                        @endif
+                                                        @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
+                                                        @elseif($item['type'] === 'service') editService({{ $item['pivot_id'] }}) @endif
                                                     "
                                                     class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                     title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
 
-                                                @if($item['type'] !== 'property')
-                                                    <button 
+                                                @if ($item['type'] !== 'property')
+                                                    <button
                                                         wire:click="
-                                                            @if($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
-                                                            @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }})
-                                                            @endif
+                                                            @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
+                                                            @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
                                                         "
                                                         class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
                                                         title="Delete">
@@ -520,91 +639,96 @@
                                                     </button>
                                                 @endif
                                             @else
-                                                <span class="text-gray-400 italic"><i class="fas fa-lock mr-1"></i></span>
+                                                <span class="text-gray-400 italic"><i
+                                                        class="fas fa-lock mr-1"></i></span>
                                             @endif
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
 
-                         <!-- Sub Total -->
-                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Subtotal: ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                        <!-- Sub Total -->
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            Subtotal:
+                            <div>
+                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                            </div>
                         </div>
 
-                         <!-- Convenience Fee -->
-                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Convenience Fee: ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
+                        <!-- Convenience Fee -->
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            Convenience Fee:
+                            <div>
+                                ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
+                            </div>
                         </div>
 
                         <!-- Grand Total -->
-                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Grand Total: ₱{{ number_format($this->invoice->sub_total, 2) }}
+                        <div class="flex justify-between font-bold text-base mt-2 text-green-700">
+                            Grand Total:
+                            <div>
+                                ₱{{ number_format($this->invoice->sub_total, 2) }}
+                            </div>
                         </div>
 
-                         <!-- Amount Paid -->
-                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Amount Paid: ₱{{ number_format($this->invoice->amount_paid, 2) }}
+                        <!-- Amount Paid -->
+                        <div
+                            class="flex justify-between font-semibold text-base mt-2
+                            {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-yellow-500' }}">
+                            Amount Paid:
+                            <div>
+                                ₱{{ number_format($this->invoice->amount_paid, 2) }}
+                            </div>
                         </div>
 
-                         <!-- Balance Due -->
-                        <div class="text-right font-semibold text-base mt-2 text-gray-700">
-                            Balance Due: ₱{{ number_format($this->invoice->balance_due, 2) }}
+
+                        <!-- Balance Due -->
+                        <div
+                            class="flex justify-between font-semibold text-base mt-2
+                            {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-red-500' }}">
+                            Balance Due:
+                            <div>
+                                ₱{{ number_format($this->invoice->balance_due, 2) }}
+                            </div>
                         </div>
                     </div>
 
-                     {{-- Add Item Button Row --}}
-                     
-                                <tr>
-                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
-                                         <x-button wire:click="openModal('activity')" icon="fas fa-plus">
-                                            Add Activity
-                                        </x-button>
-                                    </td>
-                                </tr>
+                    {{-- Add Item Button Row --}}
 
-                                    <tr>
-                                    <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500">
-                                         <x-button wire:click="openModal('service')" icon="fas fa-plus">
-                                            Add Other Charges
-                                        </x-button>
-                                    </td>
-                                </tr>
-
-                            
 
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
-                    @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
-                        <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled" class="mt-6">
-                            <div class="flex items-center justify-center">
-                                <!-- Spinner -->
-                                <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
-                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                            stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                        </path>
-                                    </svg>
-                                </span>
+                    <div class="flex justify-center">
+                        @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
+                            <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled"
+                                class="mt-6">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
 
-                                <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
-                                    wire:target="requestRemainingBalance"></i>
+                                    <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
+                                        wire:target="requestRemainingBalance"></i>
 
-                                <span wire:loading.remove wire:target="requestRemainingBalance">
-                                    Request Remaining Balance
-                                </span>
-                            </div>
-                        </x-button>
-                    @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
-                        <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
-                    @endif
+                                    <span wire:loading.remove wire:target="requestRemainingBalance">
+                                        Request Remaining Balance
+                                    </span>
+                                </div>
+                            </x-button>
+                        @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
+                            <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
+                        @endif
+                    </div>
                     <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
 
             </div>
-
             @else
             <p class="text-gray-600 italic">No invoice found for this transaction.</p>
             @endif
@@ -643,10 +767,11 @@
             @endif
             <!---------------------- END OF GENERATE RECEIPT ------------------------------>
 
-            
+
             <!----------------------------- PAYMENTS -------------------------------------->
             <section id="payments">
-                <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <div
+                    class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                     <div class="justify-between flex items-center">
                         <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
@@ -654,7 +779,8 @@
                         <div class="text-left mb-4 flex items-center gap-2">
                             <!-- Info Icon with Tooltip -->
                             <div class="relative group inline-block">
-                                <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
+                                <i
+                                    class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
 
                                 <!-- Tooltip -->
                                 <div
@@ -669,78 +795,116 @@
                         </div>
                     </div>
                     @if ($payments->isNotEmpty())
-                        <div class="overflow-x-auto">
+                        <div class="">
                             <table class="min-w-full border-collapse border border-gray-300 text-sm">
                                 <thead class="bg-gray-50 dark:bg-gray-800">
                                     <tr>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Payment ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Invoice ID</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Method</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Amount Paid</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Convenience Fee</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Type</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Reference No.</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Payment Date</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Status</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Notes</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Verified At</th>
-                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">Uploaded Receipt</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Payment ID</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Invoice ID</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Method</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Amount Paid</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Convenience Fee</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Type</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Reference No.</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Payment Date</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Status</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Notes</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Verified At</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Uploaded Receipt</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-600 ">
                                     @foreach ($payments as $payment)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $payment->id }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                {{ $payment->id }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->invoice->invoice_number }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                            {{ $payment->mode_of_payment ?? $payment->paymentMethod->mode_of_payment_name ?? 'N/A' }}
-                                        </td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                {{ $payment->mode_of_payment ?? ($payment->paymentMethod->mode_of_payment_name ?? 'N/A') }}
+                                            </td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 ₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 ₱{{ number_format($payment->convenience_fee, 2) ?? 'N/A' }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ ucfirst($payment->payment_type) }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_reference_number ?? 'N/A' }}</td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_date ?? 'N/A' }}</td>
                                             <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-500">
                                                 <span
-                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold
+                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
                                                     {{ ucfirst($payment->payment_status) }}
                                                 </span>
                                             </td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $payment->notes ?? '-' }}
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                {{ $payment->notes ?? '-' }}
                                             </td>
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->verified_at ?? 'To be verified' }}</td>
-                                            <td class="border px-4 py-2 space-x-2 dark:text-gray-200 dark:border-gray-500">
+                                            <td
+                                                class="border px-4 py-2 space-x-2 dark:text-gray-200 dark:border-gray-500">
                                                 @if (!$payment->payment_screenshot)
-                                                @if ($payment->mode_of_payment === 'cash')
-                                                    <span class="text-gray-500 italic dark:text-gray-200">Cash payment (no receipt uploaded)</span>
-                                                @else
-                                                   <span class="text-gray-500 italic dark:text-gray-200">Paid via PayMongo (no screenshot required)</span>
-                                                @endif
+                                                    @if ($payment->mode_of_payment === 'cash')
+                                                        <span class="text-gray-500 italic dark:text-gray-200">Cash
+                                                            Payment (no receipt uploaded)</span>
+                                                    @else
+                                                        <span class="text-gray-500 italic dark:text-gray-200">Paid via
+                                                            PayMongo (no screenshot required)</span>
+                                                    @endif
                                                 @else
                                                     @if ($payment->payment_status === 'pending')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                            class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-center py-2 px-4 rounded text-xs">
+                                                            class="inline-block bg-yellow-100 hover:bg-yellow-200 text-yellow-500 font-semibold text-center py-2 px-3 rounded text-xs">
                                                             Verify Receipt
                                                         </a>
                                                     @elseif ($payment->payment_status === 'completed' || $payment->payment_status === 'failed')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
-                                                            class="inline-block py-1 px-2 rounded-md text-sm font-semibold bg-green-100 text-green-500 text-center hover:bg-green-200 hover:text-green-600">
+                                                            class="inline-block py-1 px-2 rounded-md text-xs font-semibold bg-green-100 text-green-500 text-center hover:bg-green-200 hover:text-green-600">
                                                             View Receipt
                                                         </a>
                                                     @endif
                                                 @endif
-                                                </td>
-
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -759,8 +923,8 @@
 
             <!---------------------------- MODALS ---------------------------------------->
 
-                <!-- Show Receipt Modal -->
-                @if ($showReceiptModal && $receipt)
+            <!-- Show Receipt Modal -->
+            @if ($showReceiptModal && $receipt)
                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
                         <!-- Header -->
@@ -871,337 +1035,367 @@
 
                     </div>
                 </div>
-                @endif
+            @endif
 
-                <!-- Service Modal -->
-                @if ($cannotGenerateReceiptModal)
+            <!-- Cannot Generate Receipt -->
+            @if ($cannotGenerateReceiptModal)
                 <div>
-                        <x-dialog-modal wire:model.live="cannotGenerateReceiptModal" type="ghost">
-                            <x-slot name="title">
-                                {{ __('Cannot Perform Action') }}
-                            </x-slot>
+                    <x-dialog-modal wire:model.live="cannotGenerateReceiptModal" type="ghost">
+                        <x-slot name="title">
+                            {{ __('Cannot Perform Action') }}
+                        </x-slot>
 
-                            <x-slot name="content">
-                                {{ __('Receipt cannot be generated. Invoice still has balance due.') }}
-                            </x-slot>
+                        <x-slot name="content">
+                            {{ __('Receipt cannot be generated. Invoice still has balance due.') }}
+                        </x-slot>
 
-                            <x-slot name="footer">
-                                <x-secondary-button wire:click="$set('cannotGenerateReceiptModal', false)"
-                                    wire:loading.attr="disabled">
-                                    {{ __('Cancel') }}
-                                </x-secondary-button>
-                            </x-slot>
-                        </x-dialog-modal>  
+                        <x-slot name="footer">
+                            <x-secondary-button wire:click="$set('cannotGenerateReceiptModal', false)"
+                                wire:loading.attr="disabled">
+                                {{ __('Cancel') }}
+                            </x-secondary-button>
+                        </x-slot>
+                    </x-dialog-modal>
                 </div>
-                @endif
+            @endif
 
-                <!-- Add Payment Modal -->
-                @if ($createPaymentModal)
+            <!-- Add Payment Modal -->
+            @if ($createPaymentModal)
                 <div>
-                        <div id="guestModal"
-                            class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div id="guestModal"
+                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
                             <div
-                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                                <h2 class="text-xl font-bold mb-4 text-green-700 text-center">Add Payment</h2>
+                                class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                                <!-- Title -->
+                                <h2 class="text-2xl font-bold text-center">Add Payment</h2>
 
-                                <!-- Amount Paid -->
-                                <div class="mt-4">
-                                    <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span class="text-red-500">*</span></label>
-                                    <input type="number" wire:model="amount_paid"
-                                        placeholder="Ex. 1,200.00"
-                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
-                                    @error('amount_paid')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <!-- Payment Date -->
-                                <div class="mt-4">
-                                    <label class="block text-sm text-gray-700 font-semibold">Payment Date <span class="text-red-500">*</span></label>
-                                    <input type="date" wire:model="payment_date"
-                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
-                                    @error('payment_date')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <!-- Payment Type -->
-                                <div class="mt-4">
-                                    <label class="block text-sm text-gray-700 font-semibold">Payment Type <span class="text-red-500">*</span></label>
-                                    <select wire:model="payment_type"
-                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600" required>
-                                        <option value="">Select Payment Type</option>
-                                        <option value="Room Rent">Room Rent</option>
-                                        <option value="House Rent">House Rent</option>
-                                        <option value="Activity Fee">Activity Fee</option>
-                                        <option value="Event Hall">Event Hall</option>
-                                        <option value="Event Package">Event Package</option>
-                                        <option value="Security Deposit">Security Deposit</option>
-                                        <option value="Remaining Balance">Remaining Balance</option>
-                                    </select>
-                                    @error('payment_type')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <!-- Notes -->
-                                <div class="mt-4">
-                                    <label class="block text-sm text-gray-700 font-semibold">Notes</label>
-                                    <input type="text" wire:model="notes"
-                                        placeholder="Optionally add description of payment"
-                                        class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
-                                    @error('notes')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="flex justify-between items-center gap-2 mt-6">
-                                    <x-button type="button" wire:click="CloseCreatePaymentModal"
-                                        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                        Cancel
-                                    </x-button>
-                                    <x-button type="button" wire:click="CreatePayment">
-                                        Save Changes
-                                    </x-button>
-                                </div>
-
+                                <!-- Close Button -->
+                                <button wire:click="CloseCreatePaymentModal"
+                                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                    <span class="-translate-y-[2px]">&times;</span>
+                                </button>
                             </div>
-                        </div>             
-                </div>
-                @endif
 
-                <!-- Add Service Modal -->
-                @if ($activeModal === 'service')
-                    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                            <h2 class="text-xl font-bold mb-4 text-blue-700 text-center">Add Service</h2>
+                            <!-- Amount Paid -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
+                                        class="text-red-500">*</span></label>
+                                <input type="number" wire:model="amount_paid" placeholder="Ex. 1,200.00"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('amount_paid')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Date -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
+                                        class="text-red-500">*</span></label>
+                                <input type="date" wire:model="payment_date"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('payment_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Type -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
+                                        class="text-red-500">*</span></label>
+                                <select wire:model="payment_type"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                    <option value="">Select Payment Type</option>
+                                    <option value="Room Rent">Room Rent</option>
+                                    <option value="House Rent">House Rent</option>
+                                    <option value="Activity Fee">Activity Fee</option>
+                                    <option value="Event Hall">Event Hall</option>
+                                    <option value="Event Package">Event Package</option>
+                                    <option value="Security Deposit">Security Deposit</option>
+                                    <option value="Remaining Balance">Remaining Balance</option>
+                                </select>
+                                @error('payment_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                                <input type="text" wire:model="notes"
+                                    placeholder="Optionally add description of payment"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                                @error('notes')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center gap-2 mt-6">
+                                <x-ghost-button type="button" wire:click="CloseCreatePaymentModal">
+                                    Cancel
+                                </x-ghost-button>
+                                <x-button type="button" wire:click="CreatePayment">
+                                    Save Changes
+                                </x-button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Add Service Modal -->
+            @if ($activeModal === 'service')
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+                        <div
+                            class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b">
+                            <!-- Title -->
+                            <h2 class="text-2xl font-bold text-center">Add Service</h2>
+
+                            <!-- Close Button -->
+                            <button wire:click="closeModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
+                        </div>
+
+                        @error('cart')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                        @foreach ($availableServices as $service)
+                            <!-- Service Details -->
+                            <div
+                                class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform mb-4 dark:bg-gray-700 dark:border-gray-600">
+                                <div
+                                    class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
+                                    <div class="flex-grow">
+                                        <h3 class="text-xl font-bold text-gray-900 mb-1 dark:text-white">
+                                            {{ $service->name }}</h3>
+                                        <p class="text-sm text-gray-600 leading-relaxed mb-3 dark:text-gray-300">
+                                            {{ $service->description ?? 'No description provided for this service.' }}
+                                        </p>
+                                        <div class="text-lg font-bold text-green-700 dark:text-green-300">
+                                            ₱{{ number_format($service->amount, 2) }} <span
+                                                class="text-base font-normal text-gray-500 dark:text-gray-400">/
+                                                {{ $service->unit }}</span>
+                                        </div>
+                                    </div>
+
+                                    {{-- Quantity & Button --}}
+                                    <div class="flex items-center justify-between mt-2 gap-4">
+                                        <!-- Quantity Counter -->
+                                        <div class="flex flex-col">
+                                            <label for="quantity-{{ $service->id }}"
+                                                class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                                            <!-- Quantity Counter Buttons -->
+                                            <div class="flex items-center">
+                                                <button
+                                                    wire:click="decrementItemQuantity('service', {{ $service->id }})"
+                                                    class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
+                                                <span
+                                                    class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                    {{ $quantity[$service->id] ?? 1 }}
+                                                </span>
+                                                <button
+                                                    wire:click="incrementItemQuantity('service', {{ $service->id }})"
+                                                    class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+                                                <!-- Hidden input to bind the quantity -->
+                                                <input type="hidden" wire:model="quantity.{{ $service->id }}">
+                                            </div>
+                                        </div>
+
+                                        <!-- Add / Remove Button -->
+                                        @php
+                                            $inCart = collect($cart)->contains(function ($item) use ($service) {
+                                                return $item['type'] === 'service' &&
+                                                    $item['service_id'] == $service->id;
+                                            });
+                                        @endphp
+                                        <div class="mt-6">
+                                            <button
+                                                wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
+                                                class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest disabled:opacity-50 transition ease-in-out duration-150">
+                                                {{ $inCart ? 'Remove' : 'Add' }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <!-- Actions -->
+                        <div class="flex justify-between items-center gap-2 mt-7">
+                            <x-ghost-button type="button" wire:click="closeModal">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button type="button" wire:click="saveService">
+                                Save Changes
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Add Activity Modal -->
+            <div>
+                @if ($activeModal === 'activity')
+                    <div id="guestModal"
+                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg shadow-lg max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <div
+                                class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b">
+                                <!-- Title -->
+                                <h2 class="text-2xl font-bold text-center">Add Activity</h2>
+
+                                <!-- Close Button -->
+                                <button wire:click="closeModal"
+                                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                    <span class="-translate-y-[2px]">&times;</span>
+                                </button>
+                            </div>
 
                             @error('cart')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
-                            @foreach ($availableServices as $service)
-                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-4 dark:bg-gray-700 dark:border-gray-600">
-                                    <div class="p-4 flex flex-col gap-2">
-                                        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $service->name }}</h2>
+                            @foreach ($availableActivities as $activity)
+                                <div
+                                    class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-5 flex flex-col md:flex-row
+                                        dark:bg-gray-700 dark:border-gray-600">
 
-                                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                                            {{ $service->description ?? 'No description provided.' }}
-                                        </p>
+                                    {{-- Image of the Activity --}}
+                                    <div class="md:w-1/2">
+                                        @if ($activity->image)
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ asset('storage/' . $activity->image) }}"
+                                                alt="{{ $activity->name }}">
+                                        @else
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ asset('images/rms-default.png') }}"
+                                                alt="{{ $activity->name }}">
+                                        @endif
+                                    </div>
 
-                                        <div class="text-md font-semibold text-blue-600 dark:text-blue-300">
-                                            ₱{{ number_format($service->amount, 2) }} <span class="text-sm text-gray-500">({{ $service->unit }})</span>
+                                    <div class="md:w-1/2 p-4 flex flex-col justify-between">
+                                        <div>
+                                            {{-- Activity Name --}}
+                                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                                                {{ $activity->name }}</h2>
+
+                                            {{-- Activity Description --}}
+                                            <p class="text-gray-600 text-sm mb-2 text-justify dark:text-gray-200">
+                                                {{-- Show more / less when description is long --}}
+                                                @if (empty($activity->description))
+                                                    <span class="italic text-gray-400">No description provided</span>
+                                                @elseif ($expandedActivity === $activity->id)
+                                                    {{ $activity->description }}
+                                                    <a href="#"
+                                                        wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                        less</a>
+                                                @else
+                                                    {{ Str::limit($activity->description, 100, '...') }}
+                                                    @if (Str::length($activity->description) > 100)
+                                                        <a href="#"
+                                                            wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                            more</a>
+                                                    @endif
+                                                @endif
+                                            </p>
+
+                                            {{-- Activity Amount --}}
+                                            <div class="text-lg font-semibold text-green-600 dark:text-green-300">
+                                                @if ($activity->amount == 0)
+                                                    <span class="text-green-600 font-semibold">FREE</span>
+                                                @else
+                                                    ₱{{ number_format($activity->amount, 2) }}
+                                                @endif
+                                            </div>
                                         </div>
 
-                                        {{-- Quantity & Button --}}
-                                        <div class="flex items-center justify-between mt-2 gap-4">
 
-                                                <!-- Quantity Counter -->
-                                                    <div class="flex flex-col">
-                                                        <label for="quantity-{{ $service->id }}"
-                                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                                        {{-- ------------ QUANTITY COUNTER AND ADD/REMOVE ACTIVITY BUTTONS ------------- --}}
+                                        <div
+                                            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
 
-                                                        <!-- Quantity Counter Buttons -->
-                                                        <div class="flex items-center">
-                                                              <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
-                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
+                                            <!-- Quantity Counter -->
+                                            <div class="flex flex-col">
+                                                <label for="quantity-{{ $activity->id }}"
+                                                    class="text-sm font-medium text-gray-700 mb-1">
+                                                    Quantity:
+                                                </label>
+                                                <div class="flex items-center">
+                                                    <button
+                                                        wire:click="decrementItemQuantity('activity', {{ $activity->id }})"
+                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
 
-                                                                <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
-                                                                    {{ $quantity[$service->id] ?? 1 }}
-                                                                </span>
+                                                    <span
+                                                        class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                        {{ $quantity[$activity->id] ?? 1 }}
+                                                    </span>
 
-                                                                <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
-                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+                                                    <button
+                                                        wire:click="incrementItemQuantity('activity', {{ $activity->id }})"
+                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
 
-                                                                <!-- Hidden input to bind the quantity -->
-                                                                <input type="hidden" wire:model="quantity.{{ $service->id }}">     
-                                                        </div>
-                                                    </div>
-                                        
+                                                    <input type="hidden" wire:model="quantity.{{ $activity->id }}">
+                                                </div>
+                                            </div>
 
                                             {{-- Add/Remove Button --}}
                                             @php
-                                                $inCart = collect($cart)->contains(function ($item) use ($service) {
-                                                    return $item['type'] === 'service' && $item['service_id'] == $service->id;
-                                                });
+                                                $cartCollection = collect($cart);
+                                                $activityInCart = $cartCollection->contains(
+                                                    fn($item) => $item['type'] === 'activity' &&
+                                                        $item['activity_id'] == $activity->id,
+                                                );
                                             @endphp
 
-                                            <button wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
-                                                    class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700' }} text-white rounded text-sm font-semibold uppercase transition duration-150 ease-in-out">
-                                                {{ $inCart ? 'Remove' : 'Add' }}   
-                                            </button>
+                                            <div class="sm:mt-6">
+                                                <x-button
+                                                    wire:click="{{ $activityInCart ? 'removeItemFromCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
+                                                    class="w-full sm:w-auto px-4 py-2 {{ $activityInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
+                                                    wire:loading.attr="disabled">
+                                                    <div class="flex items-center justify-center">
+                                                        <span wire:loading
+                                                            wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
+                                                            class="mr-2">
+                                                            <svg class="animate-spin h-5 w-5 text-white"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4" />
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                                                            </svg>
+                                                        </span>
+                                                        <span wire:loading.remove
+                                                            wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})">
+                                                            {{ $activityInCart ? 'Remove' : 'Add' }}
+                                                        </span>
+                                                    </div>
+                                                </x-button>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
                             @endforeach
 
-                            <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6">
-                                <x-button type="button" wire:click="closeModal"
-                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                    Cancel
-                                </x-button>
-                                <x-button type="button" wire:click="saveService">
-                                    Save Changes
-                                </x-button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Add Activity Modal -->
-                <div>
-                @if ($activeModal === 'activity')
-                    <div id="guestModal"
-                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div
-                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                            <h2 class="text-xl font-bold mb-4 text-green-700 text-center">Add Activity</h2>
-
-                                @error('cart')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                      
-                               @foreach ($availableActivities as $activity)
-                                    <div
-                                        class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-0 flex flex-col md:flex-row
-                                        dark:bg-gray-700 dark:border-gray-600">
-
-                                        {{-- Image of the Activity --}}
-                                        <div class="md:w-1/2">
-                                            @if ($activity->image)
-                                                <img class="w-full h-56      object-cover" src="{{ asset('storage/' . $activity->image) }}"
-                                                    alt="{{ $activity->name }}">
-                                            @else
-                                                <img class="w-full h-56 object-cover" src="{{ asset('images/rms-default.png') }}"
-                                                    alt="{{ $activity->name }}">
-                                            @endif
-                                        </div>
-
-                                        <div class="md:w-1/2 p-4 flex flex-col justify-between">
-                                            <div>
-                                                {{-- Activity Name --}}
-                                                <h2 class="text-xl font-semibold text-gray-800 dark:text-white"> {{ $activity->name }}</h2>
-                                              
-                                                {{-- Activity Description --}}
-                                                <p class="text-gray-600 text-sm mb-2 text-justify dark:text-gray-200">
-                                                    {{-- Show more / less when description is long --}}
-                                                    @if (empty($activity->description))
-                                                        <span class="italic text-gray-400">No description provided</span>
-                                                    @elseif ($expandedActivity === $activity->id)
-                                                        {{ $activity->description }}
-                                                        <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
-                                                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
-                                                            less</a>
-                                                    @else
-                                                        {{ Str::limit($activity->description, 100, '...') }}
-                                                        @if (Str::length($activity->description) > 100)
-                                                            <a href="#"
-                                                                wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
-                                                                class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
-                                                                more</a>
-                                                        @endif
-                                                    @endif
-                                                </p>
-
-                                                 {{-- Activity Amount --}}
-                                                <div class="text-lg font-semibold text-green-600 dark:text-green-300">
-                                                    @if ($activity->amount == 0)
-                                                        <span class="text-green-600 font-semibold">FREE</span>
-                                                    @else
-                                                        ₱{{ number_format($activity->amount, 2) }}
-                                                    @endif
-                                                </div>
-                                            </div>
-
-
-                                            {{-------------- QUANTITY COUNTER AND ADD/REMOVE ACTIVITY BUTTONS ---------------}}
-                                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-
-                                               
-                                                <div class="flex items-center gap-2">
-
-                                                    <!-- Quantity Counter -->
-                                                    <div class="flex flex-col">
-                                                        <label for="quantity-{{ $activity->id }}"
-                                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-
-                                                            <!-- Quantity Counter -->
-                                                            <div class="flex flex-col">
-                                                                <label for="quantity-{{ $activity->id }}"
-                                                                    class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-
-                                                                <!-- Quantity Counter Buttons -->
-                                                                <div class="flex items-center">
-                                                                    <button wire:click="decrementItemQuantity('activity', {{ $activity->id }})"
-                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
-
-                                                                    <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
-                                                                        {{ $quantity[$activity->id] ?? 1 }}
-                                                                    </span>
-
-                                                                    <button wire:click="incrementItemQuantity('activity', {{ $activity->id }})"
-                                                                        class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
-
-                                                                    <!-- Hidden input to bind the quantity -->
-                                                                    <input type="hidden" wire:model="quantity.{{ $activity->id }}">
-                                                                </div>
-                                                            </div>
-                                                      
-                                                    </div>
-
-
-                                                    {{-- Cart Collection for Activity --}}
-                                                    @php
-                                                        $cartCollection = collect($cart); // Convert array to collection
-                                                        $activityInCart = $cartCollection->contains(function ($item) use ($activity) {
-                                                            return $item['type'] === 'activity' && $item['activity_id'] == $activity->id;
-                                                        });
-                                                    @endphp
-
-                                                    {{-- Add and Remove buttons for Activity --}}
-                                                    <button
-                                                        wire:click="{{ $activityInCart ? 'removeItemFromCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
-                                                        class="w-full px-4 py-2 {{ $activityInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
-                                                        wire:loading.attr="disabled"
-                                                    >
-                                                        <div class="flex items-center justify-center">
-                                                            <!-- Spinner -->
-                                                            <span
-                                                                wire:loading
-                                                                wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
-                                                                class="mr-2"
-                                                            >
-                                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                                                                    <path class="opacity-75" fill="currentColor"
-                                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
-                                                                </svg>
-                                                            </span>
-
-                                                            <!-- Button Text -->
-                                                            <span
-                                                                wire:loading.remove
-                                                                wire:target="{{ $activityInCart ? 'addItemToCart' : 'addItemToCart' }}('activity', {{ $activity->id }})"
-                                                            >
-                                                                {{ $activityInCart ? 'Remove' : 'Add' }}
-                                                            </span>
-                                                        </div>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-
 
                             <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6">
-                                <x-button type="button" wire:click="closeModal"
-                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                            <div class="flex justify-between items-center gap-2 mt-8">
+                                <x-ghost-button type="button" wire:click="closeModal">
                                     Cancel
-                                </x-button>
+                                </x-ghost-button>
                                 <x-button type="button" wire:click="saveActivity">
                                     Save Changes
                                 </x-button>
@@ -1210,268 +1404,436 @@
                         </div>
                     </div>
                 @endif
-                </div>
+            </div>
 
-                <!-- Add Guest Modal -->
-                @if ($activeModal === 'guest')
-                    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
-                            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Add Guest</h2>
+            <!-- Add Guest Modal -->
+            @if ($activeModal === 'guest')
+                <div
+                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
+                        <div
+                            class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                            <!-- Title -->
+                            <h2 class="text-2xl font-bold text-center">Enter Guest Details</h2>
 
+                            <!-- Close Button -->
+                            <button wire:click="closeModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
+                        </div>
+
+                        <!-- Guest Name -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- First Name -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">First Name</label>
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">First Name
+                                    <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model.defer="guest.first_name"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Juan" required>
+                                @error('guest_first_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <!-- Middle Name -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Middle Name</label>
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Middle
+                                    Name</label>
                                 <input type="text" wire:model.defer="guest.middle_name"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Mercado">
+                                @error('guest_middle_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
                             <!-- Last Name -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Last Name</label>
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Last Name
+                                    <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model.defer="guest.last_name"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    required placeholder="Ex. Dela Cruz">
+                                @error('guest_last_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <!-- Suffix -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Suffix</label>
+                            <div>
+                                <label
+                                    class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
                                 <input type="text" wire:model.defer="guest.suffix"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Jr., Sr., III">
+                                @error('guest_suffix')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
+                        </div>
 
-                            <!-- Transaction Property -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Room</label>
-                                <select wire:model.defer="guest.transaction_property_id"
-                                        class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="">Select Room</option>
-                                    @foreach ($transactionProperties as $property)
-                                        <option value="{{ $property->id }}">
-                                            {{ $property->property->name_number ?? 'Property #' . $property->id }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <!-- Transaction Property -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model.defer="guest.transaction_property_id"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Room</option>
+                                @foreach ($transactionProperties as $property)
+                                    <option value="{{ $property->id }}">
+                                        {{ $property->property->name_number ?? 'Property #' . $property->id }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('guest.transaction_property_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
 
-                            <!-- Gender -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Gender</label>
-                                <select wire:model.defer="guest.gender"
-                                        class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                            </div>
-
-                             <!-- Gender -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Citizenship</label>
-                                <select wire:model.defer="guest.residency"
-                                        class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="">Select Citizenship</option>
-                                    <option value="local">Local</option>
-                                    <option value="foreigner">Foreigner</option>
-                                </select>
-                            </div>
-
-
-                            <!-- Country of Origin -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Country of Origin</label>
-                                <input type="text" wire:model.defer="guest.country_of_origin"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            </div>
-
-                            <!-- Optional: Guest Type (can be hidden or locked to a default) -->
-                            {{-- If you want admin to skip selecting guest type, skip this field --}}
-                            @if(auth()->user()->role !== 'admin')
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type</label>
+                        <!-- Guest Type -->
+                        <!-- Optional: Guest Type (can be hidden or locked to a default) -->
+                        {{-- If you want admin to skip selecting guest type, skip this field --}}
+                        @if (auth()->user()->role !== 'admin')
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest Type
+                                    <span class="text-red-500">*</span></label>
                                 <select wire:model.defer="guest.guest_type_id"
-                                        class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                     <option value="">Select Guest Type</option>
                                     @foreach ($guestTypes as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            @endif
+                        @endif
 
-                            <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6">
-                                <x-button type="button" wire:click="closeModal"
-                                        class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                    Cancel
-                                </x-button>
-                                <x-button type="button" wire:click="saveGuest">
-                                    Save Changes
-                                </x-button>
-                            </div>
-                        </div>
-                    </div>
-                @endif 
-
-                <!--  Edit Activity Modal -->
-                @if($showEditActivityModal)
-                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-                        <h2 class="text-lg font-semibold mb-4">Edit Activity Quantity</h2>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">Quantity</label>
-                            <input type="number" wire:model="activityQuantity" min="1"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-
-                                   @error('activityQuantity')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
+                        <!-- Gender -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Gender <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model.defer="guest.gender"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Prefer not to say</option>
+                            </select>
+                            @error('guest_gender')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        <div class="flex justify-end space-x-2">
-                            <button wire:click="$set('showEditActivityModal', false)"
-                                class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                            <button wire:click="updateActivity"
-                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+                        <!-- Residency -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Residency <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model.defer="guest.residency"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Residency</option>
+                                <option value="local">Local</option>
+                                <option value="foreigner">Foreigner</option>
+                            </select>
+                            @error('guest_residency')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Country of Origin -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Country of
+                                Origin <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model.defer="guest.country_of_origin"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                placeholder="Ex. Philippines">
+                            @error('guest_country_of_origin')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between mt-4">
+                            <x-ghost-button type="button" wire:click="closeModal">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button type="button" wire:click="saveGuest" wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading class="mr-2" wire:target="saveGuest">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="saveGuest">
+                                        Add Guest
+                                    </span>
+                                </div>
+                            </x-button>
                         </div>
                     </div>
                 </div>
-                @endif
+            @endif
 
-                <!--  Edit Service Modal -->
-                @if($showEditServiceModal)
+            <!--  Edit Service Modal -->
+            @if ($showEditServiceModal)
                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-                        <h2 class="text-lg font-semibold mb-4">Edit Service Quantity</h2>
+                        <div
+                            class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                            <!-- Title -->
+                            <h2 class="text-2xl font-bold text-center">Edit Service Quantity</h2>
+                        </div>
 
                         <div class="mb-4">
                             <label class="block mb-1">Quantity</label>
                             <input type="number" wire:model="serviceQuantity" min="1"
                                 class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
 
-                                   @error('serviceQuantity')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
+                            @error('serviceQuantity')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        <div class="flex justify-end space-x-2">
-                            <button wire:click="$set('showEditServiceModal', false)"
-                                class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                            <button wire:click="updateService"
-                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+                        <div class="flex justify-between mt-3">
+                            <x-ghost-button wire:click="$set('showEditServiceModal', false)">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button wire:click="updateService" >
+                                Update
+                            </x-button>
                         </div>
                     </div>
                 </div>
-                @endif
+            @endif
 
-                <!--  Edit Guest Modal -->
-                @if($showEditGuestModal)
+            <!--  Edit Activity Modal -->
+            @if ($showEditActivityModal)
                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-                        <h2 class="text-lg font-semibold mb-4">Edit Guest Modal</h2>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">First Name</label>
-                            <input type="text" wire:model="editingFirstName"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('editingFirstName') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <div
+                            class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                            <!-- Title -->
+                            <h2 class="text-2xl font-bold text-center">Edit Activity Quantity</h2>
                         </div>
 
                         <div class="mb-4">
-                            <label class="block mb-1">Middle Name</label>
-                            <input type="text" wire:model="editingMiddleName"
+                            <label class="block mb-1">Quantity</label>
+                            <input type="number" wire:model="activityQuantity" min="1"
                                 class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('editingMiddleName') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+
+                            @error('activityQuantity')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        <div class="mb-4">
-                            <label class="block mb-1">Last Name</label>
-                            <input type="text" wire:model="editingLastName"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('editingLastName') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <div class="flex justify-between mt-3">
+                            <x-ghost-button wire:click="$set('showEditActivityModal', false)">
+                                Cancel
+                            </x-ghostbutton>
+                            <x-button wire:click="updateActivity">
+                                Update
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!--  Edit Guest Modal -->
+            @if ($showEditGuestModal)
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
+                        <div
+                            class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                            <!-- Title -->
+                            <h2 class="text-2xl font-bold text-center">Edit Guest Details</h2>
+
+                            <!-- Close Button -->
+                            <button wire:click="closeModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="block mb-1">Suffix</label>
-                            <input type="text" wire:model="editingSuffix"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('editingSuffix') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <!-- Guest Name -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- First Name -->
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">First Name
+                                    <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="editingFirstName"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Juan">
+                                @error('editingFirstName')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Middle Name -->
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Middle
+                                    Name</label>
+                                <input type="text" wire:model="editingMiddleName"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Mercado">
+                                @error('editingMiddleName')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Last Name -->
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Last Name
+                                    <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="editingLastName"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    required placeholder="Ex. Dela Cruz">
+                                @error('editingLastName')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Suffix -->
+                            <div>
+                                <label
+                                    class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
+                                <input type="text" wire:model="editingSuffix"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                    placeholder="Ex. Jr., Sr., III">
+                                @error('editingSuffix')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="block mb-1">Gender</label>
-                            <select wire:model="editingGender"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                                <option value="">Select</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                            @error('editingGender') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">Residency</label>
-                            <select wire:model="editingResidency"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                                <option value="">Select</option>
-                                <option value="local">Local</option>
-                                <option value="foreigner">Foreigner</option>
-                            </select>
-                            @error('editingResidency') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">Country of Origin</label>
-                            <input type="text" wire:model="editingCountryOfOrigin"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('editingCountryOfOrigin') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">Guest Type</label>
-                            <select wire:model="editingGuestTypeId"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                                <option value="">Select</option>
-                                @foreach ($guestTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        <!-- Transaction Property -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model.defer="editingTransactionPropertyId"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Room</option>
+                                @foreach ($transactionProperties as $property)
+                                    <option value="{{ $property->id }}">
+                                        {{ $property->property->name_number ?? 'Property #' . $property->id }}
+                                    </option>
                                 @endforeach
                             </select>
-                            @error('editingGuestTypeId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block mb-1">Transaction Property</label>
-                     
-                           <select wire:model="editingTransactionPropertyId"
-        class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-    @foreach ($transactionProperties as $property)
-        <option value="{{ $property->id }}"> <!-- use transaction_properties.id -->
-            {{ $property->property->name_number ?? 'Unnamed Property' }}
-        </option>
-    @endforeach
-</select>
-
                             @error('editingTransactionPropertyId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="flex justify-end space-x-2">
-                            <button wire:click="$set('showEditGuestModal', false)"
-                                class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                            <button wire:click="updateGuest"
-                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
+                        <!-- Guest Type -->
+                        <!-- Optional: Guest Type (can be hidden or locked to a default) -->
+                        {{-- If you want admin to skip selecting guest type, skip this field --}}
+                        @if (auth()->user()->role !== 'admin')
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest Type
+                                    <span class="text-red-500">*</span></label>
+                                <select wire:model.defer="editingGuestTypeId"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                    <option value="">Select Guest Type</option>
+                                    @foreach ($guestTypes as $type)
+                                        <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
+                        <!-- Gender -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Gender <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model="editingGender"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Prefer not to say</option>
+                            </select>
+                            @error('editingGender')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Residency -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Residency <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model="editingResidency"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Residency</option>
+                                <option value="local">Local</option>
+                                <option value="foreigner">Foreigner</option>
+                            </select>
+                            @error('editingResidency')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Country of Origin -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Country of
+                                Origin <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="editingCountryOfOrigin"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                placeholder="Ex. Philippines">
+                            @error('editingCountryOfOrigin')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between mt-4">
+                            <x-ghost-button type="button" wire:click="closeModal">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button type="button" wire:click="updateGuest" wire:loading.attr="disabled">
+                                <div class="flex items-center justify-center">
+                                    <!-- Spinner -->
+                                    <span wire:loading class="mr-2" wire:target="updateGuest">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="updateGuest">
+                                        Save Changes
+                                    </span>
+                                </div>
+                            </x-button>
                         </div>
                     </div>
                 </div>
-                @endif
-               
+            @endif
 
             <!-------------------------- END OF MODALS ---------------------------------->
 
@@ -1625,9 +1987,9 @@
 
 
 
-{{-- 
+{{--
                                                     @if ($activityInCart)
-                                                    
+
                                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                             <button wire:click="RemoveActivity({{ $activity['activity_id'] }})"
                                                                 class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
@@ -1636,7 +1998,7 @@
                                                         </td>
 
                                                     @else
-                                                        <button wire:click="addActivityToCart({{ $activity->id }})" 
+                                                        <button wire:click="addActivityToCart({{ $activity->id }})"
                                                             class="px-4 py-2 mt-auto flex bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
                                                             wire:loading.attr="disabled">
                                                             <div class="flex items-center justify-center">

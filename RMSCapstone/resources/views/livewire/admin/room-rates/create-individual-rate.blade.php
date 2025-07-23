@@ -12,8 +12,19 @@
         ]" />
     </x-slot>
 
-    <div class="mx-auto border rounded-lg p-6 max-w-2xl mb-6 mt-3 bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}</h2>
+    <div class="mx-auto border rounded-lg p-6 max-w-3xl mb-6 mt-3 bg-white">
+
+        <div class="relative flex justify-center items-center mb-4">
+            <!-- Title -->
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}
+            </h2>
+
+            <!-- Back Button -->
+            <button onclick="history.back()"
+                class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                <span class="leading-none translate-y-[-3px]">&times;</span>
+            </button>
+        </div>
 
         <form wire:submit.prevent="saveIndividualRoomRate">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -168,8 +179,8 @@
                 <div class="sm:col-span-1">
                     <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
                         Required <span class="text-red-500">*</span></label>
-                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights" placeholder="Ex. 2 Nights"
-                        onwheel="this.blur()"
+                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
+                        placeholder="Ex. 2 Nights" onwheel="this.blur()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                         min="1" max="30">
@@ -219,10 +230,9 @@
 
             </div>
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-ghost-button onclick="history.back()" type="button">
                     Cancel
-                </x-button>
+                </x-ghost-button>
                 <x-button wire:loading.attr="disabled" wire:target="image">
                     Create Room Rate
                 </x-button>

@@ -1,4 +1,16 @@
 <div>
+    <!-- Header -->
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-1 dark:text-white">
+            {{ __('Create Reservation') }}
+        </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Reservations', 'url' => route('admin.reservations-list')],
+            ['label' => 'Create Reservation', 'url' => route('admin.create-reservation')],
+        ]" />
+    </x-slot>
+
     <div class="relative flex items-center mb-3 mt-3">
         <h2 class="text-xl font-bold text-green-700 w-full text-center dark:text-green-300">
             Reservation Dates
@@ -98,19 +110,19 @@
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
                     </div>
 
-                   
+
 
                     <!-- Deposit -->
                     @if ($enable_deposit_percentage && $this->deposit > 0)
-                    <!-- Deposit -->
-                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
+                        <!-- Deposit -->
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
                             <div>Required Deposit</div>
                             <div class="font-semibold">
                                 ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
                         </div>
                     @endif
 
-                       <!-- Discount Code -->
+                    <!-- Discount Code -->
                     <hr class="my-2 border-gray-200">
                     @if ($discountMessage)
                         <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
@@ -125,16 +137,12 @@
                     @endphp
 
                     <div class="relative w-full mt-4">
-                         <input
-        type="text"
-        wire:model="promoCode"
-        wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
-        class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+                        <input type="text" wire:model="promoCode"
+                            wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+                            class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
         {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-        placeholder="Enter Promo Code"
-        autocomplete="off"
-        {{ $hasCode ? 'disabled' : '' }} {{-- optional: disable when applied --}}
-    >
+                            placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
+                            {{-- optional: disable when applied --}}>
 
                         {{-- TODO: disable field when code is inputted, clear field when removed --}}
                         @if ($discountMessage)
@@ -152,7 +160,7 @@
                         @endif
                     </div>
 
-                      <!-- Subtotal Amount -->
+                    <!-- Subtotal Amount -->
                     <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
                         <div class="text-lg">Subtotal</div>
                         <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
@@ -164,7 +172,7 @@
                         <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                     </div>
 
-                     <!-- Total Amount -->
+                    <!-- Total Amount -->
                     <div
                         class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
                         <div class="text-lg">Total</div>
@@ -292,7 +300,8 @@
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full border-collapse border border-gray-300 text-sm text-left dark:border-gray-500">
+                <table
+                    class="min-w-full border-collapse border border-gray-300 text-sm text-left dark:border-gray-500">
                     <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr class="text-center">
                             <th
@@ -849,7 +858,7 @@
 
 
                                                 </button>
-                                                
+
                                             </div>
                                         </div>
                                     </div>

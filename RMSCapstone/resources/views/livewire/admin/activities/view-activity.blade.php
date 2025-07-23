@@ -1,12 +1,18 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View Activity') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Activities', 'url' => route('admin.activities')],
+            ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
+        ]" />
     </x-slot>
 
     <div class="py-6">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <!-- Back Button -->
             <div class="flex justify-end mb-4">
                 <button onclick="history.back()"
@@ -34,7 +40,8 @@
                             @if (!empty($activity->description))
                                 {{ $activity->description }}
                             @else
-                                <em class="text-gray-500 leading-relaxed italic dark:text-white">No description provided.</em>
+                                <em class="text-gray-500 leading-relaxed italic dark:text-white">No description
+                                    provided.</em>
                             @endif
                         </p>
                     </div>
@@ -62,14 +69,14 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 pt-2">
                 <!-- Edit -->
-                <x-ghost-button type="button" icon="fas fa-pen-to-square"
-                    wire:navigate href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
+                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                    href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
                     Edit
                 </x-ghost-button>
 
                 <!-- Delete -->
-                <x-danger-button type="button" icon="fas fa-trash"
-                    wire:click="confirmDelete({{ $activity->id }})" wire:loading.attr="disabled">
+                <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $activity->id }})"
+                    wire:loading.attr="disabled">
                     Delete
                 </x-danger-button>
             </div>
