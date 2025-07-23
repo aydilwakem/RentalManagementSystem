@@ -9,6 +9,7 @@ class ServiceBag
         public ActivityCartService $activityCartService,
         public RoomCartService $roomCartService,
         public ActivityTransactionService $activityTransactionService,
+        public ServiceTransactionService $serviceTransactionService,
         public InvoiceService $invoiceService,
         public BrandingService $brandingService,
         public EmailService $emailService,
@@ -17,5 +18,9 @@ class ServiceBag
         public ReceiptService $receiptService,
         public PaymentService $paymentService,
         public CartService $cartService,
+        public GuestDetailService $guestDetailService,
+        public RoomRateService $roomRateService,
+        public RoomAvailabilityService $roomAvailabilityService,
+        public PromoCodeService $promoCodeService,
     ) {}
 }

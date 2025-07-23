@@ -12,6 +12,7 @@ use App\Models\Property;
 use App\Models\Invoice;
 use App\Models\EventType;
 use App\Models\PromoCode;
+use App\Models\GuestPet;
 use Spatie\Activitylog\Traits\LogsActivity; // 1. Add this line to use activity Logging
 use Spatie\Activitylog\LogOptions; // 2. Import LogOptions for activity logging
 
@@ -185,6 +186,11 @@ class Transaction extends Model
         return $this->hasMany(GuestDetail::class, 'transaction_id');
     }
 
+    public function guestPets()
+    {
+        return $this->hasMany(GuestPet::class, 'transaction_id');
+    }
+
     /**
      * One transaction has many feedback ratings.
      *
@@ -218,6 +224,11 @@ class Transaction extends Model
             ->orderByPivot('created_at');
     }
 
+    public function transactionProperties()
+    {
+        return $this->hasMany(TransactionProperty::class);
+    }
+
     /**
      * One transaction can have many activities.
      *
@@ -233,6 +244,15 @@ class Transaction extends Model
     {
         return $this->belongsToMany(Activity::class, 'transaction_activities')
             ->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
+            ->withTimestamps()
+            ->as('pivot')
+            ->orderByPivot('created_at');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'transaction_services')
+            ->withPivot('id', 'quantity', 'amount', 'service_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
             ->withTimestamps()
             ->as('pivot')
             ->orderByPivot('created_at');

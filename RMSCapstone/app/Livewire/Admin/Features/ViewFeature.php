@@ -11,6 +11,7 @@ class ViewFeature extends Component
 {
     public PropertyFeature $feature;
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -31,6 +32,12 @@ class ViewFeature extends Component
 
         if (!$feature) {
             session()->flash('error', 'Feature not found!');
+            return;
+        }
+
+        if ($feature->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
             return;
         }
 

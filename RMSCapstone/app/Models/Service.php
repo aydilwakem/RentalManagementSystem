@@ -20,4 +20,16 @@ class Service extends Model
     protected $cast = [
         'amount' => 'decimal:2',
     ];
+
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class, 'transaction_services')
+            ->withPivot(
+                'quantity',
+                'amount',
+                'service_datetime',
+                'status',
+            )
+            ->withTimestamps();
+    }
 }

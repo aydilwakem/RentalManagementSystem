@@ -39,7 +39,63 @@
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Type inclusion name" required>
                     @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Quanity -->
+                <div>
+                    <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Quantity
+                    </label>
+                    <input type="number" wire:model="quantity" id="quantity" onwheel="this.blur()" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                        max="30" placeholder="Ex. 10">
+                    @error('quantity')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Amenity Type -->
+                <div>
+                    <label for="property_feature_type"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amenity
+                        Type <span class="text-red-500">*</span></label>
+                    <select wire:model="property_feature_type" id="property_feature_type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                        <option value="">Select Amenity Type</option>
+                        <option value="appliance">Appliance</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="utility">Utility</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="service">Service</option>
+                        <option value="fixture">Fixture</option>
+                    </select>
+                    @error('property_feature_type')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Active Status -->
+                <div>
+                    <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Amenity Status <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-700 dark:text-gray-200">Inactive</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" wire:model="is_active" id="is_active" value="1" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                   ">
+                            </div>
+                            <div
+                                class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                            </div>
+                        </label>
+                        <span class="text-gray-700 dark:text-gray-200">Active</span>
+                    </div>
+                    @error('is_active')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -75,7 +131,7 @@
 
                 <x-button class="ms-3 bg-green text-white" wire:click="updateInclusion({{ $inclusion->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Dave Changes') }}
+                    {{ __('Save Changes') }}
                 </x-button>
             </x-slot>
         </x-dialog-modal>

@@ -12,6 +12,9 @@ class EditFeature extends Component
     //Public variable declarations of features
     public PropertyFeature $feature;
     public $name;
+    public $quantity;
+    public $property_feature_type; 
+    public $is_active = false;
     public $featureId;
     public $property_type_id; 
 
@@ -30,6 +33,9 @@ class EditFeature extends Component
         $this->feature = $feature;
         $this->featureId = $feature->id;
         $this->name = $feature->name;
+        $this->quantity = $feature->quantity; 
+        $this->property_feature_type = $feature->property_feature_type;
+        $this->is_active = $feature->is_active;  
     }
 
     /**
@@ -45,6 +51,9 @@ class EditFeature extends Component
         try {
             $this->validate([
                 'name' => 'required|string|max:100',
+                'quantity' => 'required|numeric|min:1|max:30',
+                'property_feature_type' => 'required|in:appliance,equipment,utility,entertainment,service,fixture',
+                'is_active' => 'required|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -56,6 +65,9 @@ class EditFeature extends Component
         $this->feature->update([
             'name' => $this->name,
             'property_type_id' => 2, 
+            'quantity' => $this->quantity, 
+            'property_feature_type' => $this->property_feature_type, 
+            'is_active' => $this->is_active
         ]);
 
         session()->flash('message', 'Feature successfully updated!');

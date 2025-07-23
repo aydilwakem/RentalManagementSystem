@@ -43,8 +43,11 @@ class CreateRoom extends Component
     public function mount()
     {
         $this->roomCategories = PropertyCategory::all(); // Load categories
-        //mount only room inclusions
-        $this->features = PropertyFeature::where('property_type_id', 1)->get();
+        
+        //mount only active room inclusions
+       $this->features = PropertyFeature::where('property_type_id', 1)
+        ->where('is_active', true)
+        ->get();
     }
 
     public function removeImage($index)

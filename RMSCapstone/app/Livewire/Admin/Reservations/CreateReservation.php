@@ -967,13 +967,13 @@ class CreateReservation extends Component
             ];
         });
 
-        // Step 7: Send confirmation email
-        try {
-            Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
-        } catch (\Exception $e) {
-            logger()->error('Email send failed: ' . $e->getMessage());
-            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        }
+        // // Step 7: Send confirmation email
+        // try {
+        //     Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+        // } catch (\Exception $e) {
+        //     logger()->error('Email send failed: ' . $e->getMessage());
+        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // }
 
         // Step 8: Flash success message and redirect
         session()->flash('success', 'Reservation successfully created!');

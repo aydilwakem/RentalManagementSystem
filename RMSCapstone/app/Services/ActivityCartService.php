@@ -10,14 +10,6 @@ class ActivityCartService
     {
         $activity = Activity::findOrFail($itemId);
 
-        // Loops in each item in the cart and find if the activity is existing
-        foreach ($cart as $item) {
-            if ($item['type'] === 'activity' && $item['activity_id'] == $itemId) {
-                // Returns false if the activity exists
-                return false;
-            }
-        }
-
         // Sets the values for the activity
         $qty = (int) ($quantity[$itemId] ?? 1);
         $amount = $activity->amount * $qty;

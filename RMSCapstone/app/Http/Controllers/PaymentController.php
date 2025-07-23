@@ -95,6 +95,7 @@ class PaymentController extends Controller
                 $metadata = $attributes['metadata'] ?? [];
 
                 $invoiceId = (int)($metadata['invoice_id'] ?? 0);
+                $convenienceFee = (int)($metadata['convenience_fee'] ?? 0);
                 $invoice = Invoice::find($invoiceId);
 
                 if (!$invoice) {
@@ -103,12 +104,15 @@ class PaymentController extends Controller
                 }
 
                 $transaction = $invoice->transaction;
+
+                $convenienceFeeInPesos = $convenienceFee / 100;
                 $amountInPesos = $amountPaid / 100;
 
                 try {
                     DB::transaction(function () use (
                         $eventType,
                         $amountInPesos,
+                        $convenienceFeeInPesos,
                         $invoice,
                         $invoiceId,
                         $modeOfPayment,
@@ -119,6 +123,7 @@ class PaymentController extends Controller
                         // Save payment record regardless of event type
                         $payment = Payment::create([
                             'amount_paid' => $amountInPesos,
+                            'convenience_fee' => $convenienceFeeInPesos,
                             'invoice_id' => $invoiceId,
                             'mode_of_payment' => $modeOfPayment,
                             'payment_type' => trim($metadata['payment_type'] ?? 'unknown'),
@@ -127,6 +132,7 @@ class PaymentController extends Controller
                             'verified_at' => now(),
                             'notes' => trim($metadata['notes'] ?? 'not defined'),
                             'payment_status' => $eventType === 'payment.paid' ? 'completed' : 'failed',
+
                         ]);
 
                         // Proceed only if payment was successful

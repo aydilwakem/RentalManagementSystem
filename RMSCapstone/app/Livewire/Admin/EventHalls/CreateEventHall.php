@@ -39,8 +39,10 @@ class CreateEventHall extends Component
 
     public function mount()
     {
-        //Mount only event hall inclusions
-        $this->features = PropertyFeature::where('property_type_id', 3)->get();
+        //Mount only active event hall inclusions
+        $this->features = PropertyFeature::where('property_type_id', 3)
+        ->where('is_active', true)
+        ->get();
     }
 
     public function removeImage($index)

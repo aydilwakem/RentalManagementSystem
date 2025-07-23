@@ -7,8 +7,11 @@ use Livewire\Component;
 
 class CreateInclusion extends Component
 {
-    //Public declaration of fillable field
+    //-------------- Fields ----------------- //
     public $name;
+    public $quantity;
+    public $property_feature_type; 
+    public $is_active = false;
     
     //Public declaration of confirmation modal
     public $confirmCreateItem = false;
@@ -33,6 +36,9 @@ class CreateInclusion extends Component
             // Validate form input
             $this->validate([
                 'name' => 'required|string|max:255',
+                'quantity' => 'required|numeric|min:1|max:30',
+                'property_feature_type' => 'required|in:appliance,equipment,utility,entertainment,service,fixture',
+                'is_active' => 'required|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -44,10 +50,13 @@ class CreateInclusion extends Component
         PropertyFeature::create([
             'name' => $this->name,
             'property_type_id' => 3, //Type 3 for event hall
+            'quantity' => $this->quantity, 
+            'property_feature_type' => $this->property_feature_type, 
+            'is_active' => $this->is_active
         ]);
 
         // Reset form fields
-        $this->reset('name');
+        $this->reset('name', 'quantity', 'is_active', 'property_feature_type', 'quantity');
 
         // Flash message for success
         session()->flash('message', 'Inclusion successfully created!');

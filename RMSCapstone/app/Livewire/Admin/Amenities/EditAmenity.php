@@ -17,6 +17,9 @@ class EditAmenity extends Component
     public PropertyFeature $amenity;
     public $property_type_id;
     public $name;
+    public $quantity;
+    public $property_feature_type; 
+    public $is_active = false;
     public $amenityId;
 
     //Public declaration of modal
@@ -34,6 +37,9 @@ class EditAmenity extends Component
         $this->amenity = $amenity;
         $this->amenityId = $amenity->id;
         $this->name = $amenity->name;
+        $this->quantity = $amenity->quantity; 
+        $this->property_feature_type = $amenity->property_feature_type;
+        $this->is_active = $amenity->is_active;  
     }
 
     /**
@@ -49,6 +55,9 @@ class EditAmenity extends Component
         try {
             $this->validate([
                 'name' => 'required|string|max:100',
+                'quantity' => 'required|numeric|min:1|max:30',
+                'property_feature_type' => 'required|in:appliance,equipment,utility,entertainment,service,fixture',
+                'is_active' => 'required|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -60,6 +69,9 @@ class EditAmenity extends Component
         $this->amenity->update([
             'name' => $this->name,
             'property_type_id' => 1, 
+            'quantity' => $this->quantity, 
+            'property_feature_type' => $this->property_feature_type, 
+            'is_active' => $this->is_active
         ]);
 
         session()->flash('message', 'Amenity successfully updated!');

@@ -9,7 +9,7 @@ use Livewire\WithPagination;
 
 class ViewAmenities extends Component
 {
-    //Declarations for pagination and sorting
+    //---------------- Declarations ----------- //
     use WithPagination;
 
     #[Url(history: true)]
@@ -24,10 +24,11 @@ class ViewAmenities extends Component
     #[Url(history: true)]
     public $sortDir = 'DESC';
 
-    //Public declaration for confirmation modal
+    //------------------ Modals ---------------- //
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false;
     public $selectedItemId = null;
+    public $cannotDeleteItem = false;
 
     //public declaration for bulk actions
     public $selectedRows = [];
@@ -57,9 +58,29 @@ class ViewAmenities extends Component
     }
 
     public function deleteSelectedRows(){
+        try {
+        $amenities = PropertyFeature::whereIn('id', $this->selectedRows)->get();
+
+        foreach ($amenities as $amenity) {
+            if ($amenity->is_active) {
+                $this->cannotDeleteItem = true;
+                $this->confirmBulkDelete = false;
+                return;
+            }
+        }
+
+        // Bulk Delete
         PropertyFeature::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected amenities got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e;
+        }
+    }
     }
 
     public function confirmDeleteInBulk(){
@@ -93,6 +114,13 @@ class ViewAmenities extends Component
     {
         $amenity = PropertyFeature::find($this->selectedItemId);
 
+        if ($amenity->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
+            return;
+        }
+
+        try{
 
         if ($amenity) {
             if ($this->confirmItemDelete) {
@@ -118,7 +146,15 @@ class ViewAmenities extends Component
                 session()->flash('message', 'Amenity successfully deleted!');
             }
         }
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
+        }
     }
+    }
+    
 
     /**
      * Sets the sorting criteria for displaying amenities.

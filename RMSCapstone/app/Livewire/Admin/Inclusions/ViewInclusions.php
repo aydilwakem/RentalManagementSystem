@@ -28,6 +28,7 @@ class ViewInclusions extends Component
     public $confirmItemDelete = false;
     public $confirmBulkDelete = false;
     public $selectedInclusionId = null;
+    public $cannotDeleteItem = false;
 
 
     //public declaration for bulk actions
@@ -62,9 +63,29 @@ class ViewInclusions extends Component
 
     public function deleteSelectedRows()
     {
+       try {
+        $inclusions = PropertyFeature::whereIn('id', $this->selectedRows)->get();
+
+        foreach ($inclusions as $inclusion) {
+            if ($inclusion->is_active) {
+                $this->cannotDeleteItem = true;
+                $this->confirmBulkDelete = false;
+                return;
+            }
+        }
+
+        // Bulk Delete
         PropertyFeature::whereIn('id', $this->selectedRows)->delete();
+
         $this->confirmBulkDelete = false;
         session()->flash('message', 'All selected inclusions got deleted!');
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true; // FK error
+        } else {
+            throw $e;
+        }
+    }
     }
 
     public function confirmDeleteInBulk()
@@ -99,6 +120,13 @@ class ViewInclusions extends Component
     {
         $inclusion = PropertyFeature::find($this->selectedInclusionId);
 
+        if ($inclusion->is_active) {
+            $this->cannotDeleteItem = true;
+            $this->confirmItemDelete = null;
+            return;
+        }
+
+        try{
         if ($inclusion && $this->confirmItemDelete) {
             $inclusion->delete();
 
@@ -119,6 +147,13 @@ class ViewInclusions extends Component
 
             session()->flash('message', 'Inclusion successfully deleted!');
         }
+    }catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() == 23000) {
+            $this->cannotDeleteItem = true;
+        } else {
+            throw $e;
+        }
+    }
     }
 
 

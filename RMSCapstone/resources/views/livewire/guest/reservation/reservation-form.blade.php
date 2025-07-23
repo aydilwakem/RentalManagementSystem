@@ -48,6 +48,7 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
+                              {{-- @include('livewire.guest.reservation.guest-detail') --}}
                         @include('livewire.guest.reservation.choose-room')
                           {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
@@ -328,6 +329,13 @@
                             </button>
                         @endif
                     </div>
+
+                    <!-- Pet Fee Amount -->
+                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
+                        <div class="text-lg">Pet fee</div>
+                        <div class="text-lg">₱{{ number_format($this->computePetTotal(), 2) }}</div>
+                    </div>
+
 
                     <!-- Subtotal Amount -->
                     <div class="flex justify-between items-center font-semibold text-green-700 mb-1">

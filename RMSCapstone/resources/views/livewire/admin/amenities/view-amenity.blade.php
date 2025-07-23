@@ -30,11 +30,31 @@
                 Amenity: {{ $amenity->name }}
             </h1>
 
-            <!-- Space to push buttons to bottom -->
-            <div class="flex-grow"></div>
+            <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Amenity Details</h3>
+            <div
+                class="bg-gray-50 rounded-lg p-6 mb-6 text-gray-600 dark:bg-gray-600 dark:text-gray-200 border dark:border-gray-500">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600 dark:text-gray-200">
+                    <div><strong>Quantity:</strong> {{ $amenity->quantity }} </div>
+                    <div><strong>Amenity Type:</strong> {{ ucfirst($amenity->property_feature_type) }} </div>
+                    <div><strong>Status:</strong>
+                        @if ($amenity->is_active)
+                        <span
+                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                            Active
+                        </span>
+                        @else
+                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                            Inactive
+                        </span>
+                        @endif
+                    </div>
+                </div>
 
-            {{-- Action buttons --}}
-            <div class="flex justify-between space-x-3 pt-4 mt-auto">
+            </div>
+
+            <!-- Action Buttons -->
+            <div
+                class="flex justify-between space-x-3 pt-4 mt-auto">
                 <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
                     href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}" class="w-full sm:w-auto">
                     Edit
@@ -66,6 +86,24 @@
                     </x-danger-button>
                 </x-slot>
             </x-dialog-modal>
+
+            {{-- Cannot Delete Modal --}}
+            <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
+                <x-slot name="title">
+                    {{ __('Unable to Delete') }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ __('This amenity is currently active and cannot be deleted.') }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                        {{ __('OK') }}
+                    </x-secondary-button>
+                </x-slot>
+            </x-dialog-modal>
+
         </div>
     </div>
 </div>
