@@ -48,9 +48,9 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
-                              {{-- @include('livewire.guest.reservation.guest-detail') --}}
+                        {{-- @include('livewire.guest.reservation.guest-detail') --}}
                         @include('livewire.guest.reservation.choose-room')
-                          {{-- @include('livewire.guest.reservation.review') --}}
+                        {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
                 @endif
 
@@ -102,39 +102,39 @@
                 @endphp
 
                 @if ($check_in_date)
-                <div
-                    class="-mt-6 -mx-6 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold py-2 rounded-t-lg shadow-sm">
-                    Reservation Summary
-                </div>
+                    <div
+                        class="-mt-6 -mx-6 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold py-2 rounded-t-lg shadow-sm">
+                        Reservation Summary
+                    </div>
 
-                <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
-                    <span>
-                        {{ $this->getFormattedCheckInDate() }}
-                    </span>
-
-                    @error('check_in_date')
-                        <span class="text-red-600">{{ $message }}</span>
-                    @enderror
-
-                    <i class="fa-solid fa-arrow-right"></i>
-                    @if ($check_out_date)
+                    <div class="flex justify-center items-center text-md text-gray-800 space-x-4">
                         <span>
-                            {{ $this->getFormattedCheckOutDate() }}
+                            {{ $this->getFormattedCheckInDate() }}
                         </span>
-                    @endif
-                </div>
+
+                        @error('check_in_date')
+                            <span class="text-red-600">{{ $message }}</span>
+                        @enderror
+
+                        <i class="fa-solid fa-arrow-right"></i>
+                        @if ($check_out_date)
+                            <span>
+                                {{ $this->getFormattedCheckOutDate() }}
+                            </span>
+                        @endif
+                    </div>
                 @endif
 
                 @if ($check_out_date)
-                <div class="flex justify-center items-center text-md text-gray-800 mb-2 space-x-4">
-                    <!-- Stay Duration -->
-                    <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
+                    <div class="flex justify-center items-center text-md text-gray-800 mb-2 space-x-4">
+                        <!-- Stay Duration -->
+                        <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
 
-                </div>
+                    </div>
                 @endif
 
                 @if ($check_in_date)
-                <hr class="my-2 border-gray-200">
+                    <hr class="my-2 border-gray-200">
                 @endif
 
                 <!------------------------------ Selected Items ------------------------------------->
@@ -145,111 +145,117 @@
 
                 <div>
                     @if ($cartCollection->isNotEmpty())
-                    <div class="flex flex-col gap-2 mb-2 py-2">
-                        <!-- Selected Rooms -->
-                        @if ($cartCollection->contains('type', 'room'))
-                            @foreach ($cart as $item)
-                                @if ($item['type'] === 'room')
-                                    <!-- Room Card -->
-                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
-                                        wire:key="cart-item-{{ $item['room_id'] }}">
-                                        <!-- Back Button -->
-                                        <button type="button"
-                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
-                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
-                                            title="Remove Room">
-                                            <span class="leading-none ">&times;</span>
-                                        </button>
-                                        <!-- Room Details -->
-                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
-                                            <!-- Room Name -->
-                                            <div class="text-md">
-                                                <i class="fa-solid fa-bed"></i>
-                                                <strong>Room:</strong> {{ $item['room_name'] }}
-                                            </div>
-
-                                            <!-- Guest Info -->
-                                            <div class="text-sm text-gray-600">
-                                                Adults: {{ $item['adults'] }}, Kids: {{ $item['kids'] }}
-                                            </div>
-
-                                            <!-- Charges Breakdown -->
-                                            <div class="flex justify-between items-start gap-1">
-
-                                                <!-- Labels -->
-                                                <div>
-                                                     <div class="text-sm text-gray-600">
-                                                       {{ $item['roomRateName'] }} (per night × days):
-                                                    </div>
-                                                    @if ($item['extra_charge'])
-                                                        <div class="text-sm text-gray-600">Extra Person Charge:
-                                                        </div>
-                                                    @endif
-                                                    <div class="text-sm text-gray-600">Subtotal:</div>
+                        <div class="flex flex-col gap-2 mb-2 py-2">
+                            <!-- Selected Rooms -->
+                            @if ($cartCollection->contains('type', 'room'))
+                                @foreach ($cart as $item)
+                                    @if ($item['type'] === 'room')
+                                        <!-- Room Card -->
+                                        <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                                            wire:key="cart-item-{{ $item['room_id'] }}">
+                                            <!-- Back Button -->
+                                            <button type="button"
+                                                wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['room_id'] }})"
+                                                class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                                                title="Remove Room">
+                                                <span class="leading-none ">&times;</span>
+                                            </button>
+                                            <!-- Room Details -->
+                                            <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                                <!-- Room Name -->
+                                                <div class="text-md">
+                                                    <i class="fa-solid fa-bed"></i>
+                                                    <strong>Room:</strong> {{ $item['room_name'] }}
                                                 </div>
 
-                                                <!-- Amounts -->
-                                                <div class="text-right">
-                                                     <div class="text-sm font-semibold text-gray-800">
-                                                        ₱{{ number_format($item['roomAmount'], 2) }}
-                                                    </div>
-                                                    @if ($item['extra_charge'])
-                                                        <div class="text-sm font-semibold text-gray-800">
-                                                            ₱{{ number_format($item['extra_charge'], 2) }}
-                                                        </div>
-                                                    @endif
-                                                    <div class="text-sm font-semibold text-gray-800">
-                                                        ₱{{ number_format($item['total_amount'], 2) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        @endif
-
-                        <!-- Selected Activities -->
-                        @if ($cartCollection->contains('type', 'activity'))
-                            @foreach ($cart as $item)
-                                @if ($item['type'] === 'activity')
-                                    <!-- Activity Card -->
-                                    <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
-                                        wire:key="cart-item-{{ $item['activity_id'] }}">
-                                        <!-- back Button -->
-                                        <button type="button"
-                                            wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
-                                            class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
-                                            title="Remove Activity">
-                                            <span class="leading-none ">&times;</span>
-                                        </button>
-                                        <!-- Activity Details -->
-                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
-                                            <div class="text-md">
-                                                <i class="fa-solid fa-square-plus"></i>
-                                                <strong>Activity:</strong> {{ $item['activity_name'] }}
-                                            </div>
-                                            <!-- Charges Breakdown -->
-                                            <div class="flex justify-between items-start gap-2">
-                                                <!-- Label and Quantity -->
+                                                <!-- Guest Info -->
                                                 <div class="text-sm text-gray-600">
-                                                    Quantity: {{ $item['quantity'] }}
+                                                    Adults: {{ $item['adults'] }}, Kids: {{ $item['kids'] }}
                                                 </div>
-                                                <!-- Amount -->
-                                                <div class="text-sm font-semibold text-gray-800">
-                                                    ₱{{ number_format($item['amount'], 2) }}
+
+                                                <!-- Charges Breakdown -->
+                                                <div class="flex justify-between items-start gap-1">
+
+                                                    <!-- Labels -->
+                                                    <div>
+                                                        <div class="text-sm text-gray-600">
+                                                            {{ $item['roomRateName'] }} (per night × days):
+                                                        </div>
+                                                        @if ($item['extra_charge'])
+                                                            <div class="text-sm text-gray-600">Extra Person Charge:
+                                                            </div>
+                                                        @endif
+                                                        <div class="text-sm text-gray-600">Subtotal:</div>
+                                                    </div>
+
+                                                    <!-- Amounts -->
+                                                    <div class="text-right">
+                                                        <div class="text-sm font-semibold text-gray-800">
+                                                            ₱{{ number_format($item['roomAmount'], 2) }}
+                                                        </div>
+                                                        @if ($item['extra_charge'])
+                                                            <div class="text-sm font-semibold text-gray-800">
+                                                                ₱{{ number_format($item['extra_charge'], 2) }}
+                                                            </div>
+                                                        @endif
+                                                        <div class="text-sm font-semibold text-gray-800">
+                                                            ₱{{ number_format($item['total_amount'], 2) }}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        @endif
-                        <p class="mt-4">Total Guests: {{ $total_pax }}</p>
-                    </div>
+                                    @endif
+                                @endforeach
+                            @endif
+
+                            <!-- Selected Activities -->
+                            @if ($cartCollection->contains('type', 'activity'))
+                                @foreach ($cart as $item)
+                                    @if ($item['type'] === 'activity')
+                                        <!-- Activity Card -->
+                                        <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                                            wire:key="cart-item-{{ $item['activity_id'] }}">
+                                            <!-- back Button -->
+                                            <button type="button"
+                                                wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['activity_id'] }})"
+                                                class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                                                title="Remove Activity">
+                                                <span class="leading-none ">&times;</span>
+                                            </button>
+                                            <!-- Activity Details -->
+                                            <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                                <div class="text-md">
+                                                    <i class="fa-solid fa-square-plus"></i>
+                                                    <strong>Activity:</strong> {{ $item['activity_name'] }}
+                                                </div>
+                                                <!-- Charges Breakdown -->
+                                                <div class="flex justify-between items-start gap-2">
+                                                    <!-- Label and Quantity -->
+                                                    <div class="text-sm text-gray-600">
+                                                        Quantity: {{ $item['quantity'] }}
+                                                    </div>
+                                                    <!-- Amount -->
+                                                    <div class="text-sm font-semibold text-gray-800">
+                                                        ₱{{ number_format($item['amount'], 2) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+                            <p class="mt-2">Total Guests: {{ $total_pax }}</p>
+                            <!-- Pet Fee Amount -->
+                            @if ($this->computePetTotal())
+                                <p>
+                                    Pet fee ₱{{ number_format($this->computePetTotal(), 2) }}
+                                </p>
+                            @endif
+                        </div>
                     @else
-                    <!-- Show when no room is selected -->
-                    <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
+                        <!-- Show when no room is selected -->
+                        <div class="flex flex-col items-center justify-center text-gray-500 text-sm py-6">
                             <i class="fa-solid fa-bed text-3xl mb-2"></i>
                             <span>No rooms added yet</span>
                         </div>
@@ -286,99 +292,100 @@
 
                 <!------------------------------ Price Breakdown ------------------------------------->
                 @if ($cartCollection->contains('type', 'room'))
-                <div>
+                    <div>
 
-                    <!-- Discount Code -->
-                    <hr class="my-2 border-gray-200">
-                    @if ($discountMessage)
-                        <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
-                    @endif
-
-                    @if ($errorMessage)
-                        <p class="text-sm mt-1 text-red-500">{{ $errorMessage }}</p>
-                    @endif
-
-                    @php
-                        $hasCode = !empty($promoCode) && empty($discountMessage) === false;
-                    @endphp
-
-                    <div class="relative w-full mt-4">
-                         <input
-        type="text"
-        wire:model="promoCode"
-        wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
-        class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
-        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-        placeholder="Enter Promo Code"
-        autocomplete="off"
-        {{ $hasCode ? 'disabled' : '' }} {{-- optional: disable when applied --}}
-    >
-
-                        {{-- TODO: disable field when code is inputted, clear field when removed --}}
+                        <!-- Discount Code -->
+                        <hr class="my-2 border-gray-200">
                         @if ($discountMessage)
-                            {{-- does not work yet <33 --}}
-                            <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
-                                title="Remove Promo Code">
-                                &times;
-                            </button>
-                        @else
-                            <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
-                                Apply
-                            </button>
+                            <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
                         @endif
+
+                        @if ($errorMessage)
+                            <p class="text-sm mt-1 text-red-500">{{ $errorMessage }}</p>
+                        @endif
+
+                        @php
+                            $hasCode = !empty($promoCode) && empty($discountMessage) === false;
+                        @endphp
+
+                        <div class="relative w-full mt-4">
+                            <input type="text" wire:model="promoCode"
+                                wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+                                class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+                                placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
+                                {{-- optional: disable when applied --}}>
+
+                            {{-- TODO: disable field when code is inputted, clear field when removed --}}
+                            @if ($discountMessage)
+                                {{-- does not work yet <33 --}}
+                                <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
+                                    title="Remove Promo Code">
+                                    &times;
+                                </button>
+                            @else
+                                <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
+                                    Apply
+                                </button>
+                            @endif
+                        </div>
+
+                        <!-- Subtotal Amount -->
+                        <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+                            <div>Subtotal</div>
+                            <div class="font-semibold">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                        </div>
+
+                        <!-- Convenience Fee -->
+                        <div class="flex justify-between items-center text-sm text-gray-600">
+                            <div class="text-left flex items-center gap-2">
+                                <div>Convenience Fee</div>
+                                <!-- Info Icon with Tooltip -->
+                                <div class="relative group inline-block">
+                                    <i
+                                        class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
+
+                                    <!-- Tooltip -->
+                                    <div
+                                        class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                        A convenience fee is applied for processing online payments via our secure
+                                        payment gateway.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="font-semibold">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                        </div>
+
+                        <!-- Total Amount -->
+                        <div class="flex justify-between items-center font-semibold text-green-700">
+                            <div class="text-lg">Total</div>
+                            <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
+                        </div>
+
+                        <hr class="my-2 border-gray-200 mt-3">
+
+                        <!-- If deposit percentage is enabled -->
+                        @if ($enable_deposit_percentage && $this->deposit > 0)
+                            <!-- Deposit -->
+                            <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
+                                <div>Required Deposit</div>
+                                <div class="font-semibold">
+                                    ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
+                            </div>
+                        @endif
+
                     </div>
-
-                    <!-- Pet Fee Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Pet fee</div>
-                        <div class="text-lg">₱{{ number_format($this->computePetTotal(), 2) }}</div>
-                    </div>
-
-
-                    <!-- Subtotal Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Subtotal</div>
-                        <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
-                    </div>
-
-                    <!-- Convenience Fee -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Convenience Fee</div>
-                        <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
-                    </div>
-
-                    
-                 
-
-                    <!-- Total Amount -->
-                    <hr class="my-2 border-gray-200 mt-4">
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Total</div>
-                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>          
-                    </div>
-
-                    <!-- If deposit percentage is enabled -->
-                    @if ($enable_deposit_percentage && $this->deposit > 0)
-                    <!-- Deposit -->
-                    <div class="flex justify-between items-center text-sm text-gray-600 mb-3">
-                        <div>Deposit</div>
-                        <div class="font-semibold">
-                            ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
-                    </div>
-                    @endif
-
-                </div>
                 @endif
 
 
 
-            <!-- Navigation Buttons-->
-            @if ($cartCollection->contains('type', 'room'))
-            <div class="mt-6 flex justify-between">
+                <!-- Navigation Buttons-->
+                @if ($cartCollection->contains('type', 'room'))
+                    <div class="mt-6 flex justify-between">
 
-                {{-- @if ($currentStep == 1)
+                        {{-- @if ($currentStep == 1)
                 <div> </div>
                 @endif --}}
 
@@ -520,9 +527,9 @@
                         @if ($errors->has('terms'))
                             <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
                         @endif
-                    </div> 
+                    </div>
             </div>
-            @endif
+        @endif
         @endif
     </div>
 </div>

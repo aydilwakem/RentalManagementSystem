@@ -106,9 +106,27 @@
                                             <p class="mt-4 text-lg font-medium">
                                                 Rate Per Night:
                                                 @if ($room->rate_name || $room->rate_type)
-                                                    <span class="text-green-700 font-bold">
+                                                    <span class="text-green-700 font-bold mb-1">
                                                         ₱{{ number_format($room->dynamic_rate, 2) }}
-                                                    </span> <span class="text-xs text-gray-500">/ ({{ $room->rate_name }}{{ $room->rate_type ? ' Rate - ' . $room->rate_type : '' }}) </span>
+                                                    </span>
+                                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
+                                                        @if ($room->rate_type === 'Weekend')
+                                                            bg-yellow-100 text-yellow-700
+                                                        @elseif ($room->rate_type === 'Weekdays')
+                                                            bg-green-100 text-green-700
+                                                        @elseif ($room->rate_type === 'Peak')
+                                                            bg-red-100 text-red-700
+                                                        @elseif ($room->rate_type === 'Holiday')
+                                                            bg-purple-100 text-purple-700
+                                                        @else
+                                                            bg-gray-100 text-gray-600
+                                                        @endif
+                                                    ">
+                                                        {{ $room->rate_name }}
+                                                        @if ($room->rate_type)
+                                                            - {{ $room->rate_type }} Rate
+                                                        @endif
+                                                    </span>
                                                 @endif
                                             </p>
 
@@ -343,13 +361,18 @@
                                                         <!-- Room info here -->
 
                                                         @if ($roomInCart)
-                                                        <span class="block w-full text-center py-2 bg-yellow-300 text-gray-800 font-semibold rounded">
-                                                            In Cart
-                                                        </span>
+                                                        {{-- <span class="block w-full text-center py-2 text-yellow-800 bg-yellow-100 border border-yellow-300 font-semibold rounded text-xs uppercase">
+                                                            <i class="fa-solid fa-check-to-slot"></i> In Cart
+                                                        </span> --}}
+                                                        <x-warning-button class="relative h-10 w-full justify-center !bg-yellow-400 ">
+                                                            <span>
+                                                                <i class="fa-solid fa-check-to-slot"></i> In Cart
+                                                            </span>
+                                                        </x-warning-button>
                                                         @elseif ($room->is_booked)
-                                                        <span class="block w-full text-center py-2 bg-red-500 text-white-100 font-semibold rounded">
-                                                            Sold Out
-                                                        </span>
+                                                        <x-danger-button>
+                                                            <i class="fa-solid fa-circle-xmark me-1"></i> Sold Out
+                                                        </x-danger-button>
 
                                                         @else
                                                             <x-button wire:click="addRoomToCart({{ $room->id }})"
@@ -370,7 +393,7 @@
 
                                                                     <!-- Button Text -->
                                                                     <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
-                                                                        Add Room
+                                                                        <i class="fa-solid fa-cart-plus"></i> Add Room
                                                                     </span>
                                                                 </div>
                                                             </x-button>

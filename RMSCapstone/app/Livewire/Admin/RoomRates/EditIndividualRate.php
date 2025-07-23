@@ -91,4 +91,18 @@ class EditIndividualRate extends Component
 
         return redirect()->route('admin.view-room', ['room' => $this->room_id]); // Fixed redirect
     }
+
+    public function increment()
+    {
+        if ($this->priority < 10) {
+            $this->priority++;
+        }
+    }
+
+    public function decrement()
+    {
+        if ($this->priority > 1) {
+            $this->priority--;
+        }
+    }
 }

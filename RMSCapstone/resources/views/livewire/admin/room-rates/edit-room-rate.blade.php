@@ -166,18 +166,13 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
-
-
-
-
             </div>
 
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-ghost-button onclick="history.back()" type="button">
                     Cancel
-                </x-button>
-                <x-button type="submit" wire:click="confirmEdit({{ $roomRate->id }})" wire:loading.attr="disabled">
+                </x-ghost-button>
+                <x-button type="submit" wire:click="updateIndividualRoomRate({{ $roomRate->id }})" wire:loading.attr="disabled">
                     Save Changes
                 </x-button>
             </div>
