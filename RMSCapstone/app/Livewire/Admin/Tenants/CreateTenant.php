@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
+use App\Models\Municipality;
 use App\Models\TransactionUser;
 use Livewire\Component;
 use App\Models\Property;
@@ -9,6 +10,7 @@ use App\Models\Property;
 class CreateTenant extends Component
 {
 
+    // ------------------- Tenant Information -------------------- //
     public $trn_user_type = 'tenant'; // Default value set to 'tenant'
     public $first_name;
     public $middle_name;
@@ -25,10 +27,19 @@ class CreateTenant extends Component
     public $region;
     public $postal_code;
     public $country;
+    public $otherCountry = '';
+
+    // ------------------- Address -------------------- //
+    public $municipalities = [];
 
 
-
+    //------------------- Modals -------------------- //
     public $confirmCreateItem = false;
+
+    public function mount()
+    {
+        $this->municipalities = Municipality::orderBy('PSGC_MUNC_DESC')->get();
+    }
 
     public function confirmCreate()
     {
@@ -55,6 +66,8 @@ class CreateTenant extends Component
             $this->confirmCreateItem = false;
             throw $e;
         }
+
+        $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
 
         // Create Tenant
         TransactionUser::create([

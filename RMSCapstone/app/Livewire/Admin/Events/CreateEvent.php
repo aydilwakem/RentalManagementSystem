@@ -7,7 +7,9 @@ use App\Models\EventCategory;
 use App\Models\EventHall;
 use App\Models\EventType;
 use App\Models\Invoice;
+use App\Models\Municipality;
 use App\Models\Property;
+use App\Models\Region;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
 use Carbon\Carbon;
@@ -38,6 +40,7 @@ class CreateEvent extends Component
     public $company_name;
     public $city_municipality;
     public $country;
+    public $otherCountry = '';
 
     // ----------------------- Halls (transaction_properties)---------------------------- //
     public $allHalls = [];
@@ -65,6 +68,8 @@ class CreateEvent extends Component
     public $eventTypes;
     public $event_type_id;
 
+    // ------------------- Address -------------------- //
+    public $municipalities = [];
 
 
     // ------------------- Modal -------------------- //
@@ -83,6 +88,9 @@ class CreateEvent extends Component
         $this->end_datetime = $now->copy()->setTime(12, 0)->format('Y-m-d H:i');
 
         $this->getAvailableHalls();
+
+        //Addresses
+        $this->municipalities = Municipality::orderBy('PSGC_MUNC_DESC')->get();
     }
 
     public function confirmCreate()
@@ -100,7 +108,7 @@ class CreateEvent extends Component
                 'last_name' => 'required|string|max:100',
                 'email' => 'required|email|max:100',
                 'contact_number' => 'required|string|max:20',
-                'city_municipality' => 'required|string|max:100',
+                'city_municipality' => 'nullable|string|max:100',
                 'company_name' => 'required|string|max:100',
                 'country' => 'required|string|max:100',
 
@@ -127,6 +135,7 @@ class CreateEvent extends Component
             throw $e;
         }
 
+        $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
 
         DB::transaction(function () {
 

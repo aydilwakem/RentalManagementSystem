@@ -35,8 +35,19 @@
                     <div><strong>Contact Number:</strong> {{ $event->transactionUser->contact_number }}</div>
                     <div><strong>Company Name:</strong> {{ $event->transactionUser->company_name }}</div>
                     <div class="md:col-span-2"><strong>Location:</strong>
-                        {{ $event->transactionUser->city_municipality }},
+                        {{-- If there is municipality and country, it will show both. --}}
+                        @if($event->transactionUser->city_municipality && $event->transactionUser->country)
+                        {{ Str::title(strtolower($event->transactionUser->city_municipality)) }},
+                        {{$event->transactionUser->country }}
+                        {{-- If there is only municipality, it will show municipality only. --}}
+                        @elseif($event->transactionUser->city_municipality)
+                        {{ Str::title(strtolower($event->transactionUser->city_municipality)) }}
+                        {{-- If there is only country, it will show country only. --}}
+                        @elseif($event->transactionUser->country)
                         {{ $event->transactionUser->country }}
+                        @else
+                        N/A
+                        @endif
                     </div>
                 </div>
             </div>
@@ -87,7 +98,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600 dark:text-gray-200">
                     <div><strong>Event Hall:</strong>
                         @foreach ($event->properties as $property)
-                            {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
+                        {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
                         @endforeach
 
                     </div>
@@ -140,81 +151,73 @@
                         {{ __('Payments') }}
                     </h2>
                     @if ($payments->isNotEmpty())
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full border-collapse border border-gray-300 text-sm dark:text-gray-200">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Payment ID</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Invoice ID</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Method</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Amount Paid</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Type</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Reference No.</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Payment Date</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Status</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Notes</th>
-                                        {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 text-sm dark:text-gray-200">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Payment ID</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Invoice ID</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Method</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Amount Paid</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Type</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Reference No.</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Payment Date</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Status</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        Notes</th>
+                                    {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Action</th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody
-                                    class="bg-white dark:bg-gray-500 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-500">
-                                    @foreach ($payments as $payment)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-400">
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ $payment->id }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ $payment->invoice->invoice_number }}
-                                            </td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ ucfirst($payment->mode_of_payment) }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                ₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ ucfirst($payment->payment_type) }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ $payment->payment_reference_number ?? 'N/A' }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ $payment->payment_date ?? 'N/A' }}</td>
-                                            <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-600">
-                                                <span
-                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                </tr>
+                            </thead>
+                            <tbody
+                                class="bg-white dark:bg-gray-500 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-500">
+                                @foreach ($payments as $payment)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-400">
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ $payment->id }}</td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ $payment->invoice->invoice_number }}
+                                    </td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ ucfirst($payment->mode_of_payment) }}</td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        ₱{{ number_format($payment->amount_paid, 2) }}</td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ ucfirst($payment->payment_type) }}</td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ $payment->payment_date ?? 'N/A' }}</td>
+                                    <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-600">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
-                                                    {{ ucfirst($payment->payment_status) }}
-                                                </span>
-                                            </td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                                {{ $payment->notes ?? '-' }}
-                                            </td>
-                                            {{-- <td class="border px-4 py-2 text-gray-700">
+                                            {{ ucfirst($payment->payment_status) }}
+                                        </span>
+                                    </td>
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                        {{ $payment->notes ?? '-' }}
+                                    </td>
+                                    {{-- <td class="border px-4 py-2 text-gray-700">
                                         {{ $payment->verified_at ?? 'To be verified' }}</td>
                                     <td class="border px-4 py-2 space-x-2">
                                         @if ($payment->payment_status === 'pending')
@@ -230,13 +233,13 @@
                                         </a>
                                         @endif
                                     </td> --}}
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     @else
-                        <p class="text-gray-600 italic">No payments found for this invoice.</p>
+                    <p class="text-gray-600 italic">No payments found for this invoice.</p>
                     @endif
                 </div>
             </section>
@@ -246,16 +249,17 @@
             <div>
                 @if ($createPaymentModal)
                 <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200">
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200">
                         <h2 class="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Add Payment</h2>
 
                         <!-- Amount Paid -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Amount Paid <span class="text-red-500">*</span></label>
-                            <input type="number" wire:model="amount_paid"
-                                placeholder="Ex. 10,000.00"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" required>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Amount Paid <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" wire:model="amount_paid" placeholder="Ex. 10,000.00" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                required>
                             @error('amount_paid')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -263,10 +267,11 @@
 
                         <!-- Payment Date -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Date <span class="text-red-500">*</span></label>
-                            <input type="date" wire:model="payment_date"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" required>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" wire:model="payment_date" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                required>
                             @error('payment_date')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -274,10 +279,11 @@
 
                         <!-- Payment Type -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Type <span class="text-red-500">*</span></label>
-                            <select wire:model="payment_type"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" required>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Type <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model="payment_type" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                required>
                                 <option value="">Select Payment Type</option>
                                 <option value="Room Rent">Room Rent</option>
                                 <option value="House Rent">House Rent</option>
@@ -295,9 +301,7 @@
                         <!-- Notes -->
                         <div class="mt-4">
                             <label class="block text-sm text-gray-700 dark:text-gray-200">Notes</label>
-                            <input type="text" wire:model="notes"
-                                placeholder="Optional notes about the payment"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                            <input type="text" wire:model="notes" placeholder="Optional notes about the payment" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             @error('notes')
                             <span class="text-red-500 text-sm">{{ $message }}</span>

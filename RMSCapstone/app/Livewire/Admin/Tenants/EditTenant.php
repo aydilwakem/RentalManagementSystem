@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Tenants;
 
+use App\Models\Municipality;
 use App\Models\TransactionUser;
 use App\Models\Property;
 use Livewire\Attributes\Layout;
@@ -28,6 +29,10 @@ class EditTenant extends Component
     public $region;
     public $postal_code;
     public $country;
+    public $otherCountry;
+
+    // ------------------- Address -------------------- //
+    public $municipalities = [];
 
     public $confirmEditItem = false;
 
@@ -53,7 +58,22 @@ class EditTenant extends Component
         $this->province = $tenant->province;
         $this->region = $tenant->region;
         $this->postal_code = $tenant->postal_code;
-        $this->country = $tenant->country;
+        // $this->country = $tenant->country;
+        // $this->otherCountry = $tenant->country === 'Other' ? $tenant->otherCountry : '';
+
+        // ------------------ Country Handling ------------------ //
+         $presetCountries = ['Philippines', 'Other'];
+        if (!in_array($tenant->country, $presetCountries)) {
+            // Custom country value
+            $this->country = 'Other';
+            $this->otherCountry = $tenant->country;
+        } else {
+            $this->country = $tenant->country;
+            $this->otherCountry = '';
+        }
+
+        // ----------------------- Address -------------------- //
+        $this->municipalities = Municipality::orderBy('PSGC_MUNC_DESC')->get();
     }
 
     public function updateTenant()
@@ -76,6 +96,8 @@ class EditTenant extends Component
             throw $e;
         }
 
+        $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
+
         // Update Tenant
         $this->tenant->update([
             'first_name' => $this->first_name,
@@ -86,7 +108,7 @@ class EditTenant extends Component
             'contact_number' => $this->contact_number,
             'company_name' => $this->company_name,
             'city_municipality' => $this->city_municipality,
-            'country' => $this->country,
+            'country' => $finalCountry,
         ]);
 
         session()->flash('message', 'Tenant successfully updated!');

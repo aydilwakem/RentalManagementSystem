@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\EventHall;
 use App\Models\EventType;
+use App\Models\Municipality;
 use App\Models\Property;
 use App\Models\Transaction;
 use App\Models\TransactionUser;
@@ -23,6 +24,10 @@ class EditEvent extends Component
     // ----------------------- Heard From, Status Defaults ---------------------------- // 
     public $reservation_source = 'WebApp';
     public $transaction_status = 'confirmed';
+
+    // ------------------- Address -------------------- //
+    public $municipalities = [];
+    public $otherCountry;
     
     // ----------------------- EVENT DETAILS ---------------------------- // 
     
@@ -100,7 +105,20 @@ class EditEvent extends Component
         $this->contact_number = $event->transactionUser->contact_number ?? '';
         $this->company_name = $event->transactionUser->company_name ?? '';
         $this->city_municipality = $event->transactionUser->city_municipality ?? '';
-        $this->country = $event->transactionUser->country ?? '';
+        
+        // ------------------ Country Handling ------------------ //
+        $presetCountries = ['Philippines', 'Other'];
+        if (!in_array($event->transactionUser->country, $presetCountries)) {
+            // Custom country value
+            $this->country = 'Other';
+            $this->otherCountry = $event->transactionUser->country;
+        } else {
+            $this->country = $event->transactionUser->country;
+            $this->otherCountry = '';
+        }
+
+        // ----------------------- Address -------------------- //
+        $this->municipalities = Municipality::orderBy('PSGC_MUNC_DESC')->get();
     }
 
     public function updateEvent()

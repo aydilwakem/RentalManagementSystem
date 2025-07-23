@@ -51,7 +51,9 @@ class EditRoom extends Component
     public function mount(Property $room)
     {
         //only mount amenities for Room
-        $this->amenities = PropertyFeature::where('property_type_id', 1)->get();
+        $this->amenities = PropertyFeature::where('property_type_id', 1)
+        ->where('is_active', true)
+        ->get();
 
         $this->roomId = $room->id;
         $this->room = $room;

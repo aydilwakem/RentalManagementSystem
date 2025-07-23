@@ -40,6 +40,7 @@ class Property extends Model
         'street',
         'barangay',
         'city_municipality',
+        'province',
         'region',
         'postal_code',
         'country',
@@ -186,5 +187,25 @@ class Property extends Model
         $query->where('name', 'like', "%{$search}%");
     }
 
+    // ------------------------------------------ Address Name Accessors ----------------------------------- //
+    public function getRegionNameAttribute()
+    {
+        return Region::where('PSGC_REG_CODE', $this->region)->value('PSGC_REG_DESC');
+    }
+
+    public function getProvinceNameAttribute()
+    {
+        return Province::where('PSGC_PROV_CODE', $this->province)->value('PSGC_PROV_DESC');
+    }
+
+    public function getMunicipalityNameAttribute()
+    {
+        return Municipality::where('PSGC_MUNC_CODE', $this->city_municipality)->value('PSGC_MUNC_DESC');
+    }
+
+    public function getBarangayNameAttribute()
+    {
+        return Barangay::where('PSGC_BRGY_CODE', $this->barangay)->value('PSGC_BRGY_DESC');
+    }
 
 }

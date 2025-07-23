@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Admin\Properties;
 
+use App\Models\Barangay;
+use App\Models\Municipality;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\PropertyFeature;
+use App\Models\Province;
+use App\Models\Region;
 
 class CreateProperty extends Component
 {
@@ -32,9 +36,22 @@ class CreateProperty extends Component
     public $street;
     public $barangay;
     public $city_municipality;
+    public $province;
     public $region;
     public $postal_code;
     public $country;
+
+    //------------------------------ Address Mounting -------------------------------//
+    public $provinces = [];
+    public $municipalities = [];
+    public $barangays = [];
+    public $regions = [];
+    
+    public $selectedRegion = null;
+    public $selectedProvince = null;
+    public $selectedMunicipality = null; 
+    public $selectedBarangay = null;
+
 
     // ----------------------- House Features (Amenities) -------------------------------//
     public $selectedFeatures = [];
@@ -48,14 +65,53 @@ class CreateProperty extends Component
         $this->confirmCreateItem = true;
     }
 
+    // ----------------------------- Mount --------------------------------------- //
+
     public function mount()
     {
         //only mount active house features
         $this->features = PropertyFeature::where('property_type_id', 2)
         ->where('is_active', true)
         ->get();
+
+        //Address Mounting
+        $this->regions = Region::orderBy('PSGC_REG_DESC')->get();
     }
 
+    // ----------------------------- Address Selectors --------------------------------------- //
+    public function updatedSelectedRegion($regionCode)
+    {
+        $this->provinces = Province::where('PSGC_REG_CODE', $regionCode)->orderBy('PSGC_PROV_DESC')->get();
+        $this->selectedProvince = null;
+        $this->municipalities = [];
+        $this->barangays = [];
+    }
+
+    public function updatedSelectedProvince($provinceCode)
+    {
+        $this->municipalities = Municipality::where('PSGC_PROV_CODE', $provinceCode)->orderBy('PSGC_MUNC_DESC')->get();
+        $this->selectedMunicipality = null;
+        $this->barangays = [];
+    }
+
+    public function updatedSelectedMunicipality($municipalityCode)
+    {
+        $this->barangays = Barangay::where('PSGC_MUNC_CODE', $municipalityCode)->orderBy('PSGC_BRGY_DESC')->get();
+        $this->selectedBarangay = null;
+    }
+
+    public function updatedSelectedBarangay($barangayCode)
+    {
+        $barangay = Barangay::where('PSGC_BRGY_CODE', $barangayCode)->first();
+
+        if ($barangay && $barangay->PSGC_ZIP_CODE) {
+            $this->postal_code = $barangay->PSGC_ZIP_CODE;
+        } else {
+            $this->postal_code = null;
+        }
+    }
+
+    // ------------------------------ Image Removal -------------------------------- //
     public function removeImage($index)
     {
         unset($this->images[$index]);
@@ -86,9 +142,10 @@ class CreateProperty extends Component
                 'description' => 'nullable|string',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
-                'barangay' => 'required|string',
-                'city_municipality' => 'required|string',
-                'region' => 'required|string',
+                'selectedBarangay' => 'required|string',
+                'selectedMunicipality' => 'required|string',
+                'selectedRegion' => 'required|string',
+                'selectedProvince' => 'required|string',
                 'postal_code' => 'required|string',
                 'country' => 'required|string',
                 'selectedFeatures' => 'nullable|array',
@@ -135,9 +192,10 @@ class CreateProperty extends Component
             'amount' => $this->amount,
             'house_number' => $this->house_number,
             'street' => $this->street,
-            'barangay' => $this->barangay,
-            'city_municipality' => $this->city_municipality,
-            'region' => $this->region,
+            'barangay' => $this->selectedBarangay,
+            'city_municipality' => $this->selectedMunicipality,
+            'region' => $this->selectedRegion,
+            'province' => $this->selectedProvince,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
             'property_status' => $this->property_status,
