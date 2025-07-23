@@ -1,10 +1,16 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View Room') }}
         </h2>
+    <!-- Navigation -->
+    <x-breadcrumbs :items="[
+        ['label' => 'Rooms', 'url' => route('admin.rooms')],
+        ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+    ]" />
     </x-slot>
+
 
     <!-- Body Container -->
     <div class="py-3 mb-4">

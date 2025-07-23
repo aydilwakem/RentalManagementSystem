@@ -1,14 +1,19 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-1 dark:text-white">
             {{ __('View Inclusion') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Inclusions', 'url' => route('admin.inclusions')],
+            ['label' => 'View Inclusion', 'url' => route('admin.view-inclusion', ['inclusion' => $inclusion->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6">
+        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Back Button -->
@@ -20,7 +25,7 @@
 
 
             <!-- Name -->
-            <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center p-8">
+            <h2 class="mb-4 text-xl font-semibold leading-none text-gray-900 md:text-2xl text-center p-8 dark:text-white">
                 Inclusion: {{ $inclusion->name }}
             </h2>
 

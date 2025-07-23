@@ -4,6 +4,11 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('View Room Category') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms Categories', 'url' => route('admin.room-categories')],
+            ['label' => 'View Room Category', 'url' => route('admin.view-room-category', ['roomCategory' => $roomCategory->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->

@@ -1,12 +1,18 @@
-<div class="">
+<div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Create Room Rate') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms', 'url' => route('admin.rooms')],
+            ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+            ['label' => 'Create Room Rate', 'url' => route('admin.create-room-rate', ['room' => $room->id])],
+        ]" />
     </x-slot>
 
-    <div class="mx-auto lg:py-2s border rounded-lg p-6 max-w-2xl mb-6 mt-6 bg-white">
+    <div class="mx-auto border rounded-lg p-6 max-w-2xl mb-6 mt-3 bg-white">
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}</h2>
 
         <form wire:submit.prevent="saveIndividualRoomRate">
@@ -51,8 +57,10 @@
 
                 <!-- Amount -->
                 <div>
-                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Adjusted Rate <span class="text-red-500">*</span>
-                            <span class="text-xs text-gray-500">(Current Base Rate: {{ number_format($room->amount, 2) }})</span>
+                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Adjusted Rate <span
+                            class="text-red-500">*</span>
+                        <span class="text-xs text-gray-500">(Current Base Rate:
+                            {{ number_format($room->amount, 2) }})</span>
                     </label>
                     <input type="number" wire:model="amount" id="amount" onwheel="this.blur()"
                         class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
@@ -140,7 +148,8 @@
                                 -
                             </button>
 
-                            <input type="number" wire:model="priority" min="1" max="10" onwheel="this.blur()"
+                            <input type="number" wire:model="priority" min="1" max="10"
+                                onwheel="this.blur()"
                                 class="text-center w-12 py-1 bg-white border border-gray-300 rounded focus:ring-green-600 focus:border-green-600" />
 
                             <button type="button" wire:click="increment"
@@ -159,8 +168,8 @@
                 <div class="sm:col-span-1">
                     <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
                         Required <span class="text-red-500">*</span></label>
-                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
-                        placeholder="Ex. 2 Nights" onwheel="this.blur()"
+                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights" placeholder="Ex. 2 Nights"
+                        onwheel="this.blur()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                         min="1" max="30">

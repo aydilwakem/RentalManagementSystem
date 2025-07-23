@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View Event Details') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Events', 'url' => route('admin.events')],
+            ['label' => 'View Event', 'url' => route('admin.view-event', ['event'=> $event->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -135,7 +140,7 @@
                 </div>
 
                 <div
-                    class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
+                    class="bg-white rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
                     <h2 class="font-bold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                         {{ __('Payments') }}
                     </h2>

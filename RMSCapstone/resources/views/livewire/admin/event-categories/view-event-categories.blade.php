@@ -172,9 +172,6 @@
                             </th>
                             <th scope="col" class="px-4 py-3">Description</th>
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
-                            {{-- <th scope="col" class="px-4 py-3">
-                            <span class="sr-only">Actions</span>
-                        </th> --}}
                         </tr>
                     </thead>
                     <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
@@ -191,9 +188,9 @@
                                     {{ $eventCategory->name }}</td>
                                 <td class="px-4 py-3">
                                     @if (!empty($eventCategory->description))
-                                        {{ Str::limit($eventCategory->description, 100) }}
+                                        {{ Str::limit($eventCategory->description, 70) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                        <em class="text-gray-600 dark:text-gray-200">No description
                                             provided.</em>
                                     @endif
                                 </td>

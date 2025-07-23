@@ -1,9 +1,15 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Room') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms', 'url' => route('admin.rooms')],
+            ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+            ['label' => 'Edit Room', 'url' => route('admin.edit-room', ['room' => $room->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -306,7 +312,8 @@
 
                         <!-- Loading Spinner -->
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
-                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300" viewBox="0 0 24 24">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300"
+                                viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10"
                                     stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"

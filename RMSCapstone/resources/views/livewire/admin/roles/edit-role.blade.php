@@ -1,8 +1,14 @@
 <div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg dark:bg-gray-700 dark:border-gray-600 border">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Role details') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Roles', 'url' => route('admin.manage-users')],
+            ['label' => 'View Role', 'url' => route('admin.view-role', ['role' => $role->id])],
+            ['label' => 'Edit Role', 'url' => route('admin.edit-role', ['role' => $role->id])],
+        ]" />
     </x-slot>
 
     <div class="rounded-lg p-6 mx-auto mb-6">

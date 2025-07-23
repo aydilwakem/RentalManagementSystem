@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Create Amenity') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Amenities', 'url' => route('admin.amenities')],
+            ['label' => 'Create Amenity', 'url' => route('admin.create-amenity')],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
