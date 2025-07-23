@@ -1,9 +1,15 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Property') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Properties', 'url' => route('admin.properties')],
+            ['label' => 'View Property', 'url' => route('admin.view-property',['property' => $property->id])],
+            ['label' => 'Edit Property', 'url' => route('admin.edit-property',['property' => $property->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->

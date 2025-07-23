@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
 
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-black leading-tight dark:text-white">
+            <h2 class="font-semibold text-xl text-black leading-tight dark:text-white py-1">
                 {{ __('Dashboard') }}
             </h2>
         </x-slot>

@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg">
+<div class="min-h-[550px] container mx-auto p-6 rounded-lg">
     @if ($inclusions->isEmpty() && !$search)
     <!-- Empty Page Message -->
     <div class="text-center py-10">
@@ -39,7 +39,8 @@
             <!-- Header-->
 
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     {{-- Search Tab --}}
@@ -54,13 +55,15 @@
                                 </svg>
                             </div>
                             <input wire:model.live.debounce.300ms="search" type="text"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 "
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Search" required="">
                         </div>
                         {{-- Bulk Actions Button --}}
                         <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                             <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
                                 <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -70,7 +73,8 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 <div class="py-1">
                                     <a wire:click.prevent="confirmDeleteInBulk" href="#"
                                         class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk

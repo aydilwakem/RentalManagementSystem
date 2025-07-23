@@ -51,7 +51,7 @@
 
             @if (isset($header))
                 <header class="bg-white dark:bg-gray-800 shadow w-full px-6">
-                    <div class="py-6">
+                    <div class="mt-4 mb-4">
                         {{ $header }}
                     </div>
                 </header>

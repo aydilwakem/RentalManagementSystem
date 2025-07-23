@@ -1,18 +1,25 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Create Room Category') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms Categories', 'url' => route('admin.room-categories')],
+            ['label' => 'Create Room Category', 'url' => route('admin.create-room-category')],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        <div
+            class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Room Category</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Room Category
+                </h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.room-categories') }}'" wire:navigate
@@ -27,7 +34,9 @@
 
                     <!-- Name of Category -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Category Name <span class="text-red-500">*</span></label>
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Category Name <span
+                                class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"

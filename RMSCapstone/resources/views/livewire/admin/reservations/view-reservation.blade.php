@@ -326,9 +326,6 @@
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         No. of Kids</th>
-                                     <th
-                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        No. of Infants (free)</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Stay Duration
@@ -364,9 +361,6 @@
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
-                                        <td
-                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ $property->pivot->non_chargeable_guests ?? 'N/A' }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
@@ -1479,7 +1473,7 @@
                                 @error('guest_middle_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
-                                </div>
+                            </div>
 
                             <!-- Last Name -->
                             <div>
@@ -1506,6 +1500,7 @@
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
+                   
                         </div>
 
                         <!-- Transaction Property -->
@@ -1532,6 +1527,7 @@
                                     wire:model.live="guest.birthdate"
                                     class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             </div>
+                     
 
 
                         
@@ -1548,12 +1544,12 @@
                                             <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
                                         @endforeach
                                     </select>
-                                </div>
+                        </div>
 
-                                @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
-                                    <span class="text-sm text-gray-500">(Free of charge)</span>
-                                @endif
-
+                        @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
+                         <span class="text-sm text-gray-500">(Free of charge)</span>
+                        @endif
+                            
 
                         <!-- Gender -->
                         <div class="mt-4">

@@ -1,9 +1,15 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Event Hall') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Event Halls', 'url' => route('admin.event-halls')],
+            ['label' => 'View Event Hall', 'url' => route('admin.view-event-hall', ['eventHall' => $eventHall->id])],
+            ['label' => 'Edit Event Hall', 'url' => route('admin.edit-event-hall', ['eventHall' => $eventHall->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->

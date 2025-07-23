@@ -1,8 +1,14 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-1">
             {{ __('View Room Rate') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms', 'url' => route('admin.rooms')],
+            ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+            ['label' => 'View Room Rate', 'url' => route('admin.view-room-rate', ['roomRate' => $roomRate->id])],
+        ]" />
     </x-slot>
 
     <div class="py-3 px-8 mx-auto max-w-3xl border rounded-lg bg-white shadow-md">
@@ -20,26 +26,55 @@
             Room Rate: {{ $roomRate->name }}
         </h2>
 
-        <!-- Room Information -->
-        <div class="mb-2 mt-3 flex items-center gap-2">
-            <h3 class="text-lg font-semibold text-gray-900 leading-none">Assigned Room:</h3>
-            <p class="font-semibold text-gray-600 leading-none">
-                {{ $roomRate->property->name_number ?? 'No Room Assigned' }}
-            </p>
-        </div>
-
         <!-- Rate Details -->
         <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Rate Details</h3>
-            <ul class="list-disc pl-5 text-gray-600">
-                <li><strong>Start Date:</strong> {{ $roomRate->start_date }}</li>
-                <li><strong>End Date:</strong> {{ $roomRate->end_date }}</li>
-                <li><strong>Amount:</strong> ₱{{ number_format($roomRate->amount, 2) }}</li>
-                <li><strong>Extra Person Charge:</strong> ₱{{ number_format($roomRate->extra_person_charge, 2) }}</li>
-                <li><strong>Extended Stay Charge Per Hour:</strong>
-                    ₱{{ number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li>
-            </ul>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Rate Details</h3>
+            <div class="overflow-x-auto col-span-2">
+                <table class="min-w-full divide-y divide-gray-200 border dark:border-gray-500 dark:divide-gray-500">
+                    <thead class="bg-green-50 dark:bg-green-200">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-sm font-medium text-gray-800 uppercase tracking-wider">
+                                Assigned Room
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-sm font-medium text-gray-800 uppercase tracking-wider">
+                                Start Date
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                                End Date
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                                Rate Amount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-500">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{ $roomRate->property->name_number ?? 'No Room Assigned' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{ $roomRate->start_date }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{ $roomRate->end_date }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{ number_format($roomRate->amount, 2) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        {{-- <li><strong>Extra Person Charge:</strong> ₱{{ number_format($roomRate->extra_person_charge, 2) }}</li>
+                <li><strong>Extended Stay Charge Per Hour:</strong>
+                    ₱{{ number_format($roomRate->extended_stay_charge_per_hr, 2) }}</li> --}}
+
 
         <!-- Rate Type & Description -->
         <div class="mb-4">
@@ -89,14 +124,13 @@
         <!-- Action Buttons -->
         <div class="flex items-center justify-between space-x-4 mt-3 mb-3">
             <!-- Edit -->
-            <x-ghost-button type="button" icon="fas fa-pen-to-square"
-                wire:navigate href="{{ route('admin.edit-individual-rate', ['roomRate' => $roomRate->id]) }}">
+            <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                href="{{ route('admin.edit-individual-rate', ['roomRate' => $roomRate->id]) }}">
                 Edit
             </x-ghost-button>
 
             <!-- Delete -->
-            <x-danger-button type="button" icon="fas fa-trash"
-                wire:click="confirmDelete({{ $roomRate->id }})">
+            <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $roomRate->id }})">
                 Delete
             </x-danger-button>
         </div>

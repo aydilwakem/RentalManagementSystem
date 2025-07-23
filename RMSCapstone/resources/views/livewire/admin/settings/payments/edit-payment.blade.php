@@ -1,14 +1,20 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Payment Method') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Payment Methods', 'url' => route('admin.payments')],
+            ['label' => 'View Payment Method', 'url' => route('admin.view-payment', ['paymentMethod' => $paymentMethod->id])],
+            ['label' => 'Edit Payment Method', 'url' => route('admin.edit-payment', ['paymentMethod' => $paymentMethod->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
-    <div class="py-3">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+    <div>
+        <div class="mx-auto max-w-3xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->

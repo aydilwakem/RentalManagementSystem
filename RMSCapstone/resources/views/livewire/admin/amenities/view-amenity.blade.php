@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View Amenity') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Amenities', 'url' => route('admin.amenities')],
+            ['label' => 'View Amenity', 'url' => route('admin.view-amenity', ['amenity' => $amenity->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -49,7 +54,7 @@
 
             <!-- Action Buttons -->
             <div
-                class="flex flex-col sm:flex-row items-center justify-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-4 mt-6 pt-4">
+                class="flex justify-between space-x-3 pt-4 mt-auto">
                 <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
                     href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}" class="w-full sm:w-auto">
                     Edit

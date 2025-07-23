@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View User') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Users', 'url' => route('admin.manage-users')],
+            ['label' => 'View User', 'url' => route('admin.view-user', ['user' => $user->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->

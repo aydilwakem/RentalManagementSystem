@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('View  Maintenance Report') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Maintenance Requests', 'url' => route('admin.maintenances')],
+            ['label' => 'View Maintenance Request', 'url' => route('admin.view-maintenance', ['maintenance' => $maintenance->id])],
+        ]" />
     </x-slot>
 
     <!-- Body Container -->

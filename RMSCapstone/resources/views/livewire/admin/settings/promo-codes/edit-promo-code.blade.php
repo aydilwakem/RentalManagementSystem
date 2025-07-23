@@ -4,6 +4,12 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Edit Promo Code') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Promo Codes', 'url' => route('admin.promo-codes')],
+            ['label' => 'View Promo Code', 'url' => route('admin.view-promo-code', ['promoCode' => $promoCode->id])],
+            ['label' => 'Edit Promo Code', 'url' => route('admin.edit-promo-code', ['promoCode' => $promoCode->id])],
+        ]" />
     </x-slot>
 
     {{-- Body Container --}}

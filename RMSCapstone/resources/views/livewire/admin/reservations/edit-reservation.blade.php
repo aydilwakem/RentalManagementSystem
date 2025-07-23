@@ -1,8 +1,14 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Edit Reservation') }}
         </h2>
+                <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Reservations', 'url' => route('admin.reservations-list')],
+            ['label' => 'View Reservation', 'url' => route('admin.view-reservation', ['transaction' => $transaction->id])],
+            ['label' => 'Edit Reservation', 'url' => route('admin.edit-reservation', ['transaction' => $transaction->id])],
+        ]" />
     </x-slot>
 
     <div class="py-1">

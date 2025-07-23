@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\RoomRates;
 
 use App\Models\Property;
+use App\Models\Room;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\RoomRate;
@@ -14,7 +15,7 @@ class ViewRoomRate extends Component
 
     // Define public property for Room Rate
     public RoomRate $roomRate;
-
+    public Property $room;
     public $confirmItemDelete = false;
     public $cannotDeleteItem = false;
 
@@ -22,6 +23,13 @@ class ViewRoomRate extends Component
     {
         $this->confirmItemDelete = $id;
     }
+
+    public function mount(RoomRate $roomRate)
+    {
+        $this->roomRate = $roomRate;
+        $this->room = $roomRate->property;
+    }
+
 
     // Find the model of the record
     public function deleteRoomRate()

@@ -1,13 +1,30 @@
-<div class="">
+<div>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
             {{ __('Create Room Rate') }}
         </h2>
+        <!-- Navigation -->
+        <x-breadcrumbs :items="[
+            ['label' => 'Rooms', 'url' => route('admin.rooms')],
+            ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+            ['label' => 'Create Room Rate', 'url' => route('admin.create-room-rate', ['room' => $room->id])],
+        ]" />
     </x-slot>
 
-    <div class="mx-auto lg:py-2s border rounded-lg p-6 max-w-2xl mb-6 mt-6 bg-white">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}</h2>
+    <div class="mx-auto border rounded-lg p-6 max-w-3xl mb-6 mt-3 bg-white">
+
+        <div class="relative flex justify-center items-center mb-4">
+            <!-- Title -->
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}
+            </h2>
+
+            <!-- Back Button -->
+            <button onclick="history.back()"
+                class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
+                <span class="leading-none translate-y-[-3px]">&times;</span>
+            </button>
+        </div>
 
         <form wire:submit.prevent="saveIndividualRoomRate">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -51,8 +68,10 @@
 
                 <!-- Amount -->
                 <div>
-                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Adjusted Rate <span class="text-red-500">*</span>
-                            <span class="text-xs text-gray-500">(Current Base Rate: {{ number_format($room->amount, 2) }})</span>
+                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Adjusted Rate <span
+                            class="text-red-500">*</span>
+                        <span class="text-xs text-gray-500">(Current Base Rate:
+                            {{ number_format($room->amount, 2) }})</span>
                     </label>
                     <input type="number" wire:model="amount" id="amount" onwheel="this.blur()"
                         class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
@@ -140,7 +159,8 @@
                                 -
                             </button>
 
-                            <input type="number" wire:model="priority" min="1" max="10" onwheel="this.blur()"
+                            <input type="number" wire:model="priority" min="1" max="10"
+                                onwheel="this.blur()"
                                 class="text-center w-12 py-1 bg-white border border-gray-300 rounded focus:ring-green-600 focus:border-green-600" />
 
                             <button type="button" wire:click="increment"
@@ -210,10 +230,9 @@
 
             </div>
             <div class="flex justify-between items-center space-y-2 mt-6">
-                <x-button onclick="history.back()" type="button"
-                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                <x-ghost-button onclick="history.back()" type="button">
                     Cancel
-                </x-button>
+                </x-ghost-button>
                 <x-button wire:loading.attr="disabled" wire:target="image">
                     Create Room Rate
                 </x-button>
