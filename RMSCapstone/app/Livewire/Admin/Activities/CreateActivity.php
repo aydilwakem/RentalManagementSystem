@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Activities;
 
 use App\Models\Activity;
+use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -15,9 +16,11 @@ class CreateActivity extends Component
     public $description;
     public $amount;
     public $inclusions;
-    public $image;
+    public $newImages = []; //new files
     public $images = [];
-    public $storedImages = [];
+    public $uploadedImagePreviews = []; // temporary url for preview
+    public $persistedImagePaths = []; // string paths once uploaded
+    protected $listeners = ['updateImageOrder'];
 
     //Public declaration for add item modal
     public $confirmCreateItem = false;
@@ -28,15 +31,27 @@ class CreateActivity extends Component
         $this->confirmCreateItem = true;
     }
 
-    public function removeImage()
+    public function updatedNewImages()
     {
-        $this->image = null;
+        $this->validate([
+            'newImages.*' => 'image|max:2024|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        foreach ($this->newImages as $image) {
+            $this->uploadedImagePreviews[] = $image; // store temporary for prview
+        }
+        $this->newImages = [];
     }
 
-    public function updatedImages()
+    public function removeImage($index)
     {
-        // Prevent duplicate uploads by only appending new images
-        $this->images = array_merge($this->storedImages, $this->images);
+        if (isset($this->uploadedImagePreviews[$index])) {
+            unset($this->uploadedImagePreviews[$index]);
+            $this->uploadedImagePreviews = array_values($this->uploadedImagePreviews);
+        } else if (isset($this->persistedImagePaths[$index])) {
+            unset($this->persistedImagePaths[$index]);
+            $this->persistedImagePaths = array_values($this->persistedImagePaths);
+        }
     }
 
     /**
@@ -57,9 +72,8 @@ class CreateActivity extends Component
                 'description' => 'nullable|string',
                 'amount' => 'required|numeric|min:0|max:10000',
                 'inclusions' => 'nullable|string',
-                'image' => 'nullable|image|max:1024', // Max 1MB image
-                'images' => 'nullable|array',
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+                'newImages' => 'nullable|array',
+                'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -67,24 +81,14 @@ class CreateActivity extends Component
             throw $e;
         }
 
-        // Ensure image upload is valid
-        if ($this->image && !$this->image->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
+        $allStoredImagePaths = [];
 
-        // Store Image (if uploaded)
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('activities', 'public');
-        }
-
-        $imagePaths = [];
-        if (is_array($this->images)) {
-            foreach ($this->images as $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('activities', 'public');
-                    $imagePaths[] = $path;
+        // store newly uploaded images
+        foreach ($this->uploadedImagePreviews as $imageObject) {
+            if (is_object($imageObject) && method_exists($imageObject, 'isValid')) {
+                if ($imageObject->isValid()) {
+                    $path = $imageObject->store('activities', 'public');
+                    $allStoredImagePaths[] = $path;
                 } else {
                     session()->flash('error', 'Image upload failed. Please try again.');
                     return;
@@ -92,18 +96,19 @@ class CreateActivity extends Component
             }
         }
 
+        $allStoredImagePaths = array_merge($allStoredImagePaths, $this->persistedImagePaths);
+
         // Create Activity
         Activity::create([
             'name' => $this->name,
             'description' => $this->description,
             'amount' => $this->amount,
             'inclusions' => $this->inclusions,
-            'image' => $imagePath,
-            'images' => array_merge($imagePaths, $this->storedImages),
+            'images' => $allStoredImagePaths,
         ]);
 
         // Reset form fields
-        $this->reset(['name', 'description', 'amount', 'inclusions', 'image', 'images']);
+        $this->reset(['name', 'description', 'amount', 'inclusions', 'images']);
 
         // Flash success message
         session()->flash('message', 'Activity successfully created!');

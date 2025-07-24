@@ -125,7 +125,6 @@
                                     @endif
                                 </button>
                             </th>
-                            <th scope="col" class="px-4 py-3">Company</th>
                             <th scope="col" class="px-4 py-3">Event Type</th>
                             <th scope="col" class="px-4 py-3">Event Hall</th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('event_date_start')">
@@ -176,7 +175,6 @@
                                     {{ $eventItem->transactionUser->first_name }}
                                     {{ $eventItem->transactionUser->last_name }}
                                 </td>
-                                <td class="px-4 py-3"> {{ $eventItem->transactionUser->company_name }} </td>
                                 <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A' }} </td>
                                 <td class="px-4 py-3">
                                     @foreach ($eventItem->properties as $property)

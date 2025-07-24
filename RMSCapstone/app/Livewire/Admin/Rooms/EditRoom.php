@@ -9,6 +9,7 @@ use App\Models\Property;
 use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 #[Layout('layouts.app')]
 class EditRoom extends Component
@@ -32,14 +33,17 @@ class EditRoom extends Component
     public $newImage;
     public $newImages = [];
     public $storedImages = [];
+    public $displayImages = [];
     public $confirmDeleteImage = false;
-    public $imageToDeleteIndex = null;
+    public $imageToDeleteId = null;
     public $features; // All available features
     public $selectedFeatures = []; // Selected feature IDs
     public $occupancy_rules = [];
     public $roomCategories; // Store room categories for dropdown
     public $roomId;
-    public $amenities; 
+    public $amenities;
+    public $freebies = false;
+
 
     public $confirmEditItem = false;
 
@@ -66,12 +70,20 @@ class EditRoom extends Component
         $this->property_status = $room->property_status;
         $this->amount = $room->amount;
         $this->image = $room->image;
-        $this->storedImages = $room->images ?? [];
         $this->roomCategories = PropertyCategory::all();
         $this->occupancy_rules = $room->occupancy_rules ?? []; // If null, fallback to empty array
         $this->extra_person_charge = $room->extra_person_charge;
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
+        $this->freebies = (bool) $room->freebies;
+
+        // initialize storedImages with unique IDs for sorting/removal
+        $this->storedImages = collect($room->images ?? [])->map(function ($path) {
+            return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
+        })->toArray();
+
+        // Initial combined display images
+        $this->updateDisplayImages();
     }
 
     public function addRule()
@@ -84,23 +96,63 @@ class EditRoom extends Component
         unset($this->occupancy_rules[$index]);
         $this->occupancy_rules = array_values($this->occupancy_rules); // Re-index array
     }
-
-    public function confirmImageDelete($index)
+    public function updatedNewImages()
     {
-        $this->imageToDeleteIndex = $index;
+        $this->updateDisplayImages();
+    }
+
+    protected function updateDisplayImages()
+    {
+        // Map newImages to include unique IDs for temporary files
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
+        })->toArray();
+
+        // Combine stored and newly uploaded images for display.
+        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+    }
+
+    public function confirmImageDelete($id)
+    {
+        $this->imageToDeleteId = $id;
         $this->confirmDeleteImage = true;
     }
 
     public function removeStoredImage()
     {
-        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
-            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
-            unset($this->storedImages[$this->imageToDeleteIndex]);
-            $this->storedImages = array_values($this->storedImages); // Reindex array
+        // find image by id
+        $indexToRemove = null;
+        foreach ($this->displayImages as $key => $image) {
+            if ($image['id'] === $this->imageToDeleteId) {
+                $indexToRemove = $key;
+                break;
+            }
+        }
+
+        if (is_numeric($indexToRemove)) {
+            $imageToRemove = $this->displayImages[$indexToRemove];
+
+            // if stored image, delete from storage
+            if (isset($imageToRemove['path'])) {
+                Storage::disk('public')->delete($imageToRemove['path']);
+                // and remove from the storedImages array
+                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
+                    return $img['id'] !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+            // if new upload, temp object lang,
+            // remove from newImages if it's there
+            elseif (isset($imageToRemove['object'])) {
+                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
+                    return $img->getFilename() !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+
+            $this->updateDisplayImages(); // Re-update display array after removal
         }
 
         $this->confirmDeleteImage = false;
-        $this->imageToDeleteIndex = null;
+        $this->imageToDeleteId = null;
 
         session()->flash('message', 'Image successfully deleted.');
     }
@@ -133,6 +185,7 @@ class EditRoom extends Component
                 'occupancy_rules' => 'required|array',
                 'occupancy_rules.*.adults' => 'required|integer|min:0',
                 'occupancy_rules.*.kids' => 'required|integer|min:0',
+                'freebies' => 'nullable|boolean'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -141,18 +194,17 @@ class EditRoom extends Component
         }
 
         // Handle image upload if a new one is selected
-        $newImagePaths = [];
-        if (!empty($this->newImages)) {
-            foreach ($this->newImages as $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('rooms', 'public');
-                    $newImagePaths[] = $path;
-                }
+        $finalImagePaths = [];
+        foreach ($this->displayImages as $imageItem) {
+            if (isset($imageItem['path'])) {
+                // uploaded image
+                $finalImagePaths[] = $imageItem['path'];
+            } elseif (isset($imageItem['object'])) {
+                // new temp file so store
+                $path = $imageItem['object']->store('rooms', 'public');
+                $finalImagePaths[] = $path;
             }
         }
-
-        // Merge old and new images
-        $allImages = array_merge($this->storedImages, $newImagePaths);
 
         // Update room details
         $this->room->update([
@@ -166,8 +218,9 @@ class EditRoom extends Component
             'amount' => $this->amount,
             'extra_person_charge' => $this->extra_person_charge,
             'image' => $this->image,
-            'images' => $allImages,
+            'images' => $finalImagePaths,
             'occupancy_rules' => $this->occupancy_rules,
+            'freebies' => (bool) $this->freebies,
         ]);
 
         $this->room->features()->sync($this->selectedFeatures);

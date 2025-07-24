@@ -24,9 +24,39 @@
             <!-- Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Activity Image -->
-                <div class="mb-4">
-                    <img src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
-                        alt="{{ $activity->name }}" class="w-full h-72 object-cover rounded-xl shadow-md">
+                <div class="grid grid-cols-1 gap-2">
+                    @if (isset($activity->images) && count($activity->images) > 0)
+                        <div class="w-full">
+                            <img src="{{ asset('storage/' . $activity->images[0]) }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Activity Image"
+                                onclick="openModal('{{ asset('storage/' . $activity->images[0]) }}')">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            @foreach (array_slice($activity->images, 1) as $img)
+                                <img src="{{ asset('storage/' . $img) }}"
+                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="Activity Image"
+                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="w-full">
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                        </div>
+                    @endif
+                    <!-- Image Popup View -->
+                    <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                        <div class="flex items-center justify-center min-h-screen">
+                            <div class=" relative modal-content">
+                                <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                                <button onclick="closeModal()"
+                                    class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-4 space-y-3">
@@ -122,4 +152,20 @@
 
         </div>
     </div>
+    <!-- Image Modal Script -->
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = imageSrc;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore background scroll
+        }
+    </script>
 </div>

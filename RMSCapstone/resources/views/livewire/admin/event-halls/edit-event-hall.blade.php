@@ -14,7 +14,8 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -32,7 +33,8 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Event Hall -->
                     <div class="sm:col-span-2">
-                        <label for="name_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
+                        <label for="name_number"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="name_number" id="name_number"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -57,7 +59,8 @@
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate (first 4
+                        <label for="amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate (first 4
                             hours)
                             <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="amount" id="amount" rows="8"
@@ -70,7 +73,8 @@
 
                     <!-- Capacity -->
                     <div>
-                        <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
+                        <label for="capacity"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
                             Capacity <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="capacity" id="capacity" rows="8"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -82,7 +86,8 @@
 
                     <!-- Extra Charge Per Hour -->
                     <div>
-                        <label for="extra_charge_per_hour" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
+                        <label for="extra_charge_per_hour"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Charge Per Hour <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="extra_charge_per_hour" id="extra_charge_per_hour"
                             rows="8"
@@ -95,7 +100,8 @@
 
                     <!-- Event Hall Status -->
                     <div>
-                        <label for="property_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
+                        <label for="property_status"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Status <span class="text-red-500">*</span></label>
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -128,58 +134,93 @@
                     </div>
 
                     <!-- Image Upload -->
-                    <div class="space-y-4 col-span-2">
-                        <div>
-                            <label for="newImages" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload New Image
-                                (Optional)</label>
-                            <input type="file" wire:model="newImages" id="image" multiple
-                                accept="image/png, image/jpeg"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <div class="mb-4 col-span-2">
+                        <!-- Section Title -->
+                        <label for="newImageInput"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Property
+                            Image(s)</label>
 
-                            @error('newImage')
+                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                            @if ($displayImages && count($displayImages) > 0)
+                                @foreach ($displayImages as $image)
+                                    <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
+                                        wire:key="image-{{ $image['id'] }}">
+
+                                        <!-- Image Preview -->
+                                        @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
+                                            <img src="{{ $image['object']->temporaryUrl() }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
+                                                alt="Image Preview">
+                                        @elseif (isset($image['path']))
+                                            <img src="{{ asset('storage/' . $image['path']) }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
+                                                alt="Stored Image">
+                                        @endif
+
+                                        <!-- Remove Image Button -->
+                                        <button type="button" wire:click="confirmImageDelete('{{ $image['id'] }}')"
+                                            title="Delete Image"
+                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                            ×
+                                        </button>
+
+                                        <!-- Main Image Tite -->
+                                        @if ($loop->first)
+                                            <span
+                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                                Main Image
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endforeach
+
+                                <!-- Add Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                    </div>
+                                </label>
+                            @else
+                                <!-- Upload Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        <span class="text-xs">Add image</span>
+                                    </div>
+                                </label>
+                            @endif
+
+                            <!-- Hidden File Input -->
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
+                                accept="image/png, image/jpeg" class="hidden">
+
+                            @error('newImages.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-
-                            <div wire:loading wire:target="newImages"
-                                class="flex items-center justify-center px-5 mt-4">
-                                <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                    </path>
-                                </svg>
-                                <span>Uploading...</span>
-                            </div>
                         </div>
 
-                        <!-- Image Previews -->
-                        <div class="col-span-2">
-                            <div class="flex flex-wrap gap-4">
-                                <!-- New uploaded image previews -->
-                                @if ($newImages)
-                                    @foreach ($newImages as $image)
-                                        <img src="{{ $image->temporaryUrl() }}"
-                                            class="w-52 h-40 object-cover rounded-lg shadow">
-                                    @endforeach
-                                @endif
-
-                                <!-- Existing stored image previews -->
-                                @if ($storedImages)
-                                    @foreach ($storedImages as $index => $image)
-                                        <div class="relative shrink-0">
-                                            <img src="{{ asset('storage/' . $image) }}"
-                                                class="w-52 h-40 object-cover rounded-lg shadow">
-                                            <button type="button"
-                                                wire:click="confirmImageDelete({{ $index }})"
-                                                title="Delete Image"
-                                                class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                                ×
-                                            </button>
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </div>
+                        <!-- Spinner Loading Indicator -->
+                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span class="dark:text-gray-200">Uploading...</span>
                         </div>
                     </div>
 
@@ -219,7 +260,7 @@
         </x-dialog-modal>
 
         <!-- Remove Image Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmDeleteImage">
+        <x-dialog-modal wire:model.live="confirmDeleteImage" type="danger">
             <x-slot name="title">
                 {{ __('Delete Image') }}
             </x-slot>

@@ -12,6 +12,8 @@ use App\Models\PropertyFeature;
 use App\Models\Province;
 use App\Models\Region;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 #[Layout('layouts.app')]
 class EditProperty extends Component
@@ -31,8 +33,9 @@ class EditProperty extends Component
     public $newImage;
     public $newImages = [];
     public $storedImages = [];
+    public $displayImages = [];
     public $confirmDeleteImage = false;
-    public $imageToDeleteIndex = null;
+    public $imageToDeleteId = null;
     public $description;
     public $amount; // Monthly Rent
     public $property_status;
@@ -51,10 +54,10 @@ class EditProperty extends Component
     public $municipalities = [];
     public $barangays = [];
     public $regions = [];
-    
+
     public $selectedRegion = null;
     public $selectedProvince = null;
-    public $selectedMunicipality = null; 
+    public $selectedMunicipality = null;
     public $selectedBarangay = null;
 
     // ----------------------- House Features (Amenities) -------------------------------//
@@ -104,10 +107,17 @@ class EditProperty extends Component
         $this->description = $property->description;
         $this->property_status = $property->property_status;
         $this->image = $property->image;
-        $this->storedImages = $property->images ?? [];
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $property->features()->pluck('property_features.id')->toArray();
-        
+
+        // Images
+        // initialize storedImages with unique IDs for sorting/removal
+        $this->storedImages = collect($property->images ?? [])->map(function ($path) {
+            return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
+        })->toArray();
+        // Initial combined display images
+        $this->updateDisplayImages();
+
         //Address Mounting
         $this->regions = Region::orderBy('PSGC_REG_DESC')->get();
         $this->provinces = Province::where('PSGC_REG_CODE', $this->selectedRegion)->orderBy('PSGC_PROV_DESC')->get();
@@ -149,22 +159,63 @@ class EditProperty extends Component
     }
 
     // ----------------------------- Image Removal ---------------------------------- //
-    public function confirmImageDelete($index)
+    public function updatedNewImages()
     {
-        $this->imageToDeleteIndex = $index;
+        $this->updateDisplayImages();
+    }
+
+    protected function updateDisplayImages()
+    {
+        // Map newImages to include unique IDs for temporary files
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
+        })->toArray();
+
+        // Combine stored and newly uploaded images for display.
+        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+    }
+
+    public function confirmImageDelete($id)
+    {
+        $this->imageToDeleteId = $id;
         $this->confirmDeleteImage = true;
     }
 
     public function removeStoredImage()
     {
-        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
-            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
-            unset($this->storedImages[$this->imageToDeleteIndex]);
-            $this->storedImages = array_values($this->storedImages); // Reindex array
+        // find image by id
+        $indexToRemove = null;
+        foreach ($this->displayImages as $key => $image) {
+            if ($image['id'] === $this->imageToDeleteId) {
+                $indexToRemove = $key;
+                break;
+            }
+        }
+
+        if (is_numeric($indexToRemove)) {
+            $imageToRemove = $this->displayImages[$indexToRemove];
+
+            // if stored image, delete from storage
+            if (isset($imageToRemove['path'])) {
+                Storage::disk('public')->delete($imageToRemove['path']);
+                // and remove from the storedImages array
+                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
+                    return $img['id'] !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+            // if new upload, temp object lang,
+            // remove from newImages if it's there
+            elseif (isset($imageToRemove['object'])) {
+                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
+                    return $img->getFilename() !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+
+            $this->updateDisplayImages(); // Re-update display array after removal
         }
 
         $this->confirmDeleteImage = false;
-        $this->imageToDeleteIndex = null;
+        $this->imageToDeleteId = null;
 
         session()->flash('message', 'Image successfully deleted.');
     }
@@ -197,20 +248,18 @@ class EditProperty extends Component
             throw $e;
         }
 
-         // Handle image upload if a new one is selected
-         $newImagePaths = [];
-
-         if (!empty($this->newImages)) {
-             foreach ($this->newImages as $image) {
-                 if ($image->isValid()) {
-                     $path = $image->store('houses', 'public');
-                     $newImagePaths[] = $path;
-                 }
-             }
-         }
-
-         // Merge old and new images
-        $allImages = array_merge($this->storedImages, $newImagePaths);
+        // Handle image upload if a new one is selected
+        $finalImagePaths = [];
+        foreach ($this->displayImages as $imageItem) {
+            if (isset($imageItem['path'])) {
+                // uploaded image
+                $finalImagePaths[] = $imageItem['path'];
+            } elseif (isset($imageItem['object'])) {
+                // new temp file so store
+                $path = $imageItem['object']->store('houses', 'public');
+                $finalImagePaths[] = $path;
+            }
+        }
 
 
         // Update property details
@@ -224,14 +273,14 @@ class EditProperty extends Component
             'street' => $this->street,
             'barangay' => $this->selectedBarangay,
             'city_municipality' => $this->selectedMunicipality,
-            'province' => $this->selectedProvince, 
+            'province' => $this->selectedProvince,
             'region' => $this->selectedRegion,
             'postal_code' => $this->postal_code,
             'country' => $this->country,
             'property_status' => $this->property_status,
             'description' => $this->description,
             'image' => $this->image,
-            'images' => $allImages,
+            'images' => $finalImagePaths,
         ]);
 
         $this->property->features()->sync($this->selectedFeatures);

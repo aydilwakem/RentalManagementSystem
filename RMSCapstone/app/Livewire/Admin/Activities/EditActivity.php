@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Activities;
 
 use App\Models\Activity;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -23,11 +24,15 @@ class EditActivity extends Component
     public $inclusions;
     public $image;
     public $newImage;
+    public $newImages = [];
+    public $storedImages = [];
+    public $displayImages = [];
+    public $confirmDeleteImage = false;
+    public $imageToDeleteId = null;
     public $activityId;
 
     //Public declaration of edit confirmation modal
     public $confirmEditItem = false;
-    public $confirmDeleteImage = false;
 
     //Method to make the modal true
     public function confirmEdit($id)
@@ -35,27 +40,66 @@ class EditActivity extends Component
         $this->confirmEditItem = $id;
     }
 
-    public function confirmImageDelete()
+    public function updatedNewImages()
     {
+        $this->updateDisplayImages();
+    }
+
+    protected function updateDisplayImages()
+    {
+        // Map newImages to include unique IDs for temporary files
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
+        })->toArray();
+
+        // Combine stored and newly uploaded images for display.
+        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+    }
+
+    public function confirmImageDelete($id)
+    {
+        $this->imageToDeleteId = $id;
         $this->confirmDeleteImage = true;
     }
 
     public function removeStoredImage()
-{
-    if ($this->image) {
-        Storage::disk('public')->delete($this->image);
+    {
+        // find image by id
+        $indexToRemove = null;
+        foreach ($this->displayImages as $key => $image) {
+            if ($image['id'] === $this->imageToDeleteId) {
+                $indexToRemove = $key;
+                break;
+            }
+        }
 
-        $this->activity->update(['image' => null]);
-        $this->image = null;
+        if (is_numeric($indexToRemove)) {
+            $imageToRemove = $this->displayImages[$indexToRemove];
 
-        $this->activity->refresh(); // Refresh model to sync with DB
+            // if stored image, delete from storage
+            if (isset($imageToRemove['path'])) {
+                Storage::disk('public')->delete($imageToRemove['path']);
+                // and remove from the storedImages array
+                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
+                    return $img['id'] !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+            // if new upload, temp object lang,
+            // remove from newImages if it's there
+            elseif (isset($imageToRemove['object'])) {
+                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
+                    return $img->getFilename() !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+
+            $this->updateDisplayImages(); // Re-update display array after removal
+        }
+
+        $this->confirmDeleteImage = false;
+        $this->imageToDeleteId = null;
+
+        session()->flash('message', 'Image successfully deleted.');
     }
-
-    $this->confirmDeleteImage = false;
-
-    session()->flash('message', 'Image successfully deleted.');
-}
-
 
     // To display info of the selected activity
     public function mount(Activity $activity)
@@ -66,7 +110,16 @@ class EditActivity extends Component
         $this->description = $activity->description;
         $this->amount = $activity->amount;
         $this->inclusions = $activity->inclusions;
-        $this->image = $activity->image;
+
+        // initialize storedImages with unique IDs for sorting/removal
+        $this->storedImages = collect($activity->images ?? [])
+            ->map(function ($path) {
+                return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
+            })
+            ->toArray();
+
+        // Initial combined display images
+        $this->updateDisplayImages();
     }
 
     /**
@@ -82,7 +135,8 @@ class EditActivity extends Component
                 'description' => 'nullable|string',
                 'amount' => 'required|numeric|min:0|max:10000',
                 'inclusions' => 'nullable|string',
-                'image' => 'nullable|image|max:2048', // Ensure image size is within limit
+                'newImage' => 'nullable|image|max:2048',
+                'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -90,19 +144,17 @@ class EditActivity extends Component
             throw $e;
         } //Handles constraints
 
-        // Ensure the image is uploaded properly
-        if ($this->image && !$this->image->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Handle Image Upload
-        if ($this->image) {
-            if ($this->activity->image) {
-                Storage::disk('public')->delete($this->activity->image);
+        // Handle image upload if a new one is selected
+        $finalImagePaths = [];
+        foreach ($this->displayImages as $imageItem) {
+            if (isset($imageItem['path'])) {
+                // uploaded image
+                $finalImagePaths[] = $imageItem['path'];
+            } elseif (isset($imageItem['object'])) {
+                // new temp file so store
+                $path = $imageItem['object']->store('activities', 'public');
+                $finalImagePaths[] = $path;
             }
-            // Save the image in public folder
-            $this->image = $this->image->store('activities', 'public');
         }
 
         // Update Activity
@@ -111,7 +163,7 @@ class EditActivity extends Component
             'description' => $this->description,
             'amount' => $this->amount,
             'inclusions' => $this->inclusions,
-            'image' => $this->image,
+            'images' => $finalImagePaths,
         ]);
 
         session()->flash('message', 'Activity successfully updated!');

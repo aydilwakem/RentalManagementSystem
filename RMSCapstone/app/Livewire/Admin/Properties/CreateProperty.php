@@ -10,6 +10,7 @@ use App\Models\Property;
 use App\Models\PropertyFeature;
 use App\Models\Province;
 use App\Models\Region;
+use Livewire\Attributes\Rule;
 
 class CreateProperty extends Component
 {
@@ -24,9 +25,11 @@ class CreateProperty extends Component
     public $capacity;
     public $max_adults;
     public $max_kids;
+    public $newImages = []; //new files
+    public $uploadedImagePreviews = []; // temporary url for preview
+    public $persistedImagePaths = []; // string paths once uploaded
+    protected $listeners = ['updateImageOrder'];
     public $image;
-    public $images = [];
-    public $storedImages = [];
     public $description;
     public $amount; // Monthly Rent
     public $property_status = 'available';
@@ -46,10 +49,10 @@ class CreateProperty extends Component
     public $municipalities = [];
     public $barangays = [];
     public $regions = [];
-    
+
     public $selectedRegion = null;
     public $selectedProvince = null;
-    public $selectedMunicipality = null; 
+    public $selectedMunicipality = null;
     public $selectedBarangay = null;
 
 
@@ -112,16 +115,27 @@ class CreateProperty extends Component
     }
 
     // ------------------------------ Image Removal -------------------------------- //
-    public function removeImage($index)
+    public function updatedNewImages()
     {
-        unset($this->images[$index]);
-        $this->images = array_values($this->images); // reindex array
+        $this->validate([
+            'newImages.*' => 'image|max:2024|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        foreach ($this->newImages as $image) {
+            $this->uploadedImagePreviews[] = $image; // store temporary for prview
+        }
+        $this->newImages = [];
     }
 
-    public function updatedImages()
+    public function removeImage($index)
     {
-        // Prevent duplicate uploads by only appending new images
-        $this->images = array_merge($this->storedImages, $this->images);
+        if (isset($this->uploadedImagePreviews[$index])) {
+            unset($this->uploadedImagePreviews[$index]);
+            $this->uploadedImagePreviews = array_values($this->uploadedImagePreviews);
+        } else if (isset($this->persistedImagePaths[$index])) {
+            unset($this->persistedImagePaths[$index]);
+            $this->persistedImagePaths = array_values($this->persistedImagePaths);
+        }
     }
 
     public function saveProperty()
@@ -136,9 +150,10 @@ class CreateProperty extends Component
                 // 'max_kids' => 'required|integer|min:0',
                 'property_status' => 'required|in:available,booked,out_of_service',
                 'amount' => 'required|numeric|min:100|max:100000.00',
-                'image' => 'nullable|image|max:2024',
-                'images' => 'nullable|array',
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
+                'newImages' => 'nullable|array',
+                'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+                'persistedImagePaths' => 'nullable|array',
                 'description' => 'nullable|string',
                 'house_number' => 'required|string',
                 'street' => 'required|string',
@@ -157,30 +172,29 @@ class CreateProperty extends Component
             throw $e;
         }
 
-        // Ensure image upload is complete before storing
-        if ($this->image && !$this->image->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
+        $allStoredImagePaths = [];
 
-        // Store Image (if uploaded)
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('houses', 'public');
-        }
-
-        $imagePaths = [];
-        if (is_array($this->images)) {
-            foreach ($this->images as $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('houses', 'public');
-                    $imagePaths[] = $path;
+        // store newly uploaded images
+        foreach ($this->uploadedImagePreviews as $imageObject) {
+            if (is_object($imageObject) && method_exists($imageObject, 'isValid')) {
+                if ($imageObject->isValid()) {
+                    $path = $imageObject->store('houses', 'public');
+                    $allStoredImagePaths[] = $path;
                 } else {
                     session()->flash('error', 'Image upload failed. Please try again.');
                     return;
                 }
             }
         }
+
+        $allStoredImagePaths = array_merge($allStoredImagePaths, $this->persistedImagePaths);
+
+        // single image
+        $mainImagePath = null;
+        if ($this->image && $this->image->isValid()) {
+            $mainImagePath = $this->image->store('houses', 'public');
+        }
+
 
         // Create Property
         $house = Property::create([
@@ -200,8 +214,8 @@ class CreateProperty extends Component
             'country' => $this->country,
             'property_status' => $this->property_status,
             'description' => $this->description,
-            'image' => $imagePath, // Save path in DB
-            'images' => array_merge($imagePaths, $this->storedImages),
+            'image' => $mainImagePath,
+            'images' => $allStoredImagePaths,
 
         ]);
 
