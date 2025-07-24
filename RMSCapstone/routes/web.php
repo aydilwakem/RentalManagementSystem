@@ -49,6 +49,8 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Services\EditService;
+use App\Livewire\Admin\Services\ViewService;
 use App\Livewire\Admin\Settings\PromoCodes\EditPromoCode;
 use App\Livewire\Admin\Settings\PromoCodes\ViewPromoCode;
 use App\Mail\EventQuotesMail;
@@ -280,7 +282,31 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         ->name('admin.deleted-activities')
         ->middleware('can:activity-soft-delete');
 
-    //Events
+    // ----------------------------- Services ------------------------------ //
+    Route::get('/services', function () {
+        return view('admin.services.view-services');
+    })->name('admin.services');
+
+    // Create
+    Route::get('create/create-service', function () {
+        return view('admin.services.create-service');
+    })->name('admin.create-service'); 
+
+   //Edit
+    Route::get('edit/service/{service}', EditService::class)
+    ->name('admin.edit-service');
+
+    // View
+    Route::get('view/service/{service}', ViewService::class)
+    ->name('admin.view-service'); 
+
+    // Deleted Services (Soft Deletes)
+    Route::get('deleted-services', function () {
+        return view('admin.services.deleted-services');
+    })->name('admin.deleted-services'); 
+
+     
+    // ----------------------------- Events ------------------------------ //
 
     // List
     Route::get('/events', function () {
