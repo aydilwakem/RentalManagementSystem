@@ -45,8 +45,10 @@ class EditEventHall extends Component
     //To display info of selected item
     public function mount(Property $eventHall)
     {
-        //Only mount inclusions
-        $this->inclusions = PropertyFeature::where('property_type_id', 3)->get();
+        //Only mount active inclusions
+        $this->inclusions = PropertyFeature::where('property_type_id', 3)
+        ->where('is_active', true)
+        ->get();
 
         $this->eventHall = $eventHall;
         $this->eventHallId = $eventHall->id;
