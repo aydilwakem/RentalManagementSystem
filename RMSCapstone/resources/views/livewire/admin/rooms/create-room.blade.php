@@ -152,7 +152,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model="max_guests" id="max_guests" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. 2" onwheel="this.blur()" />
+                                                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. 2" onwheel="this.blur()" />
                                 @error('max_guests')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -262,36 +262,47 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="images" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                        <label for="newImageInput"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Image(s)</label>
-                        <div class="flex flex-wrap gap-4">
+                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                            {{-- Combine both arrays for display and sorting --}}
+                            @php
+                                $displayImages = array_merge($uploadedImagePreviews, $persistedImagePaths);
+                            @endphp
 
-                            <!-- Check if there are any images selected/uploaded -->
-                            @if ($images && count($images) > 0)
-                                @foreach ($images as $index => $image)
-                                    <div class="relative shrink-0">
-                                        <!-- Show preview of the uploaded image -->
-                                        <img src="{{ $image->temporaryUrl() }}"
-                                            class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                            @if ($displayImages && count($displayImages) > 0)
+                                @foreach ($displayImages as $index => $image)
+                                    <!-- Image Preview -->
+                                    <div class="relative shrink-0" wire:sortable.item="{{ $index }}"
+                                        wire:key="image-{{ $index }}">
+                                        @if (is_object($image) && method_exists($image, 'temporaryUrl'))
+                                            <img src="{{ $image->temporaryUrl() }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                                        @else
+                                            <img src="{{ asset('storage/' . $image) }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
+                                        @endif
 
-                                        <!-- Remove image button -->
+                                        <!-- Remove Image -->
                                         <button type="button" wire:click="removeImage({{ $index }})"
                                             class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
                                             ×
                                         </button>
 
-                                        <!-- Label for first image -->
+                                        <!-- Main Image Title -->
                                         @if ($loop->first)
                                             <span
-                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">Main
-                                                Image</span>
+                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                                Main Image
+                                            </span>
                                         @endif
                                     </div>
                                 @endforeach
 
-                                <!-- Placeholder to add more images / reupload -->
-                                <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove
-                                    wire:target="images">
+                                <!-- Add more images placeholder box -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -301,12 +312,10 @@
                                         </svg>
                                     </div>
                                 </label>
-
-                                <!-- If no images uploaded yet -->
                             @else
-                                <!-- Placeholder to upload image -->
-                                <label for="imageInput" class="cursor-pointer shrink-0" wire:loading.remove
-                                    wire:target="images">
+                                <!-- Upload image placeholder box -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -319,23 +328,20 @@
                                 </label>
                             @endif
 
-                            <!-- Hidden file input for image uploads -->
-                            <input multiple type="file" wire:model="images" id="imageInput"
-                                accept="image/png, image/jpeg" class="hidden" @if (!$images || count($images) < 5)
-                                @endif>
+                            <!-- Hidden file input -->
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
+                                accept="image/png, image/jpeg" class="hidden">
 
-                            @error('images.*')
+                            @error('newImages.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Loading indicator -->
-                        <div wire:loading wire:target="images" class="flex items-center justify-start mt-2">
-                            <!-- Spinner -->
+                        <!-- Spinner loading indicator -->
+                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4">
-                                </circle>
+                                    stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                             </svg>
@@ -380,4 +386,21 @@
         </x-dialog-modal>
 
     </div>
+    <script>
+        document.addEventListener('livewire:load', () => {
+            const el = document.getElementById('sortable-images');
+
+            if (el) {
+                Sortable.create(el, {
+                    animation: 150,
+                    draggable: '.sortable-item',
+                    onEnd: function (evt) {
+                        const newOrder = Array.from(el.children).map(child => child.dataset.index);
+                        Livewire.emit('updateImageOrder', newOrder);
+                    }
+                });
+            }
+        });
+    </script>
+
 </div>

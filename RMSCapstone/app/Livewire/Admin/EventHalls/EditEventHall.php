@@ -6,6 +6,7 @@ use App\Models\EventHall;
 use App\Models\Property;
 use App\Models\PropertyFeature;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -27,8 +28,9 @@ class EditEventHall extends Component
     public $newImage;
     public $newImages = [];
     public $storedImages = [];
+    public $displayImages = [];
     public $confirmDeleteImage = false;
-    public $imageToDeleteIndex = null;
+    public $imageToDeleteId = null;
     public $property_status;
     public $eventHallId;
     public $features;            // All available features
@@ -59,7 +61,14 @@ class EditEventHall extends Component
         $this->extra_charge_per_hour = $eventHall->extra_charge_per_hour;
         $this->property_status = $eventHall->property_status;
         $this->image = $eventHall->image;
-        $this->storedImages = $eventHall->images ?? [];
+
+        // initialize storedImages with unique IDs for sorting/removal
+        $this->storedImages = collect($eventHall->images ?? [])->map(function ($path) {
+            return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
+        })->toArray();
+
+        // Initial combined display images
+        $this->updateDisplayImages();
 
         $this->features = PropertyFeature::all();
         $this->selectedFeatures = $eventHall->features()->pluck('property_features.id')->toArray();
@@ -84,35 +93,18 @@ class EditEventHall extends Component
             throw $e;
         }
 
-        // Ensure the image is uploaded properly
-        if ($this->newImage && !$this->newImage->isValid()) {
-            session()->flash('error', 'Image upload failed. Please try again.');
-            return;
-        }
-
-        // Handle Image Upload
-        if ($this->newImage) {
-            if ($this->eventHall->image) {
-                Storage::disk('public')->delete($this->eventHall->image);
-            }
-
-            //save the image in public folder
-            $this->image = $this->newImage->store('event-halls', 'public');
-        }
-
         // Handle image upload if a new one is selected
-        $newImagePaths = [];
-        if (!empty($this->newImages)) {
-            foreach ($this->newImages as $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('event-halls', 'public');
-                    $newImagePaths[] = $path;
-                }
+        $finalImagePaths = [];
+        foreach ($this->displayImages as $imageItem) {
+            if (isset($imageItem['path'])) {
+                // uploaded image
+                $finalImagePaths[] = $imageItem['path'];
+            } elseif (isset($imageItem['object'])) {
+                // new temp file so store
+                $path = $imageItem['object']->store('event-halls', 'public');
+                $finalImagePaths[] = $path;
             }
         }
-
-        // Merge old and new images
-        $allImages = array_merge($this->storedImages, $newImagePaths);
 
         // Update Event Hall
         $this->eventHall->update([
@@ -123,7 +115,7 @@ class EditEventHall extends Component
             'extra_charge_per_hour' => $this->extra_charge_per_hour,
             'property_status' => $this->property_status,
             'image' => $this->image,
-            'images' => $allImages,
+            'images' => $finalImagePaths,
         ]);
 
         $this->eventHall->features()->sync($this->selectedFeatures);
@@ -133,22 +125,63 @@ class EditEventHall extends Component
         return redirect()->route('admin.event-halls');
     }
 
-    public function confirmImageDelete($index)
+    public function updatedNewImages()
     {
-        $this->imageToDeleteIndex = $index;
+        $this->updateDisplayImages();
+    }
+
+    protected function updateDisplayImages()
+    {
+        // Map newImages to include unique IDs for temporary files
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
+        })->toArray();
+
+        // Combine stored and newly uploaded images for display.
+        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+    }
+
+    public function confirmImageDelete($id)
+    {
+        $this->imageToDeleteId = $id;
         $this->confirmDeleteImage = true;
     }
 
     public function removeStoredImage()
     {
-        if (isset($this->storedImages[$this->imageToDeleteIndex])) {
-            Storage::disk('public')->delete($this->storedImages[$this->imageToDeleteIndex]);
-            unset($this->storedImages[$this->imageToDeleteIndex]);
-            $this->storedImages = array_values($this->storedImages); // Reindex array
+        // find image by id
+        $indexToRemove = null;
+        foreach ($this->displayImages as $key => $image) {
+            if ($image['id'] === $this->imageToDeleteId) {
+                $indexToRemove = $key;
+                break;
+            }
+        }
+
+        if (is_numeric($indexToRemove)) {
+            $imageToRemove = $this->displayImages[$indexToRemove];
+
+            // if stored image, delete from storage
+            if (isset($imageToRemove['path'])) {
+                Storage::disk('public')->delete($imageToRemove['path']);
+                // and remove from the storedImages array
+                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
+                    return $img['id'] !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+            // if new upload, temp object lang,
+            // remove from newImages if it's there
+            elseif (isset($imageToRemove['object'])) {
+                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
+                    return $img->getFilename() !== $imageToRemove['id'];
+                })->values()->toArray();
+            }
+
+            $this->updateDisplayImages(); // Re-update display array after removal
         }
 
         $this->confirmDeleteImage = false;
-        $this->imageToDeleteIndex = null;
+        $this->imageToDeleteId = null;
 
         session()->flash('message', 'Image successfully deleted.');
     }

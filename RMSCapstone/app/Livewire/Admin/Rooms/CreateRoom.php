@@ -10,7 +10,6 @@ use App\Models\PropertyFeature;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Logs;
 
-
 class CreateRoom extends Component
 {
     use WithFileUploads;
@@ -29,9 +28,11 @@ class CreateRoom extends Component
     public $amount;
 
     #[Rule(['images.*' => 'image|max:2024'])]
-    public $images = [];
-    public $storedImages = [];
-    public $image; // Single image
+    public $newImages = []; //new files
+    public $uploadedImagePreviews = []; // temporary url for preview
+    public $persistedImagePaths = []; // string paths once uploaded
+    protected $listeners = ['updateImageOrder'];
+    public $image;
     public $extra_person_charge;
     public $selectedFeatures = []; // Selected feature IDs
     public $features = []; // All features
@@ -54,16 +55,47 @@ class CreateRoom extends Component
             ->get();
     }
 
-    public function removeImage($index)
+    public function updatedNewImages()
     {
-        unset($this->images[$index]);
-        $this->images = array_values($this->images); // reindex array
+        $this->validate([
+            'newImages.*' => 'image|max:2024|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        foreach ($this->newImages as $image) {
+            $this->uploadedImagePreviews[] = $image; // store temporary for prview
+        }
+        $this->newImages = [];
     }
 
-    public function updatedImages()
+    public function removeImage($index)
     {
-        // Prevent duplicate uploads by only appending new images
-        $this->images = array_merge($this->storedImages, $this->images);
+        if (isset($this->uploadedImagePreviews[$index])) {
+            unset($this->uploadedImagePreviews[$index]);
+            $this->uploadedImagePreviews = array_values($this->uploadedImagePreviews);
+        } else if (isset($this->persistedImagePaths[$index])) {
+            unset($this->persistedImagePaths[$index]);
+            $this->persistedImagePaths = array_values($this->persistedImagePaths);
+        }
+    }
+
+    public function reorderImages($order)
+    {
+        // Combine all images
+        $allImagesForReorder = array_merge($this->uploadedImagePreviews, $this->persistedImagePaths);
+        $reordered = collect($order)->map(function ($index) use ($allImagesForReorder) {
+            return $allImagesForReorder[$index];
+        })->values()->toArray();
+
+        $this->uploadedImagePreviews = []; // Clear temporary ones
+        $this->persistedImagePaths = []; // Clear persisted ones
+
+        foreach ($reordered as $item) {
+            if (is_object($item) && method_exists($item, 'temporaryUrl')) {
+                $this->uploadedImagePreviews[] = $item;
+            } else {
+                $this->persistedImagePaths[] = $item;
+            }
+        }
     }
 
     public function removeRule($index)
@@ -76,22 +108,30 @@ class CreateRoom extends Component
     {
         $this->validate();
 
-        // Image logic
-        $imagePath = null;
-        if ($this->image && $this->image->isValid()) {
-            $imagePath = $this->image->store('rooms', 'public');
-        }
 
-        $imagePaths = [];
-        if (is_array($this->images)) {
-            foreach ($this->images as $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('rooms', 'public');
-                    $imagePaths[] = $path;
+
+        $allStoredImagePaths = [];
+
+        // store newly uploaded images
+        foreach ($this->uploadedImagePreviews as $imageObject) {
+            if (is_object($imageObject) && method_exists($imageObject, 'isValid')) {
+                if ($imageObject->isValid()) {
+                    $path = $imageObject->store('rooms', 'public');
+                    $allStoredImagePaths[] = $path;
+                } else {
+                    session()->flash('error', 'Image upload failed. Please try again.');
+                    return;
                 }
             }
         }
 
+        $allStoredImagePaths = array_merge($allStoredImagePaths, $this->persistedImagePaths);
+
+        // single image
+        $mainImagePath = null;
+        if ($this->image && $this->image->isValid()) {
+            $mainImagePath = $this->image->store('rooms', 'public');
+        }
 
         // If combinations, generate subcombinations
         $finalOccupancy = null;
@@ -99,7 +139,8 @@ class CreateRoom extends Component
             $finalOccupancy = $this->generateCombinations();
         }
 
-        // Save the property
+
+        // Create the room
         $room = Property::create([
             'name_number' => $this->name_number,
             'property_type_id' => $this->property_type_id,
@@ -113,8 +154,8 @@ class CreateRoom extends Component
             'property_status' => $this->property_status,
             'extra_person_charge' => $this->extra_person_charge,
             'amount' => $this->amount,
-            'image' => $imagePath,
-            'images' => array_merge($imagePaths, $this->storedImages),
+            'image' => $mainImagePath,
+            'images' => $allStoredImagePaths,
             'occupancy_rules' => $finalOccupancy,
             'freebies' => (bool) $this->freebies,
         ]);
@@ -136,7 +177,9 @@ class CreateRoom extends Component
             'amount',
             'extra_person_charge',
             'image',
-            'images',
+            'newImages',
+            'uploadedImagePreviews',
+            'persistedImagePaths',
             'selectedFeatures',
             'occupancy_rules',
             'freebies'
@@ -169,8 +212,9 @@ class CreateRoom extends Component
             'amount' => 'required|numeric|min:100|max:20000.00',
             'extra_person_charge' => 'required|numeric|min:100|max:10000.00',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+            'newImages' => 'nullable|array',
+            'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+            'persistedImagePaths' => 'nullable|array',
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
             'freebies' => 'nullable|boolean',

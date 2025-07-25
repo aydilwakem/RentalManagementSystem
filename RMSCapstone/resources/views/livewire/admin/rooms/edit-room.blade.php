@@ -168,6 +168,27 @@
                         @enderror
                     </div>
 
+                    <!-- Free Breakfast Inclusion -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Free Breakfast Inclusion
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-800 dark:text-gray-200 text-sm">Not Included</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model="freebies" id="freebies" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                    ">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                </div>
+                            </label>
+                            <span class="text-gray-800 dark:text-gray-200 text-sm">Included</span>
+                        </div>
+                    </div>
+
                     <!-- Available Amenities (Dynamic) -->
                     <div class="sm:col-span-2">
                         <label
@@ -236,43 +257,47 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
-                        <label for="newImages"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Upload New Image (Optional)
-                        </label>
-                        <div class="flex flex-wrap gap-4">
+                        <!-- Section Title -->
+                        <label for="newImageInput"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
+                            Image(s)</label>
 
-                            <!-- Existing stored image previews -->
-                            @if ($storedImages)
-                                @foreach ($storedImages as $index => $image)
-                                    <div class="relative shrink-0">
-                                        <img src="{{ asset('storage/' . $image) }}"
-                                            class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
-                                        <button type="button" wire:click="confirmImageDelete({{ $index }})"
+                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                            @if ($displayImages && count($displayImages) > 0)
+                                @foreach ($displayImages as $image)
+                                    <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
+                                        wire:key="image-{{ $image['id'] }}">
+
+                                        <!-- Image Preview -->
+                                        @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
+                                            <img src="{{ $image['object']->temporaryUrl() }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
+                                                alt="Image Preview">
+                                        @elseif (isset($image['path']))
+                                            <img src="{{ asset('storage/' . $image['path']) }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
+                                                alt="Stored Image">
+                                        @endif
+
+                                        <!-- Remove Image Button -->
+                                        <button type="button" wire:click="confirmImageDelete('{{ $image['id'] }}')"
                                             title="Delete Image"
                                             class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
                                             ×
                                         </button>
-                                    </div>
-                                @endforeach
-                            @endif
 
-                            <!-- New uploaded image previews -->
-                            @if ($newImages && count($newImages) > 0)
-                                @foreach ($newImages as $image)
-                                    <div class="relative shrink-0">
-                                        <img src="{{ $image->temporaryUrl() }}"
-                                            class="w-52 h-40 object-cover rounded-md shadow-sm" alt="New Image">
-                                        <button type="button" wire:click="confirmImageDelete({{ $index }})"
-                                            title="Delete Image"
-                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                            ×
-                                        </button>
+                                        <!-- Main Image Tite -->
+                                        @if ($loop->first)
+                                            <span
+                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                                Main Image
+                                            </span>
+                                        @endif
                                     </div>
                                 @endforeach
 
-                                <!-- Placeholder to add more images -->
-                                <label for="newImages" class="cursor-pointer shrink-0" wire:loading.remove
+                                <!-- Add Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
@@ -284,8 +309,8 @@
                                     </div>
                                 </label>
                             @else
-                                <!-- Placeholder when no images uploaded yet -->
-                                <label for="newImages" class="cursor-pointer shrink-0" wire:loading.remove
+                                <!-- Upload Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
@@ -299,10 +324,8 @@
                                 </label>
                             @endif
 
-
-
-                            <!-- Hidden file input -->
-                            <input multiple type="file" wire:model="newImages" id="newImages"
+                            <!-- Hidden File Input -->
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
                                 accept="image/png, image/jpeg" class="hidden">
 
                             @error('newImages.*')
@@ -310,7 +333,7 @@
                             @enderror
                         </div>
 
-                        <!-- Loading Spinner -->
+                        <!-- Spinner Loading Indicator -->
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300"
                                 viewBox="0 0 24 24">
@@ -322,7 +345,6 @@
                             <span class="dark:text-gray-200">Uploading...</span>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Action Buttons -->
@@ -339,7 +361,7 @@
         </div>
 
         <!-- Edit Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmEditItem" type="ghost">
+        <x-dialog-modal wire:model.live="confirmEditItem">
             <x-slot name="title">
                 {{ __('Edit Room') }}
             </x-slot>
@@ -355,7 +377,7 @@
 
                 <x-button class="ms-3 bg-green text-white" wire:click="updateRoom({{ $room->id }})"
                     wire:loading.attr="disabled">
-                    {{ __('Edit Room') }}
+                    {{ __('Save Changes') }}
                 </x-button>
             </x-slot>
         </x-dialog-modal>

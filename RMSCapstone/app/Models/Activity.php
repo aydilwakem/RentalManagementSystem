@@ -11,26 +11,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Activity extends Model
 {
     use SoftDeletes;
-    use HasFactory; 
-    use LogsActivity; 
+    use HasFactory;
+    use LogsActivity;
 
     protected $table = 'prd_activities';
 
-    protected $fillable = ['name', 'description', 'amount', 'inclusions', 'image'];
+    protected $fillable = ['name', 'description', 'amount', 'inclusions', 'images'];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'images' => 'array',           // Automatically decode JSON to array
+
     ];
 
     // ----------------- Activity Logs --------------------- //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; //Only changed attributes are logged
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
             ->logOnly(['name', 'description', 'amount', 'inclusions', 'image'])
-            // 4.2 Automatically log only the attributes that have changed  
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "Activity has been {$eventName}")

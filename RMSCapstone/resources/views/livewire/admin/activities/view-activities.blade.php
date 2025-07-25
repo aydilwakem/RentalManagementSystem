@@ -231,7 +231,13 @@
                                         {{ number_format($activity->amount, 2) }}
                                     @endif
                                 </td>
-                                <td class="px-4 py-3"> {{ $activity->inclusions }}</td>
+                                <td class="px-4 py-3">
+                                    @if (!empty($activity->inclusions))
+                                        {{ Str::limit($activity->inclusions, 50) }}
+                                    @else
+                                        <em class="text-gray-600 leading-relaxed">No inclusions provided.</em>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">
 
                                     <!-- View Icon -->

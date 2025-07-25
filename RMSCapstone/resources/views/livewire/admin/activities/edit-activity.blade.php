@@ -14,11 +14,13 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Edit Activity Details</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Edit Activity Details
+                </h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()"
@@ -32,7 +34,8 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Activity -->
                     <div>
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
                                 class="text-red-500">*</span></label>
                         <input type="text" wire:model="name" id="name"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -40,21 +43,22 @@
                             placeholder="Ex. Coffee Farm Tour" required>
 
                         @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
+                        <label for="amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
                                 class="text-red-500">*</span></label>
                         <input type="number" wire:model="amount" id="amount" step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00">
                         @error('amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -67,72 +71,111 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Discover the journey from bean to cup on our immersive coffee farm tour."></textarea>
                         @error('description')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Inclusions -->
                     <div>
-                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
+                        <label for="inclusions"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
                         <textarea wire:model="inclusions" id="inclusions" rows="3"
                             class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Farm entrance fee, coffee tasting, light snacks, guide services."></textarea>
                         @error('inclusions')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Image Upload -->
-                    <div class="space-y-4">
-                        <div>
-                            <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload
-                                Image</label>
-                            <input accept="image/png, image/jpeg" type="file" wire:model="image" id="image"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    <div class="mb-4 col-span-2">
+                        <!-- Section Title -->
+                        <label for="newImageInput"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity
+                            Image(s)</label>
 
-                            <!-- Error Message -->
-                            @error('image')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                            @if ($displayImages && count($displayImages) > 0)
+                                @foreach ($displayImages as $image)
+                                    <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
+                                        wire:key="image-{{ $image['id'] }}">
 
-                            <!-- Loading Indicator (Shows when file is being uploaded) -->
-                            <div wire:loading wire:target="image" class="mt-2 flex items-center">
-                                <!-- Spinner -->
-                                <svg class="animate-spin h-5 w-5 text-green-700 mr-2" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                    </path>
-                                </svg>
-                                <span>Uploading...</span>
-                            </div>
-                        </div>
+                                        <!-- Image Preview -->
+                                        @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
+                                            <img src="{{ $image['object']->temporaryUrl() }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                                        @elseif (isset($image['path']))
+                                            <img src="{{ asset('storage/' . $image['path']) }}"
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
+                                        @endif
 
-                        <div>
-                            @if ($image && method_exists($image, 'temporaryUrl'))
-                            <div class="mt-2 relative inline-block">
-                                <img src="{{ $image->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow"
-                                    alt="Image preview">
-                                <button type="button" wire:click="removeImage"
-                                    class="absolute top-1 right-1 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition"
-                                    aria-label="Remove image">
-                                    ×
-                                </button>
-                            </div>
+                                        <!-- Remove Image Button -->
+                                        <button type="button" wire:click="confirmImageDelete('{{ $image['id'] }}')"
+                                            title="Delete Image"
+                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                            ×
+                                        </button>
+
+                                        <!-- Main Image Tite -->
+                                        @if ($loop->first)
+                                            <span
+                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                                Main Image
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endforeach
+
+                                <!-- Add Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                    </div>
+                                </label>
                             @else
-                            <div wire:loading.remove wire:target="image"
-                                class="w-full h-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg text-gray-400">
-                                No image selected
-                            </div>
+                                <!-- Upload Image Placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                    wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        <span class="text-xs">Add image</span>
+                                    </div>
+                                </label>
                             @endif
 
+                            <!-- Hidden File Input -->
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
+                                accept="image/png, image/jpeg" class="hidden">
+
+                            @error('newImages.*')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Spinner Loading Indicator -->
+                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span class="dark:text-gray-200">Uploading...</span>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="flex justify-between items-center space-y-2 mt-6">
