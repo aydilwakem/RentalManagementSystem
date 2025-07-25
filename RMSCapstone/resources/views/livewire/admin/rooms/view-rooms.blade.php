@@ -325,7 +325,6 @@
         @endif
     @endif
                                 </td>
-                                <td class="px-4 py-3">{{ $room->max_kids }}</td>
                                 <td class="px-4 py-3">{{ number_format($room->amount, 2) }}</td>
                                 <td class="px-4 py-3">
                                     <!-- Status Styling -->
