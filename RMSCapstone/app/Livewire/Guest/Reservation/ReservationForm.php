@@ -229,6 +229,8 @@ class ReservationForm extends Component
                 return $room;
             });
 
+        $this->prepareOccupancyRules();
+
         // Other properties
         $this->roomCategories = PropertyCategory::all();
         $this->selectedFeatures = [];
@@ -254,34 +256,95 @@ class ReservationForm extends Component
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
     }
 
-
-
-
-    public function render()
+    public function prepareOccupancyRules()
     {
-        $this->getAvailableRooms();
-        return view('livewire.guest.reservation.reservation-form');
+        foreach ($this->rooms as $room) {
+
+            switch ($room->occupancy_type) {
+                case 'combinations':
+                    $room->availableAdultOptions = collect($room->occupancy_rules ?? [])
+                        ->pluck('adults')
+                        ->filter(fn($value) => $value > 0) // remove 0 if ever present
+                        ->unique()
+                        ->sort()
+                        ->values()
+                        ->all();
+
+                    $room->availableKidOptions = collect($room->occupancy_rules ?? [])
+                        ->pluck('kids')
+                        ->unique()
+                        ->sort()
+                        ->values();
+                    break;
+
+                case 'whole_number':
+                    $range = range(0, $room->max_guests);
+
+                    // Adults: only values >= 1
+                    $room->availableAdultOptions = collect($range)->filter(fn($v) => $v > 0)->values();
+
+                    // Kids: allow from 0
+                    $room->availableKidOptions = collect($range);
+                    break;
+
+                case 'ideal_guest':
+                    $room->availableAdultOptions = collect(range(0, $room->ideal_guest));
+                    $room->availableKidOptions = collect(range(0, $room->ideal_guest));
+                    break;
+
+                default:
+                    $room->availableAdultOptions = collect();
+                    $room->availableKidOptions = collect();
+            }
+        }
+
+        // dd($this->rooms->map(function ($room) {
+        //     return [
+        //         'id' => $room->id,
+        //         'type' => $room->type,
+        //         'availableAdultOptions' => $room->availableAdultOptions,
+        //         'availableKidOptions' => $room->availableKidOptions,
+        //     ];
+        // }));
     }
 
+    public $dynamicKidOptions = [];
 
-    // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
-
-    public function increaseStep()
+    public function updateKidOptions($roomId)
     {
-        $this->resetErrorBag();
-        $this->validateData();
+        $room = collect($this->rooms)->firstWhere('id', $roomId);
+        if (!$room) return;
 
-        $this->currentStep = min($this->currentStep + 1, $this->totalSteps);
+        $selectedAdults = $this->adults[$roomId] ?? 0;
+
+        switch ($room->occupancy_type) {
+            case 'whole_number':
+            case 'ideal_guest':
+                $maxGuests = $room->max_guests ?? $room->ideal_guest ?? 0;
+                $remainingForKids = max(0, $maxGuests - $selectedAdults);
+                $this->dynamicKidOptions[$roomId] = range(0, $remainingForKids);
+
+                // Reset kids selection if over limit
+                if (($this->kids[$roomId] ?? 0) > $remainingForKids) {
+                    $this->kids[$roomId] = 0;
+                }
+                break;
+
+            case 'combinations':
+                $validCombos = collect($room->occupancy_rules ?? [])
+                    ->where('adults', $selectedAdults);
+
+                $this->dynamicKidOptions[$roomId] = $validCombos->pluck('kids')->unique()->sort()->values()->all();
+
+                if (!in_array($this->kids[$roomId] ?? 0, $this->dynamicKidOptions[$roomId])) {
+                    $this->kids[$roomId] = 0;
+                }
+                break;
+
+            default:
+                $this->dynamicKidOptions[$roomId] = [];
+        }
     }
-
-    public function decreaseStep()
-    {
-        $this->resetErrorBag();
-        $this->currentStep = max($this->currentStep - 1, 1);
-    }
-
-
-
 
     public function updated($property)
     {
@@ -295,6 +358,34 @@ class ReservationForm extends Component
                 $this->addError('cart', 'Room not found.');
                 return;
             }
+
+            if ($room->occupancy_type === 'whole_number' || $room->occupancy_type === 'ideal_guest') {
+                $maxGuests = $room->max_guests ?? $room->ideal_guest ?? 0;
+                $selectedAdults = (int) ($this->adults[$roomId] ?? 0);
+                $remaining = max(0, $maxGuests - $selectedAdults);
+
+                $this->dynamicKidOptions[$roomId] = range(0, $remaining);
+
+                // Prevent over-selection
+                if (($this->kids[$roomId] ?? 0) > $remaining) {
+                    $this->kids[$roomId] = 0;
+                }
+            }
+
+            if ($room->occupancy_type === 'combinations') {
+                $selectedAdults = (int) ($this->adults[$roomId] ?? 0);
+
+                $validCombos = collect($room->occupancy_rules ?? [])
+                    ->where('adults', $selectedAdults);
+
+                $this->dynamicKidOptions[$roomId] = $validCombos->pluck('kids')->unique()->sort()->values()->all();
+
+                // Reset invalid selection
+                if (!in_array($this->kids[$roomId] ?? 0, $this->dynamicKidOptions[$roomId])) {
+                    $this->kids[$roomId] = 0;
+                }
+            }
+
 
             foreach ($this->cart as $index => $item) {
                 if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
@@ -343,6 +434,36 @@ class ReservationForm extends Component
     }
 
 
+    public function render()
+    {
+        $this->getAvailableRooms();
+        return view('livewire.guest.reservation.reservation-form');
+    }
+
+
+    // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
+
+    public function increaseStep()
+    {
+        $this->resetErrorBag();
+        $this->validateData();
+
+        $this->currentStep = min($this->currentStep + 1, $this->totalSteps);
+    }
+
+    public function decreaseStep()
+    {
+        $this->resetErrorBag();
+        $this->currentStep = max($this->currentStep - 1, 1);
+    }
+
+
+
+
+
+
+
+
     public function updatedPetCount($value)
     {
         $value = (int) $value;
@@ -376,6 +497,7 @@ class ReservationForm extends Component
     {
         $this->rooms = $this->roomAvailabilityService
             ->getAvailableRooms($this->check_in_date, $this->check_out_date);
+        $this->prepareOccupancyRules();
     }
 
     public function getStayDurationProperty()
@@ -607,6 +729,8 @@ class ReservationForm extends Component
             $this->paymentStatus,
             $context
         );
+
+
 
         if (!$added) {
             $this->addError('cart', 'Failed to add room to cart.');
@@ -867,6 +991,7 @@ class ReservationForm extends Component
             $transaction = $this->createTransaction($transactionUser, $promo);
             $invoice = $this->createInvoice($transaction);
             $this->attachCartItemsToTransaction($transaction);
+            $this->insertGuestDetails($transaction);
             $this->insertGuestPetDetails($transaction);
 
             // Compute the base amount to charge based on deposit percentage or full amount
@@ -916,13 +1041,13 @@ class ReservationForm extends Component
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // Attempt to send confirmation emails to guest and admin
-        try {
-            $emailService->sendReservationEmails($reservationData);
-        } catch (\Exception $e) {
-            // If email sending fails, flash error but still continue
-            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        }
+        // // Attempt to send confirmation emails to guest and admin
+        // try {
+        //     $emailService->sendReservationEmails($reservationData);
+        // } catch (\Exception $e) {
+        //     // If email sending fails, flash error but still continue
+        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // }
 
         // Show success flash message
         session()->flash('success', 'Reservation successfully submitted!');
@@ -1048,6 +1173,16 @@ class ReservationForm extends Component
         }
     }
 
+
+    protected function attachActivityToTransaction(Transaction $transaction, array $item): void
+    {
+        $transaction->activities()->attach($item['activity_id'], [
+            'quantity' => $item['quantity'],
+            'amount' => $item['amount'],
+            'payment_status' => $item['payment_status'],
+        ]);
+    }
+
     protected function attachRoomToTransaction(Transaction $transaction, array $item): void
     {
         $transaction->properties()->attach($item['room_id'], [
@@ -1062,14 +1197,6 @@ class ReservationForm extends Component
         ]);
     }
 
-    protected function attachActivityToTransaction(Transaction $transaction, array $item): void
-    {
-        $transaction->activities()->attach($item['activity_id'], [
-            'quantity' => $item['quantity'],
-            'amount' => $item['amount'],
-            'payment_status' => $item['payment_status'],
-        ]);
-    }
 
     protected function insertGuestDetails(Transaction $transaction): void
     {
@@ -1154,6 +1281,12 @@ class ReservationForm extends Component
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             ]);
+
+            if (count($this->guests) !== $this->total_pax) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'guests' => 'Please input all the guests before proceeding.',
+                ]);
+            }
         }
 
         if ($this->currentStep == 4) {
@@ -1162,6 +1295,7 @@ class ReservationForm extends Component
             ]);
         }
     }
+
 
     protected function validateGuestData()
     {

@@ -88,12 +88,39 @@
                                             <p class="text-base font-normal text-gray-700 dark:text-gray-400">
                                                 <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
                                             </p>
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
-                                                <i class="fas fa-users mr-2"></i> Maximum Capacity:
-                                                {{ $room->max_adults }}
-                                                Adults,
-                                                {{ $room->max_kids }} Kids
-                                            </p>
+
+                                            @if ($room->occupancy_type === 'whole_number')
+                                                <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                                    <i class="fas fa-users mr-2"></i>
+                                                    Maximum Capacity: {{ $room->max_guests }} guests
+                                                </p>
+                                            @elseif ($room->occupancy_type === 'combinations')
+                                                @php
+                                                    $originalCombinations = collect($room->occupancy_rules)
+                                                        ->where('type', 'original');
+
+                                                    $formatted = $originalCombinations->map(function ($combo) {
+                                                        $parts = [];
+
+                                                        if (!empty($combo['adults'])) {
+                                                            $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                                                        }
+
+                                                        if (!empty($combo['kids'])) {
+                                                            $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                                                        }
+
+                                                        return implode(' and ', $parts);
+                                                    });
+                                                @endphp
+
+                                                @if ($formatted->isNotEmpty())
+                                                    <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                                        <i class="fas fa-users mr-2"></i>
+                                                        Max occupancy: {{ $formatted->implode(' or ') }}
+                                                    </p>
+                                                @endif
+                                            @endif
 
                                             <p class="text-base font-normal text-gray-700 dark:text-gray-400">
                                                 <i class="fas fa-plus mr-2"></i> Extra Person Charge:
@@ -110,19 +137,20 @@
                                                     <span class="text-green-700 font-bold mb-1">
                                                         ₱{{ number_format($room->dynamic_rate, 2) }}
                                                     </span>
-                                                    <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
-                                                                    @if ($room->rate_type === 'Weekend')
-                                                                        bg-yellow-100 text-yellow-700
-                                                                    @elseif ($room->rate_type === 'Weekdays')
-                                                                        bg-green-100 text-green-700
-                                                                    @elseif ($room->rate_type === 'Peak')
-                                                                        bg-red-100 text-red-700
-                                                                    @elseif ($room->rate_type === 'Holiday')
-                                                                        bg-purple-100 text-purple-700
-                                                                    @else
-                                                                        bg-gray-100 text-gray-600
-                                                                    @endif
-                                                                ">
+                                                    <span
+                                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
+                                                                                                                                                                    @if ($room->rate_type === 'Weekend')
+                                                                                                                                                                        bg-yellow-100 text-yellow-700
+                                                                                                                                                                    @elseif ($room->rate_type === 'Weekdays')
+                                                                                                                                                                        bg-green-100 text-green-700
+                                                                                                                                                                    @elseif ($room->rate_type === 'Peak')
+                                                                                                                                                                        bg-red-100 text-red-700
+                                                                                                                                                                    @elseif ($room->rate_type === 'Holiday')
+                                                                                                                                                                        bg-purple-100 text-purple-700
+                                                                                                                                                                    @else
+                                                                                                                                                                        bg-gray-100 text-gray-600
+                                                                                                                                                                    @endif
+                                                                                                                                                                ">
                                                         {{ $room->rate_name }}
                                                         @if ($room->rate_type)
                                                             - {{ $room->rate_type }} Rate
@@ -326,15 +354,17 @@
                                         <div class="mt-auto pt-2 flex flex-col justify-between">
                                             <div class="flex gap-4">
 
+                                                <!-- Debug: dump availableAdultOptions -->
+
                                                 <!-- Adults -->
                                                 <div class="flex-1">
                                                     <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
                                                     <select wire:model.live="adults.{{ $room->id }}"
+                                                        wire:change="updateKidOptions({{ $room->id }})"
                                                         class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @for ($i = 1; $i <= $room->max_adults; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}
-                                                            </option>
-                                                        @endfor
+                                                        @foreach ($room->availableAdultOptions ?? [] as $adult)
+                                                            <option value="{{ $adult }}">{{ $adult }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
@@ -343,12 +373,13 @@
                                                     <label class="block text-sm font-medium text-gray-700">Children</label>
                                                     <select wire:model.live="kids.{{ $room->id }}"
                                                         class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @for ($i = 0; $i <= $room->max_kids; $i++)
-                                                            <option value="{{ $i }}">{{ $i }}
-                                                            </option>
-                                                        @endfor
+                                                        @foreach ($dynamicKidOptions[$room->id] ?? $room->availableKidOptions ?? [] as $kid)
+                                                            <option value="{{ $kid }}">{{ $kid }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
+
+
 
                                             </div>
 

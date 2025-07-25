@@ -242,65 +242,8 @@
                                 </button>
                             </th>
 
-                            <!-- Max Adults-->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('max_adults')">
-                                <button class="flex items-center">
-                                    Max Adults
-                                    @if ($sortBy !== 'max_adults')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            <!-- Max Kids -->
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('max_kids')">
-                                <button class="flex items-center">
-                                    Max Kids
-                                    @if ($sortBy !== 'max_kids')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
+                            <!-- Max Occupancy-->
+                            <th scope="col" class="px-4 py-3">Max Occupancy</th>
 
                             <!-- Turnover Duration -->
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('amount')">
@@ -352,7 +295,36 @@
                                 <td class="px-4 py-3 capitalize">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
-                                <td class="px-4 py-3">{{ $room->max_adults }}</td>
+                                <td class="px-4 py-3">
+    @if ($room->occupancy_type === 'whole_number')
+        {{ $room->max_guests }} guests
+    @elseif ($room->occupancy_type === 'combinations')
+        @php
+            $originalCombinations = collect($room->occupancy_rules)
+                ->where('type', 'original');
+
+            $formatted = $originalCombinations->map(function ($combo) {
+                $parts = [];
+
+                if (!empty($combo['adults'])) {
+                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                }
+
+                if (!empty($combo['kids'])) {
+                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                }
+
+                return implode(' and ', $parts);
+            });
+        @endphp
+
+        @if ($formatted->isNotEmpty())
+            {{ $formatted->implode(' or ') }}
+        @else
+            N/A
+        @endif
+    @endif
+                                </td>
                                 <td class="px-4 py-3">{{ $room->max_kids }}</td>
                                 <td class="px-4 py-3">{{ number_format($room->amount, 2) }}</td>
                                 <td class="px-4 py-3">

@@ -494,7 +494,7 @@ class ViewReservation extends Component
                 'updated_at' => now(),
             ]);
 
-        $this->recalculateTransactionProperty($this->editingTransactionPropertyId);
+        // $this->recalculateTransactionProperty($this->editingTransactionPropertyId);
 
         $this->reset([
             'editingGuestId',

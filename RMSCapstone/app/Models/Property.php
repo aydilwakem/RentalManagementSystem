@@ -33,6 +33,8 @@ class Property extends Model
         'capacity',
         'max_adults',
         'max_kids',
+        'max_guests',
+        'occupancy_type',
         'occupancy_rules',
         'turnover_duration',
         'property_status',

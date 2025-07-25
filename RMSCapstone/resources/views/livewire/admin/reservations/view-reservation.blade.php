@@ -328,6 +328,9 @@
                                         No. of Kids</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        No. of Infants (free)</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Stay Duration
                                     </th>
                                     <th
@@ -361,6 +364,9 @@
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->kids ?? 'N/A' }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            {{ $property->pivot->non_chargeable_guests ?? 'N/A' }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
@@ -1778,6 +1784,15 @@
                             </select>
                             @error('editingTransactionPropertyId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
+
+                        
+                                 <!-- Birthdate -->
+                            <div class="mb-4">
+                                <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
+                                <input type="date"
+                                    wire:model.live="editingBirthDate"
+                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
 
                         <!-- Guest Type -->
                         <!-- Optional: Guest Type (can be hidden or locked to a default) -->
