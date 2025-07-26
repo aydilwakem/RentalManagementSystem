@@ -77,14 +77,15 @@
                         </div>
 
                         <!-- Occupancy Type -->
-                        <div class="flex flex-col gap-1">
-                            <label for="occupancy_type" class="text-gray-700 dark:text-gray-200 font-medium">Occupancy
-                                Type</label>
+                        <div>
+                            <label for="occupancy_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy
+                                Type <span class="text-red-500">*</span></label>
                             <select id="occupancy_type" wire:model.live="occupancy_type"
-                                class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-green-500 focus:border-green-500">
-                                <option value="" disabled selected>Select occupancy type</option>
-                                <option value="combinations">Combinations</option>
-                                <option value="whole_number">Whole Number</option>
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                <option value="" selected>Select Occupancy Type</option>
+                                <option value="combinations">Mixed Guest Composition (Ex. 2 Adults + 2 Kids)</option>
+                                <option value="whole_number">Total No. of Guests (Ex. 4 Guests)</option>
                             </select>
 
                             @error('occupancy_type')
@@ -94,13 +95,13 @@
 
                         <!-- Max Occupancy Rules (Only if 'combinations') -->
                         @if ($occupancy_type === 'combinations')
-                            <div class="col-span-2">
-                                <h3 class="block mb-2 text-sm font-semibold text-gray-900">Occupancy Rules</h3>
+                            <div class="col-span-2 border rounded-md shadow-sm bg-gray-50 p-4">
+                                <h3 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy Rules</h3>
                                 <div class="mt-2 flex flex-start mb-2">
-                                    <button type="button" wire:click="addRule"
-                                        class="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition-all duration-200 text-sm">
+                                    <x-button type="button" wire:click="addRule"
+                                        class="bg-green-700 text-white px-3 py-1 rounded-md hover:bg-green-800 transition-all duration-200 text-xs uppercase">
                                         Add Rule
-                                    </button>
+                                    </x-button>
                                 </div>
                                 <div class="flex flex-col sm:flex-row flex-wrap gap-3">
                                     @foreach ($occupancy_rules as $index => $rule)
@@ -110,7 +111,7 @@
                                                     <label for="adults_{{ $index }}"
                                                         class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
                                                     <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
-                                                        id="adults_{{ $index }}" min="0"
+                                                        id="adults_{{ $index }}" min="0" onwheel="this.blur()"
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
                                                     @error("occupancy_rules.{$index}.adults")
                                                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -121,7 +122,7 @@
                                                     <label for="kids_{{ $index }}"
                                                         class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
                                                     <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
-                                                        id="kids_{{ $index }}" min="0"
+                                                        id="kids_{{ $index }}" min="0" onwheel="this.blur()"
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
                                                     @error("occupancy_rules.{$index}.kids")
                                                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -152,16 +153,12 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model="max_guests" id="max_guests" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. 2" onwheel="this.blur()" />
+                                     dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. 2" onwheel="this.blur()" />
                                 @error('max_guests')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         @endif
-
-
-
-
 
                     </div>
 

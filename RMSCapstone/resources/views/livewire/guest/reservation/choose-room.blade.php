@@ -134,23 +134,24 @@
                                             <p class="mt-4 text-lg font-medium">
                                                 Rate Per Night:
                                                 @if ($room->rate_name || $room->rate_type)
-                                                    <span class="text-green-700 font-bold mb-1">
+                                                    <span class="text-green-700 font-bold">
                                                         ₱{{ number_format($room->dynamic_rate, 2) }}
                                                     </span>
+                                                    <br>
                                                     <span
-                                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
-                                                                                                                                                                    @if ($room->rate_type === 'Weekend')
-                                                                                                                                                                        bg-yellow-100 text-yellow-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Weekdays')
-                                                                                                                                                                        bg-green-100 text-green-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Peak')
-                                                                                                                                                                        bg-red-100 text-red-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Holiday')
-                                                                                                                                                                        bg-purple-100 text-purple-700
-                                                                                                                                                                    @else
-                                                                                                                                                                        bg-gray-100 text-gray-600
-                                                                                                                                                                    @endif
-                                                                                                                                                                ">
+                                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-3
+                                                        @if ($room->rate_type === 'Weekend')
+                                                             bg-yellow-100 text-yellow-700
+                                                            @elseif ($room->rate_type === 'Weekdays')
+                                                                 bg-green-100 text-green-700
+                                                            @elseif ($room->rate_type === 'Peak')
+                                                                 bg-red-100 text-red-700
+                                                            @elseif ($room->rate_type === 'Holiday')
+                                                                 bg-purple-100 text-purple-700
+                                                            @else
+                                                                 bg-gray-100 text-gray-600
+                                                        @endif
+                                                        ">
                                                         {{ $room->rate_name }}
                                                         @if ($room->rate_type)
                                                             - {{ $room->rate_type }} Rate
@@ -183,7 +184,7 @@
                                                     <div class="relative mb-4 px-12 mt-3">
                                                         <img id="modal-room-img-{{ $room->id }}"
                                                             src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
-                                                            class="w-full h-80 object-cover rounded-lg shadow" />
+                                                            class="w-full h-full object-cover rounded-lg shadow" />
                                                         @if (count($images) > 1)
                                                             <!-- Prev Button -->
                                                             <button onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
@@ -447,8 +448,8 @@
                     @endforeach
                 </div>
             </div>
+        </div>
         @endif
-    </div>
     <script>
         function openRoomModal(roomId) {
             document.getElementById('modal-room-' + roomId).classList.remove('hidden');

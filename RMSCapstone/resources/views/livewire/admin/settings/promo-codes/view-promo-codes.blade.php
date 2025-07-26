@@ -134,7 +134,7 @@
                             <th scope="col" class="px-4 py-3 ">Discount Code</th>
 
                             {{-- Details --}}
-                            <th scope="col" class="px-4 py-3 ">Name/Description</th>
+                            {{-- <th scope="col" class="px-4 py-3 ">Name/Description</th> --}}
                             <th scope="col" class="px-4 py-3 ">Discount Value</th>
                             <th scope="col" class="px-4 py-3 ">Code Uses</th>
                             <th scope="col" class="px-4 py-3 ">Validity</th>
@@ -155,14 +155,14 @@
                                 </th>
                                 <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
                                     {{ $promoCode->code }}</td>
-                                <td class="px-4 py-3">
+                                {{-- <td class="px-4 py-3">
                                     @if (!empty($promoCode->description))
                                         {{ Str::limit($promoCode->description, 50) }}
                                     @else
                                         <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
                                             provided.</em>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td class="px-4 py-3">
                                     @if ($promoCode->discount_type == 'fixed')
                                         ₱{{ number_format($promoCode->discount_value, 2) }}

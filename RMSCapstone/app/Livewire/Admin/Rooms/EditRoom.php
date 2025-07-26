@@ -24,7 +24,9 @@ class EditRoom extends Component
     public $ideal_guest;
     public $max_adults;
     public $max_kids;
-    public $occupancyRules = []; // The list of occupancy rules
+    public $max_guests;
+    public $occupancy_type;
+    public $occupancy_rules = [];
     public $turnover_duration;
     public $property_status;
     public $amount;
@@ -38,12 +40,10 @@ class EditRoom extends Component
     public $imageToDeleteId = null;
     public $features; // All available features
     public $selectedFeatures = []; // Selected feature IDs
-    public $occupancy_rules = [];
     public $roomCategories; // Store room categories for dropdown
     public $roomId;
     public $amenities;
     public $freebies = false;
-
 
     public $confirmEditItem = false;
 
@@ -55,9 +55,7 @@ class EditRoom extends Component
     public function mount(Property $room)
     {
         //only mount amenities for Room
-        $this->amenities = PropertyFeature::where('property_type_id', 1)
-        ->where('is_active', true)
-        ->get();
+        $this->amenities = PropertyFeature::where('property_type_id', 1)->where('is_active', true)->get();
 
         $this->roomId = $room->id;
         $this->room = $room;
@@ -71,16 +69,19 @@ class EditRoom extends Component
         $this->amount = $room->amount;
         $this->image = $room->image;
         $this->roomCategories = PropertyCategory::all();
-        $this->occupancy_rules = $room->occupancy_rules ?? []; // If null, fallback to empty array
         $this->extra_person_charge = $room->extra_person_charge;
         $this->features = PropertyFeature::all();
+        $this->occupancy_type = $room->occupancy_type;
+
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
         $this->freebies = (bool) $room->freebies;
 
         // initialize storedImages with unique IDs for sorting/removal
-        $this->storedImages = collect($room->images ?? [])->map(function ($path) {
-            return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
-        })->toArray();
+        $this->storedImages = collect($room->images ?? [])
+            ->map(function ($path) {
+                return ['id' => Str::random(10), 'path' => $path]; // Assign a unique ID and store the path
+            })
+            ->toArray();
 
         // Initial combined display images
         $this->updateDisplayImages();
@@ -103,13 +104,21 @@ class EditRoom extends Component
 
     protected function updateDisplayImages()
     {
-        // Map newImages to include unique IDs for temporary files
-        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
-            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
-        })->toArray();
+        // Extract current new (temporary) images from displayImages to keep them
+        $existingTempImages = collect($this->displayImages)->filter(function ($image) {
+            return !in_array($image, $this->storedImages);
+        });
 
-        // Combine stored and newly uploaded images for display.
-        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+        // Map new uploaded images with unique IDs
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image];
+        });
+
+        // Merge stored images, existing temp images, and new uploads
+        $this->displayImages = array_merge($this->storedImages, $existingTempImages->toArray(), $newImagePreviewsWithIds->toArray());
+
+        // Clear newImages to reset input
+        $this->newImages = [];
     }
 
     public function confirmImageDelete($id)
@@ -136,16 +145,22 @@ class EditRoom extends Component
             if (isset($imageToRemove['path'])) {
                 Storage::disk('public')->delete($imageToRemove['path']);
                 // and remove from the storedImages array
-                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
-                    return $img['id'] !== $imageToRemove['id'];
-                })->values()->toArray();
+                $this->storedImages = collect($this->storedImages)
+                    ->filter(function ($img) use ($imageToRemove) {
+                        return $img['id'] !== $imageToRemove['id'];
+                    })
+                    ->values()
+                    ->toArray();
             }
             // if new upload, temp object lang,
             // remove from newImages if it's there
             elseif (isset($imageToRemove['object'])) {
-                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
-                    return $img->getFilename() !== $imageToRemove['id'];
-                })->values()->toArray();
+                $this->newImages = collect($this->newImages)
+                    ->filter(function ($img) use ($imageToRemove) {
+                        return $img->getFilename() !== $imageToRemove['id'];
+                    })
+                    ->values()
+                    ->toArray();
             }
 
             $this->updateDisplayImages(); // Re-update display array after removal
@@ -185,7 +200,7 @@ class EditRoom extends Component
                 'occupancy_rules' => 'required|array',
                 'occupancy_rules.*.adults' => 'required|integer|min:0',
                 'occupancy_rules.*.kids' => 'required|integer|min:0',
-                'freebies' => 'nullable|boolean'
+                'freebies' => 'nullable|boolean',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -220,6 +235,7 @@ class EditRoom extends Component
             'image' => $this->image,
             'images' => $finalImagePaths,
             'occupancy_rules' => $this->occupancy_rules,
+            'occupancy_type' => $this->occupancy_type,
             'freebies' => (bool) $this->freebies,
         ]);
 

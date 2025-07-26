@@ -48,8 +48,8 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
-                        {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                        @include('livewire.guest.reservation.choose-room')
+                        @include('livewire.guest.reservation.guest-detail')
+                        {{-- @include('livewire.guest.reservation.choose-room') --}}
                         {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
                 @endif
@@ -57,7 +57,6 @@
                 <!-- Choose an Activity -->
                 @if ($currentStep == 2)
                     <div class="step-activity md:px-12">
-                        {{-- @include('livewire.guest.reservation.review') --}}
                         @include('livewire.guest.reservation.choose-activity')
                     </div>
                 @endif

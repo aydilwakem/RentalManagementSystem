@@ -34,8 +34,7 @@ use App\Services\PayMongoService;
 use App\Services\EmailService;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
-
-
+use PragmaRX\Countries\Package\Countries;
 
 class ReservationForm extends Component
 {
@@ -81,6 +80,7 @@ class ReservationForm extends Component
     public $email;
     public $contact_number;
     public $company_name;
+    public $countries = [];
     public $country;
     public $heard_from;
 
@@ -158,7 +158,7 @@ class ReservationForm extends Component
     protected PayMongoService $payMongo;
     protected EmailService $emailService;
 
-    //----------------------- TRAITS -------------------------- // 
+    //----------------------- TRAITS -------------------------- //
 
     use HasFormattedDates;
 
@@ -239,6 +239,8 @@ class ReservationForm extends Component
         $this->paymentMethod = PaymentMethod::all();
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
         $this->guest_types = GuestType::all();
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines'; // default  country
 
         // BRANDING
         $branding = $brandingService->getBrandingData();
@@ -621,7 +623,7 @@ class ReservationForm extends Component
      *   - Recomputes the subtotal and total after applying the discount.
      *   - Displays success or error messages accordingly.
      *   - Triggers `getAvailableRooms` to reflect the updated state.
-     * 
+     *
      * - `removePromoCode`: Resets the promo code state and recalculates totals.
      *
      * Internal Helper:
@@ -760,7 +762,7 @@ class ReservationForm extends Component
      *   the cart state accordingly.
      *
      * Internal Helper (Shared):
-     * - `isItemAlreadyInCart`: Generic duplicate checker for any item type using 
+     * - `isItemAlreadyInCart`: Generic duplicate checker for any item type using
      *   dynamic type-based ID keys (e.g., `activity_id`, `room_id`).
      *
      * ------------------------------------------------------------------------------
@@ -1255,7 +1257,7 @@ class ReservationForm extends Component
 
 
 
-    /** 
+    /**
      * ----------------------------- VALIDATION LOGIC -----------------------------
      * This section contains all methods and rules used for validating user input,
      * such as checking required fields, date logic, and cart duplication.

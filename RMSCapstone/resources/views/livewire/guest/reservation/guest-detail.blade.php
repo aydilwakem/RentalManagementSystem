@@ -76,8 +76,15 @@
                     <div class="col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" wire:model="country" placeholder="Ex. Philippines"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
+                        <select wire:model="country"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
+                            <option value="" disabled selected>Select a country</option>
+                            @foreach ($countries as $countryOption)
+                                <option value="{{ $countryOption }}">{{ $countryOption }}</option>
+                            @endforeach
+                        </select>
+                        {{-- <input type="text" wire:model="country" placeholder="Ex. Philippines"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" /> --}}
                         @error('country')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
