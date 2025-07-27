@@ -78,6 +78,10 @@
                                         class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
                                         Event End Date
                                     </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                                        Actual Start Date and Time
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-500">
@@ -89,6 +93,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $event->end_datetime->format('F j, Y') }} <br>
                                         {{ $event->end_datetime->format('h:i A') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        @if ($event->actual_start_datetime)
+                                        {{ $event->actual_start_datetime->format('F j, Y') }}
+                                        @else
+                                        Not yet started
+                                        @endif
+                                        <br>
+                                        @if ($event->actual_start_datetime)
+                                        {{ $event->actual_start_datetime->format('h:i A') }}
+                                        @else
+                                        Time not yet indicated
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -150,8 +167,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="bg-white rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
                     <h2 class="font-bold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                         {{ __('Payments') }}
                     </h2>

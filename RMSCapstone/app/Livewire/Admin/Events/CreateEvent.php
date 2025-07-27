@@ -98,6 +98,7 @@ class CreateEvent extends Component
         $this->confirmCreateItem = true;
     }
 
+
     public function saveEvent()
     {
         try {
@@ -223,8 +224,11 @@ class CreateEvent extends Component
             return;
         }
 
-        $startDate = \Carbon\Carbon::parse($this->start_datetime);
-        $endDate = \Carbon\Carbon::parse($this->end_datetime);
+        //Parse the start and end datetime to Carbon instances
+        $startDate = \Carbon\Carbon::parse($this->start_datetime)->setSeconds(0);
+        $endDate = \Carbon\Carbon::parse($this->end_datetime)->setSeconds(0);
+
+
 
         // Step 1: Get all available event halls (unfiltered)
         $allHalls = Property::ofType('Event Hall')
@@ -233,11 +237,15 @@ class CreateEvent extends Component
 
         // Step 2: Load only overlapping transactions manually
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
-            $query->where(function ($q) use ($startDate, $endDate) {
-                $q->where('start_datetime', '<', $endDate)
-                    ->where('end_datetime', '>', $startDate);
-            });
-        }]);
+        $query->where(function ($q) use ($startDate, $endDate) {
+            $q->whereBetween('start_datetime', [$startDate, $endDate])
+              ->orWhereBetween('end_datetime', [$startDate, $endDate])
+              ->orWhere(function ($q2) use ($startDate, $endDate) {
+                  $q2->where('start_datetime', '<=', $startDate)
+                     ->where('end_datetime', '>=', $endDate);
+              });
+        });
+    }]);
 
         // Step 3: Flag each hall as booked if it has any overlapping transactions
         $this->halls = $allHalls->map(function ($hall) {
@@ -246,9 +254,14 @@ class CreateEvent extends Component
         });
     }
 
-    public function updatedStartDatetime()
+    public function updatedStartDatetime($value)
     {
         $this->getAvailableHalls();
+
+        if ($value) {
+            $start = \Carbon\Carbon::parse($value);
+            $this->end_datetime = $start->copy()->addHours(4)->format('Y-m-d\TH:i');
+        }
     }
 
     public function updatedEndDatetime()

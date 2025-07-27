@@ -229,7 +229,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                             <div>
                                 <label for="total_adults"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                                     Adults <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model.live="total_adults" id="total_adults" min="0"
                                     onwheel="this.blur()" placeholder="Ex. 100 Adults"
@@ -241,7 +241,7 @@
 
                             <div>
                                 <label for="total_kids"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Max
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                                     Kids <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model.live="total_kids" id="total_kids" onwheel="this.blur()"
                                     placeholder="Ex. 50 Kids"

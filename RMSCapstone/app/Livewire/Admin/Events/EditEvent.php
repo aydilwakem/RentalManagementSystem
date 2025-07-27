@@ -59,6 +59,7 @@ class EditEvent extends Component
     public $end_datetime; //End Date Time of Event
     public $total_adults;
     public $total_kids; 
+    public $actual_start_datetime; // Actual start datetime when the event is ongoing
     //public $heard_from; 
 
     // ------------------- INVOICE AND EVENT TYPE -------------------- // 
@@ -123,14 +124,22 @@ class EditEvent extends Component
 
     public function updateEvent()
     {
-        $this->validate([
-            'transaction_status' => 'required|in:pending,confirmed,ongoing,done,terminated',
-        ]);
+         $this->validate([
+        'transaction_status' => 'required|in:pending,confirmed,ongoing,done,terminated',
+    ]);
 
-        // Directly use the $transaction model
+        // Check if status is being changed to "ongoing"
+        if (
+            $this->transaction_status === 'ongoing' &&
+            $this->event->transaction_status !== 'ongoing' &&
+            $this->event->actual_start_datetime === null // only set if not already set
+        ) {
+            $this->event->actual_start_datetime = now(); // current datetime
+        }
+
         $this->event->transaction_status = $this->transaction_status;
         $this->event->save();
-        
+
         $this->confirmEditItem = true;
         session()->flash('success', 'Event status updated successfully!');
         return redirect()->route('admin.events');
