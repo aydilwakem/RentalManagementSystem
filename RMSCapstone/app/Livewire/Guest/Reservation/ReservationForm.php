@@ -4,6 +4,7 @@ namespace App\Livewire\Guest\Reservation;
 
 use App\Mail\NewReservationMail;
 use Livewire\Component;
+use App\Models\Service;
 use App\Models\Property;
 use App\Models\Activity;
 use App\Models\Transaction;
@@ -172,6 +173,12 @@ class ReservationForm extends Component
     protected $queryString  = ['currentStep'];
 
 
+    public bool $bringingPets = false;
+    public int $pet_count;
+    public $pets = [];
+    public string $breed = '';
+    public $dynamicKidOptions = [];
+
 
 
     public function boot(ServiceBag $services)
@@ -184,12 +191,6 @@ class ReservationForm extends Component
         $this->payMongo = $services->payMongoService;
         $this->emailService = $services->emailService;
     }
-
-
-
-    public bool $bringingPets = false;
-    public int $pet_count;
-    public array $pet_breed = [];
 
 
 
@@ -210,142 +211,27 @@ class ReservationForm extends Component
 
 
 
-    public function mount(RoomRateService $roomRateService, BrandingService $brandingService)
+    public function mount()
     {
-
-        // Your existing room fetching logic
-        $this->rooms = Property::ofType('Room')
-            ->availableRooms()
-            ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
-            ->get()
-            ->map(function ($room) use ($roomRateService) {
-                $rate = $roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
-
-                $room->dynamic_rate = $rate['amount'];
-                $room->rate_name = $rate['name'];
-                $room->rate_type = $rate['rate_type'];
-                $room->rate_id = $rate['rate_id'];
-
-                return $room;
-            });
-
+        $this->initializeDates();
         $this->prepareOccupancyRules();
-
-        // Other properties
-        $this->roomCategories = PropertyCategory::all();
-        $this->selectedFeatures = [];
-        $this->activities = Activity::availableActivities()->get();
-        $this->currentStep = 1;
-        $this->paymentMethod = PaymentMethod::all();
-        $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
-        $this->guest_types = GuestType::all();
-
-        // BRANDING
-        $branding = $brandingService->getBrandingData();
-        $this->companyName = $branding['branding_company_name'];
-        $this->logoPath = $branding['logo_path'];
-        $this->companyEmail = $branding['branding_company_email'];
-        $this->companyContact = $branding['branding_company_contact'];
-        $this->companyAddress = $branding['company_address'];
-        $this->facebookLink = $branding['facebook_link'];
-        $this->instagramLink = $branding['instagram_link'];
-
-        // DATES
-        $now = Carbon::now('Asia/Manila');
-        $this->check_in_date = $now->format('Y-m-d');
-        $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+        $this->loadStaticData();
+        $this->loadRooms();
+        $this->loadBranding();
+        $this->getAvailableRooms();
     }
 
-    public function prepareOccupancyRules()
-    {
-        foreach ($this->rooms as $room) {
 
-            switch ($room->occupancy_type) {
-                case 'combinations':
-                    $room->availableAdultOptions = collect($room->occupancy_rules ?? [])
-                        ->pluck('adults')
-                        ->filter(fn($value) => $value > 0) // remove 0 if ever present
-                        ->unique()
-                        ->sort()
-                        ->values()
-                        ->all();
 
-                    $room->availableKidOptions = collect($room->occupancy_rules ?? [])
-                        ->pluck('kids')
-                        ->unique()
-                        ->sort()
-                        ->values();
-                    break;
 
-                case 'whole_number':
-                    $range = range(0, $room->max_guests);
-
-                    // Adults: only values >= 1
-                    $room->availableAdultOptions = collect($range)->filter(fn($v) => $v > 0)->values();
-
-                    // Kids: allow from 0
-                    $room->availableKidOptions = collect($range);
-                    break;
-
-                case 'ideal_guest':
-                    $room->availableAdultOptions = collect(range(0, $room->ideal_guest));
-                    $room->availableKidOptions = collect(range(0, $room->ideal_guest));
-                    break;
-
-                default:
-                    $room->availableAdultOptions = collect();
-                    $room->availableKidOptions = collect();
-            }
-        }
-
-        // dd($this->rooms->map(function ($room) {
-        //     return [
-        //         'id' => $room->id,
-        //         'type' => $room->type,
-        //         'availableAdultOptions' => $room->availableAdultOptions,
-        //         'availableKidOptions' => $room->availableKidOptions,
-        //     ];
-        // }));
-    }
-
-    public $dynamicKidOptions = [];
-
-    public function updateKidOptions($roomId)
-    {
-        $room = collect($this->rooms)->firstWhere('id', $roomId);
-        if (!$room) return;
-
-        $selectedAdults = $this->adults[$roomId] ?? 0;
-
-        switch ($room->occupancy_type) {
-            case 'whole_number':
-            case 'ideal_guest':
-                $maxGuests = $room->max_guests ?? $room->ideal_guest ?? 0;
-                $remainingForKids = max(0, $maxGuests - $selectedAdults);
-                $this->dynamicKidOptions[$roomId] = range(0, $remainingForKids);
-
-                // Reset kids selection if over limit
-                if (($this->kids[$roomId] ?? 0) > $remainingForKids) {
-                    $this->kids[$roomId] = 0;
-                }
-                break;
-
-            case 'combinations':
-                $validCombos = collect($room->occupancy_rules ?? [])
-                    ->where('adults', $selectedAdults);
-
-                $this->dynamicKidOptions[$roomId] = $validCombos->pluck('kids')->unique()->sort()->values()->all();
-
-                if (!in_array($this->kids[$roomId] ?? 0, $this->dynamicKidOptions[$roomId])) {
-                    $this->kids[$roomId] = 0;
-                }
-                break;
-
-            default:
-                $this->dynamicKidOptions[$roomId] = [];
-        }
-    }
-
+    /**
+     * ------------------------ LIVEWIRE HOOK: UPDATED -----------------------
+     *
+     * Responds to changes in component properties such as:
+     * - Adults/Kids: Recalculates valid kid options and pricing.
+     * - Dates: Reloads available rooms.
+     * ----------------------------------------------------------------------
+     */
     public function updated($property)
     {
         // ---------------------------- ADULTS AND KIDS -------------------------- //
@@ -359,58 +245,8 @@ class ReservationForm extends Component
                 return;
             }
 
-            if ($room->occupancy_type === 'whole_number' || $room->occupancy_type === 'ideal_guest') {
-                $maxGuests = $room->max_guests ?? $room->ideal_guest ?? 0;
-                $selectedAdults = (int) ($this->adults[$roomId] ?? 0);
-                $remaining = max(0, $maxGuests - $selectedAdults);
-
-                $this->dynamicKidOptions[$roomId] = range(0, $remaining);
-
-                // Prevent over-selection
-                if (($this->kids[$roomId] ?? 0) > $remaining) {
-                    $this->kids[$roomId] = 0;
-                }
-            }
-
-            if ($room->occupancy_type === 'combinations') {
-                $selectedAdults = (int) ($this->adults[$roomId] ?? 0);
-
-                $validCombos = collect($room->occupancy_rules ?? [])
-                    ->where('adults', $selectedAdults);
-
-                $this->dynamicKidOptions[$roomId] = $validCombos->pluck('kids')->unique()->sort()->values()->all();
-
-                // Reset invalid selection
-                if (!in_array($this->kids[$roomId] ?? 0, $this->dynamicKidOptions[$roomId])) {
-                    $this->kids[$roomId] = 0;
-                }
-            }
-
-
-            foreach ($this->cart as $index => $item) {
-                if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
-                    $adults = (int) ($this->adults[$roomId] ?? 1);
-                    $kids = (int) ($this->kids[$roomId] ?? 0);
-
-                    $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-                    $stayDuration = $this->getStayDurationProperty();
-                    $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
-
-                    $roomAmount = $rate['amount'] * $stayDuration;
-                    $rate_id = $rate['rate_id'];
-                    $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
-
-                    $this->cart[$index]['adults'] = $adults;
-                    $this->cart[$index]['kids'] = $kids;
-                    $this->cart[$index]['extra_guest'] = $extraGuests;
-                    $this->cart[$index]['extra_charge'] = $extraCharge;
-                    $this->cart[$index]['roomAmount'] = $roomAmount;
-                    $this->cart[$index]['rate_id'] = $rate_id;
-                    $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
-                }
-            }
-
-            // Triggers compute total pax method
+            $this->updateKidOptions($roomId);
+            $this->updateSelectedRoomDetails($roomId, $room);
             $this->computeTotalPax();
             $this->getAvailableRooms();
         }
@@ -418,16 +254,14 @@ class ReservationForm extends Component
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
 
+            // Clear guest inputs
             $this->cart = [];
             $this->currentStep = 1;
+            $this->pet_count = 0;
+            $this->pets = [];
+
             $this->getAvailableRooms();
             $this->removePromoCode();
-
-            // Clear guest-specific inputs
-            $this->pet_count = 0;
-            $this->pet_breed = [];
-
-            // Recompute totals if needed
             $this->computeSubtotalAmount();
             $this->computeTotalAmount();
         }
@@ -439,6 +273,8 @@ class ReservationForm extends Component
         $this->getAvailableRooms();
         return view('livewire.guest.reservation.reservation-form');
     }
+
+
 
 
     // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
@@ -468,13 +304,13 @@ class ReservationForm extends Component
     {
         $value = (int) $value;
 
-        // Expands or shrink the pet_breed array
-        if ($value > count($this->pet_breed)) {
-            for ($i = count($this->pet_breed); $i < $value; $i++) {
-                $this->pet_breed[] = '';
+        // Expands or shrink the pets array
+        if ($value > count($this->pets)) {
+            for ($i = count($this->pets); $i < $value; $i++) {
+                $this->pets[] = '';
             }
         } else {
-            $this->pet_breed = array_slice($this->pet_breed, 0, $value);
+            $this->pets = array_slice($this->pet_breed, 0, $value);
         }
     }
 
@@ -539,7 +375,6 @@ class ReservationForm extends Component
         return array_filter($this->cart, fn($item) => $item['type'] === $type);
     }
 
-
     public function computeTotalPax(): void
     {
         $this->total_pax = collect($this->getItemsByType('room'))
@@ -549,6 +384,7 @@ class ReservationForm extends Component
                 return $carry + $adults + $kids;
             }, 0);
     }
+
     public function computeTotalAmountOfAllRooms(): float
     {
         return collect($this->getItemsByType('room'))
@@ -601,11 +437,16 @@ class ReservationForm extends Component
     {
         $petCount = $this->pet_count ?? 0;
         $stayDuration = $this->getStayDurationProperty() ?? 0;
+        $feePerPetPerDay = $this->getPetFeeAmount();
 
-        return $petCount * 300 * $stayDuration;
+        return $petCount * $feePerPetPerDay * $stayDuration;
     }
 
-
+    protected function getPetFeeAmount(): float
+    {
+        $service = Service::where('name', 'Pet Fee')->first();
+        return $service?->amount ?? 0;
+    }
 
 
 
@@ -615,15 +456,7 @@ class ReservationForm extends Component
      *
      * Manages the application and removal of promotional codes affecting
      * the subtotal and total amount in the cart.
-     *
-     * Key Methods:
-     * - `applyPromoCode`: Validates the promo code and applies the discount.
-     *   - Recomputes the subtotal and total after applying the discount.
-     *   - Displays success or error messages accordingly.
-     *   - Triggers `getAvailableRooms` to reflect the updated state.
      * 
-     * - `removePromoCode`: Resets the promo code state and recalculates totals.
-     *
      * Internal Helper:
      * - `failPromo`: Fallback handler for invalid promo codes, resets discount state.
      *
@@ -685,20 +518,6 @@ class ReservationForm extends Component
      *
      * Handles the process of adding a room to the cart, including validation,
      * duplicate checking, rate computation, and cart state updates.
-     *
-     * Key Method:
-     * - `addRoomToCart`: Main method that orchestrates the room addition flow.
-     *   - Validates check-in and check-out dates.
-     *   - Prevents duplicate room entries in the cart.
-     *   - Computes rate, guests, duration, extra charges, and total amount.
-     *   - Delegates the cart insertion to `cartService->addItem`.
-     *   - Triggers `computeTotalPax` and `getAvailableRooms` upon success.
-     *
-     * Internal Helpers:
-     * - `checkInOutDatesAreValid`: Ensures required dates are present.
-     * - `isRoomAlreadyInCart`: Prevents duplicate room entries.
-     * - `prepareRoomCartContext`: Gathers all computed data needed for cart entry.
-     *
      * -----------------------------------------------------------------------------
      */
     public function addRoomToCart($roomId)
@@ -746,22 +565,7 @@ class ReservationForm extends Component
      * ----------------------------- ACTIVITY CART LOGIC -----------------------------
      *
      * Handles adding and managing quantities of activities (or other non-room items)
-     * in the reservation cart. This supports dynamic item types like activities, events,
-     * or services using a common cart structure.
-     *
-     * Key Methods:
-     * - `addActivityToCart`: Adds an activity or item to the cart using the shared
-     *   cart service. Checks for duplicates using `isItemAlreadyInCart` before applying.
-     *
-     * - `incrementItemQuantity`: Increases the quantity of a given item in the cart
-     *   and updates the cart state using the cart service.
-     *
-     * - `decrementItemQuantity`: Decreases the quantity (minimum of 1) and updates
-     *   the cart state accordingly.
-     *
-     * Internal Helper (Shared):
-     * - `isItemAlreadyInCart`: Generic duplicate checker for any item type using 
-     *   dynamic type-based ID keys (e.g., `activity_id`, `room_id`).
+     * in the reservation cart. 
      *
      * ------------------------------------------------------------------------------
      */
@@ -817,26 +621,6 @@ class ReservationForm extends Component
      * Handles the addition, editing, and deletion of multiple guest entries dynamically
      * within a reservation or booking form. This allows users to input and manage multiple
      * guests before final submission.
-     *
-     * Key Methods:
-     * - `addMultipleGuests`: Validates and adds a new guest to the `$guests` array using
-     *   structured guest data from `makeGuestArray`, then resets the input modal state.
-     *
-     * - `editGuest`: Sets the currently selected guest index and loads its data into
-     *   `editingGuest`, then shows the edit modal for user modifications.
-     *
-     * - `updateGuest`: Saves updates made to the selected guest entry and resets editing
-     *   state and modal visibility.
-     *
-     * - `deleteGuest`: Removes a guest from the list based on the given index and
-     *   reindexes the array to maintain proper order.
-     *
-     * State Variables:
-     * - `$guests`: Holds the list of guest entries.
-     * - `$editingGuest`: Temporary storage for the currently edited guest data.
-     * - `$editingGuestIndex`: Index of the guest currently being edited.
-     * - `$showGuestModal`, `$showEditModal`: Flags to control modal visibility.
-     *
      * -----------------------------------------------------------------------------------
      */
 
@@ -848,6 +632,24 @@ class ReservationForm extends Component
         $this->showGuestModal = false;
         $this->resetGuestInputFields();
     }
+
+    public $showPetsModal = false;
+
+
+
+    public function addMultiplePets()
+    {
+        $this->validate([
+            'breed' => 'required|string|max:255',
+        ]);
+
+        $this->pets[] = $this->makePetsArray();
+        $this->pet_count = count($this->pets);
+
+        $this->reset('breed'); // clear input
+    }
+
+
 
     public function editGuest($index)
     {
@@ -880,24 +682,6 @@ class ReservationForm extends Component
      * -------------------------------- REMOVE ITEM FROM CART --------------------------------
      *
      * Handles the removal of a specific item (room or activity) from the reservation cart.
-     *
-     * Core Responsibilities:
-     * - Delegates the item removal to the `CartService`, which handles cart logic based on item type.
-     * - Recomputes total number of guests (`pax`), overall amount, and available room inventory.
-     *
-     * Room Dependency Check:
-     * - After item removal, checks if any "room" type items remain in the cart.
-     * - If **no rooms remain**, it:
-     *   - Resets the cart and all related reservation state (promo code, discounts, error messages).
-     *   - Returns the flow to step 1 of the reservation process.
-     *
-     * Design Consideration:
-     * - Keeps reservation state consistent and avoids progressing without a required room.
-     * - Avoids orphaned items like activities or extras without a main room context.
-     *
-     * Logging:
-     * - Logs method invocation for traceability and debugging purposes.
-     *
      * ----------------------------------------------------------------------------------------
      */
 
@@ -936,26 +720,6 @@ class ReservationForm extends Component
      *
      * Handles the complete process of registering a guest reservation, from user creation
      * to payment session generation and confirmation email dispatch.
-     *
-     * Main Responsibilities:
-     * - Resets validation state and starts a database transaction to ensure atomicity.
-     * - Retrieves settings (e.g., deposit percentage, payment proof deadline).
-     * - Validates and applies a promo code if provided.
-     * - Creates all necessary records: transaction user, transaction, invoice, cart items,
-     *   and guest details.
-     * - Calculates the payable amount based on the deposit percentage or full total.
-     * - Prepares and sends the checkout session request to PayMongo and stores the returned link.
-     * - Gathers all data needed to compose confirmation emails for both guest and admin.
-     * - Redirects the user to the generated payment page or to a fallback proof submission page.
-     *
-     * External Services:
-     * - `PayMongoService`: For initiating the payment checkout session.
-     * - `EmailService`: For sending confirmation emails with reservation details.
-     *
-     * Error Handling:
-     * - PayMongo session creation is wrapped in a try-catch and logs any API failure.
-     * - Email dispatch is attempted outside the transaction to avoid rollback issues.
-     *   Failure in email sending does not block the reservation process.
      *
      * ---------------------------------------------------------------------------------------
      */
@@ -1073,35 +837,8 @@ class ReservationForm extends Component
      * the reservation process is atomic and consistent. If any of these steps fail,
      * the entire reservation is rolled back to prevent partial data persistence.
      *
-     * Main Responsibilities:
-     * - `createTransactionUser`:
-     *     Creates a new transaction-bound user (guest) with contact and identity info.
-     * - `createTransaction`:
-     *     Initializes the reservation transaction, linking it to the user.
-     * - `createInvoice`:
-     *     Generates a corresponding invoice for the transaction, based on the total amount.
-     * - `attachCartItemsToTransaction`:
-     *     Iterates over cart items and attaches each to the transaction accordingly.
-     * - `attachRoomToTransaction`:
-     *     Persists room item details (rate, duration, dates) into the transaction items table.
-     * - `attachActivityToTransaction`:
-     *     Persists booked activities into the transaction, including participant count.
-     * - `insertGuestDetails`:
-     *     Saves additional guest information associated with the reservation.
-     *
-     * Design Considerations:
-     * - Encapsulating each step into its own method keeps the main `register()` logic
-     *   clean, readable, and modular.
-     * - These are not merely "helpers"; they are essential parts of the reservation pipeline.
-     *
-     * Transactional Integrity:
-     * - All methods are designed to run inside `DB::transaction()` for rollback safety.
-     * - Any thrown exception will cancel the entire reservation and leave no partial data.
-     *
      * ------------------------------------------------------------------------------------
      */
-
-
     protected function createTransactionUser(): TransactionUser
     {
         return TransactionUser::create([
@@ -1173,7 +910,6 @@ class ReservationForm extends Component
         }
     }
 
-
     protected function attachActivityToTransaction(Transaction $transaction, array $item): void
     {
         $transaction->activities()->attach($item['activity_id'], [
@@ -1189,14 +925,16 @@ class ReservationForm extends Component
             'adults' => $item['adults'],
             'kids' => $item['kids'],
             'days' => $item['days'],
+            'extra_guest' => $item['extra_guest'],
             'extra_charge' => $item['extra_charge'],
             'amount' => $item['roomAmount'],
             'total_amount' => $item['total_amount'],
             'room_rate_id' => $item['rate_id'],
             'payment_status' => $item['payment_status'],
         ]);
-    }
 
+        Log::info('Attaching room to transaction with data:', $item);
+    }
 
     protected function insertGuestDetails(Transaction $transaction): void
     {
@@ -1214,37 +952,49 @@ class ReservationForm extends Component
             ]);
         }
     }
+
+    protected function attachServiceToTransaction(Transaction $transaction, array $item): void
+    {
+        $transaction->services()->attach($item['service_id'], [
+            'quantity' => $item['quantity'],
+            'amount' => $item['amount'],
+            'payment_status' => $item['payment_status'],
+            'days' => $item['days']
+        ]);
+
+        Log::info('Attaching room to transaction with data:', $item);
+    }
+
     protected function insertGuestPetDetails(Transaction $transaction): void
     {
-        if (!$this->bringingPets) {
+        if (!$this->bringingPets || empty($this->pets)) {
             return;
         }
 
         $nights_stayed = $this->getStayDurationProperty();
+        $feePerPetPerDay = $this->getPetFeeAmount();
 
-        $this->validate([
-            'pet_count' => 'required|integer|min:1',
-            'pet_breed' => 'required|array|min:1',
-            'pet_breed.*' => 'required|string|max:255',
-        ]);
+        foreach ($this->pets as $pet) {
+            GuestPet::create([
+                'transaction_id' => $transaction->id,
+                'breed'          => $pet['breed'],
+                'pet_count'      => 1,
+                'nights_stayed'  => $nights_stayed,
+                'total_fee'      => $feePerPetPerDay * $nights_stayed,
+            ]);
+        }
 
-        // dd($this->pet_count, $this->pet_breed, $transaction->id); // Debug
+        $totalPetCount = count($this->pets);
+        $totalAmount = $totalPetCount * $feePerPetPerDay * $nights_stayed;
 
-        GuestPet::create([
-            'transaction_id'   => $transaction->id,
-            'pet_breed'        => json_encode($this->pet_breed),
-            'pet_count'        => $this->pet_count,
-            'nights_stayed'    => $nights_stayed,
-            'total_fee'        => $this->pet_count * 300 * $nights_stayed,
+        $this->attachServiceToTransaction($transaction, [
+            'service_id' => 1, // "Pet Fee"
+            'days' =>  $nights_stayed,
+            'quantity' => $totalPetCount,
+            'amount' => $totalAmount,
+            'payment_status' => 'unpaid',
         ]);
     }
-
-
-
-
-
-
-
 
 
 
@@ -1282,11 +1032,11 @@ class ReservationForm extends Component
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             ]);
 
-            if (count($this->guests) !== $this->total_pax) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'guests' => 'Please input all the guests before proceeding.',
-                ]);
-            }
+            // if (count($this->guests) !== $this->total_pax) {
+            //     throw \Illuminate\Validation\ValidationException::withMessages([
+            //         'guests' => 'Please input all the guests before proceeding.',
+            //     ]);
+            // }
         }
 
         if ($this->currentStep == 4) {
@@ -1295,7 +1045,6 @@ class ReservationForm extends Component
             ]);
         }
     }
-
 
     protected function validateGuestData()
     {
@@ -1440,6 +1189,15 @@ class ReservationForm extends Component
             'guest_country_of_origin' => $this->guest_country_of_origin,
         ];
     }
+
+    protected function makePetsArray()
+    {
+        return [
+            'breed' => $this->breed,
+        ];
+    }
+
+
     protected function resetGuestInputFields(): void
     {
         $this->reset([
@@ -1456,5 +1214,221 @@ class ReservationForm extends Component
     protected function generateInvoiceNumber(): string
     {
         return 'INV-' . strtoupper(Str::random(8));
+    }
+
+    /**
+     * Prepare available adult and kid options for each room based on their occupancy type
+     */
+    public function prepareOccupancyRules()
+    {
+        foreach ($this->rooms as $room) {
+
+            switch ($room->occupancy_type) {
+                case 'combinations':
+                    // Extract unique, sorted adult values from occupancy rules (excluding zero)
+                    $room->availableAdultOptions = collect($room->occupancy_rules ?? [])
+                        ->pluck('adults')
+                        ->filter(fn($value) => $value > 0) // remove 0 if ever present
+                        ->unique()
+                        ->sort()
+                        ->values()
+                        ->all();
+
+                    // Extract unique, sorted kid values from occupancy rules
+                    $room->availableKidOptions = collect($room->occupancy_rules ?? [])
+                        ->pluck('kids')
+                        ->unique()
+                        ->sort()
+                        ->values();
+                    break;
+
+                case 'whole_number':
+                    $range = range(0, $room->max_guests);
+
+                    // Adults: only values >= 1
+                    $room->availableAdultOptions = collect($range)->filter(fn($v) => $v > 0)->values();
+
+                    // Kids: allow from 0
+                    $room->availableKidOptions = collect($range);
+                    break;
+
+                case 'ideal_guest':
+                    // Adults and kids range up to ideal_guest
+                    $room->availableAdultOptions = collect(range(0, $room->ideal_guest));
+                    $room->availableKidOptions = collect(range(0, $room->ideal_guest));
+                    break;
+
+                default:
+                    // If occupancy type is unknown, use empty options
+                    $room->availableAdultOptions = collect();
+                    $room->availableKidOptions = collect();
+            }
+        }
+    }
+
+
+    /**
+     * Update the list of valid kid options based on the selected number of adults and room type
+     */
+    public function updateKidOptions($roomId): void
+    {
+        $room = collect($this->rooms)->firstWhere('id', $roomId);
+        if (!$room) return;
+
+        $selectedAdults = $this->adults[$roomId] ?? 0;
+
+        $this->dynamicKidOptions[$roomId] = match ($room->occupancy_type) {
+            'whole_number', 'ideal_guest' => $this->generateWholeOrIdealKidOptions($room, $selectedAdults, $roomId),
+            'combinations'                => $this->generateCombinationKidOptions($room, $selectedAdults, $roomId),
+            default                       => [],
+        };
+    }
+
+    /**
+     * Generate kid options for 'whole_number' or 'ideal_guest' rooms.
+     */
+    protected function generateWholeOrIdealKidOptions($room, int $adults, $roomId): array
+    {
+        $maxGuests = $room->max_guests ?? $room->ideal_guest ?? 0;
+        $remaining = max(0, $maxGuests - $adults);
+        $this->resetIfExceedsLimit($roomId, $remaining);
+        return range(0, $remaining);
+    }
+
+    /**
+     * Generate kid options for 'combinations' rooms.
+     */
+    protected function generateCombinationKidOptions($room, int $adults, $roomId): array
+    {
+        $validCombos = collect($room->occupancy_rules ?? [])->where('adults', $adults);
+        $options = $validCombos->pluck('kids')->unique()->sort()->values()->all();
+
+        if (!in_array($this->kids[$roomId] ?? 0, $options)) {
+            $this->kids[$roomId] = 0;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Reset kids value to 0 if it exceeds allowable options.
+     */
+    protected function resetIfExceedsLimit($roomId, int $limit): void
+    {
+        if (($this->kids[$roomId] ?? 0) > $limit) {
+            $this->kids[$roomId] = 0;
+        }
+    }
+
+    /**
+     * Update the selected room's details including guest count, extra charges,
+     * and total amount based on dynamic room rates and stay duration.
+     */
+    public function updateSelectedRoomDetails($roomId, $room)
+    {
+        foreach ($this->cart as $index => $item) {
+            if ($item['type'] === 'room' && $item['room_id'] == $roomId) {
+                $adults = (int) ($this->adults[$roomId] ?? 1);
+                $kids = (int) ($this->kids[$roomId] ?? 0);
+
+                $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
+                $stayDuration = $this->getStayDurationProperty();
+                $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+
+                $roomAmount = $rate['amount'] * $stayDuration;
+                $rate_id = $rate['rate_id'];
+                $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
+
+                $this->cart[$index]['adults'] = $adults;
+                $this->cart[$index]['kids'] = $kids;
+                $this->cart[$index]['extra_guest'] = $extraGuests;
+                $this->cart[$index]['extra_charge'] = $extraCharge;
+                $this->cart[$index]['roomAmount'] = $roomAmount;
+                $this->cart[$index]['rate_id'] = $rate_id;
+                $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
+            }
+        }
+    }
+
+
+
+
+
+    /**
+     * ----------------------------- LOADERS -----------------------------
+     *
+     * Contains methods responsible for loading initial and dynamic data 
+     * into the reservation form based on user context and current state.
+     * 
+     * Responsibilities:
+     * - `initializeDates`: Sets the default check-in and check-out dates using the current time in Asia/Manila timezone.
+     * - `loadRooms`: Fetches available rooms, applies dynamic rates using the RoomRateService, and maps rate-related metadata.
+     * - `loadStaticData`: Loads static reference data such as available activities, payment methods, and guest types.
+     * - `loadBranding`: Retrieves company branding details (name, logo, contact, social links) using the BrandingService.
+     * 
+     * These methods are typically called on mount or when data needs to be refreshed based on user interaction.
+     * -------------------------------------------------------------------
+     */
+
+    /**
+     * Sets default check-in and check-out dates.
+     */
+    protected function initializeDates()
+    {
+        $now = Carbon::now('Asia/Manila');
+        $this->check_in_date = $now->format('Y-m-d');
+        $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+    }
+
+    /**
+     * Loads available rooms and applies dynamic rates.
+     */
+    protected function loadRooms(): void
+    {
+        $this->rooms = Property::ofType('Room')
+            ->availableRooms()
+            ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
+            ->get()
+            ->map(function ($room) {
+                $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+
+                $room->dynamic_rate = $rate['amount'];
+                $room->rate_name = $rate['name'];
+                $room->rate_type = $rate['rate_type'];
+                $room->rate_id = $rate['rate_id'];
+
+                return $room;
+            });
+    }
+
+
+    /**
+     * Loads available activities, payment methods, and guest types.
+     */
+    protected function loadStaticData()
+    {
+        $this->roomCategories = PropertyCategory::all();
+        $this->selectedFeatures = [];
+        $this->activities = Activity::availableActivities()->get();
+        $this->currentStep = 1;
+        $this->paymentMethod = PaymentMethod::all();
+        $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
+        $this->guest_types = GuestType::all();
+    }
+
+    /**
+     * Loads company branding info from the branding service.
+     */
+    protected function loadBranding(): void
+    {
+        $branding = $this->brandingService->getBrandingData();
+
+        $this->companyName = $branding['branding_company_name'];
+        $this->logoPath = $branding['logo_path'];
+        $this->companyEmail = $branding['branding_company_email'];
+        $this->companyContact = $branding['branding_company_contact'];
+        $this->companyAddress = $branding['company_address'];
+        $this->facebookLink = $branding['facebook_link'];
+        $this->instagramLink = $branding['instagram_link'];
     }
 }

@@ -19,6 +19,10 @@ class GuestDetail extends Model
 
     protected $fillable = ['transaction_id', 'transaction_property_id', 'guest_type_id', 'charge_type', 'first_name', 'middle_name', 'last_name', 'suffix', 'gender', 'birthdate', 'residency', 'country_of_origin'];
 
+    protected $casts = [
+        'birthdate' => 'date',
+    ];
+
     // ---------------------- Activity Log --------------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
 

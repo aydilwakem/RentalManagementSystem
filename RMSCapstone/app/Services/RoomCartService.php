@@ -12,6 +12,7 @@ class RoomCartService
 
     public function addRoom(array &$cart, int $itemId, array $context = [])
     {
+
         foreach ($cart as $item) {
             if ($item['type'] === 'room' && $item['room_id'] == $itemId) {
                 return false;

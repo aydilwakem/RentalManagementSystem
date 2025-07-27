@@ -10,15 +10,11 @@ class GuestPet extends Model
 
     protected $fillable = [
         'transaction_id',
-        'pet_breed',
+        'breed',
         'pet_count',
         'nights_stayed',
         'total_fee',
         'vaccination_card',
-    ];
-
-    protected $casts = [
-        'pet_breed' => 'array',
     ];
 
     public function transaction()

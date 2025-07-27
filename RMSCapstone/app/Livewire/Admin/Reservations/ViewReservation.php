@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\GuestType;
 use App\Models\Receipt;
 use App\Models\Payment;
+use App\Models\GuestPet;
 use App\Models\TransactionProperty;
 use App\Models\Activity;
 use App\Models\Service;
@@ -32,6 +33,7 @@ use App\Services\ActivityCartService;
 use App\Services\RoomCartService;
 use App\Services\ActivityTransactionService;
 use App\Services\ServiceTransactionService;
+use App\Services\PropertyTransactionService;
 use App\Services\InvoiceService;
 use App\Services\NotificationService;
 use App\Services\ReceiptService;
@@ -122,30 +124,57 @@ class ViewReservation extends Component
     // ---------------- EDITING ------------------ //
 
     public $editingActivityId;
-    public $activityQuantity;
+    public $editingServiceId;
+    public $editingRoomId;
+    public $editingPetId;
     public $showEditActivityModal = false;
     public $showEditGuestModal = false;
-
-
-    public $editingServiceId;
-    public $serviceQuantity;
+    public $showEditRoomModal = false;
     public $showEditServiceModal = false;
+    public $showEditPetModal = false;
+    public $serviceQuantity;
+    public $activityQuantity;
+    public $roomTotalAdults;
+    public $roomTotalKids;
+    public $editingBreed;
+
+
+
 
     // ---------------- GUEST EDITING FIELDS ------------------ //
     public $editingGuestId, $editingFirstName, $editingMiddleName, $editingLastName, $editingSuffix, $editingGender, $editingBirthDate, $editingResidency, $editingCountryOfOrigin, $editingGuestTypeId, $editingTransactionPropertyId;
+    public $filteredGuestTypes = [];
 
     public $guest = [
         'first_name' => '',
         'middle_name' => '',
         'last_name' => '',
         'suffix' => '',
-        'gender' => '',
-        'birthdate' => '',
-        'residency' => '',
-        'country_of_origin' => '',
-        'transaction_property_id' => '',
-        'guest_type_id' => '', // Optional if handled in service
+        'gender' => null,
+        'birthdate' => null,
+        'residency' => null,
+        'country_of_origin' => null,
+        'transaction_property_id' => null,
+        'guest_type_id' => null,
     ];
+
+    public $guestInfo = [
+        'first_name' => '',
+        'middle_name' => '',
+        'last_name' => '',
+        'suffix' => '',
+        'gender' => null,
+        'birthdate' => null,
+        'residency' => null,
+        'country_of_origin' => null,
+        'transaction_property_id' => null,
+        'guest_type_id' => null,
+    ];
+
+    public $isFull = false;
+    public $breed;
+
+
 
     protected ServiceBag $service;
     protected TransactionLoader $loader;
@@ -153,6 +182,7 @@ class ViewReservation extends Component
     protected RoomCartService $roomCartService;
     protected ActivityTransactionService $activityTransactionService;
     protected ServiceTransactionService $serviceTransactionService;
+    protected PropertyTransactionService $propertyTransactionService;
     protected InvoiceService $invoiceService;
     protected EmailService $emailService;
     protected BrandingService $brandingService;
@@ -169,8 +199,8 @@ class ViewReservation extends Component
     public function render()
     {
         $this->activities = $this->transaction->activities()->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status')->get();
-        $this->properties = $this->transaction->properties()->withPivot('adults', 'kids', 'non_chargeable_guests', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'room_rate_id')->get();
-        $this->services = $this->transaction->services()->withPivot('id', 'quantity', 'amount', 'service_datetime', 'status')->get();
+        $this->properties = $this->transaction->properties()->withPivot('id', 'adults', 'kids', 'non_chargeable_guests', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'room_rate_id')->get();
+        $this->services = $this->transaction->services()->withPivot('id', 'quantity', 'days', 'amount', 'service_datetime', 'status')->get();
 
 
         return view('livewire.admin.reservations.view-reservation', [
@@ -188,6 +218,7 @@ class ViewReservation extends Component
         $this->roomCartService = $services->roomCartService;
         $this->activityTransactionService = $services->activityTransactionService;
         $this->serviceTransactionService = $services->serviceTransactionService;
+        $this->propertyTransactionService = $services->propertyTransactionService;
         $this->invoiceService = $services->invoiceService;
         $this->emailService = $services->emailService;
         $this->brandingService = $services->brandingService;
@@ -227,6 +258,8 @@ class ViewReservation extends Component
         $now = Carbon::now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
 
+        $this->getIsFullProperty();
+
         // Retrieves all activities (Code Suggestion: Return a model accessor for available activities)
         $this->availableActivities = Activity::all();
         $this->availableServices = Service::all();
@@ -247,7 +280,7 @@ class ViewReservation extends Component
                 'quantity' => 1,
                 'days' => $property->pivot->days,
                 'extra_guest' => $property->pivot->extra_guest,
-                'extra_charge' => $property->pivot->extra_charge,
+                'extra_charge' => $property->extra_person_charge,
                 'amount' => $property->amount,
                 'total' => $property->pivot->amount,
                 'created_at' => $property->pivot->created_at,
@@ -279,7 +312,7 @@ class ViewReservation extends Component
                 'type' => 'service',
                 'name' => $service->name,
                 'quantity' => $service->pivot->quantity,
-                'days' => null,
+                'days' => $service->pivot->days ?? null,
                 'extra_guest' => 0,
                 'extra_charge' => 0,
                 'amount' => $service->amount,
@@ -299,6 +332,10 @@ class ViewReservation extends Component
 
         $this->allItems = $items;
     }
+
+
+
+
 
     /**
      * ----------------------------- ITEM CART MANAGEMENT ------------------------------
@@ -322,8 +359,6 @@ class ViewReservation extends Component
     {
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
-
-
 
     public function addItemToCart($type, $itemId)
     {
@@ -375,19 +410,89 @@ class ViewReservation extends Component
 
 
     /**
+     * ------------------------- PROPERTY MANAGEMENT ---------------------------
+     *
+     * Handles database operations for rooms tied to a reservation.
+     *
+     * -------------------------------------------------------------------------------------
+     */
+
+    public function editRoom($pivotId)
+    {
+        Log::info('Edit Room modal called.');
+
+        $pivot = DB::table('transaction_properties')->where('id', $pivotId)->first();
+
+        if ($pivot) {
+            $this->editingRoomId = $pivotId;
+            $this->roomTotalAdults = $pivot->adults;
+            $this->roomTotalKids = $pivot->kids;
+            $this->showEditRoomModal = true;
+        }
+    }
+
+    public function updateRoom()
+    {
+        Log::info('Update Room modal called.');
+
+        $this->validate([
+            'roomTotalAdults' => 'required|integer|min:1',
+            'roomTotalKids' => 'required|integer|min:1',
+        ]);
+
+        try {
+
+            $this->propertyTransactionService->updateRoomQuantity(
+                $this->editingRoomId,
+                $this->roomTotalAdults,
+                $this->roomTotalKids,
+                $this->transaction
+            );
+
+            // Recalculate all amounts in invoice
+            $this->recalculateTransactionProperty($this->editingRoomId);
+            $this->recalculateInvoice();
+            $this->loadAllInvoiceItems();
+
+            // Closes the modal
+            $this->showEditRoomModal = false;
+            $this->dispatch('room-updated');
+        } catch (\Exception $e) {
+            Log::error('Room update failed: ' . $e->getMessage());
+            session()->flash('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    public function incrementAdults()
+    {
+        $this->roomTotalAdults++;
+    }
+
+    public function decrementAdults()
+    {
+        if ($this->roomTotalAdults > 0) {
+            $this->roomTotalAdults--;
+        }
+    }
+
+    public function incrementKids()
+    {
+        $this->roomTotalKids++;
+    }
+
+    public function decrementKids()
+    {
+        if ($this->roomTotalKids > 0) {
+            $this->roomTotalKids--;
+        }
+    }
+
+
+
+    /**
      * ------------------------- ACTIVITY TRANSACTION MANAGEMENT ---------------------------
      *
      * Handles database operations for activity transactions tied to a reservation.
-     *
-     * These methods interact with the persistent transaction and invoice data:
-     * - `saveActivity`: Persists activities from the cart, resets the cart, and recalculates the invoice.
-     * - `deleteActivity`: Removes an activity from the transaction and updates the invoice.
-     * - `updateActivity`: Updates the quantity of an activity in the transaction with validation.
-     * - `editActivity`: Opens the modal for editing activity.
-     *
-     * After each operation, the invoice totals and status are recalculated via `recalculateInvoice()`
-     * and refreshed for display via `refreshInvoice()`.
-     *
      * -------------------------------------------------------------------------------------
      */
     public function saveActivity()
@@ -409,7 +514,6 @@ class ViewReservation extends Component
         $this->cart = [];
         $this->activeModal = false;
     }
-
 
     public function deleteActivity($pivotId)
     {
@@ -461,6 +565,60 @@ class ViewReservation extends Component
     }
 
 
+    /**
+     * ------------------------- GUEST MANAGEMENT ---------------------------
+     *
+     * Handles database operations for guests tied to a reservation.
+     *
+     * -------------------------------------------------------------------------------------
+     */
+
+    public function saveGuest()
+    {
+        Log::info('Save Guest method called.');
+
+        $this->resetErrorBag();
+
+        $this->validate([
+            'guest.first_name' => 'required|string|max:255',
+            'guest.last_name' => 'required|string|max:255',
+            'guest.birthdate' => 'required|date|before:today',
+            'guest.gender' => 'nullable|in:male,female',
+            'guest.transaction_property_id' => 'required|exists:transaction_properties,id',
+            'guest.guest_type_id' => 'required|exists:trn_guest_type,id',
+            'guest.middle_name' => 'nullable|string|max:255',
+            'guest.suffix' => 'nullable|string|max:10',
+            'guest.residency' => 'nullable|string|max:255',
+            'guest.country_of_origin' => 'nullable|string|max:255',
+        ]);
+
+        $transactionPropertyId = $this->guest['transaction_property_id'];
+
+        $data = [
+            'transaction_id' => $this->transaction->id,
+            'first_name' => $this->guest['first_name'],
+            'middle_name' => $this->guest['middle_name'] ?? null,
+            'last_name' => $this->guest['last_name'],
+            'suffix' => $this->guest['suffix'] ?? null,
+            'gender' => $this->guest['gender'] ?? null,
+            'birthdate' => $this->guest['birthdate'] ?? null,
+            'residency' => $this->guest['residency'] ?? null,
+            'country_of_origin' => $this->guest['country_of_origin'] ?? null,
+            'guest_type_id' => !empty($this->guest['guest_type_id']) ? $this->guest['guest_type_id'] : null,
+            'transaction_property_id' => $transactionPropertyId,
+        ];
+
+        $this->guestDetailService->saveGuest($data);
+
+        $this->loadGuestDetails();
+        $this->loadAllInvoiceItems();
+        $this->recalculateInvoice();
+
+        // Reset guest input fields
+        $this->reset('guest');
+
+        $this->activeModal = false;
+    }
 
     public function updateGuest()
     {
@@ -472,7 +630,7 @@ class ViewReservation extends Component
             'editingGender' => 'required|in:male,female,other',
             'editingBirthDate' => 'required|date|before:today',
             'editingResidency' => 'required|in:local,foreigner',
-            'editingCountryOfOrigin' => 'required|string|max:255',
+            'editingCountryOfOrigin' => 'nullable|string|max:255',
             'editingGuestTypeId' => 'required|exists:trn_guest_type,id',
             'editingTransactionPropertyId' => 'required|exists:transaction_properties,id',
         ]);
@@ -524,11 +682,7 @@ class ViewReservation extends Component
         $transactionProperty = $guestDetail->transactionProperty()->first();
 
         $this->guestDetailService->deleteGuest($guestId, $this->transaction);
-
-        if ($transactionProperty) {
-            $this->recalculateTransactionProperty($transactionProperty->id);
-        }
-
+        $this->recalculateTransactionProperty($transactionProperty->id);
         $this->loadGuestDetails();
         $this->loadAllInvoiceItems();
         $this->recalculateInvoice();
@@ -537,67 +691,15 @@ class ViewReservation extends Component
     }
 
 
-    public function saveGuest()
-    {
-        Log::info('Save Guest method called.');
-
-        $this->resetErrorBag();
-
-        $this->validate([
-            'guest.first_name' => 'required|string|max:255',
-            'guest.last_name' => 'required|string|max:255',
-            'guest.birthdate' => 'required|date|before:today',
-            'guest.gender' => 'nullable|in:male,female',
-            'guest.transaction_property_id' => 'required|exists:transaction_properties,id',
-            'guest.guest_type_id' => 'nullable|exists:trn_guest_type,id',
-            'guest.middle_name' => 'nullable|string|max:255',
-            'guest.suffix' => 'nullable|string|max:10',
-            'guest.residency' => 'nullable|string|max:255',
-            'guest.country_of_origin' => 'nullable|string|max:255',
-        ]);
-
-        $transactionPropertyId = $this->guest['transaction_property_id'];
-
-        $data = [
-            'transaction_id' => $this->transaction->id,
-            'first_name' => $this->guest['first_name'],
-            'middle_name' => $this->guest['middle_name'] ?? null,
-            'last_name' => $this->guest['last_name'],
-            'suffix' => $this->guest['suffix'] ?? null,
-            'gender' => $this->guest['gender'] ?? null,
-            'birthdate' => $this->guest['birthdate'] ?? null,
-            'residency' => $this->guest['residency'] ?? null,
-            'country_of_origin' => $this->guest['country_of_origin'] ?? null,
-            'guest_type_id' => !empty($this->guest['guest_type_id']) ? $this->guest['guest_type_id'] : null,
-            'transaction_property_id' => $transactionPropertyId,
-        ];
-
-        $this->guestDetailService->saveGuest($data);
-
-        $this->recalculateTransactionProperty($transactionPropertyId);
-        $this->loadGuestDetails();
-        $this->loadAllInvoiceItems();
-        $this->recalculateInvoice();
-
-        // Reset guest input fields
-        $this->reset('guest');
-
-        $this->activeModal = false;
-    }
-
-
-
-    public $filteredGuestTypes = [];
-
-
     public function editGuest($guestId)
     {
         Log::info("Edit Guest method called.");
 
-        $guest = DB::table('trn_guest_details')->where('id', $guestId)->first();
+        // Use Eloquent instead of DB::table
+        $guest = GuestDetail::find($guestId);
 
         if ($guest) {
-            $this->editingGuestId = $guestId;
+            $this->editingGuestId = $guest->id;
             $this->editingTransactionPropertyId = $guest->transaction_property_id;
             $this->editingGuestTypeId = $guest->guest_type_id;
             $this->editingFirstName = $guest->first_name;
@@ -605,11 +707,10 @@ class ViewReservation extends Component
             $this->editingLastName = $guest->last_name;
             $this->editingSuffix = $guest->suffix;
             $this->editingGender = $guest->gender;
-            $this->editingBirthDate = $guest->birthdate;
+            $this->editingBirthDate = $guest->birthdate?->format('Y-m-d');
             $this->editingResidency = $guest->residency;
             $this->editingCountryOfOrigin = $guest->country_of_origin;
 
-            // Recalculate sguest age and category for filtering guest types
             $this->getGuestAge();
 
             $this->showEditGuestModal = true;
@@ -624,76 +725,20 @@ class ViewReservation extends Component
         $this->filterGuestTypesByAge();
     }
 
-
     public function updatedGuestBirthDate()
     {
         $this->getGuestAge();
         $this->filterGuestTypesByAge();
     }
 
-    public function getGuestAge()
-    {
-        $birthdate = $this->guest['birthdate'] ?? $this->editingBirthDate ?? null;
 
-        if ($birthdate) {
-            $age = \Carbon\Carbon::parse($birthdate)->age;
-            $this->guest['age'] = $age;
-
-            // Determine category
-            if ($age <= 2) {
-                $category = 'Infant';
-            } elseif ($age >= 3 && $age <= 17) {
-                $category = 'Kid';
-            } elseif ($age >= 18 && $age <= 59) {
-                $category = 'Adult';
-            } else {
-                $category = 'Senior';
-            }
-
-            $this->guest['category'] = $category;
-            $this->filterGuestTypesByAge();
-        } else {
-            $this->guest['age'] = null;
-            $this->guest['category'] = null;
-            $this->filteredGuestTypes = $this->guestTypes;
-        }
-    }
-
-
-    public function filterGuestTypesByAge()
-    {
-        $age = $this->guest['age'] ?? null;
-
-        if (is_null($age)) {
-            $birthdate = $this->editingBirthDate ?? $this->guest['birthdate'] ?? null;
-            $age = $birthdate ? \Carbon\Carbon::parse($birthdate)->age : null;
-        }
-
-        if (is_null($age)) {
-            $this->filteredGuestTypes = $this->guestTypes;
-            return;
-        }
-
-        $this->filteredGuestTypes = collect($this->guestTypes)->filter(function ($type) use ($age) {
-            return match ($type['name']) {
-                'Infant' => $age <= 2,
-                'Kid'    => $age >= 3 && $age <= 17,
-                'Adult'  => $age >= 18 && $age <= 59,
-                'Senior' => $age >= 60,
-                'PWD'    => true,
-                default  => false,
-            };
-        })->values()->all();
-    }
-
-
-    public function loadGuestDetails()
-    {
-        $this->guestDetails = GuestDetail::where('transaction_id', $this->transaction->id)->get();
-    }
-
-
-
+    /**
+     * ------------------------- SERVICES MANAGEMENT ---------------------------
+     *
+     * Handles database operations for services tied to a reservation.
+     *
+     * -------------------------------------------------------------------------------------
+     */
 
     public function saveService()
     {
@@ -751,6 +796,7 @@ class ViewReservation extends Component
 
             // Recalculate all amounts in invoice
             $this->recalculateInvoice();
+            $this->loadAllInvoiceItems();
 
             // Closes the modal
             $this->showEditServiceModal = false;
@@ -758,6 +804,85 @@ class ViewReservation extends Component
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
+    }
+
+
+    /**
+     * ------------------------- GUEST MANAGEMENT ---------------------------
+     *
+     * Handles database operations for rooms tied to a reservation.
+     *
+     * -------------------------------------------------------------------------------------
+     */
+
+    public function savePet()
+    {
+        $this->validate([
+            'breed' => 'required|string|max:255',
+        ]);
+
+        GuestPet::create([
+            'transaction_id' => $this->transaction->id,
+            'breed' => $this->breed,
+        ]);
+
+        session()->flash('message', 'Pet added successfully.');
+        $this->reset(['breed']);
+        $this->activeModal = false;
+        $this->loadGuestPets();
+    }
+
+    public function deletePet($petId)
+    {
+        $pet = GuestPet::find($petId);
+
+        if ($pet) {
+            $pet->delete();
+            session()->flash('message', 'Pet deleted successfully.');
+            $this->loadGuestPets();
+        } else {
+            session()->flash('error', 'Pet not found.');
+        }
+    }
+
+    public function editPet($petId)
+    {
+        $pet = GuestPet::find($petId);
+
+        if ($pet) {
+            $this->editingPetId = $petId;
+            $this->editingBreed = $pet->breed;
+            $this->showEditPetModal = true;
+        }
+    }
+
+
+    public function updatePet()
+    {
+        $this->validate([
+            'editingBreed' => 'required|string|max:255',
+        ]);
+
+        $pet = GuestPet::find($this->editingPetId);
+
+        if ($pet) {
+            $pet->breed = $this->editingBreed;
+            $pet->save();
+
+
+            session()->flash('message', 'Pet breed updated successfully.');
+            $this->reset(['editingPetId', 'editingBreed']);
+            $this->showEditPetModal = false;
+            $this->loadGuestPets();
+        } else {
+            session()->flash('error', 'Pet not found.');
+        }
+    }
+
+
+    public function loadGuestPets()
+    {
+        $this->guestPets = GuestPet::where('transaction_id', $this->transaction->id)->get();
     }
 
 
@@ -797,36 +922,26 @@ class ViewReservation extends Component
 
     public function recalculateTransactionProperty($transactionPropertyId)
     {
+
+        Log::info('Transaction ID ' . $transactionPropertyId);
         $transactionProperty = TransactionProperty::with('property')->find($transactionPropertyId);
 
+        // Exit early if transaction or property is missing
         if (!$transactionProperty || !$transactionProperty->property) {
             return;
         }
 
-        $guests = GuestDetail::where('transaction_property_id', $transactionPropertyId)->get();
+        // Use already-saved guest counts
+        $kids = $transactionProperty->kids;
+        $adults = $transactionProperty->adults;
+        $nonChargeableGuests = $transactionProperty->non_chargeable_guests;
 
-        $infants = 0;
-        $kids = 0;
-        $adults = 0;
-
-        foreach ($guests as $guest) {
-            if (!$guest->birthdate) continue;
-
-            $age = Carbon::parse($guest->birthdate)->age;
-
-            if ($age <= 2) {
-                $infants++;
-            } elseif ($age >= 3 && $age <= 17) {
-                $kids++;
-            } elseif ($age >= 18) {
-                $adults++;
-            }
-        }
-
+        // Calculate how many guests exceed the allowed limit
         $chargeableGuests = $kids + $adults;
         $allowedGuests = $transactionProperty->property->ideal_guest;
         $extraGuests = max(0, $chargeableGuests - $allowedGuests);
 
+        // Calculate charges
         $days = $transactionProperty->days ?? 1;
         $ratePerDay = $transactionProperty->property->amount;
         $extraChargePerPerson = $transactionProperty->property->extra_person_charge;
@@ -835,13 +950,12 @@ class ViewReservation extends Component
         $extraCharge = $extraGuests * $days * $extraChargePerPerson;
         $totalAmount = $baseAmount + $extraCharge;
 
-        $transactionProperty->kids = $kids;
-        $transactionProperty->adults = $adults;
+        // Update transaction property amounts
         $transactionProperty->extra_guest = $extraGuests;
         $transactionProperty->extra_charge = $extraCharge;
         $transactionProperty->amount = $baseAmount;
         $transactionProperty->total_amount = $totalAmount;
-        $transactionProperty->non_chargeable_guests = $infants;
+        $transactionProperty->non_chargeable_guests = $nonChargeableGuests;
 
         $transactionProperty->save();
     }
@@ -850,68 +964,66 @@ class ViewReservation extends Component
 
 
 
-
-
-
     // ------------------------ COMPUTATIONS -------------------------- //
 
+    // Computes rooms total
+    public function computeRoomsTotal(): float
+    {
+        return $this->sumTransactionItems('properties', fn($item) => $item->pivot->total_amount);
+    }
+
+    // Computes activities total
+    public function computeActivitiesTotal(): float
+    {
+        return $this->sumTransactionItems('activities', fn($item) => $item->pivot->quantity * $item->amount);
+    }
+
+    // Computes services total
+    public function computeServicesTotal(): float
+    {
+        return $this->sumTransactionItems('services', fn($item) => $item->pivot->quantity * $item->amount);
+    }
+
+    // Computes each item types (Room, Activities, Services, Pet)
+    protected function sumTransactionItems(string $relation, callable $calculator): float
+    {
+        $items = $this->transaction->$relation ?? collect();
+        return $items->sum($calculator);
+    }
+
+    // Computes Base Subtotal (Room, Activities, Services, Pet) with no convenience fee.
+    public function computeBaseSubtotal(): float
+    {
+        return $this->computeRoomsTotal()
+            + $this->computeActivitiesTotal()
+            + $this->computeServicesTotal();
+    }
+
+    // Computes Convenience Fee Total from completed payments
     public function computeConvenienceFeeTotal()
     {
+        // Collects all payments related to this transaction
         $payments = $this->payments ?? collect();
 
-        return $payments
+        // Fetches all the convenience fee of the completed payments
+        $total = $payments
             ->where('payment_status', 'completed')
             ->sum('convenience_fee');
+
+        // Fallback if no payment was made yet
+        if ($total == 0 && $this->transaction->convenience_fee > 0) {
+            return $this->transaction->convenience_fee;
+        }
+
+        return $total;
     }
 
-    public function computeRoomsTotal()
+
+    // Fetches pet fee amount from Service table
+    protected function getPetFeeAmount(): float
     {
-        $properties = $this->transaction->properties ?? collect();
-
-        $roomsTotal = $properties->map(function ($property) {
-            return $property->pivot->total_amount;
-        })->sum();
-
-        return $roomsTotal;
-    }
-
-    public function computeActivitiesTotal()
-    {
-        $activities = $this->transaction->activities ?? collect();
-
-        $activitiesTotal = $activities->map(function ($activity) {
-            return $activity->pivot->quantity * $activity->amount;
-        })->sum();
-
-        return $activitiesTotal;
-    }
-
-    public function computeBaseSubtotal()
-    {
-        $activities = $this->transaction->activities ?? collect();
-        $properties = $this->transaction->properties ?? collect();
-        $services = $this->transaction->services ?? collect();
-
-        $activitiesTotal = $activities->map(function ($activity) {
-            return $activity->pivot->quantity * $activity->amount;
-        })->sum();
-
-        $servicesTotal = $services->map(function ($service) {
-            return $service->pivot->quantity * $service->amount;
-        })->sum();
-
-        $roomsTotal = $properties->map(function ($property) {
-            return $property->pivot->total_amount;
-        })->sum();
-
-        return $activitiesTotal + $roomsTotal + $servicesTotal;
-    }
-
-    public function updatePaymentStatus(PaymentService $paymentService)
-    {
-        $paymentService->markAllUnpaidItemsAsPaid($this->transaction);
-
-        $this->transaction->load('activities', 'properties', 'services');
+        $service = Service::where('name', 'Pet Fee')->first();
+        return $service?->amount ?? 0;
     }
 
 
@@ -1255,10 +1367,8 @@ class ViewReservation extends Component
             'verified_at'      => now(),
         ]);
 
-        // Change the payment status of the items
-        $this->updatePaymentStatus($paymentService);
+        $this->updatePaymentStatus($paymentService, $this->amount_paid);
         $this->recalculateInvoice();
-
         $this->reset([
             'amount_paid',
             'mode_of_payment',
@@ -1272,5 +1382,95 @@ class ViewReservation extends Component
 
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
             ->with('success', 'Payment created successfully.');
+    }
+
+
+    // --------------------- HELPER METHODS --------------------------- // 
+
+    // After a payment, the payment status of the items in the cart will be tracked and updated.
+    public function updatePaymentStatus(PaymentService $paymentService, float $amountPaid)
+    {
+        $paymentService->applyPaymentToUnpaidItems($this->transaction, $amountPaid);
+
+        $this->transaction->load('activities', 'properties', 'services', 'guestPets');
+    }
+
+
+
+    public function getGuestAge()
+    {
+        $birthdate = $this->guest['birthdate'] ?? $this->editingBirthDate ?? null;
+
+        if ($birthdate) {
+            $age = \Carbon\Carbon::parse($birthdate)->age;
+            $this->guest['age'] = $age;
+
+            // Determine category
+            if ($age <= 2) {
+                $category = 'Infant';
+            } elseif ($age >= 3 && $age <= 17) {
+                $category = 'Kid';
+            } elseif ($age >= 18 && $age <= 59) {
+                $category = 'Adult';
+            } else {
+                $category = 'Senior';
+            }
+
+            $this->guest['category'] = $category;
+            $this->filterGuestTypesByAge();
+        } else {
+            $this->guest['age'] = null;
+            $this->guest['category'] = null;
+            $this->filteredGuestTypes = $this->guestTypes;
+        }
+    }
+
+    public function getIsFullProperty()
+    {
+
+
+        // Total allowed guests (sum adults + kids across all properties)
+        $totalAllowedGuests = $this->transactionProperties->sum('adults') + $this->transactionProperties->sum('kids');
+
+        // Total guests recorded in transaction's guestDetails (assuming it's a collection)
+        $totalGuests = $this->transaction->guestDetails->count();
+
+        Log::info("getIsFullProperty: Total allowed guests = {$totalAllowedGuests}, Total guests recorded = {$totalGuests}");
+
+        // Return true if all guest slots are full or exceeded
+        return $totalGuests >= $totalAllowedGuests;
+    }
+
+
+    public function filterGuestTypesByAge()
+    {
+        $age = $this->guest['age'] ?? null;
+
+        if (is_null($age)) {
+            $birthdate = $this->editingBirthDate ?? $this->guest['birthdate'] ?? null;
+            $age = $birthdate ? \Carbon\Carbon::parse($birthdate)->age : null;
+        }
+
+        if (is_null($age)) {
+            $this->filteredGuestTypes = $this->guestTypes;
+            return;
+        }
+
+        $this->filteredGuestTypes = collect($this->guestTypes)->filter(function ($type) use ($age) {
+            return match ($type['name']) {
+                'Infant' => $age <= 2,
+                'Kid'    => $age >= 3 && $age <= 17,
+                'Adult'  => $age >= 18 && $age <= 59,
+                'Senior' => $age >= 60,
+                'PWD'    => true,
+                default  => false,
+            };
+        })->values()->all();
+    }
+
+    public function loadGuestDetails()
+    {
+        $this->guestDetails = GuestDetail::where('transaction_id', $this->transaction->id)->get();
+        $this->getIsFullProperty();
     }
 }

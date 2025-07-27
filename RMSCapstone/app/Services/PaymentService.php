@@ -151,35 +151,64 @@ class PaymentService
         ]));
     }
 
-    public function markAllUnpaidItemsAsPaid(Transaction $transaction): void
+    public function applyPaymentToUnpaidItems(Transaction $transaction, float $amountPaid): void
     {
-        // Update unpaid activities
-        DB::table('transaction_activities')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
+        $remaining = $amountPaid;
 
-        // Update unpaid properties
-        DB::table('transaction_properties')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
+        $tables = [
+            ['name' => 'transaction_properties', 'amount_field' => 'total_amount'],
+            ['name' => 'transaction_activities', 'amount_field' => 'amount'],
+            ['name' => 'transaction_services', 'amount_field' => 'amount'],
+        ];
 
-        // Update unpaid services
-        DB::table('transaction_services')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
+        foreach ($tables as $table) {
+            $items = DB::table($table['name'])
+                ->where('transaction_id', $transaction->id)
+                ->whereIn('payment_status', ['unpaid', 'partial'])
+                ->orderBy('created_at')
+                ->get();
 
-        Log::info("All unpaid items for transaction {$transaction->id} marked as paid.");
+            foreach ($items as $item) {
+
+                $itemAmount = (float) $item->{$table['amount_field']};
+                $paidAmount = (float) ($item->paid_amount ?? 0);
+                $unpaidAmount = $itemAmount - $paidAmount;
+
+                if ($unpaidAmount <= 0) {
+                    continue;
+                }
+
+                if ($remaining >= $unpaidAmount) {
+                    // Fully pay the item
+                    DB::table($table['name'])
+                        ->where('id', $item->id)
+                        ->update([
+                            'paid_amount' => $itemAmount,
+                            'payment_status' => 'paid',
+                            'updated_at' => now(),
+                        ]);
+                    $remaining -= $unpaidAmount;
+                } elseif ($remaining > 0) {
+                    // Partial payment
+                    DB::table($table['name'])
+                        ->where('id', $item->id)
+                        ->update([
+                            'paid_amount' => $paidAmount + $remaining,
+                            'payment_status' => 'partial',
+                            'updated_at' => now(),
+                        ]);
+                    $remaining = 0;
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            if ($remaining <= 0) {
+                break;
+            }
+        }
+
+        Log::info("₱{$amountPaid} applied to transaction {$transaction->id}. Remaining: ₱{$remaining}");
     }
 }

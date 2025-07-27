@@ -110,7 +110,7 @@ class ViewReceipt extends Component
 
         try {
             $this->paymentService->confirmUploadedPaymentReceipt($this->payment, (float) $this->amount_paid, $this->payment_type);
-            $this->updatePaymentStatus($paymentService);
+            $this->updatePaymentStatus($paymentService, $this->amount_paid);
         } catch (\Exception $e) {
             Log::error('Confirm Receipt Failed: ' . $e->getMessage());
             session()->flash('error', 'Failed to confirm receipt.');
@@ -144,10 +144,10 @@ class ViewReceipt extends Component
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }
 
-    public function updatePaymentStatus(PaymentService $paymentService)
+    public function updatePaymentStatus(PaymentService $paymentService,  float $amountPaid)
     {
 
-        $paymentService->markAllUnpaidItemsAsPaid($this->transaction);
+        $paymentService->applyPaymentToUnpaidItems($this->transaction, $amountPaid);
 
         $this->transaction->load('activities', 'properties', 'services');
     }

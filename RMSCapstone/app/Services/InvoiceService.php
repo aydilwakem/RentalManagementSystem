@@ -10,52 +10,52 @@ use Illuminate\Support\Facades\Log;
 
 class InvoiceService
 {
-    public function updateGrandTotal(Invoice $invoice, Transaction $transaction): void
-    {
-        $activitiesTotal = $transaction->activities->sum(function ($activity) {
-            return $activity->pivot->quantity * $activity->amount;
-        });
-
-        $servicesTotal = $transaction->services->sum(function ($service) {
-            return $service->pivot->quantity * $service->amount;
-        });
-
-        $roomsTotal = $transaction->properties->sum(fn($property) => $property->pivot->total_amount);
-
-
-        // Assume payments are already loaded via invoice
-        $convenienceFeeTotal = $invoice->payments
-            ->where('payment_status', 'completed')
-            ->sum('convenience_fee');
-
-        $subtotal = $activitiesTotal + $roomsTotal + $servicesTotal + $convenienceFeeTotal;
-
-        $invoice->update(['sub_total' => $subtotal]);
-    }
-
     public function computeBaseSubtotal(Transaction $transaction): float
     {
-        $activities = $transaction->activities ?? collect();
-        $properties = $transaction->properties ?? collect();
-        $services = $transaction->services ?? collect();
+        // Retrieves total amount of activities assigned to the transaction
+        $activitiesTotal = $transaction->activities?->sum(
+            fn($activity) => $activity->pivot->quantity * $activity->amount
+        ) ?? 0;
 
-        $activitiesTotal = $activities->map(
-            fn($activity) =>
-            $activity->pivot->quantity * $activity->amount
-        )->sum();
+        // Retrieves total amount of services assigned to the transaction
+        $servicesTotal = $transaction->services?->sum(
+            fn($service) => $service->pivot->quantity * $service->amount
+        ) ?? 0;
 
-        $servicesTotal = $services->map(
-            fn($service) =>
-            $service->pivot->quantity * $service->amount
-        )->sum();
+        // Retrieves total amount of rooms assigned to the transaction
+        $roomsTotal = $transaction->properties?->sum(
+            fn($property) => $property->pivot->total_amount
+        ) ?? 0;
 
-        $roomsTotal = $properties->map(
-            fn($property) =>
-            $property->pivot->total_amount
-        )->sum();
+        // Retrieves total amount of pets assigned to the transaction
+        $petsTotal = $transaction->guestPets?->sum('total_fee') ?? 0;
 
-        return $activitiesTotal + $roomsTotal + $servicesTotal;
+        return $activitiesTotal + $roomsTotal + $servicesTotal + $petsTotal;
     }
+
+    public function updateGrandTotal(Invoice $invoice, Transaction $transaction): void
+    {
+        // Subtotal is the amount of all items (without the convenience fee)
+        $subtotal = $this->computeBaseSubtotal($transaction);
+
+        // Convenience Fee Total is the total of convenience fee of all payments assigned to the transaction
+        $convenienceFeeTotal = $invoice->payments
+            ?->where('payment_status', 'completed')
+            ->sum('convenience_fee') ?? 0;
+
+        // Use fallback from transaction if no successful payment fee found
+        if ($convenienceFeeTotal == 0 && $transaction->convenience_fee > 0) {
+            $convenienceFeeTotal = $transaction->convenience_fee;
+        }
+
+        // Grand total is equal to the subtotal and convenience fee total
+        $grandTotal = $subtotal + $convenienceFeeTotal;
+
+        $invoice->update([
+            'sub_total' => $grandTotal // in the database it is saved as sub_total
+        ]);
+    }
+
 
     public function updateBalanceDue(Invoice $invoice): void
     {
@@ -91,34 +91,5 @@ class InvoiceService
                 'completed_at' => null,
             ]);
         }
-    }
-
-    public function markTransactionItemsAsPaid(Transaction $transaction): void
-    {
-        DB::table('transaction_activities')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        DB::table('transaction_properties')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        DB::table('transaction_services')
-            ->where('transaction_id', $transaction->id)
-            ->where('payment_status', 'unpaid')
-            ->update([
-                'payment_status' => 'paid',
-                'updated_at' => now(),
-            ]);
-
-        Log::info("All unpaid items for transaction {$transaction->id} marked as paid.");
     }
 }

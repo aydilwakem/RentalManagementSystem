@@ -10,6 +10,7 @@ class ServiceBag
         public RoomCartService $roomCartService,
         public ActivityTransactionService $activityTransactionService,
         public ServiceTransactionService $serviceTransactionService,
+        public PropertyTransactionService $propertyTransactionService,
         public InvoiceService $invoiceService,
         public BrandingService $brandingService,
         public EmailService $emailService,

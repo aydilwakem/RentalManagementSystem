@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Payment;
+use App\Services\PaymentService;
+use App\Services\ServiceBag;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -13,6 +15,14 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
+
+    protected ServiceBag $service;
+    protected PaymentService $paymentService;
+
+    public function boot(ServiceBag $services)
+    {
+        $this->paymentService = $services->paymentService;
+    }
 
     /**
      * Handles incoming PayMongo webhook events.
@@ -27,7 +37,7 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\JsonResponse A JSON response indicating success or error.
      */
 
-    public function webhook(Request $request)
+    public function webhook(Request $request, PaymentService $paymentService)
     {
         // Log that the webhook endpoint has been hit
         Log::info('Webhook Triggered');
@@ -118,7 +128,8 @@ class PaymentController extends Controller
                         $modeOfPayment,
                         $paymentReferenceNumber,
                         $metadata,
-                        $transaction
+                        $paymentService,
+                        $transaction,
                     ) {
                         // Save payment record regardless of event type
                         $payment = Payment::create([
@@ -164,6 +175,9 @@ class PaymentController extends Controller
                             if (!$user) {
                                 throw new \Exception("No user associated with transaction ID {$transaction->id}");
                             }
+
+                            $paymentService->applyPaymentToUnpaidItems($transaction, $payment->amount_paid);
+
 
                             $paymentDetails = [
                                 'full_name' => $user->first_name . ' ' . $user->last_name,
@@ -211,6 +225,11 @@ class PaymentController extends Controller
     }
 }
 
+
+
+
+
+// s
 
 
 

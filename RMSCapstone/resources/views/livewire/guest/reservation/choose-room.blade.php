@@ -131,6 +131,7 @@
                                                 <i class="fas fa-utensils mr-2"></i> Free breakfast included
                                             </p>
                                             <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
+
                                             <p class="mt-4 text-lg font-medium">
                                                 Rate Per Night:
                                                 @if ($room->rate_name || $room->rate_type)
@@ -139,18 +140,18 @@
                                                     </span>
                                                     <span
                                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
-                                                                                                                                                                    @if ($room->rate_type === 'Weekend')
-                                                                                                                                                                        bg-yellow-100 text-yellow-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Weekdays')
-                                                                                                                                                                        bg-green-100 text-green-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Peak')
-                                                                                                                                                                        bg-red-100 text-red-700
-                                                                                                                                                                    @elseif ($room->rate_type === 'Holiday')
-                                                                                                                                                                        bg-purple-100 text-purple-700
-                                                                                                                                                                    @else
-                                                                                                                                                                        bg-gray-100 text-gray-600
-                                                                                                                                                                    @endif
-                                                                                                                                                                ">
+                                                                                                                                                                                                        @if ($room->rate_type === 'Weekend')
+                                                                                                                                                                                                            bg-yellow-100 text-yellow-700
+                                                                                                                                                                                                        @elseif ($room->rate_type === 'Weekdays')
+                                                                                                                                                                                                            bg-green-100 text-green-700
+                                                                                                                                                                                                        @elseif ($room->rate_type === 'Peak')
+                                                                                                                                                                                                            bg-red-100 text-red-700
+                                                                                                                                                                                                        @elseif ($room->rate_type === 'Holiday')
+                                                                                                                                                                                                            bg-purple-100 text-purple-700
+                                                                                                                                                                                                        @else
+                                                                                                                                                                                                            bg-gray-100 text-gray-600
+                                                                                                                                                                                                        @endif
+                                                                                                                                                                                                    ">
                                                         {{ $room->rate_name }}
                                                         @if ($room->rate_type)
                                                             - {{ $room->rate_type }} Rate
@@ -354,7 +355,7 @@
                                         <div class="mt-auto pt-2 flex flex-col justify-between">
                                             <div class="flex gap-4">
 
-                                                <!-- Debug: dump availableAdultOptions -->
+
 
                                                 <!-- Adults -->
                                                 <div class="flex-1">

@@ -117,6 +117,7 @@ class Property extends Model
     {
         return $this->belongsToMany(Transaction::class, 'transaction_properties')
             ->withPivot(
+                'id',
                 'adults',
                 'kids',
                 'non_chargeable_guests',

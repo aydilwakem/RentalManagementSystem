@@ -12,6 +12,7 @@ class ActivityCartService
 
         // Sets the values for the activity
         $qty = (int) ($quantity[$itemId] ?? 1);
+        $activity_rate = $activity->amount;
         $amount = $activity->amount * $qty;
         $status[$itemId] = 'pending';
         $paymentStatus[$itemId] = 'unpaid';
@@ -21,6 +22,7 @@ class ActivityCartService
             'type' => 'activity',
             'activity_id' => $activity->id,
             'activity_name' => $activity->name,
+            'activity_rate' => $activity_rate,
             'quantity' => $qty,
             'amount' => $amount,
             'status' => $status[$itemId],

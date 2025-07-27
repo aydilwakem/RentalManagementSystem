@@ -28,6 +28,7 @@ class Service extends Model
         return $this->belongsToMany(Transaction::class, 'transaction_services')
             ->withPivot(
                 'quantity',
+                'days',
                 'amount',
                 'service_datetime',
                 'status',

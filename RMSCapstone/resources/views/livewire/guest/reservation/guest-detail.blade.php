@@ -166,31 +166,30 @@
 
                 @if ($bringingPets)
                     <div class="mt-4 col-span-1">
-                        <label for="pet_count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            How many pets?
+                        <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Pet Breed
                         </label>
-                        <input type="number" id="pet_count" wire:model.live="pet_count" min="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5
-                                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="e.g., 2">
-                        @error('pet_count')
+                        <input type="text" id="breed" wire:model="breed"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="e.g., Labrador">
+                        @error('breed')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+
+                        <button type="button" wire:click="addMultiplePets"
+                            class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add Pet</button>
                     </div>
 
-                    @for ($i = 0; $i < $pet_count; $i++)
-                        <div class="mt-4 col-span-1">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                Breed for Pet #{{ $i + 1 }}
-                            </label>
-                            <input type="text" wire:model="pet_breed.{{ $i }}"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="e.g., Labrador, Shih Tzu">
-                            @error("pet_breed.$i")
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    @endfor
+                    <div class="mt-4">
+                        <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200">Added Pets:</h3>
+                        <ul class="list-disc ml-6">
+                            @foreach ($pets as $index => $pet)
+                                <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
+
 
 
 
@@ -199,6 +198,7 @@
 
                 <!-- Additional Guests Section (Optional) -->
                 <div class="flex flex-col space-y-2 w-full">
+
                     <div class="font-semibold text-gray-700">
                         Additional Guests (Optional)
                     </div>
@@ -512,6 +512,8 @@
                             </div>
                         </div>
                     @endif
+
+
                 </div>
 
                 @error('guests')
