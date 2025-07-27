@@ -35,8 +35,7 @@ use App\Services\PayMongoService;
 use App\Services\EmailService;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
-
-
+use PragmaRX\Countries\Package\Countries;
 
 class ReservationForm extends Component
 {
@@ -82,6 +81,7 @@ class ReservationForm extends Component
     public $email;
     public $contact_number;
     public $company_name;
+    public $countries = [];
     public $country;
     public $heard_from;
 
@@ -159,7 +159,7 @@ class ReservationForm extends Component
     protected PayMongoService $payMongo;
     protected EmailService $emailService;
 
-    //----------------------- TRAITS -------------------------- // 
+    //----------------------- TRAITS -------------------------- //
 
     use HasFormattedDates;
 
@@ -219,6 +219,8 @@ class ReservationForm extends Component
         $this->loadRooms();
         $this->loadBranding();
         $this->getAvailableRooms();
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
     }
 
 

@@ -166,13 +166,21 @@ class EditProperty extends Component
 
     protected function updateDisplayImages()
     {
-        // Map newImages to include unique IDs for temporary files
-        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
-            return ['id' => $image->getFilename(), 'object' => $image]; // Use filename as ID for temp uploads
-        })->toArray();
+        // Extract current new (temporary) images from displayImages to keep them
+        $existingTempImages = collect($this->displayImages)->filter(function ($image) {
+            return !in_array($image, $this->storedImages);
+        });
 
-        // Combine stored and newly uploaded images for display.
-        $this->displayImages = array_merge($this->storedImages, $newImagePreviewsWithIds);
+        // Map new uploaded images with unique IDs
+        $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
+            return ['id' => $image->getFilename(), 'object' => $image];
+        });
+
+        // Merge stored images, existing temp images, and new uploads
+        $this->displayImages = array_merge($this->storedImages, $existingTempImages->toArray(), $newImagePreviewsWithIds->toArray());
+
+        // Clear newImages to reset input
+        $this->newImages = [];
     }
 
     public function confirmImageDelete($id)

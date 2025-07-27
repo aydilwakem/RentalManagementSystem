@@ -6,7 +6,7 @@
         <!-- Navigation -->
         <x-breadcrumbs :items="[
             ['label' => 'Properties', 'url' => route('admin.properties')],
-            ['label' => 'View Property', 'url' => route('admin.view-property',['property' => $house->id])],
+            ['label' => 'View Property', 'url' => route('admin.view-property', ['property' => $house->id])],
         ]" />
     </x-slot>
 
@@ -16,8 +16,8 @@
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">House: {{
-                    $house->name_number }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">House:
+                    {{ $house->name_number }}</h2>
 
                 <!-- Back Button -->
                 <button onclick="history.back()"
@@ -31,24 +31,24 @@
                 <!-- House Image -->
                 <div class="grid grid-cols-1 gap-2">
                     @if (isset($house->images) && count($house->images) > 0)
-                    <div class="w-full">
-                        <img src="{{ asset('storage/' . $house->images[0]) }}"
-                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main house Image"
-                            onclick="openModal('{{ asset('storage/' . $house->images[0]) }}')">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        @foreach (array_slice($house->images, 1) as $img)
-                        <img src="{{ asset('storage/' . $img) }}"
-                            class="w-full h-44 object-cover rounded border cursor-pointer" alt="house Image"
-                            onclick="openModal('{{ asset('storage/' . $img) }}')">
-                        @endforeach
-                    </div>
+                        <div class="w-full">
+                            <img src="{{ asset('storage/' . $house->images[0]) }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main house Image"
+                                onclick="openModal('{{ asset('storage/' . $house->images[0]) }}')">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            @foreach (array_slice($house->images, 1) as $img)
+                                <img src="{{ asset('storage/' . $img) }}"
+                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="house Image"
+                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
+                            @endforeach
+                        </div>
                     @else
-                    <div class="w-full">
-                        <img src="{{ asset('images/rms-default.png') }}"
-                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
-                            onclick="openModal('{{ asset('images/rms-default.png') }}')">
-                    </div>
+                        <div class="w-full">
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                        </div>
                     @endif
                 </div>
                 <!-- Image Popup View -->
@@ -93,28 +93,32 @@
                     <div>
                         <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white">Address</h3>
                         <p class="text-gray-600 dark:text-gray-200">
-                            {{ $house->house_number }}, {{ $house->street }},
-                            {{ Str::title(strtolower($house->barangay_name)) }}, {{
-                            Str::title(strtolower($house->municipality_name)) }},
-                            {{ Str::title(strtolower($house->region_name))}}, {{
-                            Str::title(strtolower($house->province_name))}} ,{{ $house->postal_code}}, {{
-                            $house->country }}
+                            {{ collect([
+                                $house->house_number,
+                                $house->street,
+                                Str::title(strtolower($house->barangay_name)),
+                                Str::title(strtolower($house->municipality_name)),
+                                Str::title(strtolower($house->region_name)),
+                                Str::title(strtolower($house->province_name)),
+                                $house->postal_code,
+                                $house->country,
+                            ])->filter()->implode(', ') }}
                         </p>
                     </div>
 
                     <!-- house Amenities -->
                     <h3 class="mt-3 text-lg font-semibold text-gray-900 dark:text-white">Amenities</h3>
                     @if ($house->features->isNotEmpty())
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ($house->features as $feature)
-                        <span
-                            class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-                            {{ $feature->name }}
-                        </span>
-                        @endforeach
-                    </div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($house->features as $feature)
+                                <span
+                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
+                                    {{ $feature->name }}
+                                </span>
+                            @endforeach
+                        </div>
                     @else
-                    <p class="text-gray-500">No amenities selected for this house.</p>
+                        <p class="text-gray-500">No amenities selected for this house.</p>
                     @endif
 
 
