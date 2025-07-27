@@ -110,7 +110,7 @@
         <!-- Header -->
         <div class="header">
             <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" />
-            <h1>Official Receipt No: RCPT-00123</h1>
+            <h1>Official Receipt No: {{ $receipt->receipt_number }}</h1>
         </div>
 
         <div class="content">
@@ -121,11 +121,13 @@
                 <table cellpadding="0" cellspacing="0" style="width: 100%; font-size: 15px;" class="no-lines">
                     <tr>
                         <td style="padding: 0 0; padding-top: 0; color: #555;"><strong>Transaction Number:</strong></td>
-                        <td style="padding: 8px 0; text-align: right; color: #166534; font-weight: bold;">#{{ $transaction->id }}</td>
+                        <td style="padding: 8px 0; text-align: right; color: #166534; font-weight: bold;">#{{
+                            $transaction->transaction_number }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #555;">Name:</td>
-                        <td style="padding: 8px 0; text-align: right;">{{ $transactionUser->first_name }} {{ $transactionUser->last_name }}</td>
+                        <td style="padding: 8px 0; text-align: right;">{{ $transactionUser->first_name }} {{
+                            $transactionUser->last_name }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #555;">Email:</td>
@@ -133,7 +135,8 @@
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #555;">Contact Number:</td>
-                        <td style="padding: 8px 0; text-align: right; color: #555;">{{ $transactionUser->contact_number }}</td>
+                        <td style="padding: 8px 0; text-align: right; color: #555;">{{ $transactionUser->contact_number
+                            }}</td>
                     </tr>
                 </table>
             </div>
@@ -153,42 +156,71 @@
                     <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
                 </tr>
                 @foreach ($properties as $property)
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('m/d/Y') }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('m/d/Y') }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->days ?? '1' }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                    </tr>
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{
+                        \Carbon\Carbon::parse($transaction->start_datetime)->format('m/d/Y') }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{
+                        \Carbon\Carbon::parse($transaction->end_datetime)->format('m/d/Y') }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->pivot->days ?? '1' }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">PHP{{
+                        number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">PHP{{
+                        number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                </tr>
                 @endforeach
             </table>
 
             <!-- Activities -->
             @if(count($activities))
-                <h3>Add-On Activities</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Activity</th>
-                            <th style="text-align:center">Quantity</th>
-                            <th style="text-align:center">Unit Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($activities as $activity)
-                            <tr>
-                                <td>{{ $activity->name }}</td>
-                                <td style="text-align:center">{{ $activity->pivot->quantity }}</td>
-                                <td style="text-align:center">₱{{ number_format($activity->amount, 2) }}</td>
-                                <td>₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <h3>Add-On Activities</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th style="text-align:center">Quantity</th>
+                        <th style="text-align:center">Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($activities as $activity)
+                    <tr>
+                        <td>{{ $activity->name }}</td>
+                        <td style="text-align:center">{{ $activity->pivot->quantity }}</td>
+                        <td style="text-align:center">PHP{{ number_format($activity->amount, 2) }}</td>
+                        <td>PHP{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+
+            <!-- Services -->
+            @if(count($services))
+            <h3>Add-On Services</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th style="text-align:center">Quantity</th>
+                        <th style="text-align:center">Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($services as $service)
+                    <tr>
+                        <td>{{ $service->name }}</td>
+                        <td style="text-align:center">{{ $service->pivot->quantity }}</td>
+                        <td style="text-align:center">PHP{{ number_format($service->amount, 2) }}</td>
+                        <td>PHP{{ number_format($service->amount * $service->pivot->quantity, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
             @endif
 
             <!-- Receipt Details -->
@@ -209,7 +241,7 @@
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Amount Received</strong></td>
-                        <td><strong>₱{{ number_format($receipt->amount_received, 2) }}</strong></td>
+                        <td><strong>PHP{{ number_format($receipt->amount_received, 2) }}</strong></td>
                     </tr>
                     <tr>
                         <td><strong>Notes</strong></td>
@@ -225,7 +257,7 @@
                         your
                         thoughts:</p>
 
-                    <a href="https://canopyfarmph.com/guest/feedback-form"
+                    <a href="https://larabelles-rms.com/guest/feedback-form"
                         style="display: inline-block; background-color: #166534; color: #ffffff; padding: 15px 25px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                         Share Your Feedback Here!
                     </a>

@@ -49,7 +49,7 @@
                 receipt attached as a PDF for your reference.</p>
 
             <p style="color:#166534"><strong>Receipt Number:</strong>
-                {{ $receiptNumber }}
+                {{ $receipt->receipt_number }}</p>
             </p>
 
             <p>If you have any questions or need further assistance, please don't hesitate

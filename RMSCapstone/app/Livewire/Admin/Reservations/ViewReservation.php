@@ -1054,6 +1054,14 @@ class ViewReservation extends Component
             'status'
         )->get();
 
+        //Fetch data related to services tied to the transaction, including pivot data
+        $services = $this->transaction->services()->withPivot(
+            'quantity',
+            'amount',
+            'service_datetime',
+            'status'
+        )->get();
+
         // Fetch related properties tied to the transaction, including pivot data
         $properties = $this->transaction->properties()->withPivot(
             'adults',
@@ -1074,6 +1082,7 @@ class ViewReservation extends Component
                 'transactionUser' => $this->transactionUser,
                 'properties' => $properties,
                 'activities' => $activities,
+                'services' => $services,
             ],
             $brandingService->getBrandingData()
         );
@@ -1209,6 +1218,9 @@ class ViewReservation extends Component
         $this->activities = $this->transaction->activities()
             ->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
 
+        $this->services = $this->transaction->services()
+        ->withPivot('quantity', 'amount', 'service_datetime', 'status')->get();
+
         $this->properties = $this->transaction->properties()
             ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
@@ -1219,6 +1231,7 @@ class ViewReservation extends Component
             'transactionUser' => $this->transactionUser,
             'properties' => $this->properties,
             'activities' => $this->activities,
+            'services' => $this->services,
         ];
 
         $pdfOutput = $this->receiptService->generatePdf($data, $this->receipt->receipt_number);
@@ -1248,21 +1261,41 @@ class ViewReservation extends Component
             'transactionUser',
             'guestDetails',
             'properties',
+            'guestPets', 
+            'promoCode', 
+            'services' => function($query){
+                $query->withPivot('quantity', 'amount', 'service_datetime', 'status', 'payment_status');
+            }, 
             'activities' => function ($query) {
                 $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
             },
         ])->findOrFail($this->transaction->id);
+
+        //Compute Total Service Charge Acquired
+        $totalServiceCharges = $transaction->services->sum(function ($service) {
+        return ($service->pivot->quantity ?? 0) * ($service->pivot->amount ?? 0);
+
+    });
+
+        $payments = $transaction->invoice->payments ?? collect();
+        $convenienceFeeTotal = $payments
+            ->where('payment_status', 'completed')
+            ->sum('convenience_fee');
 
         $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
             'transaction' => $transaction,  // Pass the actual transaction
             //Pass the relationships
             'guestDetails' => $transaction->guestDetails,
             'invoice' => $transaction->invoice,
+            'guestPets' => $transaction->guestPets,
+            'promoCode' => $transaction->promoCode, 
             'activities' => $transaction->activities,
             'properties' => $transaction->properties,
             'payments' => $transaction->invoice->payments,
             'totalRooms' => $transaction->totalRooms,
             'totalAddons' => $transaction->totalAddons,
+            'totalServiceCharges' => $totalServiceCharges,
+            'convenienceFeeTotal' => $convenienceFeeTotal,
         ]);
 
         // Optional: Download directly or store then return URL

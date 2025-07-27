@@ -518,21 +518,21 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     //Promo Codes
     //List
-    Route::get('/settings/promo-codes', function () {
+    Route::get('/reservations/promo-codes', function () {
         return view('admin.settings.promo-codes.view-promo-codes');
     })->name('admin.view-promo-codes');
 
     //Create
-    Route::get('/settings/create/promo-code', function () {
+    Route::get('/reservations/create/promo-code', function () {
         return view('admin.settings.promo-codes.create-promo-code');
     })->name('admin.create-promo-code');
 
     //View
-     Route::get('settings/view/promo-code/{promoCode}', ViewPromoCode::class)
+     Route::get('reservations/view/promo-code/{promoCode}', ViewPromoCode::class)
     ->name('admin.view-promo-code');
 
     //Edit
-     Route::get('settings/edit/promo-code/{promoCode}', EditPromoCode::class)
+     Route::get('reservations/edit/promo-code/{promoCode}', EditPromoCode::class)
      ->name('admin.edit-promo-code');
 
     //Soft Deletes
