@@ -62,7 +62,7 @@
 
                                         <div class="md:w-1/3">
                                             <!-- Image Container -->
-                                            <div class="relative w-full h-64 overflow-hidden rounded-xl">
+                                            <div class="relative w-full h-full overflow-hidden rounded-xl">
                                                 @php
                                                     $firstImage = $room->images[0] ?? null;
                                                 @endphp

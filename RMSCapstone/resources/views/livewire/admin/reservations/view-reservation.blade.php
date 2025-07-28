@@ -68,9 +68,15 @@
 
             <!---------------------- ADDITIONAL GUESTS DETAILS ---------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
-                    {{ __('Additional Guests Details') }}
-                </h2>
+                <div class="text-center justify-between flex mb-4">
+                    <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-300">
+                        {{ __('Additional Guests Details') }}
+                    </h2>
+                    <!-- Add Guest -->
+                    <x-button wire:click="openModal('guest')" icon="fas fa-user-plus">
+                        Add Guest
+                    </x-button>
+                </div>
                 @if ($guestDetails->isNotEmpty())
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-center">
@@ -148,21 +154,11 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-600 italic dark:text-gray-200">No additional guests found for this transaction.
+                    <p class="text-gray-600 italic dark:text-gray-200 col-span-7 text-center">No additional guests found
+                        for this transaction.
                     </p>
                 @endif
             </div>
-
-            <tr>
-                <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500 space-x-2">
-                  
-                    <!-- Add Guest -->
-                    <x-button wire:click="openModal('guest')" icon="fas fa-user-plus">
-                        Add Guest
-                    </x-button>
-                        
-                </td>  
-            </tr>
             <!------------------ END OF ADDITIONAL GUESTS DETAILS ------------------------------->
 
 
@@ -222,11 +218,12 @@
                     </div>
                     <div>
                         <strong>Reservation Created At:</strong>
-                        <div>{{ $transaction->created_at }}</div>
+                        <div>{{ $transaction->created_at->format('F j, Y') }} at
+                            {{ $transaction->created_at->format('g:i A') }}</div>
                     </div>
                     <div>
-                        <strong>Reservation Source:</strong>
-                        <div>{{ $transaction->reservation_source }}</div>
+                        <strong>Heard From:</strong>
+                        <div>{{ $transaction->heard_from }}</div>
                     </div>
                     <div>
                         <strong>Check-in Date:</strong>
@@ -241,7 +238,7 @@
                         <div>{{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)</div>
                     </div>
                     <div>
-                        <strong>Total Adults:</strong>
+                        <strong>Total Guests:</strong>
                         <div>{{ $transaction->total_adults }}</div>
                     </div>
                     <div>
@@ -273,14 +270,21 @@
                         <div>
                             {{ $transaction->promoCode->code ?? '' }}
 
-                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
-                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
-                            @elseif ($transaction->promoCode)
-                                {{-- Flat discount --}}
-                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
+                            @if ($transaction->promoCode)
+                                <div>
+                                    <strong>Promo Code:</strong>
+                                    {{ $transaction->promoCode->code }}
+
+                                    @if ($transaction->promoCode->discount_type === 'percentage')
+                                        ({{ number_format($transaction->promoCode->discount_value, 0) }}% off)
+                                    @else
+                                        (₱{{ number_format($transaction->promoCode->discount_value, 2) }} off)
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-gray-500 italic">No promo code used</div>
                             @endif
 
-                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
                         </div>
                     </div>
 
@@ -291,10 +295,6 @@
                     <div>
                         <strong>Required Deposit:</strong>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
-                    </div>
-                    <div>
-                        <strong>Heard From:</strong>
-                        <div>{{ $transaction->heard_from }}</div>
                     </div>
                     <div>
                         <strong>Reservation Source:</strong>
@@ -324,30 +324,27 @@
                                         Category</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        No. of Adults
+                                        Total Guest
                                     </th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        No. of Kids</th>
+                                        Ideal Guests</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        No. of Infants (free)</th>
+                                        Extra Guests</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Extra Guest Charge
+                                    </th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Stay Duration
                                     </th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        Extra Guests</th>
+                                        Room Rate</th>
                                     <th
-                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
-                                        Rate</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
-                                        Extra Guest Charge
-                                    </th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Room Total</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
@@ -366,31 +363,39 @@
                                         </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ $property->pivot->adults ?? 'N/A' }}</td>
+                                            {{ $property->pivot->adults ?? 'N/A' }} Adult(s)
+                                            @if ($property->pivot->kids)
+                                                , {{ $property->pivot->kids }} Kid(s)
+                                            @endif
+
+                                            @if ($property->pivot->non_chargeable_guests)
+                                                @if ($property->pivot->kids)
+                                                    ,
+                                                @endif
+                                                {{ $property->pivot->non_chargeable_guests }} Infant(s)
+                                            @endif
+                                        </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ $property->pivot->kids ?? 'N/A' }}</td>
-                                        <td
-                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ $property->pivot->non_chargeable_guests ?? 'N/A' }}</td>
-                                        <td
-                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
+                                            {{ $property->pivot->pax ?? 'N/A' }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
                                         <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
+                                        <td
                                             class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
                                         <td
-                                            class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
-                                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                                        <td
                                             class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                                        <td class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
-                                            <button
-                                                wire:click="editRoom({{ $property->pivot->id }})"
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
+                                            <button wire:click="editRoom({{ $property->pivot->id }})"
                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
@@ -413,7 +418,8 @@
 
 
             <!-------------------------- ADD ON (ACTIVITIES) --------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <div
+                class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Add-on Services/Activities') }}
                 </h2>
@@ -470,8 +476,9 @@
             <!---------------------- END OF ACTIVITY DETAILS ----------------------------------->
 
 
-             <!-------------------------- ADD ON (CHARGES) --------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <!-------------------------- ADD ON (CHARGES) --------------------------------------->
+            <div
+                class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Additional Charges') }}
                 </h2>
@@ -534,76 +541,82 @@
             <!---------------------- END OF SERVICE DETAILS ----------------------------------->
 
             <!-------------------------- GUEST PET INFO --------------------------------------->
-            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
-                    {{ __('Guest Pet Information') }}
-                </h2>
+            <div
+                class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+                <div class="mb-4 flex items-center justify-between">
+                    <h2 class="font-semibold text-xl text-green-700 leading-tight mb-2 dark:text-green-300">
+                        {{ __('Guest Pet Information') }}
+                    </h2>
+                    <!-- Add Pet Details -->
+                    <x-button wire:click="openModal('pet')" icon="fas fa-paw">
+                        Add Pet
+                    </x-button>
+                </div>
                 @if ($guestPets->isNotEmpty())
                     <div class="overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">Pet Breed</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Vaccination Card</th>
-                                    <th class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">Actions</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
+                                        Pet Breed</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Vaccination Card</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-600">
                                 @php
-                                    $unitAmount = $this->getPetFeeAmount(); 
+                                    $unitAmount = $this->getPetFeeAmount();
                                 @endphp
 
                                 @foreach ($guestPets as $pet)
                                     <tr>
-                                        <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">{{ $pet->breed }}</td>
-                                        <td class="border px-4 py-2 text-center text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                            {{ $pet->breed }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-center text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                             @if ($pet->vaccination_card)
-                                                <a href="{{ asset('storage/' . $pet->vaccination_card) }}" target="_blank" class="text-blue-600 underline">View</a>
+                                                <a href="{{ asset('storage/' . $pet->vaccination_card) }}"
+                                                    target="_blank" class="text-blue-600 underline">View</a>
                                             @else
                                                 N/A
                                             @endif
                                         </td>
-                                        <td class="border px-4 py-2 text-gray-700 text-center font-semibold dark:text-gray-200 dark:border-gray-500">
-                                            <button
-                                                wire:click="editPet({{ $pet->id }})"
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center font-semibold dark:text-gray-200 dark:border-gray-500">
+                                            <button wire:click="editPet({{ $pet->id }})"
                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                 title="Edit Pet">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
-                                            <button
-                                                wire:click="deletePet({{ $pet->id }})"
+                                            <button wire:click="deletePet({{ $pet->id }})"
                                                 class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500"
                                                 title="Delete Breed">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
-
-                                     
                                     </tr>
-                                @endforeach        
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-600 italic">No pet data found for this transaction.</p>
+                    <p class="text-gray-600 italic text-center col-span-7 py-3">No pet data found for this transaction.
+                    </p>
                 @endif
+
             </div>
 
 
-            <tr>
-                <td colspan="7" class="border px-4 py-2 text-center dark:border-gray-500 space-x-2">
-                  
-                    <!-- Add Pet Details -->
-                    <x-button wire:click="openModal('pet')" icon="fas fa-paw">
-                        Add Pet
-                    </x-button>
-                        
-                </td>  
-            </tr>
             <!---------------------- END OF GUEST PET INFO ----------------------------------->
 
-           
+
 
             <!----------------------------- INVOICE -------------------------------------------->
             <div
@@ -762,12 +775,12 @@
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             <span
-                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
-                                                    {{ ucfirst($item['payment_status']) }}
-                                                </span>
+                                                {{ ucfirst($item['payment_status']) }}
+                                            </span>
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
                                             @if ($item['payment_status'] !== 'paid')
@@ -799,42 +812,42 @@
                                         </td>
                                     </tr>
 
-                                      @if($item['type'] === 'property' && $item['extra_guest'] > 0)
-                                    <tr class="bg-gray-50 dark:bg-gray-800 text-sm">
-                                        <td class="border px-4 py-2 dark:border-gray-500"></td>
-                                        <td class="border px-4 py-2 dark:border-gray-500 text-gray-600 dark:text-gray-300 italic text-center">
-                                            Extra Guest(s)
-                                        </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            {{ $item['extra_guest'] }}
-                                        </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500"> {{ $item['days'] }} </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            ₱{{ number_format($item['extra_charge'], 2) }}
-                                        </td>
-                                        <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            ₱{{ number_format($item['extra_charge_total'], 2) }}
-                                        </td>
-                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            <span title="{{ $item['created_at']->format('F j, Y - g:i A') }}">
-                                                {{ $item['created_at']->diffForHumans() }}
-                                            </span>
-                                        </td>
-                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            <span
+                                    @if ($item['type'] === 'property' && $item['extra_guest'] > 0)
+                                        <tr class="bg-gray-50 dark:bg-gray-800 text-sm">
+                                            <td class="border px-4 py-2 dark:border-gray-500"></td>
+                                            <td
+                                                class="border px-4 py-2 dark:border-gray-500 text-gray-600 dark:text-gray-300 italic text-center">
+                                                Extra Guest(s)
+                                            </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                {{ $item['extra_guest'] }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                {{ $item['days'] }} </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                ₱{{ number_format($item['extra_charge'], 2) }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                ₱{{ number_format($item['extra_charge_total'], 2) }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                <span title="{{ $item['created_at']->format('F j, Y - g:i A') }}">
+                                                    {{ $item['created_at']->diffForHumans() }}
+                                                </span>
+                                            </td>
+                                            <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                                <span
                                                     class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
                                                     {{ ucfirst($item['payment_status']) }}
                                                 </span>
-                                        </td>
-                                        <td colspan="3" class="border px-4 py-2 text-center dark:border-gray-500"></td>
-                                    </tr>
+                                            </td>
+                                            <td colspan="3"
+                                                class="border px-4 py-2 text-center dark:border-gray-500"></td>
+                                        </tr>
                                     @endif
-
-
-
                                 @endforeach
                             </tbody>
                         </table>
@@ -848,12 +861,41 @@
                         </div>
 
                         <!-- Convenience Fee -->
-                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                        <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
                             Convenience Fee:
                             <div>
                                 ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
                             </div>
                         </div>
+
+                        <hr>
+
+                        <!-- Sub Total with discount -->
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            Promo Applied:
+                            <div>
+                                {{ $transaction->promoCode->code ?? '' }}
+
+                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
+                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
+                            @elseif ($transaction->promoCode)
+                                {{-- Flat discount --}}
+                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
+                            @endif
+
+                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
+                            </div>
+                        </div>
+
+                        <!-- Sub Total with discount -->
+                        <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
+                            Subtotal after discount:
+                            <div>
+                                ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
+                            </div>
+                        </div>
+
+                        <hr>
 
                         <!-- Grand Total -->
                         <div class="flex justify-between font-bold text-base mt-2 text-green-700">
@@ -865,7 +907,7 @@
 
                         <!-- Amount Paid -->
                         <div
-                            class="flex justify-between font-semibold text-base mt-2
+                            class="flex justify-between font-semibold text-base
                             {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-yellow-500' }}">
                             Amount Paid:
                             <div>
@@ -876,7 +918,7 @@
 
                         <!-- Balance Due -->
                         <div
-                            class="flex justify-between font-semibold text-base mt-2
+                            class="flex justify-between font-semibold text-base
                             {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-red-500' }}">
                             Balance Due:
                             <div>
@@ -909,7 +951,7 @@
                                         wire:target="requestRemainingBalance"></i>
 
                                     <span wire:loading.remove wire:target="requestRemainingBalance">
-                                        Request Remaining Balance
+                                        Email Balance Request
                                     </span>
                                 </div>
                             </x-button>
@@ -920,7 +962,7 @@
                     <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
 
             </div>
-            @else
+        @else
             <p class="text-gray-600 italic">No invoice found for this transaction.</p>
             @endif
             <!------------------------  END OF INVOICE ----------------------------------------->
@@ -934,8 +976,7 @@
                     @if (is_null($transaction->invoice->receipt))
                         <!-- Show this if receipt does NOT exist -->
                         <x-button wire:click="GenerateReceipt" wire:loading.attr="disabled"
-                            wire:target="GenerateReceipt"
-                            class=" !bg-blue-600 text-white rounded hover:!bg-blue-700 focus:ring-2 focus:!ring-blue-600 focus:!border-blue-600 transition items-center gap-2">
+                            wire:target="GenerateReceipt">
 
                             <!-- Show spinner and text while loading -->
                             <span wire:loading wire:target="GenerateReceipt" class=" items-center gap-2">
@@ -1252,88 +1293,70 @@
 
             <!-- Add Payment Modal -->
             @if ($createPaymentModal)
-                <div>
-                    <div id="guestModal"
-                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <div
-                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                            <div
-                                class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
-                                <!-- Title -->
-                                <h2 class="text-2xl font-bold text-center">Add Payment</h2>
+                <x-trn-modal id="guestModal">
+                    <x-slot name="title" id="guestModal">
+                        Add Payment
+                    </x-slot>
 
-                                <!-- Close Button -->
-                                <button wire:click="CloseCreatePaymentModal"
-                                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                                    <span class="-translate-y-[2px]">&times;</span>
-                                </button>
-                            </div>
-
-                            <!-- Amount Paid -->
-                            <div class="mt-4">
-                                <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
-                                        class="text-red-500">*</span></label>
-                                <input type="number" wire:model="amount_paid" placeholder="Ex. 1,200.00"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                    required>
-                                @error('amount_paid')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Payment Date -->
-                            <div class="mt-4">
-                                <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
-                                        class="text-red-500">*</span></label>
-                                <input type="date" wire:model="payment_date"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                    required>
-                                @error('payment_date')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Payment Type -->
-                            <div class="mt-4">
-                                <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
-                                        class="text-red-500">*</span></label>
-                                <select wire:model="payment_type"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                    required>
-                                    <option value="">Select Payment Type</option>
-                                    <option value="Room Rent">Room Rent</option>
-                                    <option value="Security Deposit">Security Deposit</option>
-                                    <option value="Remaining Balance">Remaining Balance</option>
-                                </select>
-                                @error('payment_type')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Notes -->
-                            <div class="mt-4">
-                                <label class="block text-sm text-gray-700 font-semibold">Notes</label>
-                                <input type="text" wire:model="notes"
-                                    placeholder="Optionally add description of payment"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
-                                @error('notes')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6">
-                                <x-ghost-button type="button" wire:click="CloseCreatePaymentModal">
-                                    Cancel
-                                </x-ghost-button>
-                                <x-button type="button" wire:click="CreatePayment">
-                                    Save Changes
-                                </x-button>
-                            </div>
-
+                    <x-slot name="content">
+                        <!-- Amount Paid -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" wire:model.defer="amount_paid" placeholder="Ex. 1,200.00"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                required>
+                            @error('amount_paid')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-                    </div>
-                </div>
+
+                        <!-- Payment Date -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" wire:model.defer="payment_date"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                required>
+                            @error('payment_date')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Payment Type -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model="payment_type"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                required>
+                                <option value="">Select Payment Type</option>
+                                <option value="Room Rent">Room Rent</option>
+                                <option value="Security Deposit">Security Deposit</option>
+                                <option value="Remaining Balance">Remaining Balance</option>
+                            </select>
+                            @error('payment_type')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                            <input type="text" wire:model="notes"
+                                placeholder="Optionally add description of payment"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                            @error('notes')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </x-slot>
+
+                    <x-slot name="footer">
+                        <x-secondary-button wire:click="CloseCreatePaymentModal">Cancel</x-ghost-button>
+                            <x-button wire:click="CreatePayment">Save Changes</x-button>
+                    </x-slot>
+                </x-trn-modal>
             @endif
 
             <!-- Add Charge Modal -->
@@ -1457,17 +1480,16 @@
                                     class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 mb-5 flex flex-col md:flex-row
                                         dark:bg-gray-700 dark:border-gray-600">
 
-                                    {{-- Image of the Activity --}}
+                                    <!-- Activity Image -->
+                                    @php
+                                        $firstImage = is_array(json_decode($activity->image))
+                                            ? json_decode($activity->image)[0] ?? null
+                                            : null;
+                                    @endphp
+
                                     <div class="md:w-1/2">
-                                        @if ($activity->image)
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ asset('storage/' . $activity->image) }}"
-                                                alt="{{ $activity->name }}">
-                                        @else
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ asset('images/rms-default.png') }}"
-                                                alt="{{ $activity->name }}">
-                                        @endif
+                                        <img src="{{ asset($firstImage ? 'storage/' . $firstImage : 'images/rms-default.png') }}"
+                                            alt="{{ $activity->name }}" class="object-cover w-62 h-62">
                                     </div>
 
                                     <div class="md:w-1/2 p-4 flex flex-col justify-between">
@@ -1595,8 +1617,7 @@
 
             <!-- Add Guest Modal -->
             @if ($activeModal === 'guest')
-                <div
-                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div
                         class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
                         <div
@@ -1619,7 +1640,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model.defer="guest.first_name"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                                     placeholder="Ex. Juan" required>
                                 @error('guest.first_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1632,11 +1653,11 @@
                                     Name</label>
                                 <input type="text" wire:model.defer="guest.middle_name"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                                     placeholder="Ex. Mercado">
                                 @error('guest.middle_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
+                                @enderror
                             </div>
 
                             <!-- Last Name -->
@@ -1645,7 +1666,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model.defer="guest.last_name"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                                     required placeholder="Ex. Dela Cruz">
                                 @error('guest.last_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1654,17 +1675,16 @@
 
                             <!-- Suffix -->
                             <div>
-                                <label
-                                    class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
                                 <input type="text" wire:model.defer="guest.suffix"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                                     placeholder="Ex. Jr., Sr., III">
                                 @error('guest.suffix')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
-                   
+
                         </div>
 
                         <!-- Transaction Property -->
@@ -1673,7 +1693,7 @@
                                     class="text-red-500">*</span></label>
                             <select wire:model.defer="guest.transaction_property_id"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Room</option>
                                 @foreach ($transactionProperties as $property)
                                     <option value="{{ $property->id }}">
@@ -1681,47 +1701,47 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('guest.transaction_property_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('guest.transaction_property_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                            <!-- Birthdate -->
-                            <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
-                                <input type="date"
-                                    wire:model.live="guest.birthdate"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                @error('guest.birthdate')
+                        <!-- Birthdate -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Birthdate</label>
+                            <input type="date" wire:model.live="guest.birthdate"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                            @error('guest.birthdate')
                                 <span class="text-red-500 text-sm">
                                     {{ $message == 'The guest.birthdate field is required.' ? 'Please enter the birthdate.' : $message }}
                                 </span>
                             @enderror
-                            </div>
-                     
+                        </div>
 
-
-                        
 
                         <!-- Guest Type -->
                         <!-- Optional: Guest Type (can be hidden or locked to a default) -->
                         {{-- If you want admin to skip selecting guest type, skip this field --}}
-                       <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type</label>
-                                <select wire:model.defer="guest.guest_type_id"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="">Select Guest Type</option>
-                                    @foreach ($filteredGuestTypes as $type)
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest Type</label>
+                            <select wire:model.defer="guest.guest_type_id"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Guest Type</option>
+                                @foreach ($filteredGuestTypes as $type)
                                     <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
-                                    @endforeach
-                                    </select>
-                                 @error('guest.guest_type_id')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
+                                @endforeach
+                            </select>
+                            @error('guest.guest_type_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
-                         <span class="text-sm text-gray-500">(Free of charge)</span>
+                            <span class="text-sm text-gray-500">(Free of charge)</span>
                         @endif
-                            
+
 
                         <!-- Gender -->
                         <div class="mt-4">
@@ -1729,7 +1749,7 @@
                                     class="text-red-500">*</span></label>
                             <select wire:model.defer="guest.gender"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -1746,7 +1766,7 @@
                                     class="text-red-500">*</span></label>
                             <select wire:model.defer="guest.residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Residency</option>
                                 <option value="local">Local</option>
                                 <option value="foreigner">Foreigner</option>
@@ -1758,14 +1778,18 @@
 
                         <!-- Country of Origin -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Country of
-                                Origin <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.defer="guest.country_of_origin"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
-                                placeholder="Ex. Philippines">
-                            @error('guest.country_of_origin')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                                    class="text-red-500">*</span></label>
+                            <select wire:model="guest.country_of_origin"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <option value="" disabled selected>Select a country</option>
+                                @foreach ($countries as $countryOption)
+                                    <option value="{{ $countryOption }}">{{ $countryOption }}</option>
+                                @endforeach
+                            </select>
+                            @error('country')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -1803,8 +1827,10 @@
             <!-- Add Pet Modal -->
             @if ($activeModal === 'pet')
                 <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-                        <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                        <div
+                            class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
                             <h2 class="text-2xl font-bold text-center">Add Pet Info</h2>
                             <button wire:click="closeModal"
                                 class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
@@ -1814,18 +1840,24 @@
 
                         {{-- Breed Input --}}
                         <div class="mb-4">
-                            <label class="block mb-1 text-gray-700 dark:text-gray-300">Breed</label>
+                            <label
+                                class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Breed</label>
                             <input type="text" wire:model="breed"
-                                class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('breed') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
+                            @error('breed')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Vaccination Card Upload --}}
                         <div class="mb-4">
-                            <label class="block mb-1 text-gray-700 dark:text-gray-300">Vaccination Card (PDF)</label>
+                            <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Vaccination
+                                Card (PDF)</label>
                             <input type="file" wire:model="vaccinationCard" accept="application/pdf"
                                 class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('vaccinationCard') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('vaccinationCard')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Actions --}}
@@ -1834,7 +1866,7 @@
                                 Cancel
                             </x-ghost-button>
                             <x-button wire:click="savePet">
-                                Save Pet
+                                Save Changes
                             </x-button>
                         </div>
                     </div>
@@ -1855,31 +1887,41 @@
                         <div class="mb-4">
                             <label class="block mb-1">Adults</label>
                             <div class="flex items-center space-x-2">
-                                <button type="button" wire:click="decrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                                <input type="number" wire:model="roomTotalAdults" min="0" class="w-16 text-center border rounded px-2 py-1">
-                                <button type="button" wire:click="incrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                                <button type="button" wire:click="decrementAdults"
+                                    class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                                <input type="number" wire:model="roomTotalAdults" min="0"
+                                    class="w-16 text-center border rounded px-2 py-1">
+                                <button type="button" wire:click="incrementAdults"
+                                    class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
                             </div>
-                            @error('roomTotalAdults') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('roomTotalAdults')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="mb-4">
                             <label class="block mb-1">Kids</label>
                             <div class="flex items-center space-x-2">
-                                <button type="button" wire:click="decrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                                <input type="number" wire:model="roomTotalKids" min="0" class="w-16 text-center border rounded px-2 py-1">
-                                <button type="button" wire:click="incrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                                <button type="button" wire:click="decrementKids"
+                                    class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                                <input type="number" wire:model="roomTotalKids" min="0"
+                                    class="w-16 text-center border rounded px-2 py-1">
+                                <button type="button" wire:click="incrementKids"
+                                    class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
                             </div>
-                            @error('roomTotalKids') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('roomTotalKids')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                                            
+
                         <div class="flex justify-between mt-3">
                             <x-ghost-button wire:click="$set('showEditRoomModal', false)">
                                 Cancel
-                            </x-ghostbutton>
-                            <x-button wire:click="updateRoom">
-                                Update
-                            </x-button>
+                                </x-ghostbutton>
+                                <x-button wire:click="updateRoom">
+                                    Update
+                                </x-button>
                         </div>
                     </div>
                 </div>
@@ -1909,7 +1951,7 @@
                             <x-ghost-button wire:click="$set('showEditServiceModal', false)">
                                 Cancel
                             </x-ghost-button>
-                            <x-button wire:click="updateService" >
+                            <x-button wire:click="updateService">
                                 Update
                             </x-button>
                         </div>
@@ -1940,10 +1982,10 @@
                         <div class="flex justify-between mt-3">
                             <x-ghost-button wire:click="$set('showEditActivityModal', false)">
                                 Cancel
-                            </x-ghostbutton>
-                            <x-button wire:click="updateActivity">
-                                Update
-                            </x-button>
+                                </x-ghostbutton>
+                                <x-button wire:click="updateActivity">
+                                    Update
+                                </x-button>
                         </div>
                     </div>
                 </div>
@@ -2035,16 +2077,17 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('editingTransactionPropertyId') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            @error('editingTransactionPropertyId')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        
+
                         <!-- Birthdate -->
                         <div class="mb-4">
-                                <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
-                                <input type="date"
-                                    wire:model="editingBirthDate"
-                                    class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
+                            <input type="date" wire:model="editingBirthDate"
+                                class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
 
                         <!-- Guest Type -->
@@ -2174,9 +2217,9 @@
             @endif
 
 
-            
-           
-            
+
+
+
 
             <!-------------------------- END OF MODALS ---------------------------------->
 
@@ -2369,8 +2412,8 @@
 
 
 
-                                                    <!-- Add Guest Modal -->
-            {{-- @if ($activeModal === 'guest-info')
+<!-- Add Guest Modal -->
+{{-- @if ($activeModal === 'guest-info')
                 <div
                     class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div
@@ -2440,7 +2483,7 @@
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
-                   
+
                         </div>
 
                         <!-- Transaction Property -->
@@ -2479,7 +2522,7 @@
                         @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
                          <span class="text-sm text-gray-500">(Free of charge)</span>
                         @endif
-                            
+
 
                         <!-- Gender -->
                         <div class="mt-4">
@@ -2559,7 +2602,7 @@
             @endif --}}
 
 
-                   {{-- @if ($isFull)
+{{-- @if ($isFull)
                     <!-- Fill Reserved Guest Info (non-billable) -->
                     <x-button wire:click="openModal('guest-info')" icon="fas fa-id-card">
                         Fill Guest Info

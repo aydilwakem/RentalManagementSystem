@@ -95,8 +95,15 @@
                 @if ($selectedRooms)
                     <hr class="my-2 border-gray-200">
 
-                    <p class="mt-4 text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
+                    <!-- Total Pax -->
+                    <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
                         {{ $this->total_pax }}</p>
+
+                    <!-- Total Pet Charge -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
+                        <div class="text-sm">Pet fee: </div>
+                        <div class="text-sm">₱{{ number_format($this->computePetTotal(), 2) }}</div>
+                    </div>
 
                     <!-- Total Room Charge -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
@@ -112,28 +119,46 @@
 
                     <!-- Total Services Charge -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
-                        <div class="text-sm">Activity Subtotal: </div>
+                        <div class="text-sm">Services Subtotal: </div>
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
                     </div>
 
-                     <!-- Total Pet Charge -->
+                    <!-- Discount Code -->
+                    <hr class="my-2 border-gray-200">
+
+                    <!-- Subtotal Amount -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
-                        <div class="text-sm">Pet fee: </div>
-                        <div class="text-sm">₱{{ number_format($this->computePetTotal(), 2) }}</div>
+                        <div class="text-sm">Subtotal</div>
+                        <div class="text-sm">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
                     </div>
+
+                    <!-- Convenience Fee -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
+                        <div class="text-sm">Convenience Fee</div>
+                        <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                    </div>
+
+                    <!-- Total Amount -->
+                    <div
+                        class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
+                        <div class="text-lg">Total</div>
+                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
+                    </div>
+
+                    <hr>
 
                     <!-- Deposit -->
                     @if ($enable_deposit_percentage && $this->deposit > 0)
                         <!-- Deposit -->
-                        <div class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100">
+                        <div
+                            class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100 mt-2">
                             <div>Required Deposit</div>
                             <div class="font-semibold">
                                 ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
                         </div>
                     @endif
 
-                    <!-- Discount Code -->
-                    <hr class="my-2 border-gray-200">
+                    <hr>
                     @if ($discountMessage)
                         <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
                     @endif
@@ -146,49 +171,30 @@
                         $hasCode = !empty($promoCode) && empty($discountMessage) === false;
                     @endphp
 
-                    <div class="relative w-full mt-4">
-                        <input type="text" wire:model="promoCode"
-                            wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
-                            class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
-        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                            placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
-                            {{-- optional: disable when applied --}}>
+                    <div class="flex justify-center">
+                        <div class="relative max-w-xl mt-4 mb-2 flex justify-center ">
+                            <input type="text" wire:model="promoCode"
+                                wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+                                class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+                                {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+                                placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
+                                {{-- optional: disable when applied --}}>
 
-                        {{-- TODO: disable field when code is inputted, clear field when removed --}}
-                        @if ($discountMessage)
-                            {{-- does not work yet <33 --}}
-                            <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
-                                title="Remove Promo Code">
-                                &times;
-                            </button>
-                        @else
-                            <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
-                                Apply
-                            </button>
-                        @endif
+                            {{-- TODO: disable field when code is inputted, clear field when removed --}}
+                            @if ($discountMessage)
+                                <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
+                                    title="Remove Promo Code">
+                                    &times;
+                                </button>
+                            @else
+                                <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none">
+                                    Apply
+                                </button>
+                            @endif
+                        </div>
                     </div>
-
-                    <!-- Subtotal Amount -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Subtotal</div>
-                        <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
-                    </div>
-
-                    <!-- Convenience Fee -->
-                    <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
-                        <div class="text-lg">Convenience Fee</div>
-                        <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
-                    </div>
-
-                    <!-- Total Amount -->
-                    <div
-                        class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
-                        <div class="text-lg">Total</div>
-                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
-                    </div>
-
                 @endif
 
                 <!-- Empty message -->
@@ -273,9 +279,9 @@
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['total_amount'], 2) }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                   
+
                                     <button wire:click="editSelectedRoom({{ $room['room_id'] }})"
-                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Edit
                                     </button>
 
@@ -348,11 +354,11 @@
                                     {{ $activity['quantity'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity['amount'] }}</td>
-                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                  <button wire:click="editSelectedActivity({{ $activity['activity_id'] }})"
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    <button wire:click="editSelectedActivity({{ $activity['activity_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Edit
-                                </button>
+                                    </button>
                                     <button wire:click="RemoveService({{ $activity['activity_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
@@ -423,10 +429,10 @@
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $service['amount'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                  <button wire:click="editSelectedService({{ $service['service_id'] }})"
+                                    <button wire:click="editSelectedService({{ $service['service_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Edit
-                                </button>
+                                    </button>
                                     <button wire:click="RemoveService({{ $service['service_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
@@ -518,11 +524,16 @@
 
                 <!-- Country -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
                             class="text-red-500">*</span></label>
-                    <input type="text" wire:model="country" placeholder="Ex. Philippines"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
-                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+                    <select wire:model="country"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                        <option value="" disabled selected>Select a country</option>
+                        @foreach ($countries as $countryOption)
+                            <option value="{{ $countryOption }}">{{ $countryOption }}</option>
+                        @endforeach
+                    </select>
                     @error('country')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -577,7 +588,7 @@
                     @enderror
                 </div>
 
-                
+
                 <div class="col-span-1">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                         Are pets included in this reservation
@@ -621,17 +632,20 @@
                     @foreach ($pets as $index => $pet)
                         <div class="flex items-center justify-between">
                             <span>{{ $pet['breed'] }}</span>
-                            <button wire:click="removeGuestPet({{ $index }})" class="text-red-500">Remove</button>
+                            <button wire:click="removeGuestPet({{ $index }})"
+                                class="text-red-500">Remove</button>
                         </div>
                     @endforeach
                 @endif
 
                 <!-- Special Requests -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Special Requests</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Special
+                        Requests</label>
                     <textarea wire:model="requests" placeholder="Ex. Late check-in, allergy info, etc."
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
-                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white resize-none" rows="4"></textarea>
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white resize-none"
+                        rows="4"></textarea>
                     @error('requests')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -759,36 +773,45 @@
                                                     {{ $room->ideal_guest }}
                                                 </p>
 
-                                                    @if ($room->occupancy_type === 'whole_number')
-                                                                 <i class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                            Maximum Capacity: {{ $room->max_guests }} guests
+                                                @if ($room->occupancy_type === 'whole_number')
+                                                    <i class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                    Maximum Capacity: {{ $room->max_guests }} guests
+                                                    </p>
+                                                @elseif ($room->occupancy_type === 'combinations')
+                                                    @php
+                                                        $originalCombinations = collect($room->occupancy_rules)->where(
+                                                            'type',
+                                                            'original',
+                                                        );
+
+                                                        $formatted = $originalCombinations->map(function ($combo) {
+                                                            $parts = [];
+
+                                                            if (!empty($combo['adults'])) {
+                                                                $parts[] =
+                                                                    $combo['adults'] .
+                                                                    ' adult' .
+                                                                    ($combo['adults'] > 1 ? 's' : '');
+                                                            }
+
+                                                            if (!empty($combo['kids'])) {
+                                                                $parts[] =
+                                                                    $combo['kids'] .
+                                                                    ' kid' .
+                                                                    ($combo['kids'] > 1 ? 's' : '');
+                                                            }
+
+                                                            return implode(' and ', $parts);
+                                                        });
+                                                    @endphp
+
+                                                    @if ($formatted->isNotEmpty())
+                                                        <i
+                                                            class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                        Max occupancy: {{ $formatted->implode(' or ') }}
                                                         </p>
-                                                    @elseif ($room->occupancy_type === 'combinations')
-                                                        @php
-                                                            $originalCombinations = collect($room->occupancy_rules)
-                                                                ->where('type', 'original');
-
-                                                            $formatted = $originalCombinations->map(function ($combo) {
-                                                                $parts = [];
-
-                                                                if (!empty($combo['adults'])) {
-                                                                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
-                                                                }
-
-                                                                if (!empty($combo['kids'])) {
-                                                                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
-                                                                }
-
-                                                                return implode(' and ', $parts);
-                                                            });
-                                                        @endphp
-
-                                                        @if ($formatted->isNotEmpty())
-                                                                 <i class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                                Max occupancy: {{ $formatted->implode(' or ') }}
-                                                            </p>
-                                                        @endif
                                                     @endif
+                                                @endif
 
                                                 <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
                                                     <i class="fas fa-plus mr-2 text-gray-500 dark:text-gray-300"></i>
@@ -811,7 +834,8 @@
                                                         <span class="text-green-700 font-bold mb-1">
                                                             ₱{{ number_format($room->dynamic_rate, 2) }}
                                                         </span>
-                                                        <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
+                                                        <span
+                                                            class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-4
                                                             @if ($room->rate_type === 'Weekend') bg-yellow-100 text-yellow-700
                                                             @elseif ($room->rate_type === 'Weekdays') bg-green-100 text-green-700
                                                             @elseif ($room->rate_type === 'Peak') bg-red-100 text-red-700
@@ -823,7 +847,8 @@
                                                             @endif
                                                         </span>
                                                     @else
-                                                        <span class="text-red-600 text-sm">No rate info available</span>
+                                                        <span class="text-red-600 text-sm">No rate info
+                                                            available</span>
                                                     @endif
                                                 </p>
 
@@ -832,35 +857,39 @@
 
                                             <!-- Booking Controls -->
                                             <div class="md:w-1/3 flex flex-col justify-between mt-4 md:mt-0 space-y-4">
-                                               
+
                                                 <div class="flex gap-4">
 
-                                                <!-- Adults -->
-                                                <div class="flex-1">
-                                                    <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
-                                                    <select wire:model.live="adults.{{ $room->id }}"
-                                                        wire:change="updateKidOptions({{ $room->id }})"
-                                                        class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @foreach ($room->availableAdultOptions ?? [] as $adult)
-                                                            <option value="{{ $adult }}">{{ $adult }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                                    <!-- Adults -->
+                                                    <div class="flex-1">
+                                                        <label
+                                                            class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                        <select wire:model.live="adults.{{ $room->id }}"
+                                                            wire:change="updateKidOptions({{ $room->id }})"
+                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                            @foreach ($room->availableAdultOptions ?? [] as $adult)
+                                                                <option value="{{ $adult }}">
+                                                                    {{ $adult }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
 
-                                                <!-- Kids -->
-                                                <div class="flex-1">
-                                                    <label class="block text-sm font-medium text-gray-700">Children</label>
-                                                    <select wire:model.live="kids.{{ $room->id }}"
-                                                        class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                        @foreach ($dynamicKidOptions[$room->id] ?? $room->availableKidOptions ?? [] as $kid)
-                                                            <option value="{{ $kid }}">{{ $kid }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                                    <!-- Kids -->
+                                                    <div class="flex-1">
+                                                        <label
+                                                            class="block text-sm font-medium text-gray-700">Children</label>
+                                                        <select wire:model.live="kids.{{ $room->id }}"
+                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                            @foreach ($dynamicKidOptions[$room->id] ?? ($room->availableKidOptions ?? []) as $kid)
+                                                                <option value="{{ $kid }}">
+                                                                    {{ $kid }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
 
-                                                  
 
-                                                  
+
+
                                                 </div>
 
 
@@ -921,8 +950,8 @@
 
                     <!-- Header -->
                     <div
-                        class="flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-green-300">Choose Activities</h2>
+                        class="flex justify-between items-center border-b bg-green-50 border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
+                        <h2 class="text-2xl font-semibold text-green-700 dark:text-green-300">Choose Activities</h2>
 
                         <button wire:click="$set('activityModal', false)"
                             class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
@@ -948,20 +977,27 @@
                             <div>
                                 @foreach ($activities as $activity)
                                     <div wire:key="activity-{{ $activity->id }}"
-                                        class="flex items-center justify-between bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+                                        class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
 
                                         <!-- Left: Image -->
+                                        @php
+                                            $firstImage = is_array(json_decode($activity->image))
+                                                ? json_decode($activity->image)[0] ?? null
+                                                : null;
+                                        @endphp
+
                                         <div
-                                            class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                                            <img src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
+                                            class="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                                            <img src="{{ asset($firstImage ? 'storage/' . $firstImage : 'images/rms-default.png') }}"
                                                 alt="{{ $activity->name }}" class="object-cover w-full h-full">
                                         </div>
 
+
                                         <!-- Middle: Name and Description -->
-                                        <div class="flex-1 px-4">
+                                        <div class="flex-1 px-8">
                                             <h4 class="text-xl font-semibold text-gray-800 dark:text-white">
                                                 {{ $activity->name }}</h4>
-                                            <p class="text-sm text-gray-600 mt-1 dark:text-gray-200">
+                                            <p class="text-sm text-gray-600 mt-1 dark:text-gray-200 text-justify">
                                                 {{-- Show more / less when description is long --}}
                                                 @if (empty($activity->description))
                                                     <span class="italic text-gray-400">No description provided</span>
@@ -984,10 +1020,10 @@
                                         </div>
 
                                         <!-- Right: Price and Quantity -->
-                                        <div class="flex flex-col md:flex-row md:space-x-12">
+                                        <div class="flex flex-col md:flex-row md:space-x-6">
                                             <div class="flex flex-col">
                                                 <label for="quantity-{{ $activity->id }}"
-                                                    class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
+                                                    class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200 text-center">
                                                     Quantity:
                                                 </label>
 
@@ -1002,10 +1038,10 @@
 
                                                     <span
                                                         class="text-center w-16 py-1 bg-white border border-gray-300 rounded ">
-                                                         {{ $quantity[$activity->id] ?? 1 }}
+                                                        {{ $quantity[$activity->id] ?? 1 }}
                                                     </span>
 
-                                                    @if (($quantity[$activity->id] ?? 1))
+                                                    @if ($quantity[$activity->id] ?? 1)
                                                         <button type="button"
                                                             wire:click.prevent="incrementActivity('{{ $activity->id }}')"
                                                             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline
@@ -1018,7 +1054,7 @@
 
 
                                             <!-- Add Activity Button -->
-                                            <div class=" flex flex-col justify-between mt-4 space-y-4">
+                                            <div class=" flex flex-col justify-between mt-4 py-2 space-y-4">
                                                 @php
                                                     $isSelected = collect($selectedActivities)->contains(
                                                         'activity_id',
@@ -1028,7 +1064,7 @@
 
                                                 <button
                                                     wire:click="{{ $isSelected ? 'RemoveActivity' : 'SelectedActivities' }}({{ $activity->id }})"
-                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
+                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-xs transition ease-in-out duration-150 uppercase"
                                                     wire:loading.attr="disabled">
 
                                                     <!-- Spinner -->
@@ -1054,9 +1090,6 @@
                                                             {{ $isSelected ? 'Remove' : 'Add' }}
                                                         </span>
                                                     </div>
-
-
-
                                                 </button>
 
                                             </div>
@@ -1082,7 +1115,8 @@
                     <!-- Header -->
                     <div
                         class="flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-green-300">Choose Services/Charge</h2>
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-green-300">Choose Services/Charge
+                        </h2>
 
                         <button wire:click="$set('servicesModal', false)"
                             class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
@@ -1155,10 +1189,10 @@
 
                                                     <span
                                                         class="text-center w-16 py-1 bg-white border border-gray-300 rounded ">
-                                                         {{ $quantity[$service->id] ?? 1 }}
+                                                        {{ $quantity[$service->id] ?? 1 }}
                                                     </span>
 
-                                                    @if (($quantity[$service->id] ?? 1))
+                                                    @if ($quantity[$service->id] ?? 1)
                                                         <button type="button"
                                                             wire:click.prevent="incrementService('{{ $service->id }}')"
                                                             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline
@@ -1233,11 +1267,11 @@
                     <!-- Guest Name -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">First Name <span
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">First Name <span
                                     class="text-red-500">*</span></label>
                             <input type="text" wire:model="guest_first_name" placeholder="Ex. Juan"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600"
                                 required>
                             @error('guest_first_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1245,21 +1279,21 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Middle Name</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Middle Name</label>
                             <input type="text" wire:model="guest_middle_name" placeholder="Ex. Mercado"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             @error('guest_middle_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Last Name <span
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Last Name <span
                                     class="text-red-500">*</span></label>
                             <input type="text" wire:model="guest_last_name" placeholder="Ex. Dela Cruz"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600"
                                 required>
                             @error('guest_last_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1267,10 +1301,10 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Suffix</label>
+                            <label class="bblock text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Suffix</label>
                             <input type="text" wire:model="guest_suffix" placeholder="Ex. Jr., Sr., III"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             @error('guest_suffix')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -1279,11 +1313,11 @@
 
                     <!-- Guest Type -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 dark:text-gray-200">Guest Type <span
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Guest Type <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="guest_type_id"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select Guest Type</option>
                             @foreach ($guest_types as $type)
                                 <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
@@ -1296,11 +1330,11 @@
 
                     <!-- Gender -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700  dark:text-gray-200">Gender <span
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Gender <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="guest_gender"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -1313,11 +1347,11 @@
 
                     <!-- Residency -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700  dark:text-gray-200">Residency <span
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Residency <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="guest_residency"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select Residency</option>
                             <option value="local">Local</option>
                             <option value="foreigner">Foreigner</option>
@@ -1327,18 +1361,22 @@
                         @enderror
                     </div>
 
-                    <!-- Country of Origin -->
+                    <!-- Country -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 dark:text-gray-200">Country of Origin <span
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" wire:model="guest_country_of_origin" placeholder="Ex. Philippines"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                        <select wire:model="guest_country_of_origin"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                            <option value="" disabled>Select a country</option>
+                            @foreach ($countries as $countryOption)
+                                <option value="{{ $countryOption }}">{{ $countryOption }}</option>
+                            @endforeach
+                        </select>
                         @error('guest_country_of_origin')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
 
                     <!-- Actions -->
                     <div class="flex justify-between items-center gap-2 mt-6">
@@ -1568,7 +1606,7 @@
             </div>
         @endif
 
-         <!-- Edit Activity Modal -->
+        <!-- Edit Activity Modal -->
         @if ($showEditActivityModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
@@ -1613,8 +1651,9 @@
         @if ($showEditRoomModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-                    <div class="relative -mt-6 -mx-6 mb-4 bg-blue-50 text-blue-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
-                    <!-- Title -->
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-blue-50 text-blue-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
                         <h2 class="text-2xl font-bold text-center">Edit {{ $roomName }} Quantity</h2>
                     </div>
 
@@ -1622,100 +1661,110 @@
                     <div class="flex items-center justify-center gap-2">
                         <label class="block mb-1">Adults</label>
                         <div class="flex items-center space-x-2">
-                            <button type="button" wire:click="decrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                            <input type="number" wire:model="roomTotalAdults" min="0" class="w-16 text-center border rounded px-2 py-1">
-                            <button type="button" wire:click="incrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                            <button type="button" wire:click="decrementAdults"
+                                class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                            <input type="number" wire:model="roomTotalAdults" min="0"
+                                class="w-16 text-center border rounded px-2 py-1">
+                            <button type="button" wire:click="incrementAdults"
+                                class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
                         </div>
-                        @error('roomTotalAdults') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        @error('roomTotalAdults')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block mb-1">Kids</label>
                         <div class="flex items-center space-x-2">
-                            <button type="button" wire:click="decrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                            <input type="number" wire:model="roomTotalKids" min="0" class="w-16 text-center border rounded px-2 py-1">
-                            <button type="button" wire:click="incrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                            <button type="button" wire:click="decrementKids"
+                                class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                            <input type="number" wire:model="roomTotalKids" min="0"
+                                class="w-16 text-center border rounded px-2 py-1">
+                            <button type="button" wire:click="incrementKids"
+                                class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
                         </div>
-                        @error('roomTotalKids') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        @error('roomTotalKids')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    </div>
+                </div>
 
-                    <div class="flex justify-between mt-5">
-                        <x-ghost-button wire:click="$set('showEditRoomModal', false)">
-                            Cancel
-                        </x-ghost-button>
-                        <x-button wire:click="updateRoom">
-                            Update
-                        </x-button>
-                    </div>
+                <div class="flex justify-between mt-5">
+                    <x-ghost-button wire:click="$set('showEditRoomModal', false)">
+                        Cancel
+                    </x-ghost-button>
+                    <x-button wire:click="updateRoom">
+                        Update
+                    </x-button>
                 </div>
             </div>
-        @endif
-
-        
-
-
-
-
-
-
-
-
-
-
-
- 
-       
-
-        <!-- Can't add activity modal -->
-        @if ($addRoomFirstModal)
-            <x-dialog-modal wire:model.live="addRoomFirstModal" type="ghost">
-                <x-slot name="title">
-                    {{ __('No Rooms Selected Yet') }}
-                </x-slot>
-
-                <x-slot name="content">
-                    {{ __('To add activities, please add one or more rooms first.') }}
-                </x-slot>
-
-                <x-slot name="footer">
-                    <x-secondary-button wire:click="$set('addRoomFirstModal', false)" wire:loading.attr="disabled">
-                        {{ __('Close') }}
-                    </x-secondary-button>
-                </x-slot>
-            </x-dialog-modal>
-        @endif
-
-
-        <!------------------------- BUTTON TO SUBMIT ------------------------->
-        <!-- Actions Buttons -->
-        <div class="flex justify-between items-center space-y-2 py-5">
-            <x-button onclick="history.back()" type="button"
-                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                Cancel
-            </x-button>
-
-            <x-button type="button" wire:click="CreateReservation" wire:loading.attr="disabled">
-                <div class="flex items-center justify-center">
-                    <!-- Spinner -->
-                    <span wire:loading class="mr-2" wire:target="CreateReservation">
-                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                            </path>
-                        </svg>
-                    </span>
-                    <!-- Button Text -->
-                    <span wire:loading.remove wire:target="CreateReservation">
-                        Create Reservation
-                    </span>
-                </div>
-            </x-button>
-
-        </div>
     </div>
+    @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Can't add activity modal -->
+    @if ($addRoomFirstModal)
+        <x-dialog-modal wire:model.live="addRoomFirstModal" type="ghost">
+            <x-slot name="title">
+                {{ __('No Rooms Selected Yet') }}
+            </x-slot>
+
+            <x-slot name="content">
+                {{ __('To add activities, please add one or more rooms first.') }}
+            </x-slot>
+
+            <x-slot name="footer">
+                <x-secondary-button wire:click="$set('addRoomFirstModal', false)" wire:loading.attr="disabled">
+                    {{ __('Close') }}
+                </x-secondary-button>
+            </x-slot>
+        </x-dialog-modal>
+    @endif
+
+
+    <!------------------------- BUTTON TO SUBMIT ------------------------->
+    <!-- Actions Buttons -->
+    <div class="flex justify-between items-center space-y-2 py-5">
+        <x-button onclick="history.back()" type="button"
+            class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+            Cancel
+        </x-button>
+
+        <x-button type="button" wire:click="CreateReservation" wire:loading.attr="disabled">
+            <div class="flex items-center justify-center">
+                <!-- Spinner -->
+                <span wire:loading class="mr-2" wire:target="CreateReservation">
+                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                        </path>
+                    </svg>
+                </span>
+                <!-- Button Text -->
+                <span wire:loading.remove wire:target="CreateReservation">
+                    Create Reservation
+                </span>
+            </div>
+        </x-button>
+
+    </div>
+</div>
 </div>

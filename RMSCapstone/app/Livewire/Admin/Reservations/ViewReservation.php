@@ -40,9 +40,7 @@ use App\Services\ReceiptService;
 use App\Services\PaymentService;
 use App\Services\CartService;
 use App\Services\GuestDetailService;
-
-
-
+use PragmaRX\Countries\Package\Countries;
 
 #[Layout('layouts.app')]
 class ViewReservation extends Component
@@ -105,7 +103,7 @@ class ViewReservation extends Component
 
     public $paymentStatus = [];
 
-    // -------------- SERVICES ------------------- // 
+    // -------------- SERVICES ------------------- //
 
 
 
@@ -137,6 +135,7 @@ class ViewReservation extends Component
     public $roomTotalAdults;
     public $roomTotalKids;
     public $editingBreed;
+    public $countries;
 
 
 
@@ -266,6 +265,10 @@ class ViewReservation extends Component
         $this->guestTypes = GuestType::all();
 
         $this->loadAllInvoiceItems();
+
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->guest['country_of_origin'] = $this->guest['country_of_origin'] ?? 'Philippines';
+
     }
 
     public function loadAllInvoiceItems()
@@ -1000,6 +1003,18 @@ class ViewReservation extends Component
             + $this->computeServicesTotal();
     }
 
+    // Computes Base Subtotal (Room, Activities, Services, Pet) with no convenience fee.
+    public function computeBaseSubtotalAfterDiscount(): float
+    {
+        $baseSubtotal = $this->computeRoomsTotal()
+            + $this->computeActivitiesTotal()
+            + $this->computeServicesTotal();
+
+        $discount = $this->transaction->promo_discount_amount ?? 0;
+
+        return max($baseSubtotal - $discount, 0);
+    }
+
     // Computes Convenience Fee Total from completed payments
     public function computeConvenienceFeeTotal()
     {
@@ -1026,6 +1041,8 @@ class ViewReservation extends Component
         $service = Service::where('name', 'Pet Fee')->first();
         return $service?->amount ?? 0;
     }
+
+
 
 
 
@@ -1252,7 +1269,7 @@ class ViewReservation extends Component
      * - Booked properties
      * - Added activities and their respective pivot data
      * - Totals for rooms and add-ons
-     * 
+     *
      * ----------------------------------------------------------------------------
      */
     public function exportReservationDetails()
@@ -1262,11 +1279,11 @@ class ViewReservation extends Component
             'transactionUser',
             'guestDetails',
             'properties',
-            'guestPets', 
-            'promoCode', 
+            'guestPets',
+            'promoCode',
             'services' => function($query){
                 $query->withPivot('quantity', 'amount', 'service_datetime', 'status', 'payment_status');
-            }, 
+            },
             'activities' => function ($query) {
                 $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
             },
@@ -1289,7 +1306,7 @@ class ViewReservation extends Component
             'guestDetails' => $transaction->guestDetails,
             'invoice' => $transaction->invoice,
             'guestPets' => $transaction->guestPets,
-            'promoCode' => $transaction->promoCode, 
+            'promoCode' => $transaction->promoCode,
             'activities' => $transaction->activities,
             'properties' => $transaction->properties,
             'payments' => $transaction->invoice->payments,
@@ -1370,7 +1387,7 @@ class ViewReservation extends Component
 
 
 
-    // --------------------- DATABASE INSERTION --------------------------- // 
+    // --------------------- DATABASE INSERTION --------------------------- //
 
 
     public function CreatePayment(PaymentService $paymentService)
@@ -1419,7 +1436,7 @@ class ViewReservation extends Component
     }
 
 
-    // --------------------- HELPER METHODS --------------------------- // 
+    // --------------------- HELPER METHODS --------------------------- //
 
     // After a payment, the payment status of the items in the cart will be tracked and updated.
     public function updatePaymentStatus(PaymentService $paymentService, float $amountPaid)

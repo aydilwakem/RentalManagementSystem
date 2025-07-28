@@ -48,8 +48,8 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
-                        {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                        @include('livewire.guest.reservation.choose-room')
+                        @include('livewire.guest.reservation.guest-detail')
+                        {{-- @include('livewire.guest.reservation.choose-room') --}}
                         {{-- @include('livewire.guest.reservation.review') --}}
                     </div>
                 @endif
@@ -178,22 +178,22 @@
                                                     <!-- Labels -->
                                                     <div>
                                                         <div class="text-sm text-gray-600">
-                                                            {{ $item['roomRateName'] }} (per night × days):
+                                                            {{ $item['roomRateName'] }} (per night):
                                                         </div>
                                                         @if ($item['extra_charge'])
                                                             <div class="text-sm text-gray-600">Extra Person Charge:
                                                             </div>
                                                         @endif
-                                                        <div class="text-sm text-gray-600">Subtotal:</div>
+                                                        <div class="text-sm font-semibold text-gray-600">Subtotal:</div>
                                                     </div>
 
                                                     <!-- Amounts -->
                                                     <div class="text-right">
-                                                        <div class="text-sm font-semibold text-gray-800">
+                                                        <div class="text-sm  text-gray-800">
                                                             ₱{{ number_format($item['roomAmount'], 2) }}
                                                         </div>
                                                         @if ($item['extra_charge'])
-                                                            <div class="text-sm font-semibold text-gray-800">
+                                                            <div class="text-sm  text-gray-800">
                                                                 ₱{{ number_format($item['extra_charge'], 2) }}
                                                             </div>
                                                         @endif
@@ -244,13 +244,28 @@
                                     @endif
                                 @endforeach
                             @endif
-                            <p class="mt-2">Total Guests: {{ $total_pax }}</p>
                             <!-- Pet Fee Amount -->
                             @if ($this->computePetTotal())
-                                <p>
-                                    Pet fee ₱{{ number_format($this->computePetTotal(), 2) }}
-                                </p>
+                                <div
+                                    class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative">
+                                    <!-- Activity Details -->
+                                    <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                        <!-- Charges Breakdown -->
+                                        <div class="flex justify-between items-start gap-2">
+                                            <!-- Label and Quantity -->
+                                            <div class="text-md">
+                                                <i class="fa-solid fa-paw"></i>
+                                                <strong>Pet fee:</strong>
+                                            </div>
+                                            <!-- Amount -->
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                ₱{{ number_format($this->computePetTotal(), 2) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @endif
+                            <p class="mt-2">Total Guests: {{ $total_pax }}</p>
                         </div>
                     @else
                         <!-- Show when no room is selected -->
@@ -281,8 +296,8 @@
                             <span class="sr-only">Close</span>
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                             </svg>
                         </button>
                     </div>

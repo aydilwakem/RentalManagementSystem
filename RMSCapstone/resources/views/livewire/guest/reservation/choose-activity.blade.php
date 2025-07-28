@@ -13,8 +13,16 @@
                 <!-- Activity Card -->
                 <div
                     class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0 flex flex-col">
+
+                    <!-- Activity Image -->
+                    @php
+                        $firstImage = is_array(json_decode($activity->image))
+                            ? json_decode($activity->image)[0] ?? null
+                            : null;
+                    @endphp
+
                     <img class="w-full h-48 object-cover"
-                        src="{{ asset($activity->image ? 'storage/' . $activity->image : 'images/rms-default.png') }}"
+                        src="{{ asset($firstImage ? 'storage/' . $firstImage : 'images/rms-default.png') }}"
                         alt="{{ $activity->name }}">
 
                     <!-- Activity Name -->
@@ -47,7 +55,8 @@
                         <div class="flex items-center justify-between sm:flex-row mt-auto">
                             <!-- Counter -->
                             <div class="flex flex-col">
-                                <label for="quantity-{{ $activity->id }}" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="quantity-{{ $activity->id }}"
+                                    class="text-sm font-medium text-gray-700 mb-1">
                                     Quantity:
                                 </label>
 
@@ -105,8 +114,8 @@
                                             <span wire:loading class=" flex items-center justify-center"
                                                 wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                        stroke-width="4" />
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                 </svg>

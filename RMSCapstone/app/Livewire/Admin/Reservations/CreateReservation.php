@@ -32,6 +32,7 @@ use App\Services\EmailService;
 use App\Models\Service;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
+use PragmaRX\Countries\Package\Countries;
 
 class CreateReservation extends Component
 {
@@ -84,7 +85,7 @@ class CreateReservation extends Component
     // Additional Guest related public properties
 
     public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
-    public $guest_gender, $guest_residency, $guest_country_of_origin;
+    public $guest_gender, $guest_residency, $guest_country_of_origin, $countries;
 
     public $guest_types = [];
     public $guests = [];
@@ -127,7 +128,7 @@ class CreateReservation extends Component
     public string $breed = '';
 
 
-    //----------------------- TRAITS -------------------------- // 
+    //----------------------- TRAITS -------------------------- //
 
     use HasFormattedDates;
 
@@ -215,7 +216,7 @@ class CreateReservation extends Component
      * ------------------------------ BOOT ---------------------------------
      *
      * Injects necessary services into the component via ServiceBag.
-     * 
+     *
      * ---------------------------------------------------------------------
      */
     public function boot(ServiceBag $services): void
@@ -250,6 +251,7 @@ class CreateReservation extends Component
         $this->loadRooms();
         $this->loadBranding();
         $this->getAvailableRooms();
+        $this->initializeGuestResidency();
     }
 
 
@@ -458,7 +460,7 @@ class CreateReservation extends Component
      *
      * Manages the application and removal of promotional codes affecting
      * the subtotal and total amount in the cart.
-     * 
+     *
      * Internal Helper:
      * - `failPromo`: Fallback handler for invalid promo codes, resets discount state.
      *
@@ -665,7 +667,7 @@ class CreateReservation extends Component
      * ----------------------------- ACTIVITY CART LOGIC -----------------------------
      *
      * Handles adding and managing quantities of activities (or other non-room items)
-     * in the reservation cart. 
+     * in the reservation cart.
      *
      * ------------------------------------------------------------------------------
      */
@@ -776,7 +778,7 @@ class CreateReservation extends Component
      * ----------------------------- SERVICE CART LOGIC -----------------------------
      *
      * Handles adding and managing quantities of activities (or other non-room items)
-     * in the reservation cart. 
+     * in the reservation cart.
      *
      * ------------------------------------------------------------------------------
      */
@@ -954,7 +956,7 @@ class CreateReservation extends Component
      * ------------------------- GUEST PET MANAGEMENT LOGIC -----------------------------
      *
      * Handles the addition, editing, and deletion of multiple guest pet entries dynamically
-     * within a reservation or booking form. 
+     * within a reservation or booking form.
      * -----------------------------------------------------------------------------------
      */
     public function addMultiplePets()
@@ -985,8 +987,8 @@ class CreateReservation extends Component
 
     /**
      * ----------------------------- RESERVATION WORKFLOW LOGIC -----------------------------
-  
-  
+
+
      *
      * Handles the complete process of registering a guest reservation, from user creation
      * to payment session generation and confirmation email dispatch.
@@ -1097,7 +1099,7 @@ class CreateReservation extends Component
     /**
      * ----------------------------- HELPERS -----------------------------
      *
-     * Contains utility methods that assist in preparing and transforming 
+     * Contains utility methods that assist in preparing and transforming
      * data for better usability and accuracy within the reservation process.
      * -------------------------------------------------------------------
      */
@@ -1166,7 +1168,7 @@ class CreateReservation extends Component
         // Fetch the extra charge depending on its room
         $extraCharge = $room->extra_person_charge;
 
-        // --------------------- ASSIGN VALUES ----------------------- // 
+        // --------------------- ASSIGN VALUES ----------------------- //
 
         // Assign the number of adults and kids
         $adults = (int) ($this->adults[$roomId] ?? 1);
@@ -1181,7 +1183,7 @@ class CreateReservation extends Component
         // Computes the roomAmount by multiplying rate by stay duration
         $roomAmount = $roomRate * $stayDuration;
 
-        // Computes the extra charge total 
+        // Computes the extra charge total
         $extraChargeTotal = $extraCharge * $extraGuests * $stayDuration;
 
 
@@ -1429,7 +1431,7 @@ class CreateReservation extends Component
 
 
 
-    /** 
+    /**
      * ----------------------------- VALIDATION LOGIC -----------------------------
      * This section contains all methods and rules used for validating user input,
      * such as checking required fields, date logic, and cart duplication.
@@ -1489,15 +1491,15 @@ class CreateReservation extends Component
     /**
      * ----------------------------- LOADERS -----------------------------
      *
-     * Contains methods responsible for loading initial and dynamic data 
+     * Contains methods responsible for loading initial and dynamic data
      * into the reservation form based on user context and current state.
-     * 
+     *
      * Responsibilities:
      * - `initializeDates`: Sets the default check-in and check-out dates using the current time in Asia/Manila timezone.
      * - `loadRooms`: Fetches available rooms, applies dynamic rates using the RoomRateService, and maps rate-related metadata.
      * - `loadStaticData`: Loads static reference data such as available activities, payment methods, and guest types.
      * - `loadBranding`: Retrieves company branding details (name, logo, contact, social links) using the BrandingService.
-     * 
+     *
      * These methods are typically called on mount or when data needs to be refreshed based on user interaction.
      * -------------------------------------------------------------------
      */
@@ -1535,6 +1537,22 @@ class CreateReservation extends Component
         $this->guest_types = GuestType::all();
         $this->services_charges = Service::all();
     }
+
+    public function initializeGuestResidency()
+    {
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
+        $this->guest_country_of_origin = 'Philippines';
+
+        //Default country
+        //  if (strtolower($this->guest_residency) === 'local') {
+        // $this->guest_country_of_origin = 'Philippines';
+        // } else {
+        //     $this->guest_country_of_origin = '';
+        // }
+
+    }
+
 
     protected function loadBranding(): void
     {

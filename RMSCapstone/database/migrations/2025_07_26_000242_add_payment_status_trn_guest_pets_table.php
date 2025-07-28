@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('trn_guest_pets', function (Blueprint $table) {
-            $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('pending')->after('total_fee');
+            $table->enum('payment_status', ['pending','unpaid', 'partial', 'paid'])->default('pending')->after('total_fee');
             $table->timestamp('paid_at')->nullable()->after('payment_status');
         });
     }

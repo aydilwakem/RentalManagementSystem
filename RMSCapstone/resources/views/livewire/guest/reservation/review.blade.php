@@ -1,7 +1,7 @@
 <div class="flex items-center justify-center min-h-screen p-4">
     <div class="w-full max-w-3xl">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-green-700 text-white text-2xl font-bold px-6 py-5 text-center">
+            <div class="bg-green-800 text-white text-2xl font-bold px-6 py-5 text-center">
                 Review Your Reservation Details
             </div>
 
@@ -130,6 +130,11 @@
                                         <p>{{ $item['days'] }} Night(s)</p>
                                     </div>
                                     <div>
+                                        <p class="text-gray-600 text-sm mb-1">Room Rate</p>
+                                        {{-- <p class="font-medium text-gray-800">₱8,500</p> --}}
+                                        <p>₱{{ number_format($item['roomAmount'], 2) }}</p>
+                                    </div>
+                                    <div>
                                         <p class="text-gray-600 text-sm mb-1">Guests</p>
                                         {{-- <p class="font-medium text-gray-800">2 Adults, 2 Children</p> --}}
                                         <p>{{ $item['adults'] }} Adults, {{ $item['kids'] }} Children</p>
@@ -140,8 +145,9 @@
                                         <p>{{ $item['extra_guest'] }} (₱{{ number_format($item['extra_charge'], 2) }})
                                         </p>
                                     </div>
+
                                     <div>
-                                        <p class="text-gray-600 text-sm mb-1">Room Rate</p>
+                                        <p class="text-gray-600 text-sm mb-1">Pet Fee</p>
                                         {{-- <p class="font-medium text-gray-800">₱8,500</p> --}}
                                         <p>₱{{ number_format($item['roomAmount'], 2) }}</p>
                                     </div>
@@ -150,6 +156,7 @@
                                         {{-- <p class="font-bold text-lg text-green-700">₱8500</p> --}}
                                         <p class="font-semibold">₱{{ number_format($item['total_amount'], 2) }}</p>
                                     </div>
+
                                 </div>
                             </div>
                         @endif
@@ -220,11 +227,11 @@
 
                 <!-- Summary -->
                 <div class="border-t-2 border-gray-200 pt-6">
-                    <div class="flex flex-col space-y-4">
+                    <div class="flex flex-col space-y-2">
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-semibold text-gray-700">Paymongo Convenience Fee</h3>
+                            <h3 class="text-lg font-semibold text-gray-700">Convenience Fee</h3>
                             <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                         </div>
 
@@ -246,8 +253,6 @@
                                 </p>
                             </div>
                         @endif
-
-
                     </div>
                 </div>
 
