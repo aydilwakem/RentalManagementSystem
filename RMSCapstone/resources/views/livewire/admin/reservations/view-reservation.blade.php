@@ -846,6 +846,31 @@
                                 ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
                             </div>
                         </div>
+                
+                        <!-- Sub Total with discount -->
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            Promo Applied:
+                            <div>
+                                {{ $transaction->promoCode->code ?? '' }}
+
+                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
+                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
+                            @elseif ($transaction->promoCode)
+                                {{-- Flat discount --}}
+                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
+                            @endif
+
+                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
+                            </div>
+                        </div>
+
+                        <!-- Sub Total with discount -->
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            Subtotal after discount:
+                            <div>
+                                ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
+                            </div>
+                        </div>
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
@@ -872,7 +897,6 @@
                                 ₱{{ number_format($this->invoice->amount_paid, 2) }}
                             </div>
                         </div>
-
 
                         <!-- Balance Due -->
                         <div

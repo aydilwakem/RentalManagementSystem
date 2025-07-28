@@ -32,4 +32,9 @@ class TransactionProperty extends Model
     {
         return $this->belongsTo(Property::class);
     }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

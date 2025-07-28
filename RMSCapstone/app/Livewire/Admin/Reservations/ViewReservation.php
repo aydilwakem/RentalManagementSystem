@@ -9,6 +9,8 @@ use App\Models\Receipt;
 use App\Models\Payment;
 use App\Models\GuestPet;
 use App\Models\TransactionProperty;
+use App\Models\TransactionService;
+use App\Models\TransactionActivity;
 use App\Models\Activity;
 use App\Models\Service;
 use App\Models\GuestDetail;
@@ -540,6 +542,7 @@ class ViewReservation extends Component
             );
 
             // Recalculate all amounts in invoice
+            $this->recalculateTransactionActivity($this->editingActivityId);
             $this->recalculateInvoice();
             $this->loadAllInvoiceItems();
 
@@ -792,10 +795,11 @@ class ViewReservation extends Component
             $this->serviceTransactionService->updateServiceQuantity(
                 $this->editingServiceId,
                 $this->serviceQuantity,
-                $this->transaction
+                $this->transaction,
             );
 
             // Recalculate all amounts in invoice
+            $this->recalculateTransactionService($this->editingServiceId);
             $this->recalculateInvoice();
             $this->loadAllInvoiceItems();
 
@@ -806,6 +810,28 @@ class ViewReservation extends Component
             session()->flash('error', $e->getMessage());
         }
     }
+
+    public function recalculateTransactionService($editingServiceId)
+    {
+        $transactionService = TransactionService::with('service')->find($editingServiceId);
+
+        if (!$transactionService) {
+            throw new \Exception("Service with ID $editingServiceId not found.");
+        }
+
+        $unitPrice = $transactionService->service->amount;
+        $quantity = $transactionService->quantity;
+        $newAmount = $quantity * $unitPrice;
+
+        $transactionService->amount = $newAmount;
+        $transactionService->touch(); // updates `updated_at`
+        $transactionService->save();
+    }
+
+
+
+
+
 
 
     /**
@@ -964,6 +990,27 @@ class ViewReservation extends Component
 
 
 
+    public function recalculateTransactionActivity($editingActivityId)
+    {
+        $transactionActivity = TransactionActivity::with('activity')->find($editingActivityId);
+
+        if (!$transactionActivity) {
+            throw new \Exception("Activity with ID $editingActivityId not found.");
+        }
+
+        $unitPrice = $transactionActivity->activity->amount;
+        $quantity = $transactionActivity->quantity;
+        $newAmount = $quantity * $unitPrice;
+
+        $transactionActivity->amount = $newAmount;
+        $transactionActivity->touch();
+        $transactionActivity->save();
+    }
+
+
+
+
+
 
     // ------------------------ COMPUTATIONS -------------------------- //
 
@@ -992,12 +1039,24 @@ class ViewReservation extends Component
         return $items->sum($calculator);
     }
 
-    // Computes Base Subtotal (Room, Activities, Services, Pet) with no convenience fee.
+
     public function computeBaseSubtotal(): float
     {
         return $this->computeRoomsTotal()
             + $this->computeActivitiesTotal()
             + $this->computeServicesTotal();
+    }
+
+    // Computes Base Subtotal (Room, Activities, Services, Pet) with no convenience fee.
+    public function computeBaseSubtotalAfterDiscount(): float
+    {
+        $baseSubtotal = $this->computeRoomsTotal()
+            + $this->computeActivitiesTotal()
+            + $this->computeServicesTotal();
+
+        $discount = $this->transaction->promo_discount_amount ?? 0;
+
+        return max($baseSubtotal - $discount, 0);
     }
 
     // Computes Convenience Fee Total from completed payments
@@ -1220,7 +1279,7 @@ class ViewReservation extends Component
             ->withPivot('quantity', 'amount', 'activity_datetime', 'status')->get();
 
         $this->services = $this->transaction->services()
-        ->withPivot('quantity', 'amount', 'service_datetime', 'status')->get();
+            ->withPivot('quantity', 'amount', 'service_datetime', 'status')->get();
 
         $this->properties = $this->transaction->properties()
             ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
@@ -1262,11 +1321,11 @@ class ViewReservation extends Component
             'transactionUser',
             'guestDetails',
             'properties',
-            'guestPets', 
-            'promoCode', 
-            'services' => function($query){
+            'guestPets',
+            'promoCode',
+            'services' => function ($query) {
                 $query->withPivot('quantity', 'amount', 'service_datetime', 'status', 'payment_status');
-            }, 
+            },
             'activities' => function ($query) {
                 $query->withPivot('quantity', 'amount', 'activity_datetime', 'status');
             },
@@ -1274,9 +1333,8 @@ class ViewReservation extends Component
 
         //Compute Total Service Charge Acquired
         $totalServiceCharges = $transaction->services->sum(function ($service) {
-        return ($service->pivot->quantity ?? 0) * ($service->pivot->amount ?? 0);
-
-    });
+            return ($service->pivot->quantity ?? 0) * ($service->pivot->amount ?? 0);
+        });
 
         $payments = $transaction->invoice->payments ?? collect();
         $convenienceFeeTotal = $payments
@@ -1289,7 +1347,7 @@ class ViewReservation extends Component
             'guestDetails' => $transaction->guestDetails,
             'invoice' => $transaction->invoice,
             'guestPets' => $transaction->guestPets,
-            'promoCode' => $transaction->promoCode, 
+            'promoCode' => $transaction->promoCode,
             'activities' => $transaction->activities,
             'properties' => $transaction->properties,
             'payments' => $transaction->invoice->payments,

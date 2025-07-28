@@ -84,7 +84,8 @@
                             @endforeach
                         </select>
                         {{-- <input type="text" wire:model="country" placeholder="Ex. Philippines"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" /> --}}
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
+                        --}}
                         @error('country')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -110,7 +111,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Company Name (Optional)</label>
                         <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
-                        @error('last_name')
+                        @error('company_name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
