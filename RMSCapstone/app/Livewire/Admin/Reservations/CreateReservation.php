@@ -410,40 +410,103 @@ class CreateReservation extends Component
 
     public function computeSubtotalAmount()
     {
-        // Usess current promoDiscount to calclate discounted subtotal
-        $baseSubtotal = $this->computeBaseSubtotal();
-        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
-        return $this->sub_total;
+        try {
+            // Step 1: Compute base subtotal safely
+            if (!method_exists($this, 'computeBaseSubtotal')) {
+                throw new \Exception('computeBaseSubtotal() not defined.');
+            }
+
+            $baseSubtotal = $this->computeBaseSubtotal();
+            $baseSubtotal = is_numeric($baseSubtotal) ? floatval($baseSubtotal) : 0;
+
+            // Step 2: Ensure promoDiscount is numeric
+            $promo = isset($this->promoDiscount) && is_numeric($this->promoDiscount)
+                ? floatval($this->promoDiscount)
+                : 0;
+
+            // Step 3: Compute discounted subtotal
+            $this->sub_total = max(0, $baseSubtotal - $promo);
+
+            return $this->sub_total;
+        } catch (\Throwable $e) {
+            Log::error('Error computing sub total: ' . $e->getMessage());
+
+            $this->sub_total = 0;
+            return 0;
+        }
     }
 
     public function computeTotalAmount()
     {
-        // Step 1: Compute discounted subtotal
-        $this->computeSubtotalAmount();
+        try {
+            if (method_exists($this, 'computeSubtotalAmount')) {
+                $this->computeSubtotalAmount();
+            } else {
+                throw new \Exception('computeSubtotalAmount() method not found.');
+            }
 
-        // Step 2: Compute 3% convenience fee from discounted subtotal
-        // Note: Add this to settings
-        $this->convenience_fee = $this->sub_total * 0.03;
+            $this->sub_total = is_numeric($this->sub_total) ? $this->sub_total : 0;
+            $this->convenience_fee = round($this->sub_total * 0.03, 2);
+            $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
 
-        // Step 3: Final total = discounted subtotal + convenience fee
-        $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
+            return $this->total_amount;
+        } catch (\Throwable $e) {
+            Log::error('Error in computeTotalAmount: ' . $e->getMessage());
 
-        return $this->total_amount;
+            // Safe fallback values
+            $this->sub_total = 0;
+            $this->convenience_fee = 0;
+            $this->total_amount = 0;
+
+            session()->flash('error', 'Something went wrong while computing the total amount.');
+
+            return 0;
+        }
     }
 
     public function recalculateCart()
     {
-        $this->promoDiscount = 0;
+        try {
+            // Clears any existing discount
+            $this->promoDiscount = 0;
 
-        $baseSubtotal = $this->computeBaseSubtotal();
+            // Make sure the computeBaseSubtotal method exists
+            if (!method_exists($this, 'computeBaseSubtotal')) {
+                throw new \Exception('computeBaseSubtotal() method not found.');
+            }
 
-        if (!empty($this->promoCode)) {
-            $this->applyPromoCode();
-        } else {
-            $this->sub_total = $baseSubtotal;
+            $baseSubtotal = $this->computeBaseSubtotal();
+            $baseSubtotal = is_numeric($baseSubtotal) ? floatval($baseSubtotal) : 0;
+
+            if (!empty($this->promoCode)) {
+                // Apply the promo code if the method is available
+                if (method_exists($this, 'applyPromoCode')) {
+                    $this->applyPromoCode();
+                } else {
+                    Log::warning('applyPromoCode() not found, skipping promo logic.');
+                }
+            } else {
+                // No promo code, just use the base subtotal
+                $this->sub_total = $baseSubtotal;
+            }
+
+            // Recalculates total amount with all adjustments
+            $this->computeTotalAmount();
+        } catch (\Throwable $e) {
+            // Log the error for developer visibility
+            Log::error('Error recalculating cart: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'promoCode' => $this->promoCode ?? null,
+            ]);
+
+            // Resets to safe values to avoid broken cart state
+            $this->promoDiscount = 0;
+            $this->sub_total = 0;
+            $this->total_amount = 0;
+
+            // Show suser-friendly error message
+            session()->flash('error', 'We had a problem recalculating your cart. Please try again.');
         }
-
-        $this->computeTotalAmount();
     }
 
     public function computeConvenienceFee()
@@ -807,6 +870,7 @@ class CreateReservation extends Component
         $this->selectedServices = $newServicesCart;
         $this->recalculateCart();
     }
+
 
     public function incrementService($serviceId)
     {

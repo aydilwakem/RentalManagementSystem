@@ -27,10 +27,10 @@ class InvoiceService
             fn($property) => $property->pivot->total_amount
         ) ?? 0;
 
-        // Retrieves total amount of pets assigned to the transaction
-        $petsTotal = $transaction->guestPets?->sum('total_fee') ?? 0;
+        $baseSubtotal = $activitiesTotal + $roomsTotal + $servicesTotal;
+        $discount = $transaction->promo_discount_amount ?? 0;
 
-        return $activitiesTotal + $roomsTotal + $servicesTotal + $petsTotal;
+        return max($baseSubtotal - $discount, 0);
     }
 
     public function updateGrandTotal(Invoice $invoice, Transaction $transaction): void

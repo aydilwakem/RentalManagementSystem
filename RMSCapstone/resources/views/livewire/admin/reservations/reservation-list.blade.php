@@ -13,9 +13,8 @@
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -24,16 +23,16 @@
                 <div class="flex items-center space-x-2">
                     <!-- Label and Confirm Button -->
                     @can('new-reservation-create')
-                        <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
-                            New Transaction
-                        </x-button>
+                            <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
+                                New Transaction
+                            </x-button>
 
-                        {{-- Check-outs Today --}}
-                        <x-warning-button icon="fa fa-file" wire:click="exportCheckoutsToday">
-                            Export All Check-outs Today
-                        </x-warning-button>
-                    </div>
-                @endcan
+                            {{-- Check-outs Today --}}
+                            <x-warning-button icon="fa fa-file" wire:click="exportCheckoutsToday">
+                                Export All Check-outs Today
+                            </x-warning-button>
+                        </div>
+                    @endcan
                 <!-- Soft Deletes -->
                 @can('new-reservation-soft-delete')
                     <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
@@ -53,39 +52,38 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        <input wire:model.live.debounce.300ms="search" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
 
                     <!-- Bulk Actions Button -->
                     {{-- <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                    <button @click="open = !open" type="button"
-                        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Actions
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                    <div x-show="open" @click.away="open = false"
-                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                        <div class="py-1">
-                            <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
-                                Delete</a>
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    Delete</a>
+                            </div>
                         </div>
-                    </div>
-                </div> --}}
+                    </div> --}}
                 </div>
 
                 <!-- Status Filter -->
@@ -93,9 +91,8 @@
                     <div class="flex space-x-3 items-center">
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation
                             Status:</label>
-                        <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <select wire:model.live="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -118,8 +115,7 @@
                 <div class="flex flex-col items-center justify-center text-center">
                     <!-- Spinner -->
                     <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4" />
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path class="opacity-75" fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                     </svg>
@@ -195,15 +191,13 @@
                                 class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
 
                                 {{-- ID --}}
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{-- <span>{{ $fakeIDs[$transaction->id] ?? 'TXN-???' }}</span> --}}
                                     <span>{{ $transaction->transaction_number }}</span>
                                 </th>
 
                                 {{-- First Name and Last Name --}}
-                                <td scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $transaction->transactionUser->first_name }}
                                     {{ $transaction->transactionUser->last_name }}
                                 </td>
@@ -334,196 +328,197 @@
                                                     </li>
                                                 @endif
 
-                                                <!-- Edit Transaction -->
+                                                {{-- <!-- Edit Transaction -->
                                                 @if (
-                                                    $transaction->transaction_status === 'pending' ||
-                                                        $transaction->transaction_status === 'reserved' ||
-                                                        $transaction->transaction_status === 'receipt_verified' ||
-                                                        $transaction->transaction_status === 'confirmed')
-                                                    <li>
-                                                        <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
-                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit
-                                                            Reservation
-                                                        </a>
-                                                    </li>
-                                                @endif
-
-                                                <!-- Add Transaction -->
-                                                @if ($transaction->transaction_status === 'ongoing')
-                                                    <a href="{{ route('admin.add-transaction', ['transaction' => $transaction->id]) }}"
+                                                $transaction->transaction_status === 'pending' ||
+                                                $transaction->transaction_status === 'reserved' ||
+                                                $transaction->transaction_status === 'receipt_verified' ||
+                                                $transaction->transaction_status === 'confirmed')
+                                                <li>
+                                                    <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
                                                         class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add
-                                                        Transaction
+                                                        <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit
+                                                        Reservation
                                                     </a>
-                                                @endif
+                                                </li>
+                                                @endif --}}
 
-                                                <!-- Mark as Done -->
-                                                @if ($transaction->transaction_status === 'ongoing')
-                                                    <a href="#"
-                                                        wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }}, 'default')"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                        <i class="fas fa-check-double mr-2 text-emerald-600"></i>
-                                                        Mark
-                                                        as Done
-                                                    </a>
-                                                @endif
+                                                {{-- <!-- Add Transaction -->
+                                                        @if ($transaction->transaction_status === 'ongoing')
+                                                            <a href="{{ route('admin.add-transaction', ['transaction' => $transaction->id]) }}"
+                                                                class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                <i class="fas fa-plus-circle mr-2 text-yellow-500"></i> Add
+                                                                Transaction
+                                                            </a>
+                                                        @endif --}}
 
-                                                <!-- Mark as No Show -->
-                                                @if ($transaction->transaction_status === 'confirmed')
-                                                    <li>
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }}, 'warning')"
-                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            <i class="fas fa-user-slash mr-2 text-pink-600"></i>
-                                                            Mark as No
-                                                            Show
-                                                        </a>
-                                                    </li>
-                                                @endif
+                                                        <!-- Mark as Done -->
+                                                        @if ($transaction->transaction_status === 'ongoing')
+                                                            <a href="#"
+                                                                wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this reservation as Done?', {{ $transaction->id }}, 'default')"
+                                                                class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                <i class="fas fa-check-double mr-2 text-emerald-600"></i>
+                                                                Mark
+                                                                as Done
+                                                            </a>
+                                                        @endif
 
-                                                <!--------------------- Destructive Actions -------------------------->
-                                                <div class="border-t">
+                                                        <!-- Mark as No Show -->
+                                                        @if ($transaction->transaction_status === 'confirmed')
+                                                            <li>
+                                                                <a href="#"
+                                                                    wire:click.prevent="showActionModal('markNoShow', 'Mark as No Show', 'Are you sure you want to mark this reservation as No Show?', {{ $transaction->id }}, 'warning')"
+                                                                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                    <i class="fas fa-user-slash mr-2 text-pink-600"></i>
+                                                                    Mark as No
+                                                                    Show
+                                                                </a>
+                                                            </li>
+                                                        @endif
 
-                                                    <!-- Cancel -->
-                                                    @if ($transaction->transaction_status === 'reserved')
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }}, 'danger')"
-                                                            class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 ">
-                                                            <i class="fas fa-times mr-2"></i> Cancel Reservation
-                                                        </a>
-                                                    @endif
+                                                        <!--------------------- Destructive Actions -------------------------->
+                                                        <div class="border-t">
 
-                                                    <!-- Terminate -->
-                                                    @if ($transaction->transaction_status === 'ongoing')
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }}, 'danger')"
-                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                            <i class="fas fa-ban mr-2"></i> Terminate Reservation
-                                                        </a>
-                                                    @endif
+                                                            <!-- Cancel -->
+                                                            @if ($transaction->transaction_status === 'reserved')
+                                                                <a href="#"
+                                                                    wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }}, 'danger')"
+                                                                    class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 ">
+                                                                    <i class="fas fa-times mr-2"></i> Cancel Reservation
+                                                                </a>
+                                                            @endif
 
-                                                    <!-- Delete -->
-                                                    @if (
-                                                        $transaction->transaction_status === 'cancelled' ||
-                                                            $transaction->transaction_status === 'expired' ||
-                                                            $transaction->transaction_status === 'done' ||
-                                                            $transaction->transaction_status === 'no_show' ||
-                                                            $transaction->transaction_status === 'terminated')
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }}, 'danger')"
-                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 ">
-                                                            <i class="fas fa-trash-alt mr-2"></i> Delete Reservation
-                                                        </a>
-                                                    @endif
+                                                            <!-- Terminate -->
+                                                            @if ($transaction->transaction_status === 'ongoing')
+                                                                <a href="#"
+                                                                    wire:click.prevent="showActionModal('terminateReservation', 'Terminate Reservation', 'Are you sure you want to terminate this reservation?', {{ $transaction->id }}, 'danger')"
+                                                                    class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                                    <i class="fas fa-ban mr-2"></i> Terminate Reservation
+                                                                </a>
+                                                            @endif
 
-                                                    <!-- Rollback Status -->
-                                                    @if (
-                                                        $transaction->transaction_status !== 'pending' &&
-                                                            $transaction->transaction_status !== 'reserved' &&
-                                                            $transaction->transaction_status !== 'expired')
-                                                        <a href="#"
-                                                            wire:click.prevent="showActionModal('rollbackStatus', 'Undo Reservation Status', 'Are you sure you want to undo the status of this reservation?', {{ $transaction->id }}, 'danger')"
-                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                                            <i class="fas fa-undo mr-2"></i> Undo Status
-                                                        </a>
-                                                    @endif
+                                                            <!-- Delete -->
+                                                            @if (
+                                                                    $transaction->transaction_status === 'cancelled' ||
+                                                                    $transaction->transaction_status === 'expired' ||
+                                                                    $transaction->transaction_status === 'done' ||
+                                                                    $transaction->transaction_status === 'no_show' ||
+                                                                    $transaction->transaction_status === 'terminated'
+                                                                )
+                                                                    <a href="#"
+                                                                        wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }}, 'danger')"
+                                                                        class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 ">
+                                                                        <i class="fas fa-trash-alt mr-2"></i> Delete Reservation
+                                                                    </a>
+                                                            @endif
 
+                                                            <!-- Rollback Status -->
+                                                            @if (
+                                                                    $transaction->transaction_status !== 'pending' &&
+                                                                    $transaction->transaction_status !== 'reserved' &&
+                                                                    $transaction->transaction_status !== 'expired'
+                                                                )
+                                                                    <a href="#"
+                                                                        wire:click.prevent="showActionModal('rollbackStatus', 'Undo Reservation Status', 'Are you sure you want to undo the status of this reservation?', {{ $transaction->id }}, 'danger')"
+                                                                        class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                                        <i class="fas fa-undo mr-2"></i> Undo Status
+                                                                    </a>
+                                                            @endif
+
+                                                        </div>
+                                                    </ul>
                                                 </div>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
+                                            </div>
+                                        </td>
 
-                            </tr>
+                                    </tr>
                         @empty
-                            <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No reservations found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500">
+                                        No reservations found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
 
-                <div>
-                    @if ($cannotMarkAsDoneModal)
-                        <x-dialog-modal wire:model.live="cannotMarkAsDoneModal" type="ghost">
-                            <x-slot name="title">
-                                {{ __('Cannot Perform Action') }}
-                            </x-slot>
+                    <div>
+                        @if ($cannotMarkAsDoneModal)
+                            <x-dialog-modal wire:model.live="cannotMarkAsDoneModal" type="ghost">
+                                <x-slot name="title">
+                                    {{ __('Cannot Perform Action') }}
+                                </x-slot>
 
-                            <x-slot name="content">
-                                {{ __('Cannot mark this reservation as done. Invoice still has balance due.') }}
-                            </x-slot>
+                                <x-slot name="content">
+                                    {{ __('Cannot mark this reservation as done. Invoice still has balance due.') }}
+                                </x-slot>
 
-                            <x-slot name="footer">
-                                <x-secondary-button wire:click="$set('cannotMarkAsDoneModal', false)"
-                                    wire:loading.attr="disabled">
-                                    {{ __('Cancel') }}
-                                </x-secondary-button>
-                            </x-slot>
-                        </x-dialog-modal>
-                    @endif
-                </div>
-
-            </div>
-            <!-- Pagination -->
-            <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
-                <div class="flex ">
-                    <div class="flex space-x-4 items-center mb-3">
-                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
-                        <select wire:model.live="perPage"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
+                                <x-slot name="footer">
+                                    <x-secondary-button wire:click="$set('cannotMarkAsDoneModal', false)"
+                                        wire:loading.attr="disabled">
+                                        {{ __('Cancel') }}
+                                    </x-secondary-button>
+                                </x-slot>
+                            </x-dialog-modal>
+                        @endif
                     </div>
+
                 </div>
-                {{ $transactions->links() }}
+                <!-- Pagination -->
+                <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
+                    <div class="flex ">
+                        <div class="flex space-x-4 items-center mb-3">
+                            <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
+                            <select wire:model.live="perPage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{ $transactions->links() }}
+                </div>
             </div>
-        </div>
 
-        <!-- Action Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmingAction" :type="$actionButtonType">
-            <x-slot name="title">
-                {{ __($actionTitle) }}
-            </x-slot>
+            <!-- Action Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmingAction" :type="$actionButtonType">
+                <x-slot name="title">
+                    {{ __($actionTitle) }}
+                </x-slot>
 
-            <x-slot name="content">
-                {{ __($actionMessage) }}
-            </x-slot>
+                <x-slot name="content">
+                    {{ __($actionMessage) }}
+                </x-slot>
 
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
 
-                @if ($actionButtonType === 'danger')
-                    <x-danger-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
-                        {{ $actionTitle }}
-                    </x-danger-button>
-                @elseif ($actionButtonType === 'warning')
-                    <x-warning-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
-                        {{ $actionTitle }}
-                    </x-warning-button>
-                @else
-                    <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
-                        {{ $actionTitle }}
-                    </x-button>
-                @endif
-            </x-slot>
-        </x-dialog-modal>
+                    @if ($actionButtonType === 'danger')
+                        <x-danger-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                            {{ $actionTitle }}
+                        </x-danger-button>
+                    @elseif ($actionButtonType === 'warning')
+                        <x-warning-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                            {{ $actionTitle }}
+                        </x-warning-button>
+                    @else
+                        <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                            {{ $actionTitle }}
+                        </x-button>
+                    @endif
+                </x-slot>
+            </x-dialog-modal>
     @endif
 </div>
 
 <script>
     document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
-        button.addEventListener("click", function(e) {
+        button.addEventListener("click", function (e) {
             e.stopPropagation(); // Prevent window click from firing
             const id = button.getAttribute("data-id");
             const dropdown = document.querySelector(`[data-dropdown="${id}"]`);
@@ -539,7 +534,7 @@
     });
 
     // Optional: Close all dropdowns when clicking outside
-    window.addEventListener("click", function() {
+    window.addEventListener("click", function () {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.classList.add("hidden");
         });
