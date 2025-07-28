@@ -250,6 +250,7 @@ class ReservationForm extends Component
             $this->updateKidOptions($roomId);
             $this->updateSelectedRoomDetails($roomId, $room);
             $this->computeTotalPax();
+            $this->recalculateCart();
             $this->getAvailableRooms();
         }
 
@@ -264,8 +265,7 @@ class ReservationForm extends Component
 
             $this->getAvailableRooms();
             $this->removePromoCode();
-            $this->computeSubtotalAmount();
-            $this->computeTotalAmount();
+            $this->recalculateCart();
         }
     }
 
@@ -386,7 +386,6 @@ class ReservationForm extends Component
                 return $carry + $adults + $kids;
             }, 0);
     }
-
     public function computeTotalAmountOfAllRooms(): float
     {
         return collect($this->getItemsByType('room'))
@@ -398,33 +397,49 @@ class ReservationForm extends Component
             ->sum('amount');
     }
 
+    public function computeBaseSubtotal()
+    {
+        return $this->computeTotalAmountOfAllRooms()
+            + $this->computeTotalAmountOfAllActivities()
+            + $this->computePetTotal();
+    }
+
     public function computeSubtotalAmount()
     {
-        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities() + $this->computePetTotal();
-        $total = $baseSubtotal - $this->promoDiscount;
-        $this->sub_total = max(0, $total);
-
+        // Usess current promoDiscount to calclate discounted subtotal
+        $baseSubtotal = $this->computeBaseSubtotal();
+        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
         return $this->sub_total;
     }
 
     public function computeTotalAmount()
     {
-        // Step 1: Calculate base subtotal (rooms + activities)
-        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities() + $this->computePetTotal();
+        // Step 1: Compute discounted subtotal
+        $this->computeSubtotalAmount();
 
-        // Step 2: Compute 3% convenience fee based on base subtotal
+        // Step 2: Compute 3% convenience fee from discounted subtotal
+        // Note: Add this to settings
         $this->convenience_fee = $this->sub_total * 0.03;
 
-        // Step 3: Add convenience fee to subtotal
-        $subtotalWithFee = $baseSubtotal + $this->convenience_fee;
-
-        // Step 4: Apply any promo discount
-        $total = $subtotalWithFee - $this->promoDiscount;
-
-        // Step 5: Ensure total amount is not negative
-        $this->total_amount = max(0, $total);
+        // Step 3: Final total = discounted subtotal + convenience fee
+        $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
 
         return $this->total_amount;
+    }
+
+    public function recalculateCart()
+    {
+        $this->promoDiscount = 0;
+
+        $baseSubtotal = $this->computeBaseSubtotal();
+
+        if (!empty($this->promoCode)) {
+            $this->applyPromoCode();
+        } else {
+            $this->sub_total = $baseSubtotal;
+        }
+
+        $this->computeTotalAmount();
     }
 
     public function computeConvenienceFee()
@@ -464,28 +479,44 @@ class ReservationForm extends Component
      *
      * -----------------------------------------------------------------------------
      */
+
+
     public function applyPromoCode()
     {
-
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
+
+        if (empty($this->promoCode) || !is_string($this->promoCode)) {
+            Log::warning('No valid promo code provided. Skipping promo application.');
+            $this->promoDiscount = 0;
+            $this->promo_discount_amount = 0;
+            $this->discountMessage = null;
+            $this->errorMessage = null;
+            return;
+        }
 
         $this->reset(['discountMessage', 'errorMessage']);
 
-        $this->sub_total = $this->computeSubtotalAmount();
+        // Compute base subtotal (without discount)
+        $baseSubtotal = $this->computeBaseSubtotal();
 
+        // Validate promo based on base subtotal
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
             $this->total_amount,
-            $this->sub_total
+            $baseSubtotal
         );
 
         if (!$response['success']) {
             return $this->failPromo($response['message']);
         }
 
+        // Apply discount
         $this->promoDiscount = $response['discount'];
         $this->promo_discount_amount = $this->promoDiscount;
-        $this->total_amount = $this->sub_total - $this->promoDiscount;
+
+        // Compute final discounted subtotal
+        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
+
         $this->discountMessage = $response['message'];
         $this->errorMessage = null;
 
@@ -498,8 +529,9 @@ class ReservationForm extends Component
         $this->promoCode = '';
         $this->promoDiscount = 0;
         $this->discountMessage = null;
-        $this->total_amount = $this->computeTotalAmount();
         $this->errorMessage = null;
+
+        $this->recalculateCart();
     }
 
     private function failPromo(string $message)
@@ -560,6 +592,7 @@ class ReservationForm extends Component
 
         $this->computeTotalPax();
         $this->getAvailableRooms();
+        $this->recalculateCart();
     }
 
 
@@ -589,6 +622,7 @@ class ReservationForm extends Component
         }
 
         $this->cart = $newCart;
+        $this->recalculateCart();
     }
 
     public function incrementItemQuantity($type, $itemId)
@@ -601,6 +635,7 @@ class ReservationForm extends Component
         $this->quantity[$itemId] = $newQuantity;
 
         $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
+        $this->recalculateCart();
     }
 
     public function decrementItemQuantity($type, $itemId)
@@ -613,6 +648,7 @@ class ReservationForm extends Component
         $this->quantity[$itemId] = $newQuantity;
 
         $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
+        $this->recalculateCart();
     }
 
 
@@ -647,8 +683,9 @@ class ReservationForm extends Component
 
         $this->pets[] = $this->makePetsArray();
         $this->pet_count = count($this->pets);
+        $this->recalculateCart();
 
-        $this->reset('breed'); // clear input
+        $this->reset('breed');
     }
 
 
@@ -696,8 +733,8 @@ class ReservationForm extends Component
 
         // Recalculate necessary values
         $this->computeTotalPax();
-        $this->computeTotalAmount();
         $this->getAvailableRooms();
+        $this->recalculateCart();
 
         // Check if there are no "room" items left in the cart
         $hasRoomItems = collect($this->cart)->contains(function ($item) {

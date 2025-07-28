@@ -12,7 +12,6 @@ use App\Models\GuestDetail;
 use App\Models\GuestPet;
 use App\Models\Invoice;
 use App\Models\PromoCode;
-use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -30,6 +29,7 @@ use App\Services\BrandingService;
 use App\Services\PromoCodeService;
 use App\Services\PayMongoService;
 use App\Services\EmailService;
+use App\Models\Service;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
 
@@ -55,6 +55,7 @@ class CreateReservation extends Component
     public $extra_charge = []; // extra_guest * extra_person_charge * days
     public $roomAmount = []; // base rate * days
     public $paymentStatus = [];
+    public $requests;
 
 
 
@@ -109,24 +110,21 @@ class CreateReservation extends Component
 
 
     // Selected Items (Rooms and Activities)
-
     public $selectedRooms = [];
     public $selectedActivities = [];
-    public $expandedActivity = null;
+    public $selectedServices = [];
+
 
     // -------------------- MODALS ------------------------ //
-
-    public $roomModal = false, $activityModal = false, $guestModal = false;
-
+    public $roomModal = false, $activityModal = false, $guestModal = false, $servicesModal = false;
     public $editRoomModal = false, $editActivityModal = false, $editGuestModal = false;
-
     public $addRoomFirstModal = false;
 
     // -------------------- PETS ------------------------ //
-
     public bool $bringingPets = false;
     public int $pet_count;
-    public array $pet_breed = [];
+    public $pets = [];
+    public string $breed = '';
 
 
     //----------------------- TRAITS -------------------------- // 
@@ -162,11 +160,20 @@ class CreateReservation extends Component
     public string $facebookLink;
     public string $instagramLink;
 
+    //----------------------- EDITING ------------------------ //
+    public $editingServiceId;
+    public $serviceQuantity;
+    public $showEditServiceModal;
+    public $editingActivityId;
+    public $activityQuantity;
+    public $showEditActivityModal;
 
-    public $dynamicKidOptions = [];
 
-    public $paymentLink;
+    //----------------------- CHARGES ------------------------ //
+    public $services_charges;
 
+
+    //----------------------- SERVICES ------------------------ //
     protected ServiceBag $services;
     protected RoomRateService $roomRateService;
     protected CartService $cartService;
@@ -176,6 +183,17 @@ class CreateReservation extends Component
     protected PayMongoService $payMongo;
     protected EmailService $emailService;
 
+    //----------------------- OTHERS ------------------------ //
+    public $expandedService = null;
+    public $expandedActivity = null;
+    public $dynamicKidOptions = [];
+    public $paymentLink;
+    public $editingRoomId;
+    public $roomTotalAdults;
+    public $roomTotalKids;
+    public $showEditRoomModal;
+    public $roomName;
+    public $activityName;
 
 
     /**
@@ -270,7 +288,7 @@ class CreateReservation extends Component
             $this->selectedRooms = [];
             $this->selectedActivities = [];
             $this->pet_count = 0;
-            $this->pet_breed = [];
+            $this->pets = [];
             $this->getAvailableRooms();
             $this->removePromoCode();
             $this->computeSubtotalAmount();
@@ -305,6 +323,8 @@ class CreateReservation extends Component
             }
         } elseif ($type === 'guest') {
             $this->guestModal = true;
+        } elseif ($type === 'services') {
+            $this->servicesModal = true;
         } else {
             Log::warning("Unknown modal type: $type");
         }
@@ -352,6 +372,7 @@ class CreateReservation extends Component
                 return $carry + $adults + $kids;
             }, 0);
     }
+
     public function computeTotalAmountOfAllRooms(): float
     {
         return collect($this->getItemsByType('room'))
@@ -362,6 +383,12 @@ class CreateReservation extends Component
         return collect($this->getItemsByType('activity'))
             ->sum('amount');
     }
+
+    public function computeTotalAmountOfAllServices(): float
+    {
+        return collect($this->getItemsByType('service'))
+            ->sum('amount');
+    }
     public function computePetTotal(): float
     {
         $petCount = $this->pet_count ?? 0;
@@ -370,33 +397,53 @@ class CreateReservation extends Component
 
         return $petCount * $feePerPetPerDay * $stayDuration;
     }
+
+    public function computeBaseSubtotal()
+    {
+        return $this->computeTotalAmountOfAllRooms()
+            + $this->computeTotalAmountOfAllActivities()
+            + $this->computeTotalAmountOfAllServices()
+            + $this->computePetTotal();
+    }
+
     public function computeSubtotalAmount()
     {
-        $baseSubtotal = $this->computeTotalAmountOfAllRooms() + $this->computeTotalAmountOfAllActivities() + $this->computePetTotal();
-        $total = $baseSubtotal - $this->promoDiscount;
-        $this->sub_total = max(0, $total);
-
+        // Usess current promoDiscount to calclate discounted subtotal
+        $baseSubtotal = $this->computeBaseSubtotal();
+        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
         return $this->sub_total;
     }
+
     public function computeTotalAmount()
     {
-        // Step 1: Calculate base subtotal (rooms + activities)
-        $baseSubtotal = $this->computeSubtotalAmount();
+        // Step 1: Compute discounted subtotal
+        $this->computeSubtotalAmount();
 
-        // Step 2: Compute 3% convenience fee based on base subtotal
+        // Step 2: Compute 3% convenience fee from discounted subtotal
+        // Note: Add this to settings
         $this->convenience_fee = $this->sub_total * 0.03;
 
-        // Step 3: Add convenience fee to subtotal
-        $subtotalWithFee = $baseSubtotal + $this->convenience_fee;
-
-        // Step 4: Apply any promo discount
-        $total = $subtotalWithFee - $this->promoDiscount;
-
-        // Step 5: Ensure total amount is not negative
-        $this->total_amount = max(0, $total);
+        // Step 3: Final total = discounted subtotal + convenience fee
+        $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
 
         return $this->total_amount;
     }
+
+    public function recalculateCart()
+    {
+        $this->promoDiscount = 0;
+
+        $baseSubtotal = $this->computeBaseSubtotal();
+
+        if (!empty($this->promoCode)) {
+            $this->applyPromoCode();
+        } else {
+            $this->sub_total = $baseSubtotal;
+        }
+
+        $this->computeTotalAmount();
+    }
+
     public function computeConvenienceFee()
     {
         // Recompute to ensure the most current values
@@ -419,24 +466,40 @@ class CreateReservation extends Component
      */
     public function applyPromoCode()
     {
+        Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
+
+        if (empty($this->promoCode) || !is_string($this->promoCode)) {
+            Log::warning('No valid promo code provided. Skipping promo application.');
+            $this->promoDiscount = 0;
+            $this->promo_discount_amount = 0;
+            $this->discountMessage = null;
+            $this->errorMessage = null;
+            return;
+        }
 
         $this->reset(['discountMessage', 'errorMessage']);
 
-        $this->sub_total = $this->computeSubtotalAmount();
+        // Compute base subtotal (without discount)
+        $baseSubtotal = $this->computeBaseSubtotal();
 
+        // Validate promo based on base subtotal
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
             $this->total_amount,
-            $this->sub_total
+            $baseSubtotal
         );
 
         if (!$response['success']) {
             return $this->failPromo($response['message']);
         }
 
+        // Apply discount
         $this->promoDiscount = $response['discount'];
         $this->promo_discount_amount = $this->promoDiscount;
-        $this->total_amount = $this->sub_total - $this->promoDiscount;
+
+        // Compute final discounted subtotal
+        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
+
         $this->discountMessage = $response['message'];
         $this->errorMessage = null;
 
@@ -449,8 +512,9 @@ class CreateReservation extends Component
         $this->promoCode = '';
         $this->promoDiscount = 0;
         $this->discountMessage = null;
-        $this->total_amount = $this->computeTotalAmount();
         $this->errorMessage = null;
+
+        $this->recalculateCart();
     }
 
     private function failPromo(string $message)
@@ -494,6 +558,7 @@ class CreateReservation extends Component
         }
 
         $context = $this->prepareRoomCartContext($room, $roomId);
+        Log::info('Prepared context for cart item:', $context);
 
         $added = $this->cartService->addItem(
             'room',
@@ -513,7 +578,87 @@ class CreateReservation extends Component
 
         $this->computeTotalPax();
         $this->getAvailableRooms();
+        $this->recalculateCart();
     }
+    public function editSelectedRoom($roomId)
+    {
+        Log::info("Edit Room method called for room ID: {$roomId}");
+
+        $room = collect($this->selectedRooms)->firstWhere('room_id', $roomId);
+
+        if (!$room) {
+            Log::warning("Room ID {$roomId} not found in selectedRooms.");
+            return;
+        }
+
+        $this->editingRoomId = $room['room_id'];
+        $this->roomName = $room['room_name'] ?? 'Room';
+        $this->roomTotalAdults = $room['adults'] ?? 0;
+        $this->roomTotalKids = $room['kids'] ?? 0;
+        $this->showEditRoomModal = true;
+    }
+    public function incrementAdults()
+    {
+        $this->roomTotalAdults++;
+    }
+    public function decrementAdults()
+    {
+        $this->roomTotalAdults = max(0, $this->roomTotalAdults - 1);
+    }
+    public function incrementKids()
+    {
+        $this->roomTotalKids++;
+    }
+    public function decrementKids()
+    {
+        $this->roomTotalKids = max(0, $this->roomTotalKids - 1);
+    }
+    public function updateRoom()
+    {
+        foreach ($this->selectedRooms as &$room) {
+            if ($room['room_id'] == $this->editingRoomId) {
+
+                // Fetch rate and charges
+                $roomRate = $room['roomRate'] ?? 0;
+                $days = $room['days'] ?? 1;
+                $extraChargePerGuestPerDay = $room['extra_charge'] ?? 0;
+
+
+                // Set number of guests
+                $room['adults'] = $this->roomTotalAdults;
+                $room['kids'] = $this->roomTotalKids;
+
+                // Calculate guest counts
+                $totalGuests = $this->roomTotalAdults + $this->roomTotalKids;
+                $includedGuests = $room['included_guests'] ?? 2;
+                $extraGuests = max(0, $totalGuests - $includedGuests);
+                $room['extra_guest'] = $extraGuests;
+
+
+                // Calculate totals
+                $room['roomAmount'] = $roomRate * $days;
+                $room['extra_charge_total'] = $extraGuests * $extraChargePerGuestPerDay * $days;
+                $room['total_amount'] =  $room['roomAmount'] + $room['extra_charge_total'];
+
+                // Dump the updated room for debugging
+                // dd($room);
+
+                break;
+            }
+        }
+
+
+        $this->selectedRooms = array_values($this->selectedRooms);
+        $this->showEditRoomModal = false;
+
+        $this->editingRoomId = null;
+        $this->roomTotalAdults = 0;
+        $this->roomTotalKids = 0;
+        $this->computeTotalPax();
+        $this->recalculateCart();
+    }
+
+
 
 
     /**
@@ -546,8 +691,8 @@ class CreateReservation extends Component
         }
 
         $this->selectedActivities = $newActivityCart;
+        $this->recalculateCart();
     }
-
     public function incrementActivity($activityId)
     {
 
@@ -559,8 +704,8 @@ class CreateReservation extends Component
         $this->quantity[$activityId] = $newQuantity;
 
         $this->selectedActivities = $this->cartService->updateQuantity('activity', $this->selectedActivities, $activityId, $newQuantity);
+        $this->recalculateCart();
     }
-
     public function decrementActivity($activityId)
     {
         if (!isset($this->quantity[$activityId])) {
@@ -571,10 +716,171 @@ class CreateReservation extends Component
         $this->quantity[$activityId] = $newQuantity;
 
         $this->selectedActivities = $this->cartService->updateQuantity('activity', $this->selectedActivities, $activityId, $newQuantity);
+        $this->recalculateCart();
+    }
+    public function editSelectedActivity($activityId)
+    {
+        Log::info("Edit Activity method called for activity ID: {$activityId}");
+
+        $activity = collect($this->selectedActivities)->firstWhere('activity_id', $activityId);
+
+        if (!$activity) {
+            Log::warning("Activity ID {$activityId} not found in selectedActivities.");
+            return;
+        }
+
+        $this->editingActivityId = $activity['activity_id'];
+        $this->activityQuantity = $activity['quantity'] ?? 1;
+        $this->activityName = $activity['activity_name'] ?? 1;
+        $this->showEditActivityModal = true;
+    }
+    public function incrementSelectedActivity($activityId)
+    {
+        if ($this->editingActivityId != $activityId) return;
+
+        $this->activityQuantity++;
+    }
+    public function decrementSelectedActivity($activityId)
+    {
+        if ($this->editingActivityId != $activityId) return;
+
+        $this->activityQuantity = max(1, $this->activityQuantity - 1);
+    }
+    public function updateActivity()
+    {
+        foreach ($this->selectedActivities as &$activity) {
+            if ($activity['activity_id'] == $this->editingActivityId) {
+                $activity['quantity'] = $this->activityQuantity;
+                $activity['amount'] = $activity['activity_rate'] * $this->activityQuantity;
+                break;
+            }
+        }
+
+        $this->selectedActivities = array_values($this->selectedActivities);
+
+        $this->showEditActivityModal = false;
+        $this->editingActivityId = null;
+        $this->activityQuantity = 1;
+
+        $this->recalculateCart();
     }
 
 
 
+
+
+
+
+
+    /**
+     * ----------------------------- SERVICE CART LOGIC -----------------------------
+     *
+     * Handles adding and managing quantities of activities (or other non-room items)
+     * in the reservation cart. 
+     *
+     * ------------------------------------------------------------------------------
+     */
+
+
+    public function SelectedServices($serviceId)
+    {
+
+        // Resets any previous error messages
+        $this->resetErrorBag();
+
+        $newServicesCart = $this->cartService->addItem(
+            'service',
+            $serviceId,
+            $this->selectedServices,
+            $this->quantity,
+            $this->status,
+            $this->paymentStatus
+        );
+
+        if ($this->isItemAlreadyInCart('service', $serviceId)) {
+            $this->addError('selectedServices', 'This item is already in the cart.');
+            return;
+        }
+
+        $this->selectedServices = $newServicesCart;
+        $this->recalculateCart();
+    }
+
+    public function incrementService($serviceId)
+    {
+
+        if (!isset($this->quantity[$serviceId])) {
+            $this->quantity[$serviceId] = 1;
+        }
+
+        $newQuantity = $this->quantity[$serviceId] + 1;
+        $this->quantity[$serviceId] = $newQuantity;
+
+        $this->selectedServices = $this->cartService->updateQuantity('service', $this->selectedServices, $serviceId, $newQuantity);
+        $this->recalculateCart();
+    }
+
+    public function decrementService($serviceId)
+    {
+        if (!isset($this->quantity[$serviceId])) {
+            $this->quantity[$serviceId] = 1;
+        }
+
+        $newQuantity = max(1, $this->quantity[$serviceId] - 1);
+        $this->quantity[$serviceId] = $newQuantity;
+
+        $this->selectedServices = $this->cartService->updateQuantity('service', $this->selectedServices, $serviceId, $newQuantity);
+        $this->recalculateCart();
+    }
+
+    public function editSelectedService($serviceId)
+    {
+        Log::info("Edit Service method called for service ID: {$serviceId}");
+
+        $service = collect($this->selectedServices)->firstWhere('service_id', $serviceId);
+
+        if (!$service) {
+            Log::warning("Service ID {$serviceId} not found in selectedServices.");
+            return;
+        }
+
+        // Assign to component properties for editing modal
+        $this->editingServiceId = $service['service_id'];
+        $this->serviceQuantity = $service['quantity'] ?? 1;
+        $this->showEditServiceModal = true;
+    }
+
+    public function incrementSelectedService($serviceId)
+    {
+        if ($this->editingServiceId != $serviceId) return;
+
+        $this->serviceQuantity++;
+    }
+
+    public function decrementSelectedService($serviceId)
+    {
+        if ($this->editingServiceId != $serviceId) return;
+
+        $this->serviceQuantity = max(1, $this->serviceQuantity - 1);
+    }
+
+    public function updateService()
+    {
+        foreach ($this->selectedServices as &$service) {
+            if ($service['service_id'] == $this->editingServiceId) {
+                $service['quantity'] = $this->serviceQuantity;
+                $service['amount'] = $service['service_rate'] * $this->serviceQuantity;
+                break;
+            }
+        }
+
+        $this->selectedServices = array_values($this->selectedServices); // Trigger reactivity
+
+        $this->showEditServiceModal = false;
+        $this->editingServiceId = null;
+        $this->serviceQuantity = 1;
+        $this->recalculateCart();
+    }
 
 
     /**
@@ -589,10 +895,15 @@ class CreateReservation extends Component
         $this->selectedActivities = $this->cartService->removeItem('activity', $activityId, $this->selectedActivities);
     }
 
-
     public function RemoveRoom($roomId)
     {
         $this->selectedRooms = $this->cartService->removeItem('room', $roomId, $this->selectedRooms);
+        $this->computeTotalPax();
+    }
+
+    public function RemoveService($serviceId)
+    {
+        $this->selectedServices = $this->cartService->removeItem('service', $serviceId, $this->selectedServices);
     }
 
 
@@ -615,7 +926,6 @@ class CreateReservation extends Component
         $this->resetGuestInputFields();
         $this->guestModal = false;
     }
-
     public function editGuest($index)
     {
         $this->editingGuestIndex = $index;
@@ -631,7 +941,6 @@ class CreateReservation extends Component
         $this->editGuestModal = false;
         $this->reset('editingGuestIndex', 'editingGuest');
     }
-
     public function deleteGuest($index)
     {
         unset($this->guests[$index]);
@@ -641,252 +950,35 @@ class CreateReservation extends Component
 
 
 
+    /**
+     * ------------------------- GUEST PET MANAGEMENT LOGIC -----------------------------
+     *
+     * Handles the addition, editing, and deletion of multiple guest pet entries dynamically
+     * within a reservation or booking form. 
+     * -----------------------------------------------------------------------------------
+     */
+    public function addMultiplePets()
+    {
+        $this->validate([
+            'breed' => 'required|string|max:255',
+        ]);
 
+        $this->pets[] = $this->makePetsArray();
+        $this->pet_count = count($this->pets);
 
+        $this->reset('breed'); // clear input
+        $this->recalculateCart();
+    }
 
-
-
-
-
-    // public function CreateReservation()
-    // {
-    //     $this->validateData();
-
-    //     $this->resetErrorBag();
-
-    //     $reservationData = []; // Initialize an empty array to store reservation data for email
-
-    //     DB::transaction(function () use (&$reservationData) {
-
-    //         // If enable_deposit is true, retrieve the deposit percentage from the settings table
-    //         $setting = Setting::first();
-
-    //         // Set the expiration hours for payment proof
-    //         $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
-
-    //         $this->depositPercentage = $setting && $setting->enable_deposit_percentage
-    //             ? $setting->deposit_percentage
-    //             : 0;
-
-    //         // Find the promo code in the database
-    //         $promo = PromoCode::where('code', $this->promoCode)->first();
-
-    //         // Step 1: Create transaction user
-    //         $transactionUser = TransactionUser::create([
-    //             'first_name' => $this->first_name,
-    //             'middle_name' => $this->middle_name,
-    //             'last_name' => $this->last_name,
-    //             'email' => $this->email,
-    //             'contact_number' => $this->contact_number,
-    //             'company_name' => $this->company_name,
-    //             'country' => $this->country,
-    //             'trn_user_type' => $this->trn_user_type,
-    //         ]);
-
-    //         // Step 2: Create transaction
-    //         $transaction = Transaction::create([
-    //             'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
-    //             'reservation_type_id' => $this->reservation_type_id,
-    //             'created_by' => $transactionUser->id,
-    //             'promo_id' => $promo?->id,
-    //             'start_datetime' => $this->check_in_date,
-    //             'end_datetime' => $this->check_out_date,
-    //             'total_adults' => collect($this->selectedRooms)->sum('adults'),
-    //             'total_kids' => collect($this->selectedRooms)->sum('kids'),
-    //             'pax' => $this->total_pax,
-    //             'sub_total' => $this->sub_total ?? 0,
-    //             'convenience_fee' => $this->convenience_fee ?? 0,
-    //             'promo_discount_amount' => $this->promo_discount_amount ?? 0,
-    //             'total_amount' => $this->computeTotalAmount(),
-    //             'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
-    //             'heard_from' => $this->heard_from,
-    //             'reservation_source' => $this->reservation_source,
-    //             'transaction_status' => $this->transaction_status,
-    //             'terms' => $this->terms,
-    //         ]);
-
-    //         // Step 3 & 4: Generate invoice number
-    //         $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
-    //         $invoiceNumber = 'INV-' . now()->year . '-' . str_pad($latestInvoice ? (int) substr($latestInvoice->invoice_number, -3) + 1 : 1, 3, '0', STR_PAD_LEFT);
-
-    //         // Step 5: Create invoice
-    //         $invoice = Invoice::create([
-    //             'transaction_id' => $transaction->id,
-    //             'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
-    //             'invoice_type' => 'Room',
-    //             'sub_total' => $this->computeTotalAmount(),
-    //             'deposit_paid' => 0,
-    //             'amount_paid' => 0,
-    //             'balance_due' => $this->computeTotalAmount(),
-    //             'due_date' => $this->check_out_date,
-    //             'invoice_status' => 'pending',
-    //         ]);
-
-    //         // Step 6: Attach rooms and activities
-    //         foreach ($this->selectedRooms as $item) {
-    //             $transaction->properties()->attach($item['room_id'], [
-    //                 'adults' => $item['adults'],
-    //                 'kids' => $item['kids'],
-    //                 'days' => $item['days'],
-    //                 'extra_charge' => $item['extra_charge'],
-    //                 'amount' => $item['roomAmount'],
-    //                 'total_amount' => $item['total_amount'],
-    //                 'extra_guest' => $item['extra_guest'],
-    //             ]);
-    //         }
-
-    //         foreach ($this->selectedActivities as $item) {
-    //             $transaction->activities()->attach($item['activity_id'], [
-    //                 'quantity' => $item['quantity'],
-    //                 'amount' => $item['amount'],
-    //             ]);
-    //         }
-
-    //         // Step 7: Insert GuestDetails
-    //         foreach ($this->guests as $guest) {
-    //             GuestDetail::create([
-    //                 'transaction_id' => $transaction->id,
-    //                 'first_name' => $guest['guest_first_name'],
-    //                 'middle_name' => $guest['guest_middle_name'],
-    //                 'last_name' => $guest['guest_last_name'],
-    //                 'suffix' => $guest['guest_suffix'],
-    //                 'gender' => $guest['guest_gender'],
-    //                 'residency' => $guest['guest_residency'],
-    //                 'country_of_origin' => $guest['guest_country_of_origin'],
-    //                 'guest_type_id' => $guest['guest_type_id'],
-    //             ]);
-    //         }
-
-    //         // Get the payment_proof_expiration_hours from database
-    //         $setting = Setting::first();
-    //         $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
-
-    //         // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
-
-    //         // Creates a new HTTP client instance (likely from GuzzleHttp\Client).
-    //         // This client will be used to send HTTP requests to the PayMongo API.
-    //         $client = new Client();
-
-    //         // Retrieves the PayMongo secret key from .env.
-    //         $apiKey = env('PAYMONGO_SECRET_KEY');
-
-    //         // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
-    //         $amountInCentavos = intval($this->computeTotalAmount() * ($this->depositPercentage / 100) * 100);
-
-    //         try {
-
-    //             // Sends an HTTP POST request to PayMongo's API endpoint to create a checkout session (payment link).
-    //             $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
-
-    //                 'headers' => [ // Extra pieces of information to be sent with the HTTP request.
-    //                     'Accept' => 'application/json', // What type of data the client expects in response.
-    //                     'Content-Type' => 'application/json', // What type of data is being sent in the request body.
-    //                     'Authorization' => 'Basic ' . base64_encode($apiKey . ':'), // Access to paymongo, contains the secret key.
-    //                 ],
-
-    //                 // JSON payload to be sent in the request body.
-    //                 'json' => [
-    //                     'data' => [
-    //                         'attributes' => [ //  Payment Session Settings
-    //                             'send_email_receipt' => true, // Instructs PayMongo to email a receipt to the payer after a successful payment.
-    //                             'show_description' => true, // Shows the overall description of the payment on the checkout page.
-    //                             'show_line_items' => true, // Displays the breakdown of items (from line_items) on the PayMongo checkout page
-    //                             'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
-    //                             'success_url' => route('guest.thank-you-page'), // This is where the user will be redirected after successful payment.
-    //                             'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
-
-    //                             'line_items' => [ // This is a list of what the user is paying for.
-    //                                 [
-    //                                     'currency' => 'PHP',
-    //                                     'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
-    //                                     'description' => 'Reservation ' . $transaction->transaction_number,
-    //                                     'name' => 'Bayad ka na uy',
-    //                                     'quantity' => 1,
-    //                                 ],
-    //                             ],
-
-    //                             'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name, // This is a general description for the transaction, shown to the payer.
-
-    //                             // Additional metadata for tracking purposes.
-    //                             'metadata' => [
-    //                                 'invoice_id' => (string) $invoice->id,
-    //                                 'payment_type' => 'Security Deposit',
-    //                                 'notes' => 'Deposit for Reservation',
-    //                             ]
-
-    //                         ],
-    //                     ],
-    //                 ],
-
-
-    //             ]);
-
-    //             // Converts the JSON response from the PayMongo API into a PHP array.
-    //             $responseData = json_decode($response->getBody(), true);
-
-    //             // Retrieves the 'data' key from the response, which contains the attributes of the created checkout session.
-    //             // $responseAllData = $responseData['data'] ?? [];
-    //             // dd($responseAllData);
-
-    //             // Retrieves the checkout_url from the response
-    //             $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
-
-    //             // Save payment link to transaction (optional)
-    //             $transaction->update(['payment_link' => $paymentLink]);
-
-    //             // If a promo code is used, increment the uses_count of Promo Code
-    //             if ($promo) {
-    //                 $promo->increment('uses_count');
-    //             }
-    //         } catch (\Exception $e) {
-
-    //             Log::error('PayMongo link creation failed: ' . $e->getMessage());
-    //             $paymentLink = null; // fallback
-
-    //         }
-
-    //         // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
-
-
-    //         $total = $this->computeTotalAmount();
-    //         $deposit = $total * ($this->depositPercentage / 100);
-
-    //         // Prepare data for the email (accessible outside transaction)
-    //         $reservationData = [
-    //             'name' => $this->first_name . ' ' . $this->last_name,
-    //             'transaction_number' => $transaction->transaction_number,
-    //             'email' => $this->email,
-    //             'invoice_number' => $invoiceNumber,
-    //             'check_in' => $this->check_in_date,
-    //             'check_out' => $this->check_out_date,
-    //             'total_amount' => $total,
-    //             'deposit' => $deposit,
-    //             'expirationHours' => $this->expirationHours,
-    //             'payment_link' => $paymentLink,
-    //             'branding_company_name' => $this->companyName,
-    //             'logo_path' => $this->logoPath,
-    //             'branding_company_email' => $this->companyEmail,
-    //             'branding_company_contact' => $this->companyContact,
-    //             'company_address' => $this->companyAddress,
-    //             'facebook_link' => $this->facebookLink,
-    //             'instagram_link' => $this->instagramLink,
-    //         ];
-    //     });
-
-    //     // // Step 7: Send confirmation email
-    //     // try {
-    //     //     Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
-    //     // } catch (\Exception $e) {
-    //     //     logger()->error('Email send failed: ' . $e->getMessage());
-    //     //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-    //     // }
-
-    //     // Step 8: Flash success message and redirect
-    //     session()->flash('success', 'Reservation successfully created!');
-    //     return redirect()->route('admin.reservations-list');
-    // }
-
-
+    public function removeGuestPet($index)
+    {
+        if (isset($this->pets[$index])) {
+            unset($this->pets[$index]);
+            $this->pets = array_values($this->pets);
+            $this->pet_count = count($this->pets);
+        }
+        $this->recalculateCart();
+    }
 
 
 
@@ -905,6 +997,8 @@ class CreateReservation extends Component
     {
         // Reset validation error messages
         $this->resetErrorBag();
+        $this->validateData();
+        $transaction = null;
 
         // Will hold data needed for email notifications
         $reservationData = [];
@@ -982,18 +1076,21 @@ class CreateReservation extends Component
         });
 
         // Attempt to send confirmation emails to guest and admin
-        try {
-            $emailService->sendReservationEmails($reservationData);
-        } catch (\Exception $e) {
-            // If email sending fails, flash error but still continue
-            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // try {
+        //     $emailService->sendReservationEmails($reservationData);
+        // } catch (\Exception $e) {
+        //     // If email sending fails, flash error but still continue
+        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        // }
+
+        if (!$transaction) {
+            session()->flash('error', 'Something went wrong while creating reservation.');
+            return redirect()->route('admin.reservations-list');
         }
 
         session()->flash('success', 'Reservation successfully created!');
-        return redirect()->route('admin.reservations-list');
+        return redirect()->route('admin.view-reservation', ['transaction' => $transaction->id]);
     }
-
-
 
 
 
@@ -1054,25 +1151,56 @@ class CreateReservation extends Component
 
     protected function prepareRoomCartContext($room, $roomId): array
     {
+        // ------------------ FETCH STATIC VALUES ----------------------- //
+
+        // Fetch the stay duration
+        $stayDuration = $this->getStayDurationProperty();
+
+        // Fetch room's ideal guest
+        $included_guests = $room->ideal_guest;
+
+        // Fetch the current room rate
         $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+        $roomRate =  $rate['amount'];
+
+        // Fetch the extra charge depending on its room
+        $extraCharge = $room->extra_person_charge;
+
+        // --------------------- ASSIGN VALUES ----------------------- // 
+
+        // Assign the number of adults and kids
         $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
-        $stayDuration = $this->getStayDurationProperty();
-        $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-        $roomAmount = $rate['amount'] * $stayDuration;
-        $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
+
+        // Fetch room total pax
+        $total_pax = $adults + $kids;
+
+        // Fetch extra guests based on total pax - room's ideal guest
+        $extraGuests = max(0, $total_pax - $included_guests);
+
+        // Computes the roomAmount by multiplying rate by stay duration
+        $roomAmount = $roomRate * $stayDuration;
+
+        // Computes the extra charge total 
+        $extraChargeTotal = $extraCharge * $extraGuests * $stayDuration;
+
+
 
         return [
             'room_name'     => $room->name_number,
-            'extra_guest'   => $extraGuests,
             'days'          => $stayDuration,
             'adults'        => $adults,
             'kids'          => $kids,
-            'roomAmount'    => $roomAmount,
-            'roomRateName'  => $rate['name'],
+            'included_guests'  => $included_guests,
+            'extra_guest'   => $extraGuests,
             'rate_id'       => $rate['rate_id'],
+            'roomRateName'  => $rate['name'],
+            'roomRate' => $roomRate,
             'extra_charge'  => $extraCharge,
-            'total_amount'  => $roomAmount + $extraCharge,
+
+            'roomAmount'    => $roomAmount,
+            'extra_charge_total'  => $extraChargeTotal,
+            'total_amount'  => $roomAmount + $extraChargeTotal,
         ];
     }
 
@@ -1141,7 +1269,7 @@ class CreateReservation extends Component
         $this->dynamicKidOptions[$roomId] = match ($room->occupancy_type) {
             'whole_number', 'ideal_guest' => $this->generateWholeOrIdealKidOptions($room, $selectedAdults, $roomId),
             'combinations'                => $this->generateCombinationKidOptions($room, $selectedAdults, $roomId),
-            default                       => [],
+            default                       => throw new \Exception("Invalid occupancy type: {$room->occupancy_type}"),
         };
     }
 
@@ -1183,16 +1311,18 @@ class CreateReservation extends Component
                 $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
                 $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
                 $roomAmount = $rate['amount'] * $stayDuration;
-                $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
+                $extraCharge = $room->extra_person_charge;
+                $extraChargeTotal = $room->extra_person_charge * $extraGuests * $stayDuration;
 
                 $this->selectedRooms[$index] = array_merge($item, [
                     'adults'        => $adults,
                     'kids'          => $kids,
                     'extra_guest'   => $extraGuests,
                     'extra_charge'  => $extraCharge,
+                    'extra_charge_total'  => $extraChargeTotal,
                     'roomAmount'    => $roomAmount,
                     'rate_id'       => $rate['rate_id'],
-                    'total_amount'  => $roomAmount + $extraCharge,
+                    'total_amount'  => $roomAmount + $extraChargeTotal,
                 ]);
             }
         }
@@ -1201,6 +1331,11 @@ class CreateReservation extends Component
     public function toggleActivityDescription($activityId)
     {
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
+    }
+
+    public function toggleServiceDescription($serviceId)
+    {
+        $this->expandedService = $this->expandedService === $serviceId ? null : $serviceId;
     }
 
     protected function makeGuestArray()
@@ -1241,6 +1376,13 @@ class CreateReservation extends Component
         return 'TXN-' . strtoupper(Str::random(8));
     }
 
+    protected function makePetsArray()
+    {
+        return [
+            'breed' => $this->breed,
+        ];
+    }
+
 
 
 
@@ -1254,7 +1396,7 @@ class CreateReservation extends Component
 
     protected function getItemsByType(string $type): array
     {
-        $combined = array_merge($this->selectedActivities, $this->selectedRooms);
+        $combined = array_merge($this->selectedActivities, $this->selectedRooms, $this->selectedServices);
 
         return array_filter($combined, fn($item) => $item['type'] === $type);
     }
@@ -1333,15 +1475,12 @@ class CreateReservation extends Component
             'last_name' => 'required|string',
             'email' => 'required|email',
             'contact_number' => 'required|string',
-            'country' => 'required|string',
+            'country' => 'nullable|string',
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
+            'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
+            'terms' => 'required|accepted',
+            'requests' => 'nullable|string|max:1000',
         ]);
-
-        if (count($this->guests) !== $this->total_pax) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'guests' => 'Please input all the guests before proceeding.',
-            ]);
-        }
     }
 
 
@@ -1394,6 +1533,7 @@ class CreateReservation extends Component
         $this->activities = Activity::availableActivities()->get();
         $this->paymentMethod = PaymentMethod::all();
         $this->guest_types = GuestType::all();
+        $this->services_charges = Service::all();
     }
 
     protected function loadBranding(): void
@@ -1458,6 +1598,7 @@ class CreateReservation extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
+            'requests' => $this->requests,
         ]);
     }
 
@@ -1491,6 +1632,13 @@ class CreateReservation extends Component
                 $this->attachActivityToTransaction($transaction, $item);
             }
         }
+
+
+        foreach ($this->selectedServices as $item) {
+            if ($item['type'] === 'service') {
+                $this->attachServiceToTransaction($transaction, $item);
+            }
+        }
     }
 
     protected function attachActivityToTransaction(Transaction $transaction, array $item): void
@@ -1501,7 +1649,6 @@ class CreateReservation extends Component
             'payment_status' => $item['payment_status'],
         ]);
     }
-
     protected function attachRoomToTransaction(Transaction $transaction, array $item): void
     {
         $transaction->properties()->attach($item['room_id'], [
@@ -1519,6 +1666,15 @@ class CreateReservation extends Component
         Log::info('Attaching room to transaction with data:', $item);
     }
 
+    protected function attachServiceToTransaction(Transaction $transaction, array $item): void
+    {
+        $transaction->services()->attach($item['service_id'], [
+            'quantity' => $item['quantity'],
+            'amount' => $item['amount'],
+            'days' => $item['days'] ?? 0,
+            'payment_status' => $item['payment_status'],
+        ]);
+    }
     protected function insertGuestDetails(Transaction $transaction): void
     {
         foreach ($this->guests as $guest) {
@@ -1537,27 +1693,40 @@ class CreateReservation extends Component
     }
     protected function insertGuestPetDetails(Transaction $transaction): void
     {
-        if (!$this->bringingPets) {
+        if (!$this->bringingPets || empty($this->pets)) {
             return;
         }
 
-        $nights_stayed = $this->getStayDurationProperty();
+        $nightsStayed = $this->getStayDurationProperty();
         $feePerPetPerDay = $this->getPetFeeAmount();
+        $totalPetCount = count($this->pets);
+        $totalFee = 0;
 
-        $this->validate([
-            'pet_count' => 'required|integer|min:1',
-            'pet_breed' => 'required|array|min:1',
-            'pet_breed.*' => 'required|string|max:255',
-        ]);
+        // Insert individual pet records
+        foreach ($this->pets as $pet) {
+            $petFee = $feePerPetPerDay * $nightsStayed;
+            $totalFee += $petFee;
 
-        // dd($this->pet_count, $this->pet_breed, $transaction->id); // Debug
+            GuestPet::create([
+                'transaction_id' => $transaction->id,
+                'breed'          => $pet['breed'],
+                'pet_count'      => 1,
+                'nights_stayed'  => $nightsStayed,
+                'total_fee'      => $petFee,
+            ]);
+        }
 
-        GuestPet::create([
-            'transaction_id'   => $transaction->id,
-            'pet_breed'        => json_encode($this->pet_breed),
-            'pet_count'        => $this->pet_count,
-            'nights_stayed'    => $nights_stayed,
-            'total_fee'        => $this->pet_count * $feePerPetPerDay * $nights_stayed,
+        // Attach pet fee as a service
+        $this->attachPetFeeService($transaction, $totalPetCount, $nightsStayed, $totalFee);
+    }
+    protected function attachPetFeeService(Transaction $transaction, int $petCount, int $days, float $amount): void
+    {
+        $this->attachServiceToTransaction($transaction, [
+            'service_id'     => 1, // "Pet Fee" (consider using a constant or config here)
+            'days'           => $days,
+            'quantity'       => $petCount,
+            'amount'         => $amount,
+            'payment_status' => 'unpaid',
         ]);
     }
 }

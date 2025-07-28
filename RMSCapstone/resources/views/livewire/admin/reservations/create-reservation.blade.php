@@ -110,6 +110,12 @@
                         <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
                     </div>
 
+                    <!-- Total Services Charge -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
+                        <div class="text-sm">Activity Subtotal: </div>
+                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
+                    </div>
+
                      <!-- Total Pet Charge -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="text-sm">Pet fee: </div>
@@ -263,10 +269,16 @@
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['roomAmount'], 2) }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    ₱{{ number_format($room['extra_charge'], 2) }}</td>
+                                    ₱{{ number_format($room['extra_charge_total'], 2) }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($room['total_amount'], 2) }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                   
+                                    <button wire:click="editSelectedRoom({{ $room['room_id'] }})"
+                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                        Edit
+                                    </button>
+
                                     <button wire:click="RemoveRoom({{ $room['room_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
@@ -294,7 +306,7 @@
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
-                    Add Ons
+                    Activities
                 </h2>
                 <!-- Add Room Button -->
                 <div class="flex justify-end">
@@ -336,8 +348,12 @@
                                     {{ $activity['quantity'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity['amount'] }}</td>
-                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    <button wire:click="RemoveActivity({{ $activity['activity_id'] }})"
+                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                  <button wire:click="editSelectedActivity({{ $activity['activity_id'] }})"
+                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                        Edit
+                                </button>
+                                    <button wire:click="RemoveService({{ $activity['activity_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
                                     </button>
@@ -357,6 +373,81 @@
                 </div>
             </div>
         </div>
+
+        <!---------------------------- SERVICES/CHARGES DETAILS ------------------------------->
+        <!-- Services/Charges Cart Table (Bottom) -->
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
+                    Additional Charges
+                </h2>
+                <!-- Add Service Button -->
+                <div class="flex justify-end">
+                    <x-button wire:click="openModal('services')" icon="fas fa-plus">
+                        Add Charges
+                    </x-button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full border-collapse border border-gray-300 text-sm text-left dark:border-gray-500">
+                    <thead class="bg-gray-50 dark:bg-gray-800">
+                        <tr class="text-center">
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Service Name</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Price</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Quantity</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Total Amount</th>
+                            <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="bg-white dark:bg-gray-600">
+                        @forelse($selectedServices as $service)
+                            <tr class="text-center">
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $service['service_name'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $service['service_rate'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $service['quantity'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    {{ $service['amount'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                  <button wire:click="editSelectedService({{ $service['service_id'] }})"
+                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                        Edit
+                                </button>
+                                    <button wire:click="RemoveService({{ $service['service_id'] }})"
+                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-4 py-6 text-center text-gray-500 dark:text-gray-300">
+                                    No services/charges added yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <div class="text-right font-semibold text-base mt-2 text-gray-700 dark:text-white">
+                    Total Services Charges: ₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}
+                </div>
+            </div>
+        </div>
+
 
 
         <!------------------------- GUEST DETAIL SECTION ------------------------->
@@ -443,7 +534,7 @@
                     <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
-                    @error('last_name')
+                    @error('company_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -489,19 +580,7 @@
                 
                 <div class="col-span-1">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Are you bringing in pets?
-                        <!-- Info Icon with Tooltip -->
-                        <div class="relative group inline-block">
-                            <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
-
-                            <!-- Tooltip -->
-                            <div
-                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                                Please note that there is a pet fee of PHP300/pet/night and we require that pets are
-                                vaccinated and on a leash when outdoors for safety of all guests. Kindly send a soft
-                                copy of the vaccination card @thecanopyfarmph.
-                            </div>
-                        </div>
+                        Are pets included in this reservation
                     </label>
 
                     <div class="flex items-center gap-3">
@@ -525,31 +604,39 @@
 
                 @if ($bringingPets)
                     <div class="mt-4 col-span-1">
-                        <label for="pet_count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            How many pets?
+                        <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Pet Breed
                         </label>
-                        <input type="number" id="pet_count" wire:model.live="pet_count" min="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5
-                                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="e.g., 2">
-                        @error('pet_count')
+                        <input type="text" id="breed" wire:model="breed"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="e.g., Labrador">
+                        @error('breed')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
+
+                        <button type="button" wire:click="addMultiplePets"
+                            class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add Pet</button>
                     </div>
 
-                    @for ($i = 0; $i < $pet_count; $i++)
-                        <div class="mt-4 col-span-1">
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                Breed for Pet #{{ $i + 1 }}
-                            </label>
-                            <input type="text" wire:model="pet_breed.{{ $i }}"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="e.g., Labrador, Shih Tzu">
-                            @error("pet_breed.$i")
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                    @foreach ($pets as $index => $pet)
+                        <div class="flex items-center justify-between">
+                            <span>{{ $pet['breed'] }}</span>
+                            <button wire:click="removeGuestPet({{ $index }})" class="text-red-500">Remove</button>
                         </div>
-                    @endfor
+                    @endforeach
                 @endif
+
+                <!-- Special Requests -->
+                <div class="col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Special Requests</label>
+                    <textarea wire:model="requests" placeholder="Ex. Late check-in, allergy info, etc."
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white resize-none" rows="4"></textarea>
+                    @error('requests')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
 
 
 
@@ -617,7 +704,7 @@
 
         <!------------------------- MODALS SECTION ------------------------->
 
-        <!-- Room Modal -->
+        <!-- Add Room Modal -->
         @if ($roomModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
@@ -823,7 +910,7 @@
             </div>
         @endif
 
-        <!-- Activity Modal -->
+        <!-- Add Activity Modal -->
         @if ($activityModal)
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
@@ -983,7 +1070,160 @@
             </div>
         @endif
 
-         <!-- Add Guest Modal -->
+        <!-- Add Services/Charge Modal -->
+        @if ($servicesModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
+
+                    @error('selectedServices')
+                        <span class="text-red-600">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Header -->
+                    <div
+                        class="flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-green-300">Choose Services/Charge</h2>
+
+                        <button wire:click="$set('servicesModal', false)"
+                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
+                            &times;
+                        </button>
+                    </div>
+
+                    <!-- Body / Services List -->
+                    <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                        @if ($services_charges->count() === 0)
+                            <div class="w-full flex justify-center">
+                                <div class="step-one w-full px-4">
+                                    <div
+                                        class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
+                                        <div class="p-4 text-center">
+                                            <h4 class="text-2xl font-semibold mb-2 dark:text-gray-200">No Services
+                                                Available</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div>
+                                @foreach ($services_charges as $service)
+                                    <div wire:key="service-{{ $service->id }}"
+                                        class="flex items-center justify-between bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+
+                                        <!-- Middle: Name and Description -->
+                                        <div class="flex-1 px-4">
+                                            <h4 class="text-xl font-semibold text-gray-800 dark:text-white">
+                                                {{ $service->name }} {{ $service->amount }} </h4>
+                                            <p class="text-sm text-gray-600 mt-1 dark:text-gray-200">
+                                                {{-- Show more / less when description is long --}}
+                                                @if (empty($service->description))
+                                                    <span class="italic text-gray-400">No description provided</span>
+                                                @elseif ($expandedService === $service->id)
+                                                    {{ $service->description }}
+                                                    <a href="#"
+                                                        wire:click.prevent="toggleServiceDescription({{ $service->id }})"
+                                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                        less</a>
+                                                @else
+                                                    {{ Str::limit($service->description, 100, '...') }}
+                                                    @if (Str::length($service->description) > 100)
+                                                        <a href="#"
+                                                            wire:click.prevent="toggleServiceDescription({{ $service->id }})"
+                                                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                                            more</a>
+                                                    @endif
+                                                @endif
+                                            </p>
+                                        </div>
+
+                                        <!-- Right: Price and Quantity -->
+                                        <div class="flex flex-col md:flex-row md:space-x-12">
+                                            <div class="flex flex-col">
+                                                <label for="quantity-{{ $service->id }}"
+                                                    class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
+                                                    Quantity:
+                                                </label>
+
+                                                <!-- Counter Buttons -->
+                                                <div class="flex items-center">
+                                                    <button type="button"
+                                                        wire:click.prevent="decrementService('{{ $service->id }}')"
+                                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                                                        -
+                                                    </button>
+
+                                                    <span
+                                                        class="text-center w-16 py-1 bg-white border border-gray-300 rounded ">
+                                                         {{ $quantity[$service->id] ?? 1 }}
+                                                    </span>
+
+                                                    @if (($quantity[$service->id] ?? 1))
+                                                        <button type="button"
+                                                            wire:click.prevent="incrementService('{{ $service->id }}')"
+                                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                                                            +
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Add Service Button -->
+                                            <div class=" flex flex-col justify-between mt-4 space-y-4">
+                                                @php
+                                                    $isSelected = collect($selectedServices)->contains(
+                                                        'service_id',
+                                                        $service->id,
+                                                    );
+                                                @endphp
+
+                                                <button
+                                                    wire:click="{{ $isSelected ? 'RemoveService' : 'SelectedServices' }}({{ $service->id }})"
+                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-sm transition ease-in-out duration-150 uppercase"
+                                                    wire:loading.attr="disabled">
+
+                                                    <!-- Spinner -->
+                                                    <div class="flex items-center justify-center">
+                                                        <span wire:loading
+                                                            wire:target="SelectedServices({{ $service->id }})"
+                                                            class="mr-2">
+                                                            <svg class="animate-spin h-5 w-5 text-white"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4">
+                                                                </circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                                </path>
+                                                            </svg>
+                                                        </span>
+
+                                                        <!-- Button Text -->
+                                                        <span wire:loading.remove
+                                                            wire:target="{{ $isSelected ? 'RemoveService' : 'SelectedServices' }}({{ $service->id }})">
+                                                            {{ $isSelected ? 'Remove' : 'Add' }}
+                                                        </span>
+                                                    </div>
+
+
+
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Add Guest Modal -->
         @if ($guestModal)
             <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div
@@ -1114,7 +1354,7 @@
             </div>
         @endif
 
-        <!-- Edit Modal -->
+        <!-- Edit Guest Modal -->
         @if ($editGuestModal)
             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
@@ -1246,6 +1486,186 @@
             </div>
         @endif
 
+        <!-- Edit Service Modal -->
+        @if ($showEditServiceModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Edit Service Quantity</h2>
+                    </div>
+
+                    <!-- Counter Buttons -->
+                    <div class="flex items-center justify-center gap-2">
+                        <button type="button"
+                            wire:click.prevent="decrementSelectedService('{{ $editingServiceId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            -
+                        </button>
+
+                        <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                            {{ $serviceQuantity }}
+                        </span>
+
+                        <button type="button"
+                            wire:click.prevent="incrementSelectedService('{{ $editingServiceId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            +
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between mt-5">
+                        <x-ghost-button wire:click="$set('showEditServiceModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="updateService">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Edit Activity Modal -->
+        @if ($showEditActivityModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-blue-50 text-blue-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Edit {{ $activityName }} Quantity</h2>
+                    </div>
+
+                    <!-- Counter Buttons -->
+                    <div class="flex items-center justify-center gap-2">
+                        <button type="button"
+                            wire:click.prevent="decrementSelectedActivity('{{ $editingActivityId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            -
+                        </button>
+
+                        <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                            {{ $activityQuantity }}
+                        </span>
+
+                        <button type="button"
+                            wire:click.prevent="incrementSelectedActivity('{{ $editingActivityId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            +
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between mt-5">
+                        <x-ghost-button wire:click="$set('showEditActivityModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="updateActivity">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+         <!-- Edit Activity Modal -->
+        @if ($showEditActivityModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-blue-50 text-blue-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Edit {{ $activityName }} Quantity</h2>
+                    </div>
+
+                    <!-- Counter Buttons -->
+                    <div class="flex items-center justify-center gap-2">
+                        <button type="button"
+                            wire:click.prevent="decrementSelectedActivity('{{ $editingActivityId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            -
+                        </button>
+
+                        <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                            {{ $activityQuantity }}
+                        </span>
+
+                        <button type="button"
+                            wire:click.prevent="incrementSelectedActivity('{{ $editingActivityId }}')"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-3 py-1 focus:outline-none dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                            +
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between mt-5">
+                        <x-ghost-button wire:click="$set('showEditActivityModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="updateActivity">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Edit Room Modal -->
+        @if ($showEditRoomModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div class="relative -mt-6 -mx-6 mb-4 bg-blue-50 text-blue-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                    <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Edit {{ $roomName }} Quantity</h2>
+                    </div>
+
+                    <!-- Counter Buttons -->
+                    <div class="flex items-center justify-center gap-2">
+                        <label class="block mb-1">Adults</label>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" wire:click="decrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                            <input type="number" wire:model="roomTotalAdults" min="0" class="w-16 text-center border rounded px-2 py-1">
+                            <button type="button" wire:click="incrementAdults" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                        </div>
+                        @error('roomTotalAdults') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-1">Kids</label>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" wire:click="decrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                            <input type="number" wire:model="roomTotalKids" min="0" class="w-16 text-center border rounded px-2 py-1">
+                            <button type="button" wire:click="incrementKids" class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                        </div>
+                        @error('roomTotalKids') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    </div>
+
+                    <div class="flex justify-between mt-5">
+                        <x-ghost-button wire:click="$set('showEditRoomModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="updateRoom">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        
+
+
+
+
+
+
+
+
+
+
+
+ 
        
 
         <!-- Can't add activity modal -->

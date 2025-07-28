@@ -281,6 +281,7 @@ class ViewReservation extends Component
                 'days' => $property->pivot->days,
                 'extra_guest' => $property->pivot->extra_guest,
                 'extra_charge' => $property->extra_person_charge,
+                'extra_charge_total' => $property->extra_person_charge * $property->pivot->days * $property->pivot->extra_guest,
                 'amount' => $property->amount,
                 'total' => $property->pivot->amount,
                 'created_at' => $property->pivot->created_at,

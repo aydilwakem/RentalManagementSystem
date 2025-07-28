@@ -813,7 +813,7 @@
                                             ₱{{ number_format($item['extra_charge'], 2) }}
                                         </td>
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                            ₱{{ number_format($item['extra_guest'] * $item['extra_charge'], 2) }}
+                                            ₱{{ number_format($item['extra_charge_total'], 2) }}
                                         </td>
                                          <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             <span title="{{ $item['created_at']->format('F j, Y - g:i A') }}">

@@ -19,7 +19,8 @@ class ServiceCartService
         }
 
         $qty = (int) ($quantity[$itemId] ?? 1);
-        $amount = $service->amount * $qty;
+        $service_rate = $service->amount;
+        $amount = $service_rate * $qty;
         $status[$itemId] = 'pending';
         $paymentStatus[$itemId] = 'unpaid';
 
@@ -27,6 +28,7 @@ class ServiceCartService
             'type' => 'service',
             'service_id' => $service->id,
             'service_name' => $service->name,
+            'service_rate' => $service_rate,
             'quantity' => $qty,
             'amount' => $amount,
             'status' => $status[$itemId],

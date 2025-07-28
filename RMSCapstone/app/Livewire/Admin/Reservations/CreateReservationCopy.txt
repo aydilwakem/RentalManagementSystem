@@ -1,0 +1,238 @@
+
+    // public function CreateReservation()
+    // {
+    //     $this->validateData();
+
+    //     $this->resetErrorBag();
+
+    //     $reservationData = []; // Initialize an empty array to store reservation data for email
+
+    //     DB::transaction(function () use (&$reservationData) {
+
+    //         // If enable_deposit is true, retrieve the deposit percentage from the settings table
+    //         $setting = Setting::first();
+
+    //         // Set the expiration hours for payment proof
+    //         $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+
+    //         $this->depositPercentage = $setting && $setting->enable_deposit_percentage
+    //             ? $setting->deposit_percentage
+    //             : 0;
+
+    //         // Find the promo code in the database
+    //         $promo = PromoCode::where('code', $this->promoCode)->first();
+
+    //         // Step 1: Create transaction user
+    //         $transactionUser = TransactionUser::create([
+    //             'first_name' => $this->first_name,
+    //             'middle_name' => $this->middle_name,
+    //             'last_name' => $this->last_name,
+    //             'email' => $this->email,
+    //             'contact_number' => $this->contact_number,
+    //             'company_name' => $this->company_name,
+    //             'country' => $this->country,
+    //             'trn_user_type' => $this->trn_user_type,
+    //         ]);
+
+    //         // Step 2: Create transaction
+    //         $transaction = Transaction::create([
+    //             'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
+    //             'reservation_type_id' => $this->reservation_type_id,
+    //             'created_by' => $transactionUser->id,
+    //             'promo_id' => $promo?->id,
+    //             'start_datetime' => $this->check_in_date,
+    //             'end_datetime' => $this->check_out_date,
+    //             'total_adults' => collect($this->selectedRooms)->sum('adults'),
+    //             'total_kids' => collect($this->selectedRooms)->sum('kids'),
+    //             'pax' => $this->total_pax,
+    //             'sub_total' => $this->sub_total ?? 0,
+    //             'convenience_fee' => $this->convenience_fee ?? 0,
+    //             'promo_discount_amount' => $this->promo_discount_amount ?? 0,
+    //             'total_amount' => $this->computeTotalAmount(),
+    //             'deposit_amount' => $this->computeTotalAmount() * ($this->depositPercentage / 100),
+    //             'heard_from' => $this->heard_from,
+    //             'reservation_source' => $this->reservation_source,
+    //             'transaction_status' => $this->transaction_status,
+    //             'terms' => $this->terms,
+    //         ]);
+
+    //         // Step 3 & 4: Generate invoice number
+    //         $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
+    //         $invoiceNumber = 'INV-' . now()->year . '-' . str_pad($latestInvoice ? (int) substr($latestInvoice->invoice_number, -3) + 1 : 1, 3, '0', STR_PAD_LEFT);
+
+    //         // Step 5: Create invoice
+    //         $invoice = Invoice::create([
+    //             'transaction_id' => $transaction->id,
+    //             'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
+    //             'invoice_type' => 'Room',
+    //             'sub_total' => $this->computeTotalAmount(),
+    //             'deposit_paid' => 0,
+    //             'amount_paid' => 0,
+    //             'balance_due' => $this->computeTotalAmount(),
+    //             'due_date' => $this->check_out_date,
+    //             'invoice_status' => 'pending',
+    //         ]);
+
+    //         // Step 6: Attach rooms and activities
+    //         foreach ($this->selectedRooms as $item) {
+    //             $transaction->properties()->attach($item['room_id'], [
+    //                 'adults' => $item['adults'],
+    //                 'kids' => $item['kids'],
+    //                 'days' => $item['days'],
+    //                 'extra_charge' => $item['extra_charge'],
+    //                 'amount' => $item['roomAmount'],
+    //                 'total_amount' => $item['total_amount'],
+    //                 'extra_guest' => $item['extra_guest'],
+    //             ]);
+    //         }
+
+    //         foreach ($this->selectedActivities as $item) {
+    //             $transaction->activities()->attach($item['activity_id'], [
+    //                 'quantity' => $item['quantity'],
+    //                 'amount' => $item['amount'],
+    //             ]);
+    //         }
+
+    //         // Step 7: Insert GuestDetails
+    //         foreach ($this->guests as $guest) {
+    //             GuestDetail::create([
+    //                 'transaction_id' => $transaction->id,
+    //                 'first_name' => $guest['guest_first_name'],
+    //                 'middle_name' => $guest['guest_middle_name'],
+    //                 'last_name' => $guest['guest_last_name'],
+    //                 'suffix' => $guest['guest_suffix'],
+    //                 'gender' => $guest['guest_gender'],
+    //                 'residency' => $guest['guest_residency'],
+    //                 'country_of_origin' => $guest['guest_country_of_origin'],
+    //                 'guest_type_id' => $guest['guest_type_id'],
+    //             ]);
+    //         }
+
+    //         // Get the payment_proof_expiration_hours from database
+    //         $setting = Setting::first();
+    //         $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24; // default value
+
+    //         // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION STARTS HERE ------------------------ //
+
+    //         // Creates a new HTTP client instance (likely from GuzzleHttp\Client).
+    //         // This client will be used to send HTTP requests to the PayMongo API.
+    //         $client = new Client();
+
+    //         // Retrieves the PayMongo secret key from .env.
+    //         $apiKey = env('PAYMONGO_SECRET_KEY');
+
+    //         // Calculates the amount to be charged in centavos (smallest currency unit for PHP).
+    //         $amountInCentavos = intval($this->computeTotalAmount() * ($this->depositPercentage / 100) * 100);
+
+    //         try {
+
+    //             // Sends an HTTP POST request to PayMongo's API endpoint to create a checkout session (payment link).
+    //             $response = $client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
+
+    //                 'headers' => [ // Extra pieces of information to be sent with the HTTP request.
+    //                     'Accept' => 'application/json', // What type of data the client expects in response.
+    //                     'Content-Type' => 'application/json', // What type of data is being sent in the request body.
+    //                     'Authorization' => 'Basic ' . base64_encode($apiKey . ':'), // Access to paymongo, contains the secret key.
+    //                 ],
+
+    //                 // JSON payload to be sent in the request body.
+    //                 'json' => [
+    //                     'data' => [
+    //                         'attributes' => [ //  Payment Session Settings
+    //                             'send_email_receipt' => true, // Instructs PayMongo to email a receipt to the payer after a successful payment.
+    //                             'show_description' => true, // Shows the overall description of the payment on the checkout page.
+    //                             'show_line_items' => true, // Displays the breakdown of items (from line_items) on the PayMongo checkout page
+    //                             'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya',], // Specifies the payment methods that are accepted for this checkout session.
+    //                             'success_url' => route('guest.thank-you-page'), // This is where the user will be redirected after successful payment.
+    //                             'cancel_url' => 'http://127.0.0.1:8000/payment-failed', // If the user cancels or the payment fails, they will be sent here.
+
+    //                             'line_items' => [ // This is a list of what the user is paying for.
+    //                                 [
+    //                                     'currency' => 'PHP',
+    //                                     'amount' => $amountInCentavos,  // e.g. 150000 for PHP 1,500.00
+    //                                     'description' => 'Reservation ' . $transaction->transaction_number,
+    //                                     'name' => 'Bayad ka na uy',
+    //                                     'quantity' => 1,
+    //                                 ],
+    //                             ],
+
+    //                             'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name, // This is a general description for the transaction, shown to the payer.
+
+    //                             // Additional metadata for tracking purposes.
+    //                             'metadata' => [
+    //                                 'invoice_id' => (string) $invoice->id,
+    //                                 'payment_type' => 'Security Deposit',
+    //                                 'notes' => 'Deposit for Reservation',
+    //                             ]
+
+    //                         ],
+    //                     ],
+    //                 ],
+
+
+    //             ]);
+
+    //             // Converts the JSON response from the PayMongo API into a PHP array.
+    //             $responseData = json_decode($response->getBody(), true);
+
+    //             // Retrieves the 'data' key from the response, which contains the attributes of the created checkout session.
+    //             // $responseAllData = $responseData['data'] ?? [];
+    //             // dd($responseAllData);
+
+    //             // Retrieves the checkout_url from the response
+    //             $paymentLink = $responseData['data']['attributes']['checkout_url'] ?? null;
+
+    //             // Save payment link to transaction (optional)
+    //             $transaction->update(['payment_link' => $paymentLink]);
+
+    //             // If a promo code is used, increment the uses_count of Promo Code
+    //             if ($promo) {
+    //                 $promo->increment('uses_count');
+    //             }
+    //         } catch (\Exception $e) {
+
+    //             Log::error('PayMongo link creation failed: ' . $e->getMessage());
+    //             $paymentLink = null; // fallback
+
+    //         }
+
+    //         // ---------------------- PAYMONGO PAYMENT LINK INTEGRATION ENDS HERE ------------------------ //
+
+
+    //         $total = $this->computeTotalAmount();
+    //         $deposit = $total * ($this->depositPercentage / 100);
+
+    //         // Prepare data for the email (accessible outside transaction)
+    //         $reservationData = [
+    //             'name' => $this->first_name . ' ' . $this->last_name,
+    //             'transaction_number' => $transaction->transaction_number,
+    //             'email' => $this->email,
+    //             'invoice_number' => $invoiceNumber,
+    //             'check_in' => $this->check_in_date,
+    //             'check_out' => $this->check_out_date,
+    //             'total_amount' => $total,
+    //             'deposit' => $deposit,
+    //             'expirationHours' => $this->expirationHours,
+    //             'payment_link' => $paymentLink,
+    //             'branding_company_name' => $this->companyName,
+    //             'logo_path' => $this->logoPath,
+    //             'branding_company_email' => $this->companyEmail,
+    //             'branding_company_contact' => $this->companyContact,
+    //             'company_address' => $this->companyAddress,
+    //             'facebook_link' => $this->facebookLink,
+    //             'instagram_link' => $this->instagramLink,
+    //         ];
+    //     });
+
+    //     // // Step 7: Send confirmation email
+    //     // try {
+    //     //     Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+    //     // } catch (\Exception $e) {
+    //     //     logger()->error('Email send failed: ' . $e->getMessage());
+    //     //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+    //     // }
+
+    //     // Step 8: Flash success message and redirect
+    //     session()->flash('success', 'Reservation successfully created!');
+    //     return redirect()->route('admin.reservations-list');
+    // }

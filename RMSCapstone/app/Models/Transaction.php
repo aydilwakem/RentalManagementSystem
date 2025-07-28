@@ -56,6 +56,7 @@ class Transaction extends Model
         'heard_from',
         'reservation_source',
         'transaction_status',
+        'requests',
         'actual_start_datetime',
         'actual_end_datetime',
         'start_datetime',
