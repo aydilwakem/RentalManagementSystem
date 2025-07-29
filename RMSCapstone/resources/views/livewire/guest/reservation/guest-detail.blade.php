@@ -170,39 +170,39 @@
                     @enderror
                 </div>
 
-                {{-- @if ($bringingPets) --}}
-                <div class="mt-4 col-span-1">
-                    <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Pet Breed
-                    </label>
-                    <div class=" flex flex-row space-x-2">
-                        <input type="text" id="breed" wire:model="breed"
-                            class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
-                            py-2"
-                            placeholder="Ex. Labrador">
-                        <x-button type="button" wire:click="addMultiplePets"
-                            class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add
-                            Pet</x-button>
+                @if ($bringingPets)
+                    <div class="mt-4 col-span-1">
+                        <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Pet Breed
+                        </label>
+                        <div class=" flex flex-row space-x-2">
+                            <input type="text" id="breed" wire:model="breed"
+                                class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
+                                py-2"
+                                placeholder="Ex. Labrador">
+                            <x-button type="button" wire:click="addMultiplePets"
+                                class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add
+                                Pet</x-button>
+                        </div>
+                        @error('breed')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    @error('breed')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
 
-                <div class="mt-4">
-                    <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Added Pets</h3>
-                    @if (count($pets))
-                        @foreach ($pets as $index => $pet)
-                            <ul class="list-disc ml-6">
-                                <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
-                            </ul>
-                        @endforeach
-                    @else
-                        No pets added.
-                    @endif
+                    <div class="mt-4">
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Added Pets</h3>
+                        @if (count($pets))
+                            @foreach ($pets as $index => $pet)
+                                <ul class="list-disc ml-6">
+                                    <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
+                                </ul>
+                            @endforeach
+                        @else
+                            No pets added.
+                        @endif
 
-                </div>
-                {{-- @endif --}}
+                    </div>
+                @endif
 
 
 
