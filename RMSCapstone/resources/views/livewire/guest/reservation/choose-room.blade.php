@@ -216,8 +216,12 @@
                                                             <ul class="list-disc list-inside space-y-1">
                                                                 <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}
                                                                 </li>
+                                                                @if ($room->is_booked)
+                                                                <p>ndi pwd</p>
+                                                                @else
                                                                 <li><strong>Max Capacity:</strong> {{ $room->max_adults }}
                                                                     Adults, {{ $room->max_kids }} Kids</li>
+                                                                @endif
                                                                 <li><strong>Extra Person Charge:</strong>
                                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                                 </li>
@@ -353,92 +357,88 @@
 
                                             <!-- Room Booking Controls -->
                                             <div class="mt-auto pt-2 flex flex-col justify-between">
-                                                <div class="flex gap-4">
+                                                @if ($room->is_booked)
+                                                @else
+                                                    <div class="flex gap-4">
+                                                        <!-- Adults -->
+                                                        <div class="flex-1">
+                                                            <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                            <select wire:model.live="adults.{{ $room->id }}"
+                                                                wire:change="updateKidOptions({{ $room->id }})"
+                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                                @foreach ($room->availableAdultOptions ?? [] as $adult)
+                                                                    <option value="{{ $adult }}">{{ $adult }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
 
-
-
-                                                    <!-- Adults -->
-                                                    <div class="flex-1">
-                                                        <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
-                                                        <select wire:model.live="adults.{{ $room->id }}"
-                                                            wire:change="updateKidOptions({{ $room->id }})"
-                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                            @foreach ($room->availableAdultOptions ?? [] as $adult)
-                                                                <option value="{{ $adult }}">{{ $adult }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <!-- Kids -->
+                                                        <div class="flex-1">
+                                                            <label class="block text-sm font-medium text-gray-700">Children</label>
+                                                            <select wire:model.live="kids.{{ $room->id }}"
+                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
+                                                                @foreach ($dynamicKidOptions[$room->id] ?? $room->availableKidOptions ?? [] as $kid)
+                                                                    <option value="{{ $kid }}">{{ $kid }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                     </div>
+                                                @endif
+                                                    <div class="mt-4">
 
-                                                    <!-- Kids -->
-                                                    <div class="flex-1">
-                                                        <label class="block text-sm font-medium text-gray-700">Children</label>
-                                                        <select wire:model.live="kids.{{ $room->id }}"
-                                                            class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                            @foreach ($dynamicKidOptions[$room->id] ?? $room->availableKidOptions ?? [] as $kid)
-                                                                <option value="{{ $kid }}">{{ $kid }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                        @php
+                                                            $cartCollection = collect($cart); // Convert array to collection
+                                                            $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
+                                                                return $item['type'] === 'room' &&
+                                                                    $item['room_id'] == $room->id;
+                                                            });
+                                                        @endphp
 
+                                                        <!-- Room info here -->
 
-
-                                                </div>
-
-
-                                                <div class="mt-4">
-
-                                                    @php
-                                                        $cartCollection = collect($cart); // Convert array to collection
-                                                        $roomInCart = $cartCollection->contains(function ($item) use ($room, ) {
-                                                            return $item['type'] === 'room' &&
-                                                                $item['room_id'] == $room->id;
-                                                        });
-                                                    @endphp
-
-                                                    <!-- Room info here -->
-
-                                                    @if ($roomInCart)
-                                                        {{-- <span
-                                                            class="block w-full text-center py-2 text-yellow-800 bg-yellow-100 border border-yellow-300 font-semibold rounded text-xs uppercase">
-                                                            <i class="fa-solid fa-check-to-slot"></i> In Cart
-                                                        </span> --}}
-                                                        <x-warning-button class="relative h-10 w-full justify-center !bg-yellow-400 ">
-                                                            <span>
+                                                        @if ($roomInCart)
+                                                            {{-- <span
+                                                                class="block w-full text-center py-2 text-yellow-800 bg-yellow-100 border border-yellow-300 font-semibold rounded text-xs uppercase">
                                                                 <i class="fa-solid fa-check-to-slot"></i> In Cart
-                                                            </span>
-                                                        </x-warning-button>
-                                                    @elseif ($room->is_booked)
-                                                        <x-danger-button>
-                                                            <i class="fa-solid fa-circle-xmark me-1"></i> Sold Out
-                                                        </x-danger-button>
-
-                                                    @else
-                                                        <x-button wire:click="addRoomToCart({{ $room->id }})"
-                                                            wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"
-                                                            class="relative h-10 w-full justify-center">
-
-                                                            <div class="flex items-center justify-center relative w-full">
-                                                                <!-- Spinner -->
-                                                                <span wire:loading class=" flex items-center justify-center"
-                                                                    wire:target="addRoomToCart({{ $room->id }})">
-                                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                                            stroke="currentColor" stroke-width="4" />
-                                                                        <path class="opacity-75" fill="currentColor"
-                                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
-                                                                    </svg>
+                                                            </span> --}}
+                                                            <x-warning-button class="relative h-10 w-full justify-center !bg-yellow-400 ">
+                                                                <span>
+                                                                    <i class="fa-solid fa-check-to-slot"></i> In Cart
                                                                 </span>
+                                                            </x-warning-button>
+                                                        @elseif ($room->is_booked)
+                                                            <x-danger-button>
+                                                                <i class="fa-solid fa-circle-xmark me-1"></i> Sold Out
+                                                            </x-danger-button>
 
-                                                                <!-- Button Text -->
-                                                                <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
-                                                                    <i class="fa-solid fa-cart-plus"></i> Add Room
-                                                                </span>
-                                                            </div>
-                                                        </x-button>
-                                                    @endif
+                                                        @else
+                                                            <x-button wire:click="addRoomToCart({{ $room->id }})"
+                                                                wire:loading.attr="disabled" wire:target="addRoomToCart({{ $room->id }})"
+                                                                class="relative h-10 w-full justify-center">
 
+                                                                <div class="flex items-center justify-center relative w-full">
+                                                                    <!-- Spinner -->
+                                                                    <span wire:loading class=" flex items-center justify-center"
+                                                                        wire:target="addRoomToCart({{ $room->id }})">
+                                                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                                stroke="currentColor" stroke-width="4" />
+                                                                            <path class="opacity-75" fill="currentColor"
+                                                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                                                                        </svg>
+                                                                    </span>
+
+                                                                    <!-- Button Text -->
+                                                                    <span wire:loading.remove wire:target="addRoomToCart({{ $room->id }})">
+                                                                        <i class="fa-solid fa-cart-plus"></i> Add Room
+                                                                    </span>
+                                                                </div>
+                                                            </x-button>
+                                                        @endif
+
+                                                    </div>
                                                 </div>
-                                            </div>
+
                                         </div>
 
 

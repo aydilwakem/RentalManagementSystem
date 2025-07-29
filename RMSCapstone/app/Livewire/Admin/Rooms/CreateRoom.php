@@ -50,9 +50,7 @@ class CreateRoom extends Component
         $this->roomCategories = PropertyCategory::all(); // Load categories
 
         //mount only active room inclusions
-        $this->features = PropertyFeature::where('property_type_id', 1)
-            ->where('is_active', true)
-            ->get();
+        $this->features = PropertyFeature::where('property_type_id', 1)->where('is_active', true)->get();
     }
 
     public function updatedNewImages()
@@ -72,7 +70,7 @@ class CreateRoom extends Component
         if (isset($this->uploadedImagePreviews[$index])) {
             unset($this->uploadedImagePreviews[$index]);
             $this->uploadedImagePreviews = array_values($this->uploadedImagePreviews);
-        } else if (isset($this->persistedImagePaths[$index])) {
+        } elseif (isset($this->persistedImagePaths[$index])) {
             unset($this->persistedImagePaths[$index]);
             $this->persistedImagePaths = array_values($this->persistedImagePaths);
         }
@@ -82,9 +80,12 @@ class CreateRoom extends Component
     {
         // Combine all images
         $allImagesForReorder = array_merge($this->uploadedImagePreviews, $this->persistedImagePaths);
-        $reordered = collect($order)->map(function ($index) use ($allImagesForReorder) {
-            return $allImagesForReorder[$index];
-        })->values()->toArray();
+        $reordered = collect($order)
+            ->map(function ($index) use ($allImagesForReorder) {
+                return $allImagesForReorder[$index];
+            })
+            ->values()
+            ->toArray();
 
         $this->uploadedImagePreviews = []; // Clear temporary ones
         $this->persistedImagePaths = []; // Clear persisted ones
@@ -106,9 +107,13 @@ class CreateRoom extends Component
 
     public function saveRoom()
     {
-        $this->validate();
-
-
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         $allStoredImagePaths = [];
 
@@ -139,7 +144,6 @@ class CreateRoom extends Component
             $finalOccupancy = $this->generateCombinations();
         }
 
-
         // Create the room
         $room = Property::create([
             'name_number' => $this->name_number,
@@ -164,26 +168,7 @@ class CreateRoom extends Component
             $room->features()->attach($this->selectedFeatures);
         }
 
-        $this->reset([
-            'name_number',
-            'property_category_id',
-            'ideal_guest',
-            'max_adults',
-            'max_kids',
-            'max_guests',
-            'occupancy_type',
-            'turnover_duration',
-            'property_status',
-            'amount',
-            'extra_person_charge',
-            'image',
-            'newImages',
-            'uploadedImagePreviews',
-            'persistedImagePaths',
-            'selectedFeatures',
-            'occupancy_rules',
-            'freebies'
-        ]);
+        $this->reset(['name_number', 'property_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'max_guests', 'occupancy_type', 'turnover_duration', 'property_status', 'amount', 'extra_person_charge', 'image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'selectedFeatures', 'occupancy_rules', 'freebies']);
 
         session()->flash('message', 'Room successfully created!');
         return redirect()->route('admin.rooms');
@@ -191,17 +176,14 @@ class CreateRoom extends Component
 
     protected function rules()
     {
-
         $baseRules = [
             'name_number' => [
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('properties', 'name_number')
-                    ->where(function ($query) {
-                        return $query->where('property_type_id', $this->property_type_id)
-                            ->whereNull('deleted_at');
-                    }),
+                Rule::unique('properties', 'name_number')->where(function ($query) {
+                    return $query->where('property_type_id', $this->property_type_id)->whereNull('deleted_at');
+                }),
             ],
             'property_category_id' => 'required|exists:property_categories,id',
             'property_type_id' => 'required|exists:property_types,id',
@@ -238,8 +220,6 @@ class CreateRoom extends Component
         $this->occupancy_rules[] = ['adults' => 2, 'kids' => 2]; // Default rule
     }
 
-
-
     // public function generateCombinations()
     // {
     //     $rules = $this->occupancy_rules;
@@ -272,8 +252,6 @@ class CreateRoom extends Component
     //     return $combinations;
     // }
 
-
-
     public function generateCombinations()
     {
         $rules = $this->occupancy_rules;
@@ -292,7 +270,7 @@ class CreateRoom extends Component
                 $combinations[] = [
                     'adults' => $adults,
                     'kids' => $kids,
-                    'type' => 'original'
+                    'type' => 'original',
                 ];
                 $seen[$comboKey] = true;
             }
@@ -300,14 +278,16 @@ class CreateRoom extends Component
             // Subcombinations
             for ($a = 1; $a <= $adults; $a++) {
                 for ($k = 0; $k <= $kids; $k++) {
-                    if ($a === $adults && $k === $kids) continue;
+                    if ($a === $adults && $k === $kids) {
+                        continue;
+                    }
 
                     $key = "{$a}-{$k}";
                     if (!isset($seen[$key])) {
                         $combinations[] = [
                             'adults' => $a,
                             'kids' => $k,
-                            'type' => 'sub'
+                            'type' => 'sub',
                         ];
                         $seen[$key] = true;
                     }
@@ -318,21 +298,13 @@ class CreateRoom extends Component
         // Sort: original first, then by adults, then kids
         usort($combinations, function ($a, $b) {
             if ($a['type'] === $b['type']) {
-                return $a['adults'] === $b['adults']
-                    ? $a['kids'] <=> $b['kids']
-                    : $a['adults'] <=> $b['adults'];
+                return $a['adults'] === $b['adults'] ? $a['kids'] <=> $b['kids'] : $a['adults'] <=> $b['adults'];
             }
             return $a['type'] === 'original' ? -1 : 1;
         });
 
         return $combinations;
     }
-
-
-
-
-
-
 
     public function render()
     {

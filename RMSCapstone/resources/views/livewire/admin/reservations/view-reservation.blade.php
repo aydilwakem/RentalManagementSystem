@@ -320,7 +320,7 @@
                                         class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                         Room</th>
                                     <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                        class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Category</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
@@ -346,9 +346,9 @@
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Room Total</th>
-                                    <th
+                                    {{-- <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-right dark:text-gray-200 dark:border-gray-500">
-                                        Action</th>
+                                        Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-600">
@@ -393,14 +393,14 @@
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                                        <td
+                                        {{-- <td
                                             class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                             <button wire:click="editRoom({{ $property->pivot->id }})"
                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                 title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -416,9 +416,8 @@
             <!------------------------ END OF ROOM DETAILS ------------------------------------->
 
 
-
             <!-------------------------- ADD ON (ACTIVITIES) --------------------------------------->
-            <div
+            {{-- <div
                 class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Add-on Services/Activities') }}
@@ -472,13 +471,12 @@
                 @else
                     <p class="text-gray-600 italic">No activities found for this transaction.</p>
                 @endif
-            </div>
+            </div> --}}
             <!---------------------- END OF ACTIVITY DETAILS ----------------------------------->
 
 
             <!-------------------------- ADD ON (CHARGES) --------------------------------------->
-            <div
-                class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Additional Charges') }}
                 </h2>
@@ -513,7 +511,7 @@
                                             {{ $service->name }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
-                                            {{ $service->type }}</td>
+                                            {{ ucfirst($service->type) }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $service->pivot->quantity ?? 'NA' }}</td>
@@ -588,7 +586,7 @@
                                             @endif
                                         </td>
                                         <td
-                                            class="border px-4 py-2 text-gray-700 text-center font-semibold dark:text-gray-200 dark:border-gray-500">
+                                            class="border px-4 py-2 text-gray-700 text-center font-semibold dark:text-gray-200 dark:border-gray-500 space-x-2">
                                             <button wire:click="editPet({{ $pet->id }})"
                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                 title="Edit Pet">
@@ -612,10 +610,7 @@
                 @endif
 
             </div>
-
-
             <!---------------------- END OF GUEST PET INFO ----------------------------------->
-
 
 
             <!----------------------------- INVOICE -------------------------------------------->
@@ -759,20 +754,24 @@
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             {{ $item['days'] ?? 'N/A' }}
                                         </td>
+                                        {{-- Unit Cost --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($item['amount'], 2) }}
                                             @if ($item['type'] === 'service')
                                                 ({{ $item['unit'] ?? '' }})
                                             @endif
                                         </td>
+                                        {{-- Subtotal --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($item['total'], 2) }}
                                         </td>
+                                        {{-- Timestamp --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             <span title="{{ $item['created_at']->format('F j, Y - g:i A') }}">
                                                 {{ $item['created_at']->diffForHumans() }}
                                             </span>
                                         </td>
+                                        {{-- Status --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             <span
                                                 class="inline-block py-1 px-2 rounded-full text-xs font-semibold
@@ -782,19 +781,25 @@
                                                 {{ ucfirst($item['payment_status']) }}
                                             </span>
                                         </td>
+                                        {{-- Activity Actions --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
                                             @if ($item['payment_status'] !== 'paid')
-                                                <button
-                                                    wire:click="
+                                                @if ($item['type'] == 'property')
+                                                    <button wire:click="editRoom({{ $property->pivot->id }})"
+                                                        class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+                                                        title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                @else
+                                                    <button
+                                                        wire:click="
                                                         @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
                                                         @elseif($item['type'] === 'service') editService({{ $item['pivot_id'] }}) @endif
                                                     "
-                                                    class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
-                                                    title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-
-                                                @if ($item['type'] !== 'property')
+                                                        class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+                                                        title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
                                                     <button
                                                         wire:click="
                                                             @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
@@ -900,7 +905,6 @@
                             </div>
                         </div> 
                         @endif
-                       
 
                         <hr>
 
@@ -1681,7 +1685,8 @@
 
                             <!-- Suffix -->
                             <div>
-                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
+                                <label
+                                    class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
                                 <input type="text" wire:model.defer="guest.suffix"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
@@ -1714,7 +1719,8 @@
 
                         <!-- Birthdate -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Birthdate</label>
+                            <label
+                                class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Birthdate</label>
                             <input type="date" wire:model.live="guest.birthdate"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
@@ -1730,7 +1736,8 @@
                         <!-- Optional: Guest Type (can be hidden or locked to a default) -->
                         {{-- If you want admin to skip selecting guest type, skip this field --}}
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest Type</label>
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest
+                                Type</label>
                             <select wire:model.defer="guest.guest_type_id"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                     dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
@@ -1883,41 +1890,43 @@
             <!--  Edit Room Modal -->
             @if ($showEditRoomModal)
                 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md ">
                         <div
                             class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
                             <!-- Title -->
-                            <h2 class="text-2xl font-bold text-center">Edit Room Quantity</h2>
+                            <h2 class="text-2xl font-bold text-center">Edit Guest Quantity in Room</h2>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="block mb-1">Adults</label>
-                            <div class="flex items-center space-x-2">
-                                <button type="button" wire:click="decrementAdults"
-                                    class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                                <input type="number" wire:model="roomTotalAdults" min="0"
-                                    class="w-16 text-center border rounded px-2 py-1">
-                                <button type="button" wire:click="incrementAdults"
-                                    class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                        <div class=" items-center justify-center flex flex-col">
+                            <div class="mb-4">
+                                <label class="block mb-1 text-center">Adults</label>
+                                <div class="flex items-center">
+                                    <button type="button" wire:click="decrementAdults"
+                                        class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                                    <input type="number" wire:model="roomTotalAdults" min="0"
+                                        class="w-16 text-center border rounded px-2 py-1">
+                                    <button type="button" wire:click="incrementAdults"
+                                        class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                                </div>
+                                @error('roomTotalAdults')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                            @error('roomTotalAdults')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="block mb-1">Kids</label>
-                            <div class="flex items-center space-x-2">
-                                <button type="button" wire:click="decrementKids"
-                                    class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
-                                <input type="number" wire:model="roomTotalKids" min="0"
-                                    class="w-16 text-center border rounded px-2 py-1">
-                                <button type="button" wire:click="incrementKids"
-                                    class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                            <div class="mb-4">
+                                <label class="block mb-1 text-center">Kids</label>
+                                <div class="flex items-center">
+                                    <button type="button" wire:click="decrementKids"
+                                        class="px-3 py-1 bg-gray-200 rounded text-lg">−</button>
+                                    <input type="number" wire:model="roomTotalKids" min="0"
+                                        class="w-16 text-center border rounded px-2 py-1">
+                                    <button type="button" wire:click="incrementKids"
+                                        class="px-3 py-1 bg-gray-200 rounded text-lg">+</button>
+                                </div>
+                                @error('roomTotalKids')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                            @error('roomTotalKids')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
                         </div>
 
 

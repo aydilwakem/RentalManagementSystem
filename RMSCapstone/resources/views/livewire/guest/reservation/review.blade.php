@@ -149,7 +149,7 @@
                                     <div>
                                         <p class="text-gray-600 text-sm mb-1">Pet Fee</p>
                                         {{-- <p class="font-medium text-gray-800">₱8,500</p> --}}
-                                        <p>₱{{ number_format($item['roomAmount'], 2) }}</p>
+                                        <p>₱{{ number_format($this->computePetTotal(), 2) }}</p>
                                     </div>
                                     <div class="md:col-span-2 pt-4 border-t border-gray-200 mt-4">
                                         <p class="text-gray-600 text-sm mb-1">Total Room Charge</p>
@@ -231,7 +231,7 @@
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-semibold text-gray-700">Convenience Fee</h3>
+                            <h3 class="text-lg text-gray-700">Convenience Fee</h3>
                             <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                         </div>
 
@@ -243,13 +243,14 @@
                             </p>
                         </div>
 
+                        <hr class="py-2">
 
                         <!-- If deposit percentage is enabled -->
                         @if ($enable_deposit_percentage && $this->deposit > 0)
                             <div class="flex justify-between items-center">
-                                <h3 class="text-lg font-semibold text-gray-700">Required Deposit</h3>
+                                <h3 class="text-lg text-gray-700">Required Deposit</h3>
                                 {{-- <p class="text-xl font-bold text-green-700">₱4500</p> --}}
-                                <p class="text-2xl font-bold text-green-700">₱{{ number_format($this->deposit ?? 0, 2) }}
+                                <p class="text-2xl">₱{{ number_format($this->deposit ?? 0, 2) }}
                                 </p>
                             </div>
                         @endif
