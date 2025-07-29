@@ -860,7 +860,8 @@
                             </div>
                         </div>
                 
-                        <!-- Sub Total with discount -->
+                        @if ($transaction->promoCode)
+                        <!-- Promo Applied -->
                         <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
                             Promo Applied:
                             <div>
@@ -875,50 +876,31 @@
 
                             - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
                             </div>
-                        </div>
+                        </div> 
+                        @endif
+                       
 
+                        @if($transaction->promoCode)
                         <!-- Sub Total with discount -->
                         <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
                             Subtotal after discount:
                             <div>
                                 ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
                             </div>
-                        </div>
+                        </div>  
+                        @endif
+                       
 
+                        @if ($this->computeConvenienceFeeTotal() > 0)
                         <!-- Convenience Fee -->
                         <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
                             Convenience Fee:
                             <div>
                                 ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
                             </div>
-                        </div>
-
-                        <hr>
-
-                        <!-- Sub Total with discount -->
-                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
-                            Promo Applied:
-                            <div>
-                                {{ $transaction->promoCode->code ?? '' }}
-
-                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
-                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
-                            @elseif ($transaction->promoCode)
-                                {{-- Flat discount --}}
-                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
-                            @endif
-
-                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
-                            </div>
-                        </div>
-
-                        <!-- Sub Total with discount -->
-                        <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
-                            Subtotal after discount:
-                            <div>
-                                ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
-                            </div>
-                        </div>
+                        </div> 
+                        @endif
+                       
 
                         <hr>
 

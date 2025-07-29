@@ -270,7 +270,6 @@ class ViewReservation extends Component
 
         $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
         $this->guest['country_of_origin'] = $this->guest['country_of_origin'] ?? 'Philippines';
-
     }
 
     public function loadAllInvoiceItems()
@@ -443,7 +442,7 @@ class ViewReservation extends Component
 
         $this->validate([
             'roomTotalAdults' => 'required|integer|min:1',
-            'roomTotalKids' => 'required|integer|min:1',
+            'roomTotalKids' => 'required|integer|min:0',
         ]);
 
         try {
@@ -476,7 +475,7 @@ class ViewReservation extends Component
 
     public function decrementAdults()
     {
-        if ($this->roomTotalAdults > 0) {
+        if ($this->roomTotalAdults > 1) {
             $this->roomTotalAdults--;
         }
     }
@@ -589,7 +588,7 @@ class ViewReservation extends Component
         $this->validate([
             'guest.first_name' => 'required|string|max:255',
             'guest.last_name' => 'required|string|max:255',
-            'guest.birthdate' => 'required|date|before:today',
+            'guest.birthdate' => 'nullable|date|before:today',
             'guest.gender' => 'nullable|in:male,female',
             'guest.transaction_property_id' => 'required|exists:transaction_properties,id',
             'guest.guest_type_id' => 'required|exists:trn_guest_type,id',
@@ -635,7 +634,7 @@ class ViewReservation extends Component
             'editingLastName' => 'required|string|max:255',
             'editingSuffix' => 'nullable|string|max:255',
             'editingGender' => 'required|in:male,female,other',
-            'editingBirthDate' => 'required|date|before:today',
+            'editingBirthDate' => 'nullable|date|before:today',
             'editingResidency' => 'required|in:local,foreigner',
             'editingCountryOfOrigin' => 'nullable|string|max:255',
             'editingGuestTypeId' => 'required|exists:trn_guest_type,id',

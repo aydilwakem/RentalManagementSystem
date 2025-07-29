@@ -99,11 +99,11 @@
                     <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
                         {{ $this->total_pax }}</p>
 
-                    <!-- Total Pet Charge -->
-                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
-                        <div class="text-sm">Pet fee: </div>
-                        <div class="text-sm">₱{{ number_format($this->computePetTotal(), 2) }}</div>
-                    </div>
+                    @if ($bringingPets)
+                    <!-- Total Pets -->
+                    <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No.of Pets:
+                        {{ $this->pet_count }}</p>
+                    @endif
 
                     <!-- Total Room Charge -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
@@ -120,7 +120,7 @@
                     <!-- Total Services Charge -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="text-sm">Services Subtotal: </div>
-                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
+                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</div>
                     </div>
 
                     <!-- Discount Code -->
@@ -134,7 +134,10 @@
 
                     <!-- Convenience Fee -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
-                        <div class="text-sm">Convenience Fee</div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
+                            <span>Convenience Fee</span>
+                        </div>
                         <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                     </div>
 
@@ -359,7 +362,7 @@
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Edit
                                     </button>
-                                    <button wire:click="RemoveService({{ $activity['activity_id'] }})"
+                                    <button wire:click="RemoveActivity({{ $activity['activity_id'] }})"
                                         class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                                         Remove
                                     </button>
@@ -423,7 +426,7 @@
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $service['service_name'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    {{ $service['service_rate'] }}</td>
+                                    {{ $service['service_rate'] }} / {{ $service['service_unit'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $service['quantity'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
@@ -588,55 +591,42 @@
                     @enderror
                 </div>
 
-
-                <div class="col-span-1">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Are pets included in this reservation
-                    </label>
-
-                    <div class="flex items-center gap-3">
-                        <span class="text-gray-700 dark:text-gray-200">No</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets" value="1"
-                                class="sr-only peer">
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
-                            </div>
-                            <div
-                                class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
-                            </div>
-                        </label>
-                        <span class="text-gray-700 dark:text-gray-200">Yes</span>
-                    </div>
-                    @error('bringingPets')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
                 @if ($bringingPets)
+                {{-- <div class="col-span-1">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Pets included in this reservation
+                    </label>
+                </div> --}}
+
+               
                     <div class="mt-4 col-span-1">
-                        <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Pet Breed
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Pet Details (Total: {{ $pet_count }})
                         </label>
-                        <input type="text" id="breed" wire:model="breed"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="e.g., Labrador">
-                        @error('breed')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
 
-                        <button type="button" wire:click="addMultiplePets"
-                            class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add Pet</button>
-                    </div>
+                        @foreach ($pets as $index => $pet)
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    Pet #{{ $index + 1 }} Breed
+                                </label>
+                                <input type="text" wire:model="pets.{{ $index }}.breed"
+                                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                                    placeholder="e.g., Labrador">
 
-                    @foreach ($pets as $index => $pet)
-                        <div class="flex items-center justify-between">
-                            <span>{{ $pet['breed'] }}</span>
-                            <button wire:click="removeGuestPet({{ $index }})"
-                                class="text-red-500">Remove</button>
-                        </div>
-                    @endforeach
+                                <button type="button" wire:click="removeGuestPet({{ $index }})"
+                                    class="text-red-500 mt-1 text-sm">Remove</button>
+                            </div>
+                        @endforeach
+
+                          {{-- General error for pets --}}
+                            @error('pets.*.breed')
+                                <div class="text-red-600 text-sm mt-2">Please enter the breed for all pets.</div>
+                            @enderror
+                    </div>   
                 @endif
+
+
+               
 
                 <!-- Special Requests -->
                 <div class="col-span-1">
@@ -1725,7 +1715,7 @@
             </x-slot>
 
             <x-slot name="content">
-                {{ __('To add activities, please add one or more rooms first.') }}
+                {{ __('Please add one or more rooms first.') }}
             </x-slot>
 
             <x-slot name="footer">

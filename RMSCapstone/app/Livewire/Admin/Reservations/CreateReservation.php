@@ -289,6 +289,7 @@ class CreateReservation extends Component
             Log::info('Dates are changed.');
             $this->selectedRooms = [];
             $this->selectedActivities = [];
+            $this->selectedServices = [];
             $this->pet_count = 0;
             $this->pets = [];
             $this->getAvailableRooms();
@@ -326,11 +327,16 @@ class CreateReservation extends Component
         } elseif ($type === 'guest') {
             $this->guestModal = true;
         } elseif ($type === 'services') {
-            $this->servicesModal = true;
+            if (empty($this->selectedRooms)) {
+                $this->addRoomFirstModal = true;
+            } else {
+                $this->servicesModal = true;
+            }
         } else {
             Log::warning("Unknown modal type: $type");
         }
     }
+
 
 
 
@@ -436,6 +442,43 @@ class CreateReservation extends Component
         }
     }
 
+    // public function computeTotalAmount()
+    // {
+    //     try {
+    //         if (method_exists($this, 'computeSubtotalAmount')) {
+    //             $this->computeSubtotalAmount();
+    //         } else {
+    //             throw new \Exception('computeSubtotalAmount() method not found.');
+    //         }
+
+    //         $this->sub_total = is_numeric($this->sub_total) ? $this->sub_total : 0;
+    //         $this->convenience_fee = round($this->sub_total * 0.03, 2);
+    //         $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
+
+    //         return $this->total_amount;
+    //     } catch (\Throwable $e) {
+    //         Log::error('Error in computeTotalAmount: ' . $e->getMessage());
+
+    //         // Safe fallback values
+    //         $this->sub_total = 0;
+    //         $this->convenience_fee = 0;
+    //         $this->total_amount = 0;
+
+    //         session()->flash('error', 'Something went wrong while computing the total amount.');
+
+    //         return 0;
+    //     }
+    // }
+
+
+
+    public function updateApplyConvenienceFee()
+    {
+        $this->recalculateCart();
+    }
+
+    public bool $apply_convenience_fee = true;
+
     public function computeTotalAmount()
     {
         try {
@@ -446,14 +489,18 @@ class CreateReservation extends Component
             }
 
             $this->sub_total = is_numeric($this->sub_total) ? $this->sub_total : 0;
-            $this->convenience_fee = round($this->sub_total * 0.03, 2);
+
+            // Only apply convenience fee if toggled ON
+            $this->convenience_fee = $this->apply_convenience_fee
+                ? round($this->sub_total * 0.03, 2)
+                : 0;
+
             $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
 
             return $this->total_amount;
         } catch (\Throwable $e) {
             Log::error('Error in computeTotalAmount: ' . $e->getMessage());
 
-            // Safe fallback values
             $this->sub_total = 0;
             $this->convenience_fee = 0;
             $this->total_amount = 0;
@@ -463,6 +510,7 @@ class CreateReservation extends Component
             return 0;
         }
     }
+
 
     public function recalculateCart()
     {
@@ -516,6 +564,8 @@ class CreateReservation extends Component
 
         return $this->convenience_fee;
     }
+
+
 
 
     /**
@@ -668,7 +718,7 @@ class CreateReservation extends Component
     }
     public function decrementAdults()
     {
-        $this->roomTotalAdults = max(0, $this->roomTotalAdults - 1);
+        $this->roomTotalAdults = max(1, $this->roomTotalAdults - 1);
     }
     public function incrementKids()
     {
@@ -847,11 +897,38 @@ class CreateReservation extends Component
      */
 
 
+    // public function SelectedServices($serviceId)
+    // {
+
+    //     // Resets any previous error messages
+    //     $this->resetErrorBag();
+
+    //     $newServicesCart = $this->cartService->addItem(
+    //         'service',
+    //         $serviceId,
+    //         $this->selectedServices,
+    //         $this->quantity,
+    //         $this->status,
+    //         $this->paymentStatus
+    //     );
+
+    //     if ($this->isItemAlreadyInCart('service', $serviceId)) {
+    //         $this->addError('selectedServices', 'This item is already in the cart.');
+    //         return;
+    //     }
+
+    //     $this->selectedServices = $newServicesCart;
+    //     $this->recalculateCart();
+    // }
+
     public function SelectedServices($serviceId)
     {
-
-        // Resets any previous error messages
         $this->resetErrorBag();
+
+        if ($this->isItemAlreadyInCart('service', $serviceId)) {
+            $this->addError('selectedServices', 'This item is already in the cart.');
+            return;
+        }
 
         $newServicesCart = $this->cartService->addItem(
             'service',
@@ -862,19 +939,14 @@ class CreateReservation extends Component
             $this->paymentStatus
         );
 
-        if ($this->isItemAlreadyInCart('service', $serviceId)) {
-            $this->addError('selectedServices', 'This item is already in the cart.');
-            return;
-        }
-
         $this->selectedServices = $newServicesCart;
+
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
 
-
     public function incrementService($serviceId)
     {
-
         if (!isset($this->quantity[$serviceId])) {
             $this->quantity[$serviceId] = 1;
         }
@@ -883,6 +955,8 @@ class CreateReservation extends Component
         $this->quantity[$serviceId] = $newQuantity;
 
         $this->selectedServices = $this->cartService->updateQuantity('service', $this->selectedServices, $serviceId, $newQuantity);
+
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
 
@@ -896,8 +970,42 @@ class CreateReservation extends Component
         $this->quantity[$serviceId] = $newQuantity;
 
         $this->selectedServices = $this->cartService->updateQuantity('service', $this->selectedServices, $serviceId, $newQuantity);
+
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
+
+    protected function handlePetServiceLogic()
+    {
+        $this->bringingPets = false;
+
+        foreach ($this->selectedServices as &$service) {
+            if ((int) $service['service_id'] === 1) {
+                $this->bringingPets = true;
+
+                // Calculate new amount = unit price * days * quantity
+                $unitAmount = $this->getPetFeeAmount();
+                $days = $this->getStayDurationProperty();
+                $qty = $service['quantity'] ?? 1;
+
+                $service['amount'] = $unitAmount * $days * $qty;
+
+                // Reset pets array based on quantity
+                $this->pets = [];
+                for ($i = 0; $i < $qty; $i++) {
+                    $this->pets[] = $this->makePetsArray();
+                }
+
+                $this->pet_count = count($this->pets);
+                break; // stop loop once pet fee is found
+            }
+        }
+
+        $this->recalculateCart();
+    }
+
+
+
 
     public function editSelectedService($serviceId)
     {
@@ -921,6 +1029,7 @@ class CreateReservation extends Component
         if ($this->editingServiceId != $serviceId) return;
 
         $this->serviceQuantity++;
+        $this->handlePetServiceLogic();
     }
 
     public function decrementSelectedService($serviceId)
@@ -928,6 +1037,7 @@ class CreateReservation extends Component
         if ($this->editingServiceId != $serviceId) return;
 
         $this->serviceQuantity = max(1, $this->serviceQuantity - 1);
+        $this->handlePetServiceLogic();
     }
 
     public function updateService()
@@ -945,6 +1055,7 @@ class CreateReservation extends Component
         $this->showEditServiceModal = false;
         $this->editingServiceId = null;
         $this->serviceQuantity = 1;
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
 
@@ -959,17 +1070,22 @@ class CreateReservation extends Component
     public function RemoveActivity($activityId)
     {
         $this->selectedActivities = $this->cartService->removeItem('activity', $activityId, $this->selectedActivities);
+        $this->recalculateCart();
     }
 
     public function RemoveRoom($roomId)
     {
         $this->selectedRooms = $this->cartService->removeItem('room', $roomId, $this->selectedRooms);
         $this->computeTotalPax();
+        $this->recalculateCart();
     }
+
 
     public function RemoveService($serviceId)
     {
         $this->selectedServices = $this->cartService->removeItem('service', $serviceId, $this->selectedServices);
+        $this->handlePetServiceLogic();
+        $this->recalculateCart();
     }
 
 
@@ -1043,6 +1159,7 @@ class CreateReservation extends Component
             $this->pets = array_values($this->pets);
             $this->pet_count = count($this->pets);
         }
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
 
@@ -1546,6 +1663,7 @@ class CreateReservation extends Component
             'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
             'terms' => 'required|accepted',
             'requests' => 'nullable|string|max:1000',
+            'pets.*.breed' => 'required|string|max:255',
         ]);
     }
 
@@ -1578,11 +1696,12 @@ class CreateReservation extends Component
 
     protected function loadRooms(): void
     {
+
         $this->rooms = Property::ofType('Room')
             ->availableRooms()
             ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
             ->get()
-            ->map(function ($room) {
+            ->map(callback: function ($room) {
                 $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
 
                 $room->dynamic_rate = $rate['amount'];
@@ -1593,6 +1712,8 @@ class CreateReservation extends Component
                 return $room;
             });
     }
+
+
 
     protected function loadStaticData()
     {
@@ -1781,7 +1902,6 @@ class CreateReservation extends Component
 
         $nightsStayed = $this->getStayDurationProperty();
         $feePerPetPerDay = $this->getPetFeeAmount();
-        $totalPetCount = count($this->pets);
         $totalFee = 0;
 
         // Insert individual pet records
@@ -1797,18 +1917,15 @@ class CreateReservation extends Component
                 'total_fee'      => $petFee,
             ]);
         }
-
-        // Attach pet fee as a service
-        $this->attachPetFeeService($transaction, $totalPetCount, $nightsStayed, $totalFee);
     }
-    protected function attachPetFeeService(Transaction $transaction, int $petCount, int $days, float $amount): void
-    {
-        $this->attachServiceToTransaction($transaction, [
-            'service_id'     => 1, // "Pet Fee" (consider using a constant or config here)
-            'days'           => $days,
-            'quantity'       => $petCount,
-            'amount'         => $amount,
-            'payment_status' => 'unpaid',
-        ]);
-    }
+    // protected function attachPetFeeService(Transaction $transaction, int $petCount, int $days, float $amount): void
+    // {
+    //     $this->attachServiceToTransaction($transaction, [
+    //         'service_id'     => 1, // "Pet Fee" (consider using a constant or config here)
+    //         'days'           => $days,
+    //         'quantity'       => $petCount,
+    //         'amount'         => $amount,
+    //         'payment_status' => 'unpaid',
+    //     ]);
+    // }
 }

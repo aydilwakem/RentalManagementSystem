@@ -170,39 +170,37 @@
                     @enderror
                 </div>
 
-                {{-- @if ($bringingPets) --}}
-                <div class="mt-4 col-span-1">
-                    <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Pet Breed
-                    </label>
-                    <div class=" flex flex-row space-x-2">
-                        <input type="text" id="breed" wire:model="breed"
-                            class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
-                            py-2"
-                            placeholder="Ex. Labrador">
-                        <x-button type="button" wire:click="addMultiplePets"
-                            class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add
-                            Pet</x-button>
+                @if ($bringingPets)
+                    <div class="mt-4 col-span-1">
+                        <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Pet Breed
+                        </label>
+                        <div class=" flex flex-row space-x-2">
+                            <input type="text" id="breed" wire:model="breed" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
+                                        py-2" placeholder="Ex. Labrador">
+                            <x-button type="button" wire:click="addMultiplePets"
+                                class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add
+                                Pet</x-button>
+                        </div>
+                        @error('breed')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    @error('breed')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
 
-                <div class="mt-4">
-                    <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Added Pets</h3>
-                    @if (count($pets))
-                        @foreach ($pets as $index => $pet)
-                            <ul class="list-disc ml-6">
-                                <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
-                            </ul>
-                        @endforeach
-                    @else
-                        No pets added.
-                    @endif
+                    <div class="mt-4">
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Added Pets</h3>
+                        @if (count($pets))
+                            @foreach ($pets as $index => $pet)
+                                <ul class="list-disc ml-6">
+                                    <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
+                                </ul>
+                            @endforeach
+                        @else
+                            No pets added.
+                        @endif
 
-                </div>
-                {{-- @endif --}}
+                    </div>
+                @endif
 
 
 
@@ -251,7 +249,7 @@
                     </div>
 
                     <!-- Button to open modal -->
-                    @if (count($guests) < $total_pax)
+                    @if (count($guests) < $total_pax - 1)
                         <div class="mt-4">
                             <x-button type="button" wire:click="openGuestModal">
                                 <i class="fas fa-plus mr-1"></i> Add Guest
@@ -409,8 +407,7 @@
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Middle Name</label>
-                                        <input type="text" wire:model="guest_middle_name"
-                                            placeholder="Ex. Mercado"
+                                        <input type="text" wire:model="guest_middle_name" placeholder="Ex. Mercado"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         @error('guest_middle_name')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -420,8 +417,7 @@
                                     <div>
                                         <label class="block text-sm text-gray-700">Last Name <span
                                                 class="text-red-500">*</span></label>
-                                        <input type="text" wire:model="guest_last_name"
-                                            placeholder="Ex. Dela Cruz"
+                                        <input type="text" wire:model="guest_last_name" placeholder="Ex. Dela Cruz"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                                         @error('guest_last_name')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -430,8 +426,7 @@
 
                                     <div>
                                         <label class="block text-sm text-gray-700">Suffix</label>
-                                        <input type="text" wire:model="guest_suffix"
-                                            placeholder="Ex. Jr., Sr., III"
+                                        <input type="text" wire:model="guest_suffix" placeholder="Ex. Jr., Sr., III"
                                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                         @error('guest_suffix')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -490,8 +485,7 @@
                                 <div class="mt-4">
                                     <label class="block text-sm text-gray-700">Country of Origin <span
                                             class="text-red-500">*</span></label>
-                                    <input type="text" wire:model="guest_country_of_origin"
-                                        placeholder="Ex. Philippines"
+                                    <input type="text" wire:model="guest_country_of_origin" placeholder="Ex. Philippines"
                                         class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                     @error('guest_country_of_origin')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -507,14 +501,13 @@
                                     </x-ghost-button>
 
                                     <!-- Add Guest Button -->
-                                    <x-button type="button" wire:click="addMultipleGuests"
-                                        wire:loading.attr="disabled">
+                                    <x-button type="button" wire:click="addMultipleGuests" wire:loading.attr="disabled">
                                         <div class="flex items-center justify-center">
                                             <!-- Spinner -->
                                             <span wire:loading class="mr-2" wire:target="addMultipleGuests">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4"></circle>
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                                     </path>
