@@ -160,7 +160,7 @@
     </div>
 
     {{-- Additional Guest Details --}}
-    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
         <h2
             style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
             Additional Guests Details
@@ -205,19 +205,18 @@
     </div>
 
     {{-- Guest Pet Details --}}
-    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px;">
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
         <h2
             style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
-            Additional Pet Details
+            Guest Pet Details
         </h2>
 
         @if ($guestPets->isNotEmpty())
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead>
                 <tr style="background-color: #166534; color: #fff;">
-                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Number</th>
+                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Pet Number</th>
                     <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Breed</th>
-                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Total Pets</th>
                     <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Total Pet Fee</th>
                 </tr>
             </thead>
@@ -227,22 +226,22 @@
                     <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
                         {{ $loop->iteration }}
                     </td>
-                    {{-- Decode json to display --}}
                     <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
                         {{ $guestPet->breed ?? 'N/A' }}
                     </td>
-                    <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
-                        {{ $guestPet->pet_count ?? 'N/A' }}
-                    </td>
-                    <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
-                        {{ number_format($guestPet->total_fee, 2) }}
+                    <td style="text-align:center">
+                        @if ($guestPet->total_fee == 0)
+                        Pet fee added as additional service
+                        @else
+                        PHP{{ number_format($guestPet->total_fee, 2) }}
+                        @endif
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
         @else
-        <p style="color: #888; font-style: italic; text-align: center; font-size: 14px;">No additional guest pets found
+        <p style="color: #888; font-style: italic; text-align: center; font-size: 14px;">No guest pets found
             for this transaction.</p>
         @endif
     </div>
@@ -325,14 +324,20 @@
             <tr>
                 <td style="padding: 8px; font-weight: bold; font-size: 14px;">Promo Code Applied:</td>
                 <td style="padding: 8px; font-size: 14px;">{{ $transaction->promoCode->code ?? ''}}
-                    @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
-                    ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
-                    @elseif ($transaction->promoCode)
-                    {{-- Flat discount --}}
-                    (PHP{{ number_format($transaction->promoCode->discount_value, 2) }})
-                    @endif
+                    @if ($transaction->promoCode)
+                    <div>
+                        <strong>Promo Code:</strong>
+                        {{ $transaction->promoCode->code }}
 
-                    - PHP{{ number_format($transaction->promo_discount_amount, 2) }}
+                        @if ($transaction->promoCode->discount_type === 'percentage')
+                        ({{ number_format($transaction->promoCode->discount_value, 0) }}% off)
+                        @else
+                        (PHP{{ number_format($transaction->promoCode->discount_value, 2) }} off)
+                        @endif
+                    </div>
+                    @else
+                    <div class="text-gray-500 italic">No promo code used</div>
+                    @endif
                 </td>
             </tr>
             <tr>

@@ -1288,14 +1288,19 @@ class ViewReservation extends Component
         $this->properties = $this->transaction->properties()
             ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
-        $data = [
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal(); 
+
+            $data = [
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
+           // 'promoCode' => $this->promoCode, 
+            'guestPets' => $this->guestPets,
             'transactionUser' => $this->transactionUser,
             'properties' => $this->properties,
             'activities' => $this->activities,
             'services' => $this->services,
+            'convenienceFeeTotal' => $convenienceFeeTotal,
         ];
 
         $pdfOutput = $this->receiptService->generatePdf($data, $this->receipt->receipt_number);
@@ -1340,10 +1345,12 @@ class ViewReservation extends Component
             return ($service->pivot->quantity ?? 0) * ($service->pivot->amount ?? 0);
         });
 
-        $payments = $transaction->invoice->payments ?? collect();
-        $convenienceFeeTotal = $payments
-            ->where('payment_status', 'completed')
-            ->sum('convenience_fee');
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal(); 
+
+        // $payments = $transaction->invoice->payments ?? collect();
+        // $convenienceFeeTotal = $payments
+        //     ->where('payment_status', 'completed')
+        //     ->sum('convenience_fee');
 
         $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
             'transaction' => $transaction,  // Pass the actual transaction

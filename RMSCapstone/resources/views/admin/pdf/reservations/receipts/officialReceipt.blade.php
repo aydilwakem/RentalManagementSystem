@@ -173,6 +173,35 @@
                 @endforeach
             </table>
 
+            <!-- Pet Fee Information -->
+            @if(count($guestPets))
+            <h3>Pet Fees</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pet Number</th>
+                        <th style="text-align:center">Pet Breed</th>
+                        <th style="text-align:center">Total Pet Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($guestPets as $guestPet)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td style="text-align:center"> {{ $guestPet->breed ?? 'N/A' }}</td>
+                        <td style="text-align:center">
+                            @if ($guestPet->total_fee == 0)
+                            Pet fee added as additional service
+                            @else
+                            PHP{{ number_format($guestPet->total_fee, 2) }}
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+
             <!-- Activities -->
             @if(count($activities))
             <h3>Add-On Activities</h3>
@@ -238,6 +267,29 @@
                     <tr>
                         <td><strong>Invoice Number</strong></td>
                         <td>{{ $invoice->invoice_number }}</td>
+                    </tr>
+                    <tr style="background-color: #f5f5f5;">
+                        <td><strong>Promo Code</strong></td>
+                        <td><strong>{{ $transaction->promoCode->code ?? '' }}
+                                @if ($transaction->promoCode)
+                                <div>
+                                    <strong>Promo Code:</strong>
+                                    {{ $transaction->promoCode->code }}
+
+                                    @if ($transaction->promoCode->discount_type === 'percentage')
+                                    ({{ number_format($transaction->promoCode->discount_value, 0) }}% off)
+                                    @else
+                                    (PHP{{ number_format($transaction->promoCode->discount_value, 2) }} off)
+                                    @endif
+                                </div>
+                                @else
+                                <div class="text-gray-500 italic">No promo code used</div>
+                                @endif
+                            </strong></td>
+                    </tr>
+                    <tr style="background-color: #f5f5f5;">
+                        <td><strong>Convenience Fee</strong></td>
+                        <td><strong> PHP{{ number_format($convenienceFeeTotal, 2) }}</strong></td>
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Amount Received</strong></td>
