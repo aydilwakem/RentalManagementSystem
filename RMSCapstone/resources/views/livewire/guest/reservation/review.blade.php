@@ -227,13 +227,20 @@
 
                 <!-- Summary -->
                 <div class="border-t-2 border-gray-200 pt-6">
-                    <div class="flex flex-col space-y-2">
+                    <div class="flex flex-col">
+
+                        <!-- Subtotal -->
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg text-gray-700">Subtotal</h3>
+                            <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                        </div>
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center">
                             <h3 class="text-lg text-gray-700">Convenience Fee</h3>
                             <div class="text-lg">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                         </div>
+
 
                         <!-- Total Amount -->
                         <div class="flex justify-between items-center font-semibold text-green-700 mb-1">
