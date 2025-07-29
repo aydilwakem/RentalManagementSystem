@@ -14,12 +14,12 @@ class InvoiceService
     {
         // Retrieves total amount of activities assigned to the transaction
         $activitiesTotal = $transaction->activities?->sum(
-            fn($activity) => $activity->pivot->quantity * $activity->amount
+            fn($activity) => $activity->pivot->amount
         ) ?? 0;
 
         // Retrieves total amount of services assigned to the transaction
         $servicesTotal = $transaction->services?->sum(
-            fn($service) => $service->pivot->quantity * $service->amount
+            fn($service) => $service->pivot->amount
         ) ?? 0;
 
         // Retrieves total amount of rooms assigned to the transaction

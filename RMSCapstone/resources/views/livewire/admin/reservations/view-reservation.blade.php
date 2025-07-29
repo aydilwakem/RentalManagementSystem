@@ -520,9 +520,7 @@
                                             ₱{{ number_format($service->amount, 2) }}</td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
-                                            ₱{{ $service->pivot && $service->pivot->quantity !== null
-                                                ? number_format($service->amount * $service->pivot->quantity, 2)
-                                                : 'NA' }}
+                                            ₱{{ number_format($service->pivot->amount, 2) }}
                                         </td>
                                     </tr>
                                 @endforeach

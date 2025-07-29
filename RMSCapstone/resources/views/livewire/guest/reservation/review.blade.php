@@ -193,6 +193,37 @@
                     </div>
                 @endif
 
+                <!-- Pet Details -->
+                @if (!empty($pets))
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Pets</h3>
+                        @foreach ($pets as $index => $pet)
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-sm mb-4">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-gray-600 text-sm mb-1">Breed</p>
+                                        <p class="font-medium">{{ $pet['breed'] }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600 text-sm mb-1">Quantity</p>
+                                        <p>1</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        @php
+                            $totalPetFee = number_format($this->computePetTotal(), 2);
+                        @endphp
+
+                        <div class="pt-4 border-t border-gray-200 mt-4">
+                            <p class="text-gray-600 text-sm mb-1">Total Pet Fee</p>
+                            <p class="font-bold text-lg text-green-700">₱{{ $totalPetFee }}</p>
+                        </div>
+                    </div>
+                @endif
+
+
                 {{-- Disclaimer - flat rate --}}
                 {{-- <div style="
     background-color: #fffacd;
@@ -228,6 +259,26 @@
                 <!-- Summary -->
                 <div class="border-t-2 border-gray-200 pt-6">
                     <div class="flex flex-col space-y-2">
+
+                        <!-- Subtotal without discount -->
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg text-gray-700">Subtotal</h3>
+                            <div class="text-lg">₱{{ number_format($this->computeBaseSubtotal(), 2) }}</div>
+                        </div>
+
+                        @if ($this->promoCode)
+                            <!-- Promo Code Applied -->
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg text-gray-700">Promo Code Applied - {{ $this->promoCode }}</h3>
+                                <div class="text-lg">₱{{ number_format($this->promo_discount_amount ?? 0, 2) }}</div>
+                            </div>
+
+                            <!-- Subtotal with discount -->
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg text-gray-700">Subtotal with discount</h3>
+                                <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                            </div>
+                        @endif
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center">

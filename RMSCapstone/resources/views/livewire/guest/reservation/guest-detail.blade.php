@@ -171,13 +171,48 @@
                 </div>
 
                 @if ($bringingPets)
+                    <!-- Displaying Added Pets -->
+                    <div class="mt-6">
+                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200 mb-2">Added Pets</h3>
+                        @if (count($pets) > 0)
+                            <ol
+                                class="space-y-3 list-decimal pl-6 text-gray-700 mb-3 p-3 bg-white rounded-2xl border border-gray-300">
+                                @foreach ($pets as $index => $pet)
+                                    <li class="me-2">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-semibold text-gray-700 flex">
+                                                Pet #{{ $index + 1 }}: {{ $pet['breed'] }}
+                                            </div>
+                                            <div class="space-x-5 flex items-center">
+                                                <button wire:click="editGuestPet({{ $index }})"
+                                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-sm transition duration-150">
+                                                    <i class="fas fa-edit mr-1"></i>
+                                                    Edit
+                                                </button>
+
+                                                <button wire:click="removeGuestPet({{ $index }})"
+                                                    class="inline-flex items-center text-red-500 hover:text-red-700 hover:underline font-sm transition duration-150">
+                                                    <i class="fas fa-trash-alt mr-1"></i>
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ol>
+                        @else
+                            <p class="text-gray-500">No pets added.</p>
+                        @endif
+                    </div>
+
+
                     <div class="mt-4 col-span-1">
                         <label for="breed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Pet Breed
                         </label>
                         <div class=" flex flex-row space-x-2">
                             <input type="text" id="breed" wire:model="breed" class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
-                                        py-2" placeholder="Ex. Labrador">
+                                                                                py-2" placeholder="Ex. Labrador">
                             <x-button type="button" wire:click="addMultiplePets"
                                 class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Add
                                 Pet</x-button>
@@ -185,20 +220,6 @@
                         @error('breed')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
-
-                    <div class="mt-4">
-                        <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Added Pets</h3>
-                        @if (count($pets))
-                            @foreach ($pets as $index => $pet)
-                                <ul class="list-disc ml-6">
-                                    <li>Pet #{{ $index + 1 }}: {{ $pet['breed'] }}</li>
-                                </ul>
-                            @endforeach
-                        @else
-                            No pets added.
-                        @endif
-
                     </div>
                 @endif
 
@@ -525,11 +546,48 @@
                         </div>
                     @endif
 
+                    <!------------------------------ MODALS ------------------------------------>
+
+                    <!-- Edit Modal -->
+                    @if ($showEditPetModal)
+                        <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                            <div
+                                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
+                                <h2 class="text-xl font-bold mb-4 text-center text-green-700">Edit Pet Details</h2>
+
+                                <!-- Breed Field -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="col-span-1 md:col-span-2">
+                                        <label class="block text-sm text-gray-700">Breed Name <span
+                                                class="text-red-500">*</span></label>
+                                        <input type="text" wire:model.defer="editingPet.breed" placeholder="Ex. Labrador"
+                                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
+                                        @error('editingPet.breed')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex justify-end gap-2 mt-6">
+                                    <button wire:click="$set('showEditPetModal', false)"
+                                        class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
+                                        Cancel
+                                    </button>
+                                    <button wire:click="updatePet"
+                                        class="px-4 py-2 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
 
                 </div>
 
                 @error('guests')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                 @enderror
             </div>
         </div>

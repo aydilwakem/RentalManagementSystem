@@ -671,7 +671,7 @@ class ReservationForm extends Component
         $this->resetGuestInputFields();
     }
 
-    public $showPetsModal = false;
+    public $showEditPetModal = false;
 
 
 
@@ -687,6 +687,40 @@ class ReservationForm extends Component
 
         $this->reset('breed');
     }
+
+    public function removeGuestPet($index)
+    {
+        if (isset($this->pets[$index])) {
+            unset($this->pets[$index]);
+            $this->pets = array_values($this->pets);
+            $this->pet_count = count($this->pets);
+        }
+        $this->recalculateCart();
+    }
+
+    public $editingPetIndex = null;
+    public $editingPet = [
+        'breed' => '',
+    ];
+
+    public function editGuestPet($index)
+    {
+        $this->editingPetIndex = $index;
+        $this->editingPet = $this->pets[$index];
+        $this->showEditPetModal = true;
+    }
+
+    public function updatePet()
+    {
+        if (!is_null($this->editingPetIndex)) {
+            $this->pets[$this->editingPetIndex] = $this->editingPet;
+        }
+
+        $this->showEditPetModal = false;
+        $this->recalculateCart();
+        $this->reset('editingPetIndex', 'editingPet');
+    }
+
 
 
 

@@ -304,7 +304,7 @@ class ViewReservation extends Component
                 'extra_guest' => 0,
                 'extra_charge' => 0,
                 'amount' => $activity->amount,
-                'total' => $activity->amount * $activity->pivot->quantity,
+                'total' => $activity->pivot->amount,
                 'created_at' => $activity->pivot->created_at,
                 'payment_status' => $activity->pivot->payment_status,
                 'id' => $activity->id,
@@ -321,7 +321,7 @@ class ViewReservation extends Component
                 'extra_guest' => 0,
                 'extra_charge' => 0,
                 'amount' => $service->amount,
-                'total' => $service->amount * $service->pivot->quantity,
+                'total' => $service->pivot->amount,
                 'created_at' => $service->pivot->created_at,
                 'payment_status' => $service->pivot->payment_status,
                 'unit' => $service->unit,
@@ -1025,13 +1025,13 @@ class ViewReservation extends Component
     // Computes activities total
     public function computeActivitiesTotal(): float
     {
-        return $this->sumTransactionItems('activities', fn($item) => $item->pivot->quantity * $item->amount);
+        return $this->sumTransactionItems('activities', fn($item) => $item->pivot->amount);
     }
 
     // Computes services total
     public function computeServicesTotal(): float
     {
-        return $this->sumTransactionItems('services', fn($item) => $item->pivot->quantity * $item->amount);
+        return $this->sumTransactionItems('services', fn($item) => $item->pivot->amount);
     }
 
     // Computes each item types (Room, Activities, Services, Pet)
