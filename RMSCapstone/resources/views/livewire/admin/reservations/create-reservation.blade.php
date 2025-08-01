@@ -135,8 +135,8 @@
                     <!-- Convenience Fee -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="flex items-center space-x-2 text-sm">
-                            <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
                             <span>Convenience Fee</span>
+                             <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
                         </div>
                         <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                     </div>
@@ -887,38 +887,43 @@
 
                                                 <!-- Add Room Button -->
                                                 @php
-                                                    $isSelected = collect($selectedRooms)->contains(
-                                                        'room_id',
-                                                        $room->id,
-                                                    );
+                                                    $isSelected = collect($selectedRooms)->contains('room_id', $room->id);
                                                 @endphp
 
-                                                <button
-                                                    wire:click="{{ $isSelected ? 'RemoveRoom' : 'SelectedRooms' }}({{ $room->id }})"
-                                                    class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-xs transition ease-in-out duration-150 uppercase"
-                                                    wire:loading.attr="disabled">
+                                                @if ($room->is_booked)
+                                                    <button
+                                                        disabled
+                                                        class="w-full px-4 py-2 bg-gray-400 text-white font-semibold rounded-md text-xs transition ease-in-out duration-150 uppercase cursor-not-allowed"
+                                                    >
+                                                        <div class="flex items-center justify-center">
+                                                            <span>Unavailable</span>
+                                                        </div>
+                                                    </button>
+                                                @else
+                                                    <button
+                                                        wire:click="{{ $isSelected ? 'RemoveRoom' : 'SelectedRooms' }}({{ $room->id }})"
+                                                        class="w-full px-4 py-2 {{ $isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} text-white font-semibold rounded-md text-xs transition ease-in-out duration-150 uppercase"
+                                                        wire:loading.attr="disabled"
+                                                    >
+                                                        <div class="flex items-center justify-center">
+                                                            <span wire:loading wire:target="SelectedRooms({{ $room->id }})" class="mr-2">
+                                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                    <path class="opacity-75" fill="currentColor"
+                                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                                    </path>
+                                                                </svg>
+                                                            </span>
 
-                                                    <div class="flex items-center justify-center">
-                                                        <span wire:loading
-                                                            wire:target="SelectedRooms({{ $room->id }})"
-                                                            class="mr-2">
-                                                            <svg class="animate-spin h-5 w-5 text-white"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12"
-                                                                    cy="12" r="10" stroke="currentColor"
-                                                                    stroke-width="4"></circle>
-                                                                <path class="opacity-75" fill="currentColor"
-                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                                                </path>
-                                                            </svg>
-                                                        </span>
+                                                            <span wire:loading.remove wire:target="{{ $isSelected ? 'RemoveRoom' : 'SelectedRooms' }}({{ $room->id }})">
+                                                                {{ $isSelected ? 'Remove Room' : 'Add Room' }}
+                                                            </span>
+                                                        </div>
+                                                    </button>
+                                                @endif
 
-                                                        <span wire:loading.remove
-                                                            wire:target="{{ $isSelected ? 'RemoveRoom' : 'SelectedRooms' }}({{ $room->id }})">
-                                                            {{ $isSelected ? 'Remove Room' : 'Add Room' }}
-                                                        </span>
-                                                    </div>
-                                                </button>
+                                         
+                                         
                                             </div>
                                         </div>
                                     </div>

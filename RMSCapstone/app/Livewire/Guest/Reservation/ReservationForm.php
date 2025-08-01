@@ -256,12 +256,20 @@ class ReservationForm extends Component
 
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
-
-            // Clear guest inputs
+            // Clear dependent selections
             $this->cart = [];
             $this->currentStep = 1;
             $this->pet_count = 0;
             $this->pets = [];
+
+            if ($property === 'check_in_date') {
+                $checkIn = Carbon::parse($this->check_in_date);
+                $checkOut = Carbon::parse($this->check_out_date);
+
+                if ($checkOut->lte($checkIn)) {
+                    $this->check_out_date = $checkIn->copy()->addDay()->format('Y-m-d');
+                }
+            }
 
             $this->getAvailableRooms();
             $this->removePromoCode();

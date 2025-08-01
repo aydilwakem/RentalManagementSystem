@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Property;
 use App\Models\RoomRate;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Log;
 
 #[Layout('layouts.app')]
 class EditIndividualRate extends Component
@@ -52,25 +53,43 @@ class EditIndividualRate extends Component
 
     public function updateIndividualRoomRate()
     {
+        Log::info('Update individual room rate called');
+
         $this->validate([
-            'room_id' => 'required|exists:properties,id',  // Ensure 'rooms' is the correct table
+            'room_id' => 'required|exists:properties,id',
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'rate_type' => 'required|string|max:50',
-            'freebies' => 'nullable|string|max:1000',
             'priority' => 'nullable|integer|min:1|max:10',
             'is_active' => 'required|boolean',
             'min_stay_nights' => 'nullable|integer|min:1|max:30',
             'max_stay_nights' => 'nullable|integer|min:1|max:90',
         ]);
 
-        // SAnitize fields that can be null
+        Log::info('Validation is successful');
+
+        // Sanitize fields that can be null
         foreach (['priority', 'min_stay_nights', 'max_stay_nights'] as $field) {
             $this->$field = $this->$field === '' ? null : $this->$field;
         }
+
+        // Update the room rate
+        Log::info('Updating room rate with data: ', [
+            'property_id' => $this->room_id,
+            'name' => $this->name,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'amount' => $this->amount,
+            'description' => $this->description,
+            'rate_type' => $this->rate_type,
+            'priority' => $this->priority,
+            'is_active' => $this->is_active,
+            'min_stay_nights' => $this->min_stay_nights,
+            'max_stay_nights' => $this->max_stay_nights,
+        ]);
 
         $this->roomRate->update([
             'property_id' => $this->room_id,
@@ -80,7 +99,6 @@ class EditIndividualRate extends Component
             'amount' => $this->amount,
             'description' => $this->description,
             'rate_type' => $this->rate_type,
-            'freebies' => $this->freebies,
             'priority' => $this->priority,
             'is_active' => $this->is_active,
             'min_stay_nights' => $this->min_stay_nights,
@@ -88,9 +106,9 @@ class EditIndividualRate extends Component
         ]);
 
         session()->flash('message', 'Room Rate successfully updated!');
-
-        return redirect()->route('admin.view-room', ['room' => $this->room_id]); // Fixed redirect
+        return redirect()->route('admin.view-room', ['room' => $this->room_id]);
     }
+
 
     public function increment()
     {

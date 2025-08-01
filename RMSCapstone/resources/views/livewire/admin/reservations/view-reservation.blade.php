@@ -8,7 +8,7 @@
             ['label' => 'Reservations', 'url' => route('admin.reservations-list')],
             [
                 'label' => 'View Reservation',
-                'url' => route('admin.view-reservation', ['transaction' => $transaction->id]),
+                'url' => route('admin.view-reservation', ['transaction' => $this->transaction->id]),
             ],
         ]" />
     </x-slot>

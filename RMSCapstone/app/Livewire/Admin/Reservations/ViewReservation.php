@@ -50,6 +50,12 @@ class ViewReservation extends Component
 
     // ---------------- RELATIONSHIPS ------------------ //
 
+
+    public $createPaymentModal = false;
+    public $amount_paid;
+    public $payment_date;
+    public $payment_type;
+    public $notes;
     public $transaction;
     public $transactionUser;
     public $invoice;
@@ -70,19 +76,17 @@ class ViewReservation extends Component
 
     // --------- PAYMENT RELATED PROPERTIES ----------- //
     public $invoice_id;
-    public $amount_paid;
     public $mode_of_payment;
-    public $payment_type;
-    public $payment_date;
+
     public $payment_status;
-    public $notes;
+
     public $currency;
     public $verified_at;
 
     // ---------------- MODALS ------------------ //
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
-    public $createPaymentModal = false;
+
     public $addActivityModal = false;
     public $expandedActivity = null;
 
@@ -171,12 +175,8 @@ class ViewReservation extends Component
         'transaction_property_id' => null,
         'guest_type_id' => null,
     ];
-
     public $isFull = false;
     public $breed;
-
-
-
     protected ServiceBag $service;
     protected TransactionLoader $loader;
     protected ActivityCartService $activityCartService;
@@ -1292,13 +1292,13 @@ class ViewReservation extends Component
         $this->properties = $this->transaction->properties()
             ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
-        $convenienceFeeTotal = $this->computeConvenienceFeeTotal(); 
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
 
-            $data = [
+        $data = [
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
-           // 'promoCode' => $this->promoCode, 
+            // 'promoCode' => $this->promoCode, 
             'guestPets' => $this->guestPets,
             'transactionUser' => $this->transactionUser,
             'properties' => $this->properties,
@@ -1349,7 +1349,7 @@ class ViewReservation extends Component
             return ($service->pivot->quantity ?? 0) * ($service->pivot->amount ?? 0);
         });
 
-        $convenienceFeeTotal = $this->computeConvenienceFeeTotal(); 
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
 
         // $payments = $transaction->invoice->payments ?? collect();
         // $convenienceFeeTotal = $payments
