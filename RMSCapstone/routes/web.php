@@ -290,22 +290,22 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Create
     Route::get('create/create-service', function () {
         return view('admin.services.create-service');
-    })->name('admin.create-service'); 
+    })->name('admin.create-service');
 
-   //Edit
+    //Edit
     Route::get('edit/service/{service}', EditService::class)
-    ->name('admin.edit-service');
+        ->name('admin.edit-service');
 
     // View
     Route::get('view/service/{service}', ViewService::class)
-    ->name('admin.view-service'); 
+        ->name('admin.view-service');
 
     // Deleted Services (Soft Deletes)
     Route::get('deleted-services', function () {
         return view('admin.services.deleted-services');
-    })->name('admin.deleted-services'); 
+    })->name('admin.deleted-services');
 
-     
+
     // ----------------------------- Events ------------------------------ //
 
     // List
@@ -528,12 +528,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })->name('admin.create-promo-code');
 
     //View
-     Route::get('reservations/view/promo-code/{promoCode}', ViewPromoCode::class)
-    ->name('admin.view-promo-code');
+    Route::get('reservations/view/promo-code/{promoCode}', ViewPromoCode::class)
+        ->name('admin.view-promo-code');
 
     //Edit
-     Route::get('reservations/edit/promo-code/{promoCode}', EditPromoCode::class)
-     ->name('admin.edit-promo-code');
+    Route::get('reservations/edit/promo-code/{promoCode}', EditPromoCode::class)
+        ->name('admin.edit-promo-code');
 
     //Soft Deletes
     Route::get('deleted-promo-codes', function () {
@@ -802,6 +802,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })
         ->name('admin.deleted-tenants')
         ->middleware('can:tenant-soft-delete');
+
+
+    // ----------------- Activity Logs
+    Route::get('/activity-logs', function () {
+        return view('admin.activity-logs.view-activity-logs');
+    })->name('admin.activity-logs');
 });
 
 // --------------------- TEST ROUTES FOR PAYMENT INTEGRATION ----------------------------------- //

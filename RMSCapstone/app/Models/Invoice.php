@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Invoice extends Model
 {
     use SoftDeletes;
-    use HasFactory; 
-    use LogsActivity; 
+    use HasFactory;
+
+    use LogsActivity;
 
     protected $table = 'trn_invoice';
 
@@ -41,23 +43,25 @@ class Invoice extends Model
     ];
 
     // --------------------- Activity Logs ------------------ //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; // Only changed attributes are logged 
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly(['transaction_id',
-            'invoice_number',
-            'invoice_type',
-            'sub_total',
-            'requested_remaining_balance',
-            'deposit_paid',
-            'amount_paid',
-            'balance_due',
-            'due_date',
-            'invoice_status',
-            'completed_at'])
+            ->logOnly([
+                'transaction_id',
+                'invoice_number',
+                'invoice_type',
+                'sub_total',
+                'requested_remaining_balance',
+                'deposit_paid',
+                'amount_paid',
+                'balance_due',
+                'due_date',
+                'invoice_status',
+                'completed_at'
+            ])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

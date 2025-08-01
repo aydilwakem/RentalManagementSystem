@@ -25,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
-    use SoftDeletes; 
+    use SoftDeletes;
     use LogsActivity;
 
     /**
@@ -75,7 +75,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }   
+    }
 
     // ---------------------- Activity Logs ------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
@@ -84,19 +84,25 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly([ 
+            ->logOnly([
                 'name',
                 'middle_name',
                 'last_name',
                 'suffix',
                 'email',
-                'password'])
+                'password'
+            ])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "User has been {$eventName}")
             // 4.4 Optionally, you can set a custom log name for Property Model
             ->useLogName('User');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->name} {$this->middle_name} {$this->last_name} {$this->suffix}");
     }
 
 
