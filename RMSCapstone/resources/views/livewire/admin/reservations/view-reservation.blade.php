@@ -856,13 +856,13 @@
                         </table>
 
                         <!-- Sub Total -->
-                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                        <div class="flex justify-between font-semibold text-base mt-2 text-gray-700 mb-2">
                             Subtotal:
                             <div>
                                 ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
                             </div>
                         </div>
-                
+
                         @if ($transaction->promoCode)
                         <!-- Promo Applied -->
                         <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
@@ -879,9 +879,9 @@
 
                             - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
                             </div>
-                        </div> 
+                        </div>
                         @endif
-                       
+
 
                         @if($transaction->promoCode)
                         <!-- Sub Total with discount -->
@@ -890,9 +890,9 @@
                             <div>
                                 ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
                             </div>
-                        </div>  
+                        </div>
                         @endif
-                       
+
 
                         @if ($this->computeConvenienceFeeTotal() > 0)
                         <!-- Convenience Fee -->
@@ -901,7 +901,7 @@
                             <div>
                                 ₱{{ number_format($this->computeConvenienceFeeTotal(), 2) }}
                             </div>
-                        </div> 
+                        </div>
                         @endif
 
                         <hr>
@@ -1041,7 +1041,7 @@
                                     <tr>
                                         <th
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Payment ID</th>
+                                            ID</th>
                                         <th
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                             Invoice ID</th>
@@ -1051,9 +1051,6 @@
                                         <th
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                             Amount Paid</th>
-                                        <th
-                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                            Convenience Fee</th>
                                         <th
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                             Type</th>
@@ -1086,22 +1083,27 @@
                                             <td
                                                 class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->invoice->invoice_number }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                                {{ $payment->mode_of_payment ?? ($payment->paymentMethod->mode_of_payment_name ?? 'N/A') }}
+                                           <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                                {{ ucfirst($payment->mode_of_payment ?? ($payment->paymentMethod->mode_of_payment_name ?? 'N/A')) }}
+                                            </td>
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 leading-tight">
+                                                <div class="font-semibold">
+                                                    ₱{{ number_format($payment->amount_paid, 2) }}
+                                                </div>
+                                                @if ($payment->convenience_fee)
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+                                                        (with ₱{{ number_format($payment->convenience_fee, 2) }} convenience fee)
+                                                    </div>
+                                                @endif
+
                                             </td>
                                             <td
                                                 class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                                ₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                                ₱{{ number_format($payment->convenience_fee, 2) ?? 'N/A' }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ ucfirst($payment->payment_type) }}</td>
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                                {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 break-words max-w-[96px]">
+                                                {{ $payment->payment_reference_number ?? 'N/A' }}
+                                            </td>
+
                                             <td
                                                 class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                                 {{ $payment->payment_date ?? 'N/A' }}</td>
@@ -1128,8 +1130,7 @@
                                                         <span class="text-gray-500 italic dark:text-gray-200">Cash
                                                             Payment (no receipt uploaded)</span>
                                                     @else
-                                                        <span class="text-gray-500 italic dark:text-gray-200">Paid via
-                                                            PayMongo (no screenshot required)</span>
+                                                        <span class="text-gray-500 italic dark:text-gray-200">Completed via secure online payment</span>
                                                     @endif
                                                 @else
                                                     @if ($payment->payment_status === 'pending')

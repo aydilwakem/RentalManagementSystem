@@ -136,7 +136,7 @@
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                         <div class="flex items-center space-x-2 text-sm">
                             <span>Convenience Fee</span>
-                             <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
+                            <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
                         </div>
                         <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
                     </div>
@@ -798,9 +798,9 @@
                                                     @endphp
 
                                                     @if ($formatted->isNotEmpty())
-                                                        <i
-                                                            class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                        Max occupancy: {{ $formatted->implode(' or ') }}
+                                                        <p class="text-sm text-gray-600 flex items-center dark:text-gray-200">
+                                                            <i class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
+                                                        Max Occupancy: {{ $formatted->implode(' / ') }}
                                                         </p>
                                                     @endif
                                                 @endif
