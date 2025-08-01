@@ -1137,6 +1137,8 @@ class ViewReservation extends Component
             'days'
         )->get();
 
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
+
         // Merge all necessary data for the PDF and email
         $data = array_merge(
             [
@@ -1144,9 +1146,11 @@ class ViewReservation extends Component
                 'invoice' => $this->invoice,
                 'transaction' => $this->transaction,
                 'transactionUser' => $this->transactionUser,
+                'guestPets' => $this->guestPets,
                 'properties' => $properties,
                 'activities' => $activities,
                 'services' => $services,
+                'convenienceFeeTotal' => $convenienceFeeTotal,
             ],
             $brandingService->getBrandingData()
         );
