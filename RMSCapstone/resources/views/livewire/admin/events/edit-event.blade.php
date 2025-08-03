@@ -42,8 +42,8 @@
                                 <label for="first_name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First
                                     Name <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="first_name" placeholder="Ex. Juan"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <input type="text" wire:model="first_name" placeholder="Ex. Juan" readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('first_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -53,8 +53,8 @@
                                 <label for="middle_name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Middle
                                     Name</label>
-                                <input type="text" wire:model="middle_name" placeholder="Ex. Mercado"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <input type="text" wire:model="middle_name" placeholder="Ex. Mercado" readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('middle_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -64,8 +64,8 @@
                                 <label for="last_name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last
                                     Name <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz" readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('last_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -78,7 +78,8 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" wire:model="email" placeholder="Ex. juan.delacruz@example.com"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                    readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('email')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -88,8 +89,8 @@
                                 <label for="contact_number"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact
                                     Number <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="contact_number" placeholder="Ex. 0912 3456 7890"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <input type="text" wire:model="contact_number" placeholder="Ex. 0912 3456 7890" readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('contact_number')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -100,7 +101,8 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company
                                     Name <span class="text-red-500">*</span></label>
                                 <input type="text" wire:model="company_name" placeholder="Ex. Event Management Inc."
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                    readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('company_name')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
@@ -112,8 +114,8 @@
                                 <label for="country"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country <span
                                         class="text-red-500">*</span></label>
-                                <select wire:model="country" wire:change="$refresh" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                                <select wire:model="country" wire:change="$refresh" required readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                                     <option value="">Select Country</option>
                                     <option value="Philippines">Philippines</option>
                                     <option value="Other">Other</option>
@@ -130,8 +132,8 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Please specify your country <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" wire:model="otherCountry" placeholder="Enter your country"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                                <input type="text" wire:model="otherCountry" placeholder="Enter your country" readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
 
                                 @error('country')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -144,12 +146,12 @@
                                 <label for="city_municipality"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
                                     Municipality <span class="text-red-500">*</span></label>
-                                <select id="city_municipality" wire:model="city_municipality" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <select id="city_municipality" wire:model="city_municipality" required readonly
+                                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Municipality</option>
                                     @foreach ($municipalities as $municipality)
                                     <option value="{{ $municipality->PSGC_MUNC_DESC }}">
-                                        {{ $municipality->PSGC_MUNC_DESC }}
+                                        {{ Str::title(strtolower($municipality->PSGC_MUNC_DESC)) }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -270,9 +272,12 @@
                                 <select wire:model="transaction_status" id="transaction_status"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Event Status</option>
+                                    <option value="pending">Pencil Booking</option>
+                                    <option value="receipt_verified">Payment Verified</option>
+                                    <option value="reserved">Reserved</option>
                                     <option value="confirmed">Confirmed</option>
                                     <option value="ongoing">On-going</option>
-                                    <option value="done">Done</option>
+                                    <option value="done">Completed</option>
                                     <option value="cancelled">Cancelled</option>
                                     <option value="terminated">Terminated</option>
                                 </select>
@@ -377,6 +382,7 @@
                     </x-button>
                 </x-slot>
             </x-dialog-modal>
+
 
         </div>
     </div>

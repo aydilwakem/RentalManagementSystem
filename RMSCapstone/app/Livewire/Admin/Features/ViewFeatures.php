@@ -30,6 +30,8 @@ class ViewFeatures extends Component
     public $selectedFeatureId = null;
     public $cannotDeleteItem = false;
 
+    public $propertyFeatureType = '';
+
 
     //public declaration for bulk actions
     public $selectedRows = [];
@@ -56,6 +58,9 @@ class ViewFeatures extends Component
         return PropertyFeature::query()
         ->where('property_type_id', 2) // Only features with property_type_id = 2
         ->where('name', 'like', '%' . trim($this->search) . '%')
+        ->when($this->propertyFeatureType !== '', function ($query) {
+                $query->where('property_feature_type', $this->propertyFeatureType);
+        })
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }

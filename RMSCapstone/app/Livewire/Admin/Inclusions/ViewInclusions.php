@@ -30,6 +30,7 @@ class ViewInclusions extends Component
     public $selectedInclusionId = null;
     public $cannotDeleteItem = false;
 
+    public $propertyFeatureType = '';
 
     //public declaration for bulk actions
     public $selectedRows = [];
@@ -57,6 +58,9 @@ class ViewInclusions extends Component
         return PropertyFeature::query()
             ->where('property_type_id', 3) // Only features with property_type_id = 3
             ->where('name', 'like', '%' . trim($this->search) . '%')
+            ->when($this->propertyFeatureType !== '', function ($query) {
+                $query->where('property_feature_type', $this->propertyFeatureType);
+        })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
     }

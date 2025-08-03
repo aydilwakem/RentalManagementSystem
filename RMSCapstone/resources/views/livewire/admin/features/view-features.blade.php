@@ -1,5 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 ">
-    @if ($features->isEmpty() && !$search)
+    @if ($features->isEmpty() && !$search && !$propertyFeatureType)
     <!-- Empty Page Message -->
     <div class="text-center py-10">
 
@@ -25,7 +25,7 @@
     <div>
         <div class="flex items-center justify-between">
 
-            @can('leases-create')
+            @can('house-features-create')
             <div class="mb-4">
                 <x-button icon="fas fa-plus" href="{{ route('admin.create-feature') }}">
                     New Feature
@@ -33,8 +33,8 @@
             </div>
             @endcan
 
-            @can('leases-delete')
-            <!-- Deleted Rooms (Restore and Delete Forever -->
+            @can('house-features-soft-delete')
+            <!-- Deleted Features (Restore and Delete Forever -->
             <x-button class="mb-4 !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                 icon="fas fa-trash" href="{{ route('admin.deleted-features') }}">
                 Deleted Features
@@ -46,13 +46,13 @@
         <div
             class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4">
-                {{-- Search Tab --}}
+            <div class="flex items-center justify-between d p-4">
+                <!-- Search-->
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor"
-                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
+                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
@@ -62,29 +62,49 @@
                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
-                </div>
 
-                {{-- Bulk Actions Button --}}
-                <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                    <button @click="open = !open" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                    {{-- Bulk Actions Button --}}
+                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                        <button @click="open = !open" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
                                 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                        Actions
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                    <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
-                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                        <div class="py-1">
-                            <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
-                                Delete</a>
+                        <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 focus:outline-none z-50
+                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
+                                    Delete</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {{-- Amenity Type Sort --}}
+                <div class="flex space-x-3">
+                    <div class="flex space-x-3 items-center">
+                        <label class=" text-sm font-medium text-gray-900 dark:text-white">Feature Type:</label>
+                        <select wire:model.live="propertyFeatureType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="">All</option>
+                            <option value="appliance">Appliance</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="utility">Utility</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="service">Service</option>
+                            <option value="fixture">Fixture</option>
+
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            {{-- Table Body --}}
             <div wire:loading wire:target="search"
                 class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
                 <div class="flex flex-col items-center justify-center text-center">
@@ -105,7 +125,7 @@
                                 wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                 class="accent-blue-600 w-4 h-4">
                             <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                <span>ID</span>
+                                <span>Feature ID</span>
                                 @if ($sortBy !== 'id')
                                 {{-- Default icon when sorting is not active --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

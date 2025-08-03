@@ -27,7 +27,7 @@ class CreateEvent extends Component
 
     // ----------------------- Heard From, Status Defaults ---------------------------- //
     public $reservation_source = 'WebApp';
-    public $transaction_status = 'confirmed';
+    public $transaction_status = '';
 
     // ----------------------- EVENT DETAILS ---------------------------- //
 

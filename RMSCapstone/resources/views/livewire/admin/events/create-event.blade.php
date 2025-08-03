@@ -272,6 +272,9 @@
                                 <select wire:model="transaction_status" id="transaction_status" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">-- Select Event Status -- </option>
+                                    <option value="pending">Pencil Booking</option>
+                                    <option value="receipt_verified">Payment Verified</option>
+                                    <option value="reserved">Reserved</option>
                                     <option value="confirmed">Confirmed</option>
                                     <option value="ongoing">On-going</option>
                                     <option value="cancelled">Cancelled</option>

@@ -30,6 +30,8 @@ class ViewAmenities extends Component
     public $selectedItemId = null;
     public $cannotDeleteItem = false;
 
+    public $propertyFeatureType = '';
+
     //public declaration for bulk actions
     public $selectedRows = [];
     public $selectPageRows = false;
@@ -53,6 +55,9 @@ class ViewAmenities extends Component
         return PropertyFeature::query()
         ->where('property_type_id', 1) // Only amenities with property_type_id = 1
         ->where('name', 'like', '%' . trim($this->search) . '%')
+        ->when($this->propertyFeatureType !== '', function ($query) {
+                $query->where('property_feature_type', $this->propertyFeatureType);
+        })
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
     }
