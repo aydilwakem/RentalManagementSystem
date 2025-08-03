@@ -694,6 +694,19 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     font-weight: 500;
 }
 
+.fc-event-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+}
+
+.fc-event-title,
+.fc-event-main {
+    overflow: hidden;
+}
+
 .fc-event:hover {
     background-color: #198754;
     border-color: #198754;

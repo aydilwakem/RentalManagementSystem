@@ -40,8 +40,22 @@
             <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
         </div>
     </div>
+    <div class="mb-4 flex items-center space-x-2">
+        <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
+        <select id="reservationFilter"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
+        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            <option value="all">All</option>
+            <option value="2">Room Reservation</option>
+            <option value="3">Event Bookings</option>
+        </select>
+    </div>
 
     <div id='calendar'></div>
+
+    <div class="mt-2">
+        <span id="currentViewLabel" class="font-semibold text-lg ml-1"></span>
+    </div>
 
     @script
         <script type="text/javascript">
@@ -49,18 +63,36 @@
                 var calendarEl = document.getElementById('calendar');
                 var events = @json($events);
 
+                // Initial filtered events
+                let filteredEvents = [...events];
+
+                // Map for label names
+                const labelMap = {
+                    'all': 'All Transactions',
+                    '2': 'Room Reservations',
+                    '3': 'Event Bookings'
+                };
+
+                // Default label
+                let currentLabel = labelMap['all'];
+
+                // Calendar layout
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
-                    events: events,
+                    events: filteredEvents,
                     headerToolbar: {
-                        left: 'today',
+                        left: 'customLabel',
                         center: 'title',
                         right: 'prev,next'
-                        //right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    customButtons: {
+                        customLabel: {
+                            text: currentLabel,
+                            click: null // no action needed
+                        }
                     },
                     eventDidMount: function(info) {
-                        // Add status-based class to event
                         if (info.event.extendedProps.transaction_status === 'done') {
                             info.el.classList.add('status-done');
                         } else {
@@ -70,28 +102,21 @@
                     eventContent: function(arg) {
                         let title = arg.event.title;
                         let room = arg.event.extendedProps.room || '';
-                        let time = arg.event.extendedProps.time || '';
                         let pax = arg.event.extendedProps.pax || '';
                         let status = arg.event.extendedProps.transaction_status || '';
 
-                        // Reservation Details
                         let firstLine = '<div class="text-sm">';
                         if (status === 'done') {
-                            firstLine += 'Reservation Completed | Click to View Details';  // For completed reservations
+                            firstLine += 'Reservation Completed | Click to View Details';
                         } else {
-                            firstLine += title;  // Guest Name
-                            if (room) firstLine += ` | Room: ${room}`; // Room Name
-                            if (pax) firstLine += ` | ${pax} pax`; // Guest Pax
-                            firstLine += '</div>';
+                            firstLine += title;
+                            if (room) firstLine += ` | Room: ${room}`;
+                            if (pax) firstLine += ` | ${pax} pax`;
                         }
-
-                        // Time
-                        // let secondLine = time ? `<div class="text-xs text-gray-600">${time}</div>` : '';
-
-                        let html = firstLine;
+                        firstLine += '</div>';
 
                         return {
-                            html: html
+                            html: firstLine
                         };
                     },
                     eventClick: function(info) {
@@ -101,10 +126,41 @@
                         }
                     }
                 });
+
                 calendar.render();
+
+                // Handle dropdown change
+                document.getElementById('reservationFilter').addEventListener('change', function() {
+                    let selectedType = this.value;
+
+                    // Filter events
+                    let filtered = selectedType === 'all' ?
+                        events :
+                        events.filter(e => String(e.type_id) === selectedType);
+
+                    calendar.removeAllEvents();
+                    calendar.addEventSource(filtered);
+
+                    // Update custom button label
+                    const newLabel = labelMap[selectedType] || 'Reservations';
+                    calendar.setOption('customButtons', {
+                        customLabel: {
+                            text: newLabel,
+                            click: null
+                        }
+                    });
+
+                    // Force re-render of header
+                    calendar.setOption('headerToolbar', {
+                        left: 'customLabel',
+                        center: 'title',
+                        right: 'prev,next'
+                    });
+                });
             });
         </script>
     @endscript
+
     {{-- <style>
         .status-done {
             background-color: #9ca3af !important;
