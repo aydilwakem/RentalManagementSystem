@@ -251,7 +251,9 @@ class CreateReservation extends Component
         $this->loadRooms();
         $this->loadBranding();
         $this->getAvailableRooms();
-        $this->initializeGuestResidency();
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
+        $this->guest_country_of_origin = 'Philippines';
     }
 
 
@@ -1641,8 +1643,8 @@ class CreateReservation extends Component
             'guest_last_name' => 'required|string',
             'guest_suffix' => 'nullable|string|max:10',
             'guest_gender' => 'nullable|in:male,female,other',
-            'guest_residency' => 'nullable|in:local,foreigner',
-            'guest_country_of_origin' => 'nullable|string|max:100',
+            'guest_residency' => 'required|in:local,foreigner',
+            'guest_country_of_origin' => 'required|string|max:100',
             'guest_type_id' => 'required|exists:trn_guest_type,id',
         ]);
     }
@@ -1723,20 +1725,7 @@ class CreateReservation extends Component
         $this->services_charges = Service::all();
     }
 
-    public function initializeGuestResidency()
-    {
-        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
-        $this->country = 'Philippines';
-        $this->guest_country_of_origin = 'Philippines';
 
-        //Default country
-        //  if (strtolower($this->guest_residency) === 'local') {
-        // $this->guest_country_of_origin = 'Philippines';
-        // } else {
-        //     $this->guest_country_of_origin = '';
-        // }
-
-    }
 
 
     protected function loadBranding(): void

@@ -31,6 +31,7 @@ class LogSuccessfulLogout
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ])
+            ->event('logged_out')
             ->log('A user has logged out');
 
         Log::info('Logout event triggered for user: ' . $user->email);

@@ -37,6 +37,7 @@ class LogSuccessfulLogin
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ])
+            ->event(event: 'logged_in')
             ->log('A user has logged in');
 
         Log::info('Login event triggered for user: ' . $user->email);

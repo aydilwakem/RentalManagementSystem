@@ -1302,71 +1302,76 @@
 
             <!-- Add Payment Modal -->
             @if ($createPaymentModal)
-                <x-trn-modal id="guestModal">
-                    <x-slot name="title" id="guestModal">
-                        Add Payment
-                    </x-slot>
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Add Payment</h2>
 
-                    <x-slot name="content">
-                        <!-- Amount Paid -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" wire:model.defer="amount_paid" placeholder="Ex. 1,200.00"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                required>
-                            @error('amount_paid')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                        <!-- Modal Content -->
+                        <div>
+                            <!-- Amount Paid -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span class="text-red-500">*</span></label>
+                                <input type="number" wire:model.defer="amount_paid" placeholder="Ex. 1,200.00"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('amount_paid')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Date -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Date <span class="text-red-500">*</span></label>
+                                <input type="date" wire:model.defer="payment_date"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('payment_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Type -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Payment Type <span class="text-red-500">*</span></label>
+                                <select wire:model="payment_type"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                    <option value="">Select Payment Type</option>
+                                    <option value="Room Rent">Room Rent</option>
+                                    <option value="Security Deposit">Security Deposit</option>
+                                    <option value="Remaining Balance">Remaining Balance</option>
+                                </select>
+                                @error('payment_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                                <input type="text" wire:model="notes"
+                                    placeholder="Optionally add description of payment"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                                @error('notes')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
-                        <!-- Payment Date -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
-                                    class="text-red-500">*</span></label>
-                            <input type="date" wire:model.defer="payment_date"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                required>
-                            @error('payment_date')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button wire:click="CloseCreatePaymentModal"
+                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancel</button>
+                            <button wire:click="CreatePayment"
+                                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save Changes</button>
                         </div>
-
-                        <!-- Payment Type -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
-                                    class="text-red-500">*</span></label>
-                            <select wire:model="payment_type"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
-                                required>
-                                <option value="">Select Payment Type</option>
-                                <option value="Room Rent">Room Rent</option>
-                                <option value="Security Deposit">Security Deposit</option>
-                                <option value="Remaining Balance">Remaining Balance</option>
-                            </select>
-                            @error('payment_type')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 font-semibold">Notes</label>
-                            <input type="text" wire:model="notes"
-                                placeholder="Optionally add description of payment"
-                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
-                            @error('notes')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </x-slot>
-
-                    <x-slot name="footer">
-                        <x-secondary-button wire:click="CloseCreatePaymentModal">Cancel</x-ghost-button>
-                            <x-button wire:click="CreatePayment">Save Changes</x-button>
-                    </x-slot>
-                </x-trn-modal>
+                    </div>
+                </div>
             @endif
+
+
+            
+          
 
             <!-- Add Charge Modal -->
             @if ($activeModal === 'service')
