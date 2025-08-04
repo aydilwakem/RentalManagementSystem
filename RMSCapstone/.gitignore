@@ -3,6 +3,14 @@
 /public/build
 /public/hot
 /public/storage
+
+# Ignore everything inside uploads
+/public/uploads/*
+
+# But keep the folder itself (and the .gitkeep file)
+!public/uploads/
+!public/uploads/.gitkeep
+
 /storage/*.key
 /storage/pail
 /vendor

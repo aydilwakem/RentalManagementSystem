@@ -47,15 +47,20 @@ class ViewActivityLogs extends Component
 
     public function getActivityLogsProperty()
     {
+        $search = trim(preg_replace('/\s+/', ' ', $this->search)); // Normalize spaces
+
         return Activity::query()
-            ->when($this->search, function ($query) {
-                $search = trim($this->search);
+            ->when($this->search, function ($query) use ($search) {
                 $query->where('description', 'like', '%' . $search . '%')
                     ->orWhere('log_name', 'like', '%' . $search . '%')
+                    ->orWhere('subject_type', 'like', '%' . $search . '%')
                     ->orWhereHas('causer', function ($q) use ($search) {
-                        $q->where('name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('subject_type', 'like', '%' . $search . '%');
+                        $q->whereRaw("CONCAT_WS(' ', name, middle_name, last_name, suffix) LIKE ?", ["%{$search}%"])
+                            ->orWhere('name', 'like', '%' . $search . '%')
+                            ->orWhere('middle_name', 'like', '%' . $search . '%')
+                            ->orWhere('last_name', 'like', '%' . $search . '%')
+                            ->orWhere('suffix', 'like', '%' . $search . '%');
+                    });
             })
             ->when($this->logNameFilter, fn($q) => $q->where('log_name', $this->logNameFilter))
             ->when($this->roleFilter, function ($q) {
@@ -63,26 +68,52 @@ class ViewActivityLogs extends Component
                     $query->where('role', $this->roleFilter);
                 });
             })
+            ->with('causer')
             ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
             ->paginate($this->perPage ?? 10);
     }
 
-
-
-
     public function render()
     {
-        $logs = Activity::with('causer') // Add this
-            ->when(
-                $this->search,
-                fn($query) =>
-                $query->where('description', 'like', '%' . $this->search . '%')
-                    ->orWhere('log_name', 'like', '%' . $this->search . '%')
-            )
-            ->latest()
-            ->paginate(perPage: 10);
+        // Normalize search input by removing extra spaces
+        $search = trim(preg_replace('/\s+/', ' ', $this->search));
 
+        // Fetch activity logs with filters and pagination
+        $logs = Activity::with('causer') // Eager load the user who performed the activity
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    // Search in the activity log fields
+                    $q->where('description', 'like', '%' . $search . '%')
+                        ->orWhere('log_name', 'like', '%' . $search . '%')
+                        ->orWhere('subject_type', 'like', '%' . $search . '%')
 
+                        // Search in the related user (causer) fields
+                        ->orWhereHas('causer', function ($causerQuery) use ($search) {
+                            // Use lower-case search to be case-insensitive across all DBs
+                            $causerQuery->whereRaw("
+                          LOWER(CONCAT_WS(' ', name, middle_name, last_name, suffix)) 
+                          LIKE LOWER(?)
+                      ", ["%" . $search . "%"])
+                                // Also search each part separately in case user types only first or last name
+                                ->orWhereRaw('LOWER(name) LIKE LOWER(?)', ["%{$search}%"])
+                                ->orWhereRaw('LOWER(middle_name) LIKE LOWER(?)', ["%{$search}%"])
+                                ->orWhereRaw('LOWER(last_name) LIKE LOWER(?)', ["%{$search}%"])
+                                ->orWhereRaw('LOWER(suffix) LIKE LOWER(?)', ["%{$search}%"]);
+                        });
+                });
+            })
+            ->when($this->logNameFilter, fn($q) => $q->where('log_name', $this->logNameFilter))
+
+            ->when($this->roleFilter, function ($q) {
+                $q->whereHas('causer', function ($query) {
+                    $query->where('role', $this->roleFilter);
+                });
+            })
+
+            ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
+            ->paginate($this->perPage ?? 10);
+
+        // Return view with logs data
         return view('livewire.admin.activity-logs.view-activity-logs', [
             'logs' => $logs,
         ]);

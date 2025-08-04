@@ -9,7 +9,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -40,18 +40,21 @@
                                 @foreach ($logsByDate as $log)
                                     <div class="relative mb-8 flex items-start">
                                         <div class="absolute -left-9 top-0">
-                                            <div
-                                                class="w-10 h-10 flex items-center justify-center rounded-full z-10
-                                            @if (Str::contains($log->description, 'created')) bg-green-100 text-green-600
-                                            @elseif(Str::contains($log->description, 'updated')) bg-blue-100 text-blue-600
-                                            @elseif(Str::contains($log->description, 'deleted')) bg-red-100 text-red-600
-                                            @else bg-gray-100 text-gray-600 @endif">
+                                            <div class="w-10 h-10 flex items-center justify-center rounded-full z-10
+                                                                        @if (Str::contains($log->description, 'created')) bg-green-100 text-green-600
+                                                                        @elseif(Str::contains($log->description, 'updated')) bg-blue-100 text-blue-600
+                                                                        @elseif(Str::contains($log->description, 'deleted')) bg-red-100 text-red-600
+                                                                        @else bg-gray-100 text-gray-600 @endif">
                                                 @if (Str::contains($log->description, 'created'))
                                                     <i class="fas fa-plus"></i>
                                                 @elseif(Str::contains($log->description, 'updated'))
                                                     <i class="fas fa-edit"></i>
                                                 @elseif(Str::contains($log->description, 'deleted'))
                                                     <i class="fas fa-trash"></i>
+                                                @elseif (Str::contains($log->description, 'logged in'))
+                                                    <i class="fas fa-sign-in-alt text-green-500"></i>
+                                                @elseif (Str::contains($log->description, 'logged out'))
+                                                    <i class="fas fa-sign-out-alt text-yellow-500"></i>
                                                 @else
                                                     <i class="fas fa-info-circle"></i>
                                                 @endif
@@ -69,8 +72,13 @@
                                                 </span>
                                             </div>
                                             {{ $log->description }} by
-                                            <span class="inline-block py-1 px-2 rounded-md text-sm font-semibold bg-gray-100 text-gray-600">
-                                                {{ $log->causer->name ?? 'System' }}
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-md text-sm font-semibold bg-gray-100 text-gray-600">
+                                                @if ($log->causer)
+                                                    {{ $log->causer->name }} {{ $log->causer->last_name }}
+                                                @else
+                                                    System
+                                                @endif
                                             </span>
                                             </p>
                                             <div class="text-xs text-gray-400 mt-2 flex items-center">
@@ -109,4 +117,3 @@
         </div>
     @endif
 </div>
-

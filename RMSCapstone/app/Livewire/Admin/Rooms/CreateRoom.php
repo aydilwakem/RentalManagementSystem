@@ -121,8 +121,9 @@ class CreateRoom extends Component
         foreach ($this->uploadedImagePreviews as $imageObject) {
             if (is_object($imageObject) && method_exists($imageObject, 'isValid')) {
                 if ($imageObject->isValid()) {
-                    $path = $imageObject->store('rooms', 'public');
-                    $allStoredImagePaths[] = $path;
+                    $filename = uniqid() . '.' . $imageObject->getClientOriginalExtension();
+                    $imageObject->storeAs('rooms', $filename, 'uploads');
+                    $allStoredImagePaths[] = 'rooms/' . $filename;
                 } else {
                     session()->flash('error', 'Image upload failed. Please try again.');
                     return;

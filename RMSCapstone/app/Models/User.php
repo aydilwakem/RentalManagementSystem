@@ -14,6 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -27,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasRoles;
     use SoftDeletes;
     use LogsActivity;
+
 
     /**
      * The attributes that are mass assignable.
@@ -97,7 +99,8 @@ class User extends Authenticatable implements MustVerifyEmail
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "User has been {$eventName}")
             // 4.4 Optionally, you can set a custom log name for Property Model
-            ->useLogName('User');
+            ->useLogName('User')
+            ->dontLogIfAttributesChangedOnly(['remember_token']);
     }
 
     public function getFullNameAttribute()
