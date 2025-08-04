@@ -36,15 +36,15 @@
                     <!-- Room Image Array -->
                     @if (isset($room->images) && count($room->images) > 0)
                         <div class="w-full">
-                            <img src="{{ asset('uploads/' . $room->images[0]) }}"
+                            <img src="{{ asset('storage/' . $room->images[0]) }}"
                                 class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Room Image"
-                                onclick="openModal('{{ asset('uploads/' . $room->images[0]) }}')">
+                                onclick="openModal('{{ asset('storage/' . $room->images[0]) }}')">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                             @foreach (array_slice($room->images, 1) as $img)
-                                <img src="{{ asset('uploads/' . $img) }}"
+                                <img src="{{ asset('storage/' . $img) }}"
                                     class="w-full h-44 object-cover rounded border cursor-pointer" alt="Room Image"
-                                    onclick="openModal('{{ asset('uploads/' . $img) }}')">
+                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
                             @endforeach
                         </div>
                     @else
