@@ -9,7 +9,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -27,6 +27,78 @@
                     </div>
                 </div>
 
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex gap-4 w-full">
+                        <div class="relative w-full">
+                            {{-- Start Date --}}
+                            <div class="w-full">
+                                <label for="start_date"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Start Date</label>
+                                <input type="date" wire:model.lazy="start_date" id="start_date"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                @error('start_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- End Date --}}
+                        <div class="w-full">
+                            <label for="end_date"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">End
+                                Date
+                            </label>
+                            <input type="date" wire:model.lazy="end_date" id="end_date"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                            @error('end_date')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Select A Module --}}
+                        <div class="w-full">
+                            <label for="select_module"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Filter by Module
+                            </label>
+                            <select wire:model.live="select_module"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                <option value="">All Modules</option>
+                                {{-- @foreach ($rooms as $room)
+                                <option value="{{ $room->id }}">{{ $room->name_number }}</option>
+                                @endforeach --}}
+
+                            </select>
+                        </div>
+
+                        <!-- Audit Log Filter -->
+                        <div class="w-full">
+                            <label for="audit_log_filter"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Audit Logs
+                                Filter:</label>
+                            <select id="audit_log_filter" name="audit_log_filter" wire:model.live="audit_log_filter"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                <option value="">All</option>
+                                <option value="created">Created</option>
+                                <option value="updated">Updated</option>
+                                <option value="deleted">Deleted</option>
+                                <option value="logged_in">Logged In</option>
+                                <option value="logged_out">Logged Out</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-end">
+                            <x-button icon="fa fa-filter" wire:click="apply_audit_log_filter">
+                                Apply Filter
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Timeline --}}
                 <div class="relative ml-5">
                     @forelse($logs->groupBy(fn($log) => $log->created_at->format('M d')) as $date => $logsByDate)
@@ -40,11 +112,12 @@
                                 @foreach ($logsByDate as $log)
                                     <div class="relative mb-8 flex items-start">
                                         <div class="absolute -left-9 top-0">
-                                            <div class="w-10 h-10 flex items-center justify-center rounded-full z-10
-                                                                        @if (Str::contains($log->description, 'created')) bg-green-100 text-green-600
-                                                                        @elseif(Str::contains($log->description, 'updated')) bg-blue-100 text-blue-600
-                                                                        @elseif(Str::contains($log->description, 'deleted')) bg-red-100 text-red-600
-                                                                        @else bg-gray-100 text-gray-600 @endif">
+                                            <div
+                                                class="w-10 h-10 flex items-center justify-center rounded-full z-10
+                                                                                                                                                @if (Str::contains($log->description, 'created')) bg-green-100 text-green-600
+                                                                                                                                                @elseif(Str::contains($log->description, 'updated')) bg-blue-100 text-blue-600
+                                                                                                                                                @elseif(Str::contains($log->description, 'deleted')) bg-red-100 text-red-600
+                                                                                                                                                @else bg-gray-100 text-gray-600 @endif">
                                                 @if (Str::contains($log->description, 'created'))
                                                     <i class="fas fa-plus"></i>
                                                 @elseif(Str::contains($log->description, 'updated'))
