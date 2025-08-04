@@ -50,10 +50,14 @@ class Dashboard extends Component
                 ->count();
 
             $this->reservations = Transaction::where('reservation_type_id', 2)->get();
-            $allTransactions = Transaction::where('reservation_type_id', 2)
-                // ->whereNotIn('transaction_status', ['done'])
-                ->with('reservationType', 'transactionUser')
+            // Fetch only transactions with reservation_type_id 1 or 2
+            $allTransactions = Transaction::with('reservationType', 'transactionUser', 'properties')
+                ->whereIn('reservation_type_id', [2, 3])
                 ->get();
+
+                // ->whereNotIn('transaction_status', ['done'])
+                // ->with('reservationType', 'transactionUser')
+                // ->get();
 
             foreach ($allTransactions as $transaction) {
                 // Get room names
@@ -66,6 +70,7 @@ class Dashboard extends Component
                     'type' => $transaction->reservationType?->name ?? 'N/A',
                     'category' => 'transaction',
                     'id' => $transaction->id,
+                    'type_id' => $transaction->reservation_type_id,
                     'url' => route('admin.view-reservation', ['transaction' => $transaction->id]),
                     'transaction_status' => $transaction->transaction_status,
                     'room' => $rooms,
