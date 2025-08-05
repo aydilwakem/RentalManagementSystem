@@ -285,7 +285,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // ----------------------------- Services ------------------------------ //
     Route::get('/services', function () {
         return view('admin.services.view-services');
-    })->name('admin.services');
+    })->name('admin.services')
+    ->middleware('can:service-list');
 
     // Create
     Route::get('create/create-service', function () {
@@ -520,25 +521,30 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     //List
     Route::get('/reservations/promo-codes', function () {
         return view('admin.settings.promo-codes.view-promo-codes');
-    })->name('admin.view-promo-codes');
+    })->name('admin.view-promo-codes')
+    ->middleware('can:promo-code-list');
 
     //Create
     Route::get('/reservations/create/promo-code', function () {
         return view('admin.settings.promo-codes.create-promo-code');
-    })->name('admin.create-promo-code');
+    })->name('admin.create-promo-code')
+    ->can('promo-code-create');
 
     //View
     Route::get('reservations/view/promo-code/{promoCode}', ViewPromoCode::class)
-        ->name('admin.view-promo-code');
+    ->name('admin.view-promo-code')
+    ->middleware('can:promo-code-view');
 
     //Edit
     Route::get('reservations/edit/promo-code/{promoCode}', EditPromoCode::class)
-        ->name('admin.edit-promo-code');
+        ->name('admin.edit-promo-code')
+        ->middleware('can:promo-code-edit');
 
     //Soft Deletes
     Route::get('deleted-promo-codes', function () {
         return view('admin.settings.promo-codes.deleted-promo-codes');
-    })->name('admin.deleted-promo-codes');
+    })->name('admin.deleted-promo-codes')
+    ->middleware('can:promo-code-soft-delete');
 
     /**
      * Reservations
@@ -807,7 +813,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // ----------------- Activity Logs
     Route::get('/activity-logs', function () {
         return view('admin.activity-logs.view-activity-logs');
-    })->name('admin.activity-logs');
+    })->name('admin.activity-logs')
+    ->middleware('can:activity-logs-view');
 });
 
 // --------------------- TEST ROUTES FOR PAYMENT INTEGRATION ----------------------------------- //

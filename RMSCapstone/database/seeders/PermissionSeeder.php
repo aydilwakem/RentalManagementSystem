@@ -14,26 +14,22 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            "event-inclusions-create",
-            "event-inclusions-view",
-            "event-inclusions-edit",
-            "event-inclusions-delete",
-            "event-inclusions-soft-delete",
+            //Services
+            // "service-list",
+            // "service-create",
+            // "service-edit",
+            // "service-view",
+            // "service-soft-delete",
 
-            "house-features-create",
-            "house-features-view",
-            "house-features-edit",
-            "house-features-delete",
-            "house-features-soft-delete",
+            //Activity Logs
+            "activity-logs-view",
 
-            "leases-create",
-            "leases-view",
-            "leases-edit",
-            "leases-delete",
-            "leases-soft-delete",
-
-            "lease-reports",
-            "reservation-reports",
+            //Promo Codes
+            "promo-code-list",
+            "promo-code-create",
+            "promo-code-edit",
+            "promo-code-view",
+            "promo-code-soft-delete",
         ];
 
         // Run this using 

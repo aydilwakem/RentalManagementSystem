@@ -109,11 +109,22 @@
                         </a>
                         @endcan
 
+                        @can('promo-code-list')
                         <!-- Promo Codes -->
                         <a href="{{ route('admin.view-promo-codes') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.view-promo-codes') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Promo Codes</h1>
                         </a>
+                        @endcan
+
+                        @can('service-list')
+                        <!-- Services -->
+                        <a href="{{ route('admin.services') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.services') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Services</h1>
+                        </a>
+                        @endcan
+
                     </div>
                 </div>
 
@@ -486,6 +497,13 @@
                         <a href="{{ route('admin.appearance') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Appearance</h1>
+                        </a>
+                        @endcan
+
+                        @can('activity-logs-view')
+                        <a href="{{ route('admin.activity-logs') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.activity-logs') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Activity Logs</h1>
                         </a>
                         @endcan
                     </div>
