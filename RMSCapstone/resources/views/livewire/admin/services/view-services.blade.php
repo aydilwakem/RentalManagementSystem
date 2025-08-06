@@ -19,16 +19,20 @@
     <div>
         <div class="flex items-center justify-between mb-4">
             <!-- Create Service Button -->
+            @can('service-create')
             <div class="flex items-center justify-between">
                 <x-button href="{{ route('admin.create-service') }}" icon="fas fa-plus">
                     New Service
                 </x-button>
             </div>
+            @endcan
             <!-- Soft Delete Button -->
+            @can('service-soft-delete')
             <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
                 icon="fas fa-trash" href="{{ route('admin.deleted-services') }}">
                 Deleted Services
             </x-button>
+            @endcan
         </div>
 
         <div
@@ -181,19 +185,25 @@
                         <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
                             <!-- View Icon -->
+                            @can('service-view')
                             <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
                                 wire:navigate href="{{ route('admin.view-service', ['service' => $service->id]) }}">
                             </i>
+                            @endcan
 
                             <!-- Edit Icon -->
+                            @can('service-edit')
                             <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
                                 wire:navigate href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
                             </i>
+                            @endcan
 
                             <!-- Delete Icon -->
+                            @can('service-soft-delete')
                             <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
                                 wire:click="confirmDelete({{ $service->id }})" wire:loading.attr="disabled">
                             </i>
+                            @endcan
                         </td>
                     </tr>
                     @empty

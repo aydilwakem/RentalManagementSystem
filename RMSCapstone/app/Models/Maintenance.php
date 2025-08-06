@@ -22,11 +22,16 @@ class Maintenance extends Model
     'reported_at', 
     'resolved_at', 
     'planned_datetime', 
-    'priority_status'];
+    'priority_status', 
+    'routine_datetime',
+    'maintenance_images',
+    'resolved_images'];
 
     protected $casts = [
         'reported_at' => 'date:Y-m-d',
         'resolved_at' => 'date:Y-m-d',
+        'maintenance_images' => 'array',
+        'resolved_images' => 'array',
     ];
 
     // ---------------------- Activity Logs ----------------- //
