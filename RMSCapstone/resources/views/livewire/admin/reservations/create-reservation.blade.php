@@ -1223,7 +1223,7 @@
                             @foreach ($services_charges as $service)
 
                                 @php
-                                    $isSelected = collect($selectedActivities)->contains('service_id', $service->id);
+                                    $isSelected = collect($selectedServices)->contains('service_id', $service->id);
                                 @endphp
 
                                 @if ($isSelected)
