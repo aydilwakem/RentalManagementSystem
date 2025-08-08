@@ -253,7 +253,7 @@ class CreateReservation extends Component
         $this->getAvailableRooms();
         $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
         $this->country = 'Philippines';
-        $this->guest_country_of_origin = 'Philippines';
+        //$this->guest_country_of_origin = 'Philippines';
     }
 
 
@@ -1129,6 +1129,15 @@ class CreateReservation extends Component
     {
         unset($this->guests[$index]);
         $this->guests = array_values($this->guests);
+    }
+
+    public function updatedGuestResidency($value)
+    {
+        if ($value === 'local') {
+            $this->guest_country_of_origin = 'Philippines';
+        } else {
+            $this->guest_country_of_origin = '';
+        }
     }
 
 

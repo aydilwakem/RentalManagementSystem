@@ -28,8 +28,8 @@
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
-                    </div> --}}
-                    <div class="flex items-center space-x-4 mb-3">
+                    </div>
+                     <div class="flex items-center space-x-4 mb-3">
                         <div class="flex items-center">
                             <label for="property_category_id" class="text-sm font-medium text-gray-900 me-2">Room
                                 Category:</label>
@@ -45,8 +45,8 @@
                         {{-- Loading indicator --}}
                         {{-- <div wire:loading wire:target="roomCategoryFilter" class="text-sm text-gray-500">
                             <i class="fas fa-spinner fa-spin"></i> Updating rooms...
-                        </div> --}}
-                    </div>
+                        </div>
+                    </div> --}}
 
                     <div wire:loading wire:target="check_in_date,check_out_date,category" class="space-y-4">
                         @for ($i = 0; $i < 3; $i++)
@@ -127,9 +127,12 @@
                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                 </p>
 
-                                                <p class="text-base font-normal text-gray-700 dark:text-gray-400">
-                                                    <i class="fas fa-utensils mr-2"></i> Free breakfast included
-                                                </p>
+                                                @if ($room->freebies)
+                                                    <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                                        <i class="fas fa-utensils mr-2"></i> Free breakfast included
+                                                    </p>
+                                                @endif
+
                                                 <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
 
                                                 <p class="mt-4 text-lg font-medium">
@@ -140,18 +143,12 @@
                                                         </span>
                                                         <br>
                                                         <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-3
-                                                                                        @if ($room->rate_type === 'Weekend')
-                                                                                             bg-yellow-100 text-yellow-700
-                                                                                        @elseif ($room->rate_type === 'Weekdays')
-                                                                                             bg-green-100 text-green-700
-                                                                                        @elseif ($room->rate_type === 'Peak')
-                                                                                                 bg-red-100 text-red-700
-                                                                                            @elseif ($room->rate_type === 'Holiday')
-                                                                                                 bg-purple-100 text-purple-700
-                                                                                            @else
-                                                                                                 bg-gray-100 text-gray-600
-                                                                                            @endif
-                                                                                        ">
+                                                            @if ($room->rate_type === 'Weekend') bg-yellow-100 text-yellow-700
+                                                            @elseif ($room->rate_type === 'Weekdays') bg-green-100 text-green-700
+                                                            @elseif ($room->rate_type === 'Peak') bg-red-100 text-red-700
+                                                            @elseif ($room->rate_type === 'Holiday')bg-purple-100 text-purple-700
+                                                            @else bg-gray-100 text-gray-600
+                                                            @endif ">
                                                             {{ $room->rate_name }}
                                                             @if ($room->rate_type)
                                                                 - {{ $room->rate_type }} Rate
@@ -214,21 +211,25 @@
                                                                 Room: {{ $room->name_number }}
                                                             </h2>
                                                             <ul class="list-disc list-inside space-y-1">
-                                                                <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}
+                                                                <li><strong>Ideal Guests:</strong>
+                                                                    {{ $room->ideal_guest }}
                                                                 </li>
-                                                                @if ($room->is_booked)
-                                                                <p>ndi pwd</p>
-                                                                @else
-                                                                <li><strong>Max Capacity:</strong> {{ $room->max_adults }}
-                                                                    Adults, {{ $room->max_kids }} Kids</li>
-                                                                @endif
+
+                                                                <li><strong>Max Capacity:</strong>
+                                                                    {{ $room->max_adults }} Adults, {{ $room->max_kids }} Kids
+                                                                </li>
+
                                                                 <li><strong>Extra Person Charge:</strong>
                                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                                 </li>
-                                                                <li><strong>Description:</strong> {{ $room->description }}
+
+                                                                <li><strong>Description:</strong>
+                                                                    {{ $room->description }}
                                                                 </li>
+
                                                                 <li><strong>Rate Per Night:</strong>
-                                                                    ₱{{ number_format($room->amount, 2) }}</li>
+                                                                    ₱{{ number_format($room->amount, 2) }}
+                                                                </li>
                                                                 {{-- <li><strong>Rate Per Night:</strong> ₱{{
                                                                     number_format($room->dynamic_rate, 2) }}</li> --}}
                                                             </ul>
@@ -280,7 +281,6 @@
                                                                             ];
                                                                         }
                                                                     }
-
 
                                                                     $averageRating = $allRatings->count() ? $allRatings->avg() : null;
 

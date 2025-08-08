@@ -523,7 +523,7 @@
                     <a href="{{ route('api-tokens.index') }}" wire:navigate>
                         <div
                             class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ Route::is('api-tokens.index') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                            {{ Route::is('api-tokens.index') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-key"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
                         </div>
@@ -536,9 +536,9 @@
                     <form method="POST" action="{{ route('logout') }}" x-data>
                         @csrf
                         <button type="submit"
-                            class="relative flex w-full items-center text-gray-400 hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
+                            class="relative flex w-full items-center justify-center text-white border hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
+                            <h1 ax-cloak x-show="$store.sidebar.full">Logout</h1>
                             <i class="fa-solid fa-sign-out"></i>
-                            <h1 x-cloak x-show="$store.sidebar.full">Logout</h1>
                         </button>
                     </form>
 

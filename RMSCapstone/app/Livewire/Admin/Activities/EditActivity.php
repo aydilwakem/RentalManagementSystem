@@ -100,6 +100,11 @@ class EditActivity extends Component
                 })->values()->toArray();
             }
 
+            $this->displayImages = collect($this->displayImages)
+            ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
+            ->values()
+            ->toArray();
+
             $this->updateDisplayImages(); // Re-update display array after removal
         }
 

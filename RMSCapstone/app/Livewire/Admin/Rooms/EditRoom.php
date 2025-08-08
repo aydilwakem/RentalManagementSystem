@@ -53,7 +53,6 @@ class EditRoom extends Component
     protected $listeners = ['updateImageOrder'];
     public array $originalCombinations = [];
 
-
     public $confirmEditItem = false;
 
     public function confirmEdit($id)
@@ -64,9 +63,7 @@ class EditRoom extends Component
     public function mount(Property $room)
     {
         //only mount amenities for Room
-        $this->amenities = PropertyFeature::where('property_type_id', 1)
-            ->where('is_active', true)
-            ->get();
+        $this->amenities = PropertyFeature::where('property_type_id', 1)->where('is_active', true)->get();
 
         $this->roomId = $room->id;
         $this->room = $room;
@@ -82,7 +79,7 @@ class EditRoom extends Component
         // $this->max_guests = $room->max_guests;
         $this->occupancy_type = $room->occupancy_type;
         $this->roomCategories = PropertyCategory::all();
-        // $this->occupancy_rules = $room->occupancy_rules ?? []; 
+        // $this->occupancy_rules = $room->occupancy_rules ?? [];
         $this->extra_person_charge = $room->extra_person_charge;
         $this->features = PropertyFeature::all();
         $this->occupancy_type = $room->occupancy_type;
@@ -97,10 +94,7 @@ class EditRoom extends Component
         // CASE 1: combinations
         if ($room->occupancy_type === 'combinations') {
             $this->occupancy_rules = $room->occupancy_rules ?? [];
-            $this->originalCombinations = collect($this->occupancy_rules)
-                ->where('type', 'original')
-                ->values()
-                ->toArray();
+            $this->originalCombinations = collect($this->occupancy_rules)->where('type', 'original')->values()->toArray();
         }
 
         // CASE 2: whole_number
@@ -123,9 +117,7 @@ class EditRoom extends Component
     {
         if ($value === 'combinations') {
             if (empty($this->originalCombinations)) {
-                $this->originalCombinations = [
-                    ['adults' => 1, 'kids' => 0, 'type' => 'original']
-                ];
+                $this->originalCombinations = [['adults' => 1, 'kids' => 0, 'type' => 'original']];
             }
 
             // Convert to occupancy_rules for combinations
@@ -136,12 +128,9 @@ class EditRoom extends Component
             $this->originalCombinations = [];
             $this->occupancy_rules = [];
 
-
             $this->max_guests = $this->max_guests ?? null;
         }
     }
-
-
 
     public function addRule()
     {
@@ -155,7 +144,6 @@ class EditRoom extends Component
         $this->originalCombinations = array_values($this->originalCombinations);
         $this->occupancy_rules = $this->originalCombinations;
     }
-
 
     public function updatedNewImages()
     {
@@ -189,7 +177,6 @@ class EditRoom extends Component
 
     public function removeStoredImage()
     {
-
         // find image by id
         $indexToRemove = null;
         foreach ($this->displayImages as $key => $image) {
@@ -224,6 +211,11 @@ class EditRoom extends Component
                     ->toArray();
             }
 
+            $this->displayImages = collect($this->displayImages)
+            ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
+            ->values()
+            ->toArray();
+
             $this->updateDisplayImages(); // Re-update display array after removal
         }
 
@@ -233,13 +225,9 @@ class EditRoom extends Component
         session()->flash('message', 'Image successfully deleted.');
     }
 
-
     public function updateRoom()
     {
-
         $this->validate();
-
-
 
         // Handle image upload if a new one is selected
         $finalImagePaths = [];
@@ -289,7 +277,6 @@ class EditRoom extends Component
 
     protected function rules()
     {
-
         $baseRules = [
             'name_number' => [
                 'required',
@@ -298,8 +285,7 @@ class EditRoom extends Component
                 Rule::unique('properties', 'name_number')
                     ->ignore($this->roomId)
                     ->where(function ($query) {
-                        return $query->where('property_type_id', $this->property_type_id)
-                            ->whereNull('deleted_at');
+                        return $query->where('property_type_id', $this->property_type_id)->whereNull('deleted_at');
                     }),
             ],
             'property_category_id' => 'required|exists:property_categories,id',
@@ -355,7 +341,7 @@ class EditRoom extends Component
                 $combinations[] = [
                     'adults' => $adults,
                     'kids' => $kids,
-                    'type' => 'original'
+                    'type' => 'original',
                 ];
                 $seen[$comboKey] = true;
             }
@@ -363,14 +349,16 @@ class EditRoom extends Component
             // Subcombinations
             for ($a = 1; $a <= $adults; $a++) {
                 for ($k = 0; $k <= $kids; $k++) {
-                    if ($a === $adults && $k === $kids) continue;
+                    if ($a === $adults && $k === $kids) {
+                        continue;
+                    }
 
                     $key = "{$a}-{$k}";
                     if (!isset($seen[$key])) {
                         $combinations[] = [
                             'adults' => $a,
                             'kids' => $k,
-                            'type' => 'sub'
+                            'type' => 'sub',
                         ];
                         $seen[$key] = true;
                     }
@@ -381,21 +369,13 @@ class EditRoom extends Component
         // Sort: original first, then by adults, then kids
         usort($combinations, function ($a, $b) {
             if ($a['type'] === $b['type']) {
-                return $a['adults'] === $b['adults']
-                    ? $a['kids'] <=> $b['kids']
-                    : $a['adults'] <=> $b['adults'];
+                return $a['adults'] === $b['adults'] ? $a['kids'] <=> $b['kids'] : $a['adults'] <=> $b['adults'];
             }
             return $a['type'] === 'original' ? -1 : 1;
         });
 
         return $combinations;
     }
-
-
-
-
-
-
 
     public function render()
     {
