@@ -140,6 +140,7 @@ class CreateReservation extends Component
     public $total_amount;
     public $depositPercentage;
     public $enable_deposit_percentage = true;
+    public bool $apply_convenience_fee = true;
 
     // Promo Discount
     public $promo;
@@ -195,6 +196,11 @@ class CreateReservation extends Component
     public $showEditRoomModal;
     public $roomName;
     public $activityName;
+    public $activityDateTime;
+    public $special_requests = [
+        ['request' => '', 'status' => 'pending'],
+    ];
+    public $selectedTimes = [];
 
 
     /**
@@ -251,9 +257,7 @@ class CreateReservation extends Component
         $this->loadRooms();
         $this->loadBranding();
         $this->getAvailableRooms();
-        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
-        $this->country = 'Philippines';
-        $this->guest_country_of_origin = 'Philippines';
+        $this->initializeCountries();
     }
 
 
@@ -271,17 +275,29 @@ class CreateReservation extends Component
         if (Str::startsWith($property, 'adults.') || Str::startsWith($property, 'kids.')) {
 
             Log::info('Adults and Kids are changed.');
+
+            // Extract room ID from the property name
             $roomId = explode('.', $property)[1];
+
+            // Find the room by ID
             $room = Property::find($roomId);
 
+            // If room is not found, add an error
             if (!$room) {
                 $this->addError('selectedRooms', 'Room not found.');
                 return;
             }
 
+            // Update dynamic kid options based on the current number of adults
             $this->updateKidOptions($roomId);
+
+            // Update selected room details with new adults and kids counts
             $this->updateSelectedRoomDetails($roomId, $room);
+
+            // Recompute total pax and available rooms
             $this->computeTotalPax();
+
+            // Re-fetch available rooms to reflect changes
             $this->getAvailableRooms();
         }
 
@@ -289,13 +305,23 @@ class CreateReservation extends Component
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
 
             Log::info('Dates are changed.');
+
+            // Clears out the selected rooms, activities, and services
             $this->selectedRooms = [];
             $this->selectedActivities = [];
             $this->selectedServices = [];
+
+            // Reset pet-related properties
             $this->pet_count = 0;
             $this->pets = [];
+
+            // Re-fetch available rooms based on new dates
             $this->getAvailableRooms();
+
+            // Reset promo code 
             $this->removePromoCode();
+
+            // Recalculate cart totals
             $this->computeSubtotalAmount();
             $this->computeTotalAmount();
         }
@@ -375,47 +401,86 @@ class CreateReservation extends Component
 
     public function computeTotalPax(): void
     {
+        // Step 1: Call a method named `getItemsByType` with the argument 'room'
+        // Step 2: Wrap the returned array in a Laravel Collection using `collect()`
         $this->total_pax = collect($this->getItemsByType('room'))
-            ->reduce(function ($carry, $item) {
-                $adults = (int) ($item['adults'] ?? 0);
-                $kids = (int) ($item['kids'] ?? 0);
-                return $carry + $adults + $kids;
-            }, 0);
-    }
 
+            // Step 3: Use the `reduce()` method to loop through each item in the collection
+            // `reduce()` takes a callback function and an initial value (0 in this case)
+            ->reduce(function ($carry, $item) {
+
+                // Step 4: Extract the number of adults from the item
+                $adults = (int) ($item['adults'] ?? 0);
+
+                // Step 5: Extract the number of kids from the item
+                $kids = (int) ($item['kids'] ?? 0);
+
+                // Step 6: Add the number of adults and kids to the accumulator ($carry)
+                return $carry + $adults + $kids;
+            }, 0); // Step 7: Initialize the accumulator ($carry) to 0
+    }
     public function computeTotalAmountOfAllRooms(): float
     {
+        // Get all items of type 'room' (e.g., room bookings)
+        // Convert the array to a Laravel Collection for easier manipulation
         return collect($this->getItemsByType('room'))
+            // Sum the value of the 'total_amount' key for all room items
             ->sum('total_amount');
     }
     public function computeTotalAmountOfAllActivities(): float
     {
+        // Get all items of type 'activity' (e.g., booked activities)
+        // Convert the array to a Laravel Collection
         return collect($this->getItemsByType('activity'))
+            // Sum the value of the 'amount' key for all activity items
             ->sum('amount');
     }
-
     public function computeTotalAmountOfAllServices(): float
     {
+        // Get all items of type 'service' (e.g., requested services like massage, laundry, etc.)
+        // Convert the array to a Laravel Collection
         return collect($this->getItemsByType('service'))
+            // Sum the value of the 'amount' key for all service items
             ->sum('amount');
     }
     public function computePetTotal(): float
     {
+        // Step 1: Get the number of pets
         $petCount = $this->pet_count ?? 0;
+
+        // Step 2: Get the number of days the guests are staying
         $stayDuration = $this->getStayDurationProperty() ?? 0;
+
+        // Step 3: Get the pet fee amount per pet per day
         $feePerPetPerDay = $this->getPetFeeAmount();
 
+        // Step 4: Compute the total pet fee
         return $petCount * $feePerPetPerDay * $stayDuration;
     }
 
+
+
+    /**
+     * Computes the base subtotal by summing up all individual totals from rooms, activities, services, and pets.
+     * With no promo codes, discount, or convenience fees applied.
+     *
+     * @return float The computed base subtotal.
+     */
     public function computeBaseSubtotal()
     {
+        // Step 1: Compute total amounts for rooms, activities, services, and pets
         return $this->computeTotalAmountOfAllRooms()
             + $this->computeTotalAmountOfAllActivities()
             + $this->computeTotalAmountOfAllServices()
             + $this->computePetTotal();
     }
 
+    /**
+     * Computes the subtotal amount by applying any promo discount to the base subtotal.
+     * Handles errors gracefully and ensures numeric values are used.
+     *
+     * @return float The computed subtotal amount after applying any discounts.
+     */
     public function computeSubtotalAmount()
     {
         try {
@@ -444,43 +509,27 @@ class CreateReservation extends Component
         }
     }
 
-    // public function computeTotalAmount()
-    // {
-    //     try {
-    //         if (method_exists($this, 'computeSubtotalAmount')) {
-    //             $this->computeSubtotalAmount();
-    //         } else {
-    //             throw new \Exception('computeSubtotalAmount() method not found.');
-    //         }
 
-    //         $this->sub_total = is_numeric($this->sub_total) ? $this->sub_total : 0;
-    //         $this->convenience_fee = round($this->sub_total * 0.03, 2);
-    //         $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
-
-    //         return $this->total_amount;
-    //     } catch (\Throwable $e) {
-    //         Log::error('Error in computeTotalAmount: ' . $e->getMessage());
-
-    //         // Safe fallback values
-    //         $this->sub_total = 0;
-    //         $this->convenience_fee = 0;
-    //         $this->total_amount = 0;
-
-    //         session()->flash('error', 'Something went wrong while computing the total amount.');
-
-    //         return 0;
-    //     }
-    // }
-
-
-
+    /**
+     * Updates the convenience fee based on the current subtotal.
+     * Recalculates the total amount after applying the convenience fee.
+     *
+     * This method is called when the convenience fee toggle is changed.
+     */
     public function updateApplyConvenienceFee()
     {
         $this->recalculateCart();
     }
 
-    public bool $apply_convenience_fee = true;
 
+    /**
+     * Computes the total amount for the reservation, including:
+     * - Subtotal amount.
+     * - Convenience fee (if applicable).
+     * Handles errors gracefully and ensures numeric values are used.
+     *
+     * @return float The computed total amount after applying convenience fee.
+     */
     public function computeTotalAmount()
     {
         try {
@@ -514,6 +563,13 @@ class CreateReservation extends Component
     }
 
 
+    /**
+     * Recalculates the cart totals, applying any promo codes and updating the subtotal and total amount.
+     * Handles errors gracefully and resets values to avoid broken cart state.
+     *
+     * This method is called whenever the cart needs to be recalculated,
+     * such as when items are added, removed, or promo codes are applied.
+     */
     public function recalculateCart()
     {
         try {
@@ -559,6 +615,13 @@ class CreateReservation extends Component
         }
     }
 
+    /**
+     * Recomputes the convenience fee based on the current subtotal.
+     * This method is called to ensure the convenience fee is always up-to-date
+     * with the latest subtotal calculations.
+     *
+     * @return float The updated convenience fee.
+     */
     public function computeConvenienceFee()
     {
         // Recompute to ensure the most current values
@@ -581,12 +644,26 @@ class CreateReservation extends Component
      *
      * -----------------------------------------------------------------------------
      */
+
+
+    /**
+     * Applies the promo code entered by the user.
+     * Validates the promo code, checks minimum booking amount, date range,
+     * usage limits, and applies the discount if valid.
+     *
+     * @return void
+     */
     public function applyPromoCode()
     {
+        // Log that the method has been triggered, including the entered promo code
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
 
+        // Step 1: Check if the promo code is empty or not a string
+        // If it's invalid, reset all related discount values and exit early
         if (empty($this->promoCode) || !is_string($this->promoCode)) {
-            Log::warning('No valid promo code provided. Skipping promo application.');
+            Log::warning(message: 'No valid promo code provided. Skipping promo application.');
+
+            // Set all discount-related fields to 0 or null
             $this->promoDiscount = 0;
             $this->promo_discount_amount = 0;
             $this->discountMessage = null;
@@ -594,35 +671,46 @@ class CreateReservation extends Component
             return;
         }
 
+        // Step 2: Reset any previous promo messages
         $this->reset(['discountMessage', 'errorMessage']);
 
-        // Compute base subtotal (without discount)
+        // Step 3: Compute the base subtotal before applying any discounts
         $baseSubtotal = $this->computeBaseSubtotal();
 
-        // Validate promo based on base subtotal
+        // Step 4: Call the promo code service to validate and apply the promo code
+        // Pass in the promo code, total amount, and base subtotal
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
             $this->total_amount,
             $baseSubtotal
         );
 
-        if (!$response['success']) {
-            return $this->failPromo($response['message']);
+        // Step 5: If promo validation fails, handle the error and exit
+        if (!isset($response['success']) || !$response['success']) {
+            return $this->failPromo($response['message'] ?? 'Invalid promo code.');
         }
 
-        // Apply discount
+        // Step 6: Apply the discount to the booking
         $this->promoDiscount = $response['discount'];
         $this->promo_discount_amount = $this->promoDiscount;
 
-        // Compute final discounted subtotal
+        // Step 7: Calculate the new subtotal after applying the discount
+        // Ensure it doesn't go below 0
         $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
 
+        // Step 8: Show the user a success message, and clear any error messages
         $this->discountMessage = $response['message'];
         $this->errorMessage = null;
 
+        // Step 9: Refresh the available rooms list, possibly affected by promo logic
         $this->getAvailableRooms();
     }
 
+
+    /**
+     * Removes the applied promo code, resetting all related discount values.
+     * This method is called when the user decides to clear the promo code input.
+     */
     public function removePromoCode()
     {
         Log::info('removePromoCode called');
@@ -634,13 +722,22 @@ class CreateReservation extends Component
         $this->recalculateCart();
     }
 
+    /**
+     * Fallback handler for invalid promo codes.
+     * Resets all discount-related values and sets an error message.
+     *
+     * @param string $message The error message to display to the user.
+     */
     private function failPromo(string $message)
     {
-        $this->promoDiscount = 0;
-        $this->total_amount = $this->computeTotalAmount();
-        $this->discountMessage = null;
-        $this->promoCode = '';
+        // Set the error message to display to the user
         $this->errorMessage = $message;
+
+        // Clear the promo code since it's invalid
+        $this->promoCode = '';
+
+        // Recalculate the cart to reset totals without promo
+        $this->recalculateCart();
     }
 
 
@@ -787,29 +884,65 @@ class CreateReservation extends Component
      * ------------------------------------------------------------------------------
      */
 
+    /**
+     * Adds a selected activity to the cart.
+     * Validates the activity, checks for duplicates, and updates the cart state.
+     * @param int $activityId The ID of the activity to add.
+     * @return void
+     */
     public function SelectedActivities($activityId)
     {
-
-        // Resets any previous error messages
+        // Reset previous error messages
         $this->resetErrorBag();
 
+        $activity = Activity::findOrFail($activityId);
+
+        // Check if activity requires a time
+        if ($activity->schedule_type !== 'no_schedule') {
+            $date = $this->check_in_date ?? now()->toDateString();
+            $time = $this->selectedTimes[$activityId] ?? null;
+
+            if (!$time) {
+                $this->addError("selectedTimes.$activityId", 'Please select a time for the activity.');
+                return;
+            }
+
+            $datetime = Carbon::parse("$date $time")->format('Y-m-d H:i:s');
+            $context['activity_datetime'] = $datetime;
+        } else {
+            $context['activity_datetime'] = null;
+        }
+
+        // Check if already in cart
+        if ($this->isItemAlreadyInCart('activity', $activityId)) {
+            $this->addError('selectedActivities', 'This item is already in the cart.');
+            return;
+        }
+
+        // Add to cart
         $newActivityCart = $this->cartService->addItem(
             'activity',
             $activityId,
             $this->selectedActivities,
             $this->quantity,
             $this->status,
-            $this->paymentStatus
+            $this->paymentStatus,
+            $context
         );
 
-        if ($this->isItemAlreadyInCart('activity', $activityId)) {
-            $this->addError('selectedActivities', 'This item is already in the cart.');
-            return;
-        }
-
+        // Update state
         $this->selectedActivities = $newActivityCart;
         $this->recalculateCart();
     }
+
+
+    /**
+     * Increments or decrements the quantity of a selected activity.
+     * This method is called when the user clicks the increment or decrement buttons
+     * in the activity modal.
+     *
+     * @param int $activityId The ID of the activity being modified.
+     */
     public function incrementActivity($activityId)
     {
 
@@ -835,6 +968,16 @@ class CreateReservation extends Component
         $this->selectedActivities = $this->cartService->updateQuantity('activity', $this->selectedActivities, $activityId, $newQuantity);
         $this->recalculateCart();
     }
+
+    public $activityScheduleType; // 'guest' or 'system'
+
+
+    /**
+     * Opens the edit modal for a selected activity already IN CART.
+     * Sets the editingActivityId and initializes activity details for editing.
+     *
+     * @param int $activityId The ID of the activity to edit.
+     */
     public function editSelectedActivity($activityId)
     {
         Log::info("Edit Activity method called for activity ID: {$activityId}");
@@ -846,11 +989,46 @@ class CreateReservation extends Component
             return;
         }
 
+        Log::info('Activity details:', [
+            'activity_id' => $activity['activity_id'],
+            'quantity' => $activity['quantity'] ?? 1,
+            'activity_name' => $activity['activity_name'] ?? 'Unknown Activity',
+            'activity_schedule_type' => $activity['activity_schedule_type'] ?? 'guest',
+            'activity_datetime' => $activity['activity_datetime'] ?? null,
+        ]);
+
         $this->editingActivityId = $activity['activity_id'];
         $this->activityQuantity = $activity['quantity'] ?? 1;
         $this->activityName = $activity['activity_name'] ?? 1;
+        $this->activityScheduleType = $activity['activity_schedule_type'] ?? 'guest';
+
+        // Handle availableTimes for "system"
+        if ($this->activityScheduleType === 'system') {
+            $this->availableTimes = $activity['available_times'] ?? [];
+        } else {
+            $this->availableTimes = [];
+        }
+
+
+        // If activity datetime is set, parse it to show in the modal
+        $this->activityDateTime = isset($activity['activity_datetime'])
+            ? \Carbon\Carbon::parse($activity['activity_datetime'])->format('H:i')
+            : null;
+
         $this->showEditActivityModal = true;
     }
+
+
+    public $availableTimes = []; // Holds available times for system-scheduled activities
+
+
+    /**
+     * Increments or decrements the quantity of a selected activity already IN CART.
+     * This method is called when the user clicks the increment or decrement buttons
+     * in the edit activity modal.
+     *
+     * @param int $activityId The ID of the activity being edited.
+     */
     public function incrementSelectedActivity($activityId)
     {
         if ($this->editingActivityId != $activityId) return;
@@ -863,12 +1041,29 @@ class CreateReservation extends Component
 
         $this->activityQuantity = max(1, $this->activityQuantity - 1);
     }
+
+
+    /**
+     * Updates the selected activity in the cart with the new quantity.
+     * Recalculates the total amount for the activity based on the new quantity.
+     * Closes the edit modal and resets editing properties.
+     */
     public function updateActivity()
     {
         foreach ($this->selectedActivities as &$activity) {
             if ($activity['activity_id'] == $this->editingActivityId) {
                 $activity['quantity'] = $this->activityQuantity;
                 $activity['amount'] = $activity['activity_rate'] * $this->activityQuantity;
+
+                if ($this->activityScheduleType === 'no_schedule') {
+                    $activity['activity_datetime'] = null;
+                } else {
+                    // Only set if a datetime is provided
+                    if (!is_null($this->activityDateTime)) {
+                        $activity['activity_datetime'] = $this->activityDateTime;
+                    }
+                }
+
                 break;
             }
         }
@@ -878,9 +1073,11 @@ class CreateReservation extends Component
         $this->showEditActivityModal = false;
         $this->editingActivityId = null;
         $this->activityQuantity = 1;
+        $this->activityDateTime = null;
 
         $this->recalculateCart();
     }
+
 
 
 
@@ -898,31 +1095,12 @@ class CreateReservation extends Component
      * ------------------------------------------------------------------------------
      */
 
-
-    // public function SelectedServices($serviceId)
-    // {
-
-    //     // Resets any previous error messages
-    //     $this->resetErrorBag();
-
-    //     $newServicesCart = $this->cartService->addItem(
-    //         'service',
-    //         $serviceId,
-    //         $this->selectedServices,
-    //         $this->quantity,
-    //         $this->status,
-    //         $this->paymentStatus
-    //     );
-
-    //     if ($this->isItemAlreadyInCart('service', $serviceId)) {
-    //         $this->addError('selectedServices', 'This item is already in the cart.');
-    //         return;
-    //     }
-
-    //     $this->selectedServices = $newServicesCart;
-    //     $this->recalculateCart();
-    // }
-
+    /**
+     * Adds a selected service to the cart.
+     * Validates the service, checks for duplicates, and updates the cart state.
+     *  @param int $serviceId The ID of the service to add.                         
+     * * @return void
+     */
     public function SelectedServices($serviceId)
     {
         $this->resetErrorBag();
@@ -947,6 +1125,13 @@ class CreateReservation extends Component
         $this->recalculateCart();
     }
 
+    /**
+     * Increments or decrements the quantity of a selected service.
+     * This method is called when the user clicks the increment or decrement buttons
+     * in the service modal.
+     *
+     * @param int $serviceId The ID of the service being modified.
+     */
     public function incrementService($serviceId)
     {
         if (!isset($this->quantity[$serviceId])) {
@@ -961,7 +1146,6 @@ class CreateReservation extends Component
         $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
-
     public function decrementService($serviceId)
     {
         if (!isset($this->quantity[$serviceId])) {
@@ -977,6 +1161,11 @@ class CreateReservation extends Component
         $this->recalculateCart();
     }
 
+    /**
+     * Handles the logic for services that involve pets.
+     * This method checks if the pet service is selected, calculates the total amount,
+     * and updates the pets array based on the quantity.
+     */
     protected function handlePetServiceLogic()
     {
         $this->bringingPets = false;
@@ -1008,7 +1197,12 @@ class CreateReservation extends Component
 
 
 
-
+    /**
+     * Opens the edit modal for a selected service already IN CART.
+     * Sets the editingServiceId and initializes service details for editing.
+     *
+     * @param int $serviceId The ID of the service to edit.
+     */
     public function editSelectedService($serviceId)
     {
         Log::info("Edit Service method called for service ID: {$serviceId}");
@@ -1026,6 +1220,14 @@ class CreateReservation extends Component
         $this->showEditServiceModal = true;
     }
 
+
+    /**
+     * Increments or decrements the quantity of a selected service already IN CART.
+     * This method is called when the user clicks the increment or decrement buttons
+     * in the edit service modal.
+     *
+     * @param int $serviceId The ID of the service being edited.
+     */
     public function incrementSelectedService($serviceId)
     {
         if ($this->editingServiceId != $serviceId) return;
@@ -1033,7 +1235,6 @@ class CreateReservation extends Component
         $this->serviceQuantity++;
         $this->handlePetServiceLogic();
     }
-
     public function decrementSelectedService($serviceId)
     {
         if ($this->editingServiceId != $serviceId) return;
@@ -1042,6 +1243,11 @@ class CreateReservation extends Component
         $this->handlePetServiceLogic();
     }
 
+    /**
+     * Updates the selected service in the cart with the new quantity.
+     * Recalculates the total amount for the service based on the new quantity.
+     * Closes the edit modal and resets editing properties.
+     */
     public function updateService()
     {
         foreach ($this->selectedServices as &$service) {
@@ -1060,6 +1266,10 @@ class CreateReservation extends Component
         $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
+
+
+
+
 
 
     /**
@@ -1082,13 +1292,43 @@ class CreateReservation extends Component
         $this->recalculateCart();
     }
 
-
     public function RemoveService($serviceId)
     {
         $this->selectedServices = $this->cartService->removeItem('service', $serviceId, $this->selectedServices);
         $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
+
+
+
+
+
+
+    /**
+     * ----------------------------- SPECIAL REQUESTS LOGIC -----------------------------
+     *
+     * Handles the addition and removal of special requests within a reservation or booking form.
+     * This allows users to input specific requests that may not fit into standard fields.
+     *
+     * Key Methods:
+     * - `addSpecialRequest`: Adds a new special request entry.
+     * - `removeSpecialRequest`: Removes a special request by index.
+     *
+     * -----------------------------------------------------------------------------------
+     */
+    public function addSpecialRequest()
+    {
+        $this->special_requests[] = ['request' => '', 'status' => 'pending'];
+    }
+
+    public function removeSpecialRequest($index)
+    {
+        unset($this->special_requests[$index]);
+        $this->special_requests = array_values($this->special_requests); // reindex
+    }
+
+
+
 
 
 
@@ -1143,25 +1383,40 @@ class CreateReservation extends Component
      */
     public function addMultiplePets()
     {
+        // Step 1: Validate the breed input
         $this->validate([
             'breed' => 'required|string|max:255',
         ]);
 
+        // Step 2: Add pet to the pets array
         $this->pets[] = $this->makePetsArray();
+
+        // Step 3: Re-calculate the total number of pets
         $this->pet_count = count($this->pets);
 
-        $this->reset('breed'); // clear input
+        // Step 4: Reset the breed input field for the next entry
+        $this->reset('breed');
+
+        // Step 6: Recalculate the pet service amount and selected services
+        $this->handlePetServiceLogic();
+
+        // Step 7: Update overall cart totals
         $this->recalculateCart();
     }
 
     public function removeGuestPet($index)
     {
+        // Step 1: Validate the index to ensure it exists
         if (isset($this->pets[$index])) {
             unset($this->pets[$index]);
             $this->pets = array_values($this->pets);
             $this->pet_count = count($this->pets);
         }
+
+        // Step 2: Recalculate the pet service amount and selected services
         $this->handlePetServiceLogic();
+
+        // Step 3: Update overall cart totals
         $this->recalculateCart();
     }
 
@@ -1180,32 +1435,42 @@ class CreateReservation extends Component
      */
     public function CreateReservation(PayMongoService $payMongo, EmailService $emailService)
     {
-        // Reset validation error messages
+
+        Log::info('CreateReservation method called with data:');
+
+        // Step 1: Reset any previous error messages
         $this->resetErrorBag();
+
+        // Step 2: Validate the reservation data before proceeding
         $this->validateData();
+
+        // Step 3: Initialize transaction variable to null
         $transaction = null;
 
-        // Will hold data needed for email notifications
+        // Step 4: Prepare an array to hold reservation data
         $reservationData = [];
 
-        // Begin database transaction to ensure atomic operations
+        // Step 5: Wrap the reservation creation logic in a database transaction
         DB::transaction(function () use (&$reservationData, $payMongo, $emailService) {
 
-            // Retrieve settings from the database
+            Log::info('Starting reservation creation transaction...');
+
+            // Step 6: Prepare settings and configurations
+            Log::info('Fetching settings for deposit percentage and payment proof expiration...');
             $setting = Setting::first();
 
-            // Get deposit percentage if enabled; otherwise, set to 0
+            // Step 7: Set the deposit percentage based on settings or default to 0
             $this->depositPercentage = $setting && $setting->enable_deposit_percentage
                 ? $setting->deposit_percentage
                 : 0;
 
-            // Set the expiration time (in hours) for submitting payment proof
+            // Step 8: Set the payment proof expiration hours based on settings or default to 24
             $this->expirationHours = $setting ? $setting->payment_proof_expiration_hours : 24;
 
-            // Check if a valid promo code was entered
+            // Step 9: Check if a valid promo code was entered
             $promo = PromoCode::where('code', $this->promoCode)->first();
 
-
+            // Step 10: Prepare the transaction user and transaction details
             $transactionUser = $this->createTransactionUser();
             $transaction = $this->createTransaction($transactionUser, $promo);
             $invoice = $this->createInvoice($transaction);
@@ -1213,66 +1478,67 @@ class CreateReservation extends Component
             $this->insertGuestDetails($transaction);
             $this->insertGuestPetDetails($transaction);
 
-            // Compute the base amount to charge based on deposit percentage or full amount
+            // Step 11: Prepare the total amount for the payment link
             $baseAmount = $this->depositPercentage > 0
                 ? $this->computeTotalAmount() * ($this->depositPercentage / 100)
                 : $this->computeTotalAmount();
 
-            // Convert the amount to centavos for PayMongo (e.g., 1500 -> 150000)
+            // Step 12: Convert the base amount to centavos for PayMongo
             $amountInCentavos = intval($baseAmount * 100);
 
-            // Prepare payload for PayMongo checkout session
+            // Step 13: Prepare the PayMongo payload for creating a checkout session
             $payload = $this->preparePayMongoPayload($amountInCentavos, $transaction, $invoice);
 
             try {
-                // Create the checkout session with PayMongo API
+                // Step 14: Attempt to create a checkout session with PayMongo
                 $response = $payMongo->createCheckoutSession($payload);
 
-                // Get the generated payment link from the response
+                // Step 15: Check if the response contains a valid checkout URL
                 $paymentLink = $response['data']['attributes']['checkout_url'] ?? null;
 
-                // Save the payment link to the transaction for later reference
+                // Step 16: If a payment link was successfully created, update the transaction
                 if ($paymentLink) {
                     $transaction->update(['payment_link' => $paymentLink]);
                 }
 
-                // Increment promo code usage count if used
+                // Step 17: Check if a promo code was applied and increment its usage count
                 if ($promo) {
                     $promo->increment('uses_count');
                 }
             } catch (\Exception $e) {
-                // Log any PayMongo API errors
+                // Step 18: If PayMongo link creation fails, log the error and set payment link to null
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());
                 $paymentLink = null;
             }
 
-            // Calculate total and deposit amount again for email
+            // Step 19: Compute the total amount and deposit based on the deposit percentage
             $total = $this->computeTotalAmount();
+
+            // Step 20: Calculate the deposit amount based on the total and deposit percentage
             $deposit = $total * ($this->depositPercentage / 100);
 
-
-
-            // Prepare data for confirmation email
+            // Step 21: Prepare the reservation data array with all necessary details
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
 
-
-
+            // Step 22: Add the payment link to the reservation data
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // Attempt to send confirmation emails to guest and admin
-        // try {
-        //     $emailService->sendReservationEmails($reservationData);
-        // } catch (\Exception $e) {
-        //     // If email sending fails, flash error but still continue
-        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        // }
+        // Step 23: If the transaction was successfully created, proceed to send emails
+        try {
+            $emailService->sendReservationEmails($reservationData);
+        } catch (\Exception $e) {
+            // If email sending fails, flash error but still continue
+            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        }
 
+        // Step 24: If the transaction was not created, flash an error message and redirect
         if (!$transaction) {
             session()->flash('error', 'Something went wrong while creating reservation.');
             return redirect()->route('admin.reservations-list');
         }
 
+        // Step 25: Flash a success message and redirect to the reservation view page
         session()->flash('success', 'Reservation successfully created!');
         return redirect()->route('admin.view-reservation', ['transaction' => $transaction->id]);
     }
@@ -1289,9 +1555,18 @@ class CreateReservation extends Component
 
     public function prepareOccupancyRules()
     {
+        // Ensure rooms are available before processing occupancy rules
+        if (empty($this->rooms)) {
+            Log::warning('No rooms available to prepare occupancy rules.');
+            return;
+        }
+
+        // Loop through each room to prepare occupancy rules
         foreach ($this->rooms as $room) {
 
             switch ($room->occupancy_type) {
+
+                // Combinations: Use unique adult and kid values from occupancy rules
                 case 'combinations':
                     // Extract unique, sorted adult values from occupancy rules (excluding zero)
                     $room->availableAdultOptions = collect($room->occupancy_rules ?? [])
@@ -1310,6 +1585,7 @@ class CreateReservation extends Component
                         ->values();
                     break;
 
+                // Whole number: Use a range from 0 to max_guests
                 case 'whole_number':
                     $range = range(0, $room->max_guests);
 
@@ -1320,14 +1596,15 @@ class CreateReservation extends Component
                     $room->availableKidOptions = collect($range);
                     break;
 
+                // Ideal guest: Adults and kids range up to ideal_guest
                 case 'ideal_guest':
                     // Adults and kids range up to ideal_guest
                     $room->availableAdultOptions = collect(range(0, $room->ideal_guest));
                     $room->availableKidOptions = collect(range(0, $room->ideal_guest));
                     break;
 
+                // Default case: If occupancy type is unknown, set empty options
                 default:
-                    // If occupancy type is unknown, use empty options
                     $room->availableAdultOptions = collect();
                     $room->availableKidOptions = collect();
             }
@@ -1338,39 +1615,46 @@ class CreateReservation extends Component
     {
         // ------------------ FETCH STATIC VALUES ----------------------- //
 
-        // Fetch the stay duration
+        // Step 1: Fetch the stay duration property
         $stayDuration = $this->getStayDurationProperty();
 
-        // Fetch room's ideal guest
+        // Step 2: Fetch the ideal guests for the room
         $included_guests = $room->ideal_guest;
 
-        // Fetch the current room rate
+        // Step 3: Fetch the dynamic rate for the room
         $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+
+        if (!$rate) {
+            Log::error("No valid rate found for room ID {$roomId}.");
+            throw new \Exception("No valid rate found for room ID {$roomId}.");
+        }
+
+        // Step 4: Fetch the room rate amount
         $roomRate =  $rate['amount'];
 
-        // Fetch the extra charge depending on its room
+        // Step 5: Fetch the extra charge per person for the room
         $extraCharge = $room->extra_person_charge;
 
         // --------------------- ASSIGN VALUES ----------------------- //
 
-        // Assign the number of adults and kids
+        // Step 6: Assign adults and kids from the component properties
         $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
 
-        // Fetch room total pax
+        // Step 7: Assign total pax as the sum of adults and kids
         $total_pax = $adults + $kids;
 
-        // Fetch extra guests based on total pax - room's ideal guest
+        // Step 8: Calculate extra guests beyond the included guests
         $extraGuests = max(0, $total_pax - $included_guests);
 
-        // Computes the roomAmount by multiplying rate by stay duration
+        // Step 9: Assign the room amount based on the rate and stay duration
         $roomAmount = $roomRate * $stayDuration;
 
-        // Computes the extra charge total
+        // Step 10: Calculate the total extra charge based on the extra guests, extra charge per person, and stay duration
         $extraChargeTotal = $extraCharge * $extraGuests * $stayDuration;
 
-
-
+        // --------------------- RETURN CONTEXT ----------------------- //
+        // Step 11: Return the prepared context array for the cart item
         return [
             'room_name'     => $room->name_number,
             'days'          => $stayDuration,
@@ -1382,7 +1666,6 @@ class CreateReservation extends Component
             'roomRateName'  => $rate['name'],
             'roomRate' => $roomRate,
             'extra_charge'  => $extraCharge,
-
             'roomAmount'    => $roomAmount,
             'extra_charge_total'  => $extraChargeTotal,
             'total_amount'  => $roomAmount + $extraChargeTotal,
@@ -1391,6 +1674,8 @@ class CreateReservation extends Component
 
     protected function preparePaymongoPayload(int $amountInCentavos, $transaction, $invoice): array
     {
+        // Prepare the payload for PayMongo checkout session
+        Log::info('Preparing PayMongo payload for checkout session.');
         return [
             'data' => [
                 'attributes' => [
@@ -1660,11 +1945,11 @@ class CreateReservation extends Component
             'last_name' => 'required|string',
             'email' => 'required|email',
             'contact_number' => 'required|string',
-            'country' => 'nullable|string',
+            'country' => 'required|string',
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
             'terms' => 'required|accepted',
-            'requests' => 'nullable|string|max:1000',
+            'special_requests.*.request' => 'nullable|string|max:255',
             'pets.*.breed' => 'required|string|max:255',
         ]);
     }
@@ -1678,17 +1963,14 @@ class CreateReservation extends Component
      * Contains methods responsible for loading initial and dynamic data
      * into the reservation form based on user context and current state.
      *
-     * Responsibilities:
-     * - `initializeDates`: Sets the default check-in and check-out dates using the current time in Asia/Manila timezone.
-     * - `loadRooms`: Fetches available rooms, applies dynamic rates using the RoomRateService, and maps rate-related metadata.
-     * - `loadStaticData`: Loads static reference data such as available activities, payment methods, and guest types.
-     * - `loadBranding`: Retrieves company branding details (name, logo, contact, social links) using the BrandingService.
-     *
      * These methods are typically called on mount or when data needs to be refreshed based on user interaction.
      * -------------------------------------------------------------------
      */
 
 
+    /**
+     * Sets default check-in and check-out dates.
+     */
     protected function initializeDates()
     {
         $now = Carbon::now('Asia/Manila');
@@ -1696,6 +1978,20 @@ class CreateReservation extends Component
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
     }
 
+    /**
+     * Initializes the list of countries for guest selection.
+     */
+    public function initializeCountries()
+    {
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
+        $this->guest_country_of_origin = 'Philippines';
+    }
+
+
+    /**
+     * Loads available rooms and applies dynamic rates.
+     */
     protected function loadRooms(): void
     {
 
@@ -1715,8 +2011,9 @@ class CreateReservation extends Component
             });
     }
 
-
-
+    /**
+     * Loads available activities, payment methods, and guest types.
+     */
     protected function loadStaticData()
     {
         $this->activities = Activity::availableActivities()->get();
@@ -1726,8 +2023,9 @@ class CreateReservation extends Component
     }
 
 
-
-
+    /**
+     * Loads company branding info from the branding service.
+     */
     protected function loadBranding(): void
     {
         $branding = $this->brandingService->getBrandingData();
@@ -1790,7 +2088,10 @@ class CreateReservation extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
-            'requests' => $this->requests,
+            'special_requests' => collect($this->special_requests)
+                ->filter(fn($req) => isset($req['request']) && trim($req['request']) !== '')
+                ->values()
+                ->all(),
         ]);
     }
 
@@ -1839,6 +2140,7 @@ class CreateReservation extends Component
             'quantity' => $item['quantity'],
             'amount' => $item['amount'],
             'payment_status' => $item['payment_status'],
+            'activity_datetime' => $item['activity_datetime'],
         ]);
     }
     protected function attachRoomToTransaction(Transaction $transaction, array $item): void

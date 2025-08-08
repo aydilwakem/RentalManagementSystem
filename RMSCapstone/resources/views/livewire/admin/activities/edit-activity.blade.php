@@ -6,10 +6,10 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Activities', 'url' => route('admin.activities')],
-            ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
-            ['label' => 'Edit Activity', 'url' => route('admin.edit-activity', ['activity' => $activity->id])],
-        ]" />
+        ['label' => 'Activities', 'url' => route('admin.activities')],
+        ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
+        ['label' => 'Edit Activity', 'url' => route('admin.edit-activity', ['activity' => $activity->id])],
+    ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -37,8 +37,7 @@
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name" id="name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Coffee Farm Tour" required>
 
@@ -53,8 +52,7 @@
                         <label for="amount"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
                                 class="text-red-500">*</span></label>
-                        <input type="number" wire:model="amount" id="amount" step="0.01"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="number" wire:model="amount" id="amount" step="0.01" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00">
                         @error('amount')
@@ -66,8 +64,7 @@
                     <div>
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
-                        <textarea wire:model="description" id="description" rows="4"
-                            class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                        <textarea wire:model="description" id="description" rows="4" class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Discover the journey from bean to cup on our immersive coffee farm tour."></textarea>
                         @error('description')
@@ -79,14 +76,51 @@
                     <div>
                         <label for="inclusions"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
-                        <textarea wire:model="inclusions" id="inclusions" rows="3"
-                            class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                        <textarea wire:model="inclusions" id="inclusions" rows="3" class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Farm entrance fee, coffee tasting, light snacks, guide services."></textarea>
                         @error('inclusions')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+                    <!-- Schedule Type -->
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Schedule
+                            Type</label>
+                        <select wire:model.live="schedule_type"
+                            class="block w-full text-sm rounded-lg border p-2 bg-gray-50 border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                            <option value="no_schedule">No schedule</option>
+                            <option value="system">System will define schedule</option>
+                            <option value="guest">Guest will choose preferred time</option>
+                        </select>
+                        @error('schedule_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Available Times (if system selected) -->
+                    @if ($schedule_type === 'system')
+                        <div class="mt-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Available
+                                Times</label>
+
+                            @foreach ($available_times as $index => $time)
+                                <div class="flex items-center gap-2 mb-2">
+                                    <input type="time" wire:model="available_times.{{ $index }}"
+                                        class="w-full text-sm rounded-lg border p-2 bg-gray-50 border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                                    <button type="button" wire:click="removeTime({{ $index }})"
+                                        class="text-red-600 hover:underline">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+
+                            <button type="button" wire:click="addTime" class="mt-2 text-green-600 hover:underline text-sm">
+                                <i class="fas fa-plus-circle mr-1"></i>Add Time
+                            </button>
+
+                            @error('available_times.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
@@ -168,8 +202,8 @@
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700 dark:text-green-300"
                                 viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                             </svg>

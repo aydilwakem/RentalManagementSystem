@@ -6,19 +6,25 @@ use App\Models\Activity;
 
 class ActivityCartService
 {
-    public function addActivity(array $cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [])
+
+    public function addActivity(array $cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [], array $context = [])
     {
         $activity = Activity::findOrFail($itemId);
 
-        // Sets the values for the activity
         $qty = (int) ($quantity[$itemId] ?? 1);
         $activity_rate = $activity->amount;
-        $amount = $activity->amount * $qty;
+        $amount = $activity_rate * $qty;
+        $activity_schedule_type = $activity->schedule_type ?? null;
         $status[$itemId] = 'pending';
         $paymentStatus[$itemId] = 'unpaid';
 
-        // Inserts the activity to the cart
+        $availableTimes = null;
+        if ($activity_schedule_type === 'system') {
+            $availableTimes = $activity->available_times ?? [];
+        }
+
         $cart[] = [
+            'activity_datetime' => $context['activity_datetime'] ?? null,
             'type' => 'activity',
             'activity_id' => $activity->id,
             'activity_name' => $activity->name,
@@ -27,10 +33,15 @@ class ActivityCartService
             'amount' => $amount,
             'status' => $status[$itemId],
             'payment_status' => $paymentStatus[$itemId],
+            'activity_schedule_type' => $activity_schedule_type,
+            'available_times' => $availableTimes,
         ];
 
         return $cart;
     }
+
+
+
 
 
     /**

@@ -296,10 +296,55 @@
                         <strong>Required Deposit:</strong>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
                     </div>
+
                     <div>
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
+
+                    <div class="mt-4">
+                        <strong>Special Requests:</strong>
+
+                        @forelse($transaction->special_requests as $index => $req)
+                            <div class="mt-2">
+                                <span>{{ $req['request'] }}</span>
+
+                                @php
+                                    $canModifyRequest = in_array($transaction->transaction_status, ['pending', 'reserved', 'receipt_verified']);
+                                @endphp
+
+                                @if($req['status'] === 'pending' && $canModifyRequest)
+                                    <span class="ml-2 inline-flex gap-1">
+                                        <x-button wire:click="approveRequest({{ $index }})" positive xs>
+                                            <i class="fas fa-check mr-1"></i>
+                                        </x-button>
+                                        <x-button wire:click="rejectRequest({{ $index }})" negative xs>
+                                            <i class="fas fa-times mr-1"></i>
+                                        </x-button>
+                                    </span>
+                                @else
+                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-300 inline-flex items-center gap-1">
+                                        (Status: <span class="font-semibold">{{ ucfirst($req['status']) }}</span>)
+
+                                        {{-- Show Revert button only if allowed --}}
+                                        @if($canModifyRequest && $req['status'] !== 'pending')
+                                            <x-button wire:click="revertRequest({{ $index }})" xs neutral class="ml-1" title="Revert to Pending">
+                                                <i class="fas fa-undo-alt"></i>
+                                            </x-button>
+                                        @endif
+                                    </span>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="text-gray-500 dark:text-gray-300 italic mt-2">
+                                No special requests.
+                            </div>
+                        @endforelse
+                    </div>
+
+                   
+
+
                 </div>
             </div>
             <!------------------------- END OF TRANSACTION DETAILS ----------------------------->
@@ -417,7 +462,7 @@
 
 
             <!-------------------------- ADD ON (ACTIVITIES) --------------------------------------->
-            {{-- <div
+            <div
                 class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Add-on Services/Activities') }}
@@ -430,6 +475,9 @@
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
                                         Activity Name</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
+                                        Scheduled Time</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Quantity</th>
@@ -448,6 +496,14 @@
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->name }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
+                                            @if ($activity->pivot && $activity->pivot->activity_datetime)
+                                                {{ \Carbon\Carbon::parse($activity->pivot->activity_datetime)->format('g:i A') }}
+                                            @else
+                                                No schedule
+                                            @endif
+                                        </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->pivot->quantity ?? 'NA' }}</td>
@@ -471,7 +527,7 @@
                 @else
                     <p class="text-gray-600 italic">No activities found for this transaction.</p>
                 @endif
-            </div> --}}
+            </div>
             <!---------------------- END OF ACTIVITY DETAILS ----------------------------------->
 
 

@@ -338,6 +338,49 @@ class ViewReservation extends Component
         $this->allItems = $items;
     }
 
+    public function approveRequest($index)
+    {
+        Log::info("Approve Request method is called for index: {$index}");
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index])) {
+            $requests[$index]['status'] = 'approved';
+
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save(); // Save back to the DB
+        }
+    }
+
+    public function rejectRequest($index)
+    {
+        Log::info("Reject Request method is called for index: {$index}");
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index])) {
+            $requests[$index]['status'] = 'rejected';
+
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save();
+        }
+    }
+
+
+    public function revertRequest($index)
+    {
+        if (!in_array($this->transaction->transaction_status, ['pending', 'reserved', 'receipt_verified'])) {
+            return; // prevent illegal action
+        }
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index]) && $requests[$index]['status'] !== 'pending') {
+            $requests[$index]['status'] = 'pending';
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save();
+        }
+    }
 
 
 

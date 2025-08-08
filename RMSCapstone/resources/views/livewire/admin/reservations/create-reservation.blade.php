@@ -332,6 +332,9 @@
                             <th
                                 class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                 Activity Name</th>
+                             <th
+                                class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                Scheduled Time</th>
                             <th
                                 class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                 Price</th>
@@ -351,6 +354,12 @@
                             <tr class="text-center">
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity['activity_name'] }}</td>
+                                <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    @if (!empty($activity['activity_datetime']))
+                                        {{ \Carbon\Carbon::parse($activity['activity_datetime'])->format('g:i A') }}
+                                    @else
+                                        No schedule
+                                    @endif</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity['activity_rate'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
@@ -591,17 +600,31 @@
                     @enderror
                 </div>
 
+              
                 <!-- Special Requests -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Special
-                        Requests</label>
-                    <input wire:model="requests" placeholder="Ex. Late check-in, allergy info, etc."
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
-                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white resize-none"></input>
-                    @error('requests')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
+                            Special Requests <span class="text-xs text-gray-500 dark:text-gray-400">(subject to
+                                approval)</span>
+                        </label>
+
+                        @foreach ($special_requests as $index => $request)
+                            <div class="mb-2 flex items-center gap-2">
+                                <input type="text" wire:model="special_requests.{{ $index }}.request"
+                                    class="w-full border border-gray-300 rounded-md px-3 py-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                                    placeholder="Enter request" />
+                                <button wire:click.prevent="removeSpecialRequest({{ $index }})"
+                                    class="text-red-600 hover:text-red-800 text-sm">Remove</button>
+                            </div>
+                            @error("special_requests.$index.request")
+                                <p class="text-red-500 text-sm">{{ $message }}</p>
+                            @enderror
+                        @endforeach
+
+                        <button wire:click.prevent="addSpecialRequest"
+                            class="mt-2 text-sm text-green-600 hover:text-green-800">+ Add Request</button>
                 </div>
+
 
                 @if ($bringingPets)
                     {{-- <div class="col-span-1">
@@ -747,6 +770,15 @@
                         @else
                             <div>
                                 @foreach ($rooms as $room)
+
+                                @php
+                                    $isSelected = collect($selectedRooms)->contains('room_id', $room->id);
+                                @endphp
+
+                                @if ($isSelected)
+                                    @continue
+                                @endif
+
                                     <div wire:key="room-{{ $room->id }}"
                                         class="bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-6 dark:bg-gray-500 dark:border-gray-400">
                                         <div class="flex flex-col md:flex-row md:space-x-6">
@@ -973,6 +1005,15 @@
                         @else
                             <div>
                                 @foreach ($activities as $activity)
+
+                                 @php
+                                    $isSelected = collect($selectedActivities)->contains('activity_id', $activity->id);
+                                @endphp
+
+                                @if ($isSelected)
+                                    @continue
+                                @endif
+
                                     <div wire:key="activity-{{ $activity->id }}"
                                         class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
 
@@ -1015,6 +1056,47 @@
                                                 @endif
                                             </p>
                                         </div>
+
+                                        <!-- Preferred Time -->
+                                        @if ($activity->schedule_type !== 'no_schedule')
+                                            <div class="mt-4">
+                                                <h3 class="text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">Preferred Time</h3>
+
+                                                @if ($activity->schedule_type === 'system')
+                                                    @if (is_array($activity->available_times) && count($activity->available_times))
+                                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                            @foreach ($activity->available_times as $time)
+                                                                <label class="flex items-center p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded cursor-pointer shadow-sm hover:border-green-500">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="selected_time_{{ $activity->id }}"
+                                                                        wire:model="selectedTimes.{{ $activity->id }}"
+                                                                        value="{{ $time }}"
+                                                                        class="form-radio text-green-600 focus:ring-green-500"
+                                                                    >
+                                                                    <span class="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                                                                        {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
+                                                                    </span>
+                                                                </label>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <p class="text-sm text-gray-500 italic">No system-defined schedule for this activity.</p>
+                                                    @endif
+
+                                                @elseif ($activity->schedule_type === 'guest')
+                                                    <input
+                                                        type="time"
+                                                        wire:model.lazy="selectedTimes.{{ $activity->id }}"
+                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+                                                    >
+                                                @endif
+
+                                                @error("selectedTimes.{$activity->id}")
+                                                    <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        @endif
 
                                         <!-- Right: Price and Quantity -->
                                         <div class="flex flex-col md:flex-row md:space-x-6">
@@ -1096,6 +1178,7 @@
                             </div>
                         @endif
                     </div>
+
                 </div>
             </div>
         @endif
@@ -1138,6 +1221,15 @@
                     @else
                         <div>
                             @foreach ($services_charges as $service)
+
+                                @php
+                                    $isSelected = collect($selectedActivities)->contains('service_id', $service->id);
+                                @endphp
+
+                                @if ($isSelected)
+                                    @continue
+                                @endif
+
                                 <div wire:key="service-{{ $service->id }}"
                                     class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
 
@@ -1638,6 +1730,37 @@
                         </button>
                     </div>
 
+
+                    @if ($activityScheduleType !== 'no_schedule')
+                        <!-- Edit Time Section -->
+                        <div class="flex flex-col items-start justify-center">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                Preferred Time
+                            </label>
+
+                            @if ($activityScheduleType === 'guest')
+                                <input type="time" id="activityTime" wire:model.lazy="activityDateTime"
+                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                            @elseif ($activityScheduleType === 'system' && !empty($availableTimes))
+                                <div class="grid grid-cols-2 gap-2">
+                                    @foreach ($availableTimes as $option)
+                                        <label class="inline-flex items-center p-2 bg-white dark:bg-gray-700 border rounded cursor-pointer">
+                                            <input type="radio" wire:model="activityDateTime" value="{{ $option }}"
+                                                class="form-radio text-green-600">
+                                            <span class="ml-2 text-gray-700 dark:text-gray-300">
+                                                {{ \Carbon\Carbon::parse($option)->format('h:i A') }}
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+
+
+                     
+
                     <div class="flex justify-between mt-5">
                         <x-ghost-button wire:click="$set('showEditActivityModal', false)">
                             Cancel
@@ -1758,3 +1881,13 @@
 
     </div>
 </div>
+
+
+{{-- add this after->  @foreach ($activities as $activity) --}}
+ {{-- @php
+                                    $isSelected = collect($selectedActivities)->contains('activity_id', $activity->id);
+                                @endphp
+
+                                @if ($isSelected)
+                                    @continue
+                                @endif --}}

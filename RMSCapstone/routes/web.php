@@ -811,7 +811,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 
     // ----------------- Activity Logs
-    Route::get('/activity-logs', function () {
+    Route::get('/audit-trail', function () {
         return view('admin.activity-logs.view-activity-logs');
     })->name('admin.activity-logs')
     ->middleware('can:activity-logs-view');

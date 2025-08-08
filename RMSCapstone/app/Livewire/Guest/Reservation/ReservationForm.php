@@ -41,19 +41,17 @@ class ReservationForm extends Component
 {
 
     // ----------------------- GENERAL ---------------------------- //
-
-
     public $reservation_type_id = 2; // This reservation is for Rooms
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
     public $reservation_source = 'WebApp';
     public $transaction_status = 'pending';
-
     public $check_in_date;
     public $check_out_date;
     public $cart = []; // Keeps all the selected rooms and activities
     public $total_amount; // Total amount for the reservation
     public $total_pax = 2; // Total number of guests (adults + kids)
     public $sub_total;
+    public $requests;
 
     // ----------------------- ROOMS ---------------------------- //
     public $rooms = [];
@@ -178,9 +176,15 @@ class ReservationForm extends Component
     public $pets = [];
     public string $breed = '';
     public $dynamicKidOptions = [];
+    public $selectedTimes = [];
 
 
-
+    /* ----------------------- BOOT METHOD ------------------------
+     *
+     * This method is called when the component is booted.
+     * It initializes the services needed for the component.
+     * -------------------------------------------------------------
+     */
     public function boot(ServiceBag $services)
     {
         $this->cartService = $services->cartService;
@@ -194,6 +198,7 @@ class ReservationForm extends Component
 
 
 
+    // ----------------------- MODAL CONTROL ------------------------ //
     public function confirmCreate()
     {
         $this->confirmReservationModal = true;
@@ -209,6 +214,21 @@ class ReservationForm extends Component
         $this->showGuestModal = false;
     }
 
+    public $addPetModal = false;
+
+    public function openPetModal()
+    {
+        $this->addPetModal = true;
+    }
+
+    public function closePetModal()
+    {
+        $this->addPetModal = false;
+    }
+
+
+
+
 
 
     public function mount()
@@ -219,9 +239,10 @@ class ReservationForm extends Component
         $this->loadRooms();
         $this->loadBranding();
         $this->getAvailableRooms();
-        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
-        $this->country = 'Philippines';
+        $this->initializeCountries();
     }
+
+
 
 
 
@@ -304,7 +325,20 @@ class ReservationForm extends Component
     }
 
 
+    public $special_requests = [
+        ['request' => '', 'status' => 'pending'],
+    ];
 
+    public function addSpecialRequest()
+    {
+        $this->special_requests[] = ['request' => '', 'status' => 'pending'];
+    }
+
+    public function removeSpecialRequest($index)
+    {
+        unset($this->special_requests[$index]);
+        $this->special_requests = array_values($this->special_requests); // reindex
+    }
 
 
 
@@ -394,6 +428,7 @@ class ReservationForm extends Component
                 return $carry + $adults + $kids;
             }, 0);
     }
+
     public function computeTotalAmountOfAllRooms(): float
     {
         return collect($this->getItemsByType('room'))
@@ -491,10 +526,12 @@ class ReservationForm extends Component
 
     public function applyPromoCode()
     {
+
+        dd($this->cart);
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
 
         if (empty($this->promoCode) || !is_string($this->promoCode)) {
-            Log::warning('No valid promo code provided. Skipping promo application.');
+            Log::warning(message: 'No valid promo code provided. Skipping promo application.');
             $this->promoDiscount = 0;
             $this->promo_discount_amount = 0;
             $this->discountMessage = null;
@@ -612,24 +649,70 @@ class ReservationForm extends Component
      *
      * ------------------------------------------------------------------------------
      */
-
     public function addActivityToCart($type, $itemId)
     {
+        $context = [];
+
+        if ($type === 'activity') {
+            $activity = Activity::findOrFail($itemId);
+
+            if ($activity->schedule_type !== 'no_schedule') {
+                $date = $this->check_in_date ?? now()->toDateString();
+                $time = $this->selectedTimes[$itemId] ?? null;
+
+                if (!$time) {
+                    $this->addError("selectedTimes.$itemId", 'Please select a time for the activity.');
+                    return;
+                }
+
+                $datetime = Carbon::parse("$date $time")->format('Y-m-d H:i:s');
+                $context['activity_datetime'] = $datetime;
+            } else {
+                // Explicitly set to null if no schedule is required
+                $context['activity_datetime'] = null;
+            }
+        }
+
+        if ($this->isItemAlreadyInCart($type, $itemId)) {
+            return;
+        }
+
         $newCart = $this->cartService->addItem(
             $type,
             $itemId,
             $this->cart,
             $this->quantity,
             $this->status,
+            $this->paymentStatus,
+            $context
+        );
+
+        $this->cart = $newCart;
+        $this->recalculateCart();
+    }
+
+
+
+
+
+    public function addServiceToCart($serviceId)
+    {
+        $newServicesCart = $this->cartService->addItem(
+            'service',
+            $serviceId,
+            $this->selectedServices,
+            $this->quantity,
+            $this->status,
             $this->paymentStatus
         );
 
-        if ($this->isItemAlreadyInCart($type, $itemId)) {
+        if ($this->isItemAlreadyInCart('service', $serviceId)) {
             $this->addError('cart', 'This item is already in the cart.');
             return;
         }
 
-        $this->cart = $newCart;
+        $this->cart = $newServicesCart;
+        $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
 
@@ -679,37 +762,142 @@ class ReservationForm extends Component
         $this->resetGuestInputFields();
     }
 
+    public $editingPetIndex = null;
+    public $editingPet = [
+        'breed' => '',
+    ];
+
     public $showEditPetModal = false;
 
 
 
+
+
+
+
+    /**
+     * ------------------------- GUEST PET MANAGEMENT LOGIC -----------------------------
+     *
+     * Handles the addition, editing, and deletion of multiple guest pet entries dynamically
+     * within a reservation or booking form.
+     * -----------------------------------------------------------------------------------
+     */
+
     public function addMultiplePets()
     {
+
+        // Step 0: Check if the maximum number of pets allowed is reached
+        if (count($this->pets) >= $this->maxPetsAllowed) {
+            session()->flash('error', 'Maximum number of pets reached based on rooms in cart.');
+            return;
+        }
+
+        // Step 1: Validate the breed input
         $this->validate([
             'breed' => 'required|string|max:255',
         ]);
 
+        // Step 2: Add pet to the pets array
         $this->pets[] = $this->makePetsArray();
-        $this->pet_count = count($this->pets);
-        $this->recalculateCart();
 
+        // Step 3: Re-calculate the total number of pets
+        $this->pet_count = count($this->pets);
+        $this->addPetModal = false;
+        // Step 4: Reset the breed input field for the next entry
         $this->reset('breed');
+
+        // Step 6: Recalculate the pet service amount and selected services
+        $this->handlePetServiceLogic();
+
+        // Step 7: Update overall cart totals
+        $this->recalculateCart();
     }
 
     public function removeGuestPet($index)
     {
+        // Step 1: Validate the index to ensure it exists
         if (isset($this->pets[$index])) {
             unset($this->pets[$index]);
             $this->pets = array_values($this->pets);
             $this->pet_count = count($this->pets);
         }
+
+        // Step 2: Recalculate the pet service amount and selected services
+        $this->handlePetServiceLogic();
+
+        // Step 3: Update overall cart totals
         $this->recalculateCart();
     }
 
-    public $editingPetIndex = null;
-    public $editingPet = [
-        'breed' => '',
-    ];
+    /**
+     * Handles the logic for services that involve pets.
+     * This method checks if the pet service is selected, calculates the total amount,
+     * and updates the pets array based on the quantity.
+     */
+    protected function handlePetServiceLogic()
+    {
+        // Only set to true if a pet service is found, otherwise leave it unchanged
+        foreach ($this->cart as &$item) {
+            if ($item['type'] === 'service' && (int) $item['service_id'] === 1) {
+                $this->bringingPets = true;
+
+                $unitAmount = $this->getPetFeeAmount();
+                $days = $this->getStayDurationProperty();
+                $qty = $item['quantity'] ?? 1;
+
+                $item['amount'] = $unitAmount * $days * $qty;
+
+                $this->pets = [];
+                for ($i = 0; $i < $qty; $i++) {
+                    $this->pets[] = $this->makePetsArray();
+                }
+
+                $this->pet_count = count($this->pets);
+                break;
+            }
+        }
+
+        $this->recalculateCart();
+    }
+
+    public function updatedBringingPets($value)
+    {
+        if (!$value) {
+            // Clear pets
+            $this->pets = [];
+            $this->pet_count = 0;
+
+            // Remove the pet service from the cart
+            $this->cart = collect($this->cart)->reject(function ($item) {
+                return $item['type'] === 'service' && (int) $item['service_id'] === 1;
+            })->values()->toArray();
+
+            // Recalculate totals
+            $this->recalculateCart();
+        } else {
+            // If turned on, re-trigger logic
+            $this->handlePetServiceLogic();
+        }
+    }
+
+
+
+
+    /**
+     * Returns the maximum number of pets allowed based on the number of rooms in the cart.
+     * Each room allows a maximum of 2 pets.
+     *
+     * @return int
+     */
+    public function getMaxPetsAllowedProperty()
+    {
+        $roomItems = collect($this->getItemsByType('room'));
+        return $roomItems->count() * 2;
+    }
+
+
+
+
 
     public function editGuestPet($index)
     {
@@ -728,6 +916,7 @@ class ReservationForm extends Component
         $this->recalculateCart();
         $this->reset('editingPetIndex', 'editingPet');
     }
+
 
 
 
@@ -753,6 +942,11 @@ class ReservationForm extends Component
         unset($this->guests[$index]);
         $this->guests = array_values($this->guests);
     }
+
+
+
+
+
 
 
 
@@ -886,13 +1080,13 @@ class ReservationForm extends Component
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // // Attempt to send confirmation emails to guest and admin
-        // try {
-        //     $emailService->sendReservationEmails($reservationData);
-        // } catch (\Exception $e) {
-        //     // If email sending fails, flash error but still continue
-        //     session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
-        // }
+        // Attempt to send confirmation emails to guest and admin
+        try {
+            $emailService->sendReservationEmails($reservationData);
+        } catch (\Exception $e) {
+            // If email sending fails, flash error but still continue
+            session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
+        }
 
         // Show success flash message
         session()->flash('success', 'Reservation successfully submitted!');
@@ -958,6 +1152,10 @@ class ReservationForm extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
+            'special_requests' => collect($this->special_requests)
+                ->filter(fn($req) => isset($req['request']) && trim($req['request']) !== '')
+                ->values()
+                ->all(),
         ]);
     }
 
@@ -997,6 +1195,7 @@ class ReservationForm extends Component
             'quantity' => $item['quantity'],
             'amount' => $item['amount'],
             'payment_status' => $item['payment_status'],
+            'activity_datetime' => $item['activity_datetime'],
         ]);
     }
 
@@ -1111,13 +1310,10 @@ class ReservationForm extends Component
                 'contact_number' => 'required|string',
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
+                'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
+                'special_requests.*.request' => 'nullable|string|max:255',
+                'pets.*.breed' => 'required|string|max:255',
             ]);
-
-            // if (count($this->guests) !== $this->total_pax) {
-            //     throw \Illuminate\Validation\ValidationException::withMessages([
-            //         'guests' => 'Please input all the guests before proceeding.',
-            //     ]);
-            // }
         }
 
         if ($this->currentStep == 4) {
@@ -1438,18 +1634,13 @@ class ReservationForm extends Component
     /**
      * ----------------------------- LOADERS -----------------------------
      *
-     * Contains methods responsible for loading initial and dynamic data 
+     * Contains methods responsible for loading initial and dynamic data
      * into the reservation form based on user context and current state.
-     * 
-     * Responsibilities:
-     * - `initializeDates`: Sets the default check-in and check-out dates using the current time in Asia/Manila timezone.
-     * - `loadRooms`: Fetches available rooms, applies dynamic rates using the RoomRateService, and maps rate-related metadata.
-     * - `loadStaticData`: Loads static reference data such as available activities, payment methods, and guest types.
-     * - `loadBranding`: Retrieves company branding details (name, logo, contact, social links) using the BrandingService.
-     * 
+     *
      * These methods are typically called on mount or when data needs to be refreshed based on user interaction.
      * -------------------------------------------------------------------
      */
+
 
     /**
      * Sets default check-in and check-out dates.
@@ -1459,6 +1650,16 @@ class ReservationForm extends Component
         $now = Carbon::now('Asia/Manila');
         $this->check_in_date = $now->format('Y-m-d');
         $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+    }
+
+    /**
+     * Initializes the list of countries for guest selection.
+     */
+    public function initializeCountries()
+    {
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
+        $this->guest_country_of_origin = 'Philippines';
     }
 
     /**

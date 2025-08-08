@@ -228,24 +228,22 @@
                                                     </ul>
 
                                                 @elseif ($log->event === 'updated')
-                                                    <p class="font-semibold text-yellow-600">Updated fields:</p>
-                                                    <ul class="list-disc list-inside space-y-1">
-                                                        @foreach ($attributes as $key => $newVal)
-                                                            @php
-                                                                $oldVal = $old[$key] ?? null;
-                                                            @endphp
-                                                            @if ($oldVal != $newVal)
-                                                                <li>
-                                                                    <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                                                    "<span
-                                                                        class="text-red-500">{{ is_array($oldVal) ? json_encode($oldVal) : ($oldVal ?? 'N/A') }}</span>"
-                                                                    →
-                                                                    "<span
-                                                                        class="text-green-600">{{ is_array($newVal) ? json_encode($newVal) : ($newVal ?? 'N/A') }}</span>"
-                                                                </li>
-                                                            @endif
-                                                        @endforeach
-                                                    </ul>
+                                                   <p class="font-semibold text-yellow-600">Updated fields:</p>
+    <ul class="list-disc list-inside space-y-1">
+        @foreach ($attributes as $key => $newVal)
+            @php
+                $oldVal = $old[$key] ?? null;
+            @endphp
+            @if ($oldVal != $newVal)
+                <li>
+                    <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                    "<span class="text-red-500">{{ is_array($oldVal) ? json_encode($oldVal) : ($oldVal ?? 'N/A') }}</span>"
+                    was updated to
+                    "<span class="text-green-600">{{ is_array($newVal) ? json_encode($newVal) : ($newVal ?? 'N/A') }}</span>"
+                </li>
+            @endif
+        @endforeach
+    </ul>
                                                 @endif
                                             </div>
 

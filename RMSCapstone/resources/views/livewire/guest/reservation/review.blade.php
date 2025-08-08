@@ -170,7 +170,7 @@
                         @foreach ($cart as $item)
                             @if ($item['type'] === 'activity')
                                 <div class="bg-gray-50 p-6 rounded-lg shadow-sm mb-4">
-                                    <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="grid md:grid-cols-3 gap-4">
                                         <div>
                                             <p class="text-gray-600 text-sm mb-1">Activity</p>
                                             {{-- <p class="font-semibold text-gray-800">Nature Walk</p> --}}
@@ -180,6 +180,16 @@
                                             <p class="text-gray-600 text-sm mb-1">Quantity</p>
                                             {{-- <p class="font-semibold text-gray-800">2</p> --}}
                                             <p>{{ $item['quantity'] }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-600 text-sm mb-1">Time</p>
+                                            <p class="font-medium">
+                                                @if (!empty($item['activity_datetime']))
+                                                    {{ \Carbon\Carbon::parse($item['activity_datetime'])->format('g:i A') }}
+                                                @else
+                                                    No schedule
+                                                @endif
+                                            </p>
                                         </div>
                                         <div class="md:col-span-2 pt-4 border-t border-gray-200 mt-4">
                                             <p class="text-gray-600 text-sm mb-1">Total Activity Charge</p>
@@ -222,6 +232,21 @@
                         </div>
                     </div>
                 @endif
+
+                <!-- Display array of Special Requests -->
+                @if (!empty($special_requests))
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Special Requests</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            @foreach ($special_requests as $request)
+                                <li class="text-gray-700">
+                                    {{ $request['request'] ?? '' }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
 
 
                 {{-- Disclaimer - flat rate --}}
