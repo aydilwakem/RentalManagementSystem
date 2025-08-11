@@ -41,7 +41,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. Solah, Mercy">
                         @error('name_number')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -54,11 +54,11 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <option value="">Select Category</option>
                             @foreach ($roomCategories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                         @error('property_category_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -74,7 +74,7 @@
                                 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('ideal_guest')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -91,79 +91,79 @@
                             </select>
 
                             @error('occupancy_type')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Max Occupancy Rules (Only if 'combinations') -->
                         @if ($occupancy_type === 'combinations')
-                            <div class="col-span-2 border rounded-md shadow-sm bg-gray-50 p-4">
-                                <h3 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy
-                                    Rules</h3>
-                                <div class="mt-2 flex flex-start mb-2">
-                                    <x-button type="button" wire:click="addRule"
-                                        class="bg-green-700 text-white px-3 py-1 rounded-md hover:bg-green-800 transition-all duration-200 text-xs uppercase">
-                                        Add Rule
-                                    </x-button>
-                                </div>
-
-                                <div class="flex flex-col sm:flex-row flex-wrap gap-3">
-                                    @foreach ($originalCombinations as $index => $rule)
-                                        <div class="bg-white border border-gray-200 rounded-md shadow-sm p-3">
-                                            <div class="grid grid-cols-2 gap-2 sm:gap-4">
-                                                <div>
-                                                    <label for="adults_{{ $index }}"
-                                                        class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
-                                                    <input type="number" wire:model="originalCombinations.{{ $index }}.adults"
-                                                        id="adults_{{ $index }}" min="0" onwheel="this.blur()"
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
-                                                    @error("originalCombinations.{$index}.adults")
-                                                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-
-
-                                                <div>
-                                                    <label for="kids_{{ $index }}"
-                                                        class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
-                                                    <input type="number" wire:model="originalCombinations.{{ $index }}.kids"
-                                                        id="kids_{{ $index }}" min="0" onwheel="this.blur()"
-                                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
-                                                    @error("originalCombinations.{$index}.kids")
-                                                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-
-                                            </div>
-
-                                            <div class="mt-2 flex justify-end">
-                                                <button type="button" wire:click="removeRule({{ $index }})"
-                                                    class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-all duration-200 text-xs">
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
+                        <div class="col-span-2 border rounded-md shadow-sm bg-gray-50 p-4">
+                            <h3 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy
+                                Rules</h3>
+                            <div class="mt-2 flex flex-start mb-2">
+                                <x-button type="button" wire:click="addRule"
+                                    class="bg-green-700 text-white px-3 py-1 rounded-md hover:bg-green-800 transition-all duration-200 text-xs uppercase">
+                                    Add Rule
+                                </x-button>
                             </div>
+
+                            <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                                @foreach ($originalCombinations as $index => $rule)
+                                <div class="bg-white border border-gray-200 rounded-md shadow-sm p-3">
+                                    <div class="grid grid-cols-2 gap-2 sm:gap-4">
+                                        <div>
+                                            <label for="adults_{{ $index }}"
+                                                class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
+                                            <input type="number" wire:model="originalCombinations.{{ $index }}.adults"
+                                                id="adults_{{ $index }}" min="0" onwheel="this.blur()"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
+                                            @error("originalCombinations.{$index}.adults")
+                                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+
+                                        <div>
+                                            <label for="kids_{{ $index }}"
+                                                class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
+                                            <input type="number" wire:model="originalCombinations.{{ $index }}.kids"
+                                                id="kids_{{ $index }}" min="0" onwheel="this.blur()"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
+                                            @error("originalCombinations.{$index}.kids")
+                                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                    </div>
+
+                                    <div class="mt-2 flex justify-end">
+                                        <button type="button" wire:click="removeRule({{ $index }})"
+                                            class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-all duration-200 text-xs">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+
+                        </div>
                         @endif
 
                         <!-- Max Guests for 'whole_number' -->
                         @if ($occupancy_type === 'whole_number')
-                            <div>
-                                <label for="max_guests"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
-                                    Guests
-                                    <span class="text-red-500">*</span></label>
-                                <input type="number" wire:model="max_guests" id="max_guests" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <div>
+                            <label for="max_guests"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
+                                Guests
+                                <span class="text-red-500">*</span></label>
+                            <input type="number" wire:model="max_guests" id="max_guests" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                                                          dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. 2"
-                                    onwheel="this.blur()" />
-                                @error('max_guests')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                                onwheel="this.blur()" />
+                            @error('max_guests')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                         @endif
                     </div>
 
@@ -176,7 +176,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. 3 hours" onwheel="this.blur()" />
                         @error('turnover_duration')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -191,8 +191,67 @@
                             <option value="out_of_service">Out of Service</option>
                         </select>
                         @error('property_status')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <!--Bed Sections-->
+                    <div class="space-y-4 col-span-2">
+                        @foreach ($bed_type as $index => $type)
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <!-- Bed Quantity -->
+                            <div>
+                                <label for="bed_quantity"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Bed Quantity <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" wire:model="bed_quantity.{{ $index }}" id="bed_quantity" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                    placeholder="Ex. 2" />
+                                @error('bed_quantity')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Bed Type -->
+                            <div>
+                                <label for="bed_type"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Bed Type <span class="text-red-500">*</span>
+                                </label>
+                                <select wire:model="bed_type.{{ $index }}" id="bed_type"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                    <option value="">Select Bed Type</option>
+                                    <option value="single">Single Bed</option>
+                                    <option value="double">Double Bed</option>
+                                    <option value="queen">Queen Bed</option>
+                                    <option value="king">King Bed</option>
+                                    <option value="sofa_bed">Sofa Bed</option>
+                                    <option value="single with pull-out">Single With Pullout Bed</option>
+                                </select>
+                                @error('bed_type')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Action Button -->
+                            <div class="flex">
+                                <!-- Only show when there is default 1 bed -->
+                                @if ($index === 0)
+                                <button type="button" wire:click="addBed"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">
+                                    Add Bed
+                                </button>
+                                @else
+                                <!-- Only show when there are more than 1 bed -->
+                                <button type="button" wire:click="removeBed({{ $index }})"
+                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full">
+                                    Remove Bed
+                                </button>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
 
                     <!-- Base Rate -->
@@ -203,7 +262,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. 2,800.00" onwheel="this.blur()" />
                         @error('amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -216,7 +275,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex. 1,000.00" onwheel="this.blur()" />
                         @error('extra_person_charge')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -245,17 +304,17 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                             @foreach ($amenities as $amenitiy)
-                                <div class="flex items-center">
-                                    <input type="checkbox" wire:model="selectedFeatures" value="{{ $amenitiy->id }}"
-                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
-                                    <label class="ms-2 text-sm font-medium text-gray-900">
-                                        {{ $amenitiy->name }}
-                                    </label>
-                                </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" wire:model="selectedFeatures" value="{{ $amenitiy->id }}"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500">
+                                <label class="ms-2 text-sm font-medium text-gray-900">
+                                    {{ $amenitiy->name }}
+                                </label>
+                            </div>
                             @endforeach
                         </div>
                         @error('selectedFeatures')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -314,62 +373,62 @@
 
                         <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
                             @if ($displayImages && count($displayImages) > 0)
-                                @foreach ($displayImages as $image)
-                                    <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
-                                        wire:key="image-{{ $image['id'] }}">
+                            @foreach ($displayImages as $image)
+                            <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
+                                wire:key="image-{{ $image['id'] }}">
 
-                                        <!-- Image Preview -->
-                                        @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
-                                            <img src="{{ $image['object']->temporaryUrl() }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
-                                        @elseif (isset($image['path']))
-                                            <img src="{{ asset('storage/' . $image['path']) }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
-                                        @endif
+                                <!-- Image Preview -->
+                                @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
+                                <img src="{{ $image['object']->temporaryUrl() }}"
+                                    class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                                @elseif (isset($image['path']))
+                                <img src="{{ asset('storage/' . $image['path']) }}"
+                                    class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
+                                @endif
 
-                                        <!-- Remove Image Button -->
-                                        <button type="button" wire:click="confirmImageDelete('{{ $image['id'] }}')"
-                                            title="Delete Image"
-                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                            ×
-                                        </button>
+                                <!-- Remove Image Button -->
+                                <button type="button" wire:click="confirmImageDelete('{{ $image['id'] }}')"
+                                    title="Delete Image"
+                                    class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
+                                    ×
+                                </button>
 
-                                        <!-- Main Image Tite -->
-                                        @if ($loop->first)
-                                            <span
-                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
-                                                Main Image
-                                            </span>
-                                        @endif
-                                    </div>
-                                @endforeach
+                                <!-- Main Image Tite -->
+                                @if ($loop->first)
+                                <span
+                                    class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                    Main Image
+                                </span>
+                                @endif
+                            </div>
+                            @endforeach
 
-                                <!-- Add Image Placeholder -->
-                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
-                                    wire:target="newImages">
-                                    <div
-                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                    </div>
-                                </label>
+                            <!-- Add Image Placeholder -->
+                            <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                wire:target="newImages">
+                                <div
+                                    class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                            </label>
                             @else
-                                <!-- Upload Image Placeholder -->
-                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
-                                    wire:target="newImages">
-                                    <div
-                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        <span class="text-xs">Add image</span>
-                                    </div>
-                                </label>
+                            <!-- Upload Image Placeholder -->
+                            <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                wire:target="newImages">
+                                <div
+                                    class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    <span class="text-xs">Add image</span>
+                                </div>
+                            </label>
                             @endif
 
                             <!-- Hidden File Input -->
@@ -377,7 +436,7 @@
                                 accept="image/png, image/jpeg" class="hidden">
 
                             @error('newImages.*')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 

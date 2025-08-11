@@ -24,8 +24,8 @@ class ViewRoom extends Component
     // Function to find the model of the record
     public function mount(Property $room)
     {
-        // Load room with category and features
-        $this->room = $room->load('category', 'features');
+        // Load room with category and features and beds
+        $this->room = $room->load('category', 'features', 'beds');
     }
 
     // Function for deleting a record

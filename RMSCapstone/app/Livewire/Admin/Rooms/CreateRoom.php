@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Rooms;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Property;
+use App\Models\PropertyBed;
 use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
 use Illuminate\Validation\Rule;
@@ -40,6 +41,10 @@ class CreateRoom extends Component
     public $confirmCreateItem = false;
     public $freebies = false;
 
+    //For pivot beds
+    public $bed_type = [];
+    public $bed_quantity = [];
+
     public function confirmCreate()
     {
         $this->confirmCreateItem = true;
@@ -51,6 +56,25 @@ class CreateRoom extends Component
 
         //mount only active room inclusions
         $this->features = PropertyFeature::where('property_type_id', 1)->where('is_active', true)->get();
+        
+        $this->addBed();
+    }
+
+    // ---------------- For Bed Buttons ---------------- //
+    public function addBed()
+    {
+        $this->bed_type[] = '';
+        $this->bed_quantity[] = '';
+    }
+
+    public function removeBed($index)
+    {
+        unset($this->bed_type[$index]);
+        unset($this->bed_quantity[$index]);
+
+        // Reindex arrays to keep the indexes aligned
+        $this->bed_type = array_values($this->bed_type);
+        $this->bed_quantity = array_values($this->bed_quantity);
     }
 
     public function updatedNewImages()
@@ -164,6 +188,17 @@ class CreateRoom extends Component
             'freebies' => (bool) $this->freebies,
         ]);
 
+        //Table for beds
+        foreach($this->bed_type as $i => $bedType){
+            PropertyBed::create([
+                'property_id' => $room->id, 
+                'bed_type' => $bedType, 
+                'bed_quantity' => $this->bed_quantity[$i], 
+            ]); 
+        }
+
+       
+
         if (!empty($this->selectedFeatures)) {
             $room->features()->attach($this->selectedFeatures);
         }
@@ -200,6 +235,10 @@ class CreateRoom extends Component
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
             'freebies' => 'nullable|boolean',
+
+            //For bed validation
+            'bed_type.*' => 'required|in:single,double,queen,king,sofa_bed,single with pull-out',
+            'bed_quantity.*' => 'required|integer|min:1',
         ];
 
         if ($this->occupancy_type === 'combinations') {

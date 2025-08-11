@@ -23,6 +23,7 @@ use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
 use App\Models\PromoCode;
+use App\Models\PropertyBed;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use App\Services\CartService;
@@ -63,6 +64,7 @@ class ReservationForm extends Component
     public $roomsTotalAmount = [];
     public $selectedFeatures = [];
     public $roomCategories;
+    public $beds;
 
     // --------------------- ACTIVITIES ------------------------- //
 
@@ -1690,6 +1692,7 @@ class ReservationForm extends Component
     protected function loadStaticData()
     {
         $this->roomCategories = PropertyCategory::all();
+        $this->beds = PropertyBed::all(); 
         $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;
