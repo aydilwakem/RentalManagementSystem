@@ -5,9 +5,9 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Activities', 'url' => route('admin.activities')],
-            ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
-        ]" />
+        ['label' => 'Activities', 'url' => route('admin.activities')],
+        ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
+    ]" />
     </x-slot>
 
     <div class="py-6">
@@ -93,6 +93,20 @@
                             @endif
                         </p>
                     </div>
+
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Available Times</h3>
+                        <ul class="list-disc pl-5 text-gray-700 dark:text-gray-200">
+                            @if (!empty($activity->available_times))
+                                @foreach ($activity->available_times as $time)
+                                    <li>{{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}</li>
+                                @endforeach
+                            @else
+                                <li><em class="text-gray-500">No time slots provided.</em></li>
+                            @endif
+                        </ul>
+                    </div>
+
                 </div>
             </div>
 

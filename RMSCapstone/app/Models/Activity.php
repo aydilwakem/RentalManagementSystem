@@ -17,11 +17,12 @@ class Activity extends Model
 
     protected $table = 'prd_activities';
 
-    protected $fillable = ['name', 'description', 'amount', 'inclusions', 'images'];
+    protected $fillable = ['name', 'description', 'amount', 'inclusions', 'images', 'schedule_type', 'available_times'];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'images' => 'array',           // Automatically decode JSON to array
+        'images' => 'array',
+        'available_times' => 'array',
 
     ];
 

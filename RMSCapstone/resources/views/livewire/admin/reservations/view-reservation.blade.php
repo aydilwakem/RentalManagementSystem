@@ -296,10 +296,55 @@
                         <strong>Required Deposit:</strong>
                         <div>₱{{ number_format($transaction->deposit_amount, 2) }}</div>
                     </div>
+
                     <div>
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
+
+                    <div class="mt-4">
+                        <strong>Special Requests:</strong>
+
+                        @forelse($transaction->special_requests as $index => $req)
+                            <div class="mt-2">
+                                <span>{{ $req['request'] }}</span>
+
+                                @php
+                                    $canModifyRequest = in_array($transaction->transaction_status, ['pending', 'reserved', 'receipt_verified']);
+                                @endphp
+
+                                @if($req['status'] === 'pending' && $canModifyRequest)
+                                    <span class="ml-2 inline-flex gap-1">
+                                        <x-button wire:click="approveRequest({{ $index }})" positive xs>
+                                            <i class="fas fa-check mr-1"></i>
+                                        </x-button>
+                                        <x-button wire:click="rejectRequest({{ $index }})" negative xs>
+                                            <i class="fas fa-times mr-1"></i>
+                                        </x-button>
+                                    </span>
+                                @else
+                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-300 inline-flex items-center gap-1">
+                                        (Status: <span class="font-semibold">{{ ucfirst($req['status']) }}</span>)
+
+                                        {{-- Show Revert button only if allowed --}}
+                                        @if($canModifyRequest && $req['status'] !== 'pending')
+                                            <x-button wire:click="revertRequest({{ $index }})" xs neutral class="ml-1" title="Revert to Pending">
+                                                <i class="fas fa-undo-alt"></i>
+                                            </x-button>
+                                        @endif
+                                    </span>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="text-gray-500 dark:text-gray-300 italic mt-2">
+                                No special requests.
+                            </div>
+                        @endforelse
+                    </div>
+
+                   
+
+
                 </div>
             </div>
             <!------------------------- END OF TRANSACTION DETAILS ----------------------------->
@@ -417,7 +462,7 @@
 
 
             <!-------------------------- ADD ON (ACTIVITIES) --------------------------------------->
-            {{-- <div
+            <div
                 class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Add-on Services/Activities') }}
@@ -430,6 +475,9 @@
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
                                         Activity Name</th>
+                                    <th
+                                        class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
+                                        Scheduled Time</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Quantity</th>
@@ -448,6 +496,14 @@
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->name }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
+                                            @if ($activity->pivot && $activity->pivot->activity_datetime)
+                                                {{ \Carbon\Carbon::parse($activity->pivot->activity_datetime)->format('g:i A') }}
+                                            @else
+                                                No schedule
+                                            @endif
+                                        </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                             {{ $activity->pivot->quantity ?? 'NA' }}</td>
@@ -471,7 +527,7 @@
                 @else
                     <p class="text-gray-600 italic">No activities found for this transaction.</p>
                 @endif
-            </div> --}}
+            </div>
             <!---------------------- END OF ACTIVITY DETAILS ----------------------------------->
 
 
@@ -781,7 +837,7 @@
                                         </td>
                                         {{-- Activity Actions --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
-                                            @if ($item['payment_status'] !== 'paid')
+                                            @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
                                                 @if ($item['type'] == 'property')
                                                     <button wire:click="editRoom({{ $property->pivot->id }})"
                                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
@@ -1532,7 +1588,7 @@
                                                             more</a>
                                                     @endif
                                                 @endif
-                                            </p>
+                                            </p> 
 
                                             {{-- Activity Amount --}}
                                             <div class="text-lg font-semibold text-green-600 dark:text-green-300">
@@ -1608,6 +1664,47 @@
                                                 </x-button>
                                             </div>
                                         </div>
+
+                                           <!-- Preferred Time -->
+                                                @if ($activity->schedule_type !== 'no_schedule')
+                                                    <div class="mt-4">
+                                                        <h3 class="text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">Preferred Time</h3>
+
+                                                        @if ($activity->schedule_type === 'system')
+                                                            @if (is_array($activity->available_times) && count($activity->available_times))
+                                                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                                    @foreach ($activity->available_times as $time)
+                                                                        <label class="flex items-center p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded cursor-pointer shadow-sm hover:border-green-500">
+                                                                            <input
+                                                                                type="radio"
+                                                                                name="selected_time_{{ $activity->id }}"
+                                                                                wire:model="selectedTimes.{{ $activity->id }}"
+                                                                                value="{{ $time }}"
+                                                                                class="form-radio text-green-600 focus:ring-green-500"
+                                                                            >
+                                                                            <span class="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                                                                                {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
+                                                                            </span>
+                                                                        </label>
+                                                                    @endforeach
+                                                                </div>
+                                                            @else
+                                                                <p class="text-sm text-gray-500 italic">No system-defined schedule for this activity.</p>
+                                                            @endif
+
+                                                        @elseif ($activity->schedule_type === 'guest')
+                                                            <input
+                                                                type="time"
+                                                                wire:model.lazy="selectedTimes.{{ $activity->id }}"
+                                                                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+                                                            >
+                                                        @endif
+
+                                                        @error("selectedTimes.{$activity->id}")
+                                                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                @endif
 
                                     </div>
                                 </div>
@@ -1985,7 +2082,7 @@
                         <div
                             class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
                             <!-- Title -->
-                            <h2 class="text-2xl font-bold text-center">Edit Activity Quantity</h2>
+                            <h2 class="text-2xl font-bold text-center">Edit Activity Details</h2>
                         </div>
 
                         <div class="mb-4">
@@ -1997,6 +2094,36 @@
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        @if ($activityScheduleType !== 'no_schedule')
+                        <!-- Edit Time Section -->
+                        <div class="flex flex-col items-start justify-center">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                Preferred Time
+                            </label>
+
+                            @if ($activityScheduleType === 'guest')
+                                <input type="time" id="activityTime" wire:model.lazy="editingActivityDateTime"
+                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                            @elseif ($activityScheduleType === 'system' && !empty($availableTimes))
+                                <div class="grid grid-cols-2 gap-2">
+                                    @foreach ($availableTimes as $option)
+                                        <label class="inline-flex items-center p-2 bg-white dark:bg-gray-700 border rounded cursor-pointer">
+                                            <input type="radio" wire:model="editingActivityDateTime" value="{{ $option }}"
+                                                class="form-radio text-green-600">
+                                            <span class="ml-2 text-gray-700 dark:text-gray-300">
+                                                {{ \Carbon\Carbon::parse($option)->format('h:i A') }}
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                        @endif
+
+                       
+
+
 
                         <div class="flex justify-between mt-3">
                             <x-ghost-button wire:click="$set('showEditActivityModal', false)">

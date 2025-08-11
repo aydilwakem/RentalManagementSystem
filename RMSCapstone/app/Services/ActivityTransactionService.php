@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction;
 use App\Models\Invoice;
+use Illuminate\Support\Facades\Log;
 
 class ActivityTransactionService
 {
@@ -28,6 +29,7 @@ class ActivityTransactionService
                     DB::table('transaction_activities')->insert([
                         'transaction_id' => $transaction->id,
                         'activity_id' => $item['activity_id'],
+                        'activity_datetime' => $item['activity_datetime'] ?? null,
                         'quantity' => $item['quantity'],
                         'amount' => $item['amount'],
                         'payment_status' => $item['payment_status'] ?? 'pending',
@@ -62,14 +64,17 @@ class ActivityTransactionService
         $invoice->refresh();
     }
 
-    public function updateActivityQuantity($pivotId, $newQuantity, Transaction $transaction)
+    public function updateActivityQuantity($pivotId, $newQuantity, $activity_datetime, Transaction $transaction)
     {
-        DB::table('transaction_activities')
+        $updated = DB::table('transaction_activities')
             ->where('id', $pivotId)
             ->update([
+                'activity_datetime' => $activity_datetime,
                 'quantity' => $newQuantity,
                 'updated_at' => now(),
             ]);
+
+        Log::info('Update affected rows:', [$updated]);
 
         $transaction->refresh();
     }

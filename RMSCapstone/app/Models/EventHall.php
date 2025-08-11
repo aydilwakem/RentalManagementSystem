@@ -8,6 +8,9 @@ use App\Models\EventCategory;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 class EventHall extends Model
 {
     use HasFactory;
@@ -17,6 +20,29 @@ class EventHall extends Model
 
     protected $fillable = ['name', 'image', 'description', 'capacity', 'amount', 'extra_charge_per_hr'];
 
+
+    use LogsActivity;
+    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            // 4.1 Specify which attributes to log
+            ->logOnly([
+                'name',
+                'image',
+                'description',
+                'capacity',
+                'amount',
+                'extra_charge_per_hr'
+            ])
+            // 4.2 Automatically log only the attributes that have changed  
+            ->logOnlyDirty()
+            // 4.3 Set a custom description for the activity log event
+            ->setDescriptionForEvent(fn(string $eventName) => "Event Hall has been {$eventName}")
+            // 4.4 Optionally, you can set a custom log name for Property Model
+            ->useLogName('Event Hall');
+    }
 
     public function events()
     {

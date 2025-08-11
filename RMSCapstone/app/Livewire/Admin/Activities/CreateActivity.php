@@ -25,6 +25,22 @@ class CreateActivity extends Component
     //Public declaration for add item modal
     public $confirmCreateItem = false;
 
+    public $schedule_type = 'no_schedule';
+    public $available_times = [];
+
+
+    public function addTime()
+    {
+        $this->available_times[] = '';
+    }
+
+    public function removeTime($index)
+    {
+        unset($this->available_times[$index]);
+        $this->available_times = array_values($this->available_times); // Reindex
+    }
+
+
     //Method to make the modal true
     public function confirmCreate()
     {
@@ -65,6 +81,7 @@ class CreateActivity extends Component
 
     public function saveActivity()
     {
+
         try {
             // Validate input
             $this->validate([
@@ -74,6 +91,10 @@ class CreateActivity extends Component
                 'inclusions' => 'nullable|string',
                 'newImages' => 'nullable|array',
                 'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
+                'schedule_type' => 'required|in:no_schedule,system,guest',
+                'available_times' => 'nullable|array',
+                'available_times.*' => 'nullable|date_format:H:i',
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -105,10 +126,12 @@ class CreateActivity extends Component
             'amount' => $this->amount,
             'inclusions' => $this->inclusions,
             'images' => $allStoredImagePaths,
+            'schedule_type' => $this->schedule_type,
+            'available_times' => $this->schedule_type === 'system' ? array_filter($this->available_times) : null,
         ]);
 
         // Reset form fields
-        $this->reset(['name', 'description', 'amount', 'inclusions', 'images']);
+        $this->reset(['name', 'description', 'amount', 'inclusions', 'images', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'available_times', 'schedule_type']);
 
         // Flash success message
         session()->flash('message', 'Activity successfully created!');

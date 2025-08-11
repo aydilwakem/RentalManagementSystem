@@ -338,6 +338,48 @@ class ViewReservation extends Component
         $this->allItems = $items;
     }
 
+    public function approveRequest($index)
+    {
+        Log::info("Approve Request method is called for index: {$index}");
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index])) {
+            $requests[$index]['status'] = 'approved';
+
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save(); // Save back to the DB
+        }
+    }
+
+    public function rejectRequest($index)
+    {
+        Log::info("Reject Request method is called for index: {$index}");
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index])) {
+            $requests[$index]['status'] = 'rejected';
+
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save();
+        }
+    }
+
+    public function revertRequest($index)
+    {
+        if (!in_array($this->transaction->transaction_status, ['pending', 'reserved', 'receipt_verified'])) {
+            return; // prevent illegal action
+        }
+
+        $requests = $this->transaction->special_requests;
+
+        if (isset($requests[$index]) && $requests[$index]['status'] !== 'pending') {
+            $requests[$index]['status'] = 'pending';
+            $this->transaction->special_requests = $requests;
+            $this->transaction->save();
+        }
+    }
 
 
 
@@ -365,15 +407,42 @@ class ViewReservation extends Component
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
+    public $selectedTimes = [];
+
     public function addItemToCart($type, $itemId)
     {
+        $context = [];
+
+        if ($type === 'activity') {
+            $activity = Activity::findOrFail($itemId);
+
+            // Check the schedule type
+            if ($activity->schedule_type !== 'no_schedule') {
+                $date = $this->check_in_date ?? now()->toDateString();
+                $time = $this->selectedTimes[$itemId] ?? null;
+
+                if (!$time) {
+                    $this->addError("selectedTimes.$itemId", 'Please select a time for the activity.');
+                    return;
+                }
+
+                $datetime = Carbon::parse("$date $time")->format('Y-m-d H:i:s');
+                $context['activity_datetime'] = $datetime;
+            } else {
+                // No schedule — set datetime explicitly to null
+                $context['activity_datetime'] = null;
+            }
+        }
+
+        // Add to cart with the context
         $newCart = $this->cartService->addItem(
             $type,
             $itemId,
             $this->cart,
             $this->quantity,
             $this->status,
-            $this->paymentStatus
+            $this->paymentStatus,
+            $context
         );
 
         if ($newCart === false) {
@@ -383,6 +452,7 @@ class ViewReservation extends Component
 
         $this->cart = $newCart;
     }
+
 
     public function removeItemFromCart($type, $itemId)
     {
@@ -528,47 +598,81 @@ class ViewReservation extends Component
         session()->flash('message', 'Activity deleted successfully.');
     }
 
+
     public function updateActivity()
     {
+        Log::info("Update Activity method called.");
+
         $this->validate([
             'activityQuantity' => 'required|integer|min:1',
         ]);
 
-        // Passes the value from editActivity() to update the quantity
         try {
+
+            Log::info('Updating with values:', [
+                'id' => $this->editingActivityId,
+                'qty' => $this->activityQuantity,
+                'datetime' => $this->editingActivityDateTime,
+            ]);
+
+            // Use the check-in date as the base date
+            $baseDate = $this->transaction->check_in_date;
+
+            // Append the time if provided, otherwise set as null
+            $activityDateTime = $this->editingActivityDateTime
+                ? Carbon::parse($baseDate . ' ' . $this->editingActivityDateTime)
+                : null;
 
             $this->activityTransactionService->updateActivityQuantity(
                 $this->editingActivityId,
                 $this->activityQuantity,
+                $activityDateTime,
                 $this->transaction
             );
 
-            // Recalculate all amounts in invoice
             $this->recalculateTransactionActivity($this->editingActivityId);
             $this->recalculateInvoice();
             $this->loadAllInvoiceItems();
 
-            // Closes the modal
             $this->showEditActivityModal = false;
             $this->dispatch('activity-updated');
         } catch (\Exception $e) {
+            Log::error('Activity update failed: ' . $e->getMessage());
             session()->flash('error', $e->getMessage());
         }
     }
 
+
     public function editActivity($pivotId)
     {
-
         Log::info("Edit Activity method called.");
 
-        $pivot = DB::table('transaction_activities')->where('id', $pivotId)->first();
+        $pivot = TransactionActivity::with('activity')->find($pivotId);
 
         if ($pivot) {
             $this->editingActivityId = $pivotId;
             $this->activityQuantity = $pivot->quantity;
+            $this->activityScheduleType = $pivot->activity->schedule_type ?? null;
+
+            // Handle availableTimes for "system"
+            if ($this->activityScheduleType === 'system') {
+                $this->availableTimes = $pivot->activity->available_times ?? [];
+            } else {
+                $this->availableTimes = [];
+            }
+
+            $this->editingActivityDateTime = $pivot->activity_datetime
+                ? \Carbon\Carbon::parse($pivot->activity_datetime)->format('H:i')
+                : null;
+
             $this->showEditActivityModal = true;
         }
     }
+
+
+    public $activityScheduleType;
+    public $editingActivityDateTime;
+    public $availableTimes = [];
 
 
     /**

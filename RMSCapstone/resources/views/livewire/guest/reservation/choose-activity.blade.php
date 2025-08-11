@@ -50,13 +50,45 @@
                             @endif
                         </p>
 
+                        <!-- Available Times -->
+                        @if ($activity->schedule_type !== 'no_schedule')
+                            <div class="mt-4">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Preferred Time</h3>
+
+                                @if ($activity->schedule_type === 'system')
+                                    @if (is_array($activity->available_times) && count($activity->available_times))
+                                        @foreach ($activity->available_times as $time)
+                                            <label class="flex items-center space-x-2 mb-2">
+                                                <input type="radio" name="selected_time_{{ $activity->id }}" {{-- This groups radios per
+                                                    activity --}} wire:model="selectedTimes.{{ $activity->id }}" value="{{ $time }}"
+                                                    class="text-green-600 focus:ring-green-500 border-gray-300">
+                                                <span class="text-gray-700 dark:text-gray-200">
+                                                    {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
+                                                </span>
+                                            </label>
+                                        @endforeach
+                                    @else
+                                        <p class="text-sm text-gray-500 italic">No system-defined schedule for this activity.</p>
+                                    @endif
+
+                                @elseif ($activity->schedule_type === 'guest')
+                                    <input type="time" wire:model.lazy="selectedTimes.{{ $activity->id }}"
+                                        class="border border-gray-300 rounded px-3 py-2 w-full dark:bg-gray-700 dark:text-white">
+                                @endif
+
+                                @error("selectedTimes.{$activity->id}")
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+
+
 
                         <!-- Controls -->
                         <div class="flex items-center justify-between sm:flex-row mt-auto">
                             <!-- Counter -->
                             <div class="flex flex-col">
-                                <label for="quantity-{{ $activity->id }}"
-                                    class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="quantity-{{ $activity->id }}" class="text-sm font-medium text-gray-700 mb-1">
                                     Quantity:
                                 </label>
 
@@ -114,8 +146,8 @@
                                             <span wire:loading class=" flex items-center justify-center"
                                                 wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4" />
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                 </svg>

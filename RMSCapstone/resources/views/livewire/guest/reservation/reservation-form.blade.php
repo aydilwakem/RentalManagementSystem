@@ -52,6 +52,7 @@
                         @include('livewire.guest.reservation.guest-detail')
                         {{-- @include('livewire.guest.reservation.choose-room') --}}
                         {{-- @include('livewire.guest.reservation.review') --}}
+                         {{-- @include('livewire.guest.reservation.choose-activity') --}}
                     </div>
                 @endif
 

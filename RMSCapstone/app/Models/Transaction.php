@@ -57,6 +57,7 @@ class Transaction extends Model
         'reservation_source',
         'transaction_status',
         'requests',
+        'special_requests',
         'actual_start_datetime',
         'actual_end_datetime',
         'start_datetime',
@@ -76,6 +77,9 @@ class Transaction extends Model
         'promo_discount_amount' => 'decimal:2',
         'convenience_fee' => 'decimal:2',
         'total_amount' => 'decimal:2',
+
+        // Cast special requests json
+        'special_requests' => 'array',
 
         // Decimal (Optional)
         'deposit_amount' => 'decimal:2',
@@ -98,7 +102,7 @@ class Transaction extends Model
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly(['transaction_number', 'reservation_type_id', 'created_by', 'event_type_id', 'promo_id', 'total_adults', 'total_kids', 'pax', 'total_amount', 'deposit_amount', 'terms', 'heard_from', 'reservation_source', 'transaction_status', 'actual_start_datetime', 'actual_end_datetime', 'start_datetime', 'end_datetime'])
+            ->logOnly(['transaction_number', 'reservation_type_id', 'created_by', 'event_type_id', 'promo_id', 'total_adults', 'total_kids', 'pax', 'total_amount', 'deposit_amount', 'requests', 'special_requests', 'terms', 'heard_from', 'reservation_source', 'transaction_status', 'actual_start_datetime', 'actual_end_datetime', 'start_datetime', 'end_datetime'])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

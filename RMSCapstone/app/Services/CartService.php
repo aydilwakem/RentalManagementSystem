@@ -27,7 +27,7 @@ class CartService
                 return $this->roomCartService->addRoom($cart, $itemId, $context);
 
             case 'activity':
-                return $this->activityCartService->addActivity($cart, $itemId, $quantity, $status, $paymentStatus);
+                return $this->activityCartService->addActivity($cart, $itemId, $quantity, $status, $paymentStatus, $context);
 
             case 'service':
                 return $this->serviceCartService->addService($cart, $itemId, $quantity, $status, $paymentStatus);

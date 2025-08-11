@@ -6,14 +6,15 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Activities', 'url' => route('admin.activities')],
-            ['label' => 'Create Activity', 'url' => route('admin.create-activity')],
-        ]" />
+        ['label' => 'Activities', 'url' => route('admin.activities')],
+        ['label' => 'Create Activity', 'url' => route('admin.create-activity')],
+    ]" />
     </x-slot>
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -31,9 +32,10 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Activity -->
                     <div>
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name" id="name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Coffee Farm Tour" required>
 
@@ -45,9 +47,10 @@
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="amount" id="amount" step="0.01"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <label for="amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
+                                class="text-red-500">*</span></label>
+                        <input type="number" wire:model="amount" id="amount" step="0.01" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00">
                         @error('amount')
@@ -59,8 +62,7 @@
                     <div>
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
-                        <textarea wire:model="description" id="description" rows="4"
-                            class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                        <textarea wire:model="description" id="description" rows="4" class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Discover the journey from bean to cup on our immersive coffee farm tour."></textarea>
                         @error('description')
@@ -70,15 +72,54 @@
 
                     <!-- Inclusions -->
                     <div>
-                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
-                        <textarea wire:model="inclusions" id="inclusions" rows="3"
-                            class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
+                        <label for="inclusions"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
+                        <textarea wire:model="inclusions" id="inclusions" rows="3" class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Farm entrance fee, coffee tasting, light snacks, guide services."></textarea>
                         @error('inclusions')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+                    <!-- Schedule Type -->
+                    <div class="mt-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Schedule
+                            Type</label>
+                        <select wire:model.live="schedule_type"
+                            class="block w-full text-sm rounded-lg border p-2 bg-gray-50 border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                            <option value="no_schedule">No schedule</option>
+                            <option value="system">System will define schedule</option>
+                            <option value="guest">Guest will choose preferred time</option>
+                        </select>
+                        @error('schedule_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Available Times (if system selected) -->
+                    @if ($schedule_type === 'system')
+                        <div class="mt-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Available
+                                Times</label>
+
+                            @foreach ($available_times as $index => $time)
+                                <div class="flex items-center gap-2 mb-2">
+                                    <input type="time" wire:model="available_times.{{ $index }}"
+                                        class="w-full text-sm rounded-lg border p-2 bg-gray-50 border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                                    <button type="button" wire:click="removeTime({{ $index }})"
+                                        class="text-red-600 hover:underline">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+
+                            <button type="button" wire:click="addTime" class="mt-2 text-green-600 hover:underline text-sm">
+                                <i class="fas fa-plus-circle mr-1"></i>Add Time
+                            </button>
+
+                            @error('available_times.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
+
 
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
@@ -98,12 +139,10 @@
                                         wire:key="image-{{ $index }}">
                                         @if (is_object($image) && method_exists($image, 'temporaryUrl'))
                                             <img src="{{ $image->temporaryUrl() }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Image Preview">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
                                         @else
                                             <img src="{{ asset('storage/' . $image) }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Stored Image">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
                                         @endif
 
                                         <!-- Remove Image -->
@@ -127,8 +166,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -140,8 +179,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -162,8 +201,8 @@
                         <!-- Spinner loading indicator -->
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                             </svg>
@@ -177,8 +216,7 @@
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
-                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image"
-                        wire:click="confirmCreate">
+                    <x-button type="submit" wire:loading.attr="disabled" wire:target="image" wire:click="confirmCreate">
                         Create Activity
                     </x-button>
                 </div>

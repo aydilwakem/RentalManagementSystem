@@ -34,6 +34,25 @@ class EditActivity extends Component
     //Public declaration of edit confirmation modal
     public $confirmEditItem = false;
 
+
+
+    public $schedule_type;
+    public $available_times;
+
+
+    public function addTime()
+    {
+        $this->available_times[] = '';
+    }
+
+    public function removeTime($index)
+    {
+        unset($this->available_times[$index]);
+        $this->available_times = array_values($this->available_times); // Reindex
+    }
+
+
+
     //Method to make the modal true
     public function confirmEdit($id)
     {
@@ -88,14 +107,14 @@ class EditActivity extends Component
             if (isset($imageToRemove['path'])) {
                 Storage::disk('public')->delete($imageToRemove['path']);
                 // and remove from the storedImages array
-                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
+                $this->storedImages = collect($this->storedImages)->filter(function ($img) use ($imageToRemove) {
                     return $img['id'] !== $imageToRemove['id'];
                 })->values()->toArray();
             }
             // if new upload, temp object lang,
             // remove from newImages if it's there
             elseif (isset($imageToRemove['object'])) {
-                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
+                $this->newImages = collect($this->newImages)->filter(function ($img) use ($imageToRemove) {
                     return $img->getFilename() !== $imageToRemove['id'];
                 })->values()->toArray();
             }
@@ -123,6 +142,9 @@ class EditActivity extends Component
         $this->description = $activity->description;
         $this->amount = $activity->amount;
         $this->inclusions = $activity->inclusions;
+        $this->schedule_type = $activity->schedule_type;
+        $this->available_times = $activity->available_times ?? [];
+
 
         // initialize storedImages with unique IDs for sorting/removal
         $this->storedImages = collect($activity->images ?? [])
@@ -150,6 +172,9 @@ class EditActivity extends Component
                 'inclusions' => 'nullable|string',
                 'newImage' => 'nullable|image|max:2048',
                 'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'schedule_type' => 'required|in:no_schedule,system,guest',
+                'available_times' => 'nullable|array',
+                'available_times.*' => 'nullable|date_format:H:i',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -177,6 +202,8 @@ class EditActivity extends Component
             'amount' => $this->amount,
             'inclusions' => $this->inclusions,
             'images' => $finalImagePaths,
+            'schedule_type' => $this->schedule_type,
+            'available_times' => $this->schedule_type === 'system' ? array_filter($this->available_times) : null,
         ]);
 
         session()->flash('message', 'Activity successfully updated!');
