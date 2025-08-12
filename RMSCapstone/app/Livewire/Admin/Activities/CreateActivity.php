@@ -29,6 +29,12 @@ class CreateActivity extends Component
     public $available_times = [];
 
 
+    public function mount()
+    {
+        // default time
+        $this->available_times = ['08:00'];
+    }
+
     public function addTime()
     {
         $this->available_times[] = '';

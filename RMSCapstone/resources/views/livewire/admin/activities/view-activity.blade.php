@@ -5,9 +5,9 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-        ['label' => 'Activities', 'url' => route('admin.activities')],
-        ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
-    ]" />
+            ['label' => 'Activities', 'url' => route('admin.activities')],
+            ['label' => 'View Activity', 'url' => route('admin.view-activity', ['activity' => $activity->id])],
+        ]" />
     </x-slot>
 
     <div class="py-6">
@@ -25,14 +25,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Activity Image -->
                 <div class="grid grid-cols-1 gap-2">
-                    @if (isset($activity->images) && count($activity->images) > 0)
+                    @php
+                        $images = is_array(json_decode($activity->image)) ? json_decode($activity->image) : [];
+                    @endphp
+
+                    @if (count($images) > 0)
                         <div class="w-full">
-                            <img src="{{ asset('storage/' . $activity->images[0]) }}"
+                            <img src="{{ asset('storage/' . $images[0]) }}"
                                 class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Activity Image"
-                                onclick="openModal('{{ asset('storage/' . $activity->images[0]) }}')">
+                                onclick="openModal('{{ asset('storage/' . $images[0]) }}')">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            @foreach (array_slice($activity->images, 1) as $img)
+                            @foreach (array_slice($images, 1) as $img)
                                 <img src="{{ asset('storage/' . $img) }}"
                                     class="w-full h-44 object-cover rounded border cursor-pointer" alt="Activity Image"
                                     onclick="openModal('{{ asset('storage/' . $img) }}')">
@@ -59,13 +63,13 @@
                     </div>
                 </div>
 
-                <div class="mb-4 space-y-3">
+                <div class="mb-4 ">
                     <!-- Activity Name -->
                     <h2 class="mb-4 text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white">
                         Activity: {{ $activity->name }}
                     </h2>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Description</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Description</h3>
                         <p class="text-gray-700 leading-relaxed dark:text-gray-200">
                             @if (!empty($activity->description))
                                 {{ $activity->description }}
@@ -77,14 +81,14 @@
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Amount</h3>
-                        <p class="text-gray-700 font-medium dark:text-gray-200">
-                            {{ number_format($activity->amount, 2) }}
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mt-2">Amount</h3>
+                        <p class="text-green-700 font-medium dark:text-gray-200">
+                            ₱{{ number_format($activity->amount, 2) }}
                         </p>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Inclusions</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mt-2">Inclusions</h3>
                         <p class="text-gray-700 leading-relaxed dark:text-gray-200">
                             @if (!empty($activity->inclusions))
                                 {{ $activity->inclusions }}
@@ -94,8 +98,8 @@
                         </p>
                     </div>
 
-                    <div class="mt-4">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Available Times</h3>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mt-2">Available Time Slots</h3>
                         <ul class="list-disc pl-5 text-gray-700 dark:text-gray-200">
                             @if (!empty($activity->available_times))
                                 @foreach ($activity->available_times as $time)

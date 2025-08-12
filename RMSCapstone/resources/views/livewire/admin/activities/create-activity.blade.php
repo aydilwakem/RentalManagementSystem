@@ -83,23 +83,24 @@
                     </div>
 
                     <!-- Schedule Type -->
-                    <div class="mt-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Schedule
-                            Type</label>
+                    <div >
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Scheduling Option <span
+                                class="text-red-500">*</span></label>
                         <select wire:model.live="schedule_type"
                             class="block w-full text-sm rounded-lg border p-2 bg-gray-50 border-gray-300 focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
-                            <option value="no_schedule">No schedule</option>
-                            <option value="system">System will define schedule</option>
-                            <option value="guest">Guest will choose preferred time</option>
+                            <option value="no_schedule">No schedule required</option>
+                            <option value="system">System assigned schedule</option>
+                            <option value="guest">Guest's preferred time</option>
                         </select>
                         @error('schedule_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Available Times (if system selected) -->
                     @if ($schedule_type === 'system')
-                        <div class="mt-4">
+                        <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Available
-                                Times</label>
+                                Time Slot(s) <span
+                                class="text-red-500">*</span></label>
 
                             @foreach ($available_times as $index => $time)
                                 <div class="flex items-center gap-2 mb-2">
@@ -112,8 +113,8 @@
                                 </div>
                             @endforeach
 
-                            <button type="button" wire:click="addTime" class="mt-2 text-green-600 hover:underline text-sm">
-                                <i class="fas fa-plus-circle mr-1"></i>Add Time
+                            <button type="button" wire:click="addTime" class="mt-2 font-medium text-green-600 hover:underline text-sm">
+                                <i class="fas fa-plus-circle mr-1"></i>Add Time Slot
                             </button>
 
                             @error('available_times.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror

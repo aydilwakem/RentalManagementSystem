@@ -17,10 +17,10 @@
 
         <!-- Reservations Card -->
         <div
-            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-calendar-check text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">New Reservations</h2>
-            <p class="text-2xl font-bold text-white">{{ $newReservations }}</p>
+            class="bg-yellow-50  border-green-800 border-2 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center hover:scale-105">
+            <i class="fas fa-calendar-check text-green-800 text-4xl"></i>
+            <h2 class="text-green-800 font-semibold ">New Reservations</h2>
+            <p class="text-2xl font-bold text-green-800">{{ $newReservations }}</p>
         </div>
 
 
@@ -28,8 +28,8 @@
         <div
             class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
             <i class="fas fa-bed text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">Rooms Available</h2>
-            <p class="text-2xl font-bold text-white"> {{ $availableRooms }}</p>
+            <h2 class="text-white font-semibold">Upcoming Events</h2>
+            <p class="text-2xl font-bold text-white"> {{ $upcomingEvents }}</p>
         </div>
 
         <!-- Maintenance Card -->
