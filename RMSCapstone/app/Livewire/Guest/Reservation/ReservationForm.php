@@ -132,6 +132,7 @@ class ReservationForm extends Component
     public $confirmReservationModal = false;
     public $showEditModal = false;
     public $showGuestModal = false;
+    public $addPetModal = false;
 
     //----------------------- BRANDING ------------------------ //
     public string $companyName = 'Company';
@@ -180,6 +181,21 @@ class ReservationForm extends Component
     public $dynamicKidOptions = [];
     public $selectedTimes = [];
 
+    public $special_requests = [
+        ['request' => '', 'status' => 'pending'],
+    ];
+
+    public $editingPetIndex = null;
+    public $editingPet = [
+        'breed' => '',
+    ];
+
+    public $showEditPetModal = false;
+
+
+
+
+
 
     /* ----------------------- BOOT METHOD ------------------------
      *
@@ -200,7 +216,53 @@ class ReservationForm extends Component
 
 
 
-    // ----------------------- MODAL CONTROL ------------------------ //
+
+
+    /* ----------------------- RENDER METHOD ------------------------
+     *
+     * This method is called to render the component view.
+     * It retrieves available rooms and returns the view.
+     * -------------------------------------------------------------
+     */
+
+    public function render()
+    {
+        $this->getAvailableRooms();
+        return view('livewire.guest.reservation.reservation-form');
+    }
+
+
+
+
+
+    /* ----------------------- MOUNT METHOD ------------------------
+     *
+     * This method is called when the component is mounted.
+     * It initializes various properties and loads necessary data.
+     * -------------------------------------------------------------
+     */
+    public function mount()
+    {
+        $this->initializeDates();
+        $this->prepareOccupancyRules();
+        $this->loadStaticData();
+        $this->loadRooms();
+        $this->loadBranding();
+        $this->getAvailableRooms();
+        $this->initializeCountries();
+    }
+
+
+
+
+
+    /* ----------------------- MODAL CONTROL ------------------------
+     *
+     * These methods control the visibility of various modals in the component.
+     * They are used to confirm reservation creation, open guest and pet modals.
+     * -------------------------------------------------------------
+     */
+
     public function confirmCreate()
     {
         $this->confirmReservationModal = true;
@@ -216,8 +278,6 @@ class ReservationForm extends Component
         $this->showGuestModal = false;
     }
 
-    public $addPetModal = false;
-
     public function openPetModal()
     {
         $this->addPetModal = true;
@@ -226,22 +286,6 @@ class ReservationForm extends Component
     public function closePetModal()
     {
         $this->addPetModal = false;
-    }
-
-
-
-
-
-
-    public function mount()
-    {
-        $this->initializeDates();
-        $this->prepareOccupancyRules();
-        $this->loadStaticData();
-        $this->loadRooms();
-        $this->loadBranding();
-        $this->getAvailableRooms();
-        $this->initializeCountries();
     }
 
 
@@ -300,17 +344,29 @@ class ReservationForm extends Component
         }
     }
 
-
-    public function render()
+    public function updatedPetCount($value)
     {
-        $this->getAvailableRooms();
-        return view('livewire.guest.reservation.reservation-form');
+        $value = (int) $value;
+
+        // Expands or shrink the pets array
+        if ($value > count($this->pets)) {
+            for ($i = count($this->pets); $i < $value; $i++) {
+                $this->pets[] = '';
+            }
+        } else {
+            $this->pets = array_slice($this->pet_breed, 0, $value);
+        }
     }
 
 
-
-
-    // --------------------------------------------- NAVIGATION STEPS ------------------------------------- //
+    /**
+     * ---------------------------- NAVIGATION STEPS ----------------------------
+     *
+     * Handles the navigation between different steps in the reservation process.
+     * Increases or decreases the current step while validating data.
+     *
+     * --------------------------------------------------------------------------
+     */
 
     public function increaseStep()
     {
@@ -327,9 +383,19 @@ class ReservationForm extends Component
     }
 
 
-    public $special_requests = [
-        ['request' => '', 'status' => 'pending'],
-    ];
+
+    /**
+     * ---------------------------- SPECIAL REQUESTS LOGIC ----------------------------
+     *
+     * Handles the addition and removal of special requests in the reservation form.
+     * Each request has a status that can be updated.
+     *
+     * Responsibilities:
+     * - `addSpecialRequest`: Adds a new special request to the list.
+     * - `removeSpecialRequest`: Removes a special request by its index.
+     *
+     * ----------------------------------------------------------------------------------
+     */
 
     public function addSpecialRequest()
     {
@@ -346,19 +412,7 @@ class ReservationForm extends Component
 
 
 
-    public function updatedPetCount($value)
-    {
-        $value = (int) $value;
 
-        // Expands or shrink the pets array
-        if ($value > count($this->pets)) {
-            for ($i = count($this->pets); $i < $value; $i++) {
-                $this->pets[] = '';
-            }
-        } else {
-            $this->pets = array_slice($this->pet_breed, 0, $value);
-        }
-    }
 
     /**
      * ---------------------------- RESERVATION COMPUTATIONS ----------------------------
@@ -392,6 +446,23 @@ class ReservationForm extends Component
         return $this->getDeposit($this->computeTotalAmount());
     }
 
+    protected function getItemsByType(string $type): array
+    {
+        return array_filter($this->cart, fn($item) => $item['type'] === $type);
+    }
+
+    protected function getPetFeeAmount(): float
+    {
+        $service = Service::where('name', 'Pet Fee')->first();
+        return $service?->amount ?? 0;
+    }
+
+    public function getMaxPetsAllowedProperty()
+    {
+        $roomItems = collect($this->getItemsByType('room'));
+        return $roomItems->count() * 2;
+    }
+
 
 
     /**
@@ -415,40 +486,91 @@ class ReservationForm extends Component
      *
      * -----------------------------------------------------------------------------------
      */
-
-    protected function getItemsByType(string $type): array
-    {
-        return array_filter($this->cart, fn($item) => $item['type'] === $type);
-    }
-
     public function computeTotalPax(): void
     {
+        // Step 1: Call a method named `getItemsByType` with the argument 'room'
+        // Step 2: Wrap the returned array in a Laravel Collection using `collect()`
         $this->total_pax = collect($this->getItemsByType('room'))
+
+            // Step 3: Use the `reduce()` method to loop through each item in the collection
+            // `reduce()` takes a callback function and an initial value (0 in this case)
             ->reduce(function ($carry, $item) {
+
+                // Step 4: Extract the number of adults from the item
                 $adults = (int) ($item['adults'] ?? 0);
+
+                // Step 5: Extract the number of kids from the item
                 $kids = (int) ($item['kids'] ?? 0);
+
+                // Step 6: Add the number of adults and kids to the accumulator ($carry)
                 return $carry + $adults + $kids;
-            }, 0);
+            }, 0); // Step 7: Initialize the accumulator ($carry) to 0
     }
 
     public function computeTotalAmountOfAllRooms(): float
     {
+        // Get all items of type 'room' (e.g., room bookings)
+        // Convert the array to a Laravel Collection for easier manipulation
         return collect($this->getItemsByType('room'))
+            // Sum the value of the 'total_amount' key for all room items
             ->sum('total_amount');
     }
+
     public function computeTotalAmountOfAllActivities(): float
     {
+        // Get all items of type 'activity' (e.g., booked activities)
+        // Convert the array to a Laravel Collection
         return collect($this->getItemsByType('activity'))
+            // Sum the value of the 'amount' key for all activity items
             ->sum('amount');
     }
 
+    public function computeTotalAmountOfAllServices(): float
+    {
+        // Get all items of type 'service' (e.g., requested services like massage, laundry, etc.)
+        // Convert the array to a Laravel Collection
+        return collect($this->getItemsByType('service'))
+            // Sum the value of the 'amount' key for all service items
+            ->sum('amount');
+    }
+
+    public function computePetTotal(): float
+    {
+        // Step 1: Get the number of pets
+        $petCount = $this->pet_count ?? 0;
+
+        // Step 2: Get the number of days the guests are staying
+        $stayDuration = $this->getStayDurationProperty() ?? 0;
+
+        // Step 3: Get the pet fee amount per pet per day
+        $feePerPetPerDay = $this->getPetFeeAmount();
+
+        // Step 4: Compute the total pet fee
+        return $petCount * $feePerPetPerDay * $stayDuration;
+    }
+
+
+    /**
+     * Computes the base subtotal by summing up all individual totals from rooms, activities, services, and pets.
+     * With no promo codes, discount, or convenience fees applied.
+     *
+     * @return float The computed base subtotal.
+     */
     public function computeBaseSubtotal()
     {
+        // Step 1: Compute total amounts for rooms, activities, services, and pets
         return $this->computeTotalAmountOfAllRooms()
             + $this->computeTotalAmountOfAllActivities()
+            + $this->computeTotalAmountOfAllServices()
             + $this->computePetTotal();
     }
 
+    /**
+     * Computes the subtotal amount by applying any promo discount to the base subtotal.
+     * Handles errors gracefully and ensures numeric values are used.
+     *
+     * @return float The computed subtotal amount after applying any discounts.
+     */
     public function computeSubtotalAmount()
     {
         // Usess current promoDiscount to calclate discounted subtotal
@@ -457,6 +579,14 @@ class ReservationForm extends Component
         return $this->sub_total;
     }
 
+    /**
+     * Computes the total amount for the reservation, including:
+     * - Subtotal amount.
+     * - Convenience fee (if applicable).
+     * Handles errors gracefully and ensures numeric values are used.
+     *
+     * @return float The computed total amount after applying convenience fee.
+     */
     public function computeTotalAmount()
     {
         // Step 1: Compute discounted subtotal
@@ -472,6 +602,28 @@ class ReservationForm extends Component
         return $this->total_amount;
     }
 
+    /**
+     * Recomputes the convenience fee based on the current subtotal.
+     * This method is called to ensure the convenience fee is always up-to-date
+     * with the latest subtotal calculations.
+     *
+     * @return float The updated convenience fee.
+     */
+    public function computeConvenienceFee()
+    {
+        // Recompute to ensure the most current values
+        $this->computeTotalAmount();
+
+        return $this->convenience_fee;
+    }
+
+    /**
+     * Recalculates the cart totals, applying any promo codes and updating the subtotal and total amount.
+     * Handles errors gracefully and resets values to avoid broken cart state.
+     *
+     * This method is called whenever the cart needs to be recalculated,
+     * such as when items are added, removed, or promo codes are applied.
+     */
     public function recalculateCart()
     {
         $this->promoDiscount = 0;
@@ -487,28 +639,6 @@ class ReservationForm extends Component
         $this->computeTotalAmount();
     }
 
-    public function computeConvenienceFee()
-    {
-        // Recompute to ensure the most current values
-        $this->computeTotalAmount();
-
-        return $this->convenience_fee;
-    }
-
-    public function computePetTotal(): float
-    {
-        $petCount = $this->pet_count ?? 0;
-        $stayDuration = $this->getStayDurationProperty() ?? 0;
-        $feePerPetPerDay = $this->getPetFeeAmount();
-
-        return $petCount * $feePerPetPerDay * $stayDuration;
-    }
-
-    protected function getPetFeeAmount(): float
-    {
-        $service = Service::where('name', 'Pet Fee')->first();
-        return $service?->amount ?? 0;
-    }
 
 
 
@@ -529,7 +659,6 @@ class ReservationForm extends Component
     public function applyPromoCode()
     {
 
-        dd($this->cart);
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
 
         if (empty($this->promoCode) || !is_string($this->promoCode)) {
@@ -583,11 +712,14 @@ class ReservationForm extends Component
 
     private function failPromo(string $message)
     {
-        $this->promoDiscount = 0;
-        $this->total_amount = $this->computeTotalAmount();
-        $this->discountMessage = null;
-        $this->promoCode = '';
+        // Set the error message to display to the user
         $this->errorMessage = $message;
+
+        // Clear the promo code since it's invalid
+        $this->promoCode = '';
+
+        // Recalculate the cart to reset totals without promo
+        $this->recalculateCart();
     }
 
 
@@ -679,7 +811,7 @@ class ReservationForm extends Component
             return;
         }
 
-        $newCart = $this->cartService->addItem(
+        $newActivitiesCart = $this->cartService->addItem(
             $type,
             $itemId,
             $this->cart,
@@ -689,14 +821,21 @@ class ReservationForm extends Component
             $context
         );
 
-        $this->cart = $newCart;
+        $this->cart = $newActivitiesCart;
         $this->recalculateCart();
     }
 
 
 
 
-
+    /**
+     * ----------------------------- SERVICE CART LOGIC -----------------------------
+     *
+     * Handles the addition of services to the cart, ensuring no duplicates
+     * and recalculating totals after each addition.
+     *
+     * ------------------------------------------------------------------------------
+     */
     public function addServiceToCart($serviceId)
     {
         $newServicesCart = $this->cartService->addItem(
@@ -718,6 +857,19 @@ class ReservationForm extends Component
         $this->recalculateCart();
     }
 
+
+
+
+
+
+    /**
+     * ----------------------------- CART ITEM QUANTITY LOGIC -----------------------------
+     *
+     * Handles the incrementing and decrementing of item quantities in the cart.
+     * This is used for both activities and services.
+     *
+     * ------------------------------------------------------------------------------
+     */
     public function incrementItemQuantity($type, $itemId)
     {
         if (!isset($this->quantity[$itemId])) {
@@ -764,13 +916,27 @@ class ReservationForm extends Component
         $this->resetGuestInputFields();
     }
 
-    public $editingPetIndex = null;
-    public $editingPet = [
-        'breed' => '',
-    ];
+    public function editGuest($index)
+    {
+        $this->editingGuestIndex = $index;
+        $this->editingGuest = $this->guests[$index];
+        $this->showEditModal = true;
+    }
+    public function updateGuest()
+    {
+        if (!is_null($this->editingGuestIndex)) {
+            $this->guests[$this->editingGuestIndex] = $this->editingGuest;
+        }
 
-    public $showEditPetModal = false;
+        $this->showEditModal = false;
+        $this->reset('editingGuestIndex', 'editingGuest');
+    }
 
+    public function deleteGuest($index)
+    {
+        unset($this->guests[$index]);
+        $this->guests = array_values($this->guests);
+    }
 
 
 
@@ -831,6 +997,11 @@ class ReservationForm extends Component
         $this->recalculateCart();
     }
 
+
+
+
+
+
     /**
      * Handles the logic for services that involve pets.
      * This method checks if the pet service is selected, calculates the total amount,
@@ -882,25 +1053,6 @@ class ReservationForm extends Component
         }
     }
 
-
-
-
-    /**
-     * Returns the maximum number of pets allowed based on the number of rooms in the cart.
-     * Each room allows a maximum of 2 pets.
-     *
-     * @return int
-     */
-    public function getMaxPetsAllowedProperty()
-    {
-        $roomItems = collect($this->getItemsByType('room'));
-        return $roomItems->count() * 2;
-    }
-
-
-
-
-
     public function editGuestPet($index)
     {
         $this->editingPetIndex = $index;
@@ -916,40 +1068,9 @@ class ReservationForm extends Component
 
         $this->showEditPetModal = false;
         $this->recalculateCart();
+        $this->handlePetServiceLogic();
         $this->reset('editingPetIndex', 'editingPet');
     }
-
-
-
-
-
-    public function editGuest($index)
-    {
-        $this->editingGuestIndex = $index;
-        $this->editingGuest = $this->guests[$index];
-        $this->showEditModal = true;
-    }
-    public function updateGuest()
-    {
-        if (!is_null($this->editingGuestIndex)) {
-            $this->guests[$this->editingGuestIndex] = $this->editingGuest;
-        }
-
-        $this->showEditModal = false;
-        $this->reset('editingGuestIndex', 'editingGuest');
-    }
-
-    public function deleteGuest($index)
-    {
-        unset($this->guests[$index]);
-        $this->guests = array_values($this->guests);
-    }
-
-
-
-
-
-
 
 
 
@@ -989,6 +1110,9 @@ class ReservationForm extends Component
             $this->errorMessage = null;
         }
     }
+
+
+
 
 
 
@@ -1102,6 +1226,7 @@ class ReservationForm extends Component
         // Fallback if no payment link — direct to proof of payment submission page
         return redirect()->route('guest.proof-of-payment-page');
     }
+
 
 
 
@@ -1356,6 +1481,8 @@ class ReservationForm extends Component
 
 
 
+
+
     /**
      * --------------------------- RESERVATION HELPER METHODS ---------------------------
      *
@@ -1379,6 +1506,15 @@ class ReservationForm extends Component
      * -------------------------------------------------------------------------------
      */
 
+
+    /**
+     * Prepare the context for a room item being added to the cart.
+     * This includes calculating rates, extra charges, and total amounts.
+     *
+     * @param Property $room The room being added
+     * @param int $roomId The ID of the room
+     * @return array The context data for the room item
+     */
     protected function prepareRoomCartContext($room, $roomId): array
     {
         $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
@@ -1402,6 +1538,17 @@ class ReservationForm extends Component
             'total_amount'  => $roomAmount + $extraCharge,
         ];
     }
+
+    /**
+     * Prepare the data needed for the reservation confirmation email.
+     * This includes guest details, transaction information, and branding.
+     *
+     * @param Transaction $transaction The transaction object
+     * @param Invoice $invoice The invoice object
+     * @param float $total The total amount of the reservation
+     * @param float $deposit The deposit amount required
+     * @return array The prepared data for the reservation email
+     */
     protected function prepareReservationData(Transaction $transaction, Invoice $invoice, float $total, float $deposit): array
     {
         return [
@@ -1424,6 +1571,16 @@ class ReservationForm extends Component
             'instagram_link' => $this->instagramLink,
         ];
     }
+
+    /**
+     * Prepare the payload for PayMongo checkout session.
+     * This includes metadata, line items, and URLs for success and cancellation.
+     *
+     * @param int $amountInCentavos The amount to charge in centavos
+     * @param Transaction $transaction The transaction object
+     * @param Invoice $invoice The invoice object
+     * @return array The prepared payload for PayMongo
+     */
     protected function preparePaymongoPayload(int $amountInCentavos, $transaction, $invoice): array
     {
         return [
@@ -1455,6 +1612,13 @@ class ReservationForm extends Component
             ],
         ];
     }
+
+    /**
+     * Create an array representation of the guest data.
+     * This is used to store guest information in the guests array.
+     *
+     * @return array
+     */
     protected function makeGuestArray()
     {
         return [
@@ -1469,6 +1633,12 @@ class ReservationForm extends Component
         ];
     }
 
+    /**
+     * Create an array representation of the pet data.
+     * This is used to store pet information in the pets array.
+     *
+     * @return array
+     */
     protected function makePetsArray()
     {
         return [
@@ -1476,7 +1646,10 @@ class ReservationForm extends Component
         ];
     }
 
-
+    /**
+     * Reset all guest input fields to their default state.
+     * This is useful after adding a guest or when clearing the form.
+     */
     protected function resetGuestInputFields(): void
     {
         $this->reset([
@@ -1490,6 +1663,11 @@ class ReservationForm extends Component
             'guest_country_of_origin',
         ]);
     }
+
+    /**
+     * Generate a unique invoice number for the transaction.
+     * This can be customized further if needed.
+     */
     protected function generateInvoiceNumber(): string
     {
         return 'INV-' . strtoupper(Str::random(8));
@@ -1544,7 +1722,6 @@ class ReservationForm extends Component
             }
         }
     }
-
 
     /**
      * Update the list of valid kid options based on the selected number of adults and room type
@@ -1633,6 +1810,7 @@ class ReservationForm extends Component
 
 
 
+
     /**
      * ----------------------------- LOADERS -----------------------------
      *
@@ -1692,7 +1870,7 @@ class ReservationForm extends Component
     protected function loadStaticData()
     {
         $this->roomCategories = PropertyCategory::all();
-        $this->beds = PropertyBed::all(); 
+        $this->beds = PropertyBed::all();
         $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;

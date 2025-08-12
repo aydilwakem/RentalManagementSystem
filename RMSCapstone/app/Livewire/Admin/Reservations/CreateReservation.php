@@ -202,28 +202,15 @@ class CreateReservation extends Component
     ];
     public $selectedTimes = [];
 
+    public $activityScheduleType; // 'guest' or 'system'
 
-    /**
-     * ----------------------------- RENDER --------------------------------
-     *
-     * Displays the reservation creation view.
-     * - Calls `getAvailableRooms` to fetch room data before rendering.
-     * - Returns the corresponding Livewire view for the reservation form.
-     * ---------------------------------------------------------------------
-     */
 
-    public function render()
-    {
-        $this->getAvailableRooms();
-        return view('livewire.admin.reservations.create-reservation');
-    }
 
-    /**
-     * ------------------------------ BOOT ---------------------------------
+    /* ----------------------- BOOT METHOD ------------------------
      *
-     * Injects necessary services into the component via ServiceBag.
-     *
-     * ---------------------------------------------------------------------
+     * This method is called when the component is booted.
+     * It initializes the services needed for the component.
+     * -------------------------------------------------------------
      */
     public function boot(ServiceBag $services): void
     {
@@ -236,19 +223,28 @@ class CreateReservation extends Component
         $this->emailService = $services->emailService;
     }
 
-    /**
-     * ----------------------------- MOUNT ---------------------------------
-     *
-     * Initializes data for the Create Reservation component.
-     * - Loads available rooms with dynamic rates.
-     * - Sets default check-in and check-out dates.
-     * - Prepares occupancy rules.
-     * - Loads available activities, guest types, and payment methods.
-     * - Retrieves company branding using the BrandingService.
-     * - Populates available rooms list.
-     * ---------------------------------------------------------------------
-     */
 
+
+    /* ----------------------- RENDER METHOD ------------------------
+     *
+     * This method is called to render the component view.
+     * It retrieves available rooms and returns the view.
+     * -------------------------------------------------------------
+     */
+    public function render()
+    {
+        $this->getAvailableRooms();
+        return view('livewire.admin.reservations.create-reservation');
+    }
+
+
+
+    /* ----------------------- MOUNT METHOD ------------------------
+     *
+     * This method is called when the component is mounted.
+     * It initializes various properties and loads necessary data.
+     * -------------------------------------------------------------
+     */
     public function mount(): void
     {
         $this->initializeDates();
@@ -325,6 +321,17 @@ class CreateReservation extends Component
             $this->computeSubtotalAmount();
             $this->computeTotalAmount();
         }
+    }
+
+    /**
+     * Updates the convenience fee based on the current subtotal.
+     * Recalculates the total amount after applying the convenience fee.
+     *
+     * This method is called when the convenience fee toggle is changed.
+     */
+    public function updateApplyConvenienceFee()
+    {
+        $this->recalculateCart();
     }
 
 
@@ -508,19 +515,6 @@ class CreateReservation extends Component
             return 0;
         }
     }
-
-
-    /**
-     * Updates the convenience fee based on the current subtotal.
-     * Recalculates the total amount after applying the convenience fee.
-     *
-     * This method is called when the convenience fee toggle is changed.
-     */
-    public function updateApplyConvenienceFee()
-    {
-        $this->recalculateCart();
-    }
-
 
     /**
      * Computes the total amount for the reservation, including:
@@ -969,7 +963,7 @@ class CreateReservation extends Component
         $this->recalculateCart();
     }
 
-    public $activityScheduleType; // 'guest' or 'system'
+
 
 
     /**
