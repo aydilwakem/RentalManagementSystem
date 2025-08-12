@@ -6,18 +6,19 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Rooms', 'url' => route('admin.rooms')],
-            ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
-            ['label' => 'View Room Rate', 'url' => route('admin.view-room-rate', ['roomRate' => $roomRate->id])],
-            ['label' => 'Edit Room Rate', 'url' => route('admin.edit-room-rate', ['roomRate' => $roomRate->id])],
-        ]" />
+        ['label' => 'Rooms', 'url' => route('admin.rooms')],
+        ['label' => 'View Room', 'url' => route('admin.view-room', ['room' => $room->id])],
+        ['label' => 'View Room Rate', 'url' => route('admin.view-room-rate', ['roomRate' => $roomRate->id])],
+        ['label' => 'Edit Room Rate', 'url' => route('admin.edit-room-rate', ['roomRate' => $roomRate->id])],
+    ]" />
     </x-slot>
 
     <div class="mx-auto border rounded-lg p-6 max-w-3xl mb-6 mt-3 bg-white">
 
         <div class="relative flex justify-center items-center mb-4">
             <!-- Title -->
-            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room Rate Details for: {{ $room->name_number }}
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Edit Room Rate Details for:
+                {{ $room->name_number }}
             </h2>
 
             <!-- Back Button -->
@@ -34,8 +35,7 @@
                 <div class="sm:col-span-2">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Room Rate Name <span
                             class="text-red-500">*</span></label>
-                    <input type="text" wire:model="name" id="name" required
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                    <input type="text" wire:model="name" id="name" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                         placeholder="Ex. Rainy Day Rate, December Rate, etc.">
                     @error('name')
@@ -47,8 +47,7 @@
                 <div>
                     <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start Date <span
                             class="text-red-500">*</span></label>
-                    <input type="date" wire:model.live="start_date" id="start_date"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                    <input type="date" wire:model.live="start_date" id="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('start_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -59,8 +58,7 @@
                 <div>
                     <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Date <span
                             class="text-red-500">*</span></label>
-                    <input type="date" wire:model.live="end_date" id="end_date"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                    <input type="date" wire:model.live="end_date" id="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('end_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -74,8 +72,7 @@
                         <span class="text-xs text-gray-500">(Current Base Rate:
                             {{ number_format($room->amount, 2) }})</span>
                     </label>
-                    <input type="number" wire:model="amount" id="amount" onwheel="this.blur()"
-                        class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                    <input type="number" wire:model="amount" id="amount" onwheel="this.blur()" class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                         placeholder="Ex. 5,500.00">
                     @error('amount')
@@ -87,8 +84,7 @@
                 <div>
                     <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900">Rate Type <span
                             class="text-red-500">*</span></label>
-                    <select wire:model="rate_type" id="rate_type"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                    <select wire:model="rate_type" id="rate_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         <option value="Weekdays">Weekdays</option>
                         <option value="Weekend">Weekend</option>
@@ -103,10 +99,10 @@
                 <!-- Description -->
                 <div class="sm:col-span-2">
                     <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
-                    <textarea wire:model="description" id="description" placeholder="Ex. Updated rate for peak season pricing"
+                    <textarea wire:model="description" id="description"
+                        placeholder="Ex. Updated rate for peak season pricing"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 resize-none"
-                        rows="3"></textarea>
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 resize-none" rows="3"></textarea>
                     @error('description')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -117,10 +113,9 @@
                     <label for="freebies" class="block mb-2 text-sm font-medium text-gray-900">Freebies</label>
                     <textarea wire:model="freebies" id="freebies"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 resize-none"
-                        rows="3"></textarea>
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 resize-none" rows="3"></textarea>
                     @error('freebies')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div> --}}
 
@@ -131,10 +126,8 @@
                     <div class="flex items-center gap-3">
                         <span class="text-gray-800 dark:text-gray-200 text-sm">Not Included</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" wire:model="freebies" id="freebies" value="1"
-                                class="sr-only peer">
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                            <input type="checkbox" wire:model="freebies" id="freebies" value="1" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                     ">
                             </div>
                             <div
@@ -145,10 +138,10 @@
                     </div>
                 </div>
 
-                <!-- Priority -->
+                <!-- Is active -->
                 <div class="sm:col-span-1">
                     <!-- Counter -->
-                    <div class="flex flex-col">
+                    {{-- <div class="flex flex-col">
                         <label for="priority" class="block mb-2 text-sm font-medium text-gray-900">
                             Priority:
                         </label>
@@ -160,8 +153,7 @@
                                 -
                             </button>
 
-                            <input type="number" wire:model="priority" min="1" max="10"
-                                onwheel="this.blur()"
+                            <input type="number" wire:model="priority" min="1" max="10" onwheel="this.blur()"
                                 class="text-center w-12 py-1 bg-white border border-gray-300 rounded focus:ring-green-600 focus:border-green-600" />
 
                             <button type="button" wire:click="increment"
@@ -171,51 +163,18 @@
                         </div>
 
                         @error('priority')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
-                </div>
+                    </div> --}}
 
-                <!-- Min Stay -->
-                <div class="sm:col-span-1">
-                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
-                        Required <span class="text-red-500">*</span></label>
-                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
-                        placeholder="Ex. 2 Nights" onwheel="this.blur()"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                        min="1" max="30">
-                    @error('min_stay_nights')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Max Stay -->
-                <div class="sm:col-span-1">
-                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Nights
-                        Allowed <span class="text-red-500">*</span></label>
-                    <input type="number" wire:model="max_stay_nights" id="max_stay_nights"
-                        placeholder="Ex. 4 nights" onwheel="this.blur()"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                        min="1" max="90">
-                    @error('max_stay_nights')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Is Active -->
-                <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                         Room Rate Status
                     </label>
                     <div class="flex items-center gap-3">
                         <span class="text-gray-800 dark:text-gray-200 text-sm">Inactive</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" wire:model="is_active" id="is_active" value="1"
-                                class="sr-only peer">
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                            <input type="checkbox" wire:model="is_active" id="is_active" value="1" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                     ">
                             </div>
                             <div
@@ -226,6 +185,33 @@
                     </div>
                     @error('is_active')
                         <span class="text-red-500 text-sm ml-2">{{ $message }}</span>
+                    @enderror
+
+                </div>
+
+                <!-- Min Stay -->
+                <div class="sm:col-span-1">
+                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
+                        Required <span class="text-red-500">*</span></label>
+                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights" placeholder="Ex. 2 Nights"
+                        onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                        max="30">
+                    @error('min_stay_nights')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Max Stay -->
+                <div class="sm:col-span-1">
+                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Nights
+                        Allowed <span class="text-red-500">*</span></label>
+                    <input type="number" wire:model="max_stay_nights" id="max_stay_nights" placeholder="Ex. 4 nights"
+                        onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                        max="90">
+                    @error('max_stay_nights')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 

@@ -33,7 +33,7 @@ class Activity extends Model
     {
         return LogOptions::defaults()
             // 4.1 Specify which attributes to log
-            ->logOnly(['name', 'description', 'amount', 'inclusions', 'image'])
+            ->logOnly(['name', 'description', 'amount', 'inclusions', 'image', 'schedule_type', 'available_times'])
             // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

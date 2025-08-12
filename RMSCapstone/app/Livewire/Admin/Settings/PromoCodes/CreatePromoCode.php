@@ -31,7 +31,8 @@ class CreatePromoCode extends Component
 
 
     // ---------------------- MOUNT --------------------------------- //
-    public function mount() {
+    public function mount()
+    {
         $this->propertyCategories = PropertyCategory::get();
     }
 
@@ -42,15 +43,20 @@ class CreatePromoCode extends Component
 
 
     // --------------------- CREATE METHOD ---------------------------- //
-    public function savePromoCode(){
+    public function savePromoCode()
+    {
         try {
-
-            // Cast select values to integers to not interfere with select
+            // Cast select values to integers
             $this->has_expiration = (int) $this->has_expiration;
             $this->is_active = (int) $this->is_active;
 
+            // If has_expiration is true but no dates are given, force it to false
+            if ($this->has_expiration === 1 && empty($this->start_date) && empty($this->end_date)) {
+                $this->has_expiration = 0;
+            }
+
             // Validate form input
-            $validated =  $this->validate([
+            $validated = $this->validate([
                 'code' => 'required|string|max:100|unique:promo_codes,code',
                 'description' => 'nullable|string|max:100',
                 'discount_type' => 'required|in:fixed,percentage',
@@ -63,22 +69,22 @@ class CreatePromoCode extends Component
                 'duration_days' => 'nullable|numeric|min:5|max:30',
                 'has_expiration' => 'required|in:0,1',
                 'is_active' => 'required|in:0,1',
-                'property_category_id' => 'required|exists:property_categories,id',
-
-
+                'property_category_id' => 'nullable|exists:property_categories,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // If validation fails, close the modal
             $this->confirmCreateItem = false;
             throw $e;
         }
 
-        //dd($validated);
+        // Convert blank optional numeric/date fields to NULL
+        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'duration_days', 'property_category_id'] as $field) {
+            if (!isset($validated[$field]) || $validated[$field] === '') {
+                $validated[$field] = null;
+            }
+        }
 
-        //Use the validated variable for create
         PromoCode::create($validated);
 
-         // Reset all form fields
         $this->reset([
             'code',
             'description',
@@ -95,12 +101,10 @@ class CreatePromoCode extends Component
             'property_category_id',
         ]);
 
-        // Flash message for success
         session()->flash('message', 'Promo Code successfully created!');
-
-        // Redirect back to promo list
-       return redirect()->route('admin.view-promo-codes');
+        return redirect()->route('admin.view-promo-codes');
     }
+
 
     // --------------------- GENERATE PROMO CODE ---------------------------- //
     public function generateCode()

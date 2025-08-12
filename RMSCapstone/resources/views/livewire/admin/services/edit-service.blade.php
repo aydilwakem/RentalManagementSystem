@@ -6,10 +6,10 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Services', 'url' => route('admin.services')],
-            ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
-            ['label' => 'Edit Service', 'url' => route('admin.edit-service', ['service' => $service->id])],
-        ]" />
+        ['label' => 'Services', 'url' => route('admin.services')],
+        ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
+        ['label' => 'Edit Service', 'url' => route('admin.edit-service', ['service' => $service->id])],
+    ]" />
     </x-slot>
 
     {{-- Body Container --}}
@@ -30,10 +30,10 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <strong class="font-bold">Success!</strong>
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
             @endif
 
             <!-- Form Container -->
@@ -50,15 +50,23 @@
                             </label>
 
                             <div class="relative">
-                                <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
-                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                    placeholder="Ex. Pet Fee">
+                                @if(!$service->is_protected)
+                                    <input type="text" wire:model="name" id="name"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
+                                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. Pet Fee">
+                                @else
+                                    <input type="text" value="{{ $service->name }}" id="name" readonly
+                                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 pr-24
+                                                    dark:bg-gray-700 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                @endif
                             </div>
 
                             @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
+
+
 
 
                         <!-- Service Description -->
@@ -70,7 +78,7 @@
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
                             @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -84,7 +92,7 @@
                                 placeholder="Ex. 2800.00" onwheel="this.blur()" />
 
                             @error('amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -103,7 +111,7 @@
                         </div>
 
                         @error('unit')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -120,38 +128,45 @@
                             <option value="package">Package</option>
                         </select>
                         @error('type')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
+                    <!-- Status -->
                     <!-- Status -->
                     <div>
                         <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Service Status <span class="text-red-500">*</span>
                         </label>
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-700 dark:text-gray-200">Inactive</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model="is_active" id="is_active" value="1"
-                                    class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
-                                   ">
-                                </div>
-                                <div
-                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
-                                </div>
-                            </label>
-                            <span class="text-gray-700 dark:text-gray-200">Active</span>
-                        </div>
-                        @error('is_active')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+
+                        @if($service->is_protected)
+                            <!-- Read-only display -->
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-700 dark:text-gray-200">
+                                    {{ $service->is_active ? 'Active' : 'Inactive' }}
+                                </span>
+                            </div>
+                        @else
+                            <!-- Editable toggle -->
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-700 dark:text-gray-200">Inactive</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model="is_active" id="is_active" value="1"
+                                        class="sr-only peer">
+                                    <div
+                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
+                                    </div>
+                                    <div
+                                        class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                    </div>
+                                </label>
+                                <span class="text-gray-700 dark:text-gray-200">Active</span>
+                            </div>
+                            @error('is_active')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        @endif
                     </div>
-
-
-
-
-
                 </div>
 
                 <!-- Buttons -->

@@ -6,14 +6,15 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Promo Codes', 'url' => route('admin.promo-codes')],
-            ['label' => 'Create Promo Code', 'url' => route('admin.create-promo-code')],
-        ]" />
+        ['label' => 'Promo Codes', 'url' => route('admin.promo-codes')],
+        ['label' => 'Create Promo Code', 'url' => route('admin.create-promo-code')],
+    ]" />
     </x-slot>
 
     {{-- Body Container --}}
     <div>
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -28,8 +29,7 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                    role="alert">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                     <strong class="font-bold">Success!</strong>
                     <span class="block sm:inline">{{ session('message') }}</span>
                 </div>
@@ -49,8 +49,7 @@
                             </label>
 
                             <div class="relative">
-                                <input type="text" wire:model="code" id="code"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
+                                <input type="text" wire:model="code" id="code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
                                     dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                     placeholder="Ex. RAINY500">
 
@@ -69,10 +68,10 @@
 
                         <!-- Code Description -->
                         <div>
-                            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Promo
+                            <label for="description"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Promo
                                 Name/Description</label>
-                            <input type="text" wire:model="description" id="description"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
                             @error('description')
@@ -82,11 +81,11 @@
 
                         <!-- Discount Type -->
                         <div>
-                            <label for="discount_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            <label for="discount_type"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Discount Type <span class="text-red-500">*</span>
                             </label>
-                            <select wire:model.live="discount_type" id="discount_type" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <select wire:model.live="discount_type" id="discount_type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                 <option value="">Select Discount Type</option>
                                 <option value="fixed">Fixed</option>
@@ -101,16 +100,19 @@
 
                     <!-- Discount Value -->
                     <div>
-                        <label for="discount_value" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="discount_value"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Discount Value <span class="text-red-500">*</span>
                         </label>
 
                         <div class="relative">
                             {{-- Symbol when type is selected --}}
                             @if ($discount_type === 'fixed')
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
+                                <span
+                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
                             @elseif ($discount_type === 'percentage')
-                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
+                                <span
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
                             @endif
 
                             {{-- Placeholders based on type --}}
@@ -132,12 +134,11 @@
                     <!-- Max Uses -->
                     <div>
                         <label for="max_uses" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Maximum Uses
+                            Maximum Uses (Optional)
                         </label>
-                        <input type="number" wire:model="max_uses" id="max_uses" onwheel="this.blur()"
-                            class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            min="1" max="30" placeholder="Ex. 10">
+                        <input type="number" wire:model="max_uses" id="max_uses" onwheel="this.blur()" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                            max="30" placeholder="Ex. 10">
                         @error('max_uses')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -145,7 +146,8 @@
 
                     <!-- Per User Limit Count -->
                     <div>
-                        <label for="per_user_limit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Limit Per
+                        <label for="per_user_limit"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Limit Per
                             User <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="per_user_limit" id="per_user_limit" onwheel="this.blur()"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
@@ -158,10 +160,10 @@
 
                     <!-- Minimum Booking Amount -->
                     <div>
-                        <label for="min_booking_amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Minimum
-                            Booking Amount</label>
-                        <input type="text" wire:model="min_booking_amount" id="min_booking_amount"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <label for="min_booking_amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Minimum
+                            Booking Amount (Optional)</label>
+                        <input type="text" wire:model="min_booking_amount" id="min_booking_amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. P3,000.00">
                         @error('min_booking_amount')
@@ -174,8 +176,7 @@
                         <label for="property_category_id"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apply
                             to <span class="text-red-500">*</span></label>
-                        <select wire:model="property_category_id" id="property_category_id" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="property_category_id" id="property_category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Room Category</option>
                             @foreach ($propertyCategories as $propertyCategory)
@@ -197,8 +198,7 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="is_active" id="is_active" value="1"
                                     class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                    ">
                                 </div>
                                 <div
@@ -220,10 +220,9 @@
                         <div class="flex items-center gap-3">
                             <span class="text-gray-700 dark:text-gray-200">No Expiration</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model.live="has_expiration" id="has_expiration"
-                                    value="1" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                <input type="checkbox" wire:model.live="has_expiration" id="has_expiration" value="1"
+                                    class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                     ">
                                 </div>
                                 <div
@@ -242,7 +241,8 @@
                         <!-- Duration Days -->
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Duration</label>
-                            <div class="text-gray-700 text-sm bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed">
+                            <div
+                                class="text-gray-700 text-sm bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed">
                                 {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
                             </div>
                         </div>
@@ -250,7 +250,8 @@
 
                         <!-- Start Date -->
                         <div>
-                            <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
+                            <label for="start_date"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
                                 Date <span class="text-red-500">*</span></label>
                             <input type="date" wire:model.live="start_date" id="start_date" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
@@ -302,8 +303,7 @@
                         {{ __('Cancel') }}
                     </x-secondary-button>
 
-                    <x-button class="ms-3 bg-green text-white" wire:click="savePromoCode"
-                        wire:loading.attr="disabled">
+                    <x-button class="ms-3 bg-green text-white" wire:click="savePromoCode" wire:loading.attr="disabled">
                         {{ __('Create Promo Code') }}
                     </x-button>
                 </x-slot>

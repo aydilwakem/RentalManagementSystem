@@ -6,9 +6,9 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Services', 'url' => route('admin.services')],
-            ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
-        ]" />
+        ['label' => 'Services', 'url' => route('admin.services')],
+        ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
+    ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -42,14 +42,14 @@
                     </div>
                     <div><strong>Service Status:</strong>
                         @if ($service->is_active)
-                        <span
-                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
-                            Active
-                        </span>
+                            <span
+                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                                Active
+                            </span>
                         @else
-                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
-                            Inactive
-                        </span>
+                            <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                                Inactive
+                            </span>
                         @endif
                     </div>
 
@@ -60,15 +60,22 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 mt-auto mb-3">
                 <!-- Edit -->
-                <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
-                    href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
-                    Edit
-                </x-ghost-button>
+                @can('service-edit')
+                    <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                        href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
+                        Edit
+                    </x-ghost-button>
+                @endcan
+
 
                 <!-- Delete -->
-                <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $service->id }})">
-                    Delete
-                    </x-daanger-button>
+                @can('service-soft-delete')
+                    @if(!$service->is_protected)
+                        <x-danger-button type="button" icon="fas fa-trash" wire:click="confirmDelete({{ $service->id }})">
+                            Delete
+                            </x-daanger-button>
+                    @endif
+                @endcan
             </div>
 
             {{-- Confirm Delete Modal --}}

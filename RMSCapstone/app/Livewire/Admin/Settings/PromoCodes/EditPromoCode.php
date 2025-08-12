@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 
 #[Layout('layouts.app')]
@@ -41,9 +42,11 @@ class EditPromoCode extends Component
     }
 
     // ------------- Promo Code ------------- //
-    public function mount(PromoCode $promoCode){
+    public function mount(PromoCode $promoCode)
+    {
 
         $this->promoCode = $promoCode;
+
 
         // toggle value
         $this->is_active = (bool) $promoCode->is_active;
@@ -59,8 +62,8 @@ class EditPromoCode extends Component
         $this->start_date = optional($promoCode->start_date)->format('Y-m-d');
         $this->end_date = optional($promoCode->end_date)->format('Y-m-d');
         $this->duration_days = $promoCode->duration_days;
-       // $this->has_expiration = $promoCode->has_expiration;
-       // $this->is_active = $promoCode->is_active;
+        // $this->has_expiration = $promoCode->has_expiration;
+        // $this->is_active = $promoCode->is_active;
         $this->property_category_id = $promoCode->property_category_id;
 
         $this->propertyCategories = PropertyCategory::get();
@@ -71,16 +74,28 @@ class EditPromoCode extends Component
     }
 
     // -------------- Edit Method ---------------- //
-    public function updatePromoCode(){
-         try {
+    public function updatePromoCode()
+    {
+        try {
 
             // Cast select values to integers to not interfere with select
             $this->has_expiration = (int) $this->has_expiration;
             $this->is_active = (int) $this->is_active;
 
+            // If has_expiration is true but no dates are given, force it to false
+            if ($this->has_expiration === 1 && empty($this->start_date) && empty($this->end_date)) {
+                $this->has_expiration = 0;
+            }
+
+
             // Validate form input
             $validated =  $this->validate([
-                'code' => 'required|string|max:100',
+                'code' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    Rule::unique('promo_codes', 'code')->ignore($this->promoCode->id),
+                ],
                 'description' => 'nullable|string|max:100',
                 'discount_type' => 'required|in:fixed,percentage',
                 'discount_value' => 'required|numeric|min:2|max:1000',
@@ -92,14 +107,21 @@ class EditPromoCode extends Component
                 'duration_days' => 'nullable|numeric|min:5|max:30',
                 'has_expiration' => 'required|in:0,1',
                 'is_active' => 'required|in:0,1',
-                'property_category_id' => 'required|exists:property_categories,id',
-
+                'property_category_id' => 'nullable|exists:property_categories,id',
 
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
             $this->confirmEditItem = false;
             throw $e;
+        }
+
+
+        // Convert blank optional numeric/date fields to NULL
+        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'duration_days', 'property_category_id'] as $field) {
+            if (!isset($validated[$field]) || $validated[$field] === '') {
+                $validated[$field] = null;
+            }
         }
 
         //Update Promo Code

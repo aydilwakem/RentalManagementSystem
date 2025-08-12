@@ -73,6 +73,9 @@ class PromoCodeService
      */
     protected function meetsMinimumBookingAmount(PromoCode $promo, float $bookingAmount): bool
     {
+        if (is_null($promo->min_booking_amount)) {
+            return true; // No minimum requirement
+        }
         return $bookingAmount >= $promo->min_booking_amount;
     }
 
@@ -100,6 +103,10 @@ class PromoCodeService
      */
     protected function hasReachedUsageLimit(PromoCode $promo): bool
     {
+        if (is_null($promo->max_uses)) {
+            return false; // Unlimited uses
+        }
+
         return $promo->max_uses > 0 && $promo->uses_count >= $promo->max_uses;
     }
 

@@ -15,21 +15,21 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             //Services
-            // "service-list",
-            // "service-create",
-            // "service-edit",
-            // "service-view",
-            // "service-soft-delete",
+            "service-list",
+            "service-create",
+            "service-edit",
+            "service-view",
+            "service-soft-delete",
 
             //Activity Logs
-            "activity-logs-view",
+            // "activity-logs-view",
 
-            //Promo Codes
-            "promo-code-list",
-            "promo-code-create",
-            "promo-code-edit",
-            "promo-code-view",
-            "promo-code-soft-delete",
+            // //Promo Codes
+            // "promo-code-list",
+            // "promo-code-create",
+            // "promo-code-edit",
+            // "promo-code-view",
+            // "promo-code-soft-delete",
         ];
 
         // Run this using 
