@@ -1,6 +1,6 @@
 <div class="w-full flex justify-center">
     <div class="step-one w-full">
-        <h1 class="text-3xl font-bold text-green-700">Our Activities</h1>
+        {{-- <h1 class="text-3xl font-bold text-green-700">Our Activities</h1> --}}
         <p class="text-lg text-gray-700 text mb-3">
             These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at
             Canopy
@@ -28,7 +28,7 @@
                     <!-- Activity Name -->
                     <div class="p-5 pb-3 flex flex-col flex-grow">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-xl font-semibold text-gray-800"> {{ $activity->name }}</h2>
+                            <h2 class="text-xl font-semibold text-gray-800"> {{ ucfirst($activity->name) }}</h2>
                             <!-- Price -->
                             <div class="text-right">
                                 <span class="text-green-600 font-bold text-lg">
@@ -42,36 +42,51 @@
                         </div>
 
                         <!-- Description -->
-                        <p class="text-gray-600 text-sm mb-4 text-justify flex-grow">
-                            @if (!empty($activity->description))
-                                {{ Str::limit($activity->description, 300) }}
+                        <p class="text-sm text-gray-600 text-justify">
+                            {{-- Show more / less when description is long --}}
+                            @if (empty($activity->description))
+                                <span class="text-gray-600">Try this activity only at Canopy Farm!</span>
+                            @elseif ($expandedActivity === $activity->id)
+                                {{ $activity->description }}
+                                <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                    class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                    less</a>
                             @else
-                                Try this activity only at Canopy Farm!
+                                {{ Str::limit($activity->description, 120, '...') }}
+                                @if (Str::length($activity->description) > 100)
+                                    <a href="#"
+                                        wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                        more</a>
+                                @endif
                             @endif
                         </p>
 
                         <!-- Available Times -->
                         @if ($activity->schedule_type !== 'no_schedule')
                             <div class="mt-4">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Preferred Time</h3>
-
                                 @if ($activity->schedule_type === 'system')
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Choose Time Slot</h3>
                                     @if (is_array($activity->available_times) && count($activity->available_times))
                                         @foreach ($activity->available_times as $time)
-                                            <label class="flex items-center space-x-2 mb-2">
-                                                <input type="radio" name="selected_time_{{ $activity->id }}" {{-- This groups radios per
-                                                    activity --}} wire:model="selectedTimes.{{ $activity->id }}" value="{{ $time }}"
-                                                    class="text-green-600 focus:ring-green-500 border-gray-300">
-                                                <span class="text-gray-700 dark:text-gray-200">
+                                            <label class="flex items-center space-x-2">
+                                                <input type="radio" name="selected_time_{{ $activity->id }}"
+                                                    {{-- This groups radios per
+                                                    activity --}}
+                                                    wire:model="selectedTimes.{{ $activity->id }}"
+                                                    value="{{ $time }}"
+                                                    class="text-green-600 focus:ring-green-500 border-gray-300 text-sm">
+                                                <span class="text-gray-700 dark:text-gray-200 text-sm">
                                                     {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
                                                 </span>
                                             </label>
                                         @endforeach
                                     @else
-                                        <p class="text-sm text-gray-500 italic">No system-defined schedule for this activity.</p>
+                                        <p class="text-sm text-gray-500 italic">No system-defined schedule for this
+                                            activity.</p>
                                     @endif
-
                                 @elseif ($activity->schedule_type === 'guest')
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Input preferred time</h3>
                                     <input type="time" wire:model.lazy="selectedTimes.{{ $activity->id }}"
                                         class="border border-gray-300 rounded px-3 py-2 w-full dark:bg-gray-700 dark:text-white">
                                 @endif
@@ -88,7 +103,8 @@
                         <div class="flex items-center justify-between sm:flex-row mt-auto">
                             <!-- Counter -->
                             <div class="flex flex-col">
-                                <label for="quantity-{{ $activity->id }}" class="text-sm font-medium text-gray-700 mb-1">
+                                <label for="quantity-{{ $activity->id }}"
+                                    class="mt-2 text-md font-medium text-gray-900 mb-1">
                                     Quantity:
                                 </label>
 
@@ -133,21 +149,21 @@
                                     });
                                 @endphp
 
-
                                 @if ($activityInCart)
+
                                 @else
                                     <x-button wire:click="addActivityToCart('activity', {{ $activity->id }})"
                                         wire:loading.attr="disabled"
                                         wire:target="addActivityToCart('activity', {{ $activity->id }})"
-                                        class="relative h-10 w-full justify-center mt-5">
+                                        class="relative h-8 w-35 justify-center mt-8">
 
                                         <div class="flex items-center justify-center relative w-full">
                                             <!-- Spinner -->
                                             <span wire:loading class=" flex items-center justify-center"
                                                 wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                        stroke-width="4" />
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                 </svg>

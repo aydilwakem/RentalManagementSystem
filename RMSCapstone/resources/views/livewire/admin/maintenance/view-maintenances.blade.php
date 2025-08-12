@@ -329,11 +329,11 @@
                         <td class="px-4 py-3">
                             {{ $maintenance->reported_at->format('F j, Y') }}
                         </td>
-                        <td class="px-4 py-3">
+                        <td class="px-4 py-3 ">
                             @if ($maintenance->resolved_at)
                             {{ $maintenance->resolved_at->format('F j, Y') }}
                             @else
-                            Unresolved Maintenance
+                            <span class="italic text-gray-500">Unresolved Maintenance</span>
                             @endif
                         </td>
                         <td class="px-4 py-3">

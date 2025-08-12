@@ -314,7 +314,7 @@ class CreateReservation extends Component
             // Re-fetch available rooms based on new dates
             $this->getAvailableRooms();
 
-            // Reset promo code 
+            // Reset promo code
             $this->removePromoCode();
 
             // Recalculate cart totals
@@ -1092,7 +1092,7 @@ class CreateReservation extends Component
     /**
      * Adds a selected service to the cart.
      * Validates the service, checks for duplicates, and updates the cart state.
-     *  @param int $serviceId The ID of the service to add.                         
+     *  @param int $serviceId The ID of the service to add.
      * * @return void
      */
     public function SelectedServices($serviceId)
@@ -1363,6 +1363,15 @@ class CreateReservation extends Component
     {
         unset($this->guests[$index]);
         $this->guests = array_values($this->guests);
+    }
+
+    public function updatedGuestResidency($value)
+    {
+        if ($value === 'local') {
+            $this->guest_country_of_origin = 'Philippines';
+        } else {
+            $this->guest_country_of_origin = '';
+        }
     }
 
 

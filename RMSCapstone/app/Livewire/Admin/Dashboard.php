@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class Dashboard extends Component
 {
     public $newReservations = 0;
-    public $availableRooms = 0;
+    public $upcomingEvents = 0;
     public $pendingMaintenances = 0;
     public $reservations;
     public $events = [];
@@ -40,9 +40,11 @@ class Dashboard extends Component
                 ->whereYear('start_datetime', now()->year)
                 ->count();
 
-            // Get all available rooms
-            $this->availableRooms = Property::where('property_type_id', 1)
-                ->where('property_status', 'available')
+            // Get pending events
+            $this->upcomingEvents = Transaction::where('reservation_type_id', 3)
+                ->whereNotIn('transaction_status', ['done'])
+                ->whereMonth('start_datetime', now()->month)
+                ->whereYear('start_datetime', now()->year)
                 ->count();
 
             // Get pending/unresolved maintenance requests

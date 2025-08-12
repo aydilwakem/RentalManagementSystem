@@ -228,14 +228,14 @@
                                     @if ($activity->amount == 0)
                                         <span class="text-green-600 font-semibold dark:text-green-300">FREE</span>
                                     @else
-                                        {{ number_format($activity->amount, 2) }}
+                                        ₱{{ number_format($activity->amount, 2) }}
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     @if (!empty($activity->inclusions))
                                         {{ Str::limit($activity->inclusions, 50) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed">No inclusions provided.</em>
+                                        <em class="text-gray-600 leading-relaxed">No inclusions listed.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">

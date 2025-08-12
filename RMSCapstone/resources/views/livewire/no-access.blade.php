@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col items-center justify-center px-6">
+<div class="flex flex-col items-center justify-center lg:py-32 px-6">
     <div class="bg-white shadow-lg rounded-lg p-8 max-w-lg text-center border">
         <!-- Title -->
         <h2 class="text-2xl font-bold text-gray-800 mb-2">No Access Yet</h2>
@@ -9,9 +9,9 @@
         </div>
 
         <!-- Description -->
-        <p class="text-gray-600 mb-4">
-            You haven't been assigned a role yet. Until then, you won't be able to access any pages.
-            Please wait for the admin to grant you access.
+        <p class="text-gray-600 mb-4 justify-center">
+            You haven't been assigned a role yet. Please wait for the admin to notify you that you’ve been assigned a role, then simply reload this page.
+            <br> <br>Until then, you won't be able to access any pages.
         </p>
 
         <!-- Contact Admin -->

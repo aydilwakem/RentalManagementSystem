@@ -19,14 +19,12 @@ class ViewActivityLogs extends Component
     public $sortDir = 'DESC';
     public $search = '';
     public $perPage = 10;
-
-
-
+    public $viewMode = 'cards';
     public $start_date;
     public $end_date;
     public $filterApplied = false;
     public $filteredAuditLogs = [];
-
+    public $expandedLogs = [];
     public $audit_log_name_filter = '';
     public $audit_event_filter = '';
     public $eventTypes = [];
@@ -57,6 +55,15 @@ class ViewActivityLogs extends Component
         $now = Carbon::now('Asia/Manila');
         $this->start_date = $now->copy()->startOfMonth()->format(('Y-m-d'));
         $this->end_date = $now->copy()->endOfMonth()->format(('Y-m-d'));
+    }
+
+    public function toggleLogChanges($logId)
+    {
+        if (in_array($logId, $this->expandedLogs)) {
+            $this->expandedLogs = array_filter($this->expandedLogs, fn($id) => $id !== $logId);
+        } else {
+            $this->expandedLogs[] = $logId;
+        }
     }
 
     public function apply_audit_log_filter()
@@ -206,6 +213,6 @@ class ViewActivityLogs extends Component
 
     public function placeholder()
     {
-        return view('livewire.admin.placeholder');
+        return view('livewire.admin.audit-placeholder');
     }
 }

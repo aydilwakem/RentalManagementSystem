@@ -73,6 +73,7 @@ class ReservationForm extends Component
     public $activity_datetime = [];
     public $activityAmount = [];
     public $status = [];
+    public $expandedActivity;
 
     // ------------------- GUEST DETAIL ------------------------ //
     public $first_name;
@@ -648,7 +649,7 @@ class ReservationForm extends Component
      *
      * Manages the application and removal of promotional codes affecting
      * the subtotal and total amount in the cart.
-     * 
+     *
      * Internal Helper:
      * - `failPromo`: Fallback handler for invalid promo codes, resets discount state.
      *
@@ -779,7 +780,7 @@ class ReservationForm extends Component
      * ----------------------------- ACTIVITY CART LOGIC -----------------------------
      *
      * Handles adding and managing quantities of activities (or other non-room items)
-     * in the reservation cart. 
+     * in the reservation cart.
      *
      * ------------------------------------------------------------------------------
      */
@@ -894,6 +895,11 @@ class ReservationForm extends Component
 
         $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
         $this->recalculateCart();
+    }
+
+    public function toggleActivityDescription($activityId)
+    {
+        $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
 
 
@@ -1412,7 +1418,7 @@ class ReservationForm extends Component
 
 
 
-    /** 
+    /**
      * ----------------------------- VALIDATION LOGIC -----------------------------
      * This section contains all methods and rules used for validating user input,
      * such as checking required fields, date logic, and cart duplication.

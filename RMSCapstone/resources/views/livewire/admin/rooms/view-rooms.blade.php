@@ -296,36 +296,36 @@
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
                                 <td class="px-4 py-3">
-    @if ($room->occupancy_type === 'whole_number')
-        {{ $room->max_guests }} guests
-    @elseif ($room->occupancy_type === 'combinations')
-        @php
-            $originalCombinations = collect($room->occupancy_rules)
-                ->where('type', 'original');
+                                    @if ($room->occupancy_type === 'whole_number')
+                                        {{ $room->max_guests }} guests
+                                    @elseif ($room->occupancy_type === 'combinations')
+                                        @php
+                                            $originalCombinations = collect($room->occupancy_rules)
+                                                ->where('type', 'original');
 
-            $formatted = $originalCombinations->map(function ($combo) {
-                $parts = [];
+                                            $formatted = $originalCombinations->map(function ($combo) {
+                                                $parts = [];
 
-                if (!empty($combo['adults'])) {
-                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
-                }
+                                                if (!empty($combo['adults'])) {
+                                                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                                                }
 
-                if (!empty($combo['kids'])) {
-                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
-                }
+                                                if (!empty($combo['kids'])) {
+                                                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                                                }
 
-                return implode(' and ', $parts);
-            });
-        @endphp
+                                                return implode(' and ', $parts);
+                                            });
+                                        @endphp
 
-        @if ($formatted->isNotEmpty())
-            {{ $formatted->implode(' or ') }}
-        @else
-            N/A
-        @endif
-    @endif
+                                        @if ($formatted->isNotEmpty())
+                                            {{ $formatted->implode(' or ') }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    @endif
                                 </td>
-                                <td class="px-4 py-3">{{ number_format($room->amount, 2) }}</td>
+                                <td class="px-4 py-3">₱{{ number_format($room->amount, 2) }}</td>
                                 <td class="px-4 py-3">
                                     <!-- Status Styling -->
                                     @if ($room->property_status === 'available')

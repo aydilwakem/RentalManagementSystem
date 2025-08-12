@@ -48,16 +48,18 @@
                 <!-- Choose a Room -->
                 @if ($currentStep == 1)
                     <div class="step-room md:px-12">
+                        @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                        @include('livewire.guest.reservation.choose-room')
+                        {{-- @include('livewire.guest.reservation.choose-room') --}}
                         {{-- @include('livewire.guest.reservation.review') --}}
-                         {{-- @include('livewire.guest.reservation.choose-activity') --}}
+                        @include('livewire.guest.reservation.choose-activity')
                     </div>
                 @endif
 
                 <!-- Choose an Activity -->
                 @if ($currentStep == 2)
                     <div class="step-activity md:px-12">
+                        @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         @include('livewire.guest.reservation.choose-activity')
                     </div>
                 @endif
@@ -65,6 +67,7 @@
                 <!-- Enter Guest Details -->
                 @if ($currentStep == 3)
                     <div class="step-guest-details w-full md:px-12">
+                        @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         @include('livewire.guest.reservation.guest-detail')
                     </div>
                 @endif
@@ -72,6 +75,7 @@
                 <!-- Review reservation -->
                 @if ($currentStep == 4)
                     <div class="step-review md:px-12">
+                        @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         @include('livewire.guest.reservation.review')
                     </div>
                 @endif
@@ -356,7 +360,7 @@
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center text-sm text-gray-600">
                             <div class="text-left flex items-center gap-2">
-                                <div>Convenience Fee</div>
+                                <div>Payment Processing Fee</div>
                                 <!-- Info Icon with Tooltip -->
                                 <div class="relative group inline-block">
                                     <i
@@ -365,7 +369,7 @@
                                     <!-- Tooltip -->
                                     <div
                                         class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                                        A convenience fee is applied for processing online payments via our secure
+                                        A processing fee is applied for processing online payments via our secure
                                         payment gateway.
                                     </div>
                                 </div>
