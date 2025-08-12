@@ -23,6 +23,7 @@ use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
 use App\Models\PromoCode;
+use App\Models\PropertyBed;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use App\Services\CartService;
@@ -43,7 +44,7 @@ class ReservationForm extends Component
     // ----------------------- GENERAL ---------------------------- //
     public $reservation_type_id = 2; // This reservation is for Rooms
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
-    public $reservation_source = 'WebApp';
+    public $reservation_source = 'Website';
     public $transaction_status = 'pending';
     public $check_in_date;
     public $check_out_date;
@@ -63,6 +64,7 @@ class ReservationForm extends Component
     public $roomsTotalAmount = [];
     public $selectedFeatures = [];
     public $roomCategories;
+    public $beds;
 
     // --------------------- ACTIVITIES ------------------------- //
 
@@ -1316,7 +1318,7 @@ class ReservationForm extends Component
                 'contact_number' => 'required|string',
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
-                'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
+                'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
                 'special_requests.*.request' => 'nullable|string|max:255',
                 'pets.*.breed' => 'required|string|max:255',
             ]);
@@ -1696,6 +1698,7 @@ class ReservationForm extends Component
     protected function loadStaticData()
     {
         $this->roomCategories = PropertyCategory::all();
+        $this->beds = PropertyBed::all(); 
         $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
         $this->currentStep = 1;

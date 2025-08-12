@@ -35,10 +35,10 @@
                         <!-- First Name -->
                         <div class="w-full">
                             <x-label for="name" value="{{ __('First Name') }}" />
-                            <x-input id="name" class="block mt-1 w-full" type="text" name="name"
-                                :value="old('name')" required autofocus />
+                            <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"
+                                required autofocus />
                             @error('name')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -48,7 +48,7 @@
                             <x-input id="middle_name" class="block mt-1 w-full" type="text" name="middle_name"
                                 :value="old('middle_name')" />
                             @error('middle_name')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                             <x-input id="last_name" class="block mt-1 w-full" type="text" name="last_name"
                                 :value="old('last_name')" />
                             @error('last_name')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -70,7 +70,7 @@
                             <x-input id="suffix" class="block mt-1 w-full" type="text" name="suffix"
                                 :value="old('suffix')" />
                             @error('suffix')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -78,10 +78,10 @@
                     <div>
                         <!-- Email -->
                         <x-label for="email" value="{{ __('Email') }}" />
-                        <x-input id="email" class="block mt-1 w-full" type="email" name="email"
-                            :value="old('email')" required />
+                        <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                            required />
                         @error('email')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -92,7 +92,9 @@
                         <div class="relative">
                             <x-input id="password" x-bind:type="show ? 'text' : 'password'"
                                 class="block mt-1 w-full rounded-full border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-300 focus:outline-none pr-10"
-                                name="password" required autocomplete="current-password" />
+                                name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                                required autocomplete="current-password" />
 
                             <button type="button"
                                 class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
@@ -101,7 +103,7 @@
                             </button>
                         </div>
                         @error('password')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
 
                         <!-- Confirm Password -->
@@ -119,36 +121,40 @@
                             </button>
                         </div>
                         @error('password_confirmation')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
 
                     @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                        <div class="mt-4">
-                            <x-label for="terms">
-                                <div class="flex items-center">
-                                    <x-checkbox name="terms" id="terms" required />
+                    <div class="mt-4">
+                        <x-label for="terms">
+                            <div class="flex items-center">
+                                <x-checkbox name="terms" id="terms" required />
 
-                                    <div class="ms-2">
-                                        {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                            'terms_of_service' =>
-                                                '<a target="_blank" href="' .
+                                <div class="ms-2">
+                                    {!! __('I agree to the :terms_of_service and :privacy_policy', [
+                                    'terms_of_service' =>
+                                    '<a target="_blank" href="' .
                                                 route('terms.show') .
-                                                '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">' .
-                                                __('Terms of Service') .
-                                                '</a>',
-                                            'privacy_policy' =>
-                                                '<a target="_blank" href="' .
+                                                '"
+                                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">'
+                                        .
+                                        __('Terms of Service') .
+                                        '</a>',
+                                    'privacy_policy' =>
+                                    '<a target="_blank" href="' .
                                                 route('policy.show') .
-                                                '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">' .
-                                                __('Privacy Policy') .
-                                                '</a>',
-                                        ]) !!}
-                                    </div>
+                                                '"
+                                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">'
+                                        .
+                                        __('Privacy Policy') .
+                                        '</a>',
+                                    ]) !!}
                                 </div>
-                            </x-label>
-                        </div>
+                            </div>
+                        </x-label>
+                    </div>
                     @endif
 
                     <div class="flex items-center justify-between mt-4">

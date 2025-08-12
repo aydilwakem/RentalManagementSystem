@@ -591,11 +591,12 @@
                     <select wire:model="reservation_source"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                        <option value="">Select an option</option>
-                        <option value="Airbnb">Airbnb</option>
-                        <option value="WebApp">WebApp</option>
-                        <option value="Phone">Phone</option>
-                        <option value="Messenger">Messenger</option>
+                         <option value="">Select an option</option>
+                        <option value="AirBnb">AirBnb</option>
+                        <option value="Website">Website</option>
+                        <option value="Facebook Messenger">Facebook Messenger</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Walk-In">Walk-In</option>
                         <option value="Other">Other</option>
                     </select>
                     @error('reservation_source')

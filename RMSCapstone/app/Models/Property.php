@@ -149,6 +149,10 @@ class Property extends Model
         return $this->hasMany(RoomRate::class, 'property_id');
     }
 
+    public function beds(){
+        return $this->hasMany(PropertyBed::class, 'property_id'); 
+    }
+
 
     // ----------------------------------------- Scopes ------------------------------------------------- //
 

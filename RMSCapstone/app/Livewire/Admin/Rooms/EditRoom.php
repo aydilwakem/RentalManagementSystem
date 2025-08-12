@@ -6,12 +6,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 use App\Models\Property;
+use App\Models\PropertyBed;
 use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Logs;
+use Illuminate\Validation\ValidationException;
 
 #[Layout('layouts.app')]
 class EditRoom extends Component
@@ -46,6 +48,11 @@ class EditRoom extends Component
     public $roomId;
     public $amenities;
     public $freebies = false;
+
+    //For beds
+    public $bed_ids = [];
+    public $bed_type = [];
+    public $bed_quantity = [];
 
     #[Rule(['images.*' => 'image|max:2024'])]
     public $uploadedImagePreviews = []; // temporary url for preview
@@ -87,6 +94,13 @@ class EditRoom extends Component
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
         $this->freebies = (bool) $room->freebies;
 
+        //Mount the beds
+        foreach ($room->beds as $bed) {
+            $this->bed_ids[] = $bed->id;
+            $this->bed_quantity[] = $bed->bed_quantity;
+            $this->bed_type[] = $bed->bed_type;
+    }
+
         $this->room = $room;
 
         $this->occupancy_type = $room->occupancy_type;
@@ -111,6 +125,30 @@ class EditRoom extends Component
 
         // Initial combined display images
         $this->updateDisplayImages();
+    }
+
+    // ---------------- For Bed Buttons ---------------- //
+    public function addBed()
+    {
+        $this->bed_type[] = '';
+        $this->bed_quantity[] = '';
+    }
+
+    public function removeBed($index)
+    {
+        // Remove from database:
+        if (isset($this->bed_ids[$index])) {
+        PropertyBed::where('id', $this->bed_ids[$index])->delete();
+        unset($this->bed_ids[$index]);
+    }
+
+        unset($this->bed_type[$index]);
+        unset($this->bed_quantity[$index]);
+
+        // Reindex arrays to keep the indexes aligned
+        $this->bed_ids = array_values($this->bed_ids);
+        $this->bed_type = array_values($this->bed_type);
+        $this->bed_quantity = array_values($this->bed_quantity);
     }
 
     public function updatedOccupancyType($value)
@@ -227,7 +265,13 @@ class EditRoom extends Component
 
     public function updateRoom()
     {
-        $this->validate();
+        try{
+            $this->validate();
+        }catch(ValidationException $e){
+            $this->confirmEditItem = false; //Close the modal
+            throw $e;
+        }
+
 
         // Handle image upload if a new one is selected
         $finalImagePaths = [];
@@ -268,6 +312,22 @@ class EditRoom extends Component
             'max_guests' => $this->occupancy_type === 'whole_number' ? $this->max_guests : null,
         ]);
 
+        foreach($this->bed_type as $i => $bedType){
+            if (!empty($this->bed_ids[$i])) {
+
+            PropertyBed::where('id', $this->bed_ids[$i])->update([
+                'bed_type' => $bedType,
+                'bed_quantity' => $this->bed_quantity[$i],
+            ]);
+        }else {
+        $bed = PropertyBed::create([
+            'property_id' => $this->room->id,
+                'bed_type' => $bedType,
+                'bed_quantity' => $this->bed_quantity[$i],
+            ]);
+    }
+    }
+
         $this->room->features()->sync($this->selectedFeatures);
 
         session()->flash('message', 'Room successfully updated!');
@@ -303,6 +363,10 @@ class EditRoom extends Component
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
             'freebies' => 'nullable|boolean',
+
+            //For bed validation
+            'bed_type.*' => 'required|in:single,double,queen,king,sofa_bed,single with pull-out',
+            'bed_quantity.*' => 'required|integer|min:1',
         ];
 
         if ($this->occupancy_type === 'combinations') {

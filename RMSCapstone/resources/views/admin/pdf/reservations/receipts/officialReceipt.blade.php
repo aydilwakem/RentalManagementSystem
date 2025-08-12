@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Official Receipt - Canopy Farm</title>
+    <title>Acknowledgement Receipt - Canopy Farm</title>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -110,7 +110,7 @@
         <!-- Header -->
         <div class="header">
             <img src="{{ asset('images/canopy-logo.png') }}" alt="Canopy Farm PH" />
-            <h1>Official Receipt No: {{ $receipt->receipt_number }}</h1>
+            <h1>Acknowledgement Receipt No: {{ $receipt->receipt_number }}</h1>
         </div>
 
         <div class="content">
@@ -174,7 +174,7 @@
             </table>
 
             <!-- Pet Fee Information -->
-            @if(count($guestPets))
+            {{-- @if(count($guestPets))
             <h3>Pet Fees</h3>
             <table>
                 <thead>
@@ -200,7 +200,7 @@
                     @endforeach
                 </tbody>
             </table>
-            @endif
+            @endif --}}
 
             <!-- Activities -->
             @if(count($activities))

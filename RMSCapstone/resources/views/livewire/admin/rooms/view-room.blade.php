@@ -35,24 +35,24 @@
                 <div class="grid grid-cols-1 gap-2">
                     <!-- Room Image Array -->
                     @if (isset($room->images) && count($room->images) > 0)
-                        <div class="w-full">
-                            <img src="{{ asset('storage/' . $room->images[0]) }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Room Image"
-                                onclick="openModal('{{ asset('storage/' . $room->images[0]) }}')">
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            @foreach (array_slice($room->images, 1) as $img)
-                                <img src="{{ asset('storage/' . $img) }}"
-                                    class="w-full h-44 object-cover rounded border cursor-pointer" alt="Room Image"
-                                    onclick="openModal('{{ asset('storage/' . $img) }}')">
-                            @endforeach
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('storage/' . $room->images[0]) }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Main Room Image"
+                            onclick="openModal('{{ asset('storage/' . $room->images[0]) }}')">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        @foreach (array_slice($room->images, 1) as $img)
+                        <img src="{{ asset('storage/' . $img) }}"
+                            class="w-full h-44 object-cover rounded border cursor-pointer" alt="Room Image"
+                            onclick="openModal('{{ asset('storage/' . $img) }}')">
+                        @endforeach
+                    </div>
                     @else
-                        <div class="w-full">
-                            <img src="{{ asset('images/rms-default.png') }}"
-                                class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
-                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
-                        </div>
+                    <div class="w-full">
+                        <img src="{{ asset('images/rms-default.png') }}"
+                            class="w-full h-72 object-cover rounded border cursor-pointer" alt="Default Image"
+                            onclick="openModal('{{ asset('images/rms-default.png') }}')">
+                    </div>
                     @endif
                 </div>
                 <!-- Image Popup View -->
@@ -77,6 +77,18 @@
                         <li><strong>Max Adults:</strong> {{ $room->max_adults }}</li>
                         <li><strong>Extra Person Charge:</strong> ₱{{ $room->extra_person_charge }}</li>
                         <li><strong>Max Kids:</strong> {{ $room->max_kids }}</li>
+                        <li><strong>Beds:</strong>
+                            @if($room->beds->count())
+                            @foreach($room->beds as $bed)
+                            {{ $bed->bed_quantity }} {{ ucfirst($bed->bed_type) }} Bed(s)
+                            @if(!$loop->last), @endif
+                            @endforeach
+                            @else
+                            N/A
+                            @endif
+
+                        </li>
+
                         <li><strong>Turnover Duration:</strong> {{ $room->turnover_duration }} hours</li>
                         <li><strong>Room Status:</strong> {{ ucfirst($room->property_status) }}</li>
                         <li><strong>Base Rate:</strong> ₱{{ $room->amount }}</li>
@@ -86,31 +98,31 @@
                         <div class="flex items-center">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 me-2">Free Breakfast</h3>
                             @if ($room->freebies)
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                    Included <i class="fa-solid fa-check pl-2"></i>
-                                </span>
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                Included <i class="fa-solid fa-check pl-2"></i>
+                            </span>
                             @else
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                                    Not Included
-                                </span>
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                Not Included
+                            </span>
                             @endif
                         </div>
                     </div>
 
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50">Amenities</h3>
                     @if ($room->features->isNotEmpty())
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            @foreach ($room->features as $feature)
-                                <span
-                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 mt-1 text-sm font-semibold text-gray-700">
-                                    {{ $feature->name }}
-                                </span>
-                            @endforeach
-                        </div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @foreach ($room->features as $feature)
+                        <span
+                            class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 mt-1 text-sm font-semibold text-gray-700">
+                            {{ $feature->name }}
+                        </span>
+                        @endforeach
+                    </div>
                     @else
-                        <p class="text-gray-500 mt-2 dark:text-gray-200">No amenities selected for this room.</p>
+                    <p class="text-gray-500 mt-2 dark:text-gray-200">No amenities selected for this room.</p>
                     @endif
 
                     <!-- Maximum Occupancy Rules -->

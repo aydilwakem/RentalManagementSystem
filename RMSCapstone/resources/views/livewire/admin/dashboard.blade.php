@@ -33,17 +33,19 @@
         </div>
 
         <!-- Maintenance Card -->
-        <div
-            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
-            <i class="fas fa-tools text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">Pending Maintenances</h2>
-            <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
-        </div>
+        <a href="{{ route('admin.maintenances') }}">
+            <div
+                class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+
+                <i class="fas fa-tools text-white text-4xl"></i>
+                <h2 class="text-white font-semibold">Pending Maintenances</h2>
+                <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
+            </div>
+        </a>
     </div>
     <div class="mb-4 flex items-center space-x-2">
         <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
-        <select id="reservationFilter"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
+        <select id="reservationFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
             <option value="all">All</option>
             <option value="2">Room Reservation</option>
@@ -58,8 +60,8 @@
     </div>
 
     @script
-        <script type="text/javascript">
-            document.addEventListener('livewire:initialized', () => {
+    <script type="text/javascript">
+        document.addEventListener('livewire:initialized', () => {
                 var calendarEl = document.getElementById('calendar');
                 var events = @json($events);
 
@@ -158,7 +160,7 @@
                     });
                 });
             });
-        </script>
+    </script>
     @endscript
 
     {{-- <style>
