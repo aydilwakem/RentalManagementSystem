@@ -28,12 +28,12 @@ class SendOfficialReceiptMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your Official Receipt from Canopy Farm')
+        return $this->subject('Your Acknowledgement Receipt from Canopy Farm')
             ->view('guest.emails.official-receipt') // Create this view file
              ->with(array_merge($this->data, [
             'transactionUser' => $this->transactionUser,
         ])) //Access the name
-            ->attachData($this->pdfContent, 'official_receipt_' . $this->receiptNumber . '.pdf', [
+            ->attachData($this->pdfContent, 'acknowledgement_receipt_' . $this->receiptNumber . '.pdf', [
                 'mime' => 'application/pdf',
             ]);
     }

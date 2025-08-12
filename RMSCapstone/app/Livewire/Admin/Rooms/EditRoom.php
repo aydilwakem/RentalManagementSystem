@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Logs;
+use Illuminate\Validation\ValidationException;
 
 #[Layout('layouts.app')]
 class EditRoom extends Component
@@ -273,10 +274,13 @@ class EditRoom extends Component
 
     public function updateRoom()
     {
-
-        $this->validate();
-
-
+        try{
+            $this->validate();
+        }catch(ValidationException $e){
+            $this->confirmEditItem = false; //Close the modal
+            throw $e; 
+        }
+        
 
         // Handle image upload if a new one is selected
         $finalImagePaths = [];

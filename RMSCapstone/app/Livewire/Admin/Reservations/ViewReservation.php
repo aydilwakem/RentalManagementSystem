@@ -1273,8 +1273,8 @@ class ViewReservation extends Component
         );
 
         // Notify user and log the success
-        session()->flash('message', 'Official receipt has been sent to guest\'s email!');
-        Log::info('Official receipt sent to email: ' . $this->transactionUser->email);
+        session()->flash('message', 'Acknowledgement receipt has been sent to guest\'s email!');
+        Log::info('Acknowledgement receipt sent to email: ' . $this->transactionUser->email);
     }
 
 
@@ -1415,7 +1415,7 @@ class ViewReservation extends Component
 
         return response()->streamDownload(function () use ($pdfOutput) {
             echo $pdfOutput;
-        }, 'official_receipt_' . $this->receipt->receipt_number . '.pdf');
+        }, 'acknowledgement_receipt_' . $this->receipt->receipt_number . '.pdf');
     }
 
 

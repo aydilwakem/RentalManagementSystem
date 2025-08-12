@@ -177,7 +177,7 @@
                                 <input type="number" wire:model="bed_quantity.{{ $index }}" id="bed_quantity" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                     placeholder="Ex. 2" />
-                                @error('bed_quantity')
+                                @error('bed_quantity.*')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -198,7 +198,7 @@
                                     <option value="sofa_bed">Sofa Bed</option>
                                     <option value="single with pull-out">Single With Pullout Bed</option>
                                 </select>
-                                @error('bed_type')
+                                @error('bed_type.*')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>

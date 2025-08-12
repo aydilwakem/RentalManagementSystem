@@ -1947,7 +1947,7 @@ class CreateReservation extends Component
             'contact_number' => 'required|string',
             'country' => 'required|string',
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
-            'reservation_source' => 'required|in:Airbnb,WebApp,Phone,Messenger,Other',
+            'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
             'terms' => 'required|accepted',
             'special_requests.*.request' => 'nullable|string|max:255',
             'pets.*.breed' => 'required|string|max:255',

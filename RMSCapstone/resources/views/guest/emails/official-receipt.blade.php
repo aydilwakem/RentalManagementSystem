@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Official Receipt</title>
+    <title>Acknowledgement Receipt</title>
 </head>
 
 <style>
@@ -31,7 +31,8 @@
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px; color:#fff;">
                 Transaction Completed!
             </h1>
-            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">Your official receipt is attached for your
+            <p style="font-size: 16px; margin: 10px 0 20px; color:#fff;">Your acknowledgement receipt is attached for
+                your
                 records.
             </p>
         </div>
@@ -45,7 +46,7 @@
             </p>
 
             <p style="margin-bottom: 20px;">Thank you for your recent transaction with {{ $branding_company_name }}!
-                Please find your official
+                Please find your acknowledgement
                 receipt attached as a PDF for your reference.</p>
 
             <p style="color:#166534"><strong>Receipt Number:</strong>

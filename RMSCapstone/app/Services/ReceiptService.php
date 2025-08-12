@@ -30,14 +30,14 @@ class ReceiptService
             ? str_pad(((int) substr($lastReceipt->receipt_number, -4)) + 1, 4, '0', STR_PAD_LEFT)
             : '0001';
 
-        $receiptNumber = "OR-{$datePart}-{$newNumber}";
+        $receiptNumber = "AR-{$datePart}-{$newNumber}";
 
         $receipt = Receipt::create([
             'invoice_id'      => $invoice->id,
             'receipt_number'  => $receiptNumber,
             'amount_received' => $invoice->amount_paid,
             'receipt_date'    => now(),
-            'notes'           => 'Official receipt generated via system',
+            'notes'           => 'Acknowledgement receipt generated via system',
         ]);
 
         Log::info("Receipt created: {$receiptNumber} for Invoice ID {$invoice->id}");
