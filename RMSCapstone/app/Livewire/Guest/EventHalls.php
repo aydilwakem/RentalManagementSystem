@@ -8,11 +8,11 @@ use Livewire\Component;
 
 class EventHalls extends Component
 {
-    public $eventHalls; 
-
+    public $eventHalls;
+    public $expandedHall;
     public string $companyName = 'Company'; //Default
-    public string $email; 
-    public string $contactNumber; 
+    public string $email;
+    public string $contactNumber;
 
     public function mount()
     {
@@ -20,16 +20,21 @@ class EventHalls extends Component
         $setting = Setting::first(); // Or use where(...) if you expect multiple rows
         if ($setting) {
             $this->companyName = $setting->company_name;
-            $this->email = $setting->email; 
-            $this->contactNumber = $setting->contact_number; 
+            $this->email = $setting->email;
+            $this->contactNumber = $setting->contact_number;
         }
     }
-    
+
+    public function toggleHallDescription($hallId)
+    {
+        $this->expandedHall = $this->expandedHall === $hallId ? null : $hallId;
+    }
+
     public function render()
     {
         $this->eventHalls = Property::ofType('Event Hall')->get();
         return view('livewire.guest.event-halls', [
-            'eventHalls' => $this->eventHalls, 
+            'eventHalls' => $this->eventHalls,
         ]);
     }
 }

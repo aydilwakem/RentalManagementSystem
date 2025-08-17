@@ -50,9 +50,9 @@
                     <div class="step-room md:px-12">
                         @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                        {{-- @include('livewire.guest.reservation.choose-room') --}}
+                        @include('livewire.guest.reservation.choose-room')
                         {{-- @include('livewire.guest.reservation.review') --}}
-                        @include('livewire.guest.reservation.choose-activity')
+                        {{-- @include('livewire.guest.reservation.choose-activity') --}}
                     </div>
                 @endif
 
@@ -283,10 +283,10 @@
 
                 @error('cart')
                     <div id="toast-danger"
-                        class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800"
+                        class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm  "
                         role="alert">
                         <div
-                            class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+                            class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg  ">
                             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                                 viewBox="0 0 20 20">
                                 <path
@@ -296,7 +296,7 @@
                         </div>
                         <div class="ms-3 text-sm font-normal">{{ $message }}</div>
                         <button type="button"
-                            class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+                            class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8"
                             data-dismiss-target="#toast-danger" aria-label="Close">
                             <span class="sr-only">Close</span>
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -364,7 +364,7 @@
                                 <!-- Info Icon with Tooltip -->
                                 <div class="relative group inline-block">
                                     <i
-                                        class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
+                                        class="fas fa-info-circle text-gray-500 text-sm cursor-pointer"></i>
 
                                     <!-- Tooltip -->
                                     <div

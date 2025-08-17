@@ -97,13 +97,13 @@
 
                         <!-- Login Button -->
                         <button type="submit"
-                            class="w-full py-3 px-6 rounded-full text-white font-bold bg-green-800 hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                            class="w-full py-3 px-6 rounded-full text-sm tracking-widest text-white font-bold bg-green-800 hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out">
                             LOGIN
                         </button>
 
                         <div class="mt-4 text-sm text-gray-600 flex justify-center space-x-1">
                             <p>Don't have an account?</p>
-                            <a href="{{ route('register') }}" class="text-primary font-semibold hover:underline">Sign
+                            <a href="{{ route('register') }}" class="text-primary font-semibold hover:underline hover:text-green-700">Sign
                                 Up</a>
                         </div>
                     </form>

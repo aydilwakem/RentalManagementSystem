@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg dark:bg-gray-800 dark:text-white">
-        @livewire('admin.reservations.reservation-list')
+        @livewire('admin.reservations.reservation-list', ['lazy' => true])
     </div>
 
 </x-app-layout>
