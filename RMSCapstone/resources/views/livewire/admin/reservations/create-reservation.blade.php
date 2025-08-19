@@ -333,7 +333,7 @@
                             <th
                                 class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                 Activity Name</th>
-                             <th
+                            <th
                                 class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                 Scheduled Time</th>
                             <th
@@ -360,7 +360,8 @@
                                         {{ \Carbon\Carbon::parse($activity['activity_datetime'])->format('g:i A') }}
                                     @else
                                         No schedule
-                                    @endif</td>
+                                    @endif
+                                </td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity['activity_rate'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
@@ -469,8 +470,6 @@
             </div>
         </div>
 
-
-
         <!------------------------- GUEST DETAIL SECTION ------------------------->
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
             <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
@@ -528,7 +527,8 @@
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Contact Number <span
                             class="text-red-500">*</span></label>
-                    <input type="text" wire:model="contact_number" placeholder="Ex. 09123456789"
+                    <input type="tel" inputmode="numeric" maxlength="11"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" wire:model="contact_number" placeholder="Ex. 09123456789"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('contact_number')
@@ -539,7 +539,7 @@
 
                 <!-- Country -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
                             class="text-red-500">*</span></label>
                     <select wire:model="country"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
@@ -587,11 +587,11 @@
                 <div class="col-span-1">
                     <!-- Source of Booking -->
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Reservation
-                        Source</label>
+                        Source <span class="text-red-500">*</span></label>
                     <select wire:model="reservation_source"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                         <option value="">Select an option</option>
+                        <option value="">Select an option</option>
                         <option value="AirBnb">AirBnb</option>
                         <option value="Website">Website</option>
                         <option value="Facebook Messenger">Facebook Messenger</option>
@@ -607,26 +607,26 @@
 
                 <!-- Special Requests -->
                 <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                            Special Requests <span class="text-xs text-gray-500 dark:text-gray-400">(subject to
-                                approval)</span>
-                        </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
+                        Special Requests <span class="text-xs text-gray-500 dark:text-gray-400">(subject to
+                            approval)</span>
+                    </label>
 
-                        @foreach ($special_requests as $index => $request)
-                            <div class="mb-2 flex items-center gap-2">
-                                <input type="text" wire:model="special_requests.{{ $index }}.request"
-                                    class="w-full border border-gray-300 rounded-md px-3 py-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                                    placeholder="Enter request" />
-                                <button wire:click.prevent="removeSpecialRequest({{ $index }})"
-                                    class="text-red-600 hover:text-red-800 text-sm">Remove</button>
-                            </div>
-                            @error("special_requests.$index.request")
-                                <p class="text-red-500 text-sm">{{ $message }}</p>
-                            @enderror
-                        @endforeach
+                    @foreach ($special_requests as $index => $request)
+                        <div class="mb-2 flex items-center gap-2">
+                            <input type="text" wire:model="special_requests.{{ $index }}.request"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                                placeholder="Enter request" />
+                            <button wire:click.prevent="removeSpecialRequest({{ $index }})"
+                                class="text-red-600 hover:text-red-800 text-sm">Remove</button>
+                        </div>
+                        @error("special_requests.$index.request")
+                            <p class="text-red-500 text-sm">{{ $message }}</p>
+                        @enderror
+                    @endforeach
 
-                        <button wire:click.prevent="addSpecialRequest"
-                            class="mt-2 text-sm text-green-600 hover:text-green-800">+ Add Request</button>
+                    <button wire:click.prevent="addSpecialRequest"
+                        class="mt-2 text-sm text-green-600 hover:text-green-800">+ Add Request</button>
                 </div>
 
 
@@ -732,6 +732,36 @@
             </div>
         </div>
 
+        <!------------------------- BUTTON TO SUBMIT ------------------------->
+        <!-- Actions Buttons -->
+        <div class="flex justify-between items-center space-y-2">
+            <x-button onclick="history.back()" type="button"
+                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                Cancel
+            </x-button>
+
+            <x-button type="button" wire:click="CreateReservation" wire:loading.attr="disabled">
+                <div class="flex items-center justify-center">
+                    <!-- Spinner -->
+                    <span wire:loading class="mr-2" wire:target="CreateReservation">
+                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                            </path>
+                        </svg>
+                    </span>
+                    <!-- Button Text -->
+                    <span wire:loading.remove wire:target="CreateReservation">
+                        Create Reservation
+                    </span>
+                </div>
+            </x-button>
+
+        </div>
+
         <!------------------------- MODALS SECTION ------------------------->
 
         <!-- Add Room Modal -->
@@ -774,14 +804,13 @@
                         @else
                             <div>
                                 @foreach ($rooms as $room)
+                                    @php
+                                        $isSelected = collect($selectedRooms)->contains('room_id', $room->id);
+                                    @endphp
 
-                                @php
-                                    $isSelected = collect($selectedRooms)->contains('room_id', $room->id);
-                                @endphp
-
-                                @if ($isSelected)
-                                    @continue
-                                @endif
+                                    @if ($isSelected)
+                                        @continue
+                                    @endif
 
                                     <div wire:key="room-{{ $room->id }}"
                                         class="bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-6 dark:bg-gray-500 dark:border-gray-400">
@@ -865,7 +894,7 @@
                                                 <p class="mt-3 text-base font-medium text-gray-800">
                                                     Rate Per Night:
                                                     @if ($room->rate_name || $room->rate_type)
-                                                        <span class="text-green-700 font-bold mb-1">
+                                                        <span class="text-green-700 dark:text-green-300 font-bold mb-1">
                                                             ₱{{ number_format($room->dynamic_rate, 2) }}
                                                         </span> <br>
                                                         <span
@@ -897,7 +926,7 @@
                                                     <!-- Adults -->
                                                     <div class="flex-1">
                                                         <label
-                                                            class="block text-sm font-medium text-gray-700 me-3">Adults</label>
+                                                            class="block text-sm font-medium text-gray-800 me-3">Adults</label>
                                                         <select wire:model.live="adults.{{ $room->id }}"
                                                             wire:change="updateKidOptions({{ $room->id }})"
                                                             class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
@@ -911,7 +940,7 @@
                                                     <!-- Kids -->
                                                     <div class="flex-1">
                                                         <label
-                                                            class="block text-sm font-medium text-gray-700">Children</label>
+                                                            class="block text-sm font-medium text-gray-800">Children</label>
                                                         <select wire:model.live="kids.{{ $room->id }}"
                                                             class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
                                                             @foreach ($dynamicKidOptions[$room->id] ?? ($room->availableKidOptions ?? []) as $kid)
@@ -1014,14 +1043,16 @@
                         @else
                             <div>
                                 @foreach ($activities as $activity)
+                                    @php
+                                        $isSelected = collect($selectedActivities)->contains(
+                                            'activity_id',
+                                            $activity->id,
+                                        );
+                                    @endphp
 
-                                 @php
-                                    $isSelected = collect($selectedActivities)->contains('activity_id', $activity->id);
-                                @endphp
-
-                                @if ($isSelected)
-                                    @continue
-                                @endif
+                                    @if ($isSelected)
+                                        @continue
+                                    @endif
 
                                     <div wire:key="activity-{{ $activity->id }}"
                                         class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
@@ -1071,40 +1102,40 @@
                                         <!-- Preferred Time -->
                                         @if ($activity->schedule_type !== 'no_schedule')
                                             <div class="mt-4">
-                                                <h3 class="text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">Preferred Time</h3>
+                                                <h3 class="text-sm font-medium text-gray-700 mb-2 dark:text-gray-200">
+                                                    Preferred Time</h3>
 
                                                 @if ($activity->schedule_type === 'system')
                                                     @if (is_array($activity->available_times) && count($activity->available_times))
                                                         <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                                                             @foreach ($activity->available_times as $time)
-                                                                <label class="flex items-center p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded cursor-pointer shadow-sm hover:border-green-500">
-                                                                    <input
-                                                                        type="radio"
+                                                                <label
+                                                                    class="flex items-center p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded cursor-pointer shadow-sm hover:border-green-500">
+                                                                    <input type="radio"
                                                                         name="selected_time_{{ $activity->id }}"
                                                                         wire:model="selectedTimes.{{ $activity->id }}"
                                                                         value="{{ $time }}"
-                                                                        class="form-radio text-green-600 focus:ring-green-500"
-                                                                    >
-                                                                    <span class="ml-2 text-sm text-gray-800 dark:text-gray-200">
+                                                                        class="form-radio text-green-600 focus:ring-green-500">
+                                                                    <span
+                                                                        class="ml-2 text-sm text-gray-800 dark:text-gray-200">
                                                                         {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
                                                                     </span>
                                                                 </label>
                                                             @endforeach
                                                         </div>
                                                     @else
-                                                        <p class="text-sm text-gray-500 italic">No system-defined schedule for this activity.</p>
+                                                        <p class="text-sm text-gray-500 italic">No system-defined
+                                                            schedule for this activity.</p>
                                                     @endif
-
                                                 @elseif ($activity->schedule_type === 'guest')
-                                                    <input
-                                                        type="time"
+                                                    <input type="time"
                                                         wire:model.lazy="selectedTimes.{{ $activity->id }}"
-                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
-                                                    >
+                                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white">
                                                 @endif
 
                                                 @error("selectedTimes.{$activity->id}")
-                                                    <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                                                    <span
+                                                        class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         @endif
@@ -1788,9 +1819,10 @@
                             @elseif ($activityScheduleType === 'system' && !empty($availableTimes))
                                 <div class="grid grid-cols-2 gap-2">
                                     @foreach ($availableTimes as $option)
-                                        <label class="inline-flex items-center p-2 bg-white dark:bg-gray-700 border rounded cursor-pointer">
-                                            <input type="radio" wire:model="activityDateTime" value="{{ $option }}"
-                                                class="form-radio text-green-600">
+                                        <label
+                                            class="inline-flex items-center p-2 bg-white dark:bg-gray-700 border rounded cursor-pointer">
+                                            <input type="radio" wire:model="activityDateTime"
+                                                value="{{ $option }}" class="form-radio text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">
                                                 {{ \Carbon\Carbon::parse($option)->format('h:i A') }}
                                             </span>
@@ -1895,40 +1927,12 @@
     @endif
 
 
-    <!------------------------- BUTTON TO SUBMIT ------------------------->
-    <!-- Actions Buttons -->
-    <div class="flex justify-between items-center space-y-2 py-5">
-        <x-button onclick="history.back()" type="button"
-            class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-            Cancel
-        </x-button>
 
-        <x-button type="button" wire:click="CreateReservation" wire:loading.attr="disabled">
-            <div class="flex items-center justify-center">
-                <!-- Spinner -->
-                <span wire:loading class="mr-2" wire:target="CreateReservation">
-                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                        </path>
-                    </svg>
-                </span>
-                <!-- Button Text -->
-                <span wire:loading.remove wire:target="CreateReservation">
-                    Create Reservation
-                </span>
-            </div>
-        </x-button>
-
-    </div>
 </div>
 
 
 {{-- add this after->  @foreach ($activities as $activity) --}}
- {{-- @php
+{{-- @php
                                     $isSelected = collect($selectedActivities)->contains('activity_id', $activity->id);
                                 @endphp
 

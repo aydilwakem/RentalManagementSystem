@@ -464,4 +464,9 @@ class ReservationList extends Component
 
         return back()->with('success', "Status rolled back to: {$previousStatus}");
     }
+
+    // ---------------------------------- LAZY LOADING ---------------------------- //
+    public function placeholder (){
+        return view('livewire.admin.placeholder');
+    }
 }

@@ -114,7 +114,8 @@
                         <label for="contact_number"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Contact
                             Number</label>
-                        <input type="tel" wire:model="contact_number" id="contact_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="tel" inputmode="numeric" maxlength="11"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" wire:model="contact_number" id="contact_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 0912 3456 7890">
                         @error('contact_number')

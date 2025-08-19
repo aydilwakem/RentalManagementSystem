@@ -7,7 +7,7 @@
                 <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                     <div class="p-4 text-center">
                         <h4 class="text-2xl font-semibold mb-2">No Rooms Available</h4>
-                        <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                        <p class="text-base font-normal text-gray-700  ">
                             Sorry, there are no rooms available for the selected dates.
                         </p>
                     </div>
@@ -84,12 +84,12 @@
 
                                             <h4 class="text-2xl font-semibold mb-2">{{ ucwords($room->name_number) }}
                                             </h4>
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                            <p class="text-base font-normal text-gray-700  ">
                                                 <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
                                             </p>
 
                                             @if ($room->occupancy_type === 'whole_number')
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                            <p class="text-base font-normal text-gray-700  ">
                                                 <i class="fas fa-users mr-2"></i>
                                                 Maximum Capacity: {{ $room->max_guests }} guests
                                             </p>
@@ -114,20 +114,20 @@
                                             @endphp
 
                                             @if ($formatted->isNotEmpty())
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                            <p class="text-base font-normal text-gray-700  ">
                                                 <i class="fas fa-users mr-2"></i>
                                                 Max occupancy: {{ $formatted->implode(' or ') }}
                                             </p>
                                             @endif
                                             @endif
 
-                                            <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                            <p class="text-base font-normal text-gray-700  ">
                                                 <i class="fas fa-plus mr-2"></i> Extra Person Charge:
                                                 ₱{{ number_format($room->extra_person_charge, 2) }}
                                             </p>
 
                                                 @if ($room->freebies)
-                                                    <p class="text-base font-normal text-gray-700 dark:text-gray-400">
+                                                    <p class="text-base font-normal text-gray-700  ">
                                                         <i class="fas fa-utensils mr-2"></i> Free breakfast included
                                                     </p>
                                                 @endif
@@ -351,257 +351,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
-
-                                            <!-- Room Booking Controls -->
-                                            <div class="mt-auto pt-2 flex flex-col justify-between">
-                                                @if ($room->is_booked)
-                                                @else
-                                                    <div class="flex gap-4">
-                                                        <!-- Adults -->
-                                                        <div class="flex-1">
-                                                            <label class="block text-sm font-medium text-gray-700 me-3">Adults</label>
-                                                            <select wire:model.live="adults.{{ $room->id }}"
-                                                                wire:change="updateKidOptions({{ $room->id }})"
-                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                                @foreach ($room->availableAdultOptions ?? [] as $adult)
-                                                                    <option value="{{ $adult }}">{{ $adult }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <!-- Kids -->
-                                                        <div class="flex-1">
-                                                            <label class="block text-sm font-medium text-gray-700">Children</label>
-                                                            <select wire:model.live="kids.{{ $room->id }}"
-                                                                class="mt-1 block w-full border border-gray-300 rounded px-2 py-1">
-                                                                @foreach ($dynamicKidOptions[$room->id] ?? $room->availableKidOptions ?? [] as $kid)
-                                                                    <option value="{{ $kid }}">{{ $kid }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </p>
-
-                                            <!-- More details Bbtton -->
-                                            <a href="#"
-                                                class="text-gray-600 hover:underline hover:text-green-800 transition mt-auto"
-                                                onclick="openRoomModal({{ $room->id }}); return false;">
-                                                See more details
-                                            </a>
-
-                                            <!-- Modal -->
-                                            <div id="modal-room-{{ $room->id }}"
-                                                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-                                                <div
-                                                    class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-4 relative max-h-[80vh] overflow-y-auto">
-                                                    <button type="button" onclick="closeRoomModal({{ $room->id }})"
-                                                        class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-2xl focus:outline-none">
-                                                        <span
-                                                            class="w-full h-full flex items-center justify-center pointer-events-none">&times;</span>
-                                                    </button>
-                                                    <!-- Carousel -->
-                                                    @php
-                                                    $images = $room->images ?? [];
-                                                    @endphp
-                                                    <div class="relative mb-4 px-12 mt-3">
-                                                        <img id="modal-room-img-{{ $room->id }}"
-                                                            src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
-                                                            class="w-full h-full object-cover rounded-lg shadow" />
-                                                        @if (count($images) > 1)
-                                                        <!-- Prev Button -->
-                                                        <button
-                                                            onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
-                                                            class="absolute left-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1">
-                                                            <i class="fa-solid fa-chevron-left"></i>
-                                                        </button>
-                                                        <!-- Next Button -->
-                                                        <button
-                                                            onclick="nextRoomImage({{ $room->id }}, {{ count($images) }})"
-                                                            class="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1">
-                                                            <i class="fa-solid fa-chevron-right"></i>
-                                                        </button>
-                                                        @endif
-                                                        <!-- Index Indicators -->
-                                                        <div
-                                                            class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 mt-2">
-                                                            @foreach ($images as $idx => $img)
-                                                            <div id="modal-room-dot-{{ $room->id }}-{{ $idx }}"
-                                                                onclick="setRoomImage({{ $room->id }}, {{ $idx }})"
-                                                                class="w-2.5 h-2.5 rounded-full cursor-pointer bg-gray-400 border border-gray-400">
-                                                            </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                    <!-- Modal Body -->
-                                                    <div class="mt-4 text-sm text-gray-700 p-3">
-                                                        <h2 class="text-xl font-bold mb-1 text-green-700">
-                                                            Room: {{ $room->name_number }}
-                                                        </h2>
-                                                        <ul class="list-disc list-inside space-y-1">
-                                                            <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}
-                                                            </li>
-                                                            @if ($room->is_booked)
-                                                            <p>ndi pwd</p>
-                                                            @else
-                                                            <li><strong>Max Capacity:</strong> {{ $room->max_adults }}
-                                                                Adults, {{ $room->max_kids }} Kids</li>
-                                                            @endif
-                                                            <li><strong>Extra Person Charge:</strong>
-                                                                ₱{{ number_format($room->extra_person_charge, 2) }}
-                                                            </li>
-                                                            <li><strong>Beds:</strong> @if($room->beds->count())
-                                                                @foreach($room->beds as $bed)
-                                                                {{ $bed->bed_quantity }} {{ ucfirst($bed->bed_type) }}
-                                                                Bed(s)
-                                                                @if(!$loop->last), @endif
-                                                                @endforeach
-                                                                @else
-                                                                N/A
-                                                                @endif
-                                                            </li>
-                                                            <li><strong>Description:</strong> {{ $room->description }}
-                                                            </li>
-                                                            <li><strong>Rate Per Night:</strong>
-                                                                ₱{{ number_format($room->amount, 2) }}</li>
-                                                            {{-- <li><strong>Rate Per Night:</strong> ₱{{
-                                                                number_format($room->dynamic_rate, 2) }}</li> --}}
-                                                        </ul>
-                                                        <!-- Room Amenities -->
-                                                        <div class="mt-2 mb-4">
-                                                            <strong>Included Amenities</strong>
-                                                            @if ($room->features && count($room->features))
-                                                            <div class="flex flex-wrap gap-2 mt-1">
-                                                                @foreach ($room->features as $feature)
-                                                                <span
-                                                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-                                                                    {{ $feature->name }}
-                                                                </span>
-                                                                @endforeach
-                                                            </div>
-                                                            @else
-                                                            <span class="text-gray-400 text-sm">No amenities
-                                                                listed.</span>
-                                                            @endif
-                                                        </div>
-                                                        <hr>
-                                                        <!--------------------------- ROOM RATING -------------------------------->
-                                                        <div class="mt-4">
-
-                                                            @php
-                                                            $allRatings = collect();
-                                                            $comments = [];
-
-                                                            foreach ($room->transactions as $transaction) {
-                                                            foreach ($transaction->feedbacks as $feedback) {
-
-                                                            // Skips sfeedbacks that are not approved
-                                                            if ($feedback->status !== 'approved') {
-                                                            continue;
-                                                            }
-
-                                                            $feedbackRatings = $feedback->feedbackRatings;
-                                                            $individualRatingValues =
-                                                            $feedbackRatings->pluck('rating_value');
-                                                            $individualAvg = $individualRatingValues->count() ?
-                                                            $individualRatingValues->avg() : null;
-
-                                                            // Push all ratings for room average
-                                                            $allRatings = $allRatings->merge($individualRatingValues);
-
-                                                            $comments[] = [
-                                                            'text' => $feedback->comments ?? '',
-                                                            'user' =>
-                                                            optional($transaction->transactionUser)->first_name . ' ' .
-                                                            optional($transaction->transactionUser)->last_name ??
-                                                            'Guest',
-                                                            'date' =>
-                                                            \Carbon\Carbon::parse($feedback->created_at)->format('F j,
-                                                            Y'),
-                                                            'rating' => $individualAvg,
-                                                            ];
-                                                            }
-                                                            }
-
-
-                                                            $averageRating = $allRatings->count() ? $allRatings->avg() :
-                                                            null;
-
-                                                            @endphp
-
-                                                            <!------------------- Avrage of Rating ---------------------->
-                                                            @if ($averageRating)
-                                                            <div class="flex items-center gap-2 mb-2">
-                                                                <span class="text-yellow-500">
-                                                                    @for ($i = 1; $i <= 5; $i++) @if ($i
-                                                                        <=floor($averageRating)) <i class="fas fa-star">
-                                                                        </i>
-                                                                        @elseif ($i - $averageRating < 1) <i
-                                                                            class="fas fa-star-half-alt"></i>
-                                                                            @else
-                                                                            <i class="far fa-star"></i>
-                                                                            @endif
-                                                                            @endfor
-                                                                </span>
-                                                                <span class="text-gray-600">({{
-                                                                    number_format($averageRating, 1) }}/5)</span>
-                                                            </div>
-                                                            @endif
-
-                                                            <!------------------------ Comments ---------------------->
-                                                            @if (count($comments))
-                                                            @foreach ($comments as $comment)
-                                                            <div class="border rounded-md p-2 mt-2">
-                                                                <img src="{{ asset('images/canopy-logo.png') }}"
-                                                                    alt="User Avatar"
-                                                                    class="w-8 h-8 rounded-full inline-block">
-                                                                <div class="inline-block align-middle ms-2">
-                                                                    <p class="text-gray-700 font-semibold">
-                                                                        {{ $comment['user'] }}
-                                                                        <span class="text-sm text-gray-400">•
-                                                                            {{ $comment['date'] }}</span>
-                                                                    </p>
-
-                                                                    <!-- Stars per feedback -->
-                                                                    @if (!is_null($comment['rating']))
-                                                                    <div class="text-yellow-500 text-sm mb-1">
-                                                                        @for ($i = 1; $i <= 5; $i++) @if ($i
-                                                                            <=floor($comment['rating'])) <i
-                                                                            class="fas fa-star"></i>
-                                                                            @elseif ($i - $comment['rating'] < 1) <i
-                                                                                class="fas fa-star-half-alt"></i>
-                                                                                @else
-                                                                                <i class="far fa-star"></i>
-                                                                                @endif
-                                                                                @endfor
-                                                                                <span class="text-gray-500 ms-1">({{
-                                                                                    number_format($comment['rating'], 1)
-                                                                                    }}/5)</span>
-                                                                    </div>
-                                                                    @endif
-
-                                                                    <p class="text-gray-500">
-                                                                        {{ $comment['text'] !== '' ? $comment['text'] :
-                                                                        'No comment provided.' }}
-                                                                    </p>
-
-                                                                </div>
-                                                            </div>
-                                                            @endforeach
-
-                                                            @else
-                                                            <p class="text-sm text-gray-400">No comments yet.</p>
-                                                            @endif
-                                                        </div>
-                                                        <!--------------------------- End kf Rating -------------------------------->
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
 
                                         <!-- Room Booking Controls -->
                                         <div class="mt-auto pt-2 flex flex-col justify-between">

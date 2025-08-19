@@ -273,114 +273,114 @@
                 {{-- Table View --}}
 
                 <table class="min-w-full text-sm text-left text-gray-700 dark:text-white">
-    <thead class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-        <tr>
-            <th class="px-4 py-2">Date</th>
-            <th class="px-4 py-2">Log Name</th>
-            <th class="px-4 py-2">Description</th>
-            <th class="px-4 py-2">Causer</th>
-            <th class="px-4 py-2">Event Time</th>
-            <th class="px-4 py-2">Changes</th> {{-- New column --}}
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($logs as $log)
-            @php
-                $properties = $log->properties ?? [];
-                $attributes = $properties['attributes'] ?? [];
-                $old = $properties['old'] ?? [];
+                    <thead class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        <tr>
+                            <th class="px-4 py-2">Date</th>
+                            <th class="px-4 py-2">Log Name</th>
+                            <th class="px-4 py-2">Description</th>
+                            <th class="px-4 py-2">Causer</th>
+                            <th class="px-4 py-2">Log Timestamp</th>
+                            <th class="px-4 py-2">Changes</th> {{-- New column --}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($logs as $log)
+                            @php
+                                $properties = $log->properties ?? [];
+                                $attributes = $properties['attributes'] ?? [];
+                                $old = $properties['old'] ?? [];
 
-                $event = $log->event;
+                                $event = $log->event;
 
-                $hasChanges = match ($event) {
-                    'created' => !empty($attributes),
-                    'deleted' => !empty($old),
-                    'updated' => !empty($old) && !empty($attributes),
-                    default => false,
-                };
-            @endphp
+                                $hasChanges = match ($event) {
+                                    'created' => !empty($attributes),
+                                    'deleted' => !empty($old),
+                                    'updated' => !empty($old) && !empty($attributes),
+                                    default => false,
+                                };
+                            @endphp
 
-            <tr class="border-b border-gray-300 dark:border-gray-600">
-                <td class="px-4 py-2">{{ $log->created_at->format('F d, Y') }}</td>
-                <td class="px-4 py-2">{{ $log->log_name ?? 'general' }}</td>
-                <td class="px-4 py-2">{{ $log->description }}</td>
-                <td class="px-4 py-2">
-                    @if ($log->causer)
-                        {{ $log->causer->name }} {{ $log->causer->last_name }}
-                    @else
-                        System
-                    @endif
-                </td>
-                <td class="px-4 py-2">{{ $log->created_at->format('g:i A') }}</td>
-                <td class="px-4 py-2">
-                    @if($hasChanges)
-                        <button wire:click="toggleLogChanges({{ $log->id }})"
-                            class="text-blue-600 hover:underline text-sm">
-                            {{ in_array($log->id, $expandedLogs) ? 'Hide Changes' : 'View Changes' }}
-                        </button>
-                    @else
-                        <span class="text-gray-400 text-xs">No changes</span>
-                    @endif
-                </td>
-            </tr>
-
-            {{-- Expanded Changes Row --}}
-            @if(in_array($log->id, $expandedLogs) && $hasChanges)
-                <tr class="bg-gray-50 dark:bg-gray-800">
-                    <td colspan="6" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
-                        @if ($log->event === 'created')
-                            <p class="font-semibold text-blue-600 mb-1">Created with:</p>
-                            <ul class="list-disc list-inside space-y-1">
-                                @foreach ($attributes as $key => $val)
-                                    <li>
-                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                        "{{ is_array($val) ? json_encode($val) : ($val ?? 'N/A') }}"
-                                    </li>
-                                @endforeach
-                            </ul>
-
-                        @elseif ($log->event === 'deleted')
-                            <p class="font-semibold text-red-600 mb-1">Deleted values:</p>
-                            <ul class="list-disc list-inside space-y-1">
-                                @foreach ($old as $key => $val)
-                                    <li>
-                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                        "{{ is_array($val) ? json_encode($val) : ($val ?? 'N/A') }}"
-                                    </li>
-                                @endforeach
-                            </ul>
-
-                        @elseif ($log->event === 'updated')
-                            <p class="font-semibold text-yellow-600 mb-1">Updated fields:</p>
-                            <ul class="list-disc list-inside space-y-1">
-                                @foreach ($attributes as $key => $newVal)
-                                    @php
-                                        $oldVal = $old[$key] ?? null;
-                                    @endphp
-                                    @if ($oldVal != $newVal)
-                                        <li>
-                                            <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                            "<span class="text-red-500">{{ is_array($oldVal) ? json_encode($oldVal) : ($oldVal ?? 'N/A') }}</span>"
-                                            was updated to
-                                            "<span class="text-green-600">{{ is_array($newVal) ? json_encode($newVal) : ($newVal ?? 'N/A') }}</span>"
-                                        </li>
+                            <tr class="border-b border-gray-300 dark:border-gray-600">
+                                <td class="px-4 py-2">{{ $log->created_at->format('F d, Y') }}</td>
+                                <td class="px-4 py-2">{{ $log->log_name ?? 'general' }}</td>
+                                <td class="px-4 py-2">{{ $log->description }}</td>
+                                <td class="px-4 py-2">
+                                    @if ($log->causer)
+                                        {{ $log->causer->name }} {{ $log->causer->last_name }}
+                                    @else
+                                        System
                                     @endif
-                                @endforeach
-                            </ul>
-                        @endif
-                    </td>
-                </tr>
-            @endif
+                                </td>
+                                <td class="px-4 py-2">{{ $log->created_at->format('g:i A') }}</td>
+                                <td class="px-4 py-2">
+                                    @if ($hasChanges)
+                                        <button wire:click="toggleLogChanges({{ $log->id }})"
+                                            class="text-blue-600 hover:underline text-sm">
+                                            {{ in_array($log->id, $expandedLogs) ? 'Hide Changes' : 'View Changes' }}
+                                        </button>
+                                    @else
+                                        <span class="text-gray-400 text-xs">No changes</span>
+                                    @endif
+                                </td>
+                            </tr>
 
-        @empty
-            <tr>
-                <td colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-300">
-                    No logs found.
-                </td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+                            {{-- Expanded Changes Row --}}
+                            @if (in_array($log->id, $expandedLogs) && $hasChanges)
+                                <tr class="bg-gray-50 dark:bg-gray-800">
+                                    <td colspan="6" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
+                                        @if ($log->event === 'created')
+                                            <p class="font-semibold text-blue-600 mb-1">Created with:</p>
+                                            <ul class="list-disc list-inside space-y-1">
+                                                @foreach ($attributes as $key => $val)
+                                                    <li>
+                                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                        "{{ is_array($val) ? json_encode($val) : $val ?? 'N/A' }}"
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @elseif ($log->event === 'deleted')
+                                            <p class="font-semibold text-red-600 mb-1">Deleted values:</p>
+                                            <ul class="list-disc list-inside space-y-1">
+                                                @foreach ($old as $key => $val)
+                                                    <li>
+                                                        <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                        "{{ is_array($val) ? json_encode($val) : $val ?? 'N/A' }}"
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @elseif ($log->event === 'updated')
+                                            <p class="font-semibold text-yellow-600 mb-1">Updated fields:</p>
+                                            <ul class="list-disc list-inside space-y-1">
+                                                @foreach ($attributes as $key => $newVal)
+                                                    @php
+                                                        $oldVal = $old[$key] ?? null;
+                                                    @endphp
+                                                    @if ($oldVal != $newVal)
+                                                        <li>
+                                                            <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                            "<span
+                                                                class="text-red-500">{{ is_array($oldVal) ? json_encode($oldVal) : $oldVal ?? 'N/A' }}</span>"
+                                                            was updated to
+                                                            "<span
+                                                                class="text-green-600">{{ is_array($newVal) ? json_encode($newVal) : $newVal ?? 'N/A' }}</span>"
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endif
+
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-300">
+                                    No logs found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
 
             @endif
 
