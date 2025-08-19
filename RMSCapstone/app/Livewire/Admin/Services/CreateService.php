@@ -8,11 +8,11 @@ use Livewire\Component;
 class CreateService extends Component
 {
     // --------------------------- Fields ------------------------- //
-    public $name; 
+    public $name;
     public $description;
-    public $amount; 
-    public $type; 
-    public $unit; 
+    public $amount;
+    public $type;
+    public $unit;
     public $is_active = '';
 
 
@@ -30,7 +30,8 @@ class CreateService extends Component
     }
 
     // ------------------------ Save Method ------------------------ //
-    public function saveService(){
+    public function saveService()
+    {
         try {
             // Cast select values to integers to not interfere with select
             $this->is_active = (int) $this->is_active;
@@ -43,7 +44,7 @@ class CreateService extends Component
                 'type' => 'required|in:addon,penalty,package',
                 'unit' => 'required|string|max:255',
                 'is_active' => 'required|in:0,1',
-            
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -56,9 +57,9 @@ class CreateService extends Component
         //Use the validated variable for create
         Service::create($validated);
 
-         // Reset all form fields
+        // Reset all form fields
         $this->reset([
-            'name', 
+            'name',
             'description',
             'amount',
             'type',
@@ -70,6 +71,6 @@ class CreateService extends Component
         session()->flash('message', 'Service successfully created!');
 
         // Redirect back to promo list
-       return redirect()->route('admin.services');
+        return redirect()->route('admin.services');
     }
 }

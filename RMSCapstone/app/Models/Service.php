@@ -27,6 +27,8 @@ class Service extends Model
     {
         return $this->belongsToMany(Transaction::class, 'transaction_services')
             ->withPivot(
+                'service_id',
+                'property_id',
                 'quantity',
                 'days',
                 'amount',
@@ -34,5 +36,10 @@ class Service extends Model
                 'status',
             )
             ->withTimestamps();
+    }
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
     }
 }

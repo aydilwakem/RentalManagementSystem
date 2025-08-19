@@ -131,6 +131,13 @@ class Property extends Model
             ->withTimestamps();
     }
 
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'property_id');
+    }
+
+
+
     // A property belongs to one property category - (for now, this is applicable for rooms. ex: cozy rooms, canopy retreats, pool house)
     public function category()
     {
@@ -149,8 +156,9 @@ class Property extends Model
         return $this->hasMany(RoomRate::class, 'property_id');
     }
 
-    public function beds(){
-        return $this->hasMany(PropertyBed::class, 'property_id'); 
+    public function beds()
+    {
+        return $this->hasMany(PropertyBed::class, 'property_id');
     }
 
 

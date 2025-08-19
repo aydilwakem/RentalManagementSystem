@@ -797,20 +797,32 @@
                             <tr>
                                 <td class="border px-4 py-2 dark:border-gray-500">{{ $rowNumber++ }}</td>
                                 <td class="border px-4 py-2 dark:border-gray-500">
-                                    {{ $item['name'] }}
+                                    @if ($item['type'] === 'service' && $item['service_id'] == 10 && isset($item['property_name']))
+                                        {{ $item['name'] }} ({{ $item['property_name'] }})
+                                    @else
+                                        {{ $item['name'] }}
+                                    @endif
                                 </td>
+
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
                                     {{ $item['quantity'] }}</td>
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
                                     {{ $item['days'] ?? 'N/A' }}
                                 </td>
-                                {{-- Unit Cost --}}
+
+                               {{-- Unit Cost --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                    ₱{{ number_format($item['amount'], 2) }}
+                                    @if ($item['type'] === 'service' && $item['service_id'] == 10 && isset($item['property_extra_hour_charge']))
+                                        ₱{{ number_format($item['property_extra_hour_charge'], 2) }}
+                                    @else
+                                        ₱{{ number_format($item['amount'], 2) }}
+                                    @endif
+
                                     @if ($item['type'] === 'service')
-                                    ({{ $item['unit'] ?? '' }})
+                                        ({{ $item['unit'] ?? '' }})
                                     @endif
                                 </td>
+
                                 {{-- Subtotal --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
                                     ₱{{ number_format($item['total'], 2) }}
@@ -1437,62 +1449,96 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                    @foreach ($availableServices as $service)
-                    <!-- Service Details -->
-                    <div
-                        class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform mb-4 dark:bg-gray-700 dark:border-gray-600">
-                        <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
-                            <div class="flex-grow">
-                                <h3 class="text-xl font-bold text-gray-900 mb-1 dark:text-white">
-                                    {{ $service->name }}</h3>
-                                <p class="text-sm text-gray-600 leading-relaxed mb-3 dark:text-gray-300">
-                                    {{ $service->description ?? 'No description provided for this service.' }}
-                                </p>
-                                <div class="text-lg font-bold text-green-700 dark:text-green-300">
-                                    ₱{{ number_format($service->amount, 2) }} <span
-                                        class="text-base font-normal text-gray-500 dark:text-gray-400">/
-                                        {{ $service->unit }}</span>
-                                </div>
-                            </div>
+                   @foreach ($availableServices as $service)
+                        <!-- Service Details -->
+                        <div
+                            class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform mb-4 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
+                                <div class="flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-1 dark:text-white">
+                                        {{ $service->name }}</h3>
+                                    <p class="text-sm text-gray-600 leading-relaxed mb-3 dark:text-gray-300">
+                                        {{ $service->description ?? 'No description provided for this service.' }}
+                                    </p>
 
-                            {{-- Quantity & Button --}}
-                            <div class="flex items-center justify-between mt-2 gap-4">
-                                <!-- Quantity Counter -->
-                                <div class="flex flex-col">
-                                    <label for="quantity-{{ $service->id }}"
-                                        class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                                    <!-- Quantity Counter Buttons -->
-                                    <div class="flex items-center">
-                                        <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
-                                            class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
-                                        <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
-                                            {{ $quantity[$service->id] ?? 1 }}
-                                        </span>
-                                        <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
-                                            class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
-                                        <!-- Hidden input to bind the quantity -->
-                                        <input type="hidden" wire:model="quantity.{{ $service->id }}">
+                                    <div class="text-lg font-bold text-green-700 dark:text-green-300">
+                                        @if($service->id == 10)
+                                                <span class="text-lg font-bold text-green-700 dark:text-green-300">Depends on room rate</span>
+                                                <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{ $service->unit }}</span>
+                                            @else
+                                                ₱{{ number_format($service->amount, 2) }}
+                                                <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{ $service->unit }}</span>
+                                            @endif
                                     </div>
+
+                                    {{-- Show checkboxes only for Extra Hour service --}}
+                                    @if ($service->id == 10 || strtolower($service->name) == 'extra hour')
+                                        <div class="mt-3">
+                                            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                                Select properties for extra hour:
+                                            </label>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                                @foreach ($transaction->properties as $property)
+                                                    <label class="flex items-center space-x-2">
+                                                        <input type="checkbox"
+                                                            wire:model="extraHourProperties.{{ $service->id }}.{{ $property->id }}"
+                                                            value="{{ $property->id }}"
+                                                            class="rounded border-gray-300 text-green-600 shadow-sm focus:ring focus:ring-green-300 focus:ring-opacity-50">
+
+                                                        <!-- Display error if no property is selected -->
+                                                           @error('extraHourProperties')
+                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                                            @enderror
+                                                        
+                                                        <span class="text-sm text-gray-800 dark:text-gray-200">
+                                                            {{ $property->name_number }} (₱{{ number_format($property->extra_charge_per_hour, 2) }})
+                                                        </span>
+
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
-                                <!-- Add / Remove Button -->
-                                @php
-                                $inCart = collect($cart)->contains(function ($item) use ($service) {
-                                return $item['type'] === 'service' &&
-                                $item['service_id'] == $service->id;
-                                });
-                                @endphp
-                                <div class="mt-6">
-                                    <button
-                                        wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
-                                        class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest disabled:opacity-50 transition ease-in-out duration-150">
-                                        {{ $inCart ? 'Remove' : 'Add' }}
-                                    </button>
+                                {{-- Quantity & Button --}}
+                                <div class="flex items-center justify-between mt-2 gap-4">
+                                    <!-- Quantity Counter -->
+                                    <div class="flex flex-col">
+                                        <label for="quantity-{{ $service->id }}"
+                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                                        <!-- Quantity Counter Buttons -->
+                                        <div class="flex items-center">
+                                            <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
+                                                class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
+                                            <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                                {{ $quantity[$service->id] ?? 1 }}
+                                            </span>
+                                            <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
+                                                class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+                                            <!-- Hidden input to bind the quantity -->
+                                            <input type="hidden" wire:model="quantity.{{ $service->id }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Add / Remove Button -->
+                                    @php
+                                        $inCart = collect($cart)->contains(function ($item) use ($service) {
+                                            return $item['type'] === 'service' && $item['service_id'] == $service->id;
+                                        });
+                                    @endphp
+                                    <div class="mt-6">
+                                        <button
+                                            wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
+                                            class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest disabled:opacity-50 transition ease-in-out duration-150">
+                                            {{ $inCart ? 'Remove' : 'Add' }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     @endforeach
+
 
                     <!-- Actions -->
                     <div class="flex justify-between items-center gap-2 mt-7">

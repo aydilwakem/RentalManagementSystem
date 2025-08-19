@@ -257,7 +257,19 @@ class Transaction extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class, 'transaction_services')
-            ->withPivot('id', 'quantity', 'days', 'amount', 'service_datetime', 'status', 'payment_status', 'paid_at', 'remarks')
+            ->withPivot(
+                'id',
+                'service_id',
+                'property_id',
+                'quantity',
+                'days',
+                'amount',
+                'service_datetime',
+                'status',
+                'payment_status',
+                'paid_at',
+                'remarks'
+            )
             ->withTimestamps()
             ->as('pivot')
             ->orderByPivot('created_at');

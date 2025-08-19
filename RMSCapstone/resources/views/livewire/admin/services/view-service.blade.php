@@ -61,10 +61,12 @@
             <div class="flex items-center justify-between space-x-4 mt-auto mb-3">
                 <!-- Edit -->
                 @can('service-edit')
-                    <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
-                        href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
-                        Edit
-                    </x-ghost-button>
+                    @if($service->id != 10)
+                        <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
+                            href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
+                            Edit
+                        </x-ghost-button>
+                    @endif
                 @endcan
 
 

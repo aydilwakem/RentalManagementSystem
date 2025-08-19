@@ -30,7 +30,7 @@ class CartService
                 return $this->activityCartService->addActivity($cart, $itemId, $quantity, $status, $paymentStatus, $context);
 
             case 'service':
-                return $this->serviceCartService->addService($cart, $itemId, $quantity, $status, $paymentStatus);
+                return $this->serviceCartService->addService($cart, $itemId, $quantity, $status, $paymentStatus, $context);
 
             default:
                 return false;

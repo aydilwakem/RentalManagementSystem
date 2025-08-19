@@ -21,19 +21,49 @@ class ServiceTransactionService
     {
         DB::transaction(function () use ($cart, $transaction, $invoice) {
             foreach ($cart as $item) {
+
+                // Save services
                 if ($item['type'] === 'service') {
-                    DB::table('transaction_services')->insert([
-                        'transaction_id' => $transaction->id,
-                        'service_id' => $item['service_id'],
-                        'quantity' => $item['quantity'],
-                        'amount' => $item['amount'],
-                        'payment_status' => $item['payment_status'] ?? 'pending',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                    // Special handling for Extra Hour (service_id = 10)
+                    if ($item['service_id'] == 10 && !empty($item['properties_with_extra_hour'])) {
+                        $propertyIds = array_keys($item['properties_with_extra_hour']); // get actual IDs
+                        foreach ($propertyIds as $propertyId) {
+                            $property = $transaction->properties->firstWhere('id', $propertyId);
+                            if (!$property) {
+                                continue;
+                            }
+
+                            $amount = $property->extra_charge_per_hour * $item['quantity'];
+
+                            DB::table('transaction_services')->insert([
+                                'transaction_id' => $transaction->id,
+                                'service_id'     => $item['service_id'],
+                                'property_id'    => $property->id,
+                                'quantity'       => $item['quantity'],
+                                'amount'         => $amount,
+                                'payment_status' => $item['payment_status'] ?? 'pending',
+                                'status'         => $item['status'] ?? 'pending',
+                                'created_at'     => now(),
+                                'updated_at'     => now(),
+                            ]);
+                        }
+                    } else {
+                        // Normal service (not tied to properties)
+                        DB::table('transaction_services')->insert([
+                            'transaction_id' => $transaction->id,
+                            'service_id'     => $item['service_id'],
+                            'quantity'       => $item['quantity'],
+                            'amount'         => $item['amount'],
+                            'payment_status' => $item['payment_status'] ?? 'pending',
+                            'status'         => $item['status'] ?? 'pending',
+                            'created_at'     => now(),
+                            'updated_at'     => now(),
+                        ]);
+                    }
                 }
             }
 
+            // Refresh relations and update invoice
             $transaction->refresh();
             $transaction->loadMissing(['activities', 'properties', 'services']);
 
@@ -50,6 +80,7 @@ class ServiceTransactionService
             }
         });
     }
+
 
     public function deleteService($pivotId, Transaction $transaction, Invoice $invoice)
     {

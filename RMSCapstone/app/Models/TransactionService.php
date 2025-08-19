@@ -14,6 +14,7 @@ class TransactionService extends Model
     protected $fillable = [
         'transaction_id',
         'service_id',
+        'property_id',
         'quantity',
         'service_datetime',
         'amount',
@@ -41,5 +42,10 @@ class TransactionService extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
+    }
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
     }
 }

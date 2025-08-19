@@ -201,7 +201,16 @@ class ViewReservation extends Component
     {
         $this->activities = $this->transaction->activities()->withPivot('id', 'quantity', 'amount', 'activity_datetime', 'status')->get();
         $this->properties = $this->transaction->properties()->withPivot('id', 'adults', 'kids', 'non_chargeable_guests', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days', 'room_rate_id')->get();
-        $this->services = $this->transaction->services()->withPivot('id', 'quantity', 'days', 'amount', 'service_datetime', 'status')->get();
+        $this->services = $this->transaction->services()->withPivot(
+            'id',
+            'service_id',
+            'property_id',
+            'quantity',
+            'days',
+            'amount',
+            'service_datetime',
+            'status'
+        )->get();
 
 
         return view('livewire.admin.reservations.view-reservation', [
@@ -313,22 +322,37 @@ class ViewReservation extends Component
         }
 
         foreach ($this->transaction->services as $service) {
+
+            $propertyName = null;
+            $propertyExtraHourCharge = null;
+            if ($service->pivot->service_id == 10 && $service->pivot->property_id) {
+                $property = \App\Models\Property::find($service->pivot->property_id);
+                $propertyName = $property?->name_number;
+                $propertyExtraHourCharge = $property?->extra_charge_per_hour;
+            }
+
             $items[] = [
-                'type' => 'service',
-                'name' => $service->name,
-                'quantity' => $service->pivot->quantity,
-                'days' => $service->pivot->days ?? null,
-                'extra_guest' => 0,
-                'extra_charge' => 0,
-                'amount' => $service->amount,
-                'total' => $service->pivot->amount,
-                'created_at' => $service->pivot->created_at,
+                'type'          => 'service',
+                'service_id'    => $service->pivot->service_id,
+                'property_id'   => $service->pivot->property_id,
+                'name'          => $service->name,
+                'property_name' => $propertyName,
+                'property_extra_hour_charge' => $propertyExtraHourCharge,
+                'quantity'      => $service->pivot->quantity,
+                'days'          => $service->pivot->days ?? null,
+                'extra_guest'   => 0,
+                'extra_charge'  => 0,
+                'amount'        => $service->amount,
+                'total'         => $service->pivot->amount,
+                'created_at'    => $service->pivot->created_at,
                 'payment_status' => $service->pivot->payment_status,
-                'unit' => $service->unit,
-                'id' => $service->id,
-                'pivot_id' => $service->pivot->id,
+                'unit'          => $service->unit,
+                'pivot_id'      => $service->pivot->id,
             ];
         }
+
+
+
 
         // Sort by created_at
         usort($items, function ($a, $b) {
@@ -336,6 +360,8 @@ class ViewReservation extends Component
         });
 
         $this->allItems = $items;
+
+        // dd($this->allItems);
     }
 
     public function approveRequest($index)
@@ -434,6 +460,18 @@ class ViewReservation extends Component
             }
         }
 
+        if ($type === 'service' && $itemId == 10) {
+
+            // Service = Extra Hour
+            if (!isset($this->extraHourProperties[$itemId]) || empty($this->extraHourProperties[$itemId])) {
+                $this->addError("extraHourProperties.$itemId", 'Please select at least one property for extra hours.');
+                return;
+            }
+
+            // Add selected property IDs to context
+            $context['properties'] = $this->extraHourProperties[$itemId];
+        }
+
         // Add to cart with the context
         $newCart = $this->cartService->addItem(
             $type,
@@ -451,7 +489,11 @@ class ViewReservation extends Component
         }
 
         $this->cart = $newCart;
+
+        // dd($this->cart);
     }
+
+    public $extraHourProperties = [];
 
 
     public function removeItemFromCart($type, $itemId)

@@ -847,7 +847,7 @@
 
                                                             if (!empty($combo['adults'])) {
                                                                 $parts[] =
-                                                                    $combo['dults'] .
+                                                                    $combo['adults'] .
                                                                     ' adult' .
                                                                     ($combo['adults'] > 1 ? 's' : '');
                                                             }

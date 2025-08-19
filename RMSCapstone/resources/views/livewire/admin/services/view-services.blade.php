@@ -11,8 +11,9 @@
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -50,16 +51,18 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input wire:model.live.debounce.300ms="search" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
-                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Search" required="">
+                            <input wire:model.live.debounce.300ms="search" type="text"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search"
+                                required="">
                         </div>
                     </div>
 
                     {{-- Bulk Actions Button --}}
                     <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                        <button @click="open = !open" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
-                                    dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                                                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                             Actions
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -68,7 +71,7 @@
                         </button>
 
                         <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
-                                    dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                                                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                             <div class="py-1">
                                 <a wire:click.prevent="confirmDeleteInBulk" href="#"
                                     class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
@@ -165,9 +168,17 @@
                                             provided.</em>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3">
-                                    ₱{{ number_format($service->amount, 2) }}
-                                </td>
+
+                                @if($service->id == 10)
+                                    <td class="px-4 py-3">
+                                        <span class="text-gray-500">N/A</span>
+                                    </td>
+                                @else
+                                    <td class="px-4 py-3">
+                                        ₱{{ number_format($service->amount, 2) }}
+                                    </td>
+                                @endif
+
                                 <td class="px-4 py-3">
                                     {{ucfirst($service->unit) }}
                                 </td>
@@ -198,9 +209,11 @@
 
                                     <!-- Edit Icon -->
                                     @can('service-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
-                                        </i>
+                                        @if($service->id != 10)
+                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
+                                                wire:navigate href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
+                                            </i>
+                                        @endif
                                     @endcan
 
                                     <!-- Delete Icon -->
@@ -230,8 +243,9 @@
                     <div class="flex">
                         <div class="flex space-x-4 items-center mb-3">
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
-                            <select wire:model.live="perPage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <select wire:model.live="perPage"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

@@ -7,7 +7,7 @@ use App\Models\Service;
 class ServiceCartService
 {
 
-    public function addService(array &$cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [])
+    public function addService(array &$cart, int $itemId, array &$quantity = [], array &$status = [], array &$paymentStatus = [], array $context = [])
     {
         $service = Service::findOrFail($itemId);
 
@@ -35,6 +35,7 @@ class ServiceCartService
             'amount' => $amount,
             'status' => $status[$itemId],
             'payment_status' => $paymentStatus[$itemId],
+            'properties_with_extra_hour' => $context['properties'] ?? null,
         ];
 
         return $cart;
