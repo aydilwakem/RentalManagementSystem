@@ -17,7 +17,7 @@ class PropertyFeature extends Model
     protected $fillable = [
         'name', 
         'property_type_id', 
-        'quanity',
+        'quantity',
         'property_feature_type',  
         'is_active'];
 

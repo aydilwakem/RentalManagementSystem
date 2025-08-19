@@ -1,9 +1,9 @@
 <div class="p-6 rounded-lg shadow-md max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
     @if (session()->has('message'))
-        <div class="p-2 text-green-600 font-semibold">
-            {{ session('message') }}
-        </div>
+    <div class="p-2 text-green-600 font-semibold">
+        {{ session('message') }}
+    </div>
     @endif
 
     {{-- <canvas id="ratingChart" height="120"></canvas> --}}
@@ -42,11 +42,11 @@
             <div class="absolute bottom-0 left-10 right-0 flex items-end justify-around h-full px-4">
                 <!-- Bar Item -->
                 @foreach ($feedbackRatingTypes as $ratingType)
-                    <div class="flex flex-col items-center">
-                        <i class="fas fa-broom text-gray-600 mt-2 text-xs dark:text-gray-200"></i>
-                        <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
-                        <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
-                    </div>
+                <div class="flex flex-col items-center">
+                    <i class="fas fa-broom text-gray-600 mt-2 text-xs dark:text-gray-200"></i>
+                    <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
+                    <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
+                </div>
                 @endforeach
             </div>
 
@@ -64,66 +64,67 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach ($feedbackRatingTypes as $ratingType)
-                <div
-                    class="flex items-center justify-between border p-4 rounded-md relative dark:bg-gray-700 dark:border-gray-600">
-                    <!-- Remove Button -->
-                    <button type="button"
-                        class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xs font-bold"
-                        wire:click="RemoveRatingType({{ $ratingType->id }})">
-                        ×
-                    </button>
+            <div
+                class="flex items-center justify-between border p-4 rounded-md relative dark:bg-gray-700 dark:border-gray-600">
+                <!-- Remove Button -->
+                <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-xs font-bold"
+                    wire:click="confirmDelete({{ $ratingType->id }})">
+                    ×
+                </button>
 
-                    <div class="flex items-center space-x-2 text-gray-700 font-medium dark:text-white">
-                        <i class="fas fa-broom"></i>
-                        <span>{{ $ratingType->rating_name }}</span>
-                    </div>
-                    {{-- <div class="flex items-center space-x-1">
+                <div class="flex items-center space-x-2 text-gray-700 font-medium dark:text-white">
+                    <i class="fas fa-broom"></i>
+                    <span>{{ $ratingType->rating_name }}</span>
+                </div>
+                {{-- <div class="flex items-center space-x-1">
                     <span class="text-sm text-gray-900 font-semibold">5.0</span>
                     <i class="fas fa-star text-yellow-400"></i>
                 </div> --}}
-                </div>
+            </div>
             @endforeach
         </div>
         <div>
             @if ($createRatingTypeModal)
-                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div class="bg-white rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+            <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div class="bg-white rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
 
-                        <!-- Header -->
-                        <div
-                            class=" bg-green-50 flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
-                            <h2 class="text-2xl font-semibold text-green-700 dark:text-green-200">Add Rating Category Name
-                            </h2>
+                    <!-- Header -->
+                    <div
+                        class=" bg-green-50 flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
+                        <h2 class="text-2xl font-semibold text-green-700 dark:text-green-200">Add Rating Category Name
+                        </h2>
 
-                            <button wire:click="CloseRatingTypeModal"
-                                class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
-                                &times;
-                            </button>
+                        <button wire:click="CloseRatingTypeModal"
+                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="px-6 py-3">
+                        <!-- Input -->
+                        <div class="mt-2 mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Rating Type
+                                Name <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="rating_name"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-green-600 focus:border-green-600"
+                                required>
+                            @error('rating_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="px-6 py-3">
-                            <!-- Input -->
-                            <div class="mt-2 mb-3">
-                                <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Rating Type Name <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="rating_name"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-green-600 focus:border-green-600" required>
-                                @error('rating_name')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
 
-                            <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6 mb-2">
-                                <x-button type="button" wire:click="CloseRatingTypeModal"
-                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                    Cancel
-                                </x-button>
-                                <x-button type="button" wire:click="CreateRatingType">
-                                    Save Changes
-                                </x-button>
-                            </div>
+                        <!-- Actions -->
+                        <div class="flex justify-between items-center gap-2 mt-6 mb-2">
+                            <x-button type="button" wire:click="CloseRatingTypeModal"
+                                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                Cancel
+                            </x-button>
+                            <x-button type="button" wire:click="CreateRatingType">
+                                Save Changes
+                            </x-button>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
         </div>
     </div>
@@ -134,42 +135,42 @@
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'pending') as $comment)
-                <li class="flex items-start space-x-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm">
-                    <div class="flex-shrink-0">
-                        <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
-                            class="w-10 h-10 rounded-full object-cover">
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-gray-800">
-                                {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                                <span class="text-xs text-gray-500">
-                                    {{ $comment->created_at->diffForHumans() }}
-                                </span>
-                            </p>
-
-                        </div>
-                        <p class="text-sm text-gray-700 mt-1">
-                            {{ $comment->comments !== '' ? $comment->comments : 'No comment provided.' }}
+            <li class="flex items-start space-x-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm">
+                <div class="flex-shrink-0">
+                    <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
+                        class="w-10 h-10 rounded-full object-cover">
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-800">
+                            {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                            {{ $comment->transaction->transactionUser->last_name ?? '' }}
+                            <span class="text-xs text-gray-500">
+                                {{ $comment->created_at->diffForHumans() }}
+                            </span>
                         </p>
-                    </div>
 
-                    <!---- Approve/Reject buttons -->
-                    <div class="mt-2 flex gap-2">
-                        <x-button wire:click="approveComment({{ $comment->id }})"
-                            class="bg-green-500 hover:bg-green-600 text-white">
-                            Approve
-                        </x-button>
-                        <x-button wire:click="rejectComment({{ $comment->id }})"
-                            class="bg-red-500 hover:bg-red-600 text-white">
-                            Reject
-                        </x-button>
                     </div>
+                    <p class="text-sm text-gray-700 mt-1">
+                        {{ $comment->comments !== '' ? $comment->comments : 'No comment provided.' }}
+                    </p>
+                </div>
 
-                </li>
+                <!---- Approve/Reject buttons -->
+                <div class="mt-2 flex gap-2">
+                    <x-button wire:click="approveComment({{ $comment->id }})"
+                        class="bg-green-500 hover:bg-green-600 text-white">
+                        Approve
+                    </x-button>
+                    <x-button wire:click="rejectComment({{ $comment->id }})"
+                        class="bg-red-500 hover:bg-red-600 text-white">
+                        Reject
+                    </x-button>
+                </div>
+
+            </li>
             @empty
-                <li class="text-gray-500 text-sm">No pending comments.</li>
+            <li class="text-gray-500 text-sm">No pending comments.</li>
             @endforelse
         </ul>
     </div>
@@ -180,29 +181,29 @@
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'approved') as $comment)
-                <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <div class="flex-shrink-0">
-                        <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
-                            class="w-10 h-10 rounded-full object-cover">
-                    </div>
+            <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="flex-shrink-0">
+                    <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
+                        class="w-10 h-10 rounded-full object-cover">
+                </div>
 
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-gray-800">
-                                {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                            </p>
-                            <span class="text-xs text-gray-500">
-                                {{ $comment->created_at->diffForHumans() }}
-                            </span>
-                        </div>
-                        <p class="text-sm text-gray-700 mt-1">
-                            {{ $comment->comments }}
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-800">
+                            {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                            {{ $comment->transaction->transactionUser->last_name ?? '' }}
                         </p>
+                        <span class="text-xs text-gray-500">
+                            {{ $comment->created_at->diffForHumans() }}
+                        </span>
                     </div>
-                </li>
+                    <p class="text-sm text-gray-700 mt-1">
+                        {{ $comment->comments }}
+                    </p>
+                </div>
+            </li>
             @empty
-                <li class="text-gray-500 text-sm">No approved comments.</li>
+            <li class="text-gray-500 text-sm">No approved comments.</li>
             @endforelse
         </ul>
     </div>
@@ -213,32 +214,54 @@
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'rejected') as $comment)
-                <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <div class="flex-shrink-0">
-                        <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
-                            class="w-10 h-10 rounded-full object-cover">
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-gray-800">
-                                {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                            </p>
-                            <span class="text-xs text-gray-500">
-                                {{ $comment->created_at->diffForHumans() }}
-                            </span>
-                        </div>
-                        <p class="text-sm text-gray-700 mt-1">
-                            {{ $comment->comments }}
+            <li class="flex items-start space-x-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="flex-shrink-0">
+                    <img src="{{ asset('images/canopy-logo.png') }}" alt="User profile"
+                        class="w-10 h-10 rounded-full object-cover">
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-800">
+                            {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                            {{ $comment->transaction->transactionUser->last_name ?? '' }}
                         </p>
+                        <span class="text-xs text-gray-500">
+                            {{ $comment->created_at->diffForHumans() }}
+                        </span>
                     </div>
-                </li>
+                    <p class="text-sm text-gray-700 mt-1">
+                        {{ $comment->comments }}
+                    </p>
+                </div>
+            </li>
 
             @empty
-                <li class="text-gray-500 text-sm">No rejected comments.</li>
+            <li class="text-gray-500 text-sm">No rejected comments.</li>
             @endforelse
         </ul>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
+        <x-slot name="title">
+            {{ __('Delete Rating Category') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to delete this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-danger-button class="ms-3" wire:click="RemoveRatingType({{ $ratingType->id }})"
+                wire:loading.attr="disabled">
+                {{ __('Delete Rating Category') }}
+            </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>
 
 <!-- Script -->

@@ -3,12 +3,32 @@
 namespace App\Livewire;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Sidebar extends Component
 {
+    public $confirmLogoutItem = false;
+
     public string $logoPath = ''; 
     public string $companyName = 'Company'; //Default
+
+
+    public function confirmLogout()
+    {
+        $this->confirmLogoutItem = true;
+    }
+
+    public function logout()
+    {
+        $this->confirmLogoutItem = false; 
+
+        Auth::guard('web')->logout();
+        session()->invalidate();
+        session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 
     public function mount()
     {

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Users;
 
+use App\Actions\Fortify\PasswordValidationRules;
 use Livewire\Component;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
@@ -11,11 +12,14 @@ use Illuminate\Validation\Rules;
 
 class CreateUser extends Component
 {
+    use PasswordValidationRules;
+    
     // Public properties to store form inputs
     public $name;
     public $email;
     public $password;
     public $selectedRole;
+    public $password_confirmation;
     public $roles = []; // List of available roles
 
     public $confirmCreateItem = false;
@@ -40,7 +44,7 @@ class CreateUser extends Component
             $this->validate([
                 'name' => 'required|string|max:255|unique:users,name', // Name is required and must be a string, with unique name
                 'email' => 'required|string|email|max:255|unique:users,email', // Email must be unique
-                'password' => ['required', 'string', Rules\Password::defaults()], // Enforce password rules
+                'password' => $this->passwordRules(), // Enforce password rules
                 'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

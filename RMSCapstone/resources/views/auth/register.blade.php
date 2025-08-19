@@ -78,7 +78,8 @@
                     <div>
                         <!-- Email -->
                         <x-label for="email" value="{{ __('Email') }}" />
-                        <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                        <x-input id="email" class="block mt-1 w-full" type="email"
+                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$" name="email" :value="old('email')"
                             required />
                         @error('email')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

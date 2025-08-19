@@ -74,9 +74,35 @@
                     <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300">
                         <li><strong>Room Category:</strong> {{ $room->category->name ?? 'N/A' }}</li>
                         <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}</li>
-                        <li><strong>Max Adults:</strong> {{ $room->max_adults }}</li>
                         <li><strong>Extra Person Charge:</strong> ₱{{ $room->extra_person_charge }}</li>
-                        <li><strong>Max Kids:</strong> {{ $room->max_kids }}</li>
+                        @if ($room->occupancy_type === 'whole_number')
+                        <li><strong>Maximum Guests:</strong> {{ $room->max_guests }} Guests</li>
+                        @elseif ($room->occupancy_type === 'combinations')
+                        @php
+                        $originalCombinations = collect($room->occupancy_rules)
+                        ->where('type', 'original');
+
+                        $formatted = $originalCombinations->map(function ($combo) {
+                        $parts = [];
+
+                        if (!empty($combo['adults'])) {
+                        $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                        }
+
+                        if (!empty($combo['kids'])) {
+                        $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                        }
+
+                        return implode(' and ', $parts);
+                        });
+                        @endphp
+
+                        @if ($formatted->isNotEmpty())
+                        <li><strong>Maximum Occupancy: </strong>{{ $formatted->implode(' or ') }}</li>
+                        @endif
+                        @endif
+
+
                         <li><strong>Beds:</strong>
                             @if($room->beds->count())
                             @foreach($room->beds as $bed)

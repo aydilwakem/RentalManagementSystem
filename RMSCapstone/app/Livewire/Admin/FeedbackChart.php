@@ -18,6 +18,14 @@ class FeedbackChart extends Component
     public $feedbackRatingTypes;
     public $transactionNumber;
 
+    //Modals for deleting
+    public $confirmItemDelete = false;
+
+    public function confirmDelete($id)
+    {
+        $this->confirmItemDelete = $id;
+    }
+
     public $createRatingTypeModal;
 
     public function render()
@@ -128,6 +136,8 @@ class FeedbackChart extends Component
 
         FeedbackRatingType::findOrFail($id)->delete();
         $this->feedbackRatingTypes = FeedbackRatingType::all();
+
+         $this->confirmItemDelete = false; 
     }
 }
 

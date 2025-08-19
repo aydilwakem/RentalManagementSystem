@@ -521,8 +521,7 @@
 
                     @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                     <a href="{{ route('api-tokens.index') }}" wire:navigate>
-                        <div
-                            class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                        <div class="flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
                             {{ Route::is('api-tokens.index') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-key"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">API Tokens</h1>
@@ -533,14 +532,12 @@
 
                 <!-- Logout -->
                 <div class="absolute inset-x-0 bottom-2 px-4">
-                    <form method="POST" action="{{ route('logout') }}" x-data>
-                        @csrf
-                        <button type="submit"
-                            class="relative flex w-full items-center justify-center text-white border hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
-                            <h1 ax-cloak x-show="$store.sidebar.full">Logout</h1>
-                            <i class="fa-solid fa-sign-out"></i>
-                        </button>
-                    </form>
+                    <button type="button" wire:click="confirmLogout"
+                        class="relative flex w-full items-center justify-center text-white border hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
+                        <h1 ax-cloak x-show="$store.sidebar.full">Logout</h1>
+                        <i class="fa-solid fa-sign-out"></i>
+                    </button>
+
 
                     @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="border-t border-gray-600 mt-3"></div>
@@ -605,4 +602,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmLogoutItem">
+        <x-slot name="title">
+            {{ __('Logout') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to logout?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmLogoutItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="logout" wire:loading.attr="disabled">
+                {{ __('Logout') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>
