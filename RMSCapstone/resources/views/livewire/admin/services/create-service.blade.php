@@ -14,7 +14,7 @@
     {{-- Body Container --}}
     <div>
         <div
-            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            class="mx-auto max-w-6xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 mb-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -51,7 +51,7 @@
                             <div class="relative">
                                 <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
                                     dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                    placeholder="Ex. Pet Fee">
+                                    placeholder="Ex. Portable Grill">
                             </div>
 
                             @error('name')
@@ -63,11 +63,11 @@
                         <!-- Service Description -->
                         <div>
                             <label for="description"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Service
-                                Description</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Service Description</label>
                             <input type="text" wire:model="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="Ex. P500 off for rainy day season reservations">
+                                placeholder="Ex. Use of Portable Grill">
                             @error('description')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -76,11 +76,11 @@
                         <!-- Amount -->
                         <div>
                             <label for="amount"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Service Amount
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount
                                 <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="Ex. 2800.00" onwheel="this.blur()" />
+                                placeholder="Ex. 2,800.00" onwheel="this.blur()" />
 
                             @error('amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -92,13 +92,13 @@
                     <!-- Service Unit -->
                     <div>
                         <label for="unit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Service Unit <span class="text-red-500">*</span>
+                            Unit <span class="text-red-500">*</span>
                         </label>
 
                         <div class="relative">
                             <input type="text" wire:model="unit" id="unit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
-                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="Ex. Per day">
+                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. Per day">
                         </div>
 
                         @error('unit')
@@ -109,7 +109,7 @@
 
                     <!-- Service Type -->
                     <div>
-                        <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service
+                        <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Type <span class="text-red-500">*</span></label>
                         <select wire:model="type" id="type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
@@ -126,7 +126,7 @@
                     <!-- Status -->
                     <div>
                         <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Service Status <span class="text-red-500">*</span>
+                             Status <span class="text-red-500">*</span>
                         </label>
                         <div class="flex items-center gap-3">
                             <span class="text-gray-700 dark:text-gray-200">Inactive</span>
@@ -146,20 +146,15 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-
-
-
-
-
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex justify-between items-center space-y-2 mt-6">
+                <div class="flex justify-between items-center space-y-2 mt-12">
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
                     <x-button wire:loading.attr="disabled" wire:click="confirmCreate">
-                        Create Promo Code
+                        Create Service
                     </x-button>
                 </div>
             </form>
@@ -167,11 +162,11 @@
             <!-- Create Confirmation Modal -->
             <x-dialog-modal wire:model.live="confirmCreateItem">
                 <x-slot name="title">
-                    {{ __('Create Promo Code') }}
+                    {{ __('Create Service') }}
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Are you sure you want to add this promo code?') }}
+                    {{ __('Are you sure you want to add this service?') }}
                 </x-slot>
 
                 <x-slot name="footer">

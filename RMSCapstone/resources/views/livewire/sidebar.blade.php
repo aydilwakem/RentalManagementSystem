@@ -72,7 +72,7 @@
                     @can('new-reservation-list')
                     <div @click="toggle('reservations')"
                         class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
-                            {{ Route::is('admin.reservations-list*') || Route::is('admin.activities*') || Route::is('admin.view-promo-codes*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                            {{ Route::is('admin.reservations-list*') || Route::is('admin.activities*') || Route::is('admin.view-promo-codes*') || Route::is('admin.services*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-calendar"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">

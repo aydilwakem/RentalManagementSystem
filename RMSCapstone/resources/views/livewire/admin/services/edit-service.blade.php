@@ -53,12 +53,12 @@
                                 @if(!$service->is_protected)
                                     <input type="text" wire:model="name" id="name"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
-                                                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                         placeholder="Ex. Pet Fee">
                                 @else
                                     <input type="text" value="{{ $service->name }}" id="name" readonly
                                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 pr-24
-                                                            dark:bg-gray-700 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                         dark:bg-gray-700 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                 @endif
                             </div>
 
@@ -73,8 +73,8 @@
                         <!-- Service Description -->
                         <div>
                             <label for="description"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Service
-                                Description</label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Service Description</label>
                             <input type="text" wire:model="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
@@ -86,7 +86,7 @@
                         <!-- Amount -->
                         <div>
                             <label for="amount"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Service Amount
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"> Amount
                                 <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
@@ -102,7 +102,7 @@
                     <!-- Service Unit -->
                     <div>
                         <label for="unit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Service Unit <span class="text-red-500">*</span>
+                             Unit <span class="text-red-500">*</span>
                         </label>
 
                         <div class="relative">
@@ -119,7 +119,7 @@
 
                     <!-- Service Type -->
                     <div>
-                        <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service
+                        <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Type <span class="text-red-500">*</span></label>
                         <select wire:model="type" id="type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
@@ -134,10 +134,9 @@
                     </div>
 
                     <!-- Status -->
-                    <!-- Status -->
                     <div>
                         <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Service Status <span class="text-red-500">*</span>
+                             Status <span class="text-red-500">*</span>
                         </label>
 
                         @if($service->is_protected)
@@ -171,7 +170,7 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex justify-between items-center space-y-2 mt-6">
+                <div class="flex justify-between items-center space-y-2 mt-12">
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
@@ -184,7 +183,7 @@
             <!-- Edit Confirmation Modal -->
             <x-dialog-modal wire:model.live="confirmEditItem">
                 <x-slot name="title">
-                    {{ __('Edit Promo Code') }}
+                    {{ __('Edit Service') }}
                 </x-slot>
 
                 <x-slot name="content">

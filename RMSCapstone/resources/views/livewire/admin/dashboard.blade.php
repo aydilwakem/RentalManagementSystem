@@ -17,35 +17,119 @@
 
         <!-- Reservations Card -->
         <div
-            class="bg-yellow-50  border-green-800 border-2 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center hover:scale-105">
-            <i class="fas fa-calendar-check text-green-800 text-4xl"></i>
-            <h2 class="text-green-800 font-semibold ">New Reservations</h2>
-            <p class="text-2xl font-bold text-green-800">{{ $newReservations }}</p>
+            class="bg-secondary-800 border-2 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            <!-- Shortcut -->
+            <div class="absolute top-2 right-2">
+                <button
+                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+
+                <!-- Dropdown -->
+                <div
+                    class="dropdownMenu hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-1 z-50">
+                    <a href="{{ route('admin.create-reservation') }}" wire:navigate
+                        class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Create Reservation
+                    </a>
+                    <a href="{{ route('admin.reservations-list') }}" wire:navigate
+                        class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        View All Reservations
+                    </a>
+                </div>
+            </div>
+            <i class="fas fa-calendar-check text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">New Reservations</h2>
+            <p class="text-2xl font-bold text-white">{{ $newReservations }}</p>
         </div>
 
-
-        <!-- Rooms Card -->
+        <!-- Events Card -->
         <div
-            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            <div class="absolute top-2 right-2">
+                <button
+                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+
+                <!-- Dropdown -->
+                <div
+                    class="dropdownMenu hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-1 z-50">
+                    <a href="{{ route('admin.create-event') }}" wire:navigate class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Create Event
+                    </a>
+                    <a href="{{ route('admin.events') }}" wire:navigate class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        View All Events
+                    </a>
+                </div>
+            </div>
+
             <i class="fas fa-bed text-white text-4xl"></i>
             <h2 class="text-white font-semibold">Upcoming Events</h2>
-            <p class="text-2xl font-bold text-white"> {{ $upcomingEvents }}</p>
+            <p class="text-2xl font-bold text-white">{{ $upcomingEvents }}</p>
         </div>
 
-        <!-- Maintenance Card -->
-        <a href="{{ route('admin.maintenances') }}">
-            <div
-                class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center">
+        <!-- Maintenances Card -->
+        <div
+            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            <div class="absolute top-2 right-2">
+                <button
+                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
 
-                <i class="fas fa-tools text-white text-4xl"></i>
-                <h2 class="text-white font-semibold">Pending Maintenances</h2>
-                <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
+                <!-- Dropdown -->
+                <div
+                    class="dropdownMenu hidden absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg py-1 z-50">
+                    <a href="{{ route('admin.create-maintenance') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Create Maintenance
+                    </a>
+                    <a href="{{ route('admin.maintenances') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        View All Maintenances
+                    </a>
+                </div>
             </div>
-        </a>
+
+            <i class="fas fa-tools text-white text-4xl"></i>
+            <h2 class="text-white font-semibold">Pending Maintenances</h2>
+            <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
+        </div>
+
+        <script>
+            // Select all buttons
+            const buttons = document.querySelectorAll('.dropdownButton');
+
+            buttons.forEach(button => {
+                const menu = button.parentElement.querySelector('.dropdownMenu');
+
+                // Toggle on click
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    // Close other open dropdowns
+                    document.querySelectorAll('.dropdownMenu').forEach(m => {
+                        if (m !== menu) m.classList.add('hidden');
+                    });
+
+                    menu.classList.toggle('hidden');
+                });
+            });
+
+            // Close when clicking outside
+            window.addEventListener('click', function() {
+                document.querySelectorAll('.dropdownMenu').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            });
+        </script>
+
     </div>
+
+    <!-- Calendar Sort -->
     <div class="mb-4 flex items-center space-x-2">
         <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
-        <select id="reservationFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
+        <select id="reservationFilter"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
             <option value="all">All</option>
             <option value="2">Room Reservation</option>
@@ -60,8 +144,8 @@
     </div>
 
     @script
-    <script type="text/javascript">
-        document.addEventListener('livewire:initialized', () => {
+        <script type="text/javascript">
+            document.addEventListener('livewire:initialized', () => {
                 var calendarEl = document.getElementById('calendar');
                 var events = @json($events);
 
@@ -160,7 +244,7 @@
                     });
                 });
             });
-    </script>
+        </script>
     @endscript
 
     {{-- <style>

@@ -74,7 +74,7 @@
                     <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300">
                         <li><strong>Room Category:</strong> {{ $room->category->name ?? 'N/A' }}</li>
                         <li><strong>Ideal Guests:</strong> {{ $room->ideal_guest }}</li>
-                        <li><strong>Extra Person Charge:</strong> ₱{{ $room->extra_person_charge }}</li>
+                        <li><strong>Extra Person Charge:</strong> ₱{{ number_format($room->extra_person_charge, 2) }}</li>
                         @if ($room->occupancy_type === 'whole_number')
                         <li><strong>Maximum Guests:</strong> {{ $room->max_guests }} Guests</li>
                         @elseif ($room->occupancy_type === 'combinations')
@@ -117,7 +117,7 @@
 
                         <li><strong>Turnover Duration:</strong> {{ $room->turnover_duration }} hours</li>
                         <li><strong>Room Status:</strong> {{ ucfirst($room->property_status) }}</li>
-                        <li><strong>Base Rate:</strong> ₱{{ $room->amount }}</li>
+                        <li><strong>Base Rate:</strong> ₱{{ number_format($room->amount, 2) }}</li>
                     </ul>
 
                     <div class="mb-1">
