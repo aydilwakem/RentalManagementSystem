@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Users;
 use App\Actions\Fortify\PasswordValidationRules;
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permissions;
 use Illuminate\Support\Facades\Hash;
@@ -62,6 +63,10 @@ class CreateUser extends Component
 
         // Assign the selected role to the created user
         $user->assignRole($this->selectedRole);
+
+        //Send email automatically
+        //$user->sendEmailVerificationNotification();
+        event(new Registered($user));
 
         // Reset input fields after successful user creation
         $this->reset(['name', 'email', 'password', 'selectedRole']);
