@@ -27,6 +27,8 @@ class ReservationReports extends Component
     public $reservationStatusFilter = '';
     public $filterApplied = false;
 
+    //-------------------- GUEST DETAILS
+    public $country_of_origin = []; 
 
     // ---FOR DATE RANGES INPUT ------ //
     public $start_date;
@@ -322,6 +324,114 @@ class ReservationReports extends Component
         fclose($handle);
     }, 200, $headers);
 }
+
+
+    //-------------------- EXPORT GUEST DETAILS ----------------------//
+    public function exportGuestDetailsSummary()
+{
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties', 'guestDetails']) // eager load main + companions
+        ->where('reservation_type_id', 2)
+        ->when($this->start_date, function ($query) {
+            $start = Carbon::parse($this->start_date)->startOfDay();
+            $query->where('start_datetime', '>=', $start);
+        })
+        ->when($this->end_date, function ($query) {
+            $end = Carbon::parse($this->end_date)->endOfDay();
+            $query->where('start_datetime', '<=', $end);
+        })
+        ->when($this->roomFilter, function ($query) {
+            $query->where('transaction_properties.property_id', $this->roomFilter);
+        })
+        ->when($this->reservationStatusFilter, function ($query) {
+            $query->where('transaction_status', $this->reservationStatusFilter);
+        })
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->get();
+
+    // ------------------- SUMMARY CALCULATIONS ------------------- //
+    $totalReservations = $transactions->count();
+    $totalGuests = 0;
+    $totalFilipinos = 0;
+    $totalForeigners = 0;
+    $totalGuestNights = 0;
+    $totalNights = 0;
+    $guestByCountry = [];
+
+    foreach ($transactions as $transaction) {
+        $start = Carbon::parse($transaction->start_datetime);
+        $end = Carbon::parse($transaction->end_datetime);
+        $nights = max(1, $start->diffInDays($end)); // at least 1 night
+
+        // count reservation nights
+        $totalNights += $nights;
+
+        // ---------------- Main Guest ----------------
+        $mainCountry = $transaction->transactionUser->country ?? 'Unknown';
+        $totalGuests += 1;
+        $totalGuestNights += $nights;
+
+        if (strtolower($mainCountry) === 'philippines') {
+            $totalFilipinos++;
+        } else {
+            $totalForeigners++;
+        }
+
+        if (!isset($guestByCountry[$mainCountry])) {
+            $guestByCountry[$mainCountry] = [
+                'checkins' => 0,
+            ];
+        }
+        $guestByCountry[$mainCountry]['checkins'] += 1;
+
+        // ---------------- Accompanying Guests ----------------
+        foreach ($transaction->guestDetails as $guest) {
+            $country = $guest->country_of_origin ?? 'Unknown';
+            $totalGuests += 1;
+            $totalGuestNights += $nights;
+
+            if (strtolower($country) === 'philippines') {
+                $totalFilipinos++;
+            } else {
+                $totalForeigners++;
+            }
+
+            if (!isset($guestByCountry[$country])) {
+                $guestByCountry[$country] = [
+                    'checkins' => 0,
+                ];
+            }
+            $guestByCountry[$country]['checkins'] += 1;
+        }
+    }
+
+    // Sort by country alphabetically
+    ksort($guestByCountry);
+
+    // ----------------------- PDF ----------------------- //
+    $pdf = Pdf::loadView('livewire.admin.reports.guest-details-summary', [
+        'transactions' => $transactions,
+        'start_date' => $this->start_date,
+        'end_date' => $this->end_date,
+        'totalReservations' => $totalReservations,
+        'totalNights' => $totalNights, 
+        'totalGuests' => $totalGuests,
+        'totalFilipinos' => $totalFilipinos,
+        'totalForeigners' => $totalForeigners,
+        'guestByCountry' => $guestByCountry,
+        'roomFilter' => $this->roomFilter, 
+        'rooms' => $this->rooms,
+        'reservationStatusFilter' => $this->reservationStatusFilter,
+    ]);
+
+    return response()->streamDownload(function () use ($pdf) {
+        echo $pdf->stream();
+    }, 'Guest-Details-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.pdf');
+    }
+
+
 
 
 
