@@ -11,6 +11,7 @@ use App\Models\PropertyFeature;
 use App\Models\Province;
 use App\Models\Region;
 use Livewire\Attributes\Rule;
+use PragmaRX\Countries\Package\Countries;
 
 class CreateProperty extends Component
 {
@@ -42,7 +43,9 @@ class CreateProperty extends Component
     public $province;
     public $region;
     public $postal_code;
+    public $countries = [];
     public $country;
+
 
     //------------------------------ Address Mounting -------------------------------//
     public $provinces = [];
@@ -79,6 +82,16 @@ class CreateProperty extends Component
 
         //Address Mounting
         $this->regions = Region::orderBy('PSGC_REG_DESC')->get();
+        $this->initializeCountries();
+    }
+
+    /**
+     * Initializes the list of countries for guest selection.
+     */
+    public function initializeCountries()
+    {
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
     }
 
     // ----------------------------- Address Selectors --------------------------------------- //
@@ -155,13 +168,13 @@ class CreateProperty extends Component
                 'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
                 'persistedImagePaths' => 'nullable|array',
                 'description' => 'nullable|string',
-                'house_number' => 'required|string',
-                'street' => 'required|string',
-                'selectedBarangay' => 'required|string',
-                'selectedMunicipality' => 'required|string',
-                'selectedRegion' => 'required|string',
-                'selectedProvince' => 'required|string',
-                'postal_code' => 'required|string',
+                'house_number' => 'nullable|string',
+                'street' => 'nullable|string',
+                'selectedBarangay' => 'nullable|string',
+                'selectedMunicipality' => 'nullable|string',
+                'selectedRegion' => 'nullable|string',
+                'selectedProvince' => 'nullable|string',
+                'postal_code' => 'nullable|string',
                 'country' => 'required|string',
                 'selectedFeatures' => 'nullable|array',
                 'selectedFeatures.*' => 'exists:property_features,id',
