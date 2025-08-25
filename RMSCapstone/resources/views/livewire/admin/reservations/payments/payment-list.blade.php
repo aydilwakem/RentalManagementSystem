@@ -29,8 +29,7 @@
                         </svg>
                     </div>
                     <!-- Search-->
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                    <input wire:model.live.debounce.300ms="search" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Search" required="">
                 </div>
@@ -59,8 +58,7 @@
                 <div class="flex items-center">
                     <label for="payment_type" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment
                         Type:</label>
-                    <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                    <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
                         <option value="Room Rent">Room Rent</option>
@@ -70,6 +68,7 @@
                         <option value="Event Package">Event Package</option>
                         <option value="Security Deposit">Security Deposit</option>
                         <option value="Remaining Balance">Remaining Balance</option>
+                        <option value="Merchandise">Merchandise</option>
                     </select>
                 </div>
 
@@ -77,8 +76,7 @@
                 <div class="flex items-center">
                     <label for="payment_status"
                         class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Status:</label>
-                    <select id="payment_status" name="payment_status" wire:model.live="paymentStatusFilter"
-                        class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                    <select id="payment_status" name="payment_status" wire:model.live="paymentStatusFilter" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
                         <option value="pending">Pending</option>
@@ -96,8 +94,7 @@
             <div class="flex flex-col items-center justify-center text-center">
                 <!-- Spinner -->
                 <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                        stroke-width="4" />
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                 </svg>
@@ -179,14 +176,14 @@
                                 @endif
                             </td>
                             {{-- <td class="px-4 py-3 space-x-1">
-                            <!-- View Icon -->
-                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                href="#">
-                            </i>
-                            <!-- Delete Icon -->
-                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
-                            </i>
-                        </td> --}}
+                                <!-- View Icon -->
+                                <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                    href="#">
+                                </i>
+                                <!-- Delete Icon -->
+                                <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#">
+                                </i>
+                            </td> --}}
                         </tr>
                     @empty
                         <tr>

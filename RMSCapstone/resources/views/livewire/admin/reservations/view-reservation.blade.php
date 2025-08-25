@@ -1397,6 +1397,7 @@
                                 <option value="Room Rent">Room Rent</option>
                                 <option value="Security Deposit">Security Deposit</option>
                                 <option value="Remaining Balance">Remaining Balance</option>
+                                <option value="Merchandise">Merchandise</option>
                             </select>
                             @error('payment_type')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
