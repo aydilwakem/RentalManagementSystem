@@ -13,7 +13,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -137,7 +137,6 @@
                             {{-- Details --}}
                             <th scope="col" class="px-4 py-3 ">Description</th>
                             <th scope="col" class="px-4 py-3 ">Amount</th>
-                            <th scope="col" class="px-4 py-3 ">Unit</th>
                             <th scope="col" class="px-4 py-3 ">Type</th>
                             <th scope="col" class="px-4 py-3 ">Status</th>
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
@@ -175,15 +174,26 @@
                                     </td>
                                 @else
                                     <td class="px-4 py-3">
-                                        ₱{{ number_format($service->amount, 2) }}
+                                        ₱{{ number_format($service->amount, 2) }}/{{ ucwords(strtolower($service->unit)) }}
                                     </td>
                                 @endif
-
                                 <td class="px-4 py-3">
-                                    {{ucfirst($service->unit) }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ucfirst($service->type) }}
+                                    @if ($service->type == "addon")
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
+                                            Add On
+                                        </span>
+                                    @elseif ($service->type == "penalty")
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">
+                                            Penalty
+                                        </span>
+                                    @elseif ($service->type == "package")
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                            Package
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     @if ($service->is_active)

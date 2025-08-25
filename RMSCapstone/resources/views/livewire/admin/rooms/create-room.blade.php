@@ -208,14 +208,12 @@
                                 <!-- Only show when there is default 1 bed -->
                                 @if ($index === 0)
                                 <button type="button" wire:click="addBed"
-                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">
-                                    Add Bed
+                                    class="mt-2 text-sm text-green-600 hover:text-green-800">+ Add Request
                                 </button>
                                 @else
                                 <!-- Only show when there are more than 1 bed -->
                                 <button type="button" wire:click="removeBed({{ $index }})"
-                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full">
-                                    Remove Bed
+                                    class="mt-2 text-sm text-red-600 hover:text-red-800">- Remove Request
                                 </button>
                                 @endif
                             </div>
@@ -259,7 +257,7 @@
                             Rate <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 2800.00" onwheel="this.blur()" />
+                            placeholder="Ex. 2,800.00" onwheel="this.blur()" />
 
                         @error('amount')
                         <span class="text-red-500 text-sm">{{ $message }}</span>

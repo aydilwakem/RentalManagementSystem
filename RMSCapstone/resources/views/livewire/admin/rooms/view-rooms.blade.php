@@ -294,10 +294,10 @@
                                 </th>
                                 <td class="px-4 py-3 capitalize">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3">{{ $room->category->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">{{ $room->ideal_guest }}</td>
+                                <td class="px-4 py-3">{{ $room->ideal_guest }} Pax</td>
                                 <td class="px-4 py-3">
                                     @if ($room->occupancy_type === 'whole_number')
-                                        {{ $room->max_guests }} guests
+                                        {{ $room->max_guests }} Pax
                                     @elseif ($room->occupancy_type === 'combinations')
                                         @php
                                             $originalCombinations = collect($room->occupancy_rules)
