@@ -28,45 +28,8 @@
                     @enderror
                 </div>
 
-                {{-- Select A Room --}}
-                <div class="w-full">
-                    <label for="select_room"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Filter by Room
-                    </label>
-                    <select wire:model.live="roomFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        <option value="">All Rooms</option>
-                        @foreach ($rooms as $room)
-                        <option value="{{ $room->id }}">{{ $room->name_number }}</option>
-                        @endforeach
-
-                    </select>
-                </div>
-
-                <!-- Status Filter -->
-                <div class="w-full">
-                    <label for="reservation_status"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Reservation
-                        Status:</label>
-                    <select id="reservation_status" name="reservation_status" wire:model.live="reservationStatusFilter"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        <option value="">All</option>
-                        <option value="pending">Awaiting Payment</option>
-                        <option value="reserved">Pending Verification</option>
-                        <option value="receipt_verified">Payment Verified</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="ongoing">On-going</option>
-                        <option value="done">Completed</option>
-                        <option value="no_show">No Show</option>
-                        <option value="terminated">Terminated</option>
-                        <option value="expired">Expired</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
-                </div>
-
                 <div class="flex items-end">
-                    <x-button icon="fa fa-filter" wire:click="applyReservationFilter">
+                    <x-button icon="fa fa-filter" wire:click="">
                         Apply Filter
                     </x-button>
                 </div>
@@ -104,19 +67,6 @@
                 <div wire:loading wire:target="exportReservationCsv"
                     class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
                     <span class="text-sm text-yellow-700 font-semibold">Exporting CSV...</span>
-                </div>
-            </div>
-
-            {{-- EXPORT GUEST DETAILS BUTTON --}}
-            <div class="relative">
-                <x-button icon="fa-solid fa-file" wire:click="exportGuestDetailsSummary" wire:loading.attr="disabled"
-                    class="bg-pink-600 hover:bg-pink-700">
-                    Export Guest Summary PDF
-                </x-button>
-
-                <div wire:loading wire:target="exportGuestDetailsSummary"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                    <span class="text-sm text-pink-700 font-semibold">Exporting Guest Summary...</span>
                 </div>
             </div>
         </div>
@@ -418,7 +368,7 @@
                         @empty
                         <tr>
                             <td colspan="15" class="text-center py-10 text-gray-500">
-                                No reservations found matching this status.
+                                No guests and reservations found matching this status.
                             </td>
                         </tr>
                         @endforelse
@@ -441,17 +391,15 @@
                         </select>
                     </div>
                 </div>
-                {{ $transactions->links() }}
+                {{-- {{ $transactions->links() }} --}}
             </div>
             @else
             <div class="text-center py-10 text-gray-500">
-                No reservations found for the selected filter.
+                No guests and reservations found for the selected filter.
             </div>
             @endif
             @endif
         </div>
 
     </div>
-
-
 </div>

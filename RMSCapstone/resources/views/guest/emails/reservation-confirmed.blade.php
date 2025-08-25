@@ -179,6 +179,42 @@
             {{--
             <hr style="border: none; border-top: 1px solid #cccccc; margin: 30px 0;"> --}}
 
+            {{-- Rebooking Policy: --}}
+            <div style="font-family: Poppins, sans-serif; font-size: 14px; line-height: 1.6; color: #333333;">
+                <h2 style="font-size: 20px; font-weight: 600; margin-top: 0; margin-bottom: 15px; color: #166534;">
+                    Rebooking and Cancellation Policy
+                </h2>
+
+                <p style="margin-bottom: 15px;">
+                    As part of your confirmed reservation, we’d like to share our Rebooking and Cancellation Policy for
+                    your reference:
+                </p>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><b>Payments are non-refundable and non-transferable.</b> However, you may rebook for a mutually
+                        agreed
+                        date, subject to availability and current rates, provided at least three (3) days’ notice is
+                        given.</li>
+                    <li>Room upgrades are allowed with an additional fee based on your original booking; downgrades will
+                        keep the original price.
+                    </li>
+                    <li> If you rebook from a weekend/peak/holiday rate to a weekday, the original weekend/peak/holiday
+                        rate will apply. Conversely, switching from a weekday to a weekend/peak/holiday rate will
+                        require a pricing adjustment. </li>
+                    <li>
+                        Cancellations made at least three (3) months prior to your original booking date are eligible
+                        for a full refund. (This does not apply to rebooked dates.)
+                    </li>
+                    <li>
+                        Rebooking is limited to one (1) instance only.
+                    </li>
+                    <li>
+                        For example, if an additional guest you paid for cannot attend, the payment is non-refundable
+                        and cannot be credited toward any farm services.
+                    </li>
+                </ul>
+            </div>
+
+
             {{-- Guidelines and House Rules --}}
             <div style="font-family: Poppins, sans-serif; font-size: 14px; line-height: 1.6; color: #333333;">
                 <h2 style="font-size: 20px; font-weight: 600; margin-top: 0; margin-bottom: 15px; color: #166534;">

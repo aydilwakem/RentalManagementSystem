@@ -13,7 +13,7 @@
         </x-button>
     </div> --}}
 
-    <!-- Table BOdy -->
+    <!-- Table Body -->
     <div
         class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
@@ -28,8 +28,7 @@
                         </svg>
                     </div>
                     <!-- Search-->
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
+                    <input wire:model.live.debounce.300ms="search" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Search" required="">
                 </div>
@@ -53,31 +52,34 @@
                 </div> --}}
             </div>
 
-            <!-- Invoice Status Filter -->
-            <div class="flex items-center">
-                <label for="invoice_status" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
-                    Status:</label>
-                <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter"
-                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
-                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                    <option value="">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="failed">Failed</option>
-                    <option value="overdue">Overdue</option>
-                </select>
+            <div class="flex items-center space-x-8">
+                <!-- Invoice Status Filter -->
+                <div class="flex items-center">
+                    <label for="invoice_status"
+                        class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
+                        Status:</label>
+                    <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <!-- Invoice Type Filter -->
+                <div class="flex items-center">
+                    <label for="invoice_type" class="w-32 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
+                        Type:</label>
+                    <select id="invoice_type" name="invoice_type" wire:model.live="invoiceTypeFilter" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <option value="">All</option>
+                        <option value="Event_Hall">Events</option>
+                        <option value="Room">Room Reservations</option>
+                        <option value="House">Leases</option>
+                    </select>
+                </div>
             </div>
-            <!-- Invoice Type Filter -->
-            {{-- <div class="flex items-center mt-4">
-                <label for="invoice_type" class="w-32 text-sm font-medium text-gray-900">Invoice Type:</label>
-                <select id="invoice_type" name="invoice_type" wire:model="invoiceTypeFilter"
-                    class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                    <option value="">All</option>
-                    @foreach ($reservationTypes as $type)
-                    <option value="{{ $type->reservation_type_id }}">{{ $type->name }}</option>
-                    @endforeach
-                </select>
-            </div> --}}
         </div>
 
         <!-- Table Content -->
@@ -86,8 +88,7 @@
             <div class="flex flex-col items-center justify-center text-center">
                 <!-- Spinner -->
                 <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                        stroke-width="4" />
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                 </svg>
@@ -116,31 +117,30 @@
                 </thead class="dark:bg-gray-700">
                 <tbody wire:loading.remove wire:target="search, invoiceStatusFilter">
                     @forelse ($invoices as $invoice)
-                        <tr
-                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
-                                <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
-                            </td>
-                            <td class="px-4 py-3 dark:text-gray-200">
-                                {{ $invoice->transaction->transactionUser->first_name ?? '' }}
-                                {{ $invoice->transaction->transactionUser->last_name ?? '' }}
-                            </td>
-                            <td class="px-4 py-3">{{ $invoice->transaction->transaction_number ?? 'N/A' }}</td>
-                            <td class="px-4 py-3">
-                                {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
-                            </td>
-                            <td class="px-4 py-3">
-                                {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
-                            </td>
-                            <td class="px-4 py-3">₱{{ number_format($invoice->sub_total, 2) }}</td>
-                            <td class="px-4 py-3">₱{{ number_format($invoice->balance_due, 2) }}</td>
-                            <td class="px-4 py-3">
-                                {{ ucfirst($invoice->invoice_type ?? 'N/A') }}
-                            </td>
-                            <td class="px-4 py-3">
-                                <span
-                                    class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
+                    <tr
+                        class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
+                            <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
+                        </td>
+                        <td class="px-4 py-3 dark:text-gray-200">
+                            {{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                            {{ $invoice->transaction->transactionUser->last_name ?? '' }}
+                        </td>
+                        <td class="px-4 py-3">{{ $invoice->transaction->transaction_number ?? 'N/A' }}</td>
+                        <td class="px-4 py-3">
+                            {{ optional($invoice->created_at)->format('M j, Y') ?? 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3">
+                            {{ optional($invoice->due_date)->format('M j, Y') ?? 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3">₱{{ number_format($invoice->sub_total, 2) }}</td>
+                        <td class="px-4 py-3">₱{{ number_format($invoice->balance_due, 2) }}</td>
+                        <td class="px-4 py-3">
+                            {{ ucfirst($invoice->invoice_type ?? 'N/A') }}
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="inline-block text-center py-1 px-2 rounded-full text-xs font-semibold
                                     {{ $invoice->invoice_status === 'pending'
                                        ? 'bg-yellow-100 text-yellow-500'
                                        : ($invoice->invoice_status === 'completed'
@@ -150,25 +150,25 @@
                                         : ($invoice->invoice_status === 'overdue'
                                         ? 'bg-pink-100 text-pink-500'
                                         : 'bg-gray-100 text-gray-500'))) }}">
-                                    {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
-                                </span>
-                            </td>
+                                {{ ucfirst($invoice->invoice_status ?? 'Unknown') }}
+                            </span>
+                        </td>
 
-                            {{-- <td class="px-4 py-3 space-x-1">
-                                            <!-- View Icon -->
-                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
-                                                href="#"></i>
-                                            <!-- Delete Icon -->
-                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#"></i>
-                                        </td> --}}
+                        {{-- <td class="px-4 py-3 space-x-1">
+                            <!-- View Icon -->
+                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer" wire:navigate
+                                href="#"></i>
+                            <!-- Delete Icon -->
+                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer" href="#"></i>
+                        </td> --}}
 
-                        </tr>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="15" class="text-center py-10 text-gray-500">
-                                No payments found.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="15" class="text-center py-10 text-gray-500">
+                            No payments found.
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
