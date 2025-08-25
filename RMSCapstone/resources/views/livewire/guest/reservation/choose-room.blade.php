@@ -132,20 +132,31 @@
                                                     </p>
                                                 @endif
 
-                                                <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }} </p>
+                                                <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }}
+
+                                                </p>
 
                                                 <p class="mt-4 text-lg font-medium">
                                                     Rate Per Night:
                                                     @if ($room->rate_name || $room->rate_type)
-                                                        <span class="text-green-700 font-bold">
-                                                            ₱{{ number_format($room->dynamic_rate, 2) }}
-                                                        </span>
+                                                        @if ($room->amount > $room->dynamic_rate)
+                                                            <span class="text-red-500 font-semibold line-through mr-2 text-sm">
+                                                                ₱{{ number_format($room->amount, 2) }}
+                                                            </span>
+                                                            <span class="text-green-700 font-bold">
+                                                                ₱{{ number_format($room->dynamic_rate, 2) }}
+                                                            </span>
+                                                        @else
+                                                            <span class="text-green-700 font-bold">
+                                                                ₱{{ number_format($room->dynamic_rate, 2) }}
+                                                            </span>
+                                                        @endif
                                                         <br>
                                                         <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold mb-3
                                                             @if ($room->rate_type === 'Weekend') bg-yellow-100 text-yellow-700
                                                             @elseif ($room->rate_type === 'Weekdays') bg-green-100 text-green-700
                                                             @elseif ($room->rate_type === 'Peak') bg-red-100 text-red-700
-                                                            @elseif ($room->rate_type === 'Holiday')bg-purple-100 text-purple-700
+                                                            @elseif ($room->rate_type === 'Holiday') bg-purple-100 text-purple-700
                                                             @else bg-gray-100 text-gray-600
                                                             @endif ">
                                                             {{ $room->rate_name }}
@@ -223,7 +234,10 @@
                                                                 </li>
 
                                                                 <li><strong>Description:</strong>
-                                                                    {{ $room->description }}
+                                                                    {{ $room->name_number }} is a room ideal for {{ $room->ideal_guest }} guest{{ $room->ideal_guest > 1 ? 's' : '' }} with a maximum capacity of {{ $room->max_adults }} Adults and {{ $room->max_kids }} Kids.
+                                                                    {{-- It features {{ $room->bed_quantity }} {{ strtolower($room->bed_type) }} bed{{ $room->bed_quantity > 1 ? 's' : '' }}. --}}
+                                                                    The base rate is ₱{{ number_format($room->amount, 2) }}{{ $room->extra_person_charge ? ', with an extra charge of ₱' . number_format($room->extra_person_charge, 2) . ' per additional guest per night' : '' }}.
+
                                                                 </li>
 
                                                                 <li><strong>Rate Per Night:</strong>

@@ -534,7 +534,7 @@
                 <div class="absolute inset-x-0 bottom-2 px-4">
                     <button type="button" wire:click="confirmLogout"
                         class="relative flex w-full items-center justify-center text-white border hover:text-white hover:bg-red-700 space-x-2 rounded-md p-2 cursor-pointer">
-                        <h1 ax-cloak x-show="$store.sidebar.full">Logout</h1>
+                        <h1 ax-cloak x-show="$store.sidebar.full">Log Out</h1>
                         <i class="fa-solid fa-sign-out"></i>
                     </button>
 
@@ -604,13 +604,13 @@
     </div>
 
     <!-- Logout Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmLogoutItem">
+    <x-dialog-modal wire:model.live="confirmLogoutItem" type="ghost">
         <x-slot name="title">
-            {{ __('Logout') }}
+            {{ __('Log Out') }}
         </x-slot>
 
         <x-slot name="content">
-            {{ __('Are you sure you want to logout?') }}
+            {{ __('Are you sure you want to log out?') }}
         </x-slot>
 
         <x-slot name="footer">
@@ -619,7 +619,7 @@
             </x-secondary-button>
 
             <x-button class="ms-3 bg-green text-white" wire:click="logout" wire:loading.attr="disabled">
-                {{ __('Logout') }}
+                {{ __('Log Out') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>
