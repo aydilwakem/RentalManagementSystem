@@ -23,6 +23,8 @@ class Invoice extends Model
         'invoice_number',
         'invoice_type',
         'sub_total',
+        'base_subtotal',
+        'total_discount',
         'requested_remaining_balance',
         'deposit_paid',
         'amount_paid',
@@ -34,6 +36,8 @@ class Invoice extends Model
 
     protected $casts = [
         'sub_total'     => 'decimal:2',
+        'base_subtotal'     => 'decimal:2',
+        'total_discount'     => 'decimal:2',
         'deposit_paid'  => 'decimal:2',
         'amount_paid'   => 'decimal:2',
         'balance_due'   => 'decimal:2',
@@ -54,6 +58,8 @@ class Invoice extends Model
                 'invoice_number',
                 'invoice_type',
                 'sub_total',
+                'base_subtotal',
+                'total_discount',
                 'requested_remaining_balance',
                 'deposit_paid',
                 'amount_paid',
@@ -85,5 +91,13 @@ class Invoice extends Model
     public function receipt()
     {
         return $this->hasOne(Receipt::class, 'invoice_id');
+    }
+
+    /**
+     * Get all discounts applied to this invoice
+     */
+    public function discounts()
+    {
+        return $this->hasMany(InvoiceDiscount::class, 'invoice_id');
     }
 }

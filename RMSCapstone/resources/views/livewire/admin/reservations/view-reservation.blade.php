@@ -915,13 +915,62 @@
                         </tbody>
                     </table>
 
-                    <!-- Sub Total -->
-                    <div class="flex justify-between font-semibold text-base mt-2 text-gray-700 mb-2">
-                        Subtotal:
-                        <div>
-                            ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                        </div>
+                  
+
+                    <!-- Subtotal -->
+                    <div class="mt-2 mb-1 flex justify-between font-semibold text-base text-gray-700">
+                        <span>Subtotal:</span>
+                        <span>₱{{ number_format($this->computeBaseSubtotal(), 2) }}</span>
                     </div>
+
+                    <!-- Discounts applied -->
+                    @if($invoice->discounts->count() > 0)
+                        <div class="mb-1 text-gray-600 text-sm">
+                            @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
+                                @php
+                                    $type = $discounts->first()->discountType;
+                                    $count = $discounts->sum('quantity'); 
+                                    $totalValue = $discounts->sum('discount_value'); 
+                                @endphp
+                                <div class="flex justify-between items-center">
+                                    <span>
+                                        - {{ strtoupper($type->name) }} x {{ $count }}
+                                        @if($type->type === 'percent')
+                                            ({{ $type->rate }}%)
+                                        @else
+                                            (Fixed)
+                                        @endif
+                                    </span>
+
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <span>₱{{ number_format($totalValue, 2) }}</span>
+
+                                        <!-- Remove button -->
+                                        <button 
+                                            wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})" 
+                                            class="text-red-500 hover:text-red-700 text-xs"
+                                        >
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+
+                
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+
+                    <!-- Subtotal with discount -->
+                    <div class="flex justify-between font-semibold text-base text-gray-700">
+                        <span>Subtotal with discount:</span>
+                        <span>₱{{ number_format($this->computeInvoiceWithDiscount(), 2) }}</span>
+                    </div>
+
+
+
+                   
 
                     @if ($transaction->promoCode)
                     <!-- Promo Applied -->
@@ -1027,6 +1076,14 @@
                     @endif
                 </div>
                 <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
+
+                <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
+@if (!$this->discountsApplied)
+    <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
+        Add PWD/SENIOR DISCOUNT
+    </x-button>
+@endif
+<!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
 
             </div>
             @else
@@ -1969,15 +2026,48 @@
                         @enderror
                     </div>
 
-                    {{-- Vaccination Card Upload --}}
-                    <div class="mb-4">
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Vaccination
-                            Card (PDF)</label>
-                        <input type="file" wire:model="vaccinationCard" accept="application/pdf"
-                            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                        @error('vaccinationCard')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    {{-- Actions --}}
+                    <div class="flex justify-between mt-6">
+                        <x-ghost-button wire:click="closeModal">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="savePet">
+                            Save Changes
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+
+            {{-- Add Discounts Modal --}}
+            @if ($activeModal === 'discounts')
+            <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                    
+                    {{-- Header --}}
+                    <div
+                        class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                        <h2 class="text-2xl font-bold text-center">Add PWD/Senior Discounts</h2>
+                        <button wire:click="closeModal"
+                            class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                            <span class="-translate-y-[2px]">&times;</span>
+                        </button>
+                    </div>
+
+                    {{-- Form Fields --}}
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-medium mb-1">Number of PWDs</label>
+                            <input type="number" min="0" wire:model="pwdCount"
+                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Number of Seniors</label>
+                            <input type="number" min="0" wire:model="seniorCount"
+                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
                     </div>
 
                     {{-- Actions --}}
@@ -1985,7 +2075,7 @@
                         <x-ghost-button wire:click="closeModal">
                             Cancel
                         </x-ghost-button>
-                        <x-button wire:click="savePet">
+                        <x-button wire:click="applyDiscounts">
                             Save Changes
                         </x-button>
                     </div>

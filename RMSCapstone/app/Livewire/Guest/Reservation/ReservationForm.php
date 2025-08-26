@@ -1300,6 +1300,7 @@ class ReservationForm extends Component
             'transaction_id' => $transaction->id,
             'invoice_number' => $this->generateInvoiceNumber(),
             'invoice_type' => 'Room',
+            'base_subtotal' => $totalAmount, // but this is not modifiable
             'sub_total' => $totalAmount,
             'deposit_paid' => 0,
             'amount_paid' => 0,

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\Invoice;
+use App\Models\InvoiceDiscount;
 use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -43,18 +44,23 @@ class InvoiceService
             ?->where('payment_status', 'completed')
             ->sum('convenience_fee') ?? 0;
 
-        // Use fallback from transaction if no successful payment fee found
+        // Fallback from transaction if no completed payment fee
         if ($convenienceFeeTotal == 0 && $transaction->convenience_fee > 0) {
             $convenienceFeeTotal = $transaction->convenience_fee;
         }
 
-        // Grand total is equal to the subtotal and convenience fee total
-        $grandTotal = $subtotal + $convenienceFeeTotal;
+        // Subtract discounts if any
+        $totalDiscount = $invoice->total_discount ?? 0;
+
+        // Grand total
+        $grandTotal = $subtotal - $totalDiscount + $convenienceFeeTotal;
 
         $invoice->update([
-            'sub_total' => $grandTotal // in the database it is saved as sub_total
+            'base_subtotal' => $subtotal,
+            'sub_total' => $grandTotal // stored in the database
         ]);
     }
+
 
 
     public function updateBalanceDue(Invoice $invoice): void
@@ -91,5 +97,15 @@ class InvoiceService
                 'completed_at' => null,
             ]);
         }
+    }
+
+    public function updateDiscountTotal(Invoice $invoice)
+    {
+        $totalDiscount = InvoiceDiscount::where('invoice_id', $invoice->id)
+            ->sum('discount_value');
+
+        $invoice->update([
+            'total_discount' => $totalDiscount,
+        ]);
     }
 }

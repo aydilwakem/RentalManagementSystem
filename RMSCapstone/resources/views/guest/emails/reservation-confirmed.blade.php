@@ -27,7 +27,7 @@
         {{-- Header --}}
         <div
             style="background-color: #166534; color: #fff; padding: 25px 30px; border-top-left-radius: 8px; border-top-right-radius: 8px; text-align: center;">
-            <img src="{{ asset('storage/' .   $logo_path) }}" alt=" {{ $branding_company_name }}"
+            <img src="{{ asset('storage/' . $logo_path) }}" alt=" {{ $branding_company_name }}"
                 style="max-height: 50px;">
             <h1 style="font-size: 28px; font-weight: 700; margin: 0; padding-top: 10px;">
                 Your Reservation is Confirmed!
@@ -43,7 +43,7 @@
                 verified, and your reservation at {{ $branding_company_name}} is now officially confirmed!
             </p>
             <p style="margin-bottom: 15px; text-align: justify;">Thank you for choosing to stay with us at {{
-                $branding_company_name }}.
+    $branding_company_name }}.
                 We’re excited to
                 welcome you with warm hospitality and provide a peaceful escape where you can relax, unwind, and create
                 unforgettable memories. Below are the details of your reservation for your review and reference.
@@ -64,17 +64,20 @@
                                 Number:</strong></td>
                         <td
                             style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right; color: #166534; font-weight: bold;">
-                            {{ $invoice_number }}</td>
+                            {{ $invoice_number }}
+                        </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; color: #555;">Check-in Date:</td>
                         <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right;">
-                            {{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}</td>
+                            {{ \Carbon\Carbon::parse($check_in)->format('F j, Y') }}
+                        </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; color: #555;">Check-out Date:</td>
                         <td style="padding: 8px 0; border-bottom: 1px dashed #e0e0e0; text-align: right;">
-                            {{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}</td>
+                            {{ \Carbon\Carbon::parse($check_out)->format('F j, Y') }}
+                        </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #555;"><strong>Total Amount:</strong></td>
@@ -105,59 +108,108 @@
                     <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
                 </tr>
                 @foreach ($properties as $property)
-                <tr>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
-                        {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) }}
-                    </td>
-                    {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td>
-                    --}}
-                    {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
-                    --}}
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                        {{ $property->pivot->days ?? '1' }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                        ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                        ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                            {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) }}
+                        </td>
+                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->adults ?? '0' }}</td>
+                        --}}
+                        {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
+                        --}}
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                            {{ $property->pivot->days ?? '1' }}
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                            ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                            ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                    </tr>
                 @endforeach
             </table>
 
             {{-- Activities --}}
             @if (count($activities))
-            <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
-                Add-On Activities</h3>
-            <table cellpadding="10" cellspacing="0"
-                style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
-                <tr style="background-color: #E8F5E9;">
-                    <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Activity</th>
-                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
-                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
-                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
-                </tr>
-                @foreach ($activities as $activity)
-                <tr>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $activity->name }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                        {{ $activity->pivot->quantity }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                        ₱{{ number_format($activity->amount, 2) }}</td>
-                    <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
-                        ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
-                </tr>
-                @endforeach
-            </table>
+                <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                    Add-On Activities</h3>
+                <table cellpadding="10" cellspacing="0"
+                    style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                    <tr style="background-color: #E8F5E9;">
+                        <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Activity</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
+                    </tr>
+                    @foreach ($activities as $activity)
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $activity->name }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                                {{ $activity->pivot->quantity }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($activity->amount, 2) }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($activity->amount * $activity->pivot->quantity, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </table>
+            @endif
+
+            {{-- Services --}}
+            @if (count($services))
+                <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                    Additional Charges</h3>
+                <table cellpadding="10" cellspacing="0"
+                    style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                    <tr style="background-color: #E8F5E9;">
+                        <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Charge</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Quantity</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Unit Price</th>
+                        <th style="padding: 12px; border-bottom: 1px solid #eee;">Subtotal</th>
+                    </tr>
+                    @foreach ($services as $service)
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $service->name }}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                                {{ $service->pivot->quantity ?? 1 }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($service->amount, 2) }}
+                            </td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                                ₱{{ number_format($service->amount * ($service->pivot->quantity ?? 1), 2) }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
             @endif
 
             {{-- Price Breakdown --}}
             <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 25px;">
                 <h3 style="color: #166534; margin-top: 0; margin-bottom: 10px;">Total Breakdown</h3>
                 <table width="100%" cellpadding="5" cellspacing="0" style="font-size: 15px;">
+
+                    <tr>
+                        <td style="text-align: left; ">Subtotal:</td>
+                        <td style="text-align: right;">₱{{ number_format($invoice_basesubtotal, 2) }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <td style="text-align: left; ">Total discount:</td>
+                        <td style="text-align: right;">- ₱{{ number_format($invoice_total_discount, 2) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: left; ">Convenience Fee:</td>
+                        <td style="text-align: right;">₱{{ number_format($convenience_fee, 2) }}</td>
+                    </tr>
+
                     <tr>
                         <td style="text-align: left; ">Amount Paid:</td>
                         <td style="text-align: right;">₱{{ number_format($amount_paid, 2) }}</td>
                     </tr>
+
                     <tr>
                         <td style="text-align: left; padding-bottom: 5px;">Remaining Balance:</td>
                         <td
@@ -165,14 +217,17 @@
                             ₱{{ number_format($balance_due, 2) }}
                         </td>
                     </tr>
+
                     <tr>
                         <td colspan="2" style="border-top: 1px solid #ddd; padding-top: 10px;"></td>
                     </tr>
+
                     <tr>
                         <td style="text-align: left; font-size: 18px; font-weight: bold;">Grand Total:</td>
                         <td style="text-align: right; font-size: 18px; font-weight: bold; color: #166534;">
                             ₱{{ number_format($total_amount, 2) }}</td>
                     </tr>
+
                 </table>
             </div>
 
@@ -316,7 +371,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block;">&copy; {{ date('Y') }} {{
-                $branding_company_name }}. All rights reserved.</span>
+    $branding_company_name }}. All rights reserved.</span>
         </div>
     </div>
 </body>

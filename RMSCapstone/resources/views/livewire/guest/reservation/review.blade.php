@@ -281,15 +281,33 @@
 
                 </div> --}}
 
+                {{-- Disclaimer --}}
+                <div style="
+                background-color: #fffacd; /* Light yellow background for attention */
+                border: 1px solid #e6b300; /* Yellow border */
+                border-left: 5px solid #e6b300;
+                border-radius: 5px;
+                padding: 15px;
+                margin-bottom: 25px;
+                color: #333333;
+                font-size: 15px;
+                line-height: 1.4;">
+                    <strong>Note:</strong> Senior citizens and PWD guests are entitled to a <strong>20%
+                        discount</strong> on their share of the base price.
+                    This discount will be applied upon check-in <strong>with presentation of a valid Senior Citizen or
+                        PWD ID</strong>.
+                    Please ensure to bring the required ID to avail of the discount.
+                </div>
+
                 <!-- Summary -->
                 <div class="border-t-2 border-gray-200 pt-6">
                     <div class="flex flex-col">
 
-                        <!-- Subtotal -->
+                        {{-- <!-- Subtotal -->
                         <div class="flex justify-between items-center">
                             <h3 class="text-lg text-gray-700">Subtotal</h3>
                             <div class="text-lg">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
-                        </div>
+                        </div> --}}
 
                         <!-- Subtotal without discount -->
                         <div class="flex justify-between items-center">

@@ -159,9 +159,22 @@ class ReservationList extends Component
      * Confirms the selected transaction
      */
 
+
+
+    public function computeInvoiceWithDiscount(): float
+    {
+        $baseSubtotal = $this->computeBaseSubtotal();
+
+        // Sum of all applied discounts (PWD + Senior, etc.)
+        $totalDiscount = $this->invoice->discounts->sum('discount_value') ?? 0;
+
+        return max($baseSubtotal - $totalDiscount, 0);
+    }
+
+
     public function confirmReservation($id)
     {
-        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities'])->find($id);
+        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities', 'services'])->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -178,6 +191,7 @@ class ReservationList extends Component
         $invoice = $transaction->invoice;
         $properties = $transaction->properties;
         $activities = $transaction->activities;
+        $services = $transaction->services;
 
         if (!$user || !$invoice) {
             logger()->error('User or invoice not found for transaction ID ' . $id);
@@ -190,20 +204,26 @@ class ReservationList extends Component
 
         // Prepare data for email
         $reservationData = [
+            'properties' => $properties,
+            'activities' => $activities,
+            'services' => $services,
             'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'transaction_number' => $transaction->id,
             'email' => $user->email,
-            'invoice_number' => $invoice->invoice_number,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
-            'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
+            'convenience_fee' => $transaction->convenience_fee,
+
+            'invoice_number' => $invoice->invoice_number,
+            'invoice_basesubtotal' => $invoice->base_subtotal,
+            'invoice_total_discount' => $invoice->total_discount,
+            'invoice_subtotal' => $invoice->sub_total,
             'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
             'balance_due' => $invoice->balance_due,
-            'properties' => $properties,
-            'activities' => $activities,
+            'total_amount' => $invoice->sub_total,
 
             // Branding
             'branding_company_name' => $setting->company_name,
@@ -261,6 +281,7 @@ class ReservationList extends Component
         $user = $transaction->transactionUser;
         $properties = $transaction->properties;
         $activities = $transaction->activities;
+        $services = $transaction->services;
 
         if (!$user) {
             logger()->error('User not found for transaction ID ' . $id);
@@ -277,15 +298,23 @@ class ReservationList extends Component
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'transaction_number' => $transaction->id,
-            'invoice_number' => $invoice->invoice_number,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
-            'total_amount' => $invoice->amount_paid,
             'deposit' => $transaction->deposit_paid,
-            'amount_paid' => $invoice->amount_paid,
+
+
+            'convenience_fee' => $transaction->convenience_fee,
+
+            'invoice_number' => $invoice->invoice_number,
+            'invoice_basesubtotal' => $invoice->base_subtotal,
+            'invoice_total_discount' => $invoice->total_discount,
+            'invoice_subtotal' => $invoice->sub_total,
+            'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
             'balance_due' => $invoice->balance_due,
+            'total_amount' => $invoice->sub_total,
             'properties' => $properties,
             'activities' => $activities,
+            'services' => $services,
 
             // Branding
             'branding_company_name' => $setting->company_name,
@@ -466,7 +495,8 @@ class ReservationList extends Component
     }
 
     // ---------------------------------- LAZY LOADING ---------------------------- //
-    public function placeholder (){
+    public function placeholder()
+    {
         return view('livewire.admin.placeholder');
     }
 }

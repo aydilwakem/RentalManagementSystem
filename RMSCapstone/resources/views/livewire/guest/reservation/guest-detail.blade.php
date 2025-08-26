@@ -129,7 +129,7 @@
                             <textarea type="text" wire:model="special_requests.{{ $index }}.request" rows="3"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 resize-none"
                                 placeholder="Requests are still subject for approval">
-                                </textarea>
+                                        </textarea>
                         </div>
                         <button wire:click.prevent="removeSpecialRequest({{ $index }})"
                             class="text-red-600 hover:text-red-800 text-sm">Remove</button>
@@ -152,8 +152,8 @@
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-800 dark:text-gray-200">No</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets"
-                                        value="1" class="sr-only peer">
+                                    <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets" value="1"
+                                        class="sr-only peer">
                                     <div
                                         class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 transition peer-focus:ring-2 peer-focus:ring-green-500">
                                     </div>
@@ -167,36 +167,6 @@
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        @if ($bringingPets)
-                            <!-- Pet Fee Notice -->
-                            <div class="text-sm text-yellow-800 bg-yellow-100 p-2 rounded-md border border-yellow-300">
-                                <strong>Note:</strong> A ₱300 fee will be charged per pet, per night.
-                            </div>
-
-                            <!-- Add Pet Form -->
-                            <div>
-                                <label for="breed"
-                                    class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                    Add a Pet
-                                </label>
-                                <div class="flex gap-3">
-                                    <input type="text" id="breed" wire:model="breed"
-                                        class="flex-1 border border-gray-300 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                        placeholder="Ex. Labrador" />
-                                    <x-button type="button" wire:click="addMultiplePets"
-                                        class="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md">
-                                        Add Pet
-                                    </x-button>
-                                </div>
-                                @error('breed')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        @endif
-                        @error('bringingPets')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
                 </div>
 
@@ -315,8 +285,7 @@
 
             <!-- Add Guest Modal -->
             @if ($showGuestModal)
-                <div id="guestModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
                         <h2 class="text-xl font-bold mb-4 text-center text-green-700">Enter Additional Guest
                             Details</h2>
@@ -380,8 +349,7 @@
 
                         <!-- Gender -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Gender <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Gender <span class="text-red-500">*</span></label>
                             <select wire:model="guest_gender"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Gender</option>
@@ -396,8 +364,7 @@
 
                         <!-- Residency -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Residency <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Residency <span class="text-red-500">*</span></label>
                             <select wire:model="guest_residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Residency</option>
@@ -440,8 +407,8 @@
                                     <!-- Spinner -->
                                     <span wire:loading class="mr-2" wire:target="addMultipleGuests">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>
@@ -471,8 +438,7 @@
                             <div>
                                 <label class="block text-sm text-gray-800">First Name <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" wire:model.defer="editingGuest.guest_first_name"
-                                    placeholder="Ex. Juan"
+                                <input type="text" wire:model.defer="editingGuest.guest_first_name" placeholder="Ex. Juan"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                                 @error('editingGuest.guest_first_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -529,8 +495,7 @@
 
                         <!-- Gender -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Gender <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Gender <span class="text-red-500">*</span></label>
                             <select wire:model.defer="editingGuest.guest_gender"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Gender</option>
@@ -545,8 +510,7 @@
 
                         <!-- Residency -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Residency <span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Residency <span class="text-red-500">*</span></label>
                             <select wire:model.defer="editingGuest.guest_residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Residency</option>
@@ -586,16 +550,14 @@
 
             <!-- Add Pet Modal -->
             @if ($addPetModal)
-                <div id="guestModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
                         <h2 class="text-xl font-bold mb-4 text-center text-green-700">Enter Pet
                             Details</h2>
 
                         <!-- Pet Breed -->
                         <div>
-                            <label class="block text-sm text-gray-700">Pet Breed<span
-                                    class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-700">Pet Breed<span class="text-red-500">*</span></label>
                             <input type="text" wire:model="breed" placeholder="Ex. Labrador"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                             @error('breed')
@@ -617,8 +579,8 @@
                                     <!-- Spinner -->
                                     <span wire:loading class="mr-2" wire:target="addMultiplePets">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>

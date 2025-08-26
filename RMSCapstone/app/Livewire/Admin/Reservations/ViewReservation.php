@@ -14,6 +14,8 @@ use App\Models\TransactionActivity;
 use App\Models\Activity;
 use App\Models\Service;
 use App\Models\GuestDetail;
+use App\Models\DiscountType;
+use App\Models\InvoiceDiscount;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -142,6 +144,8 @@ class ViewReservation extends Component
     public $roomTotalKids;
     public $editingBreed;
     public $countries;
+
+
 
 
 
@@ -407,6 +411,124 @@ class ViewReservation extends Component
         }
     }
 
+
+    /**
+     * -------------------- PWD/SENIOR DISCOUNT MANAGEMENT -----------------------------
+     *
+     * 
+     *
+     * ---------------------------------------------------------------------------------
+     */
+
+    public $pwdCount;
+    public $seniorCount;
+
+    public function applyDiscounts()
+    {
+        // Validate inputs
+        $this->validate([
+            'pwdCount' => 'required|integer|min:0',
+            'seniorCount' => 'required|integer|min:0',
+        ]);
+
+        $totalDiscount = 0;
+
+        // Fetch discount types
+        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
+
+        // Helper function to calculate discount per person
+        $calculateDiscount = function ($discountType, $count = 1) {
+            if (!$discountType || $count <= 0) return 0;
+
+            if ($discountType->type === 'percent') {
+                return ($this->invoice->base_subtotal / $this->transaction->pax) * ($discountType->rate / 100) * $count;
+            } elseif ($discountType->type === 'fixed') {
+                return $discountType->rate * $count;
+            }
+
+            return 0;
+        };
+
+        // Delete existing PWD & Senior discount rows before applying new ones
+        InvoiceDiscount::where('invoice_id', $this->invoice->id)
+            ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
+            ->delete();
+
+        // Apply PWD discounts per person
+        for ($i = 0; $i < $this->pwdCount; $i++) {
+            $amount = $calculateDiscount($pwdDiscountType, 1);
+            InvoiceDiscount::create([
+                'invoice_id' => $this->invoice->id,
+                'discount_type_id' => $pwdDiscountType->id,
+                'discount_value' => $amount,
+                'quantity' => 1,
+            ]);
+            $totalDiscount += $amount;
+        }
+
+        // Apply Senior discounts per person
+        for ($i = 0; $i < $this->seniorCount; $i++) {
+            $amount = $calculateDiscount($seniorDiscountType, 1);
+            InvoiceDiscount::create([
+                'invoice_id' => $this->invoice->id,
+                'discount_type_id' => $seniorDiscountType->id,
+                'discount_value' => $amount,
+                'quantity' => 1,
+            ]);
+            $totalDiscount += $amount;
+        }
+
+        // Update invoice totals
+        $this->invoice->update([
+            'total_discount' => $totalDiscount,
+            'sub_total' => $this->invoice->base_subtotal - $totalDiscount + $this->computeConvenienceFeeTotal(),
+            'balance_due' => $this->invoice->base_subtotal - $totalDiscount + $this->computeConvenienceFeeTotal() - $this->invoice->amount_paid,
+        ]);
+
+        // Refresh model and relationships so Blade sees updated discounts
+        $this->invoice->refresh();
+
+        $this->closeModal();
+
+        session()->flash('success', 'Discounts applied successfully!');
+    }
+
+    public function getDiscountsAppliedProperty()
+    {
+        $appliedTypes = $this->invoice->discounts->pluck('discount_type_id')->toArray();
+        $requiredTypes = DiscountType::whereIn('name', ['pwd', 'senior'])->pluck('id')->toArray();
+
+        // Check if all required discount types are already applied
+        return empty(array_diff($requiredTypes, $appliedTypes));
+    }
+
+    public function computeInvoiceWithDiscount(): float
+    {
+        $baseSubtotal = $this->computeBaseSubtotal() + $this->computeConvenienceFeeTotal();
+
+        // Sum of all applied discounts (PWD + Senior, etc.)
+        $totalDiscount = $this->invoice->discounts->sum('discount_value') ?? 0;
+
+        return max($baseSubtotal - $totalDiscount, 0);
+    }
+
+
+    public function removeDiscount($invoiceId, $discountTypeId)
+    {
+        $discount = InvoiceDiscount::where('invoice_id', $invoiceId)
+            ->where('discount_type_id', $discountTypeId)
+            ->first();
+
+        if ($discount) {
+            $discount->delete(); // removes the row completely
+        }
+
+        $this->invoice->refresh();
+        $this->recalculateInvoice();
+
+        Log::info("Removed discount type {$discountTypeId} from invoice {$invoiceId}");
+    }
 
 
 
@@ -1079,6 +1201,7 @@ class ViewReservation extends Component
     public function recalculateInvoice()
     {
         $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateDiscountTotal($this->invoice);
         $this->invoiceService->updateBalanceDue($this->invoice);
         $this->invoiceService->updateStatus($this->invoice);
 

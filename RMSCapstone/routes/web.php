@@ -286,7 +286,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/services', function () {
         return view('admin.services.view-services');
     })->name('admin.services')
-    ->middleware('can:service-list');
+        ->middleware('can:service-list');
 
     // Create
     Route::get('create/create-service', function () {
@@ -522,18 +522,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/reservations/promo-codes', function () {
         return view('admin.settings.promo-codes.view-promo-codes');
     })->name('admin.view-promo-codes')
-    ->middleware('can:promo-code-list');
+        ->middleware('can:promo-code-list');
 
     //Create
     Route::get('/reservations/create/promo-code', function () {
         return view('admin.settings.promo-codes.create-promo-code');
     })->name('admin.create-promo-code')
-    ->can('promo-code-create');
+        ->can('promo-code-create');
 
     //View
     Route::get('reservations/view/promo-code/{promoCode}', ViewPromoCode::class)
-    ->name('admin.view-promo-code')
-    ->middleware('can:promo-code-view');
+        ->name('admin.view-promo-code')
+        ->middleware('can:promo-code-view');
 
     //Edit
     Route::get('reservations/edit/promo-code/{promoCode}', EditPromoCode::class)
@@ -544,7 +544,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('deleted-promo-codes', function () {
         return view('admin.settings.promo-codes.deleted-promo-codes');
     })->name('admin.deleted-promo-codes')
-    ->middleware('can:promo-code-soft-delete');
+        ->middleware('can:promo-code-soft-delete');
 
     /**
      * Reservations
@@ -814,7 +814,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/audit-trail', function () {
         return view('admin.activity-logs.view-activity-logs');
     })->name('admin.activity-logs')
-    ->middleware('can:activity-logs-view');
+        ->middleware('can:activity-logs-view');
 });
 
 // --------------------- TEST ROUTES FOR PAYMENT INTEGRATION ----------------------------------- //
@@ -939,44 +939,9 @@ Route::get('/reservation-completed', function () {
     return new ReservationCompletedMail($reservationData);
 });
 
-Route::get('/reservation-confirmed', function () {
-    $reservationData = [
-        'name' => 'Juan Dela Cruz',
-        'email' => 'juan.delacruz@example.com',
-        'contact_number' => '09123456789',
-        'transaction_number' => 'TXN-123456',
-        'invoice_number' => 'INV-987654',
-        'check_in' => now()->addDays(2)->toDateString(),
-        'check_out' => now()->addDays(4)->toDateString(),
-        'total_amount' => 5000,
-        'deposit' => 2000,
-        'amount_paid' => 2000,
-        'balance_due' => 3000,
-        'properties' => collect([
-            (object) [
-                'name_number' => 'Room A1',
-                'pivot' => (object) [
-                    'adults' => 2,
-                    'kids' => 1,
-                    'days' => 2,
-                    'extra_charge' => 500,
-                    'total_amount' => 2500,
-                ],
-            ],
-        ]),
-        'activities' => collect([
-            (object) [
-                'name' => 'ATV Ride',
-                'amount' => 500,
-                'pivot' => (object) [
-                    'quantity' => 2,
-                ],
-            ],
-        ]),
-    ];
 
-    return new ReservationConfirmedMail($reservationData);
-});
+
+
 
 Route::get('/contact-email', function () {
     $contactData = [
