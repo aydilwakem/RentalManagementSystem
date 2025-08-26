@@ -338,6 +338,7 @@ class ViewReservation extends Component
             $items[] = [
                 'type'          => 'service',
                 'service_id'    => $service->pivot->service_id,
+                'service_name'    => $service->name,
                 'property_id'   => $service->pivot->property_id,
                 'name'          => $service->name,
                 'property_name' => $propertyName,
@@ -582,16 +583,19 @@ class ViewReservation extends Component
             }
         }
 
-        if ($type === 'service' && $itemId == 10) {
+        if ($type === 'service') {
+            $service = Service::findOrFail($itemId);
 
-            // Service = Extra Hour
-            if (!isset($this->extraHourProperties[$itemId]) || empty($this->extraHourProperties[$itemId])) {
-                $this->addError("extraHourProperties.$itemId", 'Please select at least one property for extra hours.');
-                return;
+            if ($service->name === 'Extra Hour') {
+                // Service = Extra Hour
+                if (!isset($this->extraHourProperties[$itemId]) || empty($this->extraHourProperties[$itemId])) {
+                    $this->addError("extraHourProperties.$itemId", 'Please select at least one property for extra hours.');
+                    return;
+                }
+
+                // Add selected property IDs to context
+                $context['properties'] = $this->extraHourProperties[$itemId];
             }
-
-            // Add selected property IDs to context
-            $context['properties'] = $this->extraHourProperties[$itemId];
         }
 
         // Add to cart with the context

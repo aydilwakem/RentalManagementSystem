@@ -815,7 +815,7 @@
 
                                {{-- Unit Cost --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                    @if ($item['type'] === 'service' && $item['service_id'] == 10 && isset($item['property_extra_hour_charge']))
+                                    @if ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour' && isset($item['property_extra_hour_charge']))
                                         ₱{{ number_format($item['property_extra_hour_charge'], 2) }}
                                     @else
                                         ₱{{ number_format($item['amount'], 2) }}

@@ -132,9 +132,16 @@
                                                     </p>
                                                 @endif
 
+                                                
                                                 <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }}
 
                                                 </p>
+
+                                                  
+                                                <p class="text-sm italic text-gray-500 mt-1"> Children 2 years old and below are free of charge.
+                                                </p>
+
+                                                
 
                                                 <p class="mt-4 text-lg font-medium">
                                                     Rate Per Night:
