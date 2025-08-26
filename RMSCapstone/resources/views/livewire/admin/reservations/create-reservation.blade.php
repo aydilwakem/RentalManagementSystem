@@ -626,7 +626,8 @@
                     @endforeach
 
                     <button wire:click.prevent="addSpecialRequest"
-                        class="mt-2 text-sm text-green-600 hover:text-green-800">+ Add Request</button>
+                        class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                        <i class="fa-solid fa-circle-plus"></i> Add Request</button>
                 </div>
 
 

@@ -298,13 +298,16 @@
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
-
-                    <div class="mt-4">
+                </div>
+                <div class="mt-4">
                         <strong>Special Requests:</strong>
 
                         @forelse($transaction->special_requests as $index => $req)
                         <div class="mt-2">
-                            <span>{{ $req['request'] }}</span>
+                            <span class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
+                                {{ $req['request'] }}
+                            </span>
+
 
                             @php
                             $canModifyRequest = in_array($transaction->transaction_status, ['pending', 'reserved',
@@ -316,9 +319,9 @@
                                 <x-button wire:click="approveRequest({{ $index }})" positive xs>
                                     <i class="fas fa-check mr-1"></i>
                                 </x-button>
-                                <x-button wire:click="rejectRequest({{ $index }})" negative xs>
+                                <x-danger-button wire:click="rejectRequest({{ $index }})" negative xs>
                                     <i class="fas fa-times mr-1"></i>
-                                </x-button>
+                                </x-danger-button>
                             </span>
                             @else
                             <span class="ml-2 text-sm text-gray-600 dark:text-gray-300 inline-flex items-center gap-1">
@@ -340,11 +343,6 @@
                         </div>
                         @endforelse
                     </div>
-
-
-
-
-                </div>
             </div>
             <!------------------------- END OF TRANSACTION DETAILS ----------------------------->
 
@@ -399,7 +397,7 @@
                             @foreach ($properties as $property)
                             <tr>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    {{ $property->name_number }}</td>
+                                    {{ ucfirst($property->name_number) }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ optional($property->category)->name ?? 'N/A' }}
                                 </td>
@@ -563,7 +561,12 @@
                                     {{ $service->name }}</td>
                                 <td
                                     class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
-                                    {{ ucfirst($service->type) }}</td>
+                                    @if ($service->type == "addon")
+                                        Add On
+                                    @else
+                                        {{ ucfirst($service->type) }}
+                                    @endif
+                                </td>
                                 <td
                                     class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                     {{ $service->pivot->quantity ?? 'NA' }}</td>
@@ -623,7 +626,7 @@
                             @foreach ($guestPets as $pet)
                             <tr>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    {{ $pet->breed }}</td>
+                                    {{ ucwords($pet->breed) }}</td>
                                 <td
                                     class="border px-4 py-2 text-center text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     @if ($pet->vaccination_card)
@@ -1473,11 +1476,13 @@
                     </div>
 
                     <!-- Modal Footer -->
-                    <div class="flex justify-end gap-3 mt-6">
-                        <button wire:click="CloseCreatePaymentModal"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancel</button>
-                        <button wire:click="CreatePayment"
-                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save Changes</button>
+                    <div class="flex justify-between gap-3 mt-6">
+                        <x-ghost-button wire:click="CloseCreatePaymentModal">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="CreatePayment">
+                            Save Changes
+                        </x-button>
                     </div>
                 </div>
             </div>
@@ -1547,7 +1552,7 @@
                                                            @error('extraHourProperties')
                                                             <span class="text-red-500 text-sm">{{ $message }}</span>
                                                             @enderror
-                                                        
+
                                                         <span class="text-sm text-gray-800 dark:text-gray-200">
                                                             {{ $property->name_number }} (₱{{ number_format($property->extra_charge_per_hour, 2) }})
                                                         </span>

@@ -17,11 +17,11 @@
 
         <!-- Reservations Card -->
         <div
-            class="bg-secondary-800 border-2 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            class="bg-yellow-50 border-yellow-100 border-2 rounded-xl shadow p-6 flex items-center justify-between relative hover:shadow-md transition">
             <!-- Shortcut -->
             <div class="absolute top-2 right-2">
                 <button
-                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    class="dropdownButton text-gray-500 bg-white border hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
                     <i class="fa-solid fa-ellipsis"></i>
                 </button>
 
@@ -29,70 +29,107 @@
                 <div
                     class="dropdownMenu hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-1 z-50">
                     <a href="{{ route('admin.create-reservation') }}" wire:navigate
-                        class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        class="pl-3 block py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Create Reservation
                     </a>
                     <a href="{{ route('admin.reservations-list') }}" wire:navigate
-                        class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        class="pl-3 block py-2 text-sm text-gray-700 hover:bg-gray-100">
                         View All Reservations
                     </a>
                 </div>
             </div>
-            <i class="fas fa-calendar-check text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">New Reservations</h2>
-            <p class="text-2xl font-bold text-white">{{ $newReservations }}</p>
+
+            <!-- Icon -->
+            <div class="flex-shrink-0">
+                <div class="w-20 h-20 rounded-full bg-yellow-200 flex items-center justify-center">
+                    <i class="fas fa-calendar-check text-yellow-700 text-4xl"></i>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex flex-col items-center text-center flex-1">
+                <h2 class="text-gray-800 font-semibold">New Reservations</h2>
+                <p class="text-3xl font-bold text-gray-900">{{ $newReservations }}</p>
+            </div>
         </div>
+
+
+
 
         <!-- Events Card -->
         <div
-            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            class="bg-yellow-50 border-yellow-100 border-2 rounded-xl shadow p-6 flex items-center justify-between relative hover:shadow-md transition">
             <div class="absolute top-2 right-2">
                 <button
-                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    class="dropdownButton text-gray-500 bg-white border hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
                     <i class="fa-solid fa-ellipsis"></i>
                 </button>
 
                 <!-- Dropdown -->
                 <div
                     class="dropdownMenu hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-1 z-50">
-                    <a href="{{ route('admin.create-event') }}" wire:navigate class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('admin.create-event') }}" wire:navigate
+                        class="pl-3 block py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Create Event
                     </a>
-                    <a href="{{ route('admin.events') }}" wire:navigate class="block py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('admin.events') }}" wire:navigate
+                        class="pl-3 block py-2 text-sm text-gray-700 hover:bg-gray-100">
                         View All Events
                     </a>
                 </div>
             </div>
 
-            <i class="fas fa-bed text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">Upcoming Events</h2>
-            <p class="text-2xl font-bold text-white">{{ $upcomingEvents }}</p>
+            <!-- Icon -->
+            <div class="flex-shrink-0">
+                <div class="w-20 h-20 rounded-full bg-yellow-200 flex items-center justify-center">
+                    <i class="fas fa-bed text-yellow-700 text-4xl"></i>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex flex-col items-center text-center flex-1">
+                <h2 class="text-gray-800 font-semibold">Upcoming Events</h2>
+                <p class="text-3xl font-bold text-gray-900">{{ $upcomingEvents }}</p>
+            </div>
         </div>
 
         <!-- Maintenances Card -->
         <div
-            class="bg-secondary-800 rounded-xl shadow p-6 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition text-center relative">
+            class="bg-yellow-50 border-yellow-100 border-2 rounded-xl shadow p-6 flex items-center justify-between relative hover:shadow-md transition">
             <div class="absolute top-2 right-2">
                 <button
-                    class="dropdownButton text-green-700 bg-white hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
+                    class="dropdownButton text-gray-500 bg-white border hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-md focus:outline-none">
                     <i class="fa-solid fa-ellipsis"></i>
                 </button>
 
                 <!-- Dropdown -->
                 <div
                     class="dropdownMenu hidden absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg py-1 z-50">
-                    <a href="{{ route('admin.create-maintenance') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('admin.create-maintenance') }}" wire:navigate
+                        class="pl-3 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Create Maintenance
                     </a>
-                    <a href="{{ route('admin.maintenances') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('admin.maintenances') }}" wire:navigate
+                        class="pl-3 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         View All Maintenances
                     </a>
                 </div>
             </div>
 
-            <i class="fas fa-tools text-white text-4xl"></i>
-            <h2 class="text-white font-semibold">Pending Maintenances</h2>
-            <p class="text-2xl font-bold text-white">{{ $pendingMaintenances }}</p>
+            <!-- Icon -->
+            <div class="flex-shrink-0">
+                <div class="w-20 h-20 rounded-full bg-yellow-200 flex items-center justify-center">
+                    <i class="fas fa-tools text-yellow-700 text-4xl"></i>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex flex-col items-center text-center flex-1">
+                <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
+                <p class="text-3xl font-bold text-gray-900">{{ $pendingMaintenances }}</p>
+
+            </div>
+
         </div>
 
         <script>

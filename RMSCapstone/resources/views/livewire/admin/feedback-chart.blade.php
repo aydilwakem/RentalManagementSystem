@@ -130,8 +130,10 @@
     </div>
 
     <!-- Pending Feedbacks -->
-    <h3 class="text-lg font-semibold text-yellow-600">Pending Comments for Approval</h3>
-    <p class="text-sm text-gray-500 mb-4">These comments were submitted by guests and are awaiting your review.</p>
+    <div>
+        <h3 class="text-lg font-semibold text-yellow-600">Pending Comments for Approval</h3>
+        <p class="text-sm text-gray-500 mb-2">These comments were submitted by guests and are awaiting your review.</p>
+    </div>
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'pending') as $comment)
@@ -158,14 +160,12 @@
 
                 <!---- Approve/Reject buttons -->
                 <div class="mt-2 flex gap-2">
-                    <x-button wire:click="approveComment({{ $comment->id }})"
-                        class="bg-green-500 hover:bg-green-600 text-white">
+                    <x-button wire:click="approveComment({{ $comment->id }})">
                         Approve
                     </x-button>
-                    <x-button wire:click="rejectComment({{ $comment->id }})"
-                        class="bg-red-500 hover:bg-red-600 text-white">
+                    <x-danger-button wire:click="rejectComment({{ $comment->id }})">
                         Reject
-                    </x-button>
+                    </x-danger-button>
                 </div>
 
             </li>
@@ -176,8 +176,10 @@
     </div>
 
     <!-- Approved Feedbacks -->
-    <h3 class="text-lg font-semibold text-green-600 mt-8">Approved Comments</h3>
-    <p class="text-sm text-gray-500 mb-4">These comments are visible to guests on the booking site.</p>
+    <div>
+        <h3 class="text-lg font-semibold text-green-600 mt-8">Approved Comments</h3>
+        <p class="text-sm text-gray-500 mb-4">These comments are visible to guests on the booking site.</p>
+    </div>
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'approved') as $comment)
@@ -209,8 +211,10 @@
     </div>
 
     <!-- Rejected Feedbacks -->
-    <h3 class="text-lg font-semibold text-red-600 mt-8 mb-2">Rejected Comments</h3>
-    <p class="text-sm text-gray-500 ">These comments were declined and will not be shown publicly.</p>
+    <div>
+        <h3 class="text-lg font-semibold text-red-600 mt-8">Rejected Comments</h3>
+        <p class="text-sm text-gray-500 ">These comments were declined and will not be shown publicly.</p>
+    </div>
     <div>
         <ul class="space-y-4">
             @forelse ($comments->where('status', 'rejected') as $comment)
