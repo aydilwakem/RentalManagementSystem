@@ -58,9 +58,9 @@
                                 class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
                                 <div class="md:flex">
 
-                                    <div class="md:w-1/3">
+                                    <div class="w-full md:w-1/3">
                                         <!-- Image Container -->
-                                        <div class="relative w-full h-full overflow-hidden rounded-xl">
+                                        <div class="relative w-full h-48 md:h-full overflow-hidden rounded-xl">
                                             @php
                                             $firstImage = $room->images[0] ?? null;
                                             @endphp
@@ -132,16 +132,16 @@
                                                     </p>
                                                 @endif
 
-                                                
+
                                                 <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }}
 
                                                 </p>
 
-                                                  
+
                                                 <p class="text-sm italic text-gray-500 mt-1"> Children 2 years old and below are free of charge.
                                                 </p>
 
-                                                
+
 
                                                 <p class="mt-4 text-lg font-medium">
                                                     Rate Per Night:

@@ -50,8 +50,8 @@
                     <div class="step-room md:px-12">
                         @include('livewire.guest.reservation.step-header', ['currentStep' => $currentStep])
                         {{-- @include('livewire.guest.reservation.guest-detail') --}}
-                        @include('livewire.guest.reservation.choose-room')
-                        {{-- @include('livewire.guest.reservation.review') --}}
+                        {{-- @include('livewire.guest.reservation.choose-room') --}}
+                        @include('livewire.guest.reservation.review')
                         {{-- @include('livewire.guest.reservation.choose-activity') --}}
                     </div>
                 @endif
@@ -331,13 +331,12 @@
                             <input type="text" wire:model="promoCode"
                                 wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
                                 class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
-        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+                                {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
                                 placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
                                 {{-- optional: disable when applied --}}>
 
                             {{-- TODO: disable field when code is inputted, clear field when removed --}}
                             @if ($discountMessage)
-                                {{-- does not work yet <33 --}}
                                 <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-md font-medium focus:outline-none"
                                     title="Remove Promo Code">
@@ -405,8 +404,8 @@
                     <div class="mt-6 flex justify-between">
 
                         {{-- @if ($currentStep == 1)
-                <div> </div>
-                @endif --}}
+                        <div> </div>
+                        @endif --}}
 
                         <!-- Back button -->
                         @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
@@ -547,8 +546,8 @@
                             <span class="text-red-500 text-xs">{{ $errors->first('terms') }}</span>
                         @endif
                     </div>
+                @endif
             </div>
-        @endif
         @endif
     </div>
 </div>
