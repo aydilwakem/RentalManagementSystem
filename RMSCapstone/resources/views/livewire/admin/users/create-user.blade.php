@@ -32,26 +32,30 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name -->
                     <div>
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Full
+                        <label for="name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Full
                             Name <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="text" wire:model="name" id="name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Juan Dela Cruz" required>
                         @error('name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Email
+                        <label for="email"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Email
                             <span class="text-red-500">*</span></label>
-                        <input type="email" wire:model="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="email" wire:model="email" id="email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. juan.delacruz@example.com"
                             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$" required>
                         @error('email')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -59,43 +63,55 @@
                     <div class="sm:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Select Role <span
                                 class="text-red-500">*</span></label>
-                        <select wire:model="selectedRole" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="selectedRole"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">-- Choose a Role --</option>
                             @foreach ($roles as $role)
-                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                                <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                             @endforeach
                         </select>
                         @error('selectedRole')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Password -->
-                    <div class="sm:col-span-2">
+                    <div class="sm:col-span-2 relative">
                         <label for="password"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Password <span
                                 class="text-red-500">*</span></label>
                         <input type="password" wire:model="password" id="password"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Enter password" required>
+                        <!-- Toggle button -->
+                        <div class="absolute inset-y-0 mt-6 right-0 flex items-center pr-5">
+                            <i id="togglePassword" class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
+                        </div>
                         @error('password')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Confirm Password -->
-                    <div class="sm:col-span-2">
+                    <div class="sm:col-span-2 relative">
                         <label for="password_confirmation"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Confirm
                             Password <span class="text-red-500">*</span></label>
                         <input type="password" wire:model="password_confirmation" id="password_confirmation"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Enter password" required>
+                            placeholder="Confirm password" required>
+
+                        <!-- Toggle button -->
+                        <div class="absolute inset-y-0 mt-6 right-0 flex items-center pr-5">
+                            <i id="toggleConfirmPassword" class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
+                        </div>
                         @error('password_confirmation')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -135,3 +151,29 @@
             </x-dialog-modal>
 
         </div>
+    </div>
+    <script>
+        // Generic toggle function
+        function setupPasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const toggle = document.getElementById(toggleId);
+
+            // Show toggle only when typing
+            input.addEventListener("input", () => {
+                toggle.style.display = input.value ? "block" : "none";
+            });
+
+            // Toggle password visibility
+            toggle.addEventListener("click", function() {
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+                this.classList.toggle("fa-eye");
+                this.classList.toggle("fa-eye-slash");
+            });
+        }
+
+        // Apply to both fields
+        setupPasswordToggle("password", "togglePassword");
+        setupPasswordToggle("password_confirmation", "toggleConfirmPassword");
+    </script>
+</div>

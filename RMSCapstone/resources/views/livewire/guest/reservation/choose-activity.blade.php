@@ -16,9 +16,8 @@
 
                     <!-- Activity Image -->
                     @php
-                        $firstImage = is_array(json_decode($activity->image))
-                            ? json_decode($activity->image)[0] ?? null
-                            : null;
+                        $images = $activity->images ?? [];
+                        $firstImage = count($images) ? $images[0] : null;
                     @endphp
 
                     <img class="w-full h-48 object-cover"
@@ -66,14 +65,13 @@
                         @if ($activity->schedule_type !== 'no_schedule')
                             <div class="mt-4">
                                 @if ($activity->schedule_type === 'system')
-                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Choose Time Slot</h3>
+                                    <h3 class="text-md font-medium text-gray-900 dark:text-white">Choose Time Slot</h3>
                                     @if (is_array($activity->available_times) && count($activity->available_times))
                                         @foreach ($activity->available_times as $time)
                                             <label class="flex items-center space-x-2">
                                                 <input type="radio" name="selected_time_{{ $activity->id }}"
                                                     {{-- This groups radios per
-                                                    activity --}}
-                                                    wire:model="selectedTimes.{{ $activity->id }}"
+                                                    activity --}} wire:model="selectedTimes.{{ $activity->id }}"
                                                     value="{{ $time }}"
                                                     class="text-green-600 focus:ring-green-500 border-gray-300 text-sm">
                                                 <span class="text-gray-700 dark:text-gray-200 text-sm">
@@ -86,7 +84,8 @@
                                             activity.</p>
                                     @endif
                                 @elseif ($activity->schedule_type === 'guest')
-                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Input preferred time</h3>
+                                    <h3 class="text-md font-medium text-gray-900 dark:text-white">Input preferred time
+                                    </h3>
                                     <input type="time" wire:model.lazy="selectedTimes.{{ $activity->id }}"
                                         class="border border-gray-300 rounded px-3 py-2 w-full dark:bg-gray-700 dark:text-white">
                                 @endif
@@ -129,12 +128,7 @@
                                     @endif
                                 </div>
 
-                                <!-- Max Message Below -->
-                                @if (($quantity[$activity->id] ?? 1) >= $total_pax)
-                                    <span class="text-gray-500 text-xs mt-1">
-                                        Maximum quantity reached
-                                    </span>
-                                @endif
+
                             </div>
 
 
@@ -150,7 +144,6 @@
                                 @endphp
 
                                 @if ($activityInCart)
-
                                 @else
                                     <x-button wire:click="addActivityToCart('activity', {{ $activity->id }})"
                                         wire:loading.attr="disabled"
@@ -178,6 +171,14 @@
                                     </x-button>
                                 @endif
                             </div>
+                        </div>
+                        <!-- Max Message Below -->
+                        <div class="flex justify-center mt-1">
+                            @if (($quantity[$activity->id] ?? 1) >= $total_pax)
+                                <span class="text-gray-500 text-xs mt-1">
+                                    Maximum quantity reached
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
