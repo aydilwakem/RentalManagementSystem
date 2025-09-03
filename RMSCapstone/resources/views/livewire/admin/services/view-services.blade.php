@@ -13,7 +13,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -53,7 +53,7 @@
                             </div>
                             <input wire:model.live.debounce.300ms="search" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
-                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search"
+                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search"
                                 required="">
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                     <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
                         <button @click="open = !open" type="button"
                             class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
-                                                                dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                                                                        dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                             Actions
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -70,8 +70,9 @@
                             </svg>
                         </button>
 
-                        <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
-                                                                dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                                                                        dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                             <div class="py-1">
                                 <a wire:click.prevent="confirmDeleteInBulk" href="#"
                                     class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
@@ -193,6 +194,16 @@
                                             class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
                                             Package
                                         </span>
+                                    @elseif ($service->type == "food")
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                            Food
+                                        </span>
+                                    @elseif ($service->type == "merchandise")
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                            Merchandise
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -255,7 +266,7 @@
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live="perPage"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>

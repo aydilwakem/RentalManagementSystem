@@ -67,14 +67,37 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Payment Method</option>
                         @foreach ($payment_methods as $payment_method)
-                        <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
-                        </option>
+                            <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('payment_method_id')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+
+                {{-- Payment Type --}}
+                <div>
+                    <label for="payment_type" class="block mb-2 text-sm font-medium text-gray-900">
+                        Payment Type <span class="text-red-500">*</span>
+                    </label>
+                    <select wire:model="payment_type" id="payment_type"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Select Payment Type</option>
+                        <option value="Room Rent">Room Rent</option>
+                        <option value="House Rent">House Rent</option>
+                        <option value="Activity Fee">Activity Fee</option>
+                        <option value="Event Hall">Event Hall</option>
+                        <option value="Event Package">Event Package</option>
+                        <option value="Security Deposit">Security Deposit</option>
+                        <option value="Remaining Balance">Remaining Balance</option>
+                        <option value="Merchandise">Merchandise</option>
+                    </select>
+                    @error('payment_type')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
 
                 {{-- Transaction Number --}}
                 <div>
@@ -86,14 +109,14 @@
 
                     {{-- Display error message if transaction not found --}}
                     @if ($transactionNotFound)
-                    <span class="text-red-500 text-sm">Transaction not found. Please check the transaction
-                        ID.</span>
+                        <span class="text-red-500 text-sm">Transaction not found. Please check the transaction
+                            ID.</span>
                     @endif
 
                     {{-- Display error message if transaction status = expired --}}
                     @if ($transactionExpired)
-                    <span class="text-red-500 text-sm">Your transaction has expired. You are not allowed to upload a
-                        payment screenshot.</span>
+                        <span class="text-red-500 text-sm">Your transaction has expired. You are not allowed to upload a
+                            payment screenshot.</span>
                     @endif
                 </div>
 
@@ -109,7 +132,7 @@
                         placeholder="Enter your reference number" />
 
                     @error('payment_reference_number')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -127,40 +150,40 @@
                     class="hidden">
 
                 @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
-                <!-- Show image preview -->
-                <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
-                    <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
-                        alt="Payment Screenshot Preview"
-                        onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
+                    <!-- Show image preview -->
+                    <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
+                        <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
+                            alt="Payment Screenshot Preview"
+                            onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
 
-                    <label for="payment_screenshot"
-                        class="absolute top-1 right-1 bg-white text-gray-700 rounded-full px-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition">
-                        Re-Upload File
-                    </label>
-                </div>
-                <!-- Image Popup View -->
-                <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
-                    <div class="flex items-center justify-center min-h-screen">
-                        <div class=" relative modal-content">
-                            <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
-                            <button type="button" onclick="closeModal()"
-                                class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                                <span class="leading-none translate-y-[-3px]">&times;</span>
-                            </button>
+                        <label for="payment_screenshot"
+                            class="absolute top-1 right-1 bg-white text-gray-700 rounded-full px-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition">
+                            Re-Upload File
+                        </label>
+                    </div>
+                    <!-- Image Popup View -->
+                    <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                        <div class="flex items-center justify-center min-h-screen">
+                            <div class=" relative modal-content">
+                                <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                                <button type="button" onclick="closeModal()"
+                                    class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @else
-                <!-- Show drag and drop box -->
-                <label for="payment_screenshot">
-                    <div
-                        class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400">
-                        <div class="mb-2">
-                            <i class="fas fa-upload mr-2"></i>
+                    <!-- Show drag and drop box -->
+                    <label for="payment_screenshot">
+                        <div
+                            class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400">
+                            <div class="mb-2">
+                                <i class="fas fa-upload mr-2"></i>
+                            </div>
+                            <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
                         </div>
-                        <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
-                    </div>
-                </label>
+                    </label>
                 @endif
 
                 <!-- Loading Indicator -->
@@ -177,7 +200,7 @@
 
                 <!-- Error Message -->
                 @error('payment_screenshot')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
@@ -188,7 +211,7 @@
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                     placeholder="Enter any note (optional)" />
                 @error('notes')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 

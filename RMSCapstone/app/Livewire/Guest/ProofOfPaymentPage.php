@@ -24,6 +24,8 @@ class ProofOfPaymentPage extends Component
     use WithFileUploads;
     public $payment_methods;
     public $payment_method_id;
+
+    public $payment_type;
     public $transaction_id;
     public $payment_reference_number;
     public $payment_screenshot;
@@ -170,6 +172,7 @@ class ProofOfPaymentPage extends Component
                     'payment_method_id' => $this->payment_method_id,
                     'payment_reference_number' => $this->payment_reference_number,
                     'payment_screenshot' => $screenshotPath,
+                    'payment_type' => $this->payment_type,
                     'payment_status' => 'pending',
                     'currency' => $this->currency,
                     'notes' => $this->notes,

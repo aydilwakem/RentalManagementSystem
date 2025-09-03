@@ -1206,9 +1206,6 @@ class ReservationForm extends Component
 
             // Prepare data for confirmation email
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
-
-
-
             $reservationData['payment_link'] = $paymentLink;
         });
 
@@ -1558,6 +1555,81 @@ class ReservationForm extends Component
      */
     protected function prepareReservationData(Transaction $transaction, Invoice $invoice, float $total, float $deposit): array
     {
+
+        $cartItems = [];
+
+        // ------------------ Rooms ------------------
+        if (!empty($this->cart)) {
+            foreach ($this->cart as $item) {
+                if ($item['type'] === 'room') {
+                    $cartItems[] = [
+                        'type' => 'Room',
+                        'name' => $item['room_name'] ?? 'Unknown Room',
+                        'quantity' => $item['days'] ?? 1,
+                        'adults' => $item['adults'] ?? 1,
+                        'kids' => $item['kids'] ?? 0,
+                        'rate_name' => $item['roomRateName'] ?? '',
+                        'rate' => $item['roomRate'] ?? 0,
+                        'extra_charge' => $item['extra_charge_total'] ?? 0,
+                        'total_amount' => $item['total_amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                    ];
+                }
+            }
+        }
+
+        // ------------------ Activities ------------------
+        if (!empty($this->cart)) {
+            foreach ($this->cart as $item) {
+                if ($item['type'] === 'activity') {
+                    $cartItems[] = [
+                        'type' => 'Activity',
+                        'name' => $item['activity_name'] ?? 'Unknown Activity',
+                        'datetime' => $item['activity_datetime'] ?? null,
+                        'quantity' => $item['quantity'] ?? 1,
+                        'rate' => $item['activity_rate'] ?? 0,
+                        'total_amount' => $item['amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                        'schedule_type' => $item['activity_schedule_type'] ?? 'no_schedule',
+                    ];
+                }
+            }
+        }
+
+
+        // ------------------ Services ------------------
+        if (!empty($this->cart)) {
+            foreach ($this->cart as $item) {
+                if ($item['type'] === 'service') {
+                    $cartItems[] = [
+                        'type' => 'Service',
+                        'name' => $item['service_name'] ?? 'Unknown Service',
+                        'quantity' => $item['quantity'] ?? 1,
+                        'rate' => $item['service_rate'] ?? 0,
+                        'unit' => $item['service_unit'] ?? null,
+                        'total_amount' => $item['amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                        'extra_properties' => $item['properties_with_extra_hour'] ?? null,
+                    ];
+                }
+            }
+        }
+
+        if (!empty($this->pets)) {
+            $unitAmount = $this->getPetFeeAmount();
+            $days = $this->getStayDurationProperty();
+            $totalPets = count($this->pets);
+            $totalAmount = $unitAmount * $days * $totalPets;
+
+            $cartItems[] = [
+                'type' => 'Pet',
+                'name' => 'Pet Fee',
+                'quantity' => $totalPets,
+                'total_amount' => $totalAmount,
+                'payment_status' => 'unpaid',
+            ];
+        }
+
         return [
             'name' => $this->first_name . ' ' . $this->last_name,
             'transaction_number' => $transaction->transaction_number,
@@ -1565,8 +1637,15 @@ class ReservationForm extends Component
             'invoice_number' => $invoice->invoice_number,
             'check_in' => $this->check_in_date,
             'check_out' => $this->check_out_date,
-            'total_amount' => $total,
+            'convenience_fee' => $this->computeConvenienceFee(),
+            'base_subtotal' => $this->computeBaseSubtotal(),
+            'subtotal' => $this->computeSubtotalAmount(),
+            'promo_code' => $this->promoCode,
+            'promo_amount' => $this->promoDiscount,
+            'total_amount' => $this->computeTotalAmount(),
             'deposit' => $deposit,
+
+
             'expirationHours' => $this->expirationHours,
             'payment_link' => $this->paymentLink,
             'branding_company_name' => $this->companyName,
@@ -1576,8 +1655,11 @@ class ReservationForm extends Component
             'company_address' => $this->companyAddress,
             'facebook_link' => $this->facebookLink,
             'instagram_link' => $this->instagramLink,
+            'cart_items' => $cartItems,   // unified cart for email
+            'convenience_Fe'
         ];
     }
+
 
     /**
      * Prepare the payload for PayMongo checkout session.

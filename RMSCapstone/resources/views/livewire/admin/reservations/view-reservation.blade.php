@@ -966,10 +966,10 @@
 
 
                     <!-- Subtotal with discount -->
-                    <div class="flex justify-between font-semibold text-base text-gray-700">
+                    {{-- <div class="flex justify-between font-semibold text-base text-gray-700">
                         <span>Subtotal with discount:</span>
                         <span>₱{{ number_format($this->computeInvoiceWithDiscount(), 2) }}</span>
-                    </div>
+                    </div> --}}
 
 
 
@@ -1135,17 +1135,7 @@
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
-                            <!-- Info Icon with Tooltip -->
-                            <div class="relative group inline-block">
-                                <i
-                                    class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-gray-200"></i>
-
-                                <!-- Tooltip -->
-                                <div
-                                    class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                                    Create Payment is for cash payments only.
-                                </div>
-                            </div>
+                         
                             <x-button wire:click="OpenCreatePaymentModal">
                                 <i class="fas fa-plus mr-2"></i>
                                 Create Payment
@@ -1199,10 +1189,8 @@
                                         {{ $payment->id }}</td>
                                     <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                         {{ $payment->invoice->invoice_number }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                        {{ ucfirst($payment->mode_of_payment ??
-                                        ($payment->paymentMethod->mode_of_payment_name ?? 'N/A')) }}
-                                    </td>
+                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                        {{ $payment->paymentMethod?->mode_of_payment_name ?? 'N/A' }}</td>
                                     <td
                                         class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 leading-tight">
                                         <div class="font-semibold">
@@ -1463,6 +1451,89 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
+
+                          {{-- Payment Methods --}}
+                        <div>
+                            <label for="payment_method_id" class="block mb-2 text-sm font-medium text-gray-900">Payment
+                                Method <span class="text-red-500">*</span></label>
+                            <select wire:model="payment_method_id" id="payment_method_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                <option value="">Select Payment Method</option>
+                                @foreach ($payment_methods as $payment_method)
+                                    <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('payment_method_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+
+                          {{-- Upload Payment Screenshot --}}
+            <div class="sm:col-span-2">
+                <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Proof of
+                    Payment <span class="text-red-500">*</span></label>
+
+                <!-- Hidden file input -->
+                <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
+                    class="hidden">
+
+                @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
+                <!-- Show image preview -->
+                <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
+                    <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
+                        alt="Payment Screenshot Preview"
+                        onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
+
+                    <label for="payment_screenshot"
+                        class="absolute top-1 right-1 bg-white text-gray-700 rounded-full px-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition">
+                        Re-Upload File
+                    </label>
+                </div>
+                <!-- Image Popup View -->
+                <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                    <div class="flex items-center justify-center min-h-screen">
+                        <div class=" relative modal-content">
+                            <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                            <button type="button" onclick="closeModal()"
+                                class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="leading-none translate-y-[-3px]">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <!-- Show drag and drop box -->
+                <label for="payment_screenshot">
+                    <div
+                        class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400">
+                        <div class="mb-2">
+                            <i class="fas fa-upload mr-2"></i>
+                        </div>
+                        <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
+                    </div>
+                </label>
+                @endif
+
+                <!-- Loading Indicator -->
+                <div wire:loading wire:target="payment_screenshot" class="mt-2 text-gray-600 flex items-center">
+                    <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                        </path>
+                    </svg>
+                    <span>Uploading...</span>
+                </div>
+
+                <!-- Error Message -->
+                @error('payment_screenshot')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
                         <!-- Notes -->
                         <div class="mt-4">

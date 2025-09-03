@@ -12,11 +12,11 @@ class EditService extends Component
     public Service $service;
 
     // --------------------------- Fields ------------------------- //
-    public $name; 
+    public $name;
     public $description;
-    public $amount; 
-    public $type; 
-    public $unit; 
+    public $amount;
+    public $type;
+    public $unit;
     public $is_active = false;
 
     // --------------- Modals ------------------ //
@@ -29,8 +29,9 @@ class EditService extends Component
 
 
     // --------------------- Mount Method ------------------------ //
-    public function mount(Service $service){
-        $this->service = $service; 
+    public function mount(Service $service)
+    {
+        $this->service = $service;
 
         // toggle value
         $this->is_active = (bool) $service->is_active;
@@ -39,8 +40,7 @@ class EditService extends Component
         $this->description = $service->description;
         $this->amount = $service->amount;
         $this->type = $service->type;
-        $this->unit = $service->unit;   
-        
+        $this->unit = $service->unit;
     }
 
     // ---------------------- Render --------------------- //
@@ -50,20 +50,21 @@ class EditService extends Component
     }
 
     // ------------------------- Edit Method ------------------------ //
-    public function updateService(){
-         try {
+    public function updateService()
+    {
+        try {
             // Cast select values to integers to not interfere with select
             $this->is_active = (int) $this->is_active;
 
             // Validate form input
             $this->validate([
-               'name' => 'required|string|max:100|unique:prd_services,name,' . $this->service->id,
+                'name' => 'required|string|max:100|unique:prd_services,name,' . $this->service->id,
                 'description' => 'nullable|string|max:255',
                 'amount' => 'required|numeric|min:100|max:10000',
-                'type' => 'required|in:addon,penalty,package',
+                'type' => 'required|in:addon,penalty,package,food,merchandise',
                 'unit' => 'required|string|max:255',
                 'is_active' => 'required|in:0,1',
-            
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -74,16 +75,15 @@ class EditService extends Component
         //Update the service
         $this->service->update([
             'name' => $this->name,
-            'description' => $this->description, 
+            'description' => $this->description,
             'amount' => $this->amount,
             'type' => $this->type,
             'unit' => $this->unit,
             'is_active' => $this->is_active,
-        ]); 
+        ]);
 
         session()->flash('message', 'Service successfully updated!');
 
         return redirect()->route('admin.services');
     }
-
 }
