@@ -53,12 +53,11 @@
                                 @if(!$service->is_protected)
                                     <input type="text" wire:model="name" id="name"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
-                                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                        placeholder="Ex. Pet Fee">
+                                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. Pet Fee">
                                 @else
                                     <input type="text" value="{{ $service->name }}" id="name" readonly
                                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 pr-24
-                                         dark:bg-gray-700 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                                 dark:bg-gray-700 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                 @endif
                             </div>
 
@@ -85,8 +84,8 @@
 
                         <!-- Amount -->
                         <div>
-                            <label for="amount"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"> Amount
+                            <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Amount
                                 <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
@@ -102,7 +101,7 @@
                     <!-- Service Unit -->
                     <div>
                         <label for="unit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                             Unit <span class="text-red-500">*</span>
+                            Unit <span class="text-red-500">*</span>
                         </label>
 
                         <div class="relative">
@@ -127,6 +126,8 @@
                             <option value="addon">Add On</option>
                             <option value="penalty">Penalty</option>
                             <option value="package">Package</option>
+                            <option value="food">Food</option>
+                            <option value="merchandise">Merchandise</option>
                         </select>
                         @error('type')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -136,7 +137,7 @@
                     <!-- Status -->
                     <div>
                         <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                             Status <span class="text-red-500">*</span>
+                            Status <span class="text-red-500">*</span>
                         </label>
 
                         @if($service->is_protected)

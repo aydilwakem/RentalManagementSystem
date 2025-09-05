@@ -40,13 +40,25 @@ class ReservationSubmittedMail extends Mailable
                 'name' => $this->reservationData['name'],
                 'transaction_number' => $this->reservationData['transaction_number'],
                 'email' => $this->reservationData['email'],
-                'invoice_number' => $this->reservationData['invoice_number'],
                 'check_in' => $this->reservationData['check_in'],
                 'check_out' => $this->reservationData['check_out'],
-                'total_amount' => $this->reservationData['total_amount'],
-                'deposit' => $this->reservationData['deposit'],
                 'expirationHours' => $this->reservationData['expirationHours'],
                 'payment_link' =>  $this->reservationData['payment_link'],
+
+
+
+                'base_subtotal' => $this->reservationData['base_subtotal'],
+                'promo_code' => $this->reservationData['promo_code'],
+                'promo_amount' => $this->reservationData['promo_amount'],
+                'subtotal' => $this->reservationData['subtotal'],
+                'convenience_fee' => $this->reservationData['convenience_fee'],
+                'total_amount' => $this->reservationData['total_amount'],
+                'deposit' => $this->reservationData['deposit'],
+
+
+                'invoice_number' => $this->reservationData['invoice_number'],
+
+
                 //Branding
                 'branding_company_name' => $this->reservationData['branding_company_name'],
                 'logo_path' => $this->reservationData['logo_path'],
@@ -55,7 +67,7 @@ class ReservationSubmittedMail extends Mailable
                 'company_address' => $this->reservationData['company_address'],
                 'facebook_link' => $this->reservationData['facebook_link'],
                 'instagram_link' => $this->reservationData['instagram_link'],
-
+                'cart_items' => $this->reservationData['cart_items'],
             ]);
     }
 }

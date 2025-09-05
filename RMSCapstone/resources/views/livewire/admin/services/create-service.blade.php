@@ -6,9 +6,9 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Services', 'url' => route('admin.services')],
-            ['label' => 'Create Services', 'url' => route('admin.create-service')],
-        ]" />
+        ['label' => 'Services', 'url' => route('admin.services')],
+        ['label' => 'Create Services', 'url' => route('admin.create-service')],
+    ]" />
     </x-slot>
 
     {{-- Body Container --}}
@@ -29,10 +29,10 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <strong class="font-bold">Success!</strong>
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
             @endif
 
             <!-- Form Container -->
@@ -55,7 +55,7 @@
                             </div>
 
                             @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -69,7 +69,7 @@
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Use of Portable Grill">
                             @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -83,7 +83,7 @@
                                 placeholder="Ex. 2,800.00" onwheel="this.blur()" />
 
                             @error('amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -98,11 +98,11 @@
                         <div class="relative">
                             <input type="text" wire:model="unit" id="unit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
                              dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. Per day">
+                                placeholder="Ex. Per day">
                         </div>
 
                         @error('unit')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -117,16 +117,18 @@
                             <option value="addon">Add On</option>
                             <option value="penalty">Penalty</option>
                             <option value="package">Package</option>
+                            <option value="food">Food</option>
+                            <option value="merchandise">Merchandise</option>
                         </select>
                         @error('type')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Status -->
                     <div>
                         <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                             Status <span class="text-red-500">*</span>
+                            Status <span class="text-red-500">*</span>
                         </label>
                         <div class="flex items-center gap-3">
                             <span class="text-gray-700 dark:text-gray-200">Inactive</span>
@@ -143,7 +145,7 @@
                             <span class="text-gray-700 dark:text-gray-200">Active</span>
                         </div>
                         @error('is_active')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>

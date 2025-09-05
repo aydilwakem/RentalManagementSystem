@@ -232,9 +232,38 @@
                                                                     {{ $room->ideal_guest }}
                                                                 </li>
 
-                                                                <li><strong>Max Capacity:</strong>
-                                                                    {{ $room->max_adults }} Adults, {{ $room->max_kids }} Kids
-                                                                </li>
+                                                                   @if ($room->occupancy_type === 'whole_number')
+                                                                    <p class="text-base font-normal text-gray-700  ">
+                                                                        <i class="fas fa-users mr-2"></i>
+                                                                        Maximum Capacity: {{ $room->max_guests }} guests
+                                                                    </p>
+                                                                    @elseif ($room->occupancy_type === 'combinations')
+                                                                    @php
+                                                                    $originalCombinations = collect($room->occupancy_rules)
+                                                                    ->where('type', 'original');
+
+                                                                    $formatted = $originalCombinations->map(function ($combo) {
+                                                                    $parts = [];
+
+                                                                    if (!empty($combo['adults'])) {
+                                                                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                                                                    }
+
+                                                                    if (!empty($combo['kids'])) {
+                                                                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                                                                    }
+
+                                                                    return implode(' and ', $parts);
+                                                                    });
+                                                                    @endphp
+
+                                                                    @if ($formatted->isNotEmpty())
+                                                                    <p class="text-base font-normal text-gray-700  ">
+                                                                        <i class="fas fa-users mr-2"></i>
+                                                                        Max occupancy: {{ $formatted->implode(' or ') }}
+                                                                    </p>
+                                                                    @endif
+                                                                    @endif
 
                                                                 <li><strong>Extra Person Charge:</strong>
                                                                     ₱{{ number_format($room->extra_person_charge, 2) }}

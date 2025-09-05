@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Reservations;
 use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\GuestType;
+use App\Models\PaymentMethod;
 use App\Models\Receipt;
 use App\Models\Payment;
 use App\Models\GuestPet;
@@ -28,6 +29,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Livewire\WithFileUploads;
 use App\Services\EmailService;
 use App\Services\BrandingService;
 use App\Services\PayMongoService;
@@ -49,6 +51,7 @@ use PragmaRX\Countries\Package\Countries;
 #[Layout('layouts.app')]
 class ViewReservation extends Component
 {
+    use WithFileUploads;
 
     // ---------------- RELATIONSHIPS ------------------ //
 
@@ -200,6 +203,11 @@ class ViewReservation extends Component
 
     public $allItems = [];
 
+    public $payment_screenshot;
+    public $payment_methods;
+    public $payment_method_id;
+
+
 
     public function render()
     {
@@ -222,6 +230,7 @@ class ViewReservation extends Component
             'properties' => $this->properties,  // Pass activities to the view properly
             'services' => $this->services,
             'transaction_properties' => $this->transactionProperties,
+            'payment_methods' => $this->payment_methods,
         ]);
     }
 
@@ -278,6 +287,7 @@ class ViewReservation extends Component
         $this->availableActivities = Activity::all();
         $this->availableServices = Service::all();
         $this->guestTypes = GuestType::all();
+        $this->payment_methods = PaymentMethod::all();
 
         $this->loadAllInvoiceItems();
 
@@ -1728,11 +1738,17 @@ class ViewReservation extends Component
             'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
+            'payment_method_id' => 'required|exists:pm_payment_methods,id',
+            'payment_screenshot' => 'required|image|max:2048',
         ]);
 
         if (!$this->invoice) {
             abort(404, 'No invoice found.');
         }
+
+        // Gets the screenshotpath of the image
+        $screenshotPath = $this->uploadScreenshot();
+
 
         $paymentService->create([
             'invoice'       => $this->invoice,
@@ -1745,6 +1761,8 @@ class ViewReservation extends Component
             'payment_status' => 'completed',
             'currency'         => 'PHP',
             'verified_at'      => now(),
+            'payment_screenshot' => $screenshotPath,
+            'payment_method_id' => $this->payment_method_id,
         ]);
 
         $this->updatePaymentStatus($paymentService, $this->amount_paid);
@@ -1757,11 +1775,23 @@ class ViewReservation extends Component
             'payment_status',
             'notes',
             'currency',
-            'verified_at'
+            'verified_at',
+            'payment_screenshot',
         ]);
 
         return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
             ->with('success', 'Payment created successfully.');
+    }
+
+    protected function uploadScreenshot(): string
+    {
+        // Error handling of failed upload
+        if (!$this->payment_screenshot || !$this->payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
+        }
+
+        // Returns the screenshot path where the screenshot is saved.
+        return $this->payment_screenshot->store('proof-of-payments', 'public');
     }
 
 
