@@ -525,16 +525,49 @@
 
                 <!-- Contact Number -->
                 <div class="col-span-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Contact Number <span
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Contact Number <span
                             class="text-red-500">*</span></label>
-                    <input type="tel" inputmode="numeric" maxlength="11"
+                    <input type="tel" inputmode="numeric" maxlength="11" id="phone" name="phone"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')" wire:model="contact_number" placeholder="Ex. 09123456789"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
+                        class="!w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('contact_number')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                <script>
+                        const input = document.querySelector("#phone");
+                        window.intlTelInput(input, {
+                            initialCountry: "ph", // default Philippines
+                            preferredCountries: ["ph", "us", "sg"], // top of the list
+                            separateDialCode: true, // shows dial code separately
+                            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+                        });
+
+                        // Set initial country code on mount
+                        document.getElementById('country_code').value = '+' + iti.getSelectedCountryData().dialCode;
+                        @this.set('country_code', '+' + iti.getSelectedCountryData().dialCode);
+
+                        // Update country code when the country changes
+                        input.addEventListener('countrychange', function() {
+                            const code = '+' + iti.getSelectedCountryData().dialCode;
+                            document.getElementById('country_code').value = code;
+                            @this.set('country_code', code);
+                        });
+
+                        // saving as complete number including the country code
+                        const iti = window.intlTelInput(input, {
+                            initialCountry: "ph",
+                            separateDialCode: true,
+                            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+                        });
+
+                        // pang debug
+                        // document.querySelector("form").addEventListener("submit", function(e) {
+                        //     const fullNumber = iti.getNumber();
+                        //     console.log(fullNumber); // e.g. +639951189968
+                        // });
+                </script>
 
 
                 <!-- Country -->

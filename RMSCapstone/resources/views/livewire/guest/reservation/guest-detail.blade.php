@@ -61,17 +61,51 @@
 
                     <!-- Contact Number -->
                     <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-800 mb-1">Contact Number <span
+                        <label for="phone" class="block text-sm font-medium text-gray-800 mb-1">Contact Number <span
                                 class="text-red-500">*</span></label>
-                        <input type="tel" inputmode="numeric" maxlength="11"
+                        <input type="tel" inputmode="numeric" maxlength="11" id="phone" name="phone"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')" wire:model="contact_number"
-                            placeholder="Ex. +63 912 345 6789"
+                            placeholder="Ex. 912 345 6789"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
+                        {{-- Hidden input to store country code --}}
+                        <input type="hidden" id="country_code" name="country_code" wire:model="country_code" />
                         @error('contact_number')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    <script>
+                        const input = document.querySelector("#phone");
+                        window.intlTelInput(input, {
+                            initialCountry: "ph", // default Philippines
+                            preferredCountries: ["ph", "us", "sg"], // top of the list
+                            separateDialCode: true, // shows dial code separately
+                            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+                        });
 
+                        // Set initial country code on mount
+                        document.getElementById('country_code').value = '+' + iti.getSelectedCountryData().dialCode;
+                        @this.set('country_code', '+' + iti.getSelectedCountryData().dialCode);
+
+                        // Update country code when the country changes
+                        input.addEventListener('countrychange', function() {
+                            const code = '+' + iti.getSelectedCountryData().dialCode;
+                            document.getElementById('country_code').value = code;
+                            @this.set('country_code', code);
+                        });
+
+                        // if saving as complete number including the country code
+                        // const iti = window.intlTelInput(input, {
+                        //     initialCountry: "ph",
+                        //     separateDialCode: true,
+                        //     utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+                        // });
+
+                        // pang debug
+                        // document.querySelector("form").addEventListener("submit", function(e) {
+                        //     const fullNumber = iti.getNumber();
+                        //     console.log(fullNumber); // e.g. +639951189968
+                        // });
+                    </script>
 
                     <!-- Country -->
                     <div class="col-span-1">
@@ -152,8 +186,8 @@
                             <div class="flex items-center gap-4">
                                 <span class="text-gray-800 dark:text-gray-200">No</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets" value="1"
-                                        class="sr-only peer">
+                                    <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets"
+                                        value="1" class="sr-only peer">
                                     <div
                                         class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 transition peer-focus:ring-2 peer-focus:ring-green-500">
                                     </div>
@@ -285,7 +319,8 @@
 
             <!-- Add Guest Modal -->
             @if ($showGuestModal)
-                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div id="guestModal"
+                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
                         <h2 class="text-xl font-bold mb-4 text-center text-green-700">Enter Additional Guest
                             Details</h2>
@@ -349,7 +384,8 @@
 
                         <!-- Gender -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Gender <span class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Gender <span
+                                    class="text-red-500">*</span></label>
                             <select wire:model="guest_gender"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Gender</option>
@@ -364,7 +400,8 @@
 
                         <!-- Residency -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Residency <span class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Residency <span
+                                    class="text-red-500">*</span></label>
                             <select wire:model="guest_residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Residency</option>
@@ -407,8 +444,8 @@
                                     <!-- Spinner -->
                                     <span wire:loading class="mr-2" wire:target="addMultipleGuests">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>
@@ -438,7 +475,8 @@
                             <div>
                                 <label class="block text-sm text-gray-800">First Name <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" wire:model.defer="editingGuest.guest_first_name" placeholder="Ex. Juan"
+                                <input type="text" wire:model.defer="editingGuest.guest_first_name"
+                                    placeholder="Ex. Juan"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                                 @error('editingGuest.guest_first_name')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -495,7 +533,8 @@
 
                         <!-- Gender -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Gender <span class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Gender <span
+                                    class="text-red-500">*</span></label>
                             <select wire:model.defer="editingGuest.guest_gender"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Gender</option>
@@ -510,7 +549,8 @@
 
                         <!-- Residency -->
                         <div class="mt-4">
-                            <label class="block text-sm text-gray-800">Residency <span class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-800">Residency <span
+                                    class="text-red-500">*</span></label>
                             <select wire:model.defer="editingGuest.guest_residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md">
                                 <option value="">Select Residency</option>
@@ -550,14 +590,16 @@
 
             <!-- Add Pet Modal -->
             @if ($addPetModal)
-                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div id="guestModal"
+                    class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[650px] max-h-[100vh] overflow-y-auto">
                         <h2 class="text-xl font-bold mb-4 text-center text-green-700">Enter Pet
                             Details</h2>
 
                         <!-- Pet Breed -->
                         <div>
-                            <label class="block text-sm text-gray-700">Pet Breed<span class="text-red-500">*</span></label>
+                            <label class="block text-sm text-gray-700">Pet Breed<span
+                                    class="text-red-500">*</span></label>
                             <input type="text" wire:model="breed" placeholder="Ex. Labrador"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md" required>
                             @error('breed')
@@ -579,8 +621,8 @@
                                     <!-- Spinner -->
                                     <span wire:loading class="mr-2" wire:target="addMultiplePets">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4"></circle>
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                             </path>

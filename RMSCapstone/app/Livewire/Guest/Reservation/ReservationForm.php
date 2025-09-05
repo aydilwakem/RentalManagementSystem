@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Guest\Reservation;
 
+use App\Livewire\Admin\Settings\Branding\SettingsBranding;
+use App\Livewire\Admin\Settings\Branding\ViewBranding;
 use App\Mail\NewReservationMail;
 use Livewire\Component;
 use App\Models\Service;
@@ -143,6 +145,7 @@ class ReservationForm extends Component
     public string $companyAddress;
     public string $facebookLink;
     public string $instagramLink;
+    public $country_code = '+63'; // default for PH
 
     //----------------------- PROMO CODE ------------------------ //
     public $promo;
@@ -251,6 +254,7 @@ class ReservationForm extends Component
         $this->loadBranding();
         $this->getAvailableRooms();
         $this->initializeCountries();
+        $this->loadCountryCode();
     }
 
 
@@ -1543,6 +1547,7 @@ class ReservationForm extends Component
             'rate_id'       => $rate['rate_id'],
             'extra_charge'  => $extraCharge,
             'total_amount'  => $roomAmount + $extraCharge,
+            'image'         => $room->images[0] ?? null,
         ];
     }
 
@@ -1850,6 +1855,14 @@ class ReservationForm extends Component
     }
 
     /**
+     * Initializes the list of countries for guest selection.
+     */
+    public function loadCountryCode()
+    {
+        $this->country_code = '+63';
+    }
+
+    /**
      * Loads available rooms and applies dynamic rates.
      */
     protected function loadRooms(): void
@@ -1901,4 +1914,15 @@ class ReservationForm extends Component
         $this->facebookLink = $branding['facebook_link'];
         $this->instagramLink = $branding['instagram_link'];
     }
+
+    /**
+     * Loads dynamic terms and conditions from settings.
+     */
+    protected function loadTerms()
+    {
+        $settings = ViewBranding::first();
+        $this->terms_and_conditions = $settings->terms_and_conditions ?? '';
+    }
+
+
 }

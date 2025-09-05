@@ -1,6 +1,6 @@
 <div>
     <!-- HERO -->
-    <section class="h-screen bg-cover bg-center relative pt-20"
+    <section class="min-h-[70vh] md:h-screen bg-cover bg-center relative pt-20"
         style="background-image: url('{{ asset('images/canopy-login2.png') }}');">
         <div class="absolute inset-0 flex items-center justify-center text-center px-4">
             <div>
@@ -8,8 +8,8 @@
                     style="text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);">
                     {{ $companyName }}
                 </h1>
-                <p class="text-yellow-50 text-lg md:text-2xl font-light mb-6 drop-shadow-2xl">Where nature meets
-                    elegance
+                <p class="text-yellow-50 text-lg md:text-2xl font-light mb-6 drop-shadow-2xl">
+                    Where nature meets elegance
                 </p>
                 <x-button class="px-10 py-4 !bg-yellow-50 hover:!bg-yellow-100 !text-green-700 !font-bold"
                     href="#services">
@@ -20,12 +20,13 @@
     </section>
 
 
+
     <!-- SERVICES -->
     <section id="services">
         <div class="py-6 px-4 mb-4 bg-white">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="lg:w-full px-2 mb-4 text-center">
-                    <h2 class="text-green-700 font-bold text-xl">OUR SERVICES</h2>
+                    <h2 class="text-green-700 font-bold text-2xl">OUR SERVICES</h2>
                 </div>
                 <div class="relative">
                     <!-- Swiper Container -->
@@ -66,7 +67,8 @@
                                     <h3 class="text-lg font-semibold mb-2 text-center">Memorable Moments, Made Here</h3>
                                     <p class="text-sm text-gray-600 mb-3 text-center">Host unforgettable events in our
                                         spacious
-                                        halls, ideal for weddings, parties, corporate gatherings, and celebrations of all
+                                        halls, ideal for weddings, parties, corporate gatherings, and celebrations of
+                                        all
                                         kinds.</p>
                                     <div class="flex justify-center">
                                         <x-button href="{{ route('guest.event-halls') }}">
@@ -121,15 +123,21 @@
                                 </div>
                             </div>
                         </div>
-                        {{--
-                        <!-- Pagination -->
-                        <div class="swiper-pagination mt-32"></div>
-
-                        <!-- Navigation -->
-                        <div class="swiper-button-prev !text-white !left-0 md:!left-4"></div>
-                        <div class="swiper-button-next !text-white !right-0 md:!right-4"></div> --}}
+                    </div>
+                    <!-- Swiper Navigation -->
+                    <div class="absolute inset-y-0 -left-8 md:-left-20 flex items-center">
+                        <div class="swiper-button-prev !text-gray-500 hover:!text-green-600 scale-75 md:scale-100 w-2 h-2 md:w-10 md:h-10">
+                        </div>
+                    </div>
+                    <div class="absolute inset-y-0 -right-8 md:-right-20 flex items-center">
+                        <div class="swiper-button-next !text-gray-500 hover:!text-green-600 scale-75 md:scale-100 w-2 h-2 md:w-10 md:h-10">
+                        </div>
                     </div>
 
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between mt-12">
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -312,8 +320,7 @@
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
-                            <button
-                                class="mt-4 block px-4 py-2 h-10 w-16 bg-green-700 bg-opacity-85 hover:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150"
+                            <x-button
                                 wire:loading.attr="disabled">
                                 <div class="flex items-center justify-center">
                                     <!-- Spinner -->
@@ -331,7 +338,7 @@
                                         Send
                                     </span>
                                 </div>
-                            </button>
+                            </x-button>
                         </form>
                     </div>
 
