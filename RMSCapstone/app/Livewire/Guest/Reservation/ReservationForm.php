@@ -809,6 +809,7 @@ class ReservationForm extends Component
             } else {
                 // Explicitly set to null if no schedule is required
                 $context['activity_datetime'] = null;
+                $context['activity_rate'] = $activity->amount;
             }
         }
 

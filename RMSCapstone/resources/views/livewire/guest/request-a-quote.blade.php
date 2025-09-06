@@ -1,6 +1,6 @@
-<div class="container mx-auto py-8 px-4">
+<div class="container mx-auto py-8 px-6">
     <!-- Page Title -->
-    <div class="text-center mb-8">
+    <div class="text-center mb-3 md:mb-8">
         <h1 class="text-3xl font-semibold text-green-700">Request a quote for your event</h1>
         <p class="text-lg text-gray-600 mt-2">Provide your details below, and we'll get back to you with a quote!</p>
     </div>
@@ -15,7 +15,7 @@
     @endif
 
     <!-- Request a Quote Form -->
-    <div class="max-w-2xl mx-auto bg-white p-8 mb-6 rounded-lg shadow-md border">
+    <div class="max-w-2xl mx-auto bg-white p-6 mb-6 rounded-lg shadow-md border">
         <form wire:submit.prevent="requestQuote">
 
             <div class="grid grid-cols-2 gap-4 mb-4">

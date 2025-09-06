@@ -48,7 +48,7 @@
                 </div>
 
                 <!-- Guest Details -->
-                <div class="border rounded-md bg-white p-4 shadow-sm">
+                <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                     <h2 class="text-green-700 font-semibold flex items-center gap-2">
                         <i class="fa-solid fa-circle-user"></i>
                         Guest Details
@@ -57,8 +57,8 @@
                         <div>
                             <div class="flex items-center justify-between gap-4">
                                 <div>
-                                    {{-- <p class="font-bold">John Doe (+63) 0987654321</p> --}}
-                                    <p class="font-bold">{{ $first_name }} {{ $middle_name }} {{ $last_name }} {{ $contact_number }}</p>
+                                    <p class="font-bold">John Doe (+63) 0987654321</p>
+                                    {{-- <p class="font-bold">{{ $first_name }} {{ $middle_name }} {{ $last_name }} {{ $contact_number }}</p> --}}
                                 </div>
                                 <div class="mt-2 sm:mt-0 flex gap-2">
                                     <span class="border border-gray-500 text-gray-700 text-xs px-2 py-0.5 rounded">
@@ -73,18 +73,23 @@
                             <p class="text-sm text-gray-600">
                                 {{ $country }}
                             </p>
-                            {{-- <p class="text-sm text-gray-600">
-                                arasdump@gmail.com
-                            </p> --}}
-                            <p class="text-sm text-gray-600 mt-3">
-                                Extra Guests
-                            </p>
                             <p class="text-sm text-gray-600">
-                                Total Pax
+                                arasdump@gmail.com
                             </p>
                             <p class="text-sm text-gray-600">
                                 {{ $email }}
                             </p>
+                            <hr class="my-3">
+                            {{-- <div class="mt-3 flex gap-6 text-sm text-gray-700">
+                                <div>
+                                    <span class="font-semibold">{{ $item['extra_guest'] }} Extra Guests</span>
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $item['kids'] + $item['adults'] }} Total Pax</span>
+                                </div>
+                            </div> --}}
+
+
                             @if ($company_name)
                                 <p class="text-sm text-gray-600">
                                     Company: {{ $company_name }}
@@ -97,7 +102,7 @@
 
                 <!-- Additional Guest Details -->
                 @if (count($guests) > 0)
-                    <div class="border rounded-md bg-white p-4 shadow-sm mt-4">
+                    <div class="border rounded-md bg-white p-4 mt-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                         <h2 class="text-green-700 font-semibold flex items-center gap-2">
                             <i class="fa-solid fa-users"></i>
                             Additional Guest Details
@@ -123,7 +128,7 @@
 
                 <!-- Pet Details -->
                 @if (!empty($pets))
-                    <div class="border rounded-md bg-white p-4 shadow-sm mt-4">
+                    <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
                         <h2 class="text-green-700 font-semibold flex items-center gap-2">
                             <i class="fa-solid fa-paw"></i>
                             Pet Details
@@ -147,7 +152,7 @@
                 @endif
 
                 <!-- Rooms Section -->
-                <div class="border rounded-md bg-white p-4">
+                <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                     <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
                         <i class="fa-solid fa-bed"></i>
                         Room Details
@@ -157,23 +162,23 @@
                     @foreach ($cart as $item)
                         @if ($item['type'] === 'room')
                             <div class="flex gap-4 items-start border-b pb-3 mb-3">
-                                <img src={{ asset('images/rms-default.png') }} alt="Room Image"
+                                <img src="{{ asset('images/rms-default.png') }}" alt="Room Image"
                                     class="w-20 h-20 object-cover rounded-md">
                                 <div class="flex-1">
                                     {{-- <p class="text-sm font-medium text-gray-800">Solah</p>
                                     <p class="text-xs text-gray-500">2 Extra Guest(s)</p>
                                     <p class="text-xs text-gray-500">3 Night(s)</p> --}}
                                     <p class="text-sm font-medium text-gray-800">{{ $item['room_name'] }}</p>
+                                    <p class="text-xs text-gray-500">{{ $item['extra_guest'] }} Extra Guest(s)</p>
                                     <p class="text-xs text-gray-500">{{ $item['days'] }} Night(s)</p>
-                                    <p class="text-sm font-medium text-gray-800">{{ $item['extra_guest'] }} Extra Guest(s)</p>
                                 </div>
                                 <div class="text-right text-sm">
                                     {{-- <p class="text-gray-700">₱2,400</p>
                                     <p class="text-gray-500">₱1,000</p>
                                     <p class="text-gray-500">x3</p> --}}
                                     <p class="text-gray-700">₱{{ number_format($item['roomAmount'], 2) }}</p>
-                                    <p class="text-gray-500">x{{ $item['days'] }}</p>
                                     <p class="text-gray-500">₱{{ number_format($item['extra_charge'], 2) }}</p>
+                                    <p class="text-gray-500">x{{ $item['days'] }}</p>
                                 </div>
                             </div>
                             <div class="flex justify-between">
@@ -187,7 +192,7 @@
 
                 <!-- Activities Section -->
                 @if (collect($cart)->contains('type', 'activity'))
-                    <div class="border rounded-md bg-white p-4">
+                    <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                         <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
                             <i class="fa-solid fa-person-swimming"></i>
                             Activity Details
@@ -197,7 +202,7 @@
                         @foreach ($cart as $item)
                             @if ($item['type'] === 'activity')
                                 <div class="flex gap-4 items-start border-b pb-3 mb-3">
-                                    <img src={{ asset('images/rms-default.png') }} alt="Activity Image"
+                                    <img src="{{ asset('images/rms-default.png') }}" alt="Activity Image"
                                         class="w-20 h-20 object-cover rounded-md">
                                     <div class="flex-1">
                                         <p class="text-sm font-medium text-gray-800">{{ $item['activity_name'] }}</p>
@@ -210,9 +215,8 @@
                                         </p>
                                     </div>
                                     <div class="text-right text-sm">
-                                        <p class="text-gray-700">₱{{ number_format($item['amount'], 2) }}</p>
+                                        <p class="text-gray-700">₱{{ number_format($item['activity_rate'], 2) }}</p>
                                         <p class="text-gray-500">x{{ $item['quantity'] }}</p>
-                                        <p class="font-semibold">₱{{ number_format($item['amount'], 2) }}</p>
                                     </div>
                                 </div>
                                 <div class="flex justify-between">
@@ -226,7 +230,7 @@
 
                 <!-- Special Requests -->
                 @if (!empty($special_requests))
-                    <div class="border rounded-md bg-white p-4 shadow-sm mt-4">
+                    <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
                         <h2 class="text-green-700 font-semibold flex items-center gap-2">
                             <i class="fa-solid fa-comment-dots"></i>
                             Special Requests
@@ -262,7 +266,7 @@
                 </div>
 
                 <!-- Total Summary -->
-                <div class="border rounded-md bg-white p-4">
+                <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Summary</h3>
                     {{-- <div class="flex justify-between text-sm mb-1">
                         <span class="text-gray-600">Room Fees</span>

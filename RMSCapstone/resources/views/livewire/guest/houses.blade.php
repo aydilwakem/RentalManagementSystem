@@ -1,4 +1,4 @@
-<div class="max-w-[90%] mx-auto px-4 py-7 mb-8">
+<div class="max-w-[90%] mx-auto px-1 py-7 mb-8">
     <h1 class="text-3xl font-bold text-green-700 mb-2 text-center">Spaces for Lease</h1>
 
     <!-- Inquire Text -->
@@ -9,7 +9,7 @@
         agreements.
     </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3">
         @foreach ($houses as $house)
             <div
                 class="w-full max-w-xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-6">

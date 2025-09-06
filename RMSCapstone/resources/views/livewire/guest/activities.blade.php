@@ -1,5 +1,5 @@
 <div>
-    <div class="max-w-7xl mx-auto px-4 py-7 mb-8">
+    <div class="max-w-7xl mx-auto px-6 py-7 mb-8">
         <div class="text-center">
             <h1 class="text-3xl font-bold text-green-700 mb-3 text-center">Our Activities</h1>
             <p class="text-lg text-gray-700 text-center mb-3">

@@ -276,7 +276,7 @@
     </section>
 
     <!-- CONTACT FORM + MAP -->
-    <section id="contact" class="py-10 bg-white">
+    <section id="contact" class="py-10 px-3 bg-white">
         <div class="py-5">
             <div class="container mx-auto px-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
