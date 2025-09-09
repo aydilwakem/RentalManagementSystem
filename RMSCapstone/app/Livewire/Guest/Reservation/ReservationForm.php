@@ -39,6 +39,7 @@ use App\Services\EmailService;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
 use PragmaRX\Countries\Package\Countries;
+use App\Helpers\Toast;
 
 class ReservationForm extends Component
 {

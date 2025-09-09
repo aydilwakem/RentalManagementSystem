@@ -229,7 +229,7 @@
                 @endif
 
                 <!-- Special Requests -->
-                @if (!empty($special_requests))
+                @if (!empty($special_requests) && count($special_requests) > 0)
                     <div class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
                         <h2 class="text-green-700 font-semibold flex items-center gap-2">
                             <i class="fa-solid fa-comment-dots"></i>
@@ -239,11 +239,13 @@
                             <div class="space-y-3 mb-3">
                                 <!-- Request Item -->
                                 @foreach ($special_requests as $request)
-                                    <div class="bg-white border border-l-4 border-gray-400 rounded-md p-3 shadow-sm">
-                                        <p class="text-gray-700 text-sm leading-relaxed">
-                                            {{ $request['request'] ?? '' }}
-                                        </p>
-                                    </div>
+                                    @if (!empty($request['request']))
+                                        <div class="bg-white border border-l-4 border-gray-400 rounded-md p-3 shadow-sm">
+                                            <p class="text-gray-700 text-sm leading-relaxed">
+                                                {{ $request['request'] ?? '' }}
+                                            </p>
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>

@@ -1,11 +1,11 @@
 <div class="w-full flex justify-center">
     <div class="step-one w-full">
         {{-- <h1 class="text-3xl font-bold text-green-700">Our Activities</h1> --}}
-        <p class="text-lg text-gray-700 text mb-3">
+        {{-- <p class="text-lg text-gray-700 text mb-3">
             These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at
             Canopy
             Farm. These are not required but are highly recommended!
-        </p>
+        </p> --}}
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 

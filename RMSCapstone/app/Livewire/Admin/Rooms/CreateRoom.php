@@ -10,6 +10,7 @@ use App\Models\PropertyCategory;
 use App\Models\PropertyFeature;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Logs;
+use App\Helpers\Toast;
 
 class CreateRoom extends Component
 {
@@ -56,7 +57,7 @@ class CreateRoom extends Component
 
         //mount only active room inclusions
         $this->features = PropertyFeature::where('property_type_id', 1)->where('is_active', true)->get();
-        
+
         $this->addBed();
     }
 
@@ -191,13 +192,13 @@ class CreateRoom extends Component
         //Table for beds
         foreach($this->bed_type as $i => $bedType){
             PropertyBed::create([
-                'property_id' => $room->id, 
-                'bed_type' => $bedType, 
-                'bed_quantity' => $this->bed_quantity[$i], 
-            ]); 
+                'property_id' => $room->id,
+                'bed_type' => $bedType,
+                'bed_quantity' => $this->bed_quantity[$i],
+            ]);
         }
 
-       
+
 
         if (!empty($this->selectedFeatures)) {
             $room->features()->attach($this->selectedFeatures);
