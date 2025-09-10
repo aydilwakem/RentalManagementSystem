@@ -116,8 +116,8 @@ class EditMaintenance extends Component
             'description' => 'required|string',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
-            'planned_datetime' =>'nullable|date|after_or_equal:today',
-            'routine_datetime' =>'nullable|date|after_or_equal:today',
+            'planned_datetime' =>'nullable|date',
+            'routine_datetime' =>'nullable|date',
             'priority_status' => 'required|in:emergency,urgent,routine,planned',
             'newImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             

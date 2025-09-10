@@ -33,7 +33,7 @@ class CreateLease extends Component
     public $total_amount = 0; //total amount from start date to end-date
     public $selectedHouse; // Declare the selectedRoom property
 
-    public $reservation_source = 'WebApp';
+    public $reservation_source = 'Website';
     public $transaction_status;
 
     public $selectedTenant; // Tenant selected from dropdown

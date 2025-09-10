@@ -114,11 +114,11 @@ class CreateMaintenance extends Component
                 'name' => 'required|string|unique:mnt_maintenance,name',
                 'description' => 'required|string',
                 'property_id' => 'required|exists:properties,id',
-                'reported_at' => 'required|date|after_or_equal:today',
+                'reported_at' => 'required|date',
                 'resolved_at' => 'nullable|date|after_or_equal:reported_at',
-                'planned_datetime' => 'nullable|date|after_or_equal:today',
+                'planned_datetime' => 'nullable|date',
                 'priority_status' => 'required|in:emergency,urgent,routine,planned',
-                'routine_datetime' => 'nullable|date|after_or_equal:today',
+                'routine_datetime' => 'nullable|date',
 
                 //For images
                 'newImages' => 'nullable|array',

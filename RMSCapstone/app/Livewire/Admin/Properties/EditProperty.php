@@ -232,7 +232,7 @@ class EditProperty extends Component
     {
         try {
             $this->validate([
-                'name_number' => "required|string|max:100|unique:properties,name_number,{$this->property_id},id",
+                'name_number' => "required|string|max:100|regex:/^[A-Za-z\s\-]+$/|unique:properties,name_number,{$this->property_id},id",
                 // 'capacity' => 'required|integer|min:1',
                 // 'max_adults' => 'required|integer|min:1',
                 // 'max_kids' => 'required|integer|min:0',

@@ -44,10 +44,24 @@ class Homepage extends Component
     {
         //Validate the data
         $this->validate([
-        'name' => 'required|string|max:100',
+        'name' => [
+                'required', 
+                'string',
+                'max:255', 
+                'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
+            ], 
         'email' => 'required|email|max:255',
-        'contact_number' => 'required|string|max:15', // Adjust max length as needed
-        'message' => 'required|string|max:500',
+        'contact_number' => [
+                'required', 
+                'string', 
+                'regex:/^[0-9]{11}$/', //11 digits only
+            ],  
+        'message' => [
+                'required', 
+                'string',
+                'max:255', 
+                'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
+            ], 
     ]);
         $data = [
         'name' => $this->name,

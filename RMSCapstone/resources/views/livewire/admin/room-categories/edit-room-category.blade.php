@@ -8,7 +8,8 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        <div
+            class="mx-auto max-w-2xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
@@ -26,12 +27,12 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                     <!-- Name of Category -->
                     <div class="sm:col-span-2">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Name <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name" id="name" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Name
+                            <span class="text-red-500">*</span></label>
+                        <input type="text" wire:model="name" id="name" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -39,10 +40,12 @@
                     <div class="sm:col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
-                        <textarea wire:model="description" id="description" rows="8"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 max-h-40 overflow-auto resize-none
+                        <textarea wire:model="description" id="description" rows="8" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 max-h-40 overflow-auto resize-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Your description here"></textarea>
+                        @error('description')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

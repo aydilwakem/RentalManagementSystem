@@ -1440,15 +1440,41 @@ class ReservationForm extends Component
 
         if ($this->currentStep == 3) {
             $this->validate([
-                'first_name' => 'required|string',
-                'middle_name' => 'nullable|string',
-                'last_name' => 'required|string',
+                'first_name' => [
+                'required', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
+            ], 
+                'middle_name' =>  [
+                'nullable', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
+                'last_name' => [
+                'required', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
+            'company_name' => [
+                'nullable', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
                 'email' => 'required|email',
-                'contact_number' => 'required|string',
+                'contact_number' => [
+                'required', 
+                'string', 
+                'regex:/^[0-9]{11}$/', //11 digits only
+            ], 
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
                 'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
-                'special_requests.*.request' => 'nullable|string|max:255',
+                'special_requests.*.request' => [
+                'nullable', 
+                'string', 
+                'max:255',
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
                 'pets.*.breed' => 'required|string|max:255',
             ]);
         }
@@ -1463,10 +1489,27 @@ class ReservationForm extends Component
     protected function validateGuestData()
     {
         return $this->validate([
-            'guest_first_name' => 'required|string',
-            'guest_middle_name' => 'nullable|string',
-            'guest_last_name' => 'required|string',
-            'guest_suffix' => 'nullable|string|max:10',
+            'guest_first_name' => [
+                'required', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
+            'guest_middle_name' => [
+                'nullable', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
+            'guest_last_name' => [
+                'required', 
+                'string', 
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
+            'guest_suffix' => [
+                'nullable', 
+                'string', 
+                'max:10',
+                'regex:/^[A-Za-z\s\-]+$/', 
+            ], 
             'guest_gender' => 'nullable|in:male,female,other',
             'guest_residency' => 'nullable|in:local,foreigner',
             'guest_country_of_origin' => 'nullable|string|max:100',

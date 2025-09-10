@@ -156,7 +156,7 @@ class CreateProperty extends Component
         try {
             // Validate form input
             $this->validate([
-                'name_number' => 'required|string|max:100|unique:properties,name_number',
+                'name_number' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/|unique:properties,name_number',
                 'property_type_id' => 'required|exists:property_types,id',
                 // 'capacity' => 'required|integer|min:1',
                 // 'max_adults' => 'required|integer|min:1',

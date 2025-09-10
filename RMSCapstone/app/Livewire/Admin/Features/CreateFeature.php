@@ -35,7 +35,7 @@ class CreateFeature extends Component
         try {
             // Validate form input
             $this->validate([
-                'name' => 'required|string|max:100',
+                'name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
                 'quantity' => 'required|numeric|min:1|max:30',
                 'property_feature_type' => 'required|in:appliance,equipment,utility,entertainment,service,fixture',
                 'is_active' => 'required|boolean',

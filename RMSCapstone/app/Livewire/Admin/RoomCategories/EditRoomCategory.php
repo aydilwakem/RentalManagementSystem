@@ -42,8 +42,8 @@ class EditRoomCategory extends Component
     {
         try {
             $this->validate([
-                'name' => "required|string|max:100|unique:property_categories,name,{$this->roomCategoryId},id",
-                'description' => 'nullable|string',
+                'name' => "required|string|max:100|unique:property_categories,name,{$this->roomCategoryId},id||regex:/^[A-Za-z0-9\s\-]+$/",
+                'description' => 'nullable|string|regex:/^[A-Za-z0-9\s\-]+$/',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

@@ -342,6 +342,7 @@ class EditRoom extends Component
                 'required',
                 'string',
                 'max:100',
+                'regex:/^[A-Za-z\s\-]+$/',
                 Rule::unique('properties', 'name_number')
                     ->ignore($this->roomId)
                     ->where(function ($query) {

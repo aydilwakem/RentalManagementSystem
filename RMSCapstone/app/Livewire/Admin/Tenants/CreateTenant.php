@@ -51,12 +51,12 @@ class CreateTenant extends Component
         try {
             // Validate form input
             $this->validate([
-                'first_name' => 'required|string|max:100',
-                'middle_name' => 'nullable|string|max:100',
-                'last_name' => 'required|string|max:100',
-                'suffix' => 'nullable|string|max:100',
+                'first_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'middle_name' => 'nullable|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'last_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'suffix' => 'nullable|string|max:10|regex:/^[A-Za-z\s\-]+$/',
                 'email' => 'required|email|unique:trn_users,email',
-                'contact_number' => 'nullable|string|max:100',
+                'contact_number' => 'nullable|string|max:100|regex:/^[0-9]{11}$/',
                 'company_name' => 'nullable|string|max:100',
                 'city_municipality' => 'nullable|string|max:100',
                 'country' => 'required|string|max:100',
