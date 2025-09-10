@@ -39,8 +39,8 @@ class EditEventCategory extends Component
     {
         try{
         $this->validate([
-            'name' => "required|string|max:255|unique:event_types,name,{$this->eventCategoryId},id",
-            'description' => 'nullable|string',
+            'name' => "required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:event_types,name,{$this->eventCategoryId},id",
+            'description' => 'nullable|string|regex:/^[A-Za-z\s\-]+$/',
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {
         // If validation fails, close the modal

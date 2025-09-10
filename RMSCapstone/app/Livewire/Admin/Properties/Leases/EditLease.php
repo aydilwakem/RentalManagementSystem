@@ -32,7 +32,7 @@ class EditLease extends Component
     public $selectedHouse; // Declare the selectedRoom property
     public $selectedTenant;
 
-    public $reservation_source = 'WebApp';
+    public $reservation_source = 'Website';
     public $transaction_status;
 
     public $confirmEditItem = false;

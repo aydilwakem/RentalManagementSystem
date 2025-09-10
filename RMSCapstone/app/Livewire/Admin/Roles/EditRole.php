@@ -44,7 +44,7 @@ class EditRole extends Component
     {
         try {
             $this->validate([
-                'name' => 'nullable|string|min:3|unique:roles,name,' . $this->role->id,
+                'name' => 'required|string|min:3|regex:/^[A-Za-z\s\-]+$/|unique:roles,name,' . $this->role->id,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

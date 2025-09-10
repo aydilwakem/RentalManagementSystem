@@ -26,7 +26,7 @@ class CreateEvent extends Component
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
 
     // ----------------------- Heard From, Status Defaults ---------------------------- //
-    public $reservation_source = 'WebApp';
+    public $reservation_source = 'Website';
     public $transaction_status = '';
 
     // ----------------------- EVENT DETAILS ---------------------------- //
@@ -104,13 +104,13 @@ class CreateEvent extends Component
         try {
             $this->validate([
                 // Transaction User Fields
-                'first_name' => 'required|string|max:100',
-                'middle_name' => 'nullable|string|max:100',
-                'last_name' => 'required|string|max:100',
+                'first_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'middle_name' => 'nullable|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'last_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
                 'email' => 'required|email|max:100',
-                'contact_number' => 'required|string|max:20',
+                'contact_number' => 'required|string|max:20|regex:/^[0-9]{11}$/',
                 'city_municipality' => 'nullable|string|max:100',
-                'company_name' => 'required|string|max:100',
+                'company_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
                 'country' => 'required|string|max:100',
 
                 // Transaction Fields

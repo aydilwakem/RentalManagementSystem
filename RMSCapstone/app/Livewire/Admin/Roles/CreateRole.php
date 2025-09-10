@@ -21,7 +21,7 @@ class CreateRole extends Component
     public function saveRole()
     {
         $this->validate([
-            'name' => 'required|string|min:3|unique:roles,name',
+            'name' => 'required|string|min:3|regex:/^[A-Za-z\s\-]+$/|unique:roles,name',
             'selectedPermissions' => 'array|min:1',
         ]);
 

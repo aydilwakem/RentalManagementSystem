@@ -111,9 +111,9 @@ class EditMaintenance extends Component
         try{
         // Validate form input
         $this->validate([
-            'name' => "required|string|unique:mnt_maintenance,name,{$this->maintenanceId},id",
+            'name' => "required|string|regex:/^[A-Za-z\s\-]+$/|unique:mnt_maintenance,name,{$this->maintenanceId},id",
             'property_id' => 'required|exists:properties,id',
-            'description' => 'required|string',
+            'description' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
             'reported_at' => 'required|date',
             'resolved_at' => 'nullable|date|after_or_equal:reported_at',
             'planned_datetime' =>'nullable|date',

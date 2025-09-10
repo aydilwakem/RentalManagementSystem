@@ -78,8 +78,8 @@ class EditEventHall extends Component
     {
         try {
             $this->validate([
-                'name_number' => "required|string|max:255|unique:properties,name_number,{$this->eventHallId},id",
-                'description' => 'nullable|string',
+                'name_number' => "required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:properties,name_number,{$this->eventHallId},id",
+                'description' => 'nullable|string|regex:/^[A-Za-z\s\-]+$/',
                 'amount' => 'required|numeric|min:10000|max:100000.00',
                 'capacity' => 'required|numeric|min:20|max:200',
                 'extra_charge_per_hour' => 'required|numeric|min:1000|max:50000.00',

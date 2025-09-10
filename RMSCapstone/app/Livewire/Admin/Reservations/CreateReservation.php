@@ -1981,7 +1981,7 @@ class CreateReservation extends Component
                 'regex:/^[A-Za-z\s\-]+$/', 
             ], 
             'email' => 'required|email',
-            'contact_number' => 'required|string',
+            'contact_number' => 'required|string|regex:/^[0-9]{11}$/', //PH 11-Digit number format
             'country' => 'required|string',
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',

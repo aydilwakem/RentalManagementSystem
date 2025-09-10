@@ -68,11 +68,11 @@ class ViewBranding extends Component
     {
         try {
             $this->validate([
-                'company_name' => 'required|string|max:255',
+                'company_name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/',
                 'newImage' => 'nullable|image|max:2048',
                 'email' => 'required|email|max:255',
-                'contact_number' => 'nullable|string|max:255',
-                'address' => 'nullable|string|max:255',
+                'contact_number' => 'nullable|string|max:255|regex:/^[0-9]{11}$/',
+                'address' => 'nullable|string|max:255|regex:/^[A-Za-z\s\-]+$/',
                 'facebook' => 'nullable|string|max:255',
                 'instagram' => 'nullable|string|max:255',
                 'terms_and_conditions' => 'nullable|string',

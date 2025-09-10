@@ -43,7 +43,7 @@ class CreateUser extends Component
         try {
             // Validate input fields to ensure correct data is entered
             $this->validate([
-                'name' => 'required|string|max:255|unique:users,name', // Name is required and must be a string, with unique name
+                'name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:users,name', // Name is required and must be a string, with unique name
                 'email' => 'required|string|email|max:255|unique:users,email', // Email must be unique
                 'password' => $this->passwordRules(), // Enforce password rules
                 'selectedRole' => ['required', 'exists:roles,name'], // Ensure the role exists in the roles table
