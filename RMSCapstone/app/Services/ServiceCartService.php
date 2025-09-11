@@ -38,6 +38,8 @@ class ServiceCartService
             'properties_with_extra_hour' => $context['properties'] ?? null,
         ];
 
+        session()->put('cart', $cart);
+
         return $cart;
     }
 
@@ -60,8 +62,13 @@ class ServiceCartService
 
         );
 
-        // Reindex the array to avoid gaps in numeric keys
-        return array_values($updatedCart);
+        // Reindex
+        $updatedCart = array_values($updatedCart);
+
+        // Sync session
+        session()->put('cart', $updatedCart);
+
+        return $updatedCart; // Reindex the array to avoid gaps in numeric keys
     }
 
 
@@ -88,6 +95,8 @@ class ServiceCartService
                 }
             }
         }
+
+        session()->put('cart', $cart);
 
         return $cart;
     }

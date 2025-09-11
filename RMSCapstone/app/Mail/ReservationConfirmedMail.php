@@ -46,6 +46,8 @@ class ReservationConfirmedMail extends Mailable
                 'email' => $this->reservationData['email'],
                 'check_in' => $this->reservationData['check_in'],
                 'check_out' => $this->reservationData['check_out'],
+                'requests' => $this->reservationData['requests'],
+                'request_reply' => $this->reservationData['request_reply'],
 
                 'deposit' => $this->reservationData['deposit'],
 

@@ -42,4 +42,12 @@ class Service extends Model
     {
         return $this->belongsTo(Property::class, 'property_id');
     }
+
+    // Note: Add guest facing column in services tabke
+    public function scopeAvailableServices($query)
+    {
+        return $query->where('is_active', true)
+            ->where('type', '!=', 'penalty')
+            ->whereNotIn('name', ['Extra Hour', 'Pet Fee']);
+    }
 }

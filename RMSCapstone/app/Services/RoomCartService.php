@@ -42,6 +42,8 @@ class RoomCartService
             'payment_status' => $context['payment_status'] ?? 'unpaid',
         ];
 
+        session()->put('cart', $cart);
+
         return true;
     }
 

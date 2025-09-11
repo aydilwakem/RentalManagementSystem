@@ -251,6 +251,45 @@
                                     @endif
                                 @endforeach
                             @endif
+
+                            <!-- Selected Services -->
+                            @if ($cartCollection->contains('type', 'service'))
+                                @foreach ($cart as $item)
+                                    @if ($item['type'] === 'service')
+                                        <!-- Service Card -->
+                                        <div class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative"
+                                            wire:key="cart-item-{{ $item['service_id'] }}">
+                                            <!-- back Button -->
+                                            <button type="button"
+                                                wire:click="removeFromCart('{{ $item['type'] }}', {{ $item['service_id'] }})"
+                                                class="text-gray-700 bg-gray-200 hover:bg-gray-300 hover:text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-2xl absolute top-2 right-2 focus:outline-none"
+                                                title="Remove Service">
+                                                <span class="leading-none ">&times;</span>
+                                            </button>
+                                            <!-- Service Details -->
+                                            <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                                <div class="text-md">
+                                                    <i class="fa-solid fa-gift"></i>
+                                                    <strong>Add-ons:</strong> {{ $item['service_name'] }}
+                                                </div>
+                                                <!-- Charges Breakdown -->
+                                                <div class="flex justify-between items-start gap-2">
+                                                    <!-- Label and Quantity -->
+                                                    <div class="text-sm text-gray-600">
+                                                        Quantity: {{ $item['quantity'] }}
+                                                    </div>
+                                                    <!-- Amount -->
+                                                    <div class="text-sm font-semibold text-gray-800">
+                                                        ₱{{ number_format($item['amount'], 2) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+
+
                             <!-- Pet Fee Amount -->
                             @if ($this->computePetTotal())
                                 <div
@@ -283,6 +322,16 @@
                     @endif
                 </div>
 
+                @if(!empty($cartNotices))
+                    <div class="mb-4">
+                        @foreach($cartNotices as $notice)
+                            <div class="bg-yellow-100 text-yellow-800 p-2 rounded mb-1 text-sm" role="alert">
+                                {!! $notice !!}
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
                 @error('cart')
                     <div id="toast-danger"
                         class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm  "
@@ -309,6 +358,8 @@
                         </button>
                     </div>
                 @enderror
+
+
 
                 <!------------------------------ Price Breakdown ------------------------------------->
                 @if ($cartCollection->contains('type', 'room'))

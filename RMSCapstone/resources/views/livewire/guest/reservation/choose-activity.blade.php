@@ -9,6 +9,8 @@
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+
+            <!-- Loop through Activities -->
             @foreach ($activities as $activity)
                 <!-- Activity Card -->
                 <div
@@ -53,8 +55,7 @@
                             @else
                                 {{ Str::limit($activity->description, 120, '...') }}
                                 @if (Str::length($activity->description) > 100)
-                                    <a href="#"
-                                        wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
+                                    <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
                                         class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
                                         more</a>
                                 @endif
@@ -69,10 +70,8 @@
                                     @if (is_array($activity->available_times) && count($activity->available_times))
                                         @foreach ($activity->available_times as $time)
                                             <label class="flex items-center space-x-2">
-                                                <input type="radio" name="selected_time_{{ $activity->id }}"
-                                                    {{-- This groups radios per
-                                                    activity --}} wire:model="selectedTimes.{{ $activity->id }}"
-                                                    value="{{ $time }}"
+                                                <input type="radio" name="selected_time_{{ $activity->id }}" {{-- This groups radios per
+                                                    activity --}} wire:model="selectedTimes.{{ $activity->id }}" value="{{ $time }}"
                                                     class="text-green-600 focus:ring-green-500 border-gray-300 text-sm">
                                                 <span class="text-gray-700 dark:text-gray-200 text-sm">
                                                     {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
@@ -155,8 +154,8 @@
                                             <span wire:loading class=" flex items-center justify-center"
                                                 wire:target="addActivityToCart('activity', {{ $activity->id }})">
                                                 <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4" />
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
                                                     <path class="opacity-75" fill="currentColor"
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                                 </svg>
@@ -183,6 +182,153 @@
                     </div>
                 </div>
             @endforeach
+            <!-- End of Activities Loop -->
+
+
+
         </div>
+
+
+
+        <!-- Divider for Services -->
+        <div class="flex items-center my-10">
+            <div class="flex-grow border-t border-gray-300"></div>
+            <span class="mx-4 text-gray-600 font-semibold">Services</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!--Loop through Services -->
+            @foreach ($services as $service)
+                <!-- Service Card -->
+                <div
+                    class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition mb-0 flex flex-col">
+
+                    <!-- Service Name -->
+                    <div class="p-5 pb-3 flex flex-col flex-grow">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-gray-800"> {{ ucfirst($service->name) }}</h2>
+                            <!-- Price -->
+                            <div class="text-right">
+                                <span class="text-green-600 font-bold text-lg">
+                                    @if ($service->amount == 0)
+                                        <span class="text-green-600 font-semibold">FREE</span>
+                                    @else
+                                        ₱{{ number_format($service->amount, 2) }}
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-sm text-gray-600 text-justify">
+                            {{-- Show more / less when description is long --}}
+                            @if (empty($service->description))
+                                <span class="text-gray-600">Try this activity only at Canopy Farm!</span>
+                            @elseif ($expandedActivity === $service->id)
+                                {{ $services->description }}
+                                <a href="#" wire:click.prevent="toggleServiceDescription({{ $service->id }})"
+                                    class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                    less</a>
+                            @else
+                                {{ Str::limit($service->description, 120, '...') }}
+                                @if (Str::length($service->description) > 100)
+                                    <a href="#" wire:click.prevent="toggleServiceDescription({{ $service->id }})"
+                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                        more</a>
+                                @endif
+                            @endif
+                        </p>
+
+                        <!-- Controls -->
+                        <div class="flex items-center justify-between sm:flex-row mt-auto">
+                            <!-- Counter -->
+                            <div class="flex flex-col">
+                                <label for="quantity-{{ $service->id }}"
+                                    class="mt-2 text-md font-medium text-gray-900 mb-1">
+                                    Quantity:
+                                </label>
+
+                                <!-- Counter Buttons -->
+                                <div class="flex items-center">
+                                    <button type="button"
+                                        wire:click.prevent="decrementItemQuantity('service', {{ $service->id }})"
+                                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline">
+                                        -
+                                    </button>
+
+                                    <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                        {{ $quantity[$service->id] ?? 1 }}
+                                    </span>
+
+                                    @if ($quantity[$service->id] ?? 1)
+                                        <button type="button"
+                                            wire:click.prevent="incrementItemQuantity('service', {{ $service->id }})"
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline">
+                                            +
+                                        </button>
+                                    @endif
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- Add to Cart Button -->
+                            <div>
+
+                                @php
+                                    $cartCollection = collect($cart); // Convert array to collection
+                                    $serviceInCart = $cartCollection->contains(function ($item) use ($service) {
+                                        return $item['type'] === 'service' && $item['service_id'] == $service->id;
+                                    });
+                                @endphp
+
+                                @if ($serviceInCart)
+                                @else
+                                    <x-button wire:click="addServiceToCart('service', {{ $service->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="addServiceToCart('service', {{ $service->id }})"
+                                        class="relative h-8 w-35 justify-center mt-8">
+
+                                        <div class="flex items-center justify-center relative w-full">
+                                            <!-- Spinner -->
+                                            <span wire:loading class=" flex items-center justify-center"
+                                                wire:target="addServiceToCart('service', {{ $service->id }})">
+                                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4" />
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
+                                                </svg>
+                                            </span>
+
+                                            <!-- Button Text -->
+                                            <span wire:loading.remove
+                                                wire:target="addServiceToCart('service', {{ $service->id }})">
+                                                Add Service
+                                            </span>
+                                        </div>
+                                    </x-button>
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @endforeach
+            <!--End of Services Loop -->
+
+
+        </div>
+
+
+
+
+
+
     </div>
 </div>

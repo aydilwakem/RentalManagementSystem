@@ -37,6 +37,8 @@ class ActivityCartService
             'available_times' => $availableTimes,
         ];
 
+        session()->put('cart', $cart);
+
         return $cart;
     }
 
@@ -61,8 +63,13 @@ class ActivityCartService
 
         );
 
-        // Reindex the array to avoid gaps in numeric keys
-        return array_values($updatedCart);
+        // Reindex
+        $updatedCart = array_values($updatedCart);
+
+        // Sync session
+        session()->put('cart', $updatedCart);
+
+        return $updatedCart;
     }
 
 
@@ -89,6 +96,9 @@ class ActivityCartService
                 }
             }
         }
+
+        session()->put('cart', $cart);
+
 
         return $cart;
     }

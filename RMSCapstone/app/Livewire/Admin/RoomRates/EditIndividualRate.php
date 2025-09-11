@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 class EditIndividualRate extends Component
 {
     public RoomRate $roomRate;
+    public $room;
     public $room_id;
     public $name;
     public $start_date;
@@ -25,6 +26,7 @@ class EditIndividualRate extends Component
     public $is_active = true;
     public $min_stay_nights;
     public $max_stay_nights;
+    public $rate_percentage = null;
 
     public function render()
     {
@@ -37,19 +39,43 @@ class EditIndividualRate extends Component
     {
         $this->rooms = Property::all();
         $this->roomRate = $roomRate;
+
+        // Load the room
         $this->room_id = $roomRate->property_id;
+        $this->room = Property::find($this->room_id);
+
+        if (!$this->room) {
+            abort(404, 'Room not found.');
+        }
+
         $this->name = $roomRate->name;
-        $this->start_date = $roomRate->start_date;
-        $this->end_date = $roomRate->end_date;
+        $this->start_date = $roomRate->start_date
+            ? \Carbon\Carbon::parse($roomRate->start_date)->format('Y-m-d')
+            : null;
+
+        $this->end_date = $roomRate->end_date
+            ? \Carbon\Carbon::parse($roomRate->end_date)->format('Y-m-d')
+            : null;
         $this->amount = $roomRate->amount;
         $this->description = $roomRate->description;
         $this->rate_type = $roomRate->rate_type;
         $this->freebies = $roomRate->freebies;
         $this->priority = $roomRate->priority ?: null;
         $this->is_active = $roomRate->is_active;
+        $this->rate_percentage = $roomRate->rate_percentage ?: null;
         $this->min_stay_nights = $roomRate->min_stay_nights ?: null;
         $this->max_stay_nights = $roomRate->max_stay_nights ?: null;
     }
+
+
+    public function getAdjustedRateProperty()
+    {
+        if (is_numeric($this->rate_percentage)) {
+            return $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
+        }
+        return null;
+    }
+
 
     public function updateIndividualRoomRate()
     {
@@ -60,7 +86,7 @@ class EditIndividualRate extends Component
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'amount' => 'required|numeric|min:0',
+            'rate_percentage' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|string',
             'rate_type' => 'required|string|max:50',
             'priority' => 'nullable|integer|min:1|max:10',
@@ -76,33 +102,22 @@ class EditIndividualRate extends Component
             $this->$field = $this->$field === '' ? null : $this->$field;
         }
 
-        // Update the room rate
-        Log::info('Updating room rate with data: ', [
-            'property_id' => $this->room_id,
-            'name' => $this->name,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'amount' => $this->amount,
-            'description' => $this->description,
-            'rate_type' => $this->rate_type,
-            'priority' => $this->priority,
-            'is_active' => $this->is_active,
-            'min_stay_nights' => $this->min_stay_nights,
-            'max_stay_nights' => $this->max_stay_nights,
-        ]);
+        $adjustedAmount = $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
 
         $this->roomRate->update([
             'property_id' => $this->room_id,
             'name' => $this->name,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'amount' => $this->amount,
+            'amount' => $adjustedAmount,
             'description' => $this->description,
             'rate_type' => $this->rate_type,
+            'freebies' => (bool) $this->freebies,
             'priority' => $this->priority,
             'is_active' => $this->is_active,
-            'min_stay_nights' => $this->min_stay_nights,
-            'max_stay_nights' => $this->max_stay_nights,
+            'rate_percentage' => $this->rate_percentage,
+            'min_stay_nights' => $this->min_stay_nights === '' ? null : $this->min_stay_nights,
+            'max_stay_nights' => $this->max_stay_nights === '' ? null : $this->max_stay_nights,
         ]);
 
         session()->flash('message', 'Room Rate successfully updated!');

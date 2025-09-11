@@ -158,21 +158,15 @@
                         Special Requests
                     </label>
 
-                    @foreach ($special_requests as $index => $request)
-                        <div class="mb-2 flex items-center gap-2">
-                            <textarea type="text" wire:model="special_requests.{{ $index }}.request" rows="3"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 resize-none"
-                                placeholder="Requests are still subject for approval">
-                                        </textarea>
-                        </div>
-                        <button wire:click.prevent="removeSpecialRequest({{ $index }})"
-                            class="text-red-600 hover:text-red-800 text-sm">Remove</button>
-                        <button wire:click.prevent="addSpecialRequest"
-                            class=" text-sm text-green-600 hover:text-green-800">+ Add Request</button>
-                        @error("special_requests.$index.request")
-                            <p class="text-red-500 text-sm">{{ $message }}</p>
-                        @enderror
-                    @endforeach
+                    <div class="mb-2 flex items-center gap-2">
+                        <textarea type="text" wire:model="requests" rows="3"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 resize-none"
+                            placeholder="Requests are still subject for approval">
+                                </textarea>
+                    </div>
+                    @error("requests")
+                        <p class="text-red-500 text-sm">{{ $message }}</p>
+                    @enderror
 
                 </div>
 

@@ -57,7 +57,7 @@ class Transaction extends Model
         'reservation_source',
         'transaction_status',
         'requests',
-        'special_requests',
+        'request_reply',
         'actual_start_datetime',
         'actual_end_datetime',
         'start_datetime',
@@ -77,9 +77,6 @@ class Transaction extends Model
         'promo_discount_amount' => 'decimal:2',
         'convenience_fee' => 'decimal:2',
         'total_amount' => 'decimal:2',
-
-        // Cast special requests json
-        'special_requests' => 'array',
 
         // Decimal (Optional)
         'deposit_amount' => 'decimal:2',

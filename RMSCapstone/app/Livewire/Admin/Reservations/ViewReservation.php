@@ -206,6 +206,7 @@ class ViewReservation extends Component
     public $payment_screenshot;
     public $payment_methods;
     public $payment_method_id;
+    public $request_reply;
 
 
 
@@ -379,47 +380,33 @@ class ViewReservation extends Component
         // dd($this->allItems);
     }
 
-    public function approveRequest($index)
+
+
+    /**
+     * ------------------------------ REQUESTS  ----------------------------------------
+     * Manages the guest requests and admin replies.                                         
+     * Core responsibilities:
+     * - `saveRequestReply`: Validates and updates the admin's reply to guest requests.
+     * ---------------------------------------------------------------------------------
+     */
+
+
+    public function saveRequestReply()
     {
-        Log::info("Approve Request method is called for index: {$index}");
 
-        $requests = $this->transaction->special_requests;
+        Log::info("Saving request reply: {$this->request_reply}");
 
-        if (isset($requests[$index])) {
-            $requests[$index]['status'] = 'approved';
+        $this->validate([
+            'request_reply' => 'nullable|string|max:1000',
+        ]);
 
-            $this->transaction->special_requests = $requests;
-            $this->transaction->save(); // Save back to the DB
-        }
-    }
+        $this->transaction->update([
+            'request_reply' => $this->request_reply,
+        ]);
 
-    public function rejectRequest($index)
-    {
-        Log::info("Reject Request method is called for index: {$index}");
+        $this->closeModal();
 
-        $requests = $this->transaction->special_requests;
-
-        if (isset($requests[$index])) {
-            $requests[$index]['status'] = 'rejected';
-
-            $this->transaction->special_requests = $requests;
-            $this->transaction->save();
-        }
-    }
-
-    public function revertRequest($index)
-    {
-        if (!in_array($this->transaction->transaction_status, ['pending', 'reserved', 'receipt_verified'])) {
-            return; // prevent illegal action
-        }
-
-        $requests = $this->transaction->special_requests;
-
-        if (isset($requests[$index]) && $requests[$index]['status'] !== 'pending') {
-            $requests[$index]['status'] = 'pending';
-            $this->transaction->special_requests = $requests;
-            $this->transaction->save();
-        }
+        session()->flash('success', 'Request reply updated successfully.');
     }
 
 
@@ -453,7 +440,7 @@ class ViewReservation extends Component
             if (!$discountType || $count <= 0) return 0;
 
             if ($discountType->type === 'percent') {
-                return ($this->invoice->base_subtotal / $this->transaction->pax) * ($discountType->rate / 100) * $count;
+                return ($this->computeBaseSubtotal() / $this->transaction->pax) * ($discountType->rate / 100) * $count;
             } elseif ($discountType->type === 'fixed') {
                 return $discountType->rate * $count;
             }
@@ -493,8 +480,8 @@ class ViewReservation extends Component
         // Update invoice totals
         $this->invoice->update([
             'total_discount' => $totalDiscount,
-            'sub_total' => $this->invoice->base_subtotal - $totalDiscount + $this->computeConvenienceFeeTotal(),
-            'balance_due' => $this->invoice->base_subtotal - $totalDiscount + $this->computeConvenienceFeeTotal() - $this->invoice->amount_paid,
+            'sub_total' => $this->invoice->base_subtotal - $totalDiscount,
+            'balance_due' => $this->invoice->base_subtotal - $totalDiscount - $this->invoice->amount_paid,
         ]);
 
         // Refresh model and relationships so Blade sees updated discounts
@@ -518,10 +505,16 @@ class ViewReservation extends Component
     {
         $baseSubtotal = $this->computeBaseSubtotal() + $this->computeConvenienceFeeTotal();
 
+        Log::info("Base Subtotal: {$baseSubtotal}");
+
         // Sum of all applied discounts (PWD + Senior, etc.)
         $totalDiscount = $this->invoice->discounts->sum('discount_value') ?? 0;
 
+        Log::info("Total Discount: {$totalDiscount}");
+
         return max($baseSubtotal - $totalDiscount, 0);
+
+        Log::info("Computed Invoice with Discount: {$baseSubtotal} - {$totalDiscount} = " . max($baseSubtotal - $totalDiscount, 0));
     }
 
 
@@ -532,16 +525,21 @@ class ViewReservation extends Component
             ->first();
 
         if ($discount) {
-            $discount->delete(); // removes the row completely
+            $discount->delete(); // remove the row completely
+            Log::info("Discount type {$discountTypeId} removed from invoice {$invoiceId}");
         }
 
+        // Refresh invoice to get latest discounts
         $this->invoice->refresh();
+
+        // Recalculate total discount dynamically
+        $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
+
+        // Recalculate grand total, balance, and status
         $this->recalculateInvoice();
 
-        Log::info("Removed discount type {$discountTypeId} from invoice {$invoiceId}");
+        Log::info("Invoice {$invoiceId} recalculated after discount removal.");
     }
-
-
 
     /**
      * ----------------------------- ITEM CART MANAGEMENT ------------------------------
@@ -1214,8 +1212,8 @@ class ViewReservation extends Component
      */
     public function recalculateInvoice()
     {
+        $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
         $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
-        $this->invoiceService->updateDiscountTotal($this->invoice);
         $this->invoiceService->updateBalanceDue($this->invoice);
         $this->invoiceService->updateStatus($this->invoice);
 
@@ -1339,9 +1337,9 @@ class ViewReservation extends Component
             + $this->computeActivitiesTotal()
             + $this->computeServicesTotal();
 
-        $discount = $this->transaction->promo_discount_amount ?? 0;
+        $discounts = $this->invoice->total_discount + $this->transaction->promo_discount_amount;
 
-        return max($baseSubtotal - $discount, 0);
+        return max($baseSubtotal - $discounts, 0);
     }
 
     // Computes Convenience Fee Total from completed payments
@@ -1739,7 +1737,7 @@ class ViewReservation extends Component
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
             'payment_method_id' => 'required|exists:pm_payment_methods,id',
-            'payment_screenshot' => 'required|image|max:2048',
+            'payment_screenshot' => 'nullable|image|max:2048',
         ]);
 
         if (!$this->invoice) {
@@ -1783,14 +1781,19 @@ class ViewReservation extends Component
             ->with('success', 'Payment created successfully.');
     }
 
-    protected function uploadScreenshot(): string
+    protected function uploadScreenshot(): ?string
     {
-        // Error handling of failed upload
-        if (!$this->payment_screenshot || !$this->payment_screenshot->isValid()) {
+        // If no file was uploaded, return null
+        if (!$this->payment_screenshot) {
+            return null;
+        }
+
+        // If uploaded file is invalid
+        if (!$this->payment_screenshot->isValid()) {
             throw new \Exception('Image upload failed. Please try again.');
         }
 
-        // Returns the screenshot path where the screenshot is saved.
+        // Store and return the file path
         return $this->payment_screenshot->store('proof-of-payments', 'public');
     }
 
@@ -1884,3 +1887,48 @@ class ViewReservation extends Component
         $this->getIsFullProperty();
     }
 }
+
+
+
+  // public function approveRequest($index)
+    // {
+    //     Log::info("Approve Request method is called for index: {$index}");
+
+    //     $requests = $this->transaction->special_requests;
+
+    //     if (isset($requests[$index])) {
+    //         $requests[$index]['status'] = 'approved';
+
+    //         $this->transaction->special_requests = $requests;
+    //         $this->transaction->save(); // Save back to the DB
+    //     }
+    // }
+
+    // public function rejectRequest($index)
+    // {
+    //     Log::info("Reject Request method is called for index: {$index}");
+
+    //     $requests = $this->transaction->special_requests;
+
+    //     if (isset($requests[$index])) {
+    //         $requests[$index]['status'] = 'rejected';
+
+    //         $this->transaction->special_requests = $requests;
+    //         $this->transaction->save();
+    //     }
+    // }
+
+    // public function revertRequest($index)
+    // {
+    //     if (!in_array($this->transaction->transaction_status, ['pending', 'reserved', 'receipt_verified'])) {
+    //         return; // prevent illegal action
+    //     }
+
+    //     $requests = $this->transaction->special_requests;
+
+    //     if (isset($requests[$index]) && $requests[$index]['status'] !== 'pending') {
+    //         $requests[$index]['status'] = 'pending';
+    //         $this->transaction->special_requests = $requests;
+    //         $this->transaction->save();
+    //     }
+    // }

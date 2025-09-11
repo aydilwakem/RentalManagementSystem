@@ -27,6 +27,8 @@ class CreateIndividualRate extends Component
     public $is_active = true;
     public $min_stay_nights;
     public $max_stay_nights;
+    public $rate_percentage = null;
+
 
     public function render()
     {
@@ -44,6 +46,14 @@ class CreateIndividualRate extends Component
         $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
     }
 
+    public function getAdjustedRateProperty()
+    {
+        if (is_numeric($this->rate_percentage)) {
+            return $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
+        }
+        return null;
+    }
+
     public function saveIndividualRoomRate()
     {
         // Validate the form input
@@ -51,7 +61,7 @@ class CreateIndividualRate extends Component
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'amount' => 'required|numeric|min:0',
+            'rate_percentage' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|string',
             'rate_type' => 'required|in:Weekdays,Weekend,Holiday,Peak',
             'freebies' => 'nullable|boolean',
@@ -61,24 +71,27 @@ class CreateIndividualRate extends Component
             'max_stay_nights' => 'nullable|integer|min:1|max:90',
         ]);
 
-        // Create new room rate
+        $adjustedAmount = $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
+
         RoomRate::create([
             'name' => $this->name,
             'property_id' => $this->roomId,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'amount' => $this->amount,
+            'amount' => $adjustedAmount,
             'rate_type' => $this->rate_type,
             'description' => $this->description,
             'freebies' => (bool) $this->freebies,
             'priority' => $this->priority,
             'is_active' => $this->is_active,
-            'min_stay_nights' => $this->min_stay_nights,
-            'max_stay_nights' => $this->max_stay_nights,
+            'rate_percentage' => $this->rate_percentage,
+            'min_stay_nights' => $this->min_stay_nights === '' ? null : $this->min_stay_nights,
+            'max_stay_nights' => $this->max_stay_nights === '' ? null : $this->max_stay_nights,
         ]);
 
+
         // Reset form fields (excluding `roomId`)
-        $this->reset(['name', 'start_date', 'end_date', 'amount', 'description', 'rate_type', 'freebies', 'priority', 'is_active', 'min_stay_nights', 'max_stay_nights']);
+        $this->reset(['name', 'start_date', 'end_date', 'amount', 'description', 'rate_type', 'freebies', 'priority', 'is_active', 'rate_percentage', 'min_stay_nights', 'max_stay_nights']);
 
         // Flash success message
         session()->flash('message', 'Room Rate successfully created!');

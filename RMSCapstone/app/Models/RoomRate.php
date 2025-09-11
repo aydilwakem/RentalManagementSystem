@@ -28,6 +28,7 @@ class RoomRate extends Model
         'is_active',
         'min_stay_nights',
         'max_stay_nights',
+        'rate_percentage',
     ];
 
     /**
@@ -40,6 +41,10 @@ class RoomRate extends Model
         'priority' => 'integer',
         'is_active' => 'boolean',
         'freebies' => 'boolean',
+        'min_stay_nights' => 'integer',
+        'max_stay_nights' => 'integer',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     // --------------------------- Activity Logs --------------------- //
@@ -61,7 +66,9 @@ class RoomRate extends Model
                 'priority',
                 'is_active',
                 'min_stay_nights',
-                'max_stay_nights'])
+                'max_stay_nights',
+                'rate_percentage'
+            ])
             // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event

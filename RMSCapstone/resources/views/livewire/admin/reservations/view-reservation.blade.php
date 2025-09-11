@@ -299,50 +299,29 @@
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
                 </div>
-                <div class="mt-4">
-                        <strong>Special Requests:</strong>
 
-                        @forelse($transaction->special_requests as $index => $req)
+        
+                <div class="mt-4">
+                    <strong>Requests:</strong>
+
+                    @if(!empty($transaction->requests))
                         <div class="mt-2">
                             <span class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                {{ $req['request'] }}
+                                {{ Str::limit($transaction->requests, 50) }}
                             </span>
 
-
-                            @php
-                            $canModifyRequest = in_array($transaction->transaction_status, ['pending', 'reserved',
-                            'receipt_verified']);
-                            @endphp
-
-                            @if($req['status'] === 'pending' && $canModifyRequest)
-                            <span class="ml-2 inline-flex gap-1">
-                                <x-button wire:click="approveRequest({{ $index }})" positive xs>
-                                    <i class="fas fa-check mr-1"></i>
+                                 <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
+                                    View & Reply
                                 </x-button>
-                                <x-danger-button wire:click="rejectRequest({{ $index }})" negative xs>
-                                    <i class="fas fa-times mr-1"></i>
-                                </x-danger-button>
-                            </span>
-                            @else
-                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-300 inline-flex items-center gap-1">
-                                (Status: <span class="font-semibold">{{ ucfirst($req['status']) }}</span>)
 
-                                {{-- Show Revert button only if allowed --}}
-                                @if($canModifyRequest && $req['status'] !== 'pending')
-                                <x-button wire:click="revertRequest({{ $index }})" xs neutral class="ml-1"
-                                    title="Revert to Pending">
-                                    <i class="fas fa-undo-alt"></i>
-                                </x-button>
-                                @endif
-                            </span>
-                            @endif
                         </div>
-                        @empty
-                        <div class="text-gray-500 dark:text-gray-300 italic mt-2">
-                            No special requests.
+                    @else
+                        <div class="text-gray-500 italic mt-2">
+                            No requests.
                         </div>
-                        @endforelse
-                    </div>
+                    @endif
+                </div>
+
             </div>
             <!------------------------- END OF TRANSACTION DETAILS ----------------------------->
 
@@ -783,9 +762,9 @@
                                 <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                     Timestamp</th>
-                                <th
+                                {{-- <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                    Status</th>
+                                    Status</th> --}}
                                 <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                     Actions</th>
@@ -836,7 +815,7 @@
                                         {{ $item['created_at']->diffForHumans() }}
                                     </span>
                                 </td>
-                                {{-- Status --}}
+                                {{-- Status
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
                                     <span
                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold
@@ -845,7 +824,7 @@
                                                 {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
                                         {{ ucfirst($item['payment_status']) }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 {{-- Activity Actions --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
                                     @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
@@ -902,7 +881,7 @@
                                         {{ $item['created_at']->diffForHumans() }}
                                     </span>
                                 </td>
-                                <td class="border px-4 py-2 text-center dark:border-gray-500">
+                                {{-- <td class="border px-4 py-2 text-center dark:border-gray-500">
                                     <span
                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
@@ -910,7 +889,7 @@
                                                 {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
                                         {{ ucfirst($item['payment_status']) }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td colspan="3" class="border px-4 py-2 text-center dark:border-gray-500"></td>
                             </tr>
                             @endif
@@ -926,43 +905,59 @@
                         <span>₱{{ number_format($this->computeBaseSubtotal(), 2) }}</span>
                     </div>
 
+
                     <!-- Discounts applied -->
-                    @if($invoice->discounts->count() > 0)
-                        <div class="mb-1 text-gray-600 text-sm">
-                            @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
-                                @php
-                                    $type = $discounts->first()->discountType;
-                                    $count = $discounts->sum('quantity'); 
-                                    $totalValue = $discounts->sum('discount_value'); 
-                                @endphp
-                                <div class="flex justify-between items-center">
-                                    <span>
-                                        - {{ strtoupper($type->name) }} x {{ $count }}
-                                        @if($type->type === 'percent')
-                                            ({{ $type->rate }}%)
-                                        @else
-                                            (Fixed)
-                                        @endif
-                                    </span>
+@if($invoice->discounts->count() > 0)
+    <div class="mb-1 text-gray-600 text-sm border-t pt-2">
+        @php
+            $baseSubtotal = $invoice->base_subtotal;
+            $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
+        @endphp
 
-                                    
-                                    <div class="flex items-center space-x-2">
-                                        <span>₱{{ number_format($totalValue, 2) }}</span>
+        @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
+            @php
+                $type = $discounts->first()->discountType;
+                $count = $discounts->sum('quantity'); 
+                $totalValue = $discounts->sum('discount_value'); 
+                $perPersonAmount = $type->type === 'percent' ? ($baseSubtotal / $pax) * ($type->rate / 100) : null;
+            @endphp
 
-                                        <!-- Remove button -->
-                                        <button 
-                                            wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})" 
-                                            class="text-red-500 hover:text-red-700 text-xs"
-                                        >
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-
-                
-                                </div>
-                            @endforeach
-                        </div>
+            <div class="flex justify-between items-center mb-1">
+                <span>
+                    - {{ strtoupper($type->name) }} x {{ $count }}
+                    @if($type->type === 'percent' && $perPersonAmount)
+                        ({{ $type->rate }}% of Subtotal ÷ {{ $pax }} pax)
+                    @else
+                        (Fixed)
                     @endif
+                </span>
+
+                <div class="flex items-center space-x-2">
+                    <span>- ₱{{ number_format($totalValue, 2) }}</span>
+
+                    <!-- Optional: tooltip to show exact formula -->
+                    {{-- @if($type->type === 'percent' && $perPersonAmount)
+                        <span class="text-xs text-gray-400" title="Calculation: (Subtotal ÷ Pax) × Rate × Qty">
+                            (~₱{{ number_format($perPersonAmount * $count, 2) }})
+                        </span>
+                    @endif --}}
+
+                    <button 
+                        wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})" 
+                        class="text-red-500 hover:text-red-700 text-xs"
+                        title="Remove discount"
+                    >
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+                   
+
+
 
 
                     <!-- Subtotal with discount -->
@@ -995,6 +990,7 @@
                     @endif
 
 
+
                     @if($transaction->promoCode)
                     <!-- Sub Total with discount -->
                     <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
@@ -1004,9 +1000,9 @@
                         </div>
                     </div>
                     @endif
-
-
-                    @if ($this->computeConvenienceFeeTotal() > 0)
+                    
+                    
+                     @if ($this->computeConvenienceFeeTotal() > 0)
                     <!-- Convenience Fee -->
                     <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
                         Convenience Fee:
@@ -1016,7 +1012,12 @@
                     </div>
                     @endif
 
+
+
+                
                     <hr>
+
+
 
                     <!-- Grand Total -->
                     <div class="flex justify-between font-bold text-base mt-2 text-green-700">
@@ -2158,6 +2159,55 @@
                 </div>
             </div>
             @endif
+
+          
+            <!-- Add Request Modal -->
+            @if ($activeModal === 'requests')
+            <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                    
+                    <!-- Header -->
+                    <div
+                        class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                        <h2 class="text-2xl font-bold text-center">Requests Info</h2>
+                        <button wire:click="closeModal"
+                            class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                            <span class="-translate-y-[2px]">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Guest Request -->
+                    <div class="mb-4">
+                        <strong>Guest Request:</strong>
+                        <p class="mt-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-3 rounded-lg">
+                            {{ $transaction->requests ?? 'No request submitted.' }}
+                        </p>
+                    </div>
+
+                    <!-- Admin Reply -->
+                    <div class="mb-4">
+                        <strong>Admin Reply:</strong>
+                        <textarea wire:model.defer="request_reply"
+                            class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2"
+                            rows="3"
+                            placeholder="Write your reply here..."></textarea>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-between mt-6">
+                        <x-ghost-button wire:click="closeModal">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="saveRequestReply">
+                            Save Changes
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+
 
 
             <!--  Edit Room Modal -->

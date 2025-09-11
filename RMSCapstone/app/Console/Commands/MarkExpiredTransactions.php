@@ -20,7 +20,7 @@ class MarkExpiredTransactions extends Command
 
         // Mark transactions as expired if their 'created_at' is older than the expiration timeframe
         $expiredTransactions = Transaction::whereIn('transaction_status', ['pending'])
-            ->where('created_at', '<=', Carbon::now()->subMinutes($expirationHours))
+            ->where('created_at', '<=', Carbon::now()->subHours($expirationHours))
             ->update(['transaction_status' => 'expired']);
 
         $this->info("Expired transactions updated: $expiredTransactions");

@@ -176,13 +176,19 @@
 
 
             <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-    $expirationHours }} hours</strong> to confirm your reservation. You can
-                upload your proof of payment through the link below:</p>
+    $expirationHours }} hours</strong> to confirm your reservation.
+            </p>
 
             {{-- Manual Payment Options --}}
             <p style="margin-bottom: 15px;">
                 <strong>Prefer to pay manually?</strong><br>
-                You may use any of the following options and upload your screenshot or deposit slip as proof of payment:
+                You may use any of the following options and upload your screenshot or deposit slip as proof of payment
+                through the link below:
+                <br>
+                <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
+                    style="color: #007bff; text-decoration: underline;">
+                    Upload Proof of Payment
+                </a>:
                 <br><br>
                 <strong>Bank Transfer:</strong><br>
                 <strong>Bank Name:</strong> Landbank<br>

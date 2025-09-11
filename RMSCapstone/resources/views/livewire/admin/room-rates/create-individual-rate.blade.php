@@ -63,19 +63,33 @@
                     @enderror
                 </div>
 
-                <!-- Amount -->
+                <!-- Adjusted Rate (by percentage) -->
                 <div>
-                    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Adjusted Rate <span
-                            class="text-red-500">*</span>
+                    <label for="rate_percentage" class="block mb-2 text-sm font-medium text-gray-900">
+                        Adjusted Rate <span class="text-red-500">*</span>
                         <span class="text-xs text-gray-500">(Current Base Rate:
                             {{ number_format($room->amount, 2) }})</span>
                     </label>
-                    <input type="number" wire:model="amount" id="amount" onwheel="this.blur()" class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                        placeholder="Ex. 5,500.00">
-                    @error('amount')
+
+                    <div class="flex items-center gap-2">
+                        <input type="number" wire:model.live="rate_percentage" id="rate_percentage" min="0" max="100"
+                            onwheel="this.blur()" class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 
+            focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 
+            dark:text-white dark:placeholder-gray-400" placeholder="Ex. 10">
+                        <span class="text-sm">%</span>
+                    </div>
+
+                    @error('rate_percentage')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
+
+                    @if(!is_null($this->adjustedRate))
+                        <p class="mt-1 text-sm text-green-700">
+                            New Rate:
+                            <strong>{{ number_format($this->adjustedRate, 2) }}</strong>
+                        </p>
+                    @endif
+
                 </div>
 
                 <!-- Rate Type -->
@@ -180,46 +194,46 @@
                             </div>
                         </label>
                         <span class="text-gray-800 dark:text-gray-200 text-sm">Active</span>
-                        </div>
-                        @error('is_active')
-                            <span class="text-red-500 text-sm ml-2">{{ $message }}</span>
+                    </div>
+                    @error('is_active')
+                        <span class="text-red-500 text-sm ml-2">{{ $message }}</span>
+                    @enderror
+
+
+                </div>
+
+                <!-- Min Stay -->
+                <div class="sm:col-span-1">
+                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
+                        Required <span class="text-red-500">*</span></label>
+                    <input type="number" wire:model="min_stay_nights" id="min_stay_nights" placeholder="Ex. 2 Nights"
+                        onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                        max="30"> @error('min_stay_nights') <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-
-
-                    </div>
-
-                    <!-- Min Stay -->
-                    <div class="sm:col-span-1">
-                        <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
-                            Required <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="min_stay_nights" id="min_stay_nights"
-                            placeholder="Ex. 2 Nights" onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
-                                max="30"> @error('min_stay_nights')     <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                    </div>
-
-                    <!-- Max Stay -->
-                    <div class="sm:col-span-1">
-                        <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Nights
-                            Allowed <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="max_stay_nights" id="max_stay_nights"
-                            placeholder="Ex. 4 nights" onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
-                                max="90"> @error('max_stay_nights')     <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                    </div>
-
-
                 </div>
-                <div class="flex justify-between items-center space-y-2 mt-6">
-                    <x-ghost-button onclick="history.back()" type="button">
-                        Cancel
-                    </x-ghost-button>
-                    <x-button wire:loading.attr="disabled" wire:target="image">
-                        Create Room Rate
-                    </x-button>
+
+                <!-- Max Stay -->
+                <div class="sm:col-span-1">
+                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Nights
+                        Allowed <span class="text-red-500">*</span></label>
+                    <input type="number" wire:model="max_stay_nights" id="max_stay_nights" placeholder="Ex. 4 nights"
+                        onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
+                        max="90"> @error('max_stay_nights') <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                 </div>
+
+
+            </div>
+            <div class="flex justify-between items-center space-y-2 mt-6">
+                <x-ghost-button onclick="history.back()" type="button">
+                    Cancel
+                </x-ghost-button>
+                <x-button wire:loading.attr="disabled" wire:target="image">
+                    Create Room Rate
+                </x-button>
+            </div>
         </form>
     </div>
 </div>

@@ -186,10 +186,6 @@ class ReservationForm extends Component
     public $dynamicKidOptions = [];
     public $selectedTimes = [];
 
-    public $special_requests = [
-        ['request' => '', 'status' => 'pending'],
-    ];
-
     public $editingPetIndex = null;
     public $editingPet = [
         'breed' => '',
@@ -197,6 +193,8 @@ class ReservationForm extends Component
 
     public $showEditPetModal = false;
 
+    public $services;
+    public $expandedService;
 
 
 
@@ -253,12 +251,127 @@ class ReservationForm extends Component
         $this->loadStaticData();
         $this->loadRooms();
         $this->loadBranding();
-        $this->getAvailableRooms();
         $this->initializeCountries();
         $this->loadCountryCode();
+
+        // Load cart and session data
+        $this->cart = session()->get('cart', []);
+        $this->adults = session()->get('adults', []);
+        $this->kids = session()->get('kids', []);
+        $this->total_pax = session()->get('total_pax', 0);
+
+        foreach ($this->cart as $index => $item) {
+            if ($item['type'] === 'room') {
+                $room = Property::find($item['room_id']);
+                if (
+                    !$room || // room does not exist
+                    !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date) // no longer available
+                ) {
+                    unset($this->cart[$index]);
+                    unset($this->adults[$item['room_id']]);
+                    unset($this->kids[$item['room_id']]);
+                }
+            }
+        }
+
+
+        $this->cart = array_values($this->cart);
+
+        // Recompute total pax after filtering unavailable rooms
+        $this->computeTotalPax();
+
+        // Save cleaned cart back to session
+        session([
+            'cart' => $this->cart,
+            'adults' => $this->adults,
+            'kids' => $this->kids,
+            'total_pax' => $this->total_pax,
+        ]);
+
+        // Populate quantity array for activities/services
+        foreach ($this->cart as $item) {
+            if ($item['type'] === 'activity') {
+                $this->quantity[$item['activity_id']] = $item['quantity'];
+            } elseif ($item['type'] === 'service') {
+                $this->quantity[$item['service_id']] = $item['quantity'];
+            }
+        }
+
+        // Load available rooms for display
+        $this->getAvailableRooms();
     }
 
 
+
+    protected function isRoomAvailable($room, $checkInDate, $checkOutDate)
+    {
+        $checkIn = Carbon::parse($checkInDate);
+        $checkOut = Carbon::parse($checkOutDate);
+
+        // Check if room has overlapping transactions
+        $booked = $room->transactions()
+            ->whereIn('transaction_status', [
+                'pending',
+                'reserved',
+                'receipt_verified',
+                'confirmed',
+                'ongoing'
+            ])
+            ->where(function ($q) use ($checkIn, $checkOut) {
+                $q->where('start_datetime', '<', $checkOut)
+                    ->where('end_datetime', '>', $checkIn);
+            })
+            ->exists();
+
+        return !$booked; // available if not booked
+    }
+
+    /**
+     * Remove unavailable rooms from cart based on current check-in/out dates.
+     */
+    protected function removeUnavailableRooms()
+    {
+        $removedRoom = false;
+
+        foreach ($this->cart as $index => $item) {
+            if ($item['type'] === 'room') {
+                $room = Property::find($item['room_id']);
+                if (!$room || !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                    unset($this->cart[$index]);
+                    unset($this->adults[$item['room_id']]);
+                    unset($this->kids[$item['room_id']]);
+                    $removedRoom = true;
+
+                    // Add a notice for the summary tab
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is no longer available and has been removed.";
+                }
+            }
+        }
+
+        // Reindex cart array
+        $this->cart = array_values($this->cart);
+
+        // Recompute total pax
+        $this->computeTotalPax();
+
+        // Save updated cart to session
+        session([
+            'cart' => $this->cart,
+            'adults' => $this->adults,
+            'kids' => $this->kids,
+            'total_pax' => $this->total_pax,
+        ]);
+
+        // Remove dependent activities/services if needed
+        if ($removedRoom) {
+            $this->currentStep = 1; // Go back to room selection
+            $this->cart = array_filter($this->cart, fn($item) => $item['type'] !== 'activity');
+            $this->quantity = []; // Reset quantities for activities/services
+            session(['cart' => $this->cart]);
+        }
+    }
+
+    public $cartNotices = [];
 
 
 
@@ -325,6 +438,12 @@ class ReservationForm extends Component
             $this->computeTotalPax();
             $this->recalculateCart();
             $this->getAvailableRooms();
+
+            // Save adults, kids, and selected room IDs to session
+            session([
+                'adults' => $this->adults,
+                'kids' => $this->kids,
+            ]);
         }
 
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
@@ -347,6 +466,12 @@ class ReservationForm extends Component
             $this->getAvailableRooms();
             $this->removePromoCode();
             $this->recalculateCart();
+
+            // Save to session
+            session([
+                'check_in_date' => $this->check_in_date,
+                'check_out_date' => $this->check_out_date,
+            ]);
         }
     }
 
@@ -378,13 +503,14 @@ class ReservationForm extends Component
     {
         $this->resetErrorBag();
         $this->validateData();
-
+        $this->removeUnavailableRooms();
         $this->currentStep = min($this->currentStep + 1, $this->totalSteps);
     }
 
     public function decreaseStep()
     {
         $this->resetErrorBag();
+        $this->removeUnavailableRooms();
         $this->currentStep = max($this->currentStep - 1, 1);
     }
 
@@ -403,16 +529,6 @@ class ReservationForm extends Component
      * ----------------------------------------------------------------------------------
      */
 
-    public function addSpecialRequest()
-    {
-        $this->special_requests[] = ['request' => '', 'status' => 'pending'];
-    }
-
-    public function removeSpecialRequest($index)
-    {
-        unset($this->special_requests[$index]);
-        $this->special_requests = array_values($this->special_requests); // reindex
-    }
 
 
 
@@ -511,6 +627,9 @@ class ReservationForm extends Component
                 // Step 6: Add the number of adults and kids to the accumulator ($carry)
                 return $carry + $adults + $kids;
             }, 0); // Step 7: Initialize the accumulator ($carry) to 0
+
+        // Save to session
+        session(['total_pax' => $this->total_pax]);
     }
 
     public function computeTotalAmountOfAllRooms(): float
@@ -739,9 +858,9 @@ class ReservationForm extends Component
      * duplicate checking, rate computation, and cart state updates.
      * -----------------------------------------------------------------------------
      */
+
     public function addRoomToCart($roomId)
     {
-
         $this->resetErrorBag();
 
         if (!$this->checkInOutDatesAreValid()) {
@@ -768,17 +887,19 @@ class ReservationForm extends Component
             $context
         );
 
-
-
         if (!$added) {
             $this->addError('cart', 'Failed to add room to cart.');
             return;
         }
 
+        session()->put('cart', $this->cart);
+
         $this->computeTotalPax();
         $this->getAvailableRooms();
         $this->recalculateCart();
     }
+
+
 
 
     /**
@@ -829,6 +950,8 @@ class ReservationForm extends Component
         );
 
         $this->cart = $newActivitiesCart;
+
+        session()->put('cart', $this->cart);
         $this->recalculateCart();
     }
 
@@ -843,23 +966,26 @@ class ReservationForm extends Component
      *
      * ------------------------------------------------------------------------------
      */
-    public function addServiceToCart($serviceId)
+    public function addServiceToCart($type, $itemId)
     {
+
         $newServicesCart = $this->cartService->addItem(
-            'service',
-            $serviceId,
-            $this->selectedServices,
+            $type,
+            $itemId,
+            $this->cart,
             $this->quantity,
             $this->status,
-            $this->paymentStatus
+            $this->paymentStatus,
         );
 
-        if ($this->isItemAlreadyInCart('service', $serviceId)) {
-            $this->addError('cart', 'This item is already in the cart.');
+
+        if ($this->isItemAlreadyInCart($type, $itemId)) {
             return;
         }
 
         $this->cart = $newServicesCart;
+
+        session()->put('cart', $this->cart);
         $this->handlePetServiceLogic();
         $this->recalculateCart();
     }
@@ -877,29 +1003,23 @@ class ReservationForm extends Component
      *
      * ------------------------------------------------------------------------------
      */
+
     public function incrementItemQuantity($type, $itemId)
     {
-        if (!isset($this->quantity[$itemId])) {
-            $this->quantity[$itemId] = 1;
-        }
+        // Ensure quantity exists from session/cart
+        $this->quantity[$itemId] = $this->quantity[$itemId] ?? 1;
 
-        $newQuantity = $this->quantity[$itemId] + 1;
-        $this->quantity[$itemId] = $newQuantity;
-
-        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
+        $this->quantity[$itemId]++;
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $this->quantity[$itemId]);
         $this->recalculateCart();
     }
 
     public function decrementItemQuantity($type, $itemId)
     {
-        if (!isset($this->quantity[$itemId])) {
-            $this->quantity[$itemId] = 1;
-        }
+        $this->quantity[$itemId] = $this->quantity[$itemId] ?? 1;
 
-        $newQuantity = max(1, $this->quantity[$itemId] - 1);
-        $this->quantity[$itemId] = $newQuantity;
-
-        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $newQuantity);
+        $this->quantity[$itemId] = max(1, $this->quantity[$itemId] - 1);
+        $this->cart = $this->cartService->updateQuantity($type, $this->cart, $itemId, $this->quantity[$itemId]);
         $this->recalculateCart();
     }
 
@@ -907,6 +1027,12 @@ class ReservationForm extends Component
     {
         $this->expandedActivity = $this->expandedActivity === $activityId ? null : $activityId;
     }
+
+    public function toggleServiceDescription($serviceId): void
+    {
+        $this->expandedService = $this->expandedService === $serviceId ? null : $serviceId;
+    }
+
 
 
 
@@ -1215,7 +1341,7 @@ class ReservationForm extends Component
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // Attempt to send confirmation emails to guest and admin
+        // Attempt to send confirmation emails
         try {
             $emailService->sendReservationEmails($reservationData);
         } catch (\Exception $e) {
@@ -1231,6 +1357,14 @@ class ReservationForm extends Component
             session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
             return redirect()->away($reservationData['payment_link']);
         }
+
+        // Clear session data related to the reservation
+        session()->forget([
+            'cart',
+            'promoCode',
+            'checkInDate',
+            'checkOutDate',
+        ]);
 
         // Fallback if no payment link — direct to proof of payment submission page
         return redirect()->route('guest.proof-of-payment-page');
@@ -1288,10 +1422,7 @@ class ReservationForm extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
-            'special_requests' => collect($this->special_requests)
-                ->filter(fn($req) => isset($req['request']) && trim($req['request']) !== '')
-                ->values()
-                ->all(),
+            'requests' => $this->requests,
         ]);
     }
 
@@ -1322,6 +1453,10 @@ class ReservationForm extends Component
 
             if ($item['type'] === 'activity') {
                 $this->attachActivityToTransaction($transaction, $item);
+            }
+
+            if ($item['type'] === 'service') {
+                $this->attachServiceToTransaction($transaction, $item);
             }
         }
     }
@@ -1373,13 +1508,13 @@ class ReservationForm extends Component
     protected function attachServiceToTransaction(Transaction $transaction, array $item): void
     {
         $transaction->services()->attach($item['service_id'], [
-            'quantity' => $item['quantity'],
-            'amount' => $item['amount'],
-            'payment_status' => $item['payment_status'],
-            'days' => $item['days']
+            'quantity'       => $item['quantity'] ?? 1,
+            'amount'         => $item['amount'] ?? 0,
+            'payment_status' => $item['payment_status'] ?? 'unpaid',
+            'days'           => $item['days'] ?? 1,
         ]);
 
-        Log::info('Attaching room to transaction with data:', $item);
+        Log::info('Attaching service to transaction with data:', $item);
     }
 
     protected function insertGuestPetDetails(Transaction $transaction): void
@@ -1441,40 +1576,35 @@ class ReservationForm extends Component
         if ($this->currentStep == 3) {
             $this->validate([
                 'first_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+                    'required',
+                    'string',
+                    'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
+                ],
                 'middle_name' =>  [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                    'nullable',
+                    'string',
+                    'regex:/^[A-Za-z\s\-]+$/',
+                ],
                 'last_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
-            'company_name' => [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                    'required',
+                    'string',
+                    'regex:/^[A-Za-z\s\-]+$/',
+                ],
+                'company_name' => [
+                    'nullable',
+                    'string',
+                    'regex:/^[A-Za-z\s\-]+$/',
+                ],
                 'email' => 'required|email',
                 'contact_number' => [
-                'required', 
-                'string', 
-                'regex:/^[0-9]{11}$/', //11 digits only
-            ], 
+                    'required',
+                    'string',
+                    'regex:/^[0-9]{11}$/', //11 digits only
+                ],
                 'country' => 'required|string',
                 'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
                 'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
-                'special_requests.*.request' => [
-                'nullable', 
-                'string', 
-                'max:255',
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'requests' => 'nullable|string|max:255',
                 'pets.*.breed' => 'required|string|max:255',
             ]);
         }
@@ -1490,26 +1620,26 @@ class ReservationForm extends Component
     {
         return $this->validate([
             'guest_first_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'required',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_middle_name' => [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'nullable',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_last_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'required',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_suffix' => [
-                'nullable', 
-                'string', 
+                'nullable',
+                'string',
                 'max:10',
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_gender' => 'nullable|in:male,female,other',
             'guest_residency' => 'nullable|in:local,foreigner',
             'guest_country_of_origin' => 'nullable|string|max:100',
@@ -1728,7 +1858,10 @@ class ReservationForm extends Component
                     'send_email_receipt' => true,
                     'show_description' => true,
                     'show_line_items' => true,
-                    'payment_method_types' => ['card', 'gcash', 'paymaya'],
+                    'payment_method_types' => [
+                        'gcash',      // GCash
+                        'paymaya',    // Maya / PayMaya
+                    ],
                     'success_url' => route('guest.thank-you-page'),
                     'cancel_url' => 'http://127.0.0.1:8000/payment-failed',
                     'line_items' => [
@@ -1943,6 +2076,8 @@ class ReservationForm extends Component
                 $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
             }
         }
+
+        session()->put('cart', $this->cart);
     }
 
 
@@ -1967,8 +2102,9 @@ class ReservationForm extends Component
     protected function initializeDates()
     {
         $now = Carbon::now('Asia/Manila');
-        $this->check_in_date = $now->format('Y-m-d');
-        $this->check_out_date = $now->copy()->addDay()->format('Y-m-d');
+
+        $this->check_in_date = session('check_in_date', $now->format('Y-m-d'));
+        $this->check_out_date = session('check_out_date', $now->copy()->addDay()->format('Y-m-d'));
     }
 
     /**
@@ -2020,6 +2156,7 @@ class ReservationForm extends Component
         $this->beds = PropertyBed::all();
         $this->selectedFeatures = [];
         $this->activities = Activity::availableActivities()->get();
+        $this->services = Service::availableServices()->get();
         $this->currentStep = 1;
         $this->paymentMethod = PaymentMethod::all();
         $this->terms_and_conditions = Setting::find(1)->terms_and_conditions;
@@ -2050,6 +2187,4 @@ class ReservationForm extends Component
         $settings = ViewBranding::first();
         $this->terms_and_conditions = $settings->terms_and_conditions ?? '';
     }
-
-
 }

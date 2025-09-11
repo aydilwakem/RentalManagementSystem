@@ -13,53 +13,43 @@ class InvoiceService
 {
     public function computeBaseSubtotal(Transaction $transaction): float
     {
-        // Retrieves total amount of activities assigned to the transaction
         $activitiesTotal = $transaction->activities?->sum(
             fn($activity) => $activity->pivot->amount
         ) ?? 0;
 
-        // Retrieves total amount of services assigned to the transaction
         $servicesTotal = $transaction->services?->sum(
             fn($service) => $service->pivot->amount
         ) ?? 0;
 
-        // Retrieves total amount of rooms assigned to the transaction
         $roomsTotal = $transaction->properties?->sum(
             fn($property) => $property->pivot->total_amount
         ) ?? 0;
 
-        $baseSubtotal = $activitiesTotal + $roomsTotal + $servicesTotal;
-        $discount = $transaction->promo_discount_amount ?? 0;
+        $promoDiscountTotal = $transaction->promo_discount_amount ?? 0;
 
-        return max($baseSubtotal - $discount, 0);
+        // Add convenience fee to base subtotal
+        $convenienceFee = $transaction->convenience_fee ?? 0;
+
+        // Base subtotal = items + convenience fee (fixed)
+        return $activitiesTotal + $servicesTotal + $roomsTotal + $convenienceFee - $promoDiscountTotal;
     }
+
 
     public function updateGrandTotal(Invoice $invoice, Transaction $transaction): void
     {
-        // Subtotal is the amount of all items (without the convenience fee)
-        $subtotal = $this->computeBaseSubtotal($transaction);
+        $baseSubtotal = $this->computeBaseSubtotal($transaction);
 
-        // Convenience Fee Total is the total of convenience fee of all payments assigned to the transaction
-        $convenienceFeeTotal = $invoice->payments
-            ?->where('payment_status', 'completed')
-            ->sum('convenience_fee') ?? 0;
+        // Recalculate discount dynamically
+        $totalDiscount = $this->updateDiscountTotal($invoice, $transaction);
 
-        // Fallback from transaction if no completed payment fee
-        if ($convenienceFeeTotal == 0 && $transaction->convenience_fee > 0) {
-            $convenienceFeeTotal = $transaction->convenience_fee;
-        }
-
-        // Subtract discounts if any
-        $totalDiscount = $invoice->total_discount ?? 0;
-
-        // Grand total
-        $grandTotal = $subtotal - $totalDiscount + $convenienceFeeTotal;
+        $grandTotal = max($baseSubtotal - $totalDiscount, 0);
 
         $invoice->update([
-            'base_subtotal' => $subtotal,
-            'sub_total' => $grandTotal // stored in the database
+            'base_subtotal' => $baseSubtotal,
+            'sub_total' => $grandTotal,
         ]);
     }
+
 
 
 
@@ -99,13 +89,37 @@ class InvoiceService
         }
     }
 
-    public function updateDiscountTotal(Invoice $invoice)
+    public function updateDiscountTotal(Invoice $invoice, Transaction $transaction)
     {
-        $totalDiscount = InvoiceDiscount::where('invoice_id', $invoice->id)
-            ->sum('discount_value');
+        $totalDiscount = 0;
+
+        foreach ($invoice->discounts as $discount) {
+            switch ($discount->discount_type) {
+                case 'PWD':
+                    // Apply only to eligible items (e.g., rooms)
+                    $eligibleAmount = $transaction->properties->sum(
+                        fn($p) => $p->pivot->total_amount
+                    );
+                    $totalDiscount += $eligibleAmount * ($discount->discount_value / 100);
+                    break;
+
+                case 'Senior':
+                    $eligibleAmount = $transaction->services->sum(
+                        fn($s) => $s->pivot->amount
+                    );
+                    $totalDiscount += $eligibleAmount * ($discount->discount_value / 100);
+                    break;
+
+                default:
+                    // Fixed amount discount
+                    $totalDiscount += $discount->discount_value;
+            }
+        }
 
         $invoice->update([
             'total_discount' => $totalDiscount,
         ]);
+
+        return $totalDiscount; // optionally return for use in updateGrandTotal
     }
 }

@@ -216,6 +216,8 @@ class ReservationList extends Component
             'check_out' => $transaction->end_datetime,
             'deposit' => $transaction->deposit_paid,
             'convenience_fee' => $transaction->convenience_fee,
+            'requests' => $transaction->requests,
+            'request_reply' => $transaction->request_reply,
 
             'invoice_number' => $invoice->invoice_number,
             'invoice_basesubtotal' => $invoice->base_subtotal,

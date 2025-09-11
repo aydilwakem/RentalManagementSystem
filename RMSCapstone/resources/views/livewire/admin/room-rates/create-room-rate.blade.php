@@ -11,7 +11,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter room name">
                     @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -23,11 +23,11 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Room</option>
                         @foreach ($rooms as $room)
-                        <option value="{{ $room->id }}">{{ $room->name }}</option>
+                            <option value="{{ $room->id }}">{{ $room->name }}</option>
                         @endforeach
                     </select>
                     @error('room_id')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -37,7 +37,7 @@
                     <input type="date" wire:model="start_date" id="start_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('start_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -47,7 +47,7 @@
                     <input type="date" wire:model="end_date" id="end_date"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                     @error('end_date')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -58,7 +58,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter rate amount">
                     @error('amount')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -70,7 +70,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter total amount">
                     @error('extra_person_charge')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -82,7 +82,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter total amount">
                     @error('extended_stay_charge_per_hr')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -97,7 +97,7 @@
                         <option value="Peak">Peak</option>
                     </select>
                     @error('rate_type')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
@@ -109,7 +109,7 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 resize-none"
                     rows="5"></textarea>
                 @error('description')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 

@@ -184,6 +184,24 @@
                 </table>
             @endif
 
+            {{-- Special Requests --}}
+            <div class="mb-4">
+                <strong>Guest Request:</strong>
+                <p class="mt-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-3 rounded-lg"
+                    style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 10px; color: #555;">
+                    {{ $requests ?? 'No request submitted.' }}
+                </p>
+
+                @if ($request_reply)
+                    <strong>Our Reply:</strong>
+                    <p class="mt-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 p-3 rounded-lg"
+                        style="background-color: #e0f7fa; padding: 15px; border-radius: 5px; margin-top: 10px; color: #555;">
+                        {{ $request_reply }}
+                    </p>
+                @endif
+
+            </div>
+
             {{-- Price Breakdown --}}
             <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 25px;">
                 <h3 style="color: #166534; margin-top: 0; margin-bottom: 10px;">Total Breakdown</h3>
