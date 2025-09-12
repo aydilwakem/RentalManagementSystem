@@ -15,7 +15,7 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">Edit Role</h2>
 
         {{-- Display Validation Errors --}}
-        @if ($errors->any())
+        {{-- @if ($errors->any())
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
             <ul>
                 @foreach ($errors->all() as $error)
@@ -23,7 +23,7 @@
                 @endforeach
             </ul>
         </div>
-        @endif
+        @endif --}}
 
         <form wire:submit.prevent="">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -36,12 +36,18 @@
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400
                                focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter Role" required>
+                    @error('name')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Permissions List -->
                 <div class="sm:col-span-2">
                     <label for="permissions"
                         class="block mb-2 text-xl font-medium text-gray-900 dark:text-green-200">Permissions</label>
+                    @error('selectedPermissions')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
 
                     <div class="space-y-6">
                         @php

@@ -45,8 +45,8 @@ class EditPayment extends Component
         try{
         $this->validate([
             'mode_of_payment_name' => "required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:pm_payment_methods,mode_of_payment_name,{$this->paymentMethodId},id",
-            'account_name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/',
-            'account_number' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/',
+            'account_name' => 'required|string|max:255|regex:/^[^<>?!@#$]+$/u',
+            'account_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/', // Exclude special characters, accept 10-12 digits
             'new_mode_of_payment_qr_image' => 'nullable|image|max:2048', // Ensure image size is within limit
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {

@@ -13,6 +13,13 @@ class CreateRole extends Component
     public $selectedPermissions = []; // Store selected permissions
     public $permissions = []; // Store all available permissions
 
+    public $confirmCreateItem = false; //Create modal
+
+    public function confirmCreate()
+    {
+        $this->confirmCreateItem = true;
+    }
+
     public function mount()
     {
         $this->permissions = Permission::all(); // Fetch all permissions
@@ -20,10 +27,16 @@ class CreateRole extends Component
 
     public function saveRole()
     {
-        $this->validate([
+        try{
+            $this->validate([
             'name' => 'required|string|min:3|regex:/^[A-Za-z\s\-]+$/|unique:roles,name',
             'selectedPermissions' => 'array|min:1',
         ]);
+        }catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, close the modal
+            $this->confirmCreateItem = false;
+            throw $e;
+        }
 
         // Create role with correct guard
         $role = Role::create([

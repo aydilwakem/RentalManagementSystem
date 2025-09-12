@@ -13,9 +13,9 @@
 
         <!-- Flash Message -->
         @if (session()->has('message'))
-            <div class="p-4 mb-6 bg-green-100 text-green-800 border border-green-200 rounded-md text-sm font-medium">
-                {{ session('message') }}
-            </div>
+        <div class="p-4 mb-6 bg-green-100 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+            {{ session('message') }}
+        </div>
         @endif
 
         <!-- Feedback Form -->
@@ -28,27 +28,27 @@
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     placeholder="e.g. TXN-XXXXXXX">
 
-                @error('transaction_number') <span class=" text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                @error('transaction_number')
+                <span class=" text-red-500 text-sm mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
 
             <!-- Ratings -->
             @foreach ($ratingTypes as $type)
-                <div>
-                    <label class="block text-md font-semibold text-gray-800">{{ $type->rating_name }}</label>
-                    <div class="flex items-center space-x-2">
-                        @for ($i = 1; $i <= 5; $i++)
-                            <span wire:click="$set('ratingValues.{{ $type->id }}', {{ $i }})"
-                                class="cursor-pointer text-4xl transition transform duration-100 hover:scale-125 {{ isset($ratingValues[$type->id]) && $ratingValues[$type->id] >= $i ? 'text-yellow-400' : 'text-gray-300' }}">
-                                ★
-                            </span>
+            <div>
+                <label class="block text-md font-semibold text-gray-800">{{ $type->rating_name }}</label>
+                <div class="flex items-center space-x-2">
+                    @for ($i = 1; $i <= 5; $i++) <span wire:click="$set('ratingValues.{{ $type->id }}', {{ $i }})"
+                        class="cursor-pointer text-4xl transition transform duration-100 hover:scale-125 {{ isset($ratingValues[$type->id]) && $ratingValues[$type->id] >= $i ? 'text-yellow-400' : 'text-gray-300' }}">
+                        ★
+                        </span>
                         @endfor
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1 italic">Tap to rate from 1 (poor) to 5 (excellent)</p>
-                    @error("ratingValues.{$type->id}")
-                        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-                    @enderror
                 </div>
+                <p class="text-sm text-gray-500 mt-1 italic">Tap to rate from 1 (poor) to 5 (excellent)</p>
+                @error("ratingValues.{$type->id}")
+                <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
             @endforeach
 
             <!-- Comments -->
@@ -58,6 +58,9 @@
                     class="w-full border resize-none border-gray-300 rounded-lg px-4 py-3 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     rows="4" placeholder="Tell us what you loved or what could be improved..."></textarea>
                 <p class="text-xs text-gray-400 mt-1">Your suggestions are valuable to us</p>
+                @error('comments')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             <!-- Submit -->

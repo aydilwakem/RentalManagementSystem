@@ -28,9 +28,19 @@ class FeedbackForm extends Component
     {
         $expectedRatingTypeIds = FeedbackRatingType::pluck('id')->toArray();
 
+        // Find in Transactions table with the transaction number
+        $transaction = Transaction::where('transaction_number', $this->transaction_number)->first();
+
+        //If transaction number not found: 
+        if (!$transaction){
+            $this->addError('transaction_number', 'Transaction number not found.');
+            return;
+        }
+
+
         $rules = [
             'transaction_number' => 'required|string',
-            'comments' => 'nullable|string',
+            'comments' => 'nullable|string|not_regex:/[<>?@#$]/',
             'ratingValues' => 'required|array',
         ];
 
@@ -40,9 +50,7 @@ class FeedbackForm extends Component
 
         $this->validate($rules);
 
-        // Find in Transactions table with the transaction number
-
-        $transaction = Transaction::where('transaction_number', $this->transaction_number)->first();
+        
 
         // Create feedback
         $feedback = Feedback::create([

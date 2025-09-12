@@ -1976,7 +1976,7 @@ class CreateReservation extends Component
                 'regex:/^[A-Za-z\s\-]+$/', 
             ], 
             'company_name' => [
-                'required', 
+                'nullable', 
                 'string', 
                 'regex:/^[A-Za-z\s\-]+$/', 
             ], 

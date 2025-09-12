@@ -27,7 +27,7 @@
                 </button>
             </div>
 
-            @if ($errors->any())
+            {{-- @if ($errors->any())
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -35,10 +35,10 @@
                     @endforeach
                 </ul>
             </div>
-            @endif
+            @endif --}}
 
             <!-- Form container -->
-            <form wire:submit.prevent="saveRole">
+            <form wire:submit.prevent="">
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                     <!-- Name of Role -->
@@ -48,12 +48,18 @@
                         <input type="text" wire:model="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Super Admin" required>
+                        @error('name')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Permissions List -->
                     <div class="sm:col-span-2">
                         <label for="permissions"
                             class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Permissions</label>
+                        @error('selectedPermissions')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                         <div class="space-y-4">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +179,8 @@
                             <x-ghost-button onclick="history.back()" type="button">
                                 Cancel
                             </x-ghost-button>
-                            <x-button type="submit" class="mt-6" wire:loading.attr="disabled" wire:target="image">
+                            <x-button type="submit" class="mt-6" wire:loading.attr="disabled" wire:target="image"
+                                wire:click="confirmCreate">
                                 Create Role
                             </x-button>
 
@@ -183,4 +190,25 @@
             </form>
         </div>
     </div>
+
+    <!-- Create Confirmation Modal -->
+    <x-dialog-modal wire:model.live="confirmCreateItem">
+        <x-slot name="title">
+            {{ __('Create Role') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you want to create this item?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button class="ms-3 bg-green text-white" wire:click="saveRole" wire:loading.attr="disabled">
+                {{ __('Create Role') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

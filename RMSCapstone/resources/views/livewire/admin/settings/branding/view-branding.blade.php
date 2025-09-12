@@ -37,6 +37,9 @@
                             class="w-32 h-32 object-cover rounded-lg shadow">
                         @endif
                     </div>
+                    @error('logo')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Company Name -->
@@ -99,6 +102,9 @@
                     <input type="text" wire:model="facebook" id="facebook"
                         placeholder="Ex. https://facebook.com/yourpage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    @error('facebook')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Instagram -->
@@ -108,6 +114,9 @@
                     <input type="text" wire:model="instagram" id="instagram"
                         placeholder="Ex. https://instagram.com/yourprofile" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    @error('instagram')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 

@@ -28,8 +28,8 @@ class CreatePayment extends Component
         // Validate form input (including image)
         $this->validate([
             'mode_of_payment_name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:pm_payment_methods,mode_of_payment_name',
-            'account_name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/',
-            'account_number' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/',
+            'account_name' => 'required|string|max:255|regex:/^[^<>?!@#$]+$/u',
+            'account_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
             'mode_of_payment_qr_image' => 'nullable|image|max:1024', // Max 1MB image
         ]);
     }catch (\Illuminate\Validation\ValidationException $e) {

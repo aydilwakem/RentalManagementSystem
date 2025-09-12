@@ -6,7 +6,7 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-        ['label' => 'Promo Codes', 'url' => route('admin.promo-codes')],
+        ['label' => 'Promo Codes', 'url' => route('admin.view-promo-codes')],
         ['label' => 'Create Promo Code', 'url' => route('admin.create-promo-code')],
     ]" />
     </x-slot>
@@ -29,10 +29,10 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Success!</strong>
-                    <span class="block sm:inline">{{ session('message') }}</span>
-                </div>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('message') }}</span>
+            </div>
             @endif
 
             <!-- Form Container -->
@@ -61,7 +61,7 @@
                             </div>
 
                             @error('code')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -75,7 +75,7 @@
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
                             @error('description')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -92,7 +92,7 @@
                                 <option value="percentage">Percentage</option>
                             </select>
                             @error('discount_type')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -108,11 +108,11 @@
                         <div class="relative">
                             {{-- Symbol when type is selected --}}
                             @if ($discount_type === 'fixed')
-                                <span
-                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
+                            <span
+                                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
                             @elseif ($discount_type === 'percentage')
-                                <span
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
+                            <span
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
                             @endif
 
                             {{-- Placeholders based on type --}}
@@ -126,7 +126,7 @@
                         </div>
 
                         @error('discount_value')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -140,7 +140,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
                             max="30" placeholder="Ex. 10">
                         @error('max_uses')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -154,7 +154,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1">
                         @error('per_user_limit')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -167,7 +167,7 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. P3,000.00">
                         @error('min_booking_amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -180,11 +180,11 @@
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Room Category</option>
                             @foreach ($propertyCategories as $propertyCategory)
-                                <option value="{{ $propertyCategory->id }}">{{ $propertyCategory->name }}</option>
+                            <option value="{{ $propertyCategory->id }}">{{ $propertyCategory->name }}</option>
                             @endforeach
                         </select>
                         @error('property_category_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -208,7 +208,7 @@
                             <span class="text-gray-700 dark:text-gray-200">Active</span>
                         </div>
                         @error('is_active')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -232,45 +232,45 @@
                             <span class="text-gray-700 dark:text-gray-200">Has Expiration</span>
                         </div>
                         @error('has_expiration')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
 
                     @if ($has_expiration)
-                        <!-- Duration Days -->
-                        <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Duration</label>
-                            <div
-                                class="text-gray-700 text-sm bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed">
-                                {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
-                            </div>
+                    <!-- Duration Days -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Duration</label>
+                        <div
+                            class="text-gray-700 text-sm bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed">
+                            {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
                         </div>
+                    </div>
 
 
-                        <!-- Start Date -->
-                        <div>
-                            <label for="start_date"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
-                                Date <span class="text-red-500">*</span></label>
-                            <input type="date" wire:model.live="start_date" id="start_date" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            @error('start_date')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
+                    <!-- Start Date -->
+                    <div>
+                        <label for="start_date"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
+                            Date <span class="text-red-500">*</span></label>
+                        <input type="date" wire:model.live="start_date" id="start_date" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        @error('start_date')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                        <!-- End Date -->
-                        <div>
-                            <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                End Date <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" wire:model.live="end_date" id="end_date" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            @error('end_date')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
+                    <!-- End Date -->
+                    <div>
+                        <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            End Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" wire:model.live="end_date" id="end_date" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        @error('end_date')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
                     @endif
 
 

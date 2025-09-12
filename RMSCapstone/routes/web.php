@@ -660,27 +660,27 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // ----------------- Houses
 
     // List
-    Route::get('/houses', function () {
+    Route::get('/properties', function () {
         return view('admin.rentals.properties.view-properties');
     })
         ->name('admin.properties')
         ->middleware('can:house-list');
 
     // Create
-    Route::get('create/house', function () {
+    Route::get('create/property', function () {
         return view('admin.rentals.properties.create-property');
     })
         ->name('admin.create-property')
         ->middleware('can:house-create');
 
     // View
-    Route::get('view/house/{property}', ViewProperty::class)->name('admin.view-property')->middleware('can:house-view');
+    Route::get('view/property/{property}', ViewProperty::class)->name('admin.view-property')->middleware('can:house-view');
 
     // Edit
-    Route::get('edit/house/{property}', EditProperty::class)->name('admin.edit-property')->middleware('can:house-edit');
+    Route::get('edit/property/{property}', EditProperty::class)->name('admin.edit-property')->middleware('can:house-edit');
 
     // Deleted Houses (Soft Deletes)
-    Route::get('deleted-houses', function () {
+    Route::get('deleted-properties', function () {
         return view('admin.rentals.properties.deleted-properties');
     })
         ->name('admin.deleted-properties')

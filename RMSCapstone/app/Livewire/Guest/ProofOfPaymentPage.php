@@ -81,8 +81,9 @@ class ProofOfPaymentPage extends Component
         $this->validate([
             'payment_method_id' => 'required|exists:pm_payment_methods,id',
             'transaction_number' => 'required|exists:trn_transactions,transaction_number',
-            'payment_reference_number' => 'required|string|max:255',
+            'payment_reference_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
             'payment_screenshot' => 'required|image|max:2048',
+            'notes' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
         ]);
     }
 
