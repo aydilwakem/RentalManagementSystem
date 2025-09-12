@@ -824,6 +824,15 @@ class ReservationForm extends Component
         $this->getAvailableRooms();
     }
 
+    public function computeSubtotalAfterDiscount(): float
+    {
+        $subtotal = $this->computeBaseSubtotal();
+
+        $promoDiscount = $this->promoDiscount ?? 0; // promo discount amount
+
+        return max($subtotal - $promoDiscount, 0);
+    }
+
     public function removePromoCode()
     {
         Log::info('removePromoCode called');

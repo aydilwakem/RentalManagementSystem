@@ -406,10 +406,21 @@
                         </div>
 
                         <!-- Subtotal Amount -->
-                        <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+                    <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
                             <div>Subtotal</div>
-                            <div class="font-semibold">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
+                            <div class="font-semibold flex flex-col items-end">
+                                @if($discountMessage)
+                                    <!-- Original subtotal with strikethrough -->
+                                    <span class="line-through text-gray-400">₱{{ number_format($this->computeBaseSubtotal(), 2) }}</span>
+                                    <!-- Subtotal after discount -->
+                                    <span class="text-green-700 font-semibold">₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</span>
+                                @else
+                                    <!-- No discount applied -->
+                                    <span>₱{{ number_format($this->computeSubtotalAmount(), 2) }}</span>
+                                @endif
+                            </div>
                         </div>
+
 
                         <!-- Convenience Fee -->
                         <div class="flex justify-between items-center text-sm text-gray-600">
@@ -815,11 +826,20 @@
 
                                     <!-- Subtotal Amount -->
                                     <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
-                                        <div>Subtotal</div>
-                                        <div class="font-semibold">
-                                            ₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
-                                    </div>
-
+                                            <div>Subtotal</div>
+                                            <div class="font-semibold flex flex-col items-end">
+                                                @if($discountMessage)
+                                                    <!-- Original subtotal with strikethrough -->
+                                                    <span class="line-through text-gray-400">₱{{ number_format($this->computeBaseSubtotal(), 2) }}</span>
+                                                    <!-- Subtotal after discount -->
+                                                    <span class="text-green-700 font-semibold">₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</span>
+                                                @else
+                                                    <!-- No discount applied -->
+                                                    <span>₱{{ number_format($this->computeSubtotalAmount(), 2) }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                        
                                     <!-- Convenience Fee -->
                                     <div class="flex justify-between items-center text-sm text-gray-600">
                                         <div class="text-left flex items-center gap-2">
