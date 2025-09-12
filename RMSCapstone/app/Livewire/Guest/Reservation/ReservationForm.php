@@ -40,6 +40,7 @@ use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
 use PragmaRX\Countries\Package\Countries;
 use App\Helpers\Toast;
+use App\Services\PaymentMethodService;
 
 class ReservationForm extends Component
 {
@@ -162,6 +163,7 @@ class ReservationForm extends Component
     protected PromoCodeService $promoCodeService;
     protected CartService $cartService;
     protected BrandingService $brandingService;
+    protected PaymentMethodService $paymentMethodService;
     protected PayMongoService $payMongo;
     protected EmailService $emailService;
 
@@ -1343,11 +1345,14 @@ class ReservationForm extends Component
             $total = $this->computeTotalAmount();
             $deposit = $total * ($this->depositPercentage / 100);
 
-
+            //Fetch payment method data for email
+            $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
 
             // Prepare data for confirmation email
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
             $reservationData['payment_link'] = $paymentLink;
+
+            $reservationData['payment_methods'] = $paymentMethods; // Add payment methods data to be accessed by email
         });
 
         // Attempt to send confirmation emails
@@ -2187,6 +2192,13 @@ class ReservationForm extends Component
         $this->facebookLink = $branding['facebook_link'];
         $this->instagramLink = $branding['instagram_link'];
     }
+
+    /**
+     * Loads payment methods from the payment method service.
+     */
+    // protected function loadPaymentMethoods(): void{
+    //     $this->paymentMethods = $this->paymentMethodService->getPaymentMethodsData();
+    // }
 
     /**
      * Loads dynamic terms and conditions from settings.

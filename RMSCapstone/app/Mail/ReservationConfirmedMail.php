@@ -64,6 +64,11 @@ class ReservationConfirmedMail extends Mailable
                 'activities' => $this->reservationData['activities'],
                 'services' => $this->reservationData['services'],
 
+                //Promo Code
+                'code' => $this->reservationData['code'],
+                'discount_type' => $this->reservationData['discount_type'],
+                'discount_value' => $this->reservationData['discount_value'],
+
 
                 //Branding
                 'branding_company_name' => $this->reservationData['branding_company_name'],

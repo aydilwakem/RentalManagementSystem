@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Reservation Confirmation</title>
+    <title>Reservation Successfully Submitted</title>
     <style>
         body,
         p,
@@ -96,43 +96,43 @@
 
             {{-- Cart Items Table --}}
             @if(!empty($cart_items))
-                <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
-                    <thead>
-                        <tr style="background-color: #166534; color: #fff;">
-                            <th style="padding: 10px; text-align: left;">Type</th>
-                            <th style="padding: 10px; text-align: left;">Name</th>
-                            <th style="padding: 10px; text-align: center;">Qty / Days</th>
-                            <th style="padding: 10px; text-align: right;">Total</th>
-                            <th style="padding: 10px; text-align: center;">Scheduled</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($cart_items as $item)
-                            <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 8px;">{{ $item['type'] }}</td>
-                                <td style="padding: 8px;">{{ $item['name'] }}</td>
-                                <td style="padding: 8px; text-align: center;">
-                                    @if($item['type'] === 'Room')
-                                        {{ $item['quantity'] }} days
-                                    @else
-                                        {{ $item['quantity'] }}
-                                    @endif
-                                </td>
-                                <td style="padding: 8px; text-align: right;">
-                                    ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
-                                </td>
-                                <td style="padding: 8px; text-align: center;">
-                                    @if(isset($item['datetime']))
-                                        {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                <thead>
+                    <tr style="background-color: #166534; color: #fff;">
+                        <th style="padding: 10px; text-align: left;">Type</th>
+                        <th style="padding: 10px; text-align: left;">Name</th>
+                        <th style="padding: 10px; text-align: center;">Qty / Days</th>
+                        <th style="padding: 10px; text-align: right;">Total</th>
+                        <th style="padding: 10px; text-align: center;">Scheduled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($cart_items as $item)
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 8px;">{{ $item['type'] }}</td>
+                        <td style="padding: 8px;">{{ $item['name'] }}</td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if($item['type'] === 'Room')
+                            {{ $item['quantity'] }} days
+                            @else
+                            {{ $item['quantity'] }}
+                            @endif
+                        </td>
+                        <td style="padding: 8px; text-align: right;">
+                            ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
+                        </td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if(isset($item['datetime']))
+                            {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
+                            @else
+                            N/A
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
             @endif
 
 
@@ -148,10 +148,10 @@
                             <td style="padding:8px; text-align:right;">₱{{ number_format($base_subtotal ?? 0, 2) }}</td>
                         </tr>
                         @if(!empty($promo_code))
-                            <tr>
-                                <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
-                                <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
-                            </tr>
+                        <tr>
+                            <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
+                            <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
+                        </tr>
                         @endif
                         <tr>
                             <td style="padding:8px;">Subtotal:</td>
@@ -176,33 +176,38 @@
 
 
             <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-    $expirationHours }} hours</strong> to confirm your reservation.
+                    $expirationHours }} hours</strong> to confirm your reservation.
             </p>
 
             {{-- Manual Payment Options --}}
+            <strong>Prefer to pay manually?</strong><br>
+            You may use any of the following options and upload your screenshot or deposit slip as proof of payment
+            through the link below:
+            <br>
+            <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
+                style="color: #007bff; text-decoration: underline;">
+                Upload Proof of Payment
+            </a>:
+            <br><br>
+            <strong>Accepted Mode of Payments and Details:</strong><br>
+            @forelse($payment_methods as $manualPaymentMethods)
             <p style="margin-bottom: 15px;">
-                <strong>Prefer to pay manually?</strong><br>
-                You may use any of the following options and upload your screenshot or deposit slip as proof of payment
-                through the link below:
-                <br>
-                <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
-                    style="color: #007bff; text-decoration: underline;">
-                    Upload Proof of Payment
-                </a>:
+                <strong>Bank Name:</strong>{{ $manualPaymentMethods['mode_of_payment_name'] }}<br>
+                <strong>Account Name:</strong>{{ $manualPaymentMethods['account_name'] }}<br>
+                <strong>Account Number:</strong>{{ $manualPaymentMethods['account_number'] }}
                 <br><br>
-                <strong>Bank Transfer:</strong><br>
-                <strong>Bank Name:</strong> Landbank<br>
-                <strong>Account Name:</strong> Canopy Farm PH<br>
-                <strong>Account Number:</strong> 00-2340-179315
-                <br><br>
-                <strong>GCash:</strong><br>
+
+                {{-- <strong>GCash:</strong><br>
                 <strong>Account Name:</strong> Canopy Farm PH<br>
                 <strong>Mobile Number:</strong> 0987654321
                 <br><br>
                 <strong>Maya:</strong><br>
                 <strong>Account Name:</strong> Canopy Farm PH<br>
-                <strong>Mobile Number:</strong> 0987654321
+                <strong>Mobile Number:</strong> 0987654321 --}}
             </p>
+            @empty
+            <p>No manual payment methods are currently available.</p>
+            @endforelse
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
@@ -261,7 +266,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-    $branding_company_name }}. All rights reserved.</span>
+                $branding_company_name }}. All rights reserved.</span>
 
         </div>
     </div>

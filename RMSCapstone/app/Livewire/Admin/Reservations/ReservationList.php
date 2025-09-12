@@ -174,7 +174,7 @@ class ReservationList extends Component
 
     public function confirmReservation($id)
     {
-        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities', 'services'])->find($id);
+        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities', 'services', 'promoCode'])->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -210,7 +210,7 @@ class ReservationList extends Component
             'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'contact_number' => $user->contact_number,
-            'transaction_number' => $transaction->id,
+            'transaction_number' => $transaction->transaction_number,
             'email' => $user->email,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
@@ -226,6 +226,11 @@ class ReservationList extends Component
             'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
             'balance_due' => $invoice->balance_due,
             'total_amount' => $invoice->sub_total,
+
+            //Call promo code
+            'code' => optional($transaction->promoCode)->code,
+            'discount_type' => optional($transaction->promoCode)->discount_type, 
+            'discount_value' => optional($transaction->promoCode)->discount_value,
 
             // Branding
             'branding_company_name' => $setting->company_name,
@@ -299,7 +304,7 @@ class ReservationList extends Component
             'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'contact_number' => $user->contact_number,
-            'transaction_number' => $transaction->id,
+            'transaction_number' => $transaction->transaction_number,
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
             'deposit' => $transaction->deposit_paid,

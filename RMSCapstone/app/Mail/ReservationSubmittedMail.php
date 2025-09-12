@@ -35,7 +35,7 @@ class ReservationSubmittedMail extends Mailable
     public function build()
     {
         return $this->view('guest.emails.reservation-submitted')
-            ->subject('Reservation Confirmation')
+            ->subject('Reservation Successfully Submitted')
             ->with([
                 'name' => $this->reservationData['name'],
                 'transaction_number' => $this->reservationData['transaction_number'],
@@ -68,6 +68,9 @@ class ReservationSubmittedMail extends Mailable
                 'facebook_link' => $this->reservationData['facebook_link'],
                 'instagram_link' => $this->reservationData['instagram_link'],
                 'cart_items' => $this->reservationData['cart_items'],
+
+                //Payment Methods
+                'payment_methods'         => $this->reservationData['payment_methods'],
             ]);
     }
 }
