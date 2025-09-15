@@ -1343,9 +1343,7 @@ class ReservationForm extends Component
             // AYUSIN NIYO DITO SAME SA KANINA 
 
             // Compute the base amount to charge based on deposit percentage or full amount
-            $baseAmount = $this->depositPercentage > 0
-                ? $this->computeTotalAmount() * ($this->depositPercentage / 100)
-                : $this->computeTotalAmount();
+            $baseAmount = $this->computePayableAmount();
 
             // Convert the amount to centavos for PayMongo (e.g., 1500 -> 150000)
             $amountInCentavos = intval($baseAmount * 100);
