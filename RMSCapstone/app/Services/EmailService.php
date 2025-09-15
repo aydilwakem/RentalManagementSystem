@@ -22,10 +22,10 @@ class EmailService
         Mail::to($to)->send(new PaymentUploadedMail($paymentDetails));
     }
 
-    public function sendReservationEmails(array $reservationData): void
+    public function sendReservationEmails(array $reservationData, string $pdfContent): void
     {
         try {
-            Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData));
+            Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData, $pdfContent));
             Log::info('ReservationSubmittedMail sent to: ' . $reservationData['email']);
 
             Mail::to('rmscapstone26@gmail.com')->send(new NewReservationMail($reservationData));

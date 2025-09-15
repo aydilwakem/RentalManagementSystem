@@ -208,25 +208,30 @@
                 <table width="100%" cellpadding="5" cellspacing="0" style="font-size: 15px;">
 
                     <tr>
-                        <td style="text-align: left; ">Subtotal:</td>
-                        <td style="text-align: right;">₱{{ number_format($invoice_basesubtotal, 2) }}</td>
+                        <td style="text-align: left; ">Base Subtotal:</td>
+                        <td style="text-align: right;"> ₱{{ number_format($sub_total + $promo_discount_amount, 2) }}
+                        </td>
                     </tr>
-
 
                     <tr>
                         <td style="text-align: left; ">Total discount:</td>
                         <td style="text-align: right;">- ₱{{ number_format($invoice_total_discount, 2) }}</td>
                     </tr>
 
-                    {{-- <tr>
-                        <td style="text-align: left; ">Promo Code Applied:</td>
-                        <td style="text-align: right;">- ₱{{ number_format($discount_value, 2) }}</td>
-                    </tr> --}}
+                    <tr>
+                        <td style="text-align: left; ">Promo Code Discount:</td>
+                        <td style="text-align: right;">- ₱{{ number_format($promo_discount_amount, 2) }}</td>
+                    </tr>
 
                     <tr>
                         <td style="text-align: left; ">Convenience Fee:</td>
                         <td style="text-align: right;">₱{{ number_format($convenience_fee, 2) }}</td>
                     </tr>
+
+                    {{-- <tr>
+                        <td style="text-align: left; ">Deposit Amount:</td>
+                        <td style="text-align: right;">₱{{ number_format($deposit ?? 0, 2) }}</td>
+                    </tr> --}}
 
                     <tr>
                         <td style="text-align: left; ">Amount Paid:</td>

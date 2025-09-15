@@ -51,6 +51,7 @@ class ReservationConfirmedMail extends Mailable
 
                 'deposit' => $this->reservationData['deposit'],
 
+                'promo_discount_amount' => $this->reservationData['promo_discount_amount'],
                 'convenience_fee' => $this->reservationData['convenience_fee'],
                 'invoice_number' => $this->reservationData['invoice_number'],
                 'invoice_basesubtotal' =>  $this->reservationData['invoice_basesubtotal'],
@@ -59,15 +60,14 @@ class ReservationConfirmedMail extends Mailable
                 'amount_paid' =>  $this->reservationData['amount_paid'],
                 'balance_due' =>  $this->reservationData['balance_due'],
                 'total_amount' => $this->reservationData['total_amount'],
+                'deposit_amount' => $this->reservationData['deposit_amount'],
+                'sub_total' => $this->reservationData['sub_total'],
 
                 'properties' => $this->reservationData['properties'],
                 'activities' => $this->reservationData['activities'],
                 'services' => $this->reservationData['services'],
 
-                //Promo Code
-                'code' => $this->reservationData['code'],
-                'discount_type' => $this->reservationData['discount_type'],
-                'discount_value' => $this->reservationData['discount_value'],
+                
 
 
                 //Branding

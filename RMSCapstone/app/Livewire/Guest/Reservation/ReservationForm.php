@@ -41,6 +41,7 @@ use App\Traits\ReservationHelpers;
 use PragmaRX\Countries\Package\Countries;
 use App\Helpers\Toast;
 use App\Services\PaymentMethodService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservationForm extends Component
 {
@@ -1384,12 +1385,13 @@ class ReservationForm extends Component
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
             $reservationData['payment_link'] = $paymentLink;
 
-            $reservationData['payment_methods'] = $paymentMethods; // Add payment methods data to be accessed by email
+            // $reservationData['payment_methods'] = $paymentMethods; // Add payment methods data to be accessed by email
         });
 
         // Attempt to send confirmation emails
         try {
-            $emailService->sendReservationEmails($reservationData);
+            $pdfContent = $this->generateAvailablePaymentMethods();
+            $emailService->sendReservationEmails($reservationData, $pdfContent);
         } catch (\Exception $e) {
             // If email sending fails, flash error but still continue
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
@@ -1415,10 +1417,6 @@ class ReservationForm extends Component
         // Fallback if no payment link — direct to proof of payment submission page
         return redirect()->route('guest.proof-of-payment-page');
     }
-
-
-
-
 
 
     /**
@@ -2244,5 +2242,35 @@ class ReservationForm extends Component
     {
         $settings = ViewBranding::first();
         $this->terms_and_conditions = $settings->terms_and_conditions ?? '';
+    }
+
+
+
+    /**
+     * -------------------------- PRINT AVAILABLE PAYMENT METHODS ---------------------------
+     *
+     * This method is for fetching the available payment methods from the CRUD in the admin panel
+     *
+     * ------------------------------------------------------------------------------------
+     */
+
+    public function generateAvailablePaymentMethods(){
+        Log::info('Print available payment methods called.');
+        $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
+
+        $pdf = Pdf::loadview('livewire.admin.reports.available-payment-methods', compact('paymentMethods')); 
+
+
+        // ------------------ Return the raw PDF for Email Attachment ------------------ //
+        return $pdf->output(); 
+
+    //     //To preview the pdf:
+    //     return response()->stream(function () use ($pdf) {
+    //     echo $pdf->output();
+    // }, 200, [
+    //     'Content-Type'        => 'application/pdf',
+    //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
+    // ]);
+
     }
 }

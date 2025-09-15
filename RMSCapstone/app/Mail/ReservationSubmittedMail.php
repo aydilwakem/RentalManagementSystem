@@ -15,16 +15,19 @@ class ReservationSubmittedMail extends Mailable
     use Queueable, SerializesModels;
 
     public $reservationData;
+    public $pdfContent;
 
     /**
      * Create a new message instance.
      *
      * @param  array  $reservationData
+     * @param  string  $pdfContent
      * @return void
      */
-    public function __construct($reservationData)
+    public function __construct($reservationData, $pdfContent)
     {
         $this->reservationData = $reservationData;
+        $this->pdfContent = $pdfContent;
     }
 
     /**
@@ -70,7 +73,14 @@ class ReservationSubmittedMail extends Mailable
                 'cart_items' => $this->reservationData['cart_items'],
 
                 //Payment Methods
-                'payment_methods'         => $this->reservationData['payment_methods'],
-            ]);
+                //'payment_methods'         => $this->reservationData['payment_methods'],
+            ])
+            ->attachData(
+                $this->pdfContent, 
+                'Available_Payment_Methods.pdf', 
+                [
+                    'mime' => 'application/pdf',
+                ]
+            );
     }
 }

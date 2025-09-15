@@ -16,7 +16,7 @@ class PaymentMethodService
                 'mode_of_payment_name' => $method->mode_of_payment_name,
                 'account_name'         => $method->account_name,
                 'account_number'       => $method->account_number,
-                //'qr_image'             => $method->mode_of_payment_qr_image,
+                'qr_image'             => $method->mode_of_payment_qr_image,
             ];
         })->toArray();
     }

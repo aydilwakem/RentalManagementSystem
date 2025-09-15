@@ -179,11 +179,8 @@
                     $expirationHours }} hours</strong> to confirm your reservation.
             </p>
 
-            {{-- Manual Payment Options --}}
-            <strong>Prefer to pay manually?</strong><br>
-            You may use any of the following options and upload your screenshot or deposit slip as proof of payment
-            through the link below:
-            <br>
+            {{-- Manual Payment Options
+
             <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
                 style="color: #007bff; text-decoration: underline;">
                 Upload Proof of Payment
@@ -205,9 +202,9 @@
                 <strong>Account Name:</strong> Canopy Farm PH<br>
                 <strong>Mobile Number:</strong> 0987654321 --}}
             </p>
-            @empty
+            {{-- @empty
             <p>No manual payment methods are currently available.</p>
-            @endforelse
+            @endforelse --}}
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
@@ -230,6 +227,12 @@
                 If you need to make any changes to your reservation or have any questions, please don't hesitate to
                 reach out to us.
             </p>
+
+            <strong>Prefer to pay manually?</strong><br>
+            You may use any of the following payment method options and upload your screenshot or deposit slip as proof
+            of payment
+            through the attached PDF File below.
+            <br>
 
             <p style="margin-top: 20px;">
                 Thank you,<br>

@@ -53,6 +53,7 @@ use App\Livewire\Admin\Services\EditService;
 use App\Livewire\Admin\Services\ViewService;
 use App\Livewire\Admin\Settings\PromoCodes\EditPromoCode;
 use App\Livewire\Admin\Settings\PromoCodes\ViewPromoCode;
+use App\Livewire\Guest\Reservation\ReservationForm;
 use App\Mail\EventQuotesMail;
 use App\Mail\PaymentUploadedMail;
 use App\Mail\ReceiptRejectedMail;
@@ -1264,6 +1265,14 @@ Route::get('/receipt-preview', function () {
 
     return $email->render();
 })->name('receipt.preview');
+
+
+
+
+
+//Preview the available payment methods pdf: 
+Route::get('/reports/payment-methods/preview', [ReservationForm::class, 'printAvailablePaymentMethods'])
+     ->name('reports.payment-methods.preview');
 
 
 // ----------------------------- GUEST PAGES ----------------------------------------- //
