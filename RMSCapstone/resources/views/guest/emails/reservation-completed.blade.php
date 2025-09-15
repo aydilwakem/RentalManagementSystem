@@ -210,14 +210,19 @@
                     </tr>
 
                     <tr>
-                        <td style="text-align: left; ">Subtotal:</td>
-                        <td style="text-align: right;">₱{{ number_format($invoice_basesubtotal, 2) }}</td>
+                        <td style="text-align: left; ">Base Subtotal:</td>
+                        <td style="text-align: right;"> ₱{{ number_format($sub_total + $promo_discount_amount, 2) }}
                     </tr>
 
 
                     <tr>
-                        <td style="text-align: left; ">Total discount:</td>
+                        <td style="text-align: left; ">Total Senior/PWD Discount:</td>
                         <td style="text-align: right;">- ₱{{ number_format($invoice_total_discount, 2) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: left; ">Promo Code Discount:</td>
+                        <td style="text-align: right;">- ₱{{ number_format($promo_discount_amount, 2) }}</td>
                     </tr>
 
                     <tr>

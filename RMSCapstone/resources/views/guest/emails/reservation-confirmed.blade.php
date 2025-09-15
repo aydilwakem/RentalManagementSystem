@@ -214,7 +214,7 @@
                     </tr>
 
                     <tr>
-                        <td style="text-align: left; ">Total discount:</td>
+                        <td style="text-align: left; ">Total PWD/Senior Discount:</td>
                         <td style="text-align: right;">- ₱{{ number_format($invoice_total_discount, 2) }}</td>
                     </tr>
 
@@ -228,10 +228,10 @@
                         <td style="text-align: right;">₱{{ number_format($convenience_fee, 2) }}</td>
                     </tr>
 
-                    {{-- <tr>
+                    <tr>
                         <td style="text-align: left; ">Deposit Amount:</td>
-                        <td style="text-align: right;">₱{{ number_format($deposit ?? 0, 2) }}</td>
-                    </tr> --}}
+                        <td style="text-align: right;">₱{{ number_format($deposit_amount, 2) }}</td>
+                    </tr>
 
                     <tr>
                         <td style="text-align: left; ">Amount Paid:</td>

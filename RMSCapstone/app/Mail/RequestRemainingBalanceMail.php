@@ -15,15 +15,17 @@ class RequestRemainingBalanceMail extends Mailable
     use Queueable, SerializesModels;
 
     public $reservationData;
+    public $pdfContent;
 
 
 
     /**
      * Create a new message instance.
      */
-    public function __construct($reservationData)
+    public function __construct($reservationData, $pdfContent)
     {
         $this->reservationData = $reservationData;
+        $this->pdfContent = $pdfContent;
     }
 
 
@@ -51,6 +53,13 @@ class RequestRemainingBalanceMail extends Mailable
                 'company_address' => $this->reservationData['company_address'],
                 'facebook_link' => $this->reservationData['facebook_link'],
                 'instagram_link' => $this->reservationData['instagram_link'],
-            ]);
+            ])
+            ->attachData(
+                $this->pdfContent,
+                'Available_Payment_Methods.pdf',
+                [
+                    'mime' => 'application/pdf',
+                ]
+            ); 
     }
 }

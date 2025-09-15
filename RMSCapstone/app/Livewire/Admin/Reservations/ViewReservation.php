@@ -46,6 +46,7 @@ use App\Services\ReceiptService;
 use App\Services\PaymentService;
 use App\Services\CartService;
 use App\Services\GuestDetailService;
+use App\Services\PaymentMethodService;
 use PragmaRX\Countries\Package\Countries;
 
 #[Layout('layouts.app')]
@@ -1635,7 +1636,8 @@ class ViewReservation extends Component
 
         // Attempt to send email notification to guest with the payment link
         try {
-            $notifier->sendRemainingBalanceEmail($user, $transaction, $invoice, $paymentLink);
+            $pdfContent = $this->generateAvailablePaymentMethods(); 
+            $notifier->sendRemainingBalanceEmail($user, $transaction, $invoice, $paymentLink, $pdfContent);
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage()); // Show error message in UI
         }
@@ -2005,6 +2007,34 @@ class ViewReservation extends Component
     {
         $this->guestDetails = GuestDetail::where('transaction_id', $this->transaction->id)->get();
         $this->getIsFullProperty();
+    }
+
+
+    public function generateAvailablePaymentMethods()
+    {
+        Log::info('Print available payment methods called.');
+
+        $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
+
+        // Optionally, you can filter or highlight Cash differently
+        foreach ($paymentMethods as &$method) {
+            if (!$method['has_convenience_fee']) {
+                $method['note'] = 'No convenience fee for manual payment.';
+            }
+        }
+
+        $pdf = Pdf::loadView('livewire.admin.reports.available-payment-methods', compact('paymentMethods'));
+
+        // Return PDF as raw output for email attachment
+        return $pdf->output();
+
+        // To preview the PDF in browser (optional)
+        // return response()->stream(function () use ($pdf) {
+        //     echo $pdf->output();
+        // }, 200, [
+        //     'Content-Type'        => 'application/pdf',
+        //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
+        // ]);
     }
 }
 

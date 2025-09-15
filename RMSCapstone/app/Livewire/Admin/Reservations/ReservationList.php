@@ -314,7 +314,9 @@ class ReservationList extends Component
 
 
             'convenience_fee' => $transaction->convenience_fee,
-
+            'promo_discount_amount' => $transaction->promo_discount_amount,
+            'sub_total' => $transaction->sub_total,
+            
             'invoice_number' => $invoice->invoice_number,
             'invoice_basesubtotal' => $invoice->base_subtotal,
             'invoice_total_discount' => $invoice->total_discount,

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
-    public function sendRemainingBalanceEmail($transactionUser, $transaction, $invoice, $paymentLink)
+    public function sendRemainingBalanceEmail($transactionUser, $transaction, $invoice, $paymentLink, $pdfContent)
     {
         $setting = Setting::first();
 
@@ -36,7 +36,7 @@ class NotificationService
         ];
 
         try {
-            Mail::to($data['email'])->send(new RequestRemainingBalanceMail($data));
+            Mail::to($data['email'])->send(new RequestRemainingBalanceMail($data, $pdfContent));
         } catch (\Exception $e) {
             Log::error('Email send failed: ' . $e->getMessage());
             throw new \Exception('Reservation saved, but confirmation email failed to send.');

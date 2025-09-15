@@ -96,43 +96,43 @@
 
             {{-- Cart Items Table --}}
             @if(!empty($cart_items))
-                <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
-                    <thead>
-                        <tr style="background-color: #166534; color: #fff;">
-                            <th style="padding: 10px; text-align: left;">Type</th>
-                            <th style="padding: 10px; text-align: left;">Name</th>
-                            <th style="padding: 10px; text-align: center;">Qty / Days</th>
-                            <th style="padding: 10px; text-align: right;">Total</th>
-                            <th style="padding: 10px; text-align: center;">Scheduled</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($cart_items as $item)
-                            <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 8px;">{{ $item['type'] }}</td>
-                                <td style="padding: 8px;">{{ $item['name'] }}</td>
-                                <td style="padding: 8px; text-align: center;">
-                                    @if($item['type'] === 'Room')
-                                        {{ $item['quantity'] }} days
-                                    @else
-                                        {{ $item['quantity'] }}
-                                    @endif
-                                </td>
-                                <td style="padding: 8px; text-align: right;">
-                                    ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
-                                </td>
-                                <td style="padding: 8px; text-align: center;">
-                                    @if(isset($item['datetime']))
-                                        {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                <thead>
+                    <tr style="background-color: #166534; color: #fff;">
+                        <th style="padding: 10px; text-align: left;">Type</th>
+                        <th style="padding: 10px; text-align: left;">Name</th>
+                        <th style="padding: 10px; text-align: center;">Qty / Days</th>
+                        <th style="padding: 10px; text-align: right;">Total</th>
+                        <th style="padding: 10px; text-align: center;">Scheduled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($cart_items as $item)
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 8px;">{{ $item['type'] }}</td>
+                        <td style="padding: 8px;">{{ $item['name'] }}</td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if($item['type'] === 'Room')
+                            {{ $item['quantity'] }} days
+                            @else
+                            {{ $item['quantity'] }}
+                            @endif
+                        </td>
+                        <td style="padding: 8px; text-align: right;">
+                            ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
+                        </td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if(isset($item['datetime']))
+                            {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
+                            @else
+                            N/A
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
             @endif
 
 
@@ -148,10 +148,10 @@
                             <td style="padding:8px; text-align:right;">₱{{ number_format($base_subtotal ?? 0, 2) }}</td>
                         </tr>
                         @if(!empty($promo_code))
-                            <tr>
-                                <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
-                                <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
-                            </tr>
+                        <tr>
+                            <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
+                            <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
+                        </tr>
                         @endif
                         <tr>
                             <td style="padding:8px;">Subtotal:</td>
@@ -171,7 +171,7 @@
                             <td style="padding:8px; text-align:right;">₱{{ number_format($total_amount ?? 0, 2) }}</td>
                         </tr>
                         <tr style="font-weight:bold; border-top: 2px solid #166534;">
-                            <td style="padding:8px;">Total Payable Amount:</td>
+                            <td style="padding:8px;">Total Payable Deposit Amount:</td>
                             <td style="padding:8px; text-align:right;">
                                 ₱{{ number_format($total_payable_amount ?? 0, 2) }}</td>
                         </tr>
@@ -182,7 +182,7 @@
 
 
             <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-    $expirationHours }} hours</strong> to confirm your reservation.
+                    $expirationHours }} hours</strong> to confirm your reservation.
             </p>
 
             {{-- Manual Payment Options
@@ -275,7 +275,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-    $branding_company_name }}. All rights reserved.</span>
+                $branding_company_name }}. All rights reserved.</span>
 
         </div>
     </div>

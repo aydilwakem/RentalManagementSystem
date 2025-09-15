@@ -85,7 +85,7 @@
             </p>
 
             {{-- Manual Payment Options --}}
-            <p style="margin-bottom: 15px;">
+            {{-- <p style="margin-bottom: 15px;">
                 <strong>Prefer to pay manually?</strong><br>
                 You may use any of the following options and upload your screenshot or deposit slip as proof of payment:
                 <br><br>
@@ -106,9 +106,13 @@
             <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
                 style="color: #337ab7; text-decoration: underline;">
                 Click here to upload your proof of payment
-            </a>
+            </a> --}}
 
-
+            <strong>Prefer to pay manually?</strong><br>
+            You may use any of the following payment method options and upload your screenshot or deposit slip as proof
+            of payment
+            through the attached PDF File below.
+            <br>
 
             <p>If you’ve already completed the payment, please ignore this message. Otherwise, we appreciate your prompt
                 attention.</p>
@@ -146,7 +150,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-    $branding_company_name }}. All rights reserved.</span>
+                $branding_company_name }}. All rights reserved.</span>
         </div>
     </div>
 

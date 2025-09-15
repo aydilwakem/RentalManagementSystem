@@ -269,27 +269,21 @@
                         <td>{{ $invoice->invoice_number }}</td>
                     </tr>
                     <tr style="background-color: #f5f5f5;">
-                        <td><strong>Promo Code</strong></td>
-                        <td><strong>{{ $transaction->promoCode->code ?? '' }}
-                                @if ($transaction->promoCode)
-                                <div>
-                                    <strong>Promo Code:</strong>
-                                    {{ $transaction->promoCode->code }}
-
-                                    @if ($transaction->promoCode->discount_type === 'percentage')
-                                    ({{ number_format($transaction->promoCode->discount_value, 0) }}% off)
-                                    @else
-                                    (PHP{{ number_format($transaction->promoCode->discount_value, 2) }} off)
-                                    @endif
-                                </div>
-                                @else
-                                <div class="text-gray-500 italic">No promo code used</div>
-                                @endif
-                            </strong></td>
+                        <td><strong>Base Total</strong></td>
+                        <td><strong> PHP{{ number_format($transaction->sub_total + $transaction->promo_discount_amount,
+                                2) }}</strong></td>
+                    </tr>
+                    <tr style="background-color: #f5f5f5;">
+                        <td><strong>Promo Code Discount</strong></td>
+                        <td><strong> - PHP{{ number_format($transaction->promo_discount_amount, 2) }}</strong></td>
+                    </tr>
+                    <tr style="background-color: #f5f5f5;">
+                        <td><strong>Total Senior/PWD Discount</strong></td>
+                        <td><strong> - PHP{{ number_format($invoice->total_discount, 2) }}</strong></td>
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Convenience Fee</strong></td>
-                        <td><strong> PHP{{ number_format($convenienceFeeTotal, 2) }}</strong></td>
+                        <td><strong> PHP{{ number_format($transaction->convenience_fee, 2) }}</strong></td>
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Amount Received</strong></td>
