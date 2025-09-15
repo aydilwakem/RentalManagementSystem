@@ -124,7 +124,7 @@ class ReservationForm extends Component
 
 
     // --------------- PAYMENT ------------------- //
-    public $enable_deposit_percentage = true;
+    public $enable_deposit_percentage = false;
     public $depositPercentage;
     public $convenienceFeeInCentavos;
     public $convenience_fee;
@@ -197,6 +197,7 @@ class ReservationForm extends Component
 
     public $services;
     public $expandedService;
+    public $deposit_percentage;
 
 
 
@@ -565,9 +566,11 @@ class ReservationForm extends Component
         return $this->getStayDuration($this->check_in_date, $this->check_out_date);
     }
 
+
+    // DEPOSIT 
     public function getDepositProperty()
     {
-        return $this->getDeposit($this->computeTotalAmount());
+        return $this->getDeposit($this->computeSubtotalAmount());
     }
 
     protected function getItemsByType(string $type): array
@@ -714,19 +717,34 @@ class ReservationForm extends Component
      *
      * @return float The computed total amount after applying convenience fee.
      */
+
+    // COMPUTE TOTAL AMOUNT
     public function computeTotalAmount()
     {
         // Step 1: Compute discounted subtotal
         $this->computeSubtotalAmount();
 
-        // Step 2: Compute 3% convenience fee from discounted subtotal
-        // Note: Add this to settings
-        $this->convenience_fee = $this->sub_total * 0.03;
-
         // Step 3: Final total = discounted subtotal + convenience fee
         $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
 
         return $this->total_amount;
+    }
+
+    // Compute Payable Amount for UI
+    public function computePayableAmount()
+    {
+        // Always recompute subtotal so it’s fresh
+        $this->computeSubtotalAmount();
+        $this->computeConvenienceFee();
+
+        if ($this->enable_deposit_percentage) {
+            // Deposit based on current discounted subtotal
+
+            return max(0, $this->deposit + $this->convenience_fee);
+        } else {
+            // Full amount already includes subtotal + convenience fee
+            return $this->total_amount;
+        }
     }
 
     /**
@@ -738,8 +756,21 @@ class ReservationForm extends Component
      */
     public function computeConvenienceFee()
     {
-        // Recompute to ensure the most current values
-        $this->computeTotalAmount();
+        // Always recompute the current subtotal first (after discounts)
+        $this->computeSubtotalAmount();
+        Log::info('Recomputing convenience fee with subtotal: ' . $this->sub_total);
+
+        if ($this->enable_deposit_percentage == true) {
+            // Use deposit (e.g., 50% of discounted subtotal) as base
+            $deposit = $this->sub_total * ($this->deposit_percentage / 100);
+            Log::info('Using deposit as base for convenience fee: ' . $deposit);
+            $this->convenience_fee = $deposit * 0.03;
+            Log::info('Computed convenience fee from deposit: ' . $this->convenience_fee);
+        } else {
+            // Use full discounted subtotal as base
+            $this->convenience_fee = $this->sub_total * 0.03;
+            Log::info('Computed convenience fee from full subtotal: ' . $this->convenience_fee);
+        }
 
         return $this->convenience_fee;
     }
@@ -1308,6 +1339,9 @@ class ReservationForm extends Component
             $this->insertGuestDetails($transaction);
             $this->insertGuestPetDetails($transaction);
 
+
+            // AYUSIN NIYO DITO SAME SA KANINA 
+
             // Compute the base amount to charge based on deposit percentage or full amount
             $baseAmount = $this->depositPercentage > 0
                 ? $this->computeTotalAmount() * ($this->depositPercentage / 100)
@@ -1415,7 +1449,7 @@ class ReservationForm extends Component
     protected function createTransaction(TransactionUser $transactionUser, ?PromoCode $promo): Transaction
     {
         $totalAmount = $this->computeTotalAmount();
-        $depositAmount = $totalAmount * ($this->depositPercentage / 100);
+        $depositAmount = $this->computePayableAmount();
 
         return Transaction::create([
             'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
@@ -1430,8 +1464,10 @@ class ReservationForm extends Component
             'sub_total' => $this->sub_total ?? 0,
             'convenience_fee' => $this->convenience_fee ?? 0,
             'promo_discount_amount' => $this->promo_discount_amount ?? 0,
+
             'total_amount' => $totalAmount,
             'deposit_amount' => $depositAmount,
+
             'heard_from' => $this->heard_from,
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
@@ -2185,12 +2221,15 @@ class ReservationForm extends Component
         $branding = $this->brandingService->getBrandingData();
 
         $this->companyName = $branding['branding_company_name'];
+        $this->companyName = $branding['branding_company_name'];
         $this->logoPath = $branding['logo_path'];
         $this->companyEmail = $branding['branding_company_email'];
         $this->companyContact = $branding['branding_company_contact'];
         $this->companyAddress = $branding['company_address'];
         $this->facebookLink = $branding['facebook_link'];
         $this->instagramLink = $branding['instagram_link'];
+        $this->enable_deposit_percentage = $branding['enable_deposit_percentage'];
+        $this->deposit_percentage = $branding['deposit_percentage'];
     }
 
     /**

@@ -1927,26 +1927,26 @@ class CreateReservation extends Component
     {
         return $this->validate([
             'guest_first_name' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
             'guest_middle_name' => [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'nullable',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_last_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'required',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'guest_suffix' => [
-                'nullable', 
-                'string', 
+                'nullable',
+                'string',
                 'max:10',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
             'guest_gender' => 'nullable|in:male,female,other',
             'guest_residency' => 'required|in:local,foreigner',
             'guest_country_of_origin' => 'required|string|max:100',
@@ -1961,25 +1961,25 @@ class CreateReservation extends Component
             'check_in_date' => 'required|date|after_or_equal:today',
             'check_out_date' => 'required|date|after:check_in_date',
             'first_name' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
             'middle_name' => [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'nullable',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'last_name' => [
-                'required', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'required',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'company_name' => [
-                'nullable', 
-                'string', 
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'required',
+                'string',
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'email' => 'required|email',
             'contact_number' => 'required|string|regex:/^[0-9]{11}$/', //PH 11-Digit number format
             'country' => 'required|string',
@@ -1987,11 +1987,11 @@ class CreateReservation extends Component
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
             'terms' => 'required|accepted',
             'special_requests.*.request' => [
-                'nullable', 
-                'string', 
+                'nullable',
+                'string',
                 'max:255',
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
             'pets.*.breed' => 'required|string|max:255',
         ]);
     }

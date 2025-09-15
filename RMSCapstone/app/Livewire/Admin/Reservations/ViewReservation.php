@@ -309,7 +309,7 @@ class ViewReservation extends Component
                 'days' => $property->pivot->days,
                 'extra_guest' => $property->pivot->extra_guest,
                 'extra_charge' => $property->extra_person_charge,
-                'extra_charge_total' => $property->extra_person_charge * $property->pivot->days * $property->pivot->extra_guest,
+                'extra_charge_total' => $property->pivot->extra_charge,
                 'amount' => $property->amount,
                 'total' => $property->pivot->amount,
                 'created_at' => $property->pivot->created_at,
@@ -418,8 +418,8 @@ class ViewReservation extends Component
      * ---------------------------------------------------------------------------------
      */
 
-    public $pwdCount;
-    public $seniorCount;
+    public $pwdCount = 0;
+    public $seniorCount = 0;
 
     public function applyDiscounts()
     {
@@ -1111,6 +1111,126 @@ class ViewReservation extends Component
     }
 
 
+    public function editExtraHour($pivotId)
+    {
+        Log::info('Update Extra Hour method called.');
+
+        $pivot = DB::table('transaction_services')->where('id', $pivotId)->first();
+
+        if ($pivot) {
+            $this->editingExtraHourId = $pivotId;
+            $this->extraHourQuantity = $pivot->quantity;
+            $this->showEditExtraHourModal = true;
+        }
+    }
+
+    public function updateExtraHour()
+    {
+        Log::info('Update Extra Hour method called.');
+
+        $this->validate([
+            'extraHourQuantity' => 'required|integer|min:1',
+        ]);
+
+        $pivot = DB::table('transaction_services')->where('id', $this->editingExtraHourId)->first();
+
+        if ($pivot) {
+            // get the related property to know its extra charge per hour
+            $property = DB::table('properties')->where('id', $pivot->property_id)->first();
+
+            if ($property) {
+                $newAmount = $this->extraHourQuantity * $property->extra_charge_per_hour;
+
+                DB::table('transaction_services')
+                    ->where('id', $this->editingExtraHourId)
+                    ->update([
+                        'quantity' => $this->extraHourQuantity,
+                        'amount'   => $newAmount,
+                        'updated_at' => now(),
+                    ]);
+
+                Log::info("Extra hour updated: qty={$this->extraHourQuantity}, amount={$newAmount}");
+            }
+        }
+
+        $this->showEditExtraHourModal = false;
+
+        $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+    }
+
+    public $editingExtraHourId;
+    public $extraHourQuantity;
+    public $showEditExtraHourModal;
+
+
+
+
+
+    public function addGuest($pivotId)
+    {
+        Log::info('Add Guest modal called for pivot ID: ' . $pivotId);
+
+        $this->addingGuestPivotId = $pivotId;
+        $this->showAddGuestModal = true;
+    }
+
+    public $addingGuestPivotId;
+    public $showAddGuestModal;
+
+    public $extraGuestQuantity;
+
+
+    public function saveExtraGuest()
+    {
+        Log::info('Save Extra Guest called for pivot ID: ' . $this->addingGuestPivotId);
+
+        $this->validate([
+            'extraGuestQuantity' => 'required|integer|min:1',
+        ]);
+
+        // Fetch the pivot record
+        $pivot = DB::table('transaction_properties')->where('id', $this->addingGuestPivotId)->first();
+
+        if (!$pivot) {
+            Log::warning("Pivot not found for ID: " . $this->addingGuestPivotId);
+            return;
+        }
+
+        // Get the property to retrieve its extra guest charge
+        $property = DB::table('properties')->where('id', $pivot->property_id)->first();
+
+        if (!$property) {
+            Log::warning("Property not found for pivot ID: " . $this->addingGuestPivotId);
+            return;
+        }
+
+        // Compute the extra charge ONLY based on quantity
+        $extraGuestCharge = $property->extra_person_charge ?? 0; // e.g. 1000
+        $newExtraCharge   = $this->extraGuestQuantity * $extraGuestCharge * ($pivot->days ?? 1);
+
+        // Compute total
+        $newTotalAmount = ($pivot->amount ?? 0) + $newExtraCharge;
+
+
+
+        // Update pivot record
+        DB::table('transaction_properties')
+            ->where('id', $this->addingGuestPivotId)
+            ->update([
+                'extra_guest'   => $this->extraGuestQuantity,
+                'extra_charge'  => $newExtraCharge,
+                'total_amount' => $newTotalAmount,
+                'updated_at'    => now(),
+            ]);
+
+        // Recalculate invoice totals
+        $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+
+        // Reset state and close modal
+        $this->reset(['addingGuestPivotId', 'extraGuestQuantity', 'showAddGuestModal']);
+    }
 
 
 

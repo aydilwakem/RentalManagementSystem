@@ -60,6 +60,12 @@ class RoomCartService
             }
         );
 
-        return array_values($updatedCart);
+        // Reindex
+        $updatedCart = array_values($updatedCart);
+
+        // Sync session
+        session()->put('cart', $updatedCart);
+
+        return $updatedCart;
     }
 }

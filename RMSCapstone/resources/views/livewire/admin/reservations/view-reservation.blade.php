@@ -828,21 +828,38 @@
                                 {{-- Activity Actions --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
                                     @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
+
+
                                     @if ($item['type'] == 'property')
+
                                     <button wire:click="editRoom({{ $property->pivot->id }})"
                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                         title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
+
+                                    <!-- Add Another Guest Button -->
+                                    <button wire:click="addGuest({{ $property->pivot->id }})"
+                                        class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
+                                        title="Add Another Guest">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
                                     @else
+
                                     <button wire:click="
-                                                        @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
-                                                        @elseif($item['type'] === 'service') editService({{ $item['pivot_id'] }}) @endif
+                                                        @if ($item['type'] === 'activity')
+                                                            editActivity({{ $item['pivot_id'] }})
+                                                        @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
+                                                            editExtraHour({{ $item['pivot_id'] }})
+                                                        @elseif ($item['type'] === 'service')
+                                                            editService({{ $item['pivot_id'] }})
+                                                        @endif
                                                     "
                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                         title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
+
                                     <button wire:click="
                                                             @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
                                                             @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
@@ -2290,6 +2307,70 @@
                             Cancel
                         </x-ghost-button>
                         <x-button wire:click="updateService">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!--  Edit Extra Hour Modal -->
+            @if ($showEditExtraHourModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Edit Extra Hour Quantity</h2>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-1">Quantity</label>
+                        <input type="number" wire:model="extraHourQuantity" min="1"
+                            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+
+                        @error('extraHourQuantity')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="flex justify-between mt-3">
+                        <x-ghost-button wire:click="$set('showEditExtraHourModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="updateExtraHour">
+                            Update
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!--  Add Extra Guest Modal -->
+            @if ($showAddGuestModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <div
+                        class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-center">Add Extra Guest</h2>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block mb-1">Quantity</label>
+                        <input type="number" wire:model="extraGuestQuantity" min="1"
+                            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+
+                        @error('extraGuestQuantity')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="flex justify-between mt-3">
+                        <x-ghost-button wire:click="$set('showAddGuestModal', false)">
+                            Cancel
+                        </x-ghost-button>
+                        <x-button wire:click="saveExtraGuest">
                             Update
                         </x-button>
                     </div>

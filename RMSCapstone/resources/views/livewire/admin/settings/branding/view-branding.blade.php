@@ -196,16 +196,17 @@
                 <!-- Enable Deposit Option -->
                 {{-- <div>
                     <label class="inline-flex items-center">
-                        <input type="checkbox" id="enable_deposit" wire:model.live="enable_deposit_percentage"
-                            class="mr-2">
-                        <span class="text-sm text-gray-900 dark:text-gray-200">Enable Deposit Option for
-                            Bookings</span>
+                        <input type="checkbox" id="enable_deposit" wire:model="enable_deposit_percentage" class="mr-2">
+                        <span class="text-sm text-gray-900 dark:text-gray-200">
+                            Enable Deposit Option for Bookings
+                        </span>
                     </label>
 
                     @error('enable_deposit_percentage')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div> --}}
+
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                         Deposit Option for Bookings
@@ -213,10 +214,10 @@
                     <div class="flex items-center gap-3">
                         <span class="text-gray-700 dark:text-gray-200">Disable</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="enable_deposit" wire:model.live="enable_deposit_percentage"
-                                value="1" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
-                                    ">
+                            <input type="checkbox" id="enable_deposit" wire:model="enable_deposit_percentage"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
                             </div>
                             <div
                                 class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">

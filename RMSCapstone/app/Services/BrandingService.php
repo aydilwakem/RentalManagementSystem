@@ -18,6 +18,8 @@ class BrandingService
             'company_address' => $setting->address ?? '',
             'facebook_link' => $setting->facebook ?? '',
             'instagram_link' => $setting->instagram ?? '',
+            'enable_deposit_percentage' => $setting->enable_deposit_percentage ?? '',
+            'deposit_percentage' => $setting->deposit_percentage ?? 0,
         ];
     }
 }

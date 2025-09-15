@@ -149,6 +149,11 @@
                                             {{-- <p class="font-semibold text-gray-800">2</p> --}}
                                             <p>{{ $item['quantity'] }}</p>
                                         </div>
+                                        <div>
+                                            <p class="text-gray-600 text-sm mb-1">Rate</p>
+                                            {{-- <p class="font-semibold text-gray-800">2</p> --}}
+                                            <p>₱{{ number_format($item['service_rate'], 2) }}</p>
+                                        </div>
                                         <div class="md:col-span-2 pt-4 border-t border-gray-200 mt-4">
                                             <p class="text-gray-600 text-sm mb-1">Total Service Charge</p>
                                             {{-- <p class="font-bold text-lg text-green-700">₱500</p> --}}
@@ -295,72 +300,72 @@
                 <div
                     class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Summary</h3>
-                    {{-- <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600">Room Fees</span>
-                        <span class="text-gray-800">₱2,000</span>
-                    </div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600">Activity Fees</span>
-                        <span class="text-gray-800">₱1,300</span>
-                    </div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600">Pet Fee</span>
-                        <span class="text-gray-800">₱1,300</span>
-                    </div> --}}
 
-
-                    <!-- Subtotal Amount -->
-                    <div class="flex flex-col text-sm text-gray-600 mt-3 space-y-1">
-                        <!-- Original Subtotal -->
+                    <!-- Subtotal -->
+                    <div class="space-y-1 text-sm text-gray-700">
                         @if($discountMessage)
-                            <div class="flex justify-between w-full">
+                            <!-- Original Subtotal -->
+                            <div class="flex justify-between">
                                 <span>Subtotal</span>
-                                <span
-                                    class="line-through text-gray-400">₱{{ number_format($this->computeBaseSubtotal(), 2) }}</span>
+                                <span class="line-through text-gray-400">
+                                    ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                </span>
                             </div>
 
                             <!-- Promo Code Discount -->
                             @if($this->promoCode && ($promo_discount_amount ?? 0) > 0)
-                                <div class="flex justify-between w-full text-green-600">
-                                    <span>Promo Code Discount ({{ $this->promoCode }})</span>
+                                <div class="flex justify-between text-green-600">
+                                    <span>Promo Discount ({{ $this->promoCode }})</span>
                                     <span>-₱{{ number_format($promo_discount_amount, 2) }}</span>
                                 </div>
                             @endif
 
-                            <!-- Subtotal After Discount -->
-                            <div class="flex justify-between w-full font-semibold text-green-700">
+                            <!-- Discounted Subtotal -->
+                            <div class="flex justify-between font-semibold text-green-700">
                                 <span>Subtotal after Discount</span>
                                 <span>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</span>
                             </div>
                         @else
-                            <!-- No Discount Applied -->
-                            <div class="flex justify-between w-full font-semibold">
+                            <!-- Normal Subtotal -->
+                            <div class="flex justify-between font-semibold">
                                 <span>Subtotal</span>
                                 <span>₱{{ number_format($this->computeSubtotalAmount(), 2) }}</span>
                             </div>
                         @endif
                     </div>
 
+                    <!-- Deposit -->
+                    @if ($enable_deposit_percentage && $this->deposit > 0)
+                        <div class="flex justify-between text-sm text-yellow-700 mt-3">
+                            <span>Required Deposit</span>
+                            <span class="font-semibold">
+                                ₱{{ number_format($this->deposit ?? 0, 2) }}
+                            </span>
+                        </div>
+                    @endif
 
-
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-600">Payment Processing Fee</span>
-                        <span class="text-gray-800">₱{{ number_format($this->computeConvenienceFee(), 2) }}</span>
+                    <!-- Processing Fee -->
+                    <div class="flex justify-between text-sm text-gray-700 mt-2">
+                        <span>Payment Processing Fee</span>
+                        <span class="font-semibold">
+                            ₱{{ number_format($this->computeConvenienceFee(), 2) }}
+                        </span>
                     </div>
 
+                    <hr class="my-4">
 
-
-                    <hr class="my-3">
-                    <div class="flex justify-between text-xl font-bold text-green-700">
+                    <!-- Grand Total -->
+                    <div class="flex justify-between text-lg font-semibold text-gray-800">
                         <span>Grand Total</span>
                         <span>₱{{ number_format($this->computeTotalAmount(), 2) }}</span>
                     </div>
-                    @if ($enable_deposit_percentage && $this->deposit > 0)
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-600">Required Deposit</span>
-                            <span class="text-gray-800">₱{{ number_format($this->deposit ?? 0, 2) }}</span>
-                        </div>
-                    @endif
+
+                    <!-- Total Payable (highlighted) -->
+                    <div class="flex justify-between text-2xl font-bold text-green-700 mt-2">
+                        <span>Total Payable</span>
+                        <span>₱{{ number_format($this->computePayableAmount(), 2) }}</span>
+                    </div>
+
 
                     <div class="text-center justify-between flex pt-4">
                         <!-- Back button -->
@@ -472,6 +477,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div>
                     {{-- space --}}
                 </div>
