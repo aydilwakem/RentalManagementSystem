@@ -56,7 +56,10 @@ class ReservationSubmittedMail extends Mailable
                 'subtotal' => $this->reservationData['subtotal'],
                 'convenience_fee' => $this->reservationData['convenience_fee'],
                 'total_amount' => $this->reservationData['total_amount'],
+                'total_payable_amount' => $this->reservationData['total_payable_amount'],
                 'deposit' => $this->reservationData['deposit'],
+
+
 
 
                 'invoice_number' => $this->reservationData['invoice_number'],
@@ -76,8 +79,8 @@ class ReservationSubmittedMail extends Mailable
                 //'payment_methods'         => $this->reservationData['payment_methods'],
             ])
             ->attachData(
-                $this->pdfContent, 
-                'Available_Payment_Methods.pdf', 
+                $this->pdfContent,
+                'Available_Payment_Methods.pdf',
                 [
                     'mime' => 'application/pdf',
                 ]

@@ -1376,7 +1376,7 @@ class ReservationForm extends Component
 
             // Calculate total and deposit amount again for email
             $total = $this->computeTotalAmount();
-            $deposit = $total * ($this->depositPercentage / 100);
+            $deposit = $this->sub_total * ($this->deposit_percentage / 100);
 
             //Fetch payment method data for email
             $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
@@ -1869,6 +1869,7 @@ class ReservationForm extends Component
             'promo_code' => $this->promoCode,
             'promo_amount' => $this->promoDiscount,
             'total_amount' => $this->computeTotalAmount(),
+            'total_payable_amount' => $this->computePayableAmount(),
             'deposit' => $deposit,
 
 
@@ -2254,23 +2255,30 @@ class ReservationForm extends Component
      * ------------------------------------------------------------------------------------
      */
 
-    public function generateAvailablePaymentMethods(){
+    public function generateAvailablePaymentMethods()
+    {
         Log::info('Print available payment methods called.');
+
         $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
 
-        $pdf = Pdf::loadview('livewire.admin.reports.available-payment-methods', compact('paymentMethods')); 
+        // Optionally, you can filter or highlight Cash differently
+        foreach ($paymentMethods as &$method) {
+            if (!$method['has_convenience_fee']) {
+                $method['note'] = 'No convenience fee for manual payment.';
+            }
+        }
 
+        $pdf = Pdf::loadView('livewire.admin.reports.available-payment-methods', compact('paymentMethods'));
 
-        // ------------------ Return the raw PDF for Email Attachment ------------------ //
-        return $pdf->output(); 
+        // Return PDF as raw output for email attachment
+        return $pdf->output();
 
-    //     //To preview the pdf:
-    //     return response()->stream(function () use ($pdf) {
-    //     echo $pdf->output();
-    // }, 200, [
-    //     'Content-Type'        => 'application/pdf',
-    //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
-    // ]);
-
+        // To preview the PDF in browser (optional)
+        // return response()->stream(function () use ($pdf) {
+        //     echo $pdf->output();
+        // }, 200, [
+        //     'Content-Type'        => 'application/pdf',
+        //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
+        // ]);
     }
 }
