@@ -1054,15 +1054,26 @@
                         </div>
                     </div>
 
-                    <!-- Balance Due -->
-                    <div
-                        class="flex justify-between font-semibold text-base
-                            {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-red-500' }}">
-                        Balance Due:
-                        <div>
-                            ₱{{ number_format($this->invoice->balance_due, 2) }}
+                    @if ($this->invoice->amount_paid > $this->invoice->sub_total)
+                        <!-- Overpayment / Change -->
+                        <div class="flex justify-between font-semibold text-base text-blue-600">
+                            Change / Overpayment:
+                            <div>
+                                ₱{{ number_format($this->invoice->amount_paid - $this->invoice->sub_total, 2) }}
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <!-- Balance Due -->
+                        <div
+                            class="flex justify-between font-semibold text-base
+                                {{ $this->invoice->balance_due == 0 ? 'text-green-700' : 'text-red-500' }}">
+                            Balance Due:
+                            <div>
+                                ₱{{ number_format($this->invoice->balance_due, 2) }}
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
 
                 {{-- Add Item Button Row --}}

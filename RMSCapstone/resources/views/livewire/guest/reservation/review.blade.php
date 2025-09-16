@@ -300,72 +300,74 @@
                     class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Summary</h3>
 
+            
                     <!-- Subtotal -->
-                    <div class="space-y-1 text-sm text-gray-700">
-                        @if($discountMessage)
-                        <!-- Original Subtotal -->
-                        <div class="flex justify-between">
-                            <span>Subtotal</span>
-                            <span class="line-through text-gray-400">
-                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                            </span>
-                        </div>
+<div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+    <div>Subtotal</div>
+    <div class="font-semibold flex flex-col items-end">
+        @if($discountMessage)
+            <!-- Original subtotal with strikethrough -->
+            <span class="line-through text-gray-400">
+                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+            </span>
+            <!-- Subtotal after discount -->
+            <span class="text-green-700 font-semibold">
+                ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+            </span>
+        @else
+            <!-- No discount applied -->
+            <span>
+                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+            </span>
+        @endif
+    </div>
+</div>
 
-                        <!-- Promo Code Discount -->
-                        @if($this->promoCode && ($promo_discount_amount ?? 0) > 0)
-                        <div class="flex justify-between text-green-600">
-                            <span>Promo Discount ({{ $this->promoCode }})</span>
-                            <span>-₱{{ number_format($promo_discount_amount, 2) }}</span>
-                        </div>
-                        @endif
+<!-- Final Total (after discount) -->
+<div class="flex justify-between items-center text-lg font-semibold text-gray-800 mt-2">
+    <div>Total</div>
+    <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
+</div>
 
-                        <!-- Discounted Subtotal -->
-                        <div class="flex justify-between font-semibold text-green-700">
-                            <span>Subtotal after Discount</span>
-                            <span>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</span>
-                        </div>
-                        @else
-                        <!-- Normal Subtotal -->
-                        <div class="flex justify-between font-semibold">
-                            <span>Subtotal</span>
-                            <span>₱{{ number_format($this->computeSubtotalAmount(), 2) }}</span>
-                        </div>
-                        @endif
-                    </div>
+<!-- Deposit (if enabled) -->
+@if ($this->enable_deposit_percentage)
+    <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
+        <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+        <div class="font-semibold">
+            ₱{{ number_format($this->deposit ?? 0, 2) }}
+        </div>
+    </div>
+@endif
 
-                    <!-- Deposit -->
-                    @if ($enable_deposit_percentage && $this->deposit > 0)
-                    <div class="flex justify-between text-sm text-yellow-700 mt-3">
-                        <span>Required Deposit</span>
-                        <span class="font-semibold">
-                            ₱{{ number_format($this->deposit ?? 0, 2) }}
-                        </span>
-                    </div>
-                    @endif
+<!-- Convenience Fee -->
+<div class="flex justify-between items-center text-sm text-gray-600 mt-2">
+    <div class="flex items-center gap-2">
+        <span>Convenience Fee (3%)</span>
+        <div class="relative group inline-block">
+            <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
+            <!-- Tooltip -->
+            <div
+                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                A processing fee is applied for secure online payments.
+            </div>
+        </div>
+    </div>
+    <div class="font-semibold">
+        ₱{{ number_format($this->computeConvenienceFee(), 2) }}
+    </div>
+</div>
 
-                    <!-- Processing Fee -->
-                    <div class="flex justify-between text-sm text-gray-700 mt-2">
-                        <span>Payment Processing Fee</span>
-                        <span class="font-semibold">
-                            ₱{{ number_format($this->computeConvenienceFee(), 2) }}
-                        </span>
-                    </div>
+<hr class="my-3 border-gray-300">
 
-                    <hr class="my-4">
-
-                    <!-- Grand Total -->
-                    <div class="flex justify-between text-lg font-semibold text-gray-800">
-                        <span>Grand Total</span>
-                        <span>₱{{ number_format($this->computeTotalAmount(), 2) }}</span>
-                    </div>
-
-                    <!-- Total Payable (highlighted) -->
-                    <div class="flex justify-between text-2xl font-bold text-green-700 mt-2">
-                        <span>Total Payable</span>
-                        <span>₱{{ number_format($this->computePayableAmount(), 2) }}</span>
-                    </div>
+<!-- Total Payable Now -->
+<div class="flex justify-between items-center text-2xl font-bold text-green-700 mt-2">
+    <div>Total Payable Now</div>
+    <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
+</div>
 
 
+
+               
                     <div class="text-center justify-between flex pt-4">
                         <!-- Back button -->
                         @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)

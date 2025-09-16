@@ -25,13 +25,8 @@ class InvoiceService
             fn($property) => $property->pivot->total_amount
         ) ?? 0;
 
-        $promoDiscountTotal = $transaction->promo_discount_amount ?? 0;
-
-        // Add convenience fee to base subtotal
-        $convenienceFee = $transaction->convenience_fee ?? 0;
-
         // Base subtotal = items + convenience fee (fixed)
-        return $activitiesTotal + $servicesTotal + $roomsTotal + $convenienceFee - $promoDiscountTotal;
+        return $activitiesTotal + $servicesTotal + $roomsTotal;
     }
 
 
@@ -39,14 +34,19 @@ class InvoiceService
     {
         $baseSubtotal = $this->computeBaseSubtotal($transaction);
 
-        // Recalculate discount dynamically
+        // Discounts (promo, PWD, senior, etc.)
         $totalDiscount = $this->updateDiscountTotal($invoice, $transaction);
+        $promoDiscount = $transaction->promo_discount_amount ?? 0;
 
-        $grandTotal = max($baseSubtotal - $totalDiscount, 0);
+        // Get convenience fee directly from payments
+        $convenienceFee = $invoice->payments()->sum('convenience_fee');
+
+        // Apply discounts first, then add convenience fee
+        $subTotal = max($baseSubtotal - $totalDiscount - $promoDiscount + $convenienceFee, 0);
 
         $invoice->update([
-            'base_subtotal' => $baseSubtotal,
-            'sub_total' => $grandTotal,
+            'base_subtotal'   => $baseSubtotal,
+            'sub_total'       => $subTotal,
         ]);
     }
 

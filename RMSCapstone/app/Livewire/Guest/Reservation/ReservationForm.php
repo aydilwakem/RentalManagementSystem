@@ -241,10 +241,6 @@ class ReservationForm extends Component
     }
 
 
-    public Property $property;
-
-    public $averageRating;
-    public $comments = [];
 
 
 
@@ -254,10 +250,8 @@ class ReservationForm extends Component
      * It initializes various properties and loads necessary data.
      * -------------------------------------------------------------
      */
-    public function mount(Property $property)
+    public function mount()
     {
-        $this->property = $property;
-        $this->loadFeedbackData();
         $this->initializeDates();
         $this->prepareOccupancyRules();
         $this->loadStaticData();
@@ -311,36 +305,6 @@ class ReservationForm extends Component
 
         // Load available rooms for display
         $this->getAvailableRooms();
-    }
-    //feedbacks
-    protected function loadFeedbackData()
-    {
-        $allRatings = collect();
-        $comments = [];
-
-        foreach ($this->property->transactions as $transaction) {
-            foreach ($transaction->feedbacks as $feedback) {
-                if (!$feedback->is_approved) {
-                    continue;
-                }
-
-                $feedbackRatings = $feedback->feedbackRatings;
-                $individualRatingValues = $feedbackRatings->pluck('rating_value');
-                $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
-
-                $allRatings = $allRatings->merge($individualRatingValues);
-
-                $comments[] = [
-                    'text' => $feedback->comments ?? '',
-                    'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
-                    'date' => $feedback->created_at->format('F j, Y'),
-                    'rating' => $individualAvg,
-                ];
-            }
-        }
-
-        $this->averageRating = $allRatings->count() ? $allRatings->avg() : null;
-        $this->comments = $comments;
     }
 
 
@@ -782,7 +746,7 @@ class ReservationForm extends Component
             return max(0, $this->deposit + $this->convenience_fee);
         } else {
             // Full amount already includes subtotal + convenience fee
-            return $this->total_amount;
+            return max(0, $this->total_amount + $this->convenience_fee);
         }
     }
 
@@ -1371,22 +1335,28 @@ class ReservationForm extends Component
             $promo = PromoCode::where('code', $this->promoCode)->first();
 
 
+            // ------------------------- CREATE RESERVATION RECORDS ------------------------- //
             $transactionUser = $this->createTransactionUser();
             $transaction = $this->createTransaction($transactionUser, $promo);
             $invoice = $this->createInvoice($transaction);
             $this->attachCartItemsToTransaction($transaction);
             $this->insertGuestDetails($transaction);
             $this->insertGuestPetDetails($transaction);
+            // ----------------------- END CREATE RESERVATION RECORDS ----------------------- //
 
 
-            // AYUSIN NIYO DITO SAME SA KANINA 
+            //---------------------------- PAYMONGO CHECKOUT SESSION ----------------------------//
 
-            // Compute the base amount to charge based on deposit percentage or full amount
-            $baseAmount = $this->computePayableAmount();
+            // If enable_deposit_percentage is true, base amount is the deposit
+            // Otherwise, it's the full total amount
+            if (!$this->enable_deposit_percentage) {
+                $baseAmount = $this->sub_total;
+            } else {
+                $baseAmount = $this->deposit;
+            }
 
             // Convert the amount to centavos for PayMongo (e.g., 1500 -> 150000)
             $amountInCentavos = intval($baseAmount * 100);
-
             // Prepare payload for PayMongo checkout session
             $payload = $this->preparePayMongoPayload($amountInCentavos, $transaction, $invoice);
 
@@ -1411,6 +1381,8 @@ class ReservationForm extends Component
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());
                 $paymentLink = null;
             }
+
+            //---------------------------- END PAYMONGO CHECKOUT SESSION ----------------------------//
 
             // Calculate total and deposit amount again for email
             $total = $this->computeTotalAmount();
@@ -1486,9 +1458,10 @@ class ReservationForm extends Component
     protected function createTransaction(TransactionUser $transactionUser, ?PromoCode $promo): Transaction
     {
         $totalAmount = $this->computeTotalAmount();
-        $depositAmount = $this->computePayableAmount();
 
         return Transaction::create([
+
+            // -------------------- BASIC DETAILS -------------------- //
             'transaction_number' => 'TXN-' . strtoupper(Str::random(8)),
             'reservation_type_id' => $this->reservation_type_id,
             'created_by' => $transactionUser->id,
@@ -1498,34 +1471,42 @@ class ReservationForm extends Component
             'total_adults' => collect($this->cart)->sum('adults'),
             'total_kids' => collect($this->cart)->sum('kids'),
             'pax' => $this->total_pax,
-            'sub_total' => $this->sub_total ?? 0,
-            'convenience_fee' => $this->convenience_fee ?? 0,
+            // -------------------- END BASIC DETAILS -------------------- //
+
+
+            // -------------------- FINANCIAL DETAILS -------------------- //
+            'sub_total' => $this->computeBaseSubtotal() ?? 0,
             'promo_discount_amount' => $this->promo_discount_amount ?? 0,
+            'total_amount' => $this->computeSubtotalAmount() ?? 0,
+            'deposit_amount' => $this->deposit ?? 0,
+            'convenience_fee' => 0,
+            // -------------------- END FINANCIAL DETAILS -------------------- //
 
-            'total_amount' => $totalAmount,
-            'deposit_amount' => $depositAmount,
 
+            // -------------------- ADDITIONAL DETAILS -------------------- //
             'heard_from' => $this->heard_from,
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
             'requests' => $this->requests,
+            // -------------------- END ADDITIONAL DETAILS -------------------- //
         ]);
     }
 
     protected function createInvoice(Transaction $transaction): Invoice
     {
-        $totalAmount = $this->computeTotalAmount();
+        $base_subtotal = $this->computeBaseSubtotal();
+        $sub_total = $this->computeSubtotalAmount();
 
         return Invoice::create([
             'transaction_id' => $transaction->id,
             'invoice_number' => $this->generateInvoiceNumber(),
             'invoice_type' => 'Room',
-            'base_subtotal' => $totalAmount, // but this is not modifiable
-            'sub_total' => $totalAmount,
+            'base_subtotal' => $base_subtotal, // but this is not modifiable
+            'sub_total' => $sub_total,
             'deposit_paid' => 0,
             'amount_paid' => 0,
-            'balance_due' => $totalAmount,
+            'balance_due' => $sub_total,
             'due_date' => $this->check_out_date,
             'invoice_status' => 'pending',
         ]);
@@ -1906,10 +1887,12 @@ class ReservationForm extends Component
             'check_out' => $this->check_out_date,
             'convenience_fee' => $this->computeConvenienceFee(),
             'base_subtotal' => $this->computeBaseSubtotal(),
-            'subtotal' => $this->computeSubtotalAmount(),
+            'subtotal' => $this->computeSubtotalAfterDiscount(),
             'promo_code' => $this->promoCode,
             'promo_amount' => $this->promoDiscount,
-            'total_amount' => $this->computeTotalAmount(),
+
+            'total_amount' => $this->computeSubtotalAmount(),
+
             'total_payable_amount' => $this->computePayableAmount(),
             'deposit' => $deposit,
 
@@ -1956,10 +1939,19 @@ class ReservationForm extends Component
                         [
                             'currency' => 'PHP',
                             'amount' => $amountInCentavos,
-                            'description' => 'Reservation ' . $transaction->transaction_number,
-                            'name' => 'Reservation Fee',
+                            'description' => 'Reservation fee for booking #' . $transaction->transaction_number,
+                            'name' => '1. Reservation Fee',
                             'quantity' => 1,
                         ],
+                        [
+                            'currency' => 'PHP',
+                            'amount' => intval($this->convenience_fee * 100),
+                            'description' => 'Online payment processing charge (3%)',
+                            'name' => '2. Payment Processing Fee',
+                            'quantity' => 1,
+                        ],
+
+
                     ],
                     'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name,
                     'metadata' => [

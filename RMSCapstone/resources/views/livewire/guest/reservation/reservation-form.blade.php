@@ -406,68 +406,69 @@
                         </div>
 
                         <!-- Subtotal -->
-<div class="flex justify-between items-center text-sm text-gray-600 mt-3">
-    <div>Subtotal</div>
-    <div class="font-semibold flex flex-col items-end">
-        @if($discountMessage)
-            <!-- Original subtotal with strikethrough -->
-            <span class="line-through text-gray-400">
-                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-            </span>
-            <!-- Subtotal after discount -->
-            <span class="text-green-700 font-semibold">
-                ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
-            </span>
-        @else
-            <!-- No discount applied -->
-            <span>
-                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-            </span>
-        @endif
-    </div>
-</div>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+                            <div>Subtotal</div>
+                            <div class="font-semibold flex flex-col items-end">
+                                @if($discountMessage)
+                                    <!-- Original subtotal with strikethrough -->
+                                    <span class="line-through text-gray-400">
+                                        ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                    </span>
+                                    <!-- Subtotal after discount -->
+                                    <span class="text-green-700 font-semibold">
+                                        ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+                                    </span>
+                                @else
+                                    <!-- No discount applied -->
+                                    <span>
+                                        ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
 
-<!-- Deposit (if enabled) -->
-@if ($this->enable_deposit_percentage)
-    <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
-        <div>Required Deposit</div>
-        <div class="font-semibold">
-            ₱{{ number_format($this->deposit ?? 0, 2) }}
-        </div>
-    </div>
-@endif
+                        <!-- Final Total (after discount) -->
+                        <div class="flex justify-between items-center text-lg font-semibold text-gray-800 mt-2">
+                            <div>Total</div>
+                            <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
+                        </div>
 
-<!-- Convenience Fee -->
-<div class="flex justify-between items-center text-sm text-gray-600 mt-2">
-    <div class="flex items-center gap-2">
-        <span>Payment Processing Fee</span>
-        <div class="relative group inline-block">
-            <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
-            <!-- Tooltip -->
-            <div
-                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                A processing fee is applied for secure online payments.
-            </div>
-        </div>
-    </div>
-    <div class="font-semibold">
-        ₱{{ number_format($this->computeConvenienceFee(), 2) }}
-    </div>
-</div>
+                        <!-- Deposit (if enabled) -->
+                        @if ($this->enable_deposit_percentage)
+                            <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
+                                <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+                                <div class="font-semibold">
+                                    ₱{{ number_format($this->deposit ?? 0, 2) }}
+                                </div>
+                            </div>
+                        @endif
 
-<hr class="my-3 border-gray-300">
+                        <!-- Convenience Fee -->
+                        <div class="flex justify-between items-center text-sm text-gray-600 mt-2">
+                            <div class="flex items-center gap-2">
+                                <span>Convenience Fee (3%)</span>
+                                <div class="relative group inline-block">
+                                    <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
+                                    <!-- Tooltip -->
+                                    <div
+                                        class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                        A processing fee is applied for secure online payments.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="font-semibold">
+                                ₱{{ number_format($this->computeConvenienceFee(), 2) }}
+                            </div>
+                        </div>
 
-<!-- Grand Total -->
-<div class="flex justify-between items-center text-lg font-semibold text-gray-800">
-    <div>Grand Total</div>
-    <div>₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
-</div>
+                        <hr class="my-3 border-gray-300">
 
-<!-- Total Payable (highlighted for guest clarity) -->
-<div class="flex justify-between items-center text-2xl font-bold text-green-700 mt-2">
-    <div>Total Payable</div>
-    <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
-</div>
+                        <!-- Total Payable Now -->
+                        <div class="flex justify-between items-center text-2xl font-bold text-green-700 mt-2">
+                            <div>Total Payable Now</div>
+                            <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
+                        </div>
+
 
                      
 
@@ -773,27 +774,31 @@
                                         @endif
                                     @endforeach
                                 @endif
-                                <!-- Pet Fee Amount -->
-                                @if ($this->computePetTotal())
-                                    <div
-                                        class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative">
-                                        <!-- Activity Details -->
-                                        <div class="text-gray-800 flex flex-col justify-between mt-1">
-                                            <!-- Charges Breakdown -->
-                                            <div class="flex justify-between items-start gap-2">
-                                                <!-- Label and Quantity -->
-                                                <div class="text-md">
-                                                    <i class="fa-solid fa-paw"></i>
-                                                    <strong>Pet fee:</strong>
-                                                </div>
-                                                <!-- Amount -->
-                                                <div class="text-sm font-semibold text-gray-800">
-                                                    ₱{{ number_format($this->computePetTotal(), 2) }}
-                                                </div>
+
+                            <!-- Pet Fee Amount -->
+                            @if ($this->computePetTotal())
+                                <div
+                                    class="bg-gray-100 py-3 px-2 rounded-xl shadow-sm border border-gray-200 flex-1 relative">
+                                    <!-- Activity Details -->
+                                    <div class="text-gray-800 flex flex-col justify-between mt-1">
+                                        <!-- Charges Breakdown -->
+                                        <div class="flex justify-between items-start gap-2">
+                                            <!-- Label and Quantity -->
+                                            <div class="text-md">
+                                                <i class="fa-solid fa-paw"></i>
+                                                <strong>Pet fee:</strong>
+                                            </div>
+                                            <!-- Amount -->
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                ₱{{ number_format($this->computePetTotal(), 2) }}
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                </div>
+                            @endif
+
+
+                               
                             </div>
                             @if ($cartCollection->contains('type', 'room'))
                                 <div>
@@ -838,69 +843,69 @@
                                         @endif
                                     </div>
 
-                                <!-- Subtotal -->
-                                <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
-                                    <div>Subtotal</div>
-                                    <div class="font-semibold flex flex-col items-end">
-                                        @if($discountMessage)
-                                            <!-- Original subtotal with strikethrough -->
-                                            <span class="line-through text-gray-400">
-                                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                                            </span>
-                                            <!-- Subtotal after discount -->
-                                            <span class="text-green-700 font-semibold">
-                                                ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
-                                            </span>
-                                        @else
-                                            <!-- No discount applied -->
-                                            <span>
-                                                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Deposit (if enabled) -->
-                                @if ($this->enable_deposit_percentage)
-                                    <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
-                                        <div>Required Deposit</div>
-                                        <div class="font-semibold">
-                                            ₱{{ number_format($this->deposit ?? 0, 2) }}
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <!-- Convenience Fee -->
-                                <div class="flex justify-between items-center text-sm text-gray-600 mt-2">
-                                    <div class="flex items-center gap-2">
-                                        <span>Payment Processing Fee</span>
-                                        <div class="relative group inline-block">
-                                            <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
-                                            <!-- Tooltip -->
-                                            <div
-                                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                                                A processing fee is applied for secure online payments.
+                                           <!-- Subtotal -->
+                                            <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+                                                <div>Subtotal</div>
+                                                <div class="font-semibold flex flex-col items-end">
+                                                    @if($discountMessage)
+                                                        <!-- Original subtotal with strikethrough -->
+                                                        <span class="line-through text-gray-400">
+                                                            ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                                        </span>
+                                                        <!-- Subtotal after discount -->
+                                                        <span class="text-green-700 font-semibold">
+                                                            ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+                                                        </span>
+                                                    @else
+                                                        <!-- No discount applied -->
+                                                        <span>
+                                                            ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="font-semibold">
-                                        ₱{{ number_format($this->computeConvenienceFee(), 2) }}
-                                    </div>
-                                </div>
 
-                                <hr class="my-3 border-gray-300">
+                                            <!-- Final Total (after discount) -->
+                                            <div class="flex justify-between items-center text-lg font-semibold text-gray-800 mt-2">
+                                                <div>Total</div>
+                                                <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
+                                            </div>
 
-                                <!-- Grand Total -->
-                                <div class="flex justify-between items-center text-lg font-semibold text-gray-800">
-                                    <div>Grand Total</div>
-                                    <div>₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
-                                </div>
+                                            <!-- Deposit (if enabled) -->
+                                            @if ($this->enable_deposit_percentage)
+                                                <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
+                                                    <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+                                                    <div class="font-semibold">
+                                                        ₱{{ number_format($this->deposit ?? 0, 2) }}
+                                                    </div>
+                                                </div>
+                                            @endif
 
-                                <!-- Total Payable (highlighted for guest clarity) -->
-                                <div class="flex justify-between items-center text-2xl font-bold text-green-700 mt-2">
-                                    <div>Total Payable</div>
-                                    <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
-                                </div>
+                                            <!-- Convenience Fee -->
+                                            <div class="flex justify-between items-center text-sm text-gray-600 mt-2">
+                                                <div class="flex items-center gap-2">
+                                                    <span>Convenience Fee (3%)</span>
+                                                    <div class="relative group inline-block">
+                                                        <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
+                                                        <!-- Tooltip -->
+                                                        <div
+                                                            class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                                            A processing fee is applied for secure online payments.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="font-semibold">
+                                                    ₱{{ number_format($this->computeConvenienceFee(), 2) }}
+                                                </div>
+                                            </div>
+
+                                            <hr class="my-3 border-gray-300">
+
+                                            <!-- Total Payable Now -->
+                                            <div class="flex justify-between items-center text-2xl font-bold text-green-700 mt-2">
+                                                <div>Total Payable Now</div>
+                                                <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
+                                            </div>
 
 
                                 </div>

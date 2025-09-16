@@ -20,12 +20,9 @@ class Feedback extends Model
         'transaction_number',
         'submitted_at',
         'comments',
-        'is_approved',
+        'status',
     ];
 
-    protected $casts = [
-        'is_approved'        => 'boolean',
-    ];
 
     // --------------------- Activity Logs ------------------ //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
@@ -39,7 +36,8 @@ class Feedback extends Model
                 'transaction_number',
                 'submitted_at',
                 'comments',
-                'is_approved'])
+                'is_approved'
+            ])
             // 4.2 Automatically log only the attributes that have changed  
             ->logOnlyDirty()
             // 4.3 Set a custom description for the feedback log event
