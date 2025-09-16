@@ -33,6 +33,8 @@ use App\Models\Service;
 use App\Traits\HasFormattedDates;
 use App\Traits\ReservationHelpers;
 use PragmaRX\Countries\Package\Countries;
+use App\Services\PaymentMethodService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CreateReservation extends Component
 {
@@ -140,7 +142,7 @@ class CreateReservation extends Component
     public $total_amount;
     public $depositPercentage;
     public $enable_deposit_percentage = true;
-    public bool $apply_convenience_fee = true;
+    public bool $apply_convenience_fee = false;
 
     // Promo Discount
     public $promo;
@@ -184,6 +186,7 @@ class CreateReservation extends Component
     protected BrandingService $brandingService;
     protected PayMongoService $payMongo;
     protected EmailService $emailService;
+    protected PaymentMethodService $paymentMethodService;
 
     //----------------------- OTHERS ------------------------ //
     public $expandedService = null;
@@ -310,6 +313,15 @@ class CreateReservation extends Component
             // Reset pet-related properties
             $this->pet_count = 0;
             $this->pets = [];
+
+            if ($property === 'check_in_date') {
+                $checkIn = Carbon::parse($this->check_in_date);
+                $checkOut = Carbon::parse($this->check_out_date);
+
+                if ($checkOut->lte($checkIn)) {
+                    $this->check_out_date = $checkIn->copy()->addDay()->format('Y-m-d');
+                }
+            }
 
             // Re-fetch available rooms based on new dates
             $this->getAvailableRooms();
@@ -1527,9 +1539,10 @@ class CreateReservation extends Component
             $reservationData['payment_link'] = $paymentLink;
         });
 
-        // Step 23: If the transaction was successfully created, proceed to send emails
+        // Attempt to send confirmation emails
         try {
-            $emailService->sendReservationEmails($reservationData);
+            $pdfContent = $this->generateAvailablePaymentMethods();
+            $emailService->sendReservationEmails($reservationData, $pdfContent);
         } catch (\Exception $e) {
             // If email sending fails, flash error but still continue
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
@@ -2262,4 +2275,41 @@ class CreateReservation extends Component
     //         'payment_status' => 'unpaid',
     //     ]);
     // }
+
+
+
+    /**
+     * -------------------------- PRINT AVAILABLE PAYMENT METHODS ---------------------------
+     *
+     * This method is for fetching the available payment methods from the CRUD in the admin panel
+     *
+     * ------------------------------------------------------------------------------------
+     */
+
+    public function generateAvailablePaymentMethods()
+    {
+        Log::info('Print available payment methods called.');
+
+        $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
+
+        // Optionally, you can filter or highlight Cash differently
+        foreach ($paymentMethods as &$method) {
+            if (!$method['has_convenience_fee']) {
+                $method['note'] = 'No convenience fee for manual payment.';
+            }
+        }
+
+        $pdf = Pdf::loadView('livewire.admin.reports.available-payment-methods', compact('paymentMethods'));
+
+        // Return PDF as raw output for email attachment
+        return $pdf->output();
+
+        // To preview the PDF in browser (optional)
+        // return response()->stream(function () use ($pdf) {
+        //     echo $pdf->output();
+        // }, 200, [
+        //     'Content-Type'        => 'application/pdf',
+        //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
+        // ]);
+    }
 }

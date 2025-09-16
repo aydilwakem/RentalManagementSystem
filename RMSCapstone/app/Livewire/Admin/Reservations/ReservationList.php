@@ -232,7 +232,7 @@ class ReservationList extends Component
 
             //Call promo code
             'code' => optional($transaction->promoCode)->code,
-            'discount_type' => optional($transaction->promoCode)->discount_type, 
+            'discount_type' => optional($transaction->promoCode)->discount_type,
             'discount_value' => optional($transaction->promoCode)->discount_value,
 
             // Branding
@@ -259,18 +259,32 @@ class ReservationList extends Component
     public function startReservation($id)
     {
         $transaction = Transaction::find($id);
+
         if ($transaction) {
-            $transaction->update(['transaction_status' => 'ongoing']); // Update transaction status to 'ongoing'
-            session()->flash('message', 'Transaction successfully started!');
+            $transaction->update([
+                'transaction_status' => 'ongoing', // Update status
+                'actual_start_datetime' => now(),   // Record actual check-in
+            ]);
+
+            session()->flash('message', 'Transaction successfully started and check-in recorded!');
+        } else {
+            session()->flash('error', 'Transaction not found.');
         }
     }
+
 
     /**
      * Marks the selected transaction as 'done'
      */
     public function markAsDone($id)
     {
-        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities'])->find($id);
+        $transaction = Transaction::with([
+            'transactionUser',
+            'invoice',
+            'properties.category',
+            'activities',
+            'services'
+        ])->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -284,51 +298,48 @@ class ReservationList extends Component
             return;
         }
 
-        // Update transaction status
-        $transaction->update(['transaction_status' => 'done']);
-        session()->flash('message', 'Transaction successfully confirmed!');
+        // Update transaction status and record actual check-out
+        $transaction->update([
+            'transaction_status' => 'done',
+            'actual_end_datetime' => now(), // Record actual checkout
+        ]);
+
+        session()->flash('message', 'Transaction successfully marked as done!');
 
         $user = $transaction->transactionUser;
-        $properties = $transaction->properties;
-        $activities = $transaction->activities;
-        $services = $transaction->services;
-
         if (!$user) {
             logger()->error('User not found for transaction ID ' . $id);
             session()->flash('error', 'Confirmation email could not be sent due to missing user data.');
             return;
         }
 
-        //Call setting
+        $properties = $transaction->properties;
+        $activities = $transaction->activities;
+        $services = $transaction->services;
         $setting = Setting::first();
 
-        // Prepare data for email
+        // Prepare email data using actual check-in/out if available
         $reservationData = [
             'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'transaction_number' => $transaction->transaction_number,
-            'check_in' => $transaction->start_datetime,
-            'check_out' => $transaction->end_datetime,
+            'check_in' => $transaction->actual_start_datetime ?? $transaction->start_datetime,
+            'check_out' => $transaction->actual_end_datetime ?? $transaction->end_datetime,
             'deposit' => $transaction->deposit_paid,
-
-
             'convenience_fee' => $transaction->convenience_fee,
             'promo_discount_amount' => $transaction->promo_discount_amount,
             'sub_total' => $transaction->sub_total,
-            
             'invoice_number' => $invoice->invoice_number,
             'invoice_basesubtotal' => $invoice->base_subtotal,
             'invoice_total_discount' => $invoice->total_discount,
             'invoice_subtotal' => $invoice->sub_total,
-            'amount_paid' => $invoice->amount_paid, //see the amount paid once reservation is confirmed
+            'amount_paid' => $invoice->amount_paid,
             'balance_due' => $invoice->balance_due,
             'total_amount' => $invoice->sub_total,
             'properties' => $properties,
             'activities' => $activities,
             'services' => $services,
-
-            // Branding
             'branding_company_name' => $setting->company_name,
             'logo_path' => $setting->logo,
             'branding_company_email' => $setting->email,
@@ -345,6 +356,7 @@ class ReservationList extends Component
             session()->flash('error', 'Reservation marked as done, but email failed to send.');
         }
     }
+
 
     /**
      * Marks the selected transaction as 'no show'

@@ -71,11 +71,19 @@ class PaymentService
                 'balance_due' => $newBalance,
             ]);
 
-            // Mark invoice as completed if fully paid
+            // Mark invoice status
             if ($newBalance === 0) {
                 $invoice->update([
                     'invoice_status' => 'completed',
                     'completed_at'   => now(),
+                ]);
+            } elseif ($totalPaid > 0 && $newBalance > 0) {
+                $invoice->update([
+                    'invoice_status' => 'pending',
+                ]);
+            } else {
+                $invoice->update([
+                    'invoice_status' => 'pending',
                 ]);
             }
 
@@ -112,8 +120,6 @@ class PaymentService
         ]);
 
         $newAmountPaid = $invoice->amount_paid + $amountPaid;
-
-        Log::info($newAmountPaid);
         $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
 
         $invoice->update([
@@ -121,10 +127,19 @@ class PaymentService
             'balance_due' => $newBalanceDue,
         ]);
 
+        // Mark invoice status
         if ($newBalanceDue === 0) {
             $invoice->update([
                 'invoice_status' => 'completed',
                 'completed_at' => now(),
+            ]);
+        } elseif ($newAmountPaid > 0 && $newBalanceDue > 0) {
+            $invoice->update([
+                'invoice_status' => 'pending',
+            ]);
+        } else {
+            $invoice->update([
+                'invoice_status' => 'pending',
             ]);
         }
 

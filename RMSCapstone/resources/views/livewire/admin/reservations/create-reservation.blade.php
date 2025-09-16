@@ -134,10 +134,13 @@
                 <!-- Convenience Fee -->
                 <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
                     <div class="flex items-center space-x-2 text-sm">
-                        <span>Convenience Fee</span>
+                        <span>Apply Convenience Fee</span>
                         <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
                     </div>
-                    <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+
+                    @if ($apply_convenience_fee)
+                        <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                    @endif
                 </div>
 
                 <!-- Total Amount -->

@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\MarkExpiredTransactions;
+use App\Console\Commands\MarkOverdueInvoices;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         MarkExpiredTransactions::class,
+        MarkOverdueInvoices::class,
     ];
 
     /**
@@ -25,7 +27,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // Expire pending transactions (every minute)
         $schedule->command('transactions:mark-expired')->everyMinute();
+
+        // Mark overdue invoices (every minute)
+        $schedule->command('invoices:mark-overdue')->everyMinute();
     }
 
     /**

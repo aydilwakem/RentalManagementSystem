@@ -174,6 +174,8 @@ class ReservationForm extends Component
 
     use ReservationHelpers;
 
+
+
     // ------------------- NAVIGATION STEPS -------------------- //
 
     public $currentStep = 1;
@@ -239,6 +241,10 @@ class ReservationForm extends Component
     }
 
 
+    public Property $property;
+
+    public $averageRating;
+    public $comments = [];
 
 
 
@@ -248,8 +254,10 @@ class ReservationForm extends Component
      * It initializes various properties and loads necessary data.
      * -------------------------------------------------------------
      */
-    public function mount()
+    public function mount(Property $property)
     {
+        $this->property = $property;
+        $this->loadFeedbackData();
         $this->initializeDates();
         $this->prepareOccupancyRules();
         $this->loadStaticData();
@@ -303,6 +311,36 @@ class ReservationForm extends Component
 
         // Load available rooms for display
         $this->getAvailableRooms();
+    }
+    //feedbacks
+    protected function loadFeedbackData()
+    {
+        $allRatings = collect();
+        $comments = [];
+
+        foreach ($this->property->transactions as $transaction) {
+            foreach ($transaction->feedbacks as $feedback) {
+                if (!$feedback->is_approved) {
+                    continue;
+                }
+
+                $feedbackRatings = $feedback->feedbackRatings;
+                $individualRatingValues = $feedbackRatings->pluck('rating_value');
+                $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
+
+                $allRatings = $allRatings->merge($individualRatingValues);
+
+                $comments[] = [
+                    'text' => $feedback->comments ?? '',
+                    'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
+                    'date' => $feedback->created_at->format('F j, Y'),
+                    'rating' => $individualAvg,
+                ];
+            }
+        }
+
+        $this->averageRating = $allRatings->count() ? $allRatings->avg() : null;
+        $this->comments = $comments;
     }
 
 
@@ -1400,19 +1438,22 @@ class ReservationForm extends Component
         // Show success flash message
         session()->flash('success', 'Reservation successfully submitted!');
 
-        // Redirect user to payment page if available
-        if (!empty($reservationData['payment_link'])) {
-            session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
-            return redirect()->away($reservationData['payment_link']);
-        }
-
         // Clear session data related to the reservation
         session()->forget([
             'cart',
             'promoCode',
             'checkInDate',
             'checkOutDate',
+            'pets',
         ]);
+
+        // Redirect user to payment page if available
+        if (!empty($reservationData['payment_link'])) {
+            session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
+            return redirect()->away($reservationData['payment_link']);
+        }
+
+
 
         // Fallback if no payment link — direct to proof of payment submission page
         return redirect()->route('guest.proof-of-payment-page');

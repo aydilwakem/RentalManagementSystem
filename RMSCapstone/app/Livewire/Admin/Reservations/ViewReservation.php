@@ -866,6 +866,11 @@ class ViewReservation extends Component
 
         $this->resetErrorBag();
 
+        // Auto-assign if only one property exists
+        if ($this->guest['transaction_property_id'] == null && $this->transactionProperties->count() === 1) {
+            $this->guest['transaction_property_id'] = $this->transactionProperties->first()->id;
+        }
+
         $this->validate([
             'guest.first_name' => 'required|string|max:255',
             'guest.last_name' => 'required|string|max:255',
@@ -1592,7 +1597,11 @@ class ViewReservation extends Component
         $invoice = $this->invoice;
         $user = $this->transactionUser;
 
-        // Build the payload required by PayMongo for the checkout session
+        // Calculate convenience fee (3%)
+        $convenienceFee = $invoice->balance_due * 0.03;
+        $totalAmount = $invoice->balance_due + $convenienceFee;
+
+        // Build the payload with separate line items for balance and convenience fee
         $payload = [
             'data' => [
                 'attributes' => [
@@ -1600,20 +1609,30 @@ class ViewReservation extends Component
                     'show_description' => true,
                     'show_line_items' => true,
                     'payment_method_types' => ['card', 'gcash', 'qrph', 'paymaya'],
-                    'success_url' => route('guest.thank-you-page'), // Redirect after successful payment
-                    'cancel_url' => url('/payment-failed'), // Redirect if payment is cancelled
-                    'line_items' => [[
-                        'currency' => 'PHP',
-                        'amount' => intval($invoice->balance_due * 100), // PayMongo expects amount in centavos
-                        'description' => 'Reservation ' . $transaction->transaction_number,
-                        'name' => 'Canopy Farm PH',
-                        'quantity' => 1,
-                    ]],
+                    'success_url' => route('guest.thank-you-page'),
+                    'cancel_url' => url('/payment-failed'),
+                    'line_items' => [
+                        [
+                            'currency' => 'PHP',
+                            'amount' => intval($convenienceFee * 100),
+                            'description' => 'Convenience Fee (3%)',
+                            'name' => 'Convenience Fee',
+                            'quantity' => 1,
+                        ],
+                        [
+                            'currency' => 'PHP',
+                            'amount' => intval($invoice->balance_due * 100),
+                            'description' => 'Reservation ' . $transaction->transaction_number,
+                            'name' => 'Canopy Farm PH',
+                            'quantity' => 1,
+                        ],
+                    ],
                     'description' => 'Reservation for ' . $user->first_name . ' ' . $user->last_name,
                     'metadata' => [
                         'invoice_id' => (string) $invoice->id,
                         'payment_type' => 'Remaining Balance',
                         'notes' => 'Payment for Remaining Balance',
+                        'convenience_fee' => $convenienceFee, // optional, for tracking
                     ],
                 ],
             ],
@@ -1622,29 +1641,26 @@ class ViewReservation extends Component
         // Create the checkout session through PayMongo
         $response = $payMongo->createCheckoutSession($payload);
 
-        // Extract the payment link from the response
         $paymentLink = $response['data']['attributes']['checkout_url'] ?? null;
 
-        // Save the payment link in the transaction record if it exists
         if ($paymentLink) {
             $transaction->update(['payment_link' => $paymentLink]);
         }
 
-        // Mark that the invoice has requested for remaining balance
         $invoice->requested_remaining_balance = true;
         $invoice->save();
 
-        // Attempt to send email notification to guest with the payment link
         try {
-            $pdfContent = $this->generateAvailablePaymentMethods(); 
+            $pdfContent = $this->generateAvailablePaymentMethods();
             $notifier->sendRemainingBalanceEmail($user, $transaction, $invoice, $paymentLink, $pdfContent);
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage()); // Show error message in UI
+            session()->flash('error', $e->getMessage());
         }
 
-        // Redirect back to the reservation view page
         return redirect()->route('admin.view-reservation', ['transaction' => $transaction->id]);
     }
+
+
 
 
     /**

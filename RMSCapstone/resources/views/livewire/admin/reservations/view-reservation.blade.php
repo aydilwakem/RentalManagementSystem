@@ -1965,21 +1965,34 @@
 
                     <!-- Transaction Property -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room <span
-                                class="text-red-500">*</span></label>
-                        <select wire:model.defer="guest.transaction_property_id" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                        @if ($transactionProperties->count() === 1)
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room</label>
+                            <input type="hidden" wire:model="guest.transaction_property_id" value="{{ $transactionProperties->first()->id }}">
+                            <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md 
                                     dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
-                            <option value="">Select Room</option>
-                            @foreach ($transactionProperties as $property)
-                            <option value="{{ $property->id }}">
-                                {{ $property->property->name_number ?? 'Property #' . $property->id }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('guest.transaction_property_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                                {{ $transactionProperties->first()->property->name_number ?? 'Property #' . $transactionProperties->first()->id }}
+                            </p>
+                        @else
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
+                                Room <span class="text-red-500">*</span>
+                            </label>
+                            <select wire:model.defer="guest.transaction_property_id" 
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                <option value="">Select Room</option>
+                                @foreach ($transactionProperties as $property)
+                                    <option value="{{ $property->id }}">
+                                        {{ $property->property->name_number ?? 'Property #' . $property->id }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('guest.transaction_property_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        @endif
                     </div>
+
+
 
                     <!-- Birthdate -->
                     <div class="mt-4">

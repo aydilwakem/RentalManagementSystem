@@ -209,7 +209,7 @@
                 <label for="notes" class="block mb-1 font-medium text-gray-700">Notes</label>
                 <input type="text" id="notes" wire:model="notes"
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    placeholder="Enter any note (optional)" />
+                    placeholder="Enter any note" />
                 @error('notes')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror

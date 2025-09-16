@@ -35,10 +35,11 @@ class Dashboard extends Component
 
             // Get all active reservations that are not completed
             $this->newReservations = Transaction::where('reservation_type_id', 2)
-                ->whereNotIn('transaction_status', ['done'])
+                ->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed'])
                 ->whereMonth('start_datetime', now()->month)
                 ->whereYear('start_datetime', now()->year)
                 ->count();
+
 
             // Get pending events
             $this->upcomingEvents = Transaction::where('reservation_type_id', 3)
@@ -57,9 +58,9 @@ class Dashboard extends Component
                 ->whereIn('reservation_type_id', [2, 3])
                 ->get();
 
-                // ->whereNotIn('transaction_status', ['done'])
-                // ->with('reservationType', 'transactionUser')
-                // ->get();
+            // ->whereNotIn('transaction_status', ['done'])
+            // ->with('reservationType', 'transactionUser')
+            // ->get();
 
             foreach ($allTransactions as $transaction) {
                 // Get room names
