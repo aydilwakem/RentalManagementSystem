@@ -25,11 +25,21 @@ class EmailService
     public function sendReservationEmails(array $reservationData, string $pdfContent): void
     {
         try {
+            //email for guest
             Mail::to($reservationData['email'])->send(new ReservationSubmittedMail($reservationData, $pdfContent));
             Log::info('ReservationSubmittedMail sent to: ' . $reservationData['email']);
 
-            Mail::to('rmscapstone26@gmail.com')->send(new NewReservationMail($reservationData));
-            Log::info('NewReservationMail sent to: rmscapstone26@gmail.com');
+            //emails for admins
+            Mail::to('username@try.com')->send(
+                new NewReservationMail($reservationData)
+            );
+            Log::info('NewReservationMail sent to: username@try.com');
+
+            Mail::to('username@try.com')->send(
+                new NewReservationMail($reservationData)
+            );
+            Log::info('NewReservationMail also sent to: username@try.com');
+
         } catch (\Exception $e) {
             Log::error('Reservation email send failed: ' . $e->getMessage());
             throw $e;

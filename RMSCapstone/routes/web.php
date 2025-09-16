@@ -74,14 +74,20 @@ use Illuminate\Http\Request;
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
 // Welcome page
+// Redirect root to guest homepage
 Route::get('/', function () {
+    return redirect('/guest/homepage');
+});
+
+// Admin welcome page (kept for other references)
+Route::get('/admin', function () {
     return redirect()->route('login'); // index file
 })->name('admin.welcome');
 
 // Authentication Middleware Group
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     // Dashboard Route
-    Route::get('/', function () {
+    Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
