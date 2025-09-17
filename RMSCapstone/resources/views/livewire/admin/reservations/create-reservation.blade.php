@@ -730,8 +730,7 @@
                                     {{ $guest['guest_first_name'] }} {{ $guest['guest_last_name'] }}
                                 </div>
                                 <div class="space-x-5 flex items-center">
-                                    <button wire:click="editGuest({{ $loop->index }})" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline font-sm transition duration-150
-                                                dark:text-indigo-400 dark:hover:text-indigo-600">
+                                    <button wire:click="editGuest({{ $loop->index }})" class="inline-flex text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500 hover:underline font-sm transition duration-150">
                                         <i class="fas fa-edit mr-1"></i>
                                         Edit
                                     </button>
