@@ -865,21 +865,21 @@ Route::get('/guest-event', function () {
     return view('guest.emails.request-quote', ['quoteData' => $quoteData]);
 });
 
-Route::get('/reservation-submitted', function () {
-    $fakeData = [
-        'name' => 'Juan Dela Cruz',
-        'transaction_number' => 'TXN123456789',
-        'email' => 'juan@example.com',
-        'invoice_number' => 'INV-2025-001',
-        'check_in' => '2025-06-01',
-        'check_out' => '2025-06-03',
-        'total_amount' => 5000.0,
-        'deposit' => 1000.0,
-        'expirationHours' => 48,
-    ];
+// Route::get('/reservation-submitted', function () {
+//     $fakeData = [
+//         'name' => 'Juan Dela Cruz',
+//         'transaction_number' => 'TXN123456789',
+//         'email' => 'juan@example.com',
+//         'invoice_number' => 'INV-2025-001',
+//         'check_in' => '2025-06-01',
+//         'check_out' => '2025-06-03',
+//         'total_amount' => 5000.0,
+//         'deposit' => 1000.0,
+//         'expirationHours' => 48,
+//     ];
 
-    return new ReservationSubmittedMail($fakeData);
-});
+//     return new ReservationSubmittedMail($fakeData, $pdfContent);
+// });
 
 Route::get('/payment-email', function () {
     $paymentDetails = [
