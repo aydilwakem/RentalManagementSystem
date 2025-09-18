@@ -521,27 +521,6 @@ class ReservationForm extends Component
     }
 
 
-
-    /**
-     * ---------------------------- SPECIAL REQUESTS LOGIC ----------------------------
-     *
-     * Handles the addition and removal of special requests in the reservation form.
-     * Each request has a status that can be updated.
-     *
-     * Responsibilities:
-     * - `addSpecialRequest`: Adds a new special request to the list.
-     * - `removeSpecialRequest`: Removes a special request by its index.
-     *
-     * ----------------------------------------------------------------------------------
-     */
-
-
-
-
-
-
-
-
     /**
      * ---------------------------- RESERVATION COMPUTATIONS ----------------------------
      *

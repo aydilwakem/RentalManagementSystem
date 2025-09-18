@@ -635,23 +635,19 @@
                             approval)</span>
                     </label>
 
-                    @foreach ($special_requests as $index => $request)
+                  
                     <div class="mb-2 flex items-center gap-2">
-                        <input type="text" wire:model="special_requests.{{ $index }}.request"
+                        <input type="text" wire:model="requests"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                             placeholder="Enter request" />
-                        <button wire:click.prevent="removeSpecialRequest({{ $index }})"
-                            class="text-red-600 hover:text-red-800 text-sm">Remove</button>
                     </div>
-                    @error("special_requests.$index.request")
+
+                    @error("requests")
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                     @enderror
-                    @endforeach
-
-                    <button wire:click.prevent="addSpecialRequest"
-                        class="mt-2 text-sm text-green-600 hover:underline font-medium">
-                        <i class="fa-solid fa-circle-plus"></i> Add Request</button>
+                  
                 </div>
+
 
 
                 @if ($bringingPets)

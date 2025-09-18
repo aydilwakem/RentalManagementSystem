@@ -155,7 +155,7 @@ class ViewReservation extends Component
 
 
     // ---------------- GUEST EDITING FIELDS ------------------ //
-    public $editingGuestId, $editingFirstName, $editingMiddleName, $editingLastName, $editingSuffix, $editingGender, $editingBirthDate, $editingResidency, $editingCountryOfOrigin, $editingGuestTypeId, $editingTransactionPropertyId;
+    public $editingGuestId, $editingFirstName, $editingMiddleName, $editingLastName, $editingSuffix, $editingGender, $editingResidency, $editingCountryOfOrigin, $editingGuestTypeId, $editingTransactionPropertyId;
     public $filteredGuestTypes = [];
 
     public $guest = [
@@ -164,7 +164,6 @@ class ViewReservation extends Component
         'last_name' => '',
         'suffix' => '',
         'gender' => null,
-        'birthdate' => null,
         'residency' => null,
         'country_of_origin' => null,
         'transaction_property_id' => null,
@@ -177,7 +176,6 @@ class ViewReservation extends Component
         'last_name' => '',
         'suffix' => '',
         'gender' => null,
-        'birthdate' => null,
         'residency' => null,
         'country_of_origin' => null,
         'transaction_property_id' => null,
@@ -225,12 +223,14 @@ class ViewReservation extends Component
             'service_datetime',
             'status'
         )->get();
+        $this->guestTypes = GuestType::all();
 
 
         return view('livewire.admin.reservations.view-reservation', [
             'activities' => $this->activities,  // Pass activities to the view properly
             'properties' => $this->properties,  // Pass activities to the view properly
             'services' => $this->services,
+            'guestTypes' => $this->guestTypes,
             'transaction_properties' => $this->transactionProperties,
             'payment_methods' => $this->payment_methods,
         ]);
@@ -289,6 +289,7 @@ class ViewReservation extends Component
         $this->availableActivities = Activity::all();
         $this->availableServices = Service::all();
         $this->guestTypes = GuestType::all();
+        Log::info('Guest Types:', $this->guestTypes->toArray());
         $this->payment_methods = PaymentMethod::all();
 
         $this->loadAllInvoiceItems();
@@ -874,7 +875,6 @@ class ViewReservation extends Component
         $this->validate([
             'guest.first_name' => 'required|string|max:255',
             'guest.last_name' => 'required|string|max:255',
-            'guest.birthdate' => 'nullable|date|before:today',
             'guest.gender' => 'nullable|in:male,female',
             'guest.transaction_property_id' => 'required|exists:transaction_properties,id',
             'guest.guest_type_id' => 'required|exists:trn_guest_type,id',
@@ -893,7 +893,6 @@ class ViewReservation extends Component
             'last_name' => $this->guest['last_name'],
             'suffix' => $this->guest['suffix'] ?? null,
             'gender' => $this->guest['gender'] ?? null,
-            'birthdate' => $this->guest['birthdate'] ?? null,
             'residency' => $this->guest['residency'] ?? null,
             'country_of_origin' => $this->guest['country_of_origin'] ?? null,
             'guest_type_id' => !empty($this->guest['guest_type_id']) ? $this->guest['guest_type_id'] : null,
@@ -920,7 +919,6 @@ class ViewReservation extends Component
             'editingLastName' => 'required|string|max:255',
             'editingSuffix' => 'nullable|string|max:255',
             'editingGender' => 'required|in:male,female,other',
-            'editingBirthDate' => 'nullable|date|before:today',
             'editingResidency' => 'required|in:local,foreigner',
             'editingCountryOfOrigin' => 'nullable|string|max:255',
             'editingGuestTypeId' => 'required|exists:trn_guest_type,id',
@@ -936,7 +934,6 @@ class ViewReservation extends Component
                 'last_name' => $this->editingLastName,
                 'suffix' => $this->editingSuffix,
                 'gender' => $this->editingGender,
-                'birthdate' => $this->editingBirthDate,
                 'residency' => $this->editingResidency,
                 'country_of_origin' => $this->editingCountryOfOrigin,
                 'guest_type_id' => $this->editingGuestTypeId,
@@ -953,7 +950,6 @@ class ViewReservation extends Component
             'editingLastName',
             'editingSuffix',
             'editingGender',
-            'editingBirthDate',
             'editingResidency',
             'editingCountryOfOrigin',
             'editingGuestTypeId',
@@ -999,29 +995,15 @@ class ViewReservation extends Component
             $this->editingLastName = $guest->last_name;
             $this->editingSuffix = $guest->suffix;
             $this->editingGender = $guest->gender;
-            $this->editingBirthDate = $guest->birthdate?->format('Y-m-d');
             $this->editingResidency = $guest->residency;
             $this->editingCountryOfOrigin = $guest->country_of_origin;
-
-            $this->getGuestAge();
-
             $this->showEditGuestModal = true;
         } else {
             Log::warning("Guest not found for ID: $guestId");
         }
     }
 
-    public function updatedEditingBirthdate()
-    {
-        $this->getGuestAge();
-        $this->filterGuestTypesByAge();
-    }
 
-    public function updatedGuestBirthDate()
-    {
-        $this->getGuestAge();
-        $this->filterGuestTypesByAge();
-    }
 
 
     /**
@@ -1238,6 +1220,44 @@ class ViewReservation extends Component
         $this->reset(['addingGuestPivotId', 'extraGuestQuantity', 'showAddGuestModal']);
     }
 
+    /**
+     * ------------------------- VOUCHER ---------------------------
+     * Handles voucher code application and removal.
+     * -------------------------------------------------------------------------------------
+     */
+
+    public $voucher_type;
+    public $voucher_amount;
+
+    public function saveVoucher()
+    {
+        $this->validate([
+            'voucher_type' => 'required|in:Food,Other',
+            'voucher_amount' => 'required|numeric|min:0.01',
+        ]);
+
+        $this->transaction->vouchers()->create([
+            'transaction_id' => $this->transaction->id,
+            'voucher_type' => $this->voucher_type,
+            'voucher_amount' => $this->voucher_amount,
+        ]);
+
+        // Reset inputs & close modal
+        $this->reset(['voucher_type', 'voucher_amount']);
+        $this->closeModal();
+
+        session()->flash('message', 'Voucher added successfully!');
+    }
+
+    public function deleteVoucher($voucherId)
+    {
+        $voucher = $this->transaction->vouchers()->find($voucherId);
+
+        if ($voucher) {
+            $voucher->delete();
+            session()->flash('message', 'Voucher removed successfully!');
+        }
+    }
 
 
 
@@ -1903,6 +1923,13 @@ class ViewReservation extends Component
 
         $this->updatePaymentStatus($paymentService, $this->amount_paid);
         $this->recalculateInvoice();
+        if ($this->transaction->transaction_status === 'reserved') {
+            $this->transaction->update([
+                'transaction_status' => 'receipt_verified',
+                'updated_at' => now(),
+            ]);
+        }
+
         $this->reset([
             'amount_paid',
             'mode_of_payment',
@@ -1948,34 +1975,6 @@ class ViewReservation extends Component
 
 
 
-    public function getGuestAge()
-    {
-        $birthdate = $this->guest['birthdate'] ?? $this->editingBirthDate ?? null;
-
-        if ($birthdate) {
-            $age = \Carbon\Carbon::parse($birthdate)->age;
-            $this->guest['age'] = $age;
-
-            // Determine category
-            if ($age <= 2) {
-                $category = 'Infant';
-            } elseif ($age >= 3 && $age <= 17) {
-                $category = 'Kid';
-            } elseif ($age >= 18 && $age <= 59) {
-                $category = 'Adult';
-            } else {
-                $category = 'Senior';
-            }
-
-            $this->guest['category'] = $category;
-            $this->filterGuestTypesByAge();
-        } else {
-            $this->guest['age'] = null;
-            $this->guest['category'] = null;
-            $this->filteredGuestTypes = $this->guestTypes;
-        }
-    }
-
     public function getIsFullProperty()
     {
 
@@ -1990,33 +1989,6 @@ class ViewReservation extends Component
 
         // Return true if all guest slots are full or exceeded
         return $totalGuests >= $totalAllowedGuests;
-    }
-
-
-    public function filterGuestTypesByAge()
-    {
-        $age = $this->guest['age'] ?? null;
-
-        if (is_null($age)) {
-            $birthdate = $this->editingBirthDate ?? $this->guest['birthdate'] ?? null;
-            $age = $birthdate ? \Carbon\Carbon::parse($birthdate)->age : null;
-        }
-
-        if (is_null($age)) {
-            $this->filteredGuestTypes = $this->guestTypes;
-            return;
-        }
-
-        $this->filteredGuestTypes = collect($this->guestTypes)->filter(function ($type) use ($age) {
-            return match ($type['name']) {
-                'Infant' => $age <= 2,
-                'Kid'    => $age >= 3 && $age <= 17,
-                'Adult'  => $age >= 18 && $age <= 59,
-                'Senior' => $age >= 60,
-                'PWD'    => true,
-                default  => false,
-            };
-        })->values()->all();
     }
 
     public function loadGuestDetails()

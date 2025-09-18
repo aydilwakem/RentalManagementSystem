@@ -200,9 +200,7 @@ class CreateReservation extends Component
     public $roomName;
     public $activityName;
     public $activityDateTime;
-    public $special_requests = [
-        ['request' => '', 'status' => 'pending'],
-    ];
+
     public $selectedTimes = [];
 
     public $activityScheduleType; // 'guest' or 'system'
@@ -1307,39 +1305,6 @@ class CreateReservation extends Component
 
 
 
-
-
-
-    /**
-     * ----------------------------- SPECIAL REQUESTS LOGIC -----------------------------
-     *
-     * Handles the addition and removal of special requests within a reservation or booking form.
-     * This allows users to input specific requests that may not fit into standard fields.
-     *
-     * Key Methods:
-     * - `addSpecialRequest`: Adds a new special request entry.
-     * - `removeSpecialRequest`: Removes a special request by index.
-     *
-     * -----------------------------------------------------------------------------------
-     */
-    public function addSpecialRequest()
-    {
-        $this->special_requests[] = ['request' => '', 'status' => 'pending'];
-    }
-
-    public function removeSpecialRequest($index)
-    {
-        unset($this->special_requests[$index]);
-        $this->special_requests = array_values($this->special_requests); // reindex
-    }
-
-
-
-
-
-
-
-
     /**
      * ----------------------------- GUEST MANAGEMENT LOGIC -----------------------------
      *
@@ -1999,12 +1964,7 @@ class CreateReservation extends Component
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
             'terms' => 'required|accepted',
-            'special_requests.*.request' => [
-                'nullable',
-                'string',
-                'max:255',
-                'regex:/^[A-Za-z\s\-]+$/',
-            ],
+            'requests' => 'nullable|string|max:255',
             'pets.*.breed' => 'required|string|max:255',
         ]);
     }
@@ -2143,10 +2103,7 @@ class CreateReservation extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
-            'special_requests' => collect($this->special_requests)
-                ->filter(fn($req) => isset($req['request']) && trim($req['request']) !== '')
-                ->values()
-                ->all(),
+            'requests' => $this->requests,
         ]);
     }
 
