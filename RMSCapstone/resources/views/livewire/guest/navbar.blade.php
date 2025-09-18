@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-primary-900 border-b border-gray-300 sticky top-0 z-50">
+<nav x-data="{ open: false }" class="bg-primary-800 border-b border-gray-300 sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -36,6 +36,11 @@
                 <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')"
                     wire:navigate>
                     {{ __('Event Halls') }}
+                </x-nav-link>
+
+                <x-nav-link href="{{ route('guest.feedback-form') }}" :active="request()->routeIs('guest.feedback-form')"
+                    wire:navigate>
+                    {{ __('Feedback Form') }}
                 </x-nav-link>
             </div>
 

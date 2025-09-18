@@ -70,6 +70,11 @@ use Spatie\Activitylog\Models\Activity as LogActivity;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\NewPasswordController;
+use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 
 // ----------------------------- ADMIN PAGES ----------------------------------------- //
 
@@ -79,13 +84,75 @@ Route::get('/', function () {
     return redirect('/guest/homepage');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Custom Login Route
+|--------------------------------------------------------------------------
+*/
+Route::get('/' . env('LOGIN_URI', 'l06iN-4k9v7BqP2zX'), [AuthenticatedSessionController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('login');
+
+Route::post('/' . env('LOGIN_URI', 'l06iN-4k9v7BqP2zX'), [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest']);
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware(['auth'])
+    ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Custom Sign Up Route
+|--------------------------------------------------------------------------
+*/
+Route::get('/' . env('REGISTER_URI', 'R3g1st3r9xV2'), [RegisteredUserController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('register');
+
+Route::post('/' . env('REGISTER_URI', 'R3g1st3r9xV2'), [RegisteredUserController::class, 'store'])
+    ->middleware(['guest']);
+
+/*
+|--------------------------------------------------------------------------
+| Custom Two-Factor Authentication Route
+|--------------------------------------------------------------------------
+*/
+Route::get('/' . env('TWO_FACTOR_URI', 't2FaC-8mX2zV4r9L1k'),
+    [TwoFactorAuthenticatedSessionController::class, 'create']
+)->middleware(['guest'])->name('two-factor.login');
+
+Route::post('/' . env('TWO_FACTOR_URI', 't2FaC-8mX2zV4r9L1k'),
+    [TwoFactorAuthenticatedSessionController::class, 'store']
+)->middleware(['guest']);
+
+/*
+|--------------------------------------------------------------------------
+| Custom Forgot Password + Reset PAssword Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/' . env('FORGOT_PASSWORD_URI', 'f0rG07-2xV7k2P6zQ3m'), [PasswordResetLinkController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('password.request');
+
+Route::post('/' . env('FORGOT_PASSWORD_URI', 'f0rG07-2xV7k2P6zQ3m'), [PasswordResetLinkController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [NewPasswordController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('password.update');
+
 // Admin welcome page (kept for other references)
 Route::get('/admin', function () {
     return redirect()->route('login'); // index file
 })->name('admin.welcome');
 
 // Authentication Middleware Group
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(callback: function () {
     // Dashboard Route
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -1276,7 +1343,7 @@ Route::get('/receipt-preview', function () {
 
 
 
-//Preview the available payment methods pdf: 
+//Preview the available payment methods pdf:
 Route::get('/reports/payment-methods/preview', [ReservationForm::class, 'printAvailablePaymentMethods'])
      ->name('reports.payment-methods.preview');
 

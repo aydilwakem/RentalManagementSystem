@@ -386,7 +386,7 @@ class ViewReservation extends Component
 
     /**
      * ------------------------------ REQUESTS  ----------------------------------------
-     * Manages the guest requests and admin replies.                                         
+     * Manages the guest requests and admin replies.
      * Core responsibilities:
      * - `saveRequestReply`: Validates and updates the admin's reply to guest requests.
      * ---------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ class ViewReservation extends Component
     /**
      * -------------------- PWD/SENIOR DISCOUNT MANAGEMENT -----------------------------
      *
-     * 
+     *
      *
      * ---------------------------------------------------------------------------------
      */
@@ -1737,7 +1737,7 @@ class ViewReservation extends Component
             'receipt' => $this->receipt,
             'invoice' => $this->invoice,
             'transaction' => $this->transaction,
-            // 'promoCode' => $this->promoCode, 
+            // 'promoCode' => $this->promoCode,
             'guestPets' => $this->guestPets,
             'transactionUser' => $this->transactionUser,
             'properties' => $this->properties,
