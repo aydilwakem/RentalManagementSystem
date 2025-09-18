@@ -200,7 +200,7 @@
                                     <option value="">Select Event Hall</option>
                                     @foreach ($halls as $hall)
                                     <option value="{{ $hall->id }}" @if ($hall->isBooked) disabled @endif>
-                                        {{ $hall->name_number }} @if ($hall->isBooked)
+                                        {{ $hall->name_number }} - {{ $hall->capacity }} Pax Capacity @if ($hall->isBooked)
                                         - (Booked)
                                         @endif
                                     </option>

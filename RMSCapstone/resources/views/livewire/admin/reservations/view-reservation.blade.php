@@ -300,7 +300,7 @@
                     </div>
                 </div>
 
-        
+
                 <div class="mt-4">
                     <strong>Requests:</strong>
 
@@ -345,7 +345,7 @@
                                     Category</th>
                                 <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                    Total Guest
+                                    Total Guests
                                 </th>
                                 <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
@@ -396,7 +396,7 @@
                                 </td>
                                 <td
                                     class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                    {{ $property->pivot->pax ?? 'N/A' }}</td>
+                                    {{ (($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0)) - ($property->pivot->extra_guest ?? 0) }}</td>
                                 <td
                                     class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                     {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
@@ -449,7 +449,7 @@
                                     class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
                                     Activity Name</th>
                                 <th
-                                    class="border px-4 py-2 font-medium text-gray-900 text-left dark:text-gray-200 dark:border-gray-500">
+                                    class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                     Scheduled Time</th>
                                 <th
                                     class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
@@ -470,7 +470,7 @@
                                     class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
                                     {{ $activity->name }}</td>
                                 <td
-                                    class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
+                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                     @if ($activity->pivot && $activity->pivot->activity_datetime)
                                     {{ \Carbon\Carbon::parse($activity->pivot->activity_datetime)->format('g:i A') }}
                                     @else
@@ -914,7 +914,7 @@
                         </tbody>
                     </table>
 
-                  
+
 
                     <!-- Subtotal -->
                     <div class="mt-2 mb-1 flex justify-between font-semibold text-base text-gray-700">
@@ -934,8 +934,8 @@
         @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
             @php
                 $type = $discounts->first()->discountType;
-                $count = $discounts->sum('quantity'); 
-                $totalValue = $discounts->sum('discount_value'); 
+                $count = $discounts->sum('quantity');
+                $totalValue = $discounts->sum('discount_value');
                 $perPersonAmount = $type->type === 'percent' ? ($baseSubtotal / $pax) * ($type->rate / 100) : null;
             @endphp
 
@@ -959,8 +959,8 @@
                         </span>
                     @endif --}}
 
-                    <button 
-                        wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})" 
+                    <button
+                        wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
                         class="text-red-500 hover:text-red-700 text-xs"
                         title="Remove discount"
                     >
@@ -972,7 +972,7 @@
     </div>
 @endif
 
-                   
+
 
 
 
@@ -985,7 +985,7 @@
 
 
 
-                   
+
 
                     @if ($transaction->promoCode)
                     <!-- Promo Applied -->
@@ -1017,8 +1017,8 @@
                         </div>
                     </div>
                     @endif
-                    
-                    
+
+
                      @if ($this->computeConvenienceFeeTotal() > 0)
                     <!-- Convenience Fee -->
                     <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
@@ -1031,7 +1031,7 @@
 
 
 
-                
+
                     <hr>
 
 
@@ -1164,7 +1164,7 @@
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
-                         
+
                             <x-button wire:click="OpenCreatePaymentModal">
                                 <i class="fas fa-plus mr-2"></i>
                                 Create Payment
@@ -1979,7 +1979,7 @@
                         @if ($transactionProperties->count() === 1)
                             <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room</label>
                             <input type="hidden" wire:model="guest.transaction_property_id" value="{{ $transactionProperties->first()->id }}">
-                            <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md 
+                            <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                     dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 {{ $transactionProperties->first()->property->name_number ?? 'Property #' . $transactionProperties->first()->id }}
                             </p>
@@ -1987,7 +1987,7 @@
                             <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
                                 Room <span class="text-red-500">*</span>
                             </label>
-                            <select wire:model.defer="guest.transaction_property_id" 
+                            <select wire:model.defer="guest.transaction_property_id"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Room</option>
@@ -2163,7 +2163,7 @@
             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-                    
+
                     {{-- Header --}}
                     <div
                         class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
@@ -2201,13 +2201,13 @@
             </div>
             @endif
 
-          
+
             <!-- Add Request Modal -->
             @if ($activeModal === 'requests')
             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-                    
+
                     <!-- Header -->
                     <div
                         class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">

@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-gradient-to-br from-green-50 to-white flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-3xl bg-white shadow-2xl rounded-2xl p-10 border border-gray-100">
+<div class="min-h-screen bg-gradient-to-br bg-yellow-50 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-10 border border-gray-100">
 
         <!-- Header Section -->
         <div class="text-center mb-8">

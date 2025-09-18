@@ -26,7 +26,15 @@
                 <!-- Activity Image -->
                 <div class="grid grid-cols-1 gap-2">
                     @php
-                        $images = is_array(json_decode($activity->image)) ? json_decode($activity->image) : [];
+                        // Normalize $activity->images into an array safely
+                        $images = [];
+
+                        if (is_string($activity->images)) {
+                            $decoded = json_decode($activity->images, true);
+                            $images = is_array($decoded) ? $decoded : [];
+                        } elseif (is_array($activity->images)) {
+                            $images = $activity->images;
+                        }
                     @endphp
 
                     @if (count($images) > 0)
