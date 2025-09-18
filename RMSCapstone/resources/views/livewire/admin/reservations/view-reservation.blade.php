@@ -300,25 +300,25 @@
                     </div>
                 </div>
 
-        
+
                 <div class="mt-4">
                     <strong>Requests:</strong>
 
                     @if(!empty($transaction->requests))
-                        <div class="mt-2">
-                            <span class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                {{ Str::limit($transaction->requests, 50) }}
-                            </span>
+                    <div class="mt-2">
+                        <span class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
+                            {{ Str::limit($transaction->requests, 50) }}
+                        </span>
 
-                                 <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
-                                    View & Reply
-                                </x-button>
+                        <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
+                            View & Reply
+                        </x-button>
 
-                        </div>
+                    </div>
                     @else
-                        <div class="text-gray-500 italic mt-2">
-                            No requests.
-                        </div>
+                    <div class="text-gray-500 italic mt-2">
+                        No requests.
+                    </div>
                     @endif
                 </div>
 
@@ -541,9 +541,9 @@
                                 <td
                                     class="border px-4 py-2 text-gray-700 text-left dark:text-gray-200 dark:border-gray-500">
                                     @if ($service->type == "addon")
-                                        Add On
+                                    Add On
                                     @else
-                                        {{ ucfirst($service->type) }}
+                                    {{ ucfirst($service->type) }}
                                     @endif
                                 </td>
                                 <td
@@ -779,10 +779,11 @@
                             <tr>
                                 <td class="border px-4 py-2 dark:border-gray-500">{{ $rowNumber++ }}</td>
                                 <td class="border px-4 py-2 dark:border-gray-500">
-                                    @if ($item['type'] === 'service' && $item['service_id'] == 10 && isset($item['property_name']))
-                                        {{ $item['name'] }} ({{ $item['property_name'] }})
+                                    @if ($item['type'] === 'service' && $item['service_id'] == 10 &&
+                                    isset($item['property_name']))
+                                    {{ $item['name'] }} ({{ $item['property_name'] }})
                                     @else
-                                        {{ $item['name'] }}
+                                    {{ $item['name'] }}
                                     @endif
                                 </td>
 
@@ -792,16 +793,17 @@
                                     {{ $item['days'] ?? 'N/A' }}
                                 </td>
 
-                               {{-- Unit Cost --}}
+                                {{-- Unit Cost --}}
                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
-                                    @if ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour' && isset($item['property_extra_hour_charge']))
-                                        ₱{{ number_format($item['property_extra_hour_charge'], 2) }}
+                                    @if ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour' &&
+                                    isset($item['property_extra_hour_charge']))
+                                    ₱{{ number_format($item['property_extra_hour_charge'], 2) }}
                                     @else
-                                        ₱{{ number_format($item['amount'], 2) }}
+                                    ₱{{ number_format($item['amount'], 2) }}
                                     @endif
 
                                     @if ($item['type'] === 'service')
-                                        ({{ $item['unit'] ?? '' }})
+                                    ({{ $item['unit'] ?? '' }})
                                     @endif
                                 </td>
 
@@ -914,7 +916,7 @@
                         </tbody>
                     </table>
 
-                  
+
 
                     <!-- Subtotal -->
                     <div class="mt-2 mb-1 flex justify-between font-semibold text-base text-gray-700">
@@ -924,55 +926,53 @@
 
 
                     <!-- Discounts applied -->
-@if($invoice->discounts->count() > 0)
-    <div class="mb-1 text-gray-600 text-sm border-t pt-2">
-        @php
-            $baseSubtotal = $invoice->base_subtotal;
-            $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
-        @endphp
+                    @if($invoice->discounts->count() > 0)
+                    <div class="mb-1 text-gray-600 text-sm border-t pt-2">
+                        @php
+                        $baseSubtotal = $invoice->base_subtotal;
+                        $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
+                        @endphp
 
-        @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
-            @php
-                $type = $discounts->first()->discountType;
-                $count = $discounts->sum('quantity'); 
-                $totalValue = $discounts->sum('discount_value'); 
-                $perPersonAmount = $type->type === 'percent' ? ($baseSubtotal / $pax) * ($type->rate / 100) : null;
-            @endphp
+                        @foreach($invoice->discounts->groupBy('discount_type_id') as $discounts)
+                        @php
+                        $type = $discounts->first()->discountType;
+                        $count = $discounts->sum('quantity');
+                        $totalValue = $discounts->sum('discount_value');
+                        $perPersonAmount = $type->type === 'percent' ? ($baseSubtotal / $pax) * ($type->rate / 100) :
+                        null;
+                        @endphp
 
-            <div class="flex justify-between items-center mb-1">
-                <span>
-                    - {{ strtoupper($type->name) }} x {{ $count }}
-                    @if($type->type === 'percent' && $perPersonAmount)
-                        ({{ $type->rate }}% of Subtotal ÷ {{ $pax }} pax)
-                    @else
-                        (Fixed)
+                        <div class="flex justify-between items-center mb-1">
+                            <span>
+                                - {{ strtoupper($type->name) }} x {{ $count }}
+                                @if($type->type === 'percent' && $perPersonAmount)
+                                ({{ $type->rate }}% of Subtotal ÷ {{ $pax }} pax)
+                                @else
+                                (Fixed)
+                                @endif
+                            </span>
+
+                            <div class="flex items-center space-x-2">
+                                <span>- ₱{{ number_format($totalValue, 2) }}</span>
+
+                                <!-- Optional: tooltip to show exact formula -->
+                                {{-- @if($type->type === 'percent' && $perPersonAmount)
+                                <span class="text-xs text-gray-400" title="Calculation: (Subtotal ÷ Pax) × Rate × Qty">
+                                    (~₱{{ number_format($perPersonAmount * $count, 2) }})
+                                </span>
+                                @endif --}}
+
+                                <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
+                                    class="text-red-500 hover:text-red-700 text-xs" title="Remove discount">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                     @endif
-                </span>
 
-                <div class="flex items-center space-x-2">
-                    <span>- ₱{{ number_format($totalValue, 2) }}</span>
 
-                    <!-- Optional: tooltip to show exact formula -->
-                    {{-- @if($type->type === 'percent' && $perPersonAmount)
-                        <span class="text-xs text-gray-400" title="Calculation: (Subtotal ÷ Pax) × Rate × Qty">
-                            (~₱{{ number_format($perPersonAmount * $count, 2) }})
-                        </span>
-                    @endif --}}
-
-                    <button 
-                        wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})" 
-                        class="text-red-500 hover:text-red-700 text-xs"
-                        title="Remove discount"
-                    >
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </div>
-        @endforeach
-    </div>
-@endif
-
-                   
 
 
 
@@ -985,7 +985,7 @@
 
 
 
-                   
+
 
                     @if ($transaction->promoCode)
                     <!-- Promo Applied -->
@@ -1017,9 +1017,9 @@
                         </div>
                     </div>
                     @endif
-                    
-                    
-                     @if ($this->computeConvenienceFeeTotal() > 0)
+
+
+                    @if ($this->computeConvenienceFeeTotal() > 0)
                     <!-- Convenience Fee -->
                     <div class="flex justify-between font-semibold text-base mb-2 text-gray-700">
                         Convenience Fee:
@@ -1031,7 +1031,7 @@
 
 
 
-                
+
                     <hr>
 
 
@@ -1055,23 +1055,22 @@
                     </div>
 
                     @if ($this->invoice->amount_paid > $this->invoice->sub_total)
-                        <!-- Overpayment / Change -->
-                        <div class="flex justify-between font-semibold text-base text-blue-600">
-                            Change / Overpayment:
-                            <div>
-                                ₱{{ number_format($this->invoice->amount_paid - $this->invoice->sub_total, 2) }}
-                            </div>
+                    <!-- Overpayment / Change -->
+                    <div class="flex justify-between font-semibold text-base text-blue-600">
+                        Change / Overpayment:
+                        <div>
+                            ₱{{ number_format($this->invoice->amount_paid - $this->invoice->sub_total, 2) }}
                         </div>
+                    </div>
                     @else
-                        <!-- Balance Due -->
-                        <div
-                            class="flex justify-between font-semibold text-base
+                    <!-- Balance Due -->
+                    <div class="flex justify-between font-semibold text-base
                                 {{ $this->invoice->balance_due == 0 ? 'text-green-700' : 'text-red-500' }}">
-                            Balance Due:
-                            <div>
-                                ₱{{ number_format($this->invoice->balance_due, 2) }}
-                            </div>
+                        Balance Due:
+                        <div>
+                            ₱{{ number_format($this->invoice->balance_due, 2) }}
                         </div>
+                    </div>
                     @endif
 
                 </div>
@@ -1110,12 +1109,12 @@
                 <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
 
                 <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
-@if (!$this->discountsApplied)
-    <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
-        Add PWD/SENIOR DISCOUNT
-    </x-button>
-@endif
-<!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
+                @if (!$this->discountsApplied)
+                <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
+                    Add PWD/SENIOR DISCOUNT
+                </x-button>
+                @endif
+                <!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
 
             </div>
             @else
@@ -1164,7 +1163,7 @@
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
-                         
+
                             <x-button wire:click="OpenCreatePaymentModal">
                                 <i class="fas fa-plus mr-2"></i>
                                 Create Payment
@@ -1215,10 +1214,10 @@
                                 @foreach ($payments as $payment)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                        {{ $payment->id }}</td>
+                                        {{ $loop->iteration }}</td>
                                     <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                         {{ $payment->invoice->invoice_number }}</td>
-                                         <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
+                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                         {{ $payment->paymentMethod?->mode_of_payment_name ?? 'N/A' }}</td>
                                     <td
                                         class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 leading-tight">
@@ -1481,7 +1480,7 @@
                             @enderror
                         </div>
 
-                          {{-- Payment Methods --}}
+                        {{-- Payment Methods --}}
                         <div>
                             <label for="payment_method_id" class="block mb-2 text-sm font-medium text-gray-900">Payment
                                 Method <span class="text-red-500">*</span></label>
@@ -1489,80 +1488,84 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                                 <option value="">Select Payment Method</option>
                                 @foreach ($payment_methods as $payment_method)
-                                    <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
-                                    </option>
+                                <option value="{{ $payment_method->id }}">{{ $payment_method->mode_of_payment_name }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('payment_method_id')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
 
 
-                          {{-- Upload Payment Screenshot --}}
-            <div class="sm:col-span-2">
-                <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Proof of
-                    Payment <span class="text-red-500">*</span></label>
+                        {{-- Upload Payment Screenshot --}}
+                        <div class="sm:col-span-2">
+                            <label for="payment_screenshot" class="block mb-2 text-sm font-medium text-gray-900">Proof
+                                of
+                                Payment <span class="text-red-500">*</span></label>
 
-                <!-- Hidden file input -->
-                <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
-                    class="hidden">
+                            <!-- Hidden file input -->
+                            <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
+                                class="hidden">
 
-                @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
-                <!-- Show image preview -->
-                <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
-                    <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
-                        alt="Payment Screenshot Preview"
-                        onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
+                            @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
+                            <!-- Show image preview -->
+                            <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
+                                <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
+                                    alt="Payment Screenshot Preview"
+                                    onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
 
-                    <label for="payment_screenshot"
-                        class="absolute top-1 right-1 bg-white text-gray-700 rounded-full px-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition">
-                        Re-Upload File
-                    </label>
-                </div>
-                <!-- Image Popup View -->
-                <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
-                    <div class="flex items-center justify-center min-h-screen">
-                        <div class=" relative modal-content">
-                            <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
-                            <button type="button" onclick="closeModal()"
-                                class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                                <span class="leading-none translate-y-[-3px]">&times;</span>
-                            </button>
+                                <label for="payment_screenshot"
+                                    class="absolute top-1 right-1 bg-white text-gray-700 rounded-full px-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition">
+                                    Re-Upload File
+                                </label>
+                            </div>
+                            <!-- Image Popup View -->
+                            <div id="imageModal"
+                                class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                                <div class="flex items-center justify-center min-h-screen">
+                                    <div class=" relative modal-content">
+                                        <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                                        <button type="button" onclick="closeModal()"
+                                            class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                            <span class="leading-none translate-y-[-3px]">&times;</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @else
+                            <!-- Show drag and drop box -->
+                            <label for="payment_screenshot">
+                                <div
+                                    class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400">
+                                    <div class="mb-2">
+                                        <i class="fas fa-upload mr-2"></i>
+                                    </div>
+                                    <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
+                                </div>
+                            </label>
+                            @endif
+
+                            <!-- Loading Indicator -->
+                            <div wire:loading wire:target="payment_screenshot"
+                                class="mt-2 text-gray-600 flex items-center">
+                                <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                    </path>
+                                </svg>
+                                <span>Uploading...</span>
+                            </div>
+
+                            <!-- Error Message -->
+                            @error('payment_screenshot')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
-                    </div>
-                </div>
-                @else
-                <!-- Show drag and drop box -->
-                <label for="payment_screenshot">
-                    <div
-                        class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400">
-                        <div class="mb-2">
-                            <i class="fas fa-upload mr-2"></i>
-                        </div>
-                        <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
-                    </div>
-                </label>
-                @endif
-
-                <!-- Loading Indicator -->
-                <div wire:loading wire:target="payment_screenshot" class="mt-2 text-gray-600 flex items-center">
-                    <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                        </path>
-                    </svg>
-                    <span>Uploading...</span>
-                </div>
-
-                <!-- Error Message -->
-                @error('payment_screenshot')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
 
                         <!-- Notes -->
                         <div class="mt-4">
@@ -1612,94 +1615,98 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                   @foreach ($availableServices as $service)
-                        <!-- Service Details -->
-                        <div
-                            class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform mb-4 dark:bg-gray-700 dark:border-gray-600">
-                            <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
-                                <div class="flex-grow">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-1 dark:text-white">
-                                        {{ $service->name }}</h3>
-                                    <p class="text-sm text-gray-600 leading-relaxed mb-3 dark:text-gray-300">
-                                        {{ $service->description ?? 'No description provided for this service.' }}
-                                    </p>
+                    @foreach ($availableServices as $service)
+                    <!-- Service Details -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform mb-4 dark:bg-gray-700 dark:border-gray-600">
+                        <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
+                            <div class="flex-grow">
+                                <h3 class="text-xl font-bold text-gray-900 mb-1 dark:text-white">
+                                    {{ $service->name }}</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed mb-3 dark:text-gray-300">
+                                    {{ $service->description ?? 'No description provided for this service.' }}
+                                </p>
 
-                                    <div class="text-lg font-bold text-green-700 dark:text-green-300">
-                                        @if($service->id == 10)
-                                                <span class="text-lg font-bold text-green-700 dark:text-green-300">Depends on room rate</span>
-                                                <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{ $service->unit }}</span>
-                                            @else
-                                                ₱{{ number_format($service->amount, 2) }}
-                                                <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{ $service->unit }}</span>
-                                            @endif
-                                    </div>
-
-                                    {{-- Show checkboxes only for Extra Hour service --}}
-                                    @if ($service->id == 10 || strtolower($service->name) == 'extra hour')
-                                        <div class="mt-3">
-                                            <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                                Select properties for extra hour:
-                                            </label>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                                @foreach ($transaction->properties as $property)
-                                                    <label class="flex items-center space-x-2">
-                                                        <input type="checkbox"
-                                                            wire:model="extraHourProperties.{{ $service->id }}.{{ $property->id }}"
-                                                            value="{{ $property->id }}"
-                                                            class="rounded border-gray-300 text-green-600 shadow-sm focus:ring focus:ring-green-300 focus:ring-opacity-50">
-
-                                                        <!-- Display error if no property is selected -->
-                                                           @error('extraHourProperties')
-                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                                                            @enderror
-
-                                                        <span class="text-sm text-gray-800 dark:text-gray-200">
-                                                            {{ $property->name_number }} (₱{{ number_format($property->extra_charge_per_hour, 2) }})
-                                                        </span>
-
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
+                                <div class="text-lg font-bold text-green-700 dark:text-green-300">
+                                    @if($service->id == 10)
+                                    <span class="text-lg font-bold text-green-700 dark:text-green-300">Depends on room
+                                        rate</span>
+                                    <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{
+                                        $service->unit }}</span>
+                                    @else
+                                    ₱{{ number_format($service->amount, 2) }}
+                                    <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{
+                                        $service->unit }}</span>
                                     @endif
                                 </div>
 
-                                {{-- Quantity & Button --}}
-                                <div class="flex items-center justify-between mt-2 gap-4">
-                                    <!-- Quantity Counter -->
-                                    <div class="flex flex-col">
-                                        <label for="quantity-{{ $service->id }}"
-                                            class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
-                                        <!-- Quantity Counter Buttons -->
-                                        <div class="flex items-center">
-                                            <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
-                                                class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
-                                            <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
-                                                {{ $quantity[$service->id] ?? 1 }}
-                                            </span>
-                                            <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
-                                                class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
-                                            <!-- Hidden input to bind the quantity -->
-                                            <input type="hidden" wire:model="quantity.{{ $service->id }}">
-                                        </div>
-                                    </div>
+                                {{-- Show checkboxes only for Extra Hour service --}}
+                                @if ($service->id == 10 || strtolower($service->name) == 'extra hour')
+                                <div class="mt-3">
+                                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                        Select properties for extra hour:
+                                    </label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                        @foreach ($transaction->properties as $property)
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox"
+                                                wire:model="extraHourProperties.{{ $service->id }}.{{ $property->id }}"
+                                                value="{{ $property->id }}"
+                                                class="rounded border-gray-300 text-green-600 shadow-sm focus:ring focus:ring-green-300 focus:ring-opacity-50">
 
-                                    <!-- Add / Remove Button -->
-                                    @php
-                                        $inCart = collect($cart)->contains(function ($item) use ($service) {
-                                            return $item['type'] === 'service' && $item['service_id'] == $service->id;
-                                        });
-                                    @endphp
-                                    <div class="mt-6">
-                                        <button
-                                            wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
-                                            class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest disabled:opacity-50 transition ease-in-out duration-150">
-                                            {{ $inCart ? 'Remove' : 'Add' }}
-                                        </button>
+                                            <!-- Display error if no property is selected -->
+                                            @error('extraHourProperties')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
+
+                                            <span class="text-sm text-gray-800 dark:text-gray-200">
+                                                {{ $property->name_number }} (₱{{
+                                                number_format($property->extra_charge_per_hour, 2) }})
+                                            </span>
+
+                                        </label>
+                                        @endforeach
                                     </div>
+                                </div>
+                                @endif
+                            </div>
+
+                            {{-- Quantity & Button --}}
+                            <div class="flex items-center justify-between mt-2 gap-4">
+                                <!-- Quantity Counter -->
+                                <div class="flex flex-col">
+                                    <label for="quantity-{{ $service->id }}"
+                                        class="text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                                    <!-- Quantity Counter Buttons -->
+                                    <div class="flex items-center">
+                                        <button wire:click="decrementItemQuantity('service', {{ $service->id }})"
+                                            class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">-</button>
+                                        <span class="text-center w-16 py-1 bg-white border border-gray-300 rounded">
+                                            {{ $quantity[$service->id] ?? 1 }}
+                                        </span>
+                                        <button wire:click="incrementItemQuantity('service', {{ $service->id }})"
+                                            class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">+</button>
+                                        <!-- Hidden input to bind the quantity -->
+                                        <input type="hidden" wire:model="quantity.{{ $service->id }}">
+                                    </div>
+                                </div>
+
+                                <!-- Add / Remove Button -->
+                                @php
+                                $inCart = collect($cart)->contains(function ($item) use ($service) {
+                                return $item['type'] === 'service' && $item['service_id'] == $service->id;
+                                });
+                                @endphp
+                                <div class="mt-6">
+                                    <button
+                                        wire:click="{{ $inCart ? 'removeItemFromCart' : 'addItemToCart' }}('service', {{ $service->id }})"
+                                        class="px-4 py-2 {{ $inCart ? 'bg-red-600 hover:bg-red-700' : 'bg-green-700 hover:bg-green-800' }} inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest disabled:opacity-50 transition ease-in-out duration-150">
+                                        {{ $inCart ? 'Remove' : 'Add' }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     @endforeach
 
 
@@ -1977,29 +1984,30 @@
                     <!-- Transaction Property -->
                     <div class="mt-4">
                         @if ($transactionProperties->count() === 1)
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room</label>
-                            <input type="hidden" wire:model="guest.transaction_property_id" value="{{ $transactionProperties->first()->id }}">
-                            <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md 
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room</label>
+                        <input type="hidden" wire:model="guest.transaction_property_id"
+                            value="{{ $transactionProperties->first()->id }}">
+                        <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md 
                                     dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
-                                {{ $transactionProperties->first()->property->name_number ?? 'Property #' . $transactionProperties->first()->id }}
-                            </p>
+                            {{ $transactionProperties->first()->property->name_number ?? 'Property #' .
+                            $transactionProperties->first()->id }}
+                        </p>
                         @else
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
-                                Room <span class="text-red-500">*</span>
-                            </label>
-                            <select wire:model.defer="guest.transaction_property_id" 
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
+                            Room <span class="text-red-500">*</span>
+                        </label>
+                        <select wire:model.defer="guest.transaction_property_id" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
-                                <option value="">Select Room</option>
-                                @foreach ($transactionProperties as $property)
-                                    <option value="{{ $property->id }}">
-                                        {{ $property->property->name_number ?? 'Property #' . $property->id }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('guest.transaction_property_id')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                            <option value="">Select Room</option>
+                            @foreach ($transactionProperties as $property)
+                            <option value="{{ $property->id }}">
+                                {{ $property->property->name_number ?? 'Property #' . $property->id }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('guest.transaction_property_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                         @endif
                     </div>
 
@@ -2163,7 +2171,7 @@
             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-                    
+
                     {{-- Header --}}
                     <div
                         class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
@@ -2201,13 +2209,13 @@
             </div>
             @endif
 
-          
+
             <!-- Add Request Modal -->
             @if ($activeModal === 'requests')
             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-                    
+
                     <!-- Header -->
                     <div
                         class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
@@ -2230,8 +2238,7 @@
                     <div class="mb-4">
                         <strong>Admin Reply:</strong>
                         <textarea wire:model.defer="request_reply"
-                            class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2"
-                            rows="3"
+                            class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2" rows="3"
                             placeholder="Write your reply here..."></textarea>
                     </div>
 
