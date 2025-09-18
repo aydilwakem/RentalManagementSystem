@@ -80,22 +80,95 @@
                 </ul>
             </div>
 
+            {{-- Rooms and Activities Summary --}}
+            {{-- Cart Items Table --}}
+            @if(!empty($cart_items))
+            <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Transaction Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                <thead>
+                    <tr style="background-color: #166534; color: #fff;">
+                        <th style="padding: 10px; text-align: left;">Type</th>
+                        <th style="padding: 10px; text-align: left;">Name</th>
+                        <th style="padding: 10px; text-align: center;">Qty / Days</th>
+                        <th style="padding: 10px; text-align: right;">Total</th>
+                        <th style="padding: 10px; text-align: center;">Scheduled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($cart_items as $item)
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 8px;">{{ $item['type'] }}</td>
+                        <td style="padding: 8px;">{{ $item['name'] }}</td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if($item['type'] === 'Room')
+                            {{ $item['quantity'] }} days
+                            @else
+                            {{ $item['quantity'] }}
+                            @endif
+                        </td>
+                        <td style="padding: 8px; text-align: right;">
+                            ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
+                        </td>
+                        <td style="padding: 8px; text-align: center;">
+                            @if(isset($item['datetime']))
+                            {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
+                            @else
+                            N/A
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+
+
+            {{-- Financial Summary --}}
             {{-- Financial Summary --}}
             <div
                 style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0; margin-bottom: 10px;">Financial Summary</h3>
-                <ul style="padding-left: 0; list-style: none; margin: 0;">
-                    <li style="margin-bottom: 8px;"><strong>Total Amount:</strong>
-                        ₱{{ number_format($total_amount, 2) }}</li>
-                    <li style="margin-bottom: 8px;"><strong>Required Deposit:</strong> ₱{{ number_format($deposit, 2) }}
-                    </li>
-                </ul>
+
+                <table style="width:100%; border-collapse: collapse;">
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px;">Base Subtotal:</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($base_subtotal ?? 0, 2) }}</td>
+                        </tr>
+                        @if(!empty($promo_code))
+                        <tr>
+                            <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
+                            <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td style="padding:8px;">Subtotal:</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($subtotal ?? 0, 2) }}</td>
+                        </tr>
+                        <tr style="font-weight:bold; border-top: 2px solid #166534;">
+                            <td style="padding:8px;">Total Amount:</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($total_amount ?? 0, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;">Required Deposit:</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($deposit ?? 0, 2) }}</td>
+                        </tr>
+                        {{-- <tr>
+                            <td style="padding:8px;">Convenience Fee:</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($convenience_fee ?? 0, 2) }}
+                            </td>
+                        </tr> --}}
+
+                        {{-- <tr style="font-weight:bold; border-top: 2px solid #166534;">
+                            <td style="padding:8px;">Total Payable Deposit Amount:</td>
+                            <td style="padding:8px; text-align:right;">
+                                ₱{{ number_format($total_payable_amount ?? 0, 2) }}</td>
+                        </tr> --}}
+
+                    </tbody>
+                </table>
             </div>
 
-            <p style="margin-top: 25px;">
-                If you need to update the reservation details or have any questions regarding this booking, please feel
-                free to contact the guest or reach out to the support team.
-            </p>
 
         </div>
 

@@ -38,6 +38,18 @@ class NewReservationMail extends Mailable
                 'total_amount' => $this->reservationData['total_amount'],
                 'deposit' => $this->reservationData['deposit'],
 
+                //All rooms and activities:
+                'cart_items' => $this->reservationData['cart_items'],
+
+                //Financial Summary
+                'promo_code' => $this->reservationData['promo_code'],
+                'promo_amount' => $this->reservationData['promo_amount'],
+                'base_subtotal' => $this->reservationData['base_subtotal'],
+                'subtotal' => $this->reservationData['subtotal'],
+                'convenience_fee' => $this->reservationData['convenience_fee'],
+                'total_amount' => $this->reservationData['total_amount'],
+                'total_payable_amount' => $this->reservationData['total_payable_amount'],
+
                 //Branding
                 'branding_company_name' => $this->reservationData['branding_company_name'],
                 'logo_path' =>$this->reservationData['logo_path'],
