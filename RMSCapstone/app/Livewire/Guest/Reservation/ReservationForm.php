@@ -717,7 +717,6 @@ class ReservationForm extends Component
     {
         // Always recompute subtotal so it’s fresh
         $this->computeSubtotalAmount();
-        $this->computeConvenienceFee();
 
         if ($this->enable_deposit_percentage) {
             // Deposit based on current discounted subtotal
@@ -725,7 +724,7 @@ class ReservationForm extends Component
             return max(0, $this->deposit + $this->convenience_fee);
         } else {
             // Full amount already includes subtotal + convenience fee
-            return max(0, $this->total_amount + $this->convenience_fee);
+            return max(0, $this->sub_total + $this->convenience_fee);
         }
     }
 

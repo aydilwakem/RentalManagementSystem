@@ -1480,7 +1480,6 @@ class CreateReservation extends Component
      */
     public function CreateReservation(PayMongoService $payMongo, EmailService $emailService)
     {
-        // Ensure no unavailable rooms are in the cart
         $this->removeUnavailableRooms();
 
         Log::info('CreateReservation method called with data:');
