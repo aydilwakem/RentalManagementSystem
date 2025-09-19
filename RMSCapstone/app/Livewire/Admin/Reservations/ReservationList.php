@@ -280,7 +280,7 @@ class ReservationList extends Component
     {
         $transaction = Transaction::with([
             'transactionUser',
-            'invoice',
+            'invoice.payments',
             'properties.category',
             'activities',
             'services'
@@ -327,9 +327,10 @@ class ReservationList extends Component
             'check_in' => $transaction->actual_start_datetime ?? $transaction->start_datetime,
             'check_out' => $transaction->actual_end_datetime ?? $transaction->end_datetime,
             'deposit' => $transaction->deposit_paid,
-            'convenience_fee' => $transaction->convenience_fee,
+            //'convenience_fee' => $transaction->convenience_fee,
             'promo_discount_amount' => $transaction->promo_discount_amount,
             'sub_total' => $transaction->sub_total,
+            'convenience_fee' => $invoice->payments->sum('convenience_fee'),
             'invoice_number' => $invoice->invoice_number,
             'invoice_basesubtotal' => $invoice->base_subtotal,
             'invoice_total_discount' => $invoice->total_discount,
