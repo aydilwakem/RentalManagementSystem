@@ -126,11 +126,43 @@
                     <!-- Discount Code -->
                     <hr class="my-2 border-gray-200">
 
-                    <!-- Subtotal Amount -->
-                    <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
-                        <div class="text-sm">Subtotal</div>
-                        <div class="text-sm">₱{{ number_format($this->computeSubtotalAmount(), 2) }}</div>
-                    </div>
+                    <!-- Subtotal -->
+                        <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
+                            <div>Subtotal</div>
+                            <div class="font-semibold flex flex-col items-end">
+                                @if($discountMessage)
+                                    <!-- Original subtotal with strikethrough -->
+                                    <span class="line-through text-gray-400">
+                                        ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                    </span>
+                                    <!-- Subtotal after discount -->
+                                    <span class="text-green-700 font-semibold">
+                                        ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+                                    </span>
+                                @else
+                                    <!-- No discount applied -->
+                                    <span>
+                                        ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                         <!-- Final Total (after discount) -->
+                        <div class="flex justify-between items-center text-lg font-bold text-gray-600">
+                            <div>Total</div>
+                            <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
+                        </div>
+                        
+                      <!-- Deposit (if enabled) -->
+                        @if ($this->enable_deposit_percentage)
+                            <div class="flex justify-between items-center text-sm text-yellow-700">
+                                <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+                                <div class="font-semibold">
+                                    ₱{{ number_format($this->deposit ?? 0, 2) }}
+                                </div>
+                            </div>
+                        @endif
 
                     <!-- Convenience Fee -->
                     <div class="flex justify-between items-center font-semibold text-gray-800 mb-1 dark:text-white">
@@ -144,25 +176,14 @@
                         @endif
                     </div>
 
-                    <!-- Total Amount -->
-                    <div
-                        class="flex justify-between items-center font-semibold text-green-700 mb-1 dark:text-green-300">
-                        <div class="text-lg">Total</div>
-                        <div class="text-lg">₱{{ number_format($this->computeTotalAmount(), 2) }}</div>
-                    </div>
+                     <!-- Total Payable Now -->
+                        <div class="flex justify-between items-center text-xl font-bold text-green-700">
+                            <div>Amount Due Now</div>
+                            <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
+                        </div>
 
                     <hr>
 
-                    <!-- Deposit -->
-                    @if ($enable_deposit_percentage && $this->deposit > 0)
-                        <!-- Deposit -->
-                        <div
-                            class="flex justify-between items-center text-sm text-gray-600 mb-3 dark:text-gray-100 mt-2">
-                            <div>Required Deposit</div>
-                            <div class="font-semibold">
-                                ₱{{ number_format($this->deposit ?? 0, 2) }}</div>
-                        </div>
-                    @endif
 
                     <hr>
                     @if ($discountMessage)
@@ -664,48 +685,6 @@
                   
                 </div>
 
-
-
-                @if ($bringingPets)
-                    {{-- <div class="col-span-1">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Pets included in this reservation
-                    </label>
-                </div> --}}
-                    <div class="col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                            Pet Details (Total: {{ $pet_count }})
-                        </label>
-
-                        @foreach ($pets as $index => $pet)
-                            <div class="mb-2">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    Pet #{{ $index + 1 }} Breed
-                                </label>
-                                <input type="text" wire:model="pets.{{ $index }}.breed"
-                                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                                    placeholder="e.g., Labrador">
-
-                                <button type="button" wire:click="removeGuestPet({{ $index }})"
-                                    class="text-red-500 mt-1 text-sm">Remove</button>
-                            </div>
-                        @endforeach
-
-                        {{-- General error for pets --}}
-                        @error('pets.*.breed')
-                            <div class="text-red-600 text-sm mt-2">Please enter the breed for all pets.</div>
-                        @enderror
-                    </div>
-                @endif
-
-
-
-
-
-
-
-
-
             </div>
         </div>
 
@@ -796,6 +775,18 @@
             </x-button>
 
         </div>
+
+        
+                @if(!empty($cartNotices))
+                    <div class="mb-4">
+                        @foreach($cartNotices as $notice)
+                            <div class="bg-yellow-100 text-yellow-800 p-2 rounded mb-1 text-sm" role="alert">
+                                {!! $notice !!}
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
 
         <!------------------------- MODALS SECTION ------------------------->
 

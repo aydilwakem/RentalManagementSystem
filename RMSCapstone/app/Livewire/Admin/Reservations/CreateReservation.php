@@ -143,6 +143,9 @@ class CreateReservation extends Component
     public $depositPercentage;
     public $enable_deposit_percentage = true;
     public bool $apply_convenience_fee = false;
+    public $deposit_percentage;
+
+
 
     // Promo Discount
     public $promo;
@@ -255,7 +258,92 @@ class CreateReservation extends Component
         $this->loadBranding();
         $this->getAvailableRooms();
         $this->initializeCountries();
+
+        foreach ($this->selectedRooms as $index => $item) {
+            if ($item['type'] === 'room') {
+                $room = Property::find($item['room_id']);
+                if (
+                    !$room || // room does not exist
+                    !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date) // no longer available
+                ) {
+                    unset($this->selectedRooms[$index]);
+                    unset($this->adults[$item['room_id']]);
+                    unset($this->kids[$item['room_id']]);
+                }
+            }
+        }
+
+        $this->selectedRooms = array_values($this->selectedRooms);
+
+        // Recompute total pax after filtering unavailable rooms
+        $this->computeTotalPax();
     }
+
+    public $cartNotices = [];
+
+    protected function isRoomAvailable($room, $checkInDate, $checkOutDate)
+    {
+        $checkIn = Carbon::parse($checkInDate);
+        $checkOut = Carbon::parse($checkOutDate);
+
+        // Check if room has overlapping transactions
+        $booked = $room->transactions()
+            ->whereIn('transaction_status', [
+                'pending',
+                'reserved',
+                'receipt_verified',
+                'confirmed',
+                'ongoing'
+            ])
+            ->where(function ($q) use ($checkIn, $checkOut) {
+                $q->where('start_datetime', '<', $checkOut)
+                    ->where('end_datetime', '>', $checkIn);
+            })
+            ->exists();
+
+        return !$booked; // available if not booked
+    }
+
+    /**
+     * Remove unavailable rooms from selectedRooms based on current check-in/out dates.
+     */
+    protected function removeUnavailableRooms()
+    {
+        $removedRoom = false;
+
+        foreach ($this->selectedRooms as $index => $item) {
+            if ($item['type'] === 'room') {
+                $room = Property::find($item['room_id']);
+                if (!$room || !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                    unset($this->selectedRooms[$index]);
+
+                    if (isset($this->adults[$item['room_id']])) {
+                        unset($this->adults[$item['room_id']]);
+                    }
+
+                    if (isset($this->kids[$item['room_id']])) {
+                        unset($this->kids[$item['room_id']]);
+                    }
+
+                    $removedRoom = true;
+
+                    // Add a notice for the summary tab
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is no longer available and has been removed.";
+                }
+            }
+        }
+
+        // Reindex selectedRooms after unsetting
+        $this->selectedRooms = array_values($this->selectedRooms);
+
+        // Recalculate totals after cleanup
+        $this->recalculateCart();
+
+        return $removedRoom;
+    }
+
+
+
 
 
     /**
@@ -488,8 +576,7 @@ class CreateReservation extends Component
         // Step 1: Compute total amounts for rooms, activities, services, and pets
         return $this->computeTotalAmountOfAllRooms()
             + $this->computeTotalAmountOfAllActivities()
-            + $this->computeTotalAmountOfAllServices()
-            + $this->computePetTotal();
+            + $this->computeTotalAmountOfAllServices();
     }
 
     /**
@@ -500,30 +587,20 @@ class CreateReservation extends Component
      */
     public function computeSubtotalAmount()
     {
-        try {
-            // Step 1: Compute base subtotal safely
-            if (!method_exists($this, 'computeBaseSubtotal')) {
-                throw new \Exception('computeBaseSubtotal() not defined.');
-            }
+        // Usess current promoDiscount to calclate discounted subtotal
+        $baseSubtotal = $this->computeBaseSubtotal();
+        $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
+        return $this->sub_total;
+    }
 
-            $baseSubtotal = $this->computeBaseSubtotal();
-            $baseSubtotal = is_numeric($baseSubtotal) ? floatval($baseSubtotal) : 0;
 
-            // Step 2: Ensure promoDiscount is numeric
-            $promo = isset($this->promoDiscount) && is_numeric($this->promoDiscount)
-                ? floatval($this->promoDiscount)
-                : 0;
+    public function computeSubtotalAfterDiscount(): float
+    {
+        $subtotal = $this->computeBaseSubtotal();
 
-            // Step 3: Compute discounted subtotal
-            $this->sub_total = max(0, $baseSubtotal - $promo);
+        $promoDiscount = $this->promoDiscount ?? 0; // promo discount amount
 
-            return $this->sub_total;
-        } catch (\Throwable $e) {
-            Log::error('Error computing sub total: ' . $e->getMessage());
-
-            $this->sub_total = 0;
-            return 0;
-        }
+        return max($subtotal - $promoDiscount, 0);
     }
 
     /**
@@ -536,35 +613,34 @@ class CreateReservation extends Component
      */
     public function computeTotalAmount()
     {
-        try {
-            if (method_exists($this, 'computeSubtotalAmount')) {
-                $this->computeSubtotalAmount();
-            } else {
-                throw new \Exception('computeSubtotalAmount() method not found.');
-            }
+        // Step 1: Compute discounted subtotal
+        $this->computeSubtotalAmount();
 
-            $this->sub_total = is_numeric($this->sub_total) ? $this->sub_total : 0;
+        // Step 2: Just assign subtotal (no fee here!)
+        $this->total_amount = max(0, $this->sub_total);
 
-            // Only apply convenience fee if toggled ON
-            $this->convenience_fee = $this->apply_convenience_fee
-                ? round($this->sub_total * 0.03, 2)
-                : 0;
+        return $this->total_amount;
+    }
 
-            $this->total_amount = max(0, $this->sub_total + $this->convenience_fee);
+    public function computePayableAmount()
+    {
+        // Always recompute subtotal so it’s fresh
+        $this->computeSubtotalAmount();
 
-            return $this->total_amount;
-        } catch (\Throwable $e) {
-            Log::error('Error in computeTotalAmount: ' . $e->getMessage());
+        // Only compute fee if applied
+        $convenienceFee = $this->apply_convenience_fee
+            ? $this->computeConvenienceFee()
+            : 0;
 
-            $this->sub_total = 0;
-            $this->convenience_fee = 0;
-            $this->total_amount = 0;
-
-            session()->flash('error', 'Something went wrong while computing the total amount.');
-
-            return 0;
+        if ($this->enable_deposit_percentage) {
+            // Deposit based on current discounted subtotal
+            return max(0, $this->deposit + $convenienceFee);
+        } else {
+            // Full amount already includes subtotal (+ optional fee)
+            return max(0, $this->sub_total + $convenienceFee);
         }
     }
+
 
 
     /**
@@ -576,60 +652,49 @@ class CreateReservation extends Component
      */
     public function recalculateCart()
     {
-        try {
-            // Clears any existing discount
-            $this->promoDiscount = 0;
+        $this->promoDiscount = 0;
 
-            // Make sure the computeBaseSubtotal method exists
-            if (!method_exists($this, 'computeBaseSubtotal')) {
-                throw new \Exception('computeBaseSubtotal() method not found.');
-            }
+        $baseSubtotal = $this->computeBaseSubtotal();
 
-            $baseSubtotal = $this->computeBaseSubtotal();
-            $baseSubtotal = is_numeric($baseSubtotal) ? floatval($baseSubtotal) : 0;
-
-            if (!empty($this->promoCode)) {
-                // Apply the promo code if the method is available
-                if (method_exists($this, 'applyPromoCode')) {
-                    $this->applyPromoCode();
-                } else {
-                    Log::warning('applyPromoCode() not found, skipping promo logic.');
-                }
-            } else {
-                // No promo code, just use the base subtotal
-                $this->sub_total = $baseSubtotal;
-            }
-
-            // Recalculates total amount with all adjustments
-            $this->computeTotalAmount();
-        } catch (\Throwable $e) {
-            // Log the error for developer visibility
-            Log::error('Error recalculating cart: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'promoCode' => $this->promoCode ?? null,
-            ]);
-
-            // Resets to safe values to avoid broken cart state
-            $this->promoDiscount = 0;
-            $this->sub_total = 0;
-            $this->total_amount = 0;
-
-            // Show suser-friendly error message
-            session()->flash('error', 'We had a problem recalculating your cart. Please try again.');
+        if (!empty($this->promoCode)) {
+            $this->applyPromoCode();
+        } else {
+            $this->sub_total = $baseSubtotal;
         }
+
+        $this->computeTotalAmount();
     }
 
     /**
-     * Recomputes the convenience fee based on the current subtotal.
-     * This method is called to ensure the convenience fee is always up-to-date
-     * with the latest subtotal calculations.
+     * Recomputes the convenience fee based on the current subtotal,
+     * but only if the user enabled it.
      *
      * @return float The updated convenience fee.
      */
     public function computeConvenienceFee()
     {
-        // Recompute to ensure the most current values
-        $this->computeTotalAmount();
+        // Always recompute the current subtotal first (after discounts)
+        $this->computeSubtotalAmount();
+        Log::info('Recomputing convenience fee with subtotal: ' . $this->sub_total);
+
+        // If user did not enable the fee, set to 0
+        if (!$this->apply_convenience_fee) {
+            $this->convenience_fee = 0;
+            Log::info('Convenience fee not applied.');
+            return $this->convenience_fee;
+        }
+
+        if ($this->enable_deposit_percentage == true) {
+            // Use deposit (e.g., 50% of discounted subtotal) as base
+            $deposit = $this->sub_total * ($this->deposit_percentage / 100);
+            Log::info('Using deposit as base for convenience fee: ' . $deposit);
+            $this->convenience_fee = $deposit * 0.03;
+            Log::info('Computed convenience fee from deposit: ' . $this->convenience_fee);
+        } else {
+            // Use full discounted subtotal as base
+            $this->convenience_fee = $this->sub_total * 0.03;
+            Log::info('Computed convenience fee from full subtotal: ' . $this->convenience_fee);
+        }
 
         return $this->convenience_fee;
     }
@@ -1415,6 +1480,8 @@ class CreateReservation extends Component
      */
     public function CreateReservation(PayMongoService $payMongo, EmailService $emailService)
     {
+        // Ensure no unavailable rooms are in the cart
+        $this->removeUnavailableRooms();
 
         Log::info('CreateReservation method called with data:');
 
@@ -1458,16 +1525,12 @@ class CreateReservation extends Component
             $this->insertGuestDetails($transaction);
             $this->insertGuestPetDetails($transaction);
 
-            // Step 11: Prepare the total amount for the payment link
-            $baseAmount = $this->depositPercentage > 0
-                ? $this->computeTotalAmount() * ($this->depositPercentage / 100)
-                : $this->computeTotalAmount();
+            //---------------------------- PAYMONGO CHECKOUT SESSION ----------------------------//
 
-            // Step 12: Convert the base amount to centavos for PayMongo
-            $amountInCentavos = intval($baseAmount * 100);
+
 
             // Step 13: Prepare the PayMongo payload for creating a checkout session
-            $payload = $this->preparePayMongoPayload($amountInCentavos, $transaction, $invoice);
+            $payload = $this->preparePayMongoPayload($transaction, $invoice);
 
             try {
                 // Step 14: Attempt to create a checkout session with PayMongo
@@ -1491,16 +1554,17 @@ class CreateReservation extends Component
                 $paymentLink = null;
             }
 
-            // Step 19: Compute the total amount and deposit based on the deposit percentage
+            //---------------------------- END PAYMONGO CHECKOUT SESSION ----------------------------//
+
+            // Calculate total and deposit amount again for email
             $total = $this->computeTotalAmount();
+            $deposit = $this->sub_total * ($this->deposit_percentage / 100);
 
-            // Step 20: Calculate the deposit amount based on the total and deposit percentage
-            $deposit = $total * ($this->depositPercentage / 100);
+            //Fetch payment method data for email
+            $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
 
-            // Step 21: Prepare the reservation data array with all necessary details
+            // Prepare data for confirmation email
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
-
-            // Step 22: Add the payment link to the reservation data
             $reservationData['payment_link'] = $paymentLink;
         });
 
@@ -1653,42 +1717,123 @@ class CreateReservation extends Component
         ];
     }
 
-    protected function preparePaymongoPayload(int $amountInCentavos, $transaction, $invoice): array
+    protected function preparePaymongoPayload($transaction, $invoice): array
     {
-        // Prepare the payload for PayMongo checkout session
         Log::info('Preparing PayMongo payload for checkout session.');
+
+        // Step 1: Decide base amount (deposit or full)
+        if (!$this->enable_deposit_percentage) {
+            $baseAmount = $this->sub_total; // full total in pesos
+        } else {
+            $baseAmount = $this->deposit; // deposit only in pesos
+        }
+
+        // Step 2: Convert base amount to centavos
+        $baseAmountInCentavos = intval($baseAmount * 100);
+
+        // Step 3: Compute 3% convenience fee (in centavos)
+        $convenienceFeeInCentavos = intval($baseAmount * 0.03 * 100);
+
         return [
             'data' => [
                 'attributes' => [
-                    'send_email_receipt' => true,
-                    'show_description' => true,
-                    'show_line_items' => true,
+                    'send_email_receipt'   => true,
+                    'show_description'     => true,
+                    'show_line_items'      => true,
                     'payment_method_types' => ['card', 'gcash', 'paymaya'],
-                    'success_url' => route('guest.thank-you-page'),
-                    'cancel_url' => 'http://127.0.0.1:8000/payment-failed',
-                    'line_items' => [
+                    'success_url'          => route('guest.thank-you-page'),
+                    'cancel_url'           => 'http://larabelles-rms.com/payment-failed',
+                    'line_items'           => [
                         [
-                            'currency' => 'PHP',
-                            'amount' => $amountInCentavos,
-                            'description' => 'Reservation ' . $transaction->transaction_number,
-                            'name' => 'Reservation Fee',
-                            'quantity' => 1,
+                            'currency'    => 'PHP',
+                            'amount'      => $baseAmountInCentavos,
+                            'description' => 'Reservation fee for booking #' . $transaction->transaction_number,
+                            'name'        => '1. Reservation Fee',
+                            'quantity'    => 1,
+                        ],
+                        [
+                            'currency'    => 'PHP',
+                            'amount'      => $convenienceFeeInCentavos,
+                            'description' => 'Online payment processing charge (3%)',
+                            'name'        => '2. Payment Processing Fee',
+                            'quantity'    => 1,
                         ],
                     ],
                     'description' => 'Reservation for ' . $this->first_name . ' ' . $this->last_name,
-                    'metadata' => [
-                        'invoice_id' => (string) $invoice->id,
-                        'payment_type' => 'Security Deposit',
-                        'notes' => 'Deposit for Reservation',
-                        'convenience_fee' => $this->convenience_fee ?? 0,
+                    'metadata'    => [
+                        'invoice_id'      => (string) $invoice->id,
+                        'payment_type'    => 'Security Deposit',
+                        'notes'           => 'Deposit for Reservation',
+                        'convenience_fee' => $convenienceFeeInCentavos / 100, // back to pesos
                     ],
                 ],
             ],
         ];
     }
 
+
     protected function prepareReservationData(Transaction $transaction, Invoice $invoice, float $total, float $deposit): array
     {
+
+        $cartItems = [];
+
+        // ------------------ Rooms ------------------
+        if (!empty($this->selectedRooms)) {
+            foreach ($this->selectedRooms as $item) {
+                if ($item['type'] === 'room') {
+                    $cartItems[] = [
+                        'type' => 'Room',
+                        'name' => $item['room_name'] ?? 'Unknown Room',
+                        'quantity' => $item['days'] ?? 1,
+                        'adults' => $item['adults'] ?? 1,
+                        'kids' => $item['kids'] ?? 0,
+                        'rate_name' => $item['roomRateName'] ?? '',
+                        'rate' => $item['roomRate'] ?? 0,
+                        'extra_charge' => $item['extra_charge_total'] ?? 0,
+                        'total_amount' => $item['total_amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                    ];
+                }
+            }
+        }
+
+        // ------------------ Activities ------------------
+        if (!empty($this->selectedActivities)) {
+            foreach ($this->selectedActivities as $item) {
+                if ($item['type'] === 'activity') {
+                    $cartItems[] = [
+                        'type' => 'Activity',
+                        'name' => $item['activity_name'] ?? 'Unknown Activity',
+                        'datetime' => $item['activity_datetime'] ?? null,
+                        'quantity' => $item['quantity'] ?? 1,
+                        'rate' => $item['activity_rate'] ?? 0,
+                        'total_amount' => $item['amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                        'schedule_type' => $item['activity_schedule_type'] ?? 'no_schedule',
+                    ];
+                }
+            }
+        }
+
+
+        // ------------------ Services ------------------
+        if (!empty($this->selectedServices)) {
+            foreach ($this->selectedServices as $item) {
+                if ($item['type'] === 'service') {
+                    $cartItems[] = [
+                        'type' => 'Service',
+                        'name' => $item['service_name'] ?? 'Unknown Service',
+                        'quantity' => $item['quantity'] ?? 1,
+                        'rate' => $item['service_rate'] ?? 0,
+                        'unit' => $item['service_unit'] ?? null,
+                        'total_amount' => $item['amount'] ?? 0,
+                        'payment_status' => $item['payment_status'] ?? 'unpaid',
+                        'extra_properties' => $item['properties_with_extra_hour'] ?? null,
+                    ];
+                }
+            }
+        }
+
         return [
             'name' => $this->first_name . ' ' . $this->last_name,
             'transaction_number' => $transaction->transaction_number,
@@ -1696,8 +1841,18 @@ class CreateReservation extends Component
             'invoice_number' => $invoice->invoice_number,
             'check_in' => $this->check_in_date,
             'check_out' => $this->check_out_date,
-            'total_amount' => $total,
+            'convenience_fee' => $this->computeConvenienceFee(),
+            'base_subtotal' => $this->computeBaseSubtotal(),
+            'subtotal' => $this->computeSubtotalAfterDiscount(),
+            'promo_code' => $this->promoCode,
+            'promo_amount' => $this->promoDiscount,
+
+            'total_amount' => $this->computeSubtotalAmount(),
+
+            'total_payable_amount' => $this->computePayableAmount(),
             'deposit' => $deposit,
+
+
             'expirationHours' => $this->expirationHours,
             'payment_link' => $this->paymentLink,
             'branding_company_name' => $this->companyName,
@@ -1707,9 +1862,10 @@ class CreateReservation extends Component
             'company_address' => $this->companyAddress,
             'facebook_link' => $this->facebookLink,
             'instagram_link' => $this->instagramLink,
+            'cart_items' => $cartItems,   // unified cart for email
+            'convenience_Fe'
         ];
     }
-
     public function updateKidOptions($roomId): void
     {
         $room = collect($this->rooms)->firstWhere('id', $roomId);
@@ -1871,11 +2027,11 @@ class CreateReservation extends Component
         $this->prepareOccupancyRules();
     }
 
+    // DEPOSIT 
     public function getDepositProperty()
     {
-        return $this->getDeposit($this->computeTotalAmount());
+        return $this->getDeposit($this->computeSubtotalAmount());
     }
-
 
 
 
@@ -1954,7 +2110,7 @@ class CreateReservation extends Component
                 'regex:/^[A-Za-z\s\-]+$/',
             ],
             'company_name' => [
-                'required',
+                'nullable',
                 'string',
                 'regex:/^[A-Za-z\s\-]+$/',
             ],
@@ -1965,7 +2121,7 @@ class CreateReservation extends Component
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
             'terms' => 'required|accepted',
             'requests' => 'nullable|string|max:255',
-            'pets.*.breed' => 'required|string|max:255',
+            // 'pets.*.breed' => 'required|string|max:255',
         ]);
     }
 
@@ -2046,12 +2202,15 @@ class CreateReservation extends Component
         $branding = $this->brandingService->getBrandingData();
 
         $this->companyName = $branding['branding_company_name'];
+        $this->companyName = $branding['branding_company_name'];
         $this->logoPath = $branding['logo_path'];
         $this->companyEmail = $branding['branding_company_email'];
         $this->companyContact = $branding['branding_company_contact'];
         $this->companyAddress = $branding['company_address'];
         $this->facebookLink = $branding['facebook_link'];
         $this->instagramLink = $branding['instagram_link'];
+        $this->enable_deposit_percentage = $branding['enable_deposit_percentage'];
+        $this->deposit_percentage = $branding['deposit_percentage'];
     }
 
 
@@ -2094,32 +2253,41 @@ class CreateReservation extends Component
             'total_adults' => collect($this->selectedRooms)->sum('adults'),
             'total_kids' => collect($this->selectedRooms)->sum('kids'),
             'pax' => $this->total_pax,
-            'sub_total' => $this->sub_total ?? 0,
-            'convenience_fee' => $this->convenience_fee ?? 0,
+
+
+            // -------------------- FINANCIAL DETAILS -------------------- //
+            'sub_total' => $this->computeBaseSubtotal() ?? 0,
             'promo_discount_amount' => $this->promo_discount_amount ?? 0,
-            'total_amount' => $totalAmount,
-            'deposit_amount' => $depositAmount,
+            'total_amount' => $this->computeSubtotalAmount() ?? 0,
+            'deposit_amount' => $this->deposit ?? 0,
+            'convenience_fee' => 0,
+            // -------------------- END FINANCIAL DETAILS -------------------- //
+
+
+            // -------------------- ADDITIONAL DETAILS -------------------- //
             'heard_from' => $this->heard_from,
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             'terms' => $this->terms,
             'requests' => $this->requests,
+            // -------------------- END ADDITIONAL DETAILS -------------------- //
         ]);
     }
 
     protected function createInvoice(Transaction $transaction): Invoice
     {
-        $totalAmount = $this->computeTotalAmount();
+        $base_subtotal = $this->computeBaseSubtotal();
+        $sub_total = $this->computeSubtotalAmount();
 
         return Invoice::create([
             'transaction_id' => $transaction->id,
             'invoice_number' => $this->generateInvoiceNumber(),
             'invoice_type' => 'Room',
-            'base_subtotal' => $totalAmount, // not modifiable
-            'sub_total' => $totalAmount,
+            'base_subtotal' => $base_subtotal, // but this is not modifiable
+            'sub_total' => $sub_total,
             'deposit_paid' => 0,
             'amount_paid' => 0,
-            'balance_due' => $totalAmount,
+            'balance_due' => $sub_total,
             'due_date' => $this->check_out_date,
             'invoice_status' => 'pending',
         ]);
