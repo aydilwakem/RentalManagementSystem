@@ -6,9 +6,9 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Rooms', 'url' => route('admin.rooms')],
-            ['label' => 'Create Room', 'url' => route('admin.create-room')],
-        ]" />
+        ['label' => 'Rooms', 'url' => route('admin.rooms')],
+        ['label' => 'Create Room', 'url' => route('admin.create-room')],
+    ]" />
     </x-slot>
 
     <!-- Body Container -->
@@ -35,8 +35,7 @@
                         <label for="name_number"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room Name <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" wire:model="name_number" id="name_number" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
+                        <input type="text" wire:model="name_number" id="name_number" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Solah, Mercy">
                         @error('name_number')
@@ -49,8 +48,7 @@
                         <label for="property_category_id"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Category <span class="text-red-500">*</span></label>
-                        <select wire:model="property_category_id" id="property_category_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="property_category_id" id="property_category_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Category</option>
                             @foreach ($roomCategories as $category)
@@ -70,8 +68,7 @@
                             <label for="ideal_guest"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Ideal
                                 Guest <span class="text-red-500">*</span></label>
-                            <input type="number" wire:model="ideal_guest" id="ideal_guest" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="number" wire:model="ideal_guest" id="ideal_guest" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2" onwheel="this.blur()" />
                             @error('ideal_guest')
@@ -84,8 +81,7 @@
                             <label for="occupancy_type"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy
                                 Type <span class="text-red-500">*</span></label>
-                            <select id="occupancy_type" wire:model.live="occupancy_type"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <select id="occupancy_type" wire:model.live="occupancy_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                 <option value="" selected>Select Occupancy Type</option>
                                 <option value="combinations">Mixed Guest Composition (Ex. 2 Adults + 2 Kids)</option>
@@ -116,10 +112,8 @@
                                                 <div>
                                                     <label for="adults_{{ $index }}"
                                                         class="block text-xs font-medium text-gray-700 mb-1">Adults</label>
-                                                    <input type="number"
-                                                        wire:model="occupancy_rules.{{ $index }}.adults"
-                                                        id="adults_{{ $index }}" min="0"
-                                                        onwheel="this.blur()"
+                                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.adults"
+                                                        id="adults_{{ $index }}" min="0" onwheel="this.blur()"
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
                                                     @error("occupancy_rules.{$index}.adults")
                                                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -129,10 +123,8 @@
                                                 <div>
                                                     <label for="kids_{{ $index }}"
                                                         class="block text-xs font-medium text-gray-700 mb-1">Kids</label>
-                                                    <input type="number"
-                                                        wire:model="occupancy_rules.{{ $index }}.kids"
-                                                        id="kids_{{ $index }}" min="0"
-                                                        onwheel="this.blur()"
+                                                    <input type="number" wire:model="occupancy_rules.{{ $index }}.kids"
+                                                        id="kids_{{ $index }}" min="0" onwheel="this.blur()"
                                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-primary-500 focus:border-primary-500 block w-full p-2">
                                                     @error("occupancy_rules.{$index}.kids")
                                                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -164,7 +156,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model="max_guests" id="max_guests" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                                                                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                                                                                                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                     placeholder="Ex. 2" onwheel="this.blur()" />
                                 @error('max_guests')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -184,8 +176,7 @@
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                         Bed Quantity <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="number" wire:model="bed_quantity.{{ $index }}"
-                                        id="bed_quantity" required
+                                    <input type="number" wire:model="bed_quantity.{{ $index }}" id="bed_quantity" required
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                         placeholder="Ex. 2" />
                                     @error('bed_quantity.*')
@@ -240,8 +231,7 @@
                         <label for="turnover_duration"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Turnover
                             Duration (Hours) <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="turnover_duration" id="turnover_duration" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="number" wire:model="turnover_duration" id="turnover_duration" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 3 hours" onwheel="this.blur()" />
                         @error('turnover_duration')
@@ -254,8 +244,7 @@
                         <label for="property_status"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Status <span class="text-red-500">*</span></label>
-                        <select wire:model="property_status" id="property_status"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="property_status" id="property_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
@@ -268,11 +257,9 @@
 
                     <!-- Base Rate -->
                     <div>
-                        <label for="amount"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base
                             Rate <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="amount" id="amount" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
+                        <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 2,800.00" onwheel="this.blur()" />
 
@@ -287,14 +274,28 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
                             Person Charge <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
+                        <input type="text" wire:model="extra_person_charge" id="extra_person_charge" required class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1,000.00" onwheel="this.blur()" />
                         @error('extra_person_charge')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+                    <!-- Extra Charge Per Hour -->
+                    <div>
+                        <label for="extra_charge_per_hour"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
+                            Charge Per Hour <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" wire:model="extra_charge_per_hour" id="extra_charge_per_hour" required class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 focus:outline-none
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. 1,000.00" onwheel="this.blur()" />
+                        @error('extra_charge_per_hour')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
 
                     <!-- Free Breakfast Inclusion -->
                     <div>
@@ -306,8 +307,7 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="freebies" id="freebies" value="1"
                                     class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
                                     ">
                                 </div>
                                 <div
@@ -320,8 +320,7 @@
 
                     <!-- Available Amenities -->
                     <div class="sm:col-span-2">
-                        <label
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
@@ -355,12 +354,10 @@
                                         wire:key="image-{{ $index }}">
                                         @if (is_object($image) && method_exists($image, 'temporaryUrl'))
                                             <img src="{{ $image->temporaryUrl() }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Image Preview">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
                                         @else
                                             <img src="{{ asset('storage/' . $image) }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Stored Image">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
                                         @endif
 
                                         <!-- Remove Image -->
@@ -384,8 +381,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -397,8 +394,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -419,8 +416,8 @@
                         <!-- Spinner loading indicator -->
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                 </path>
@@ -474,7 +471,7 @@
                 Sortable.create(el, {
                     animation: 150,
                     draggable: '.sortable-item',
-                    onEnd: function(evt) {
+                    onEnd: function (evt) {
                         const newOrder = Array.from(el.children).map(child => child.dataset.index);
                         Livewire.emit('updateImageOrder', newOrder);
                     }

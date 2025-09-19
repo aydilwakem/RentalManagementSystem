@@ -35,6 +35,7 @@ class EditRoom extends Component
     public $property_status;
     public $amount;
     public $extra_person_charge;
+    public $extra_charge_per_hour;
     public $image;
     public $newImage;
     public $newImages = [];
@@ -88,6 +89,7 @@ class EditRoom extends Component
         $this->roomCategories = PropertyCategory::all();
         // $this->occupancy_rules = $room->occupancy_rules ?? [];
         $this->extra_person_charge = $room->extra_person_charge;
+        $this->extra_charge_per_hour = $room->extra_charge_per_hour;
         $this->features = PropertyFeature::all();
         $this->occupancy_type = $room->occupancy_type;
 
@@ -99,7 +101,7 @@ class EditRoom extends Component
             $this->bed_ids[] = $bed->id;
             $this->bed_quantity[] = $bed->bed_quantity;
             $this->bed_type[] = $bed->bed_type;
-    }
+        }
 
         $this->room = $room;
 
@@ -138,9 +140,9 @@ class EditRoom extends Component
     {
         // Remove from database:
         if (isset($this->bed_ids[$index])) {
-        PropertyBed::where('id', $this->bed_ids[$index])->delete();
-        unset($this->bed_ids[$index]);
-    }
+            PropertyBed::where('id', $this->bed_ids[$index])->delete();
+            unset($this->bed_ids[$index]);
+        }
 
         unset($this->bed_type[$index]);
         unset($this->bed_quantity[$index]);
@@ -250,9 +252,9 @@ class EditRoom extends Component
             }
 
             $this->displayImages = collect($this->displayImages)
-            ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
-            ->values()
-            ->toArray();
+                ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
+                ->values()
+                ->toArray();
 
             $this->updateDisplayImages(); // Re-update display array after removal
         }
@@ -265,9 +267,9 @@ class EditRoom extends Component
 
     public function updateRoom()
     {
-        try{
+        try {
             $this->validate();
-        }catch(ValidationException $e){
+        } catch (ValidationException $e) {
             $this->confirmEditItem = false; //Close the modal
             throw $e;
         }
@@ -305,6 +307,7 @@ class EditRoom extends Component
             'property_status' => $this->property_status,
             'amount' => $this->amount,
             'extra_person_charge' => $this->extra_person_charge,
+            'extra_charge_per_hour' => $this->extra_charge_per_hour,
             'image' => $this->image,
             'images' => $finalImagePaths,
             'freebies' => (bool) $this->freebies,
@@ -312,21 +315,21 @@ class EditRoom extends Component
             'max_guests' => $this->occupancy_type === 'whole_number' ? $this->max_guests : null,
         ]);
 
-        foreach($this->bed_type as $i => $bedType){
+        foreach ($this->bed_type as $i => $bedType) {
             if (!empty($this->bed_ids[$i])) {
 
-            PropertyBed::where('id', $this->bed_ids[$i])->update([
-                'bed_type' => $bedType,
-                'bed_quantity' => $this->bed_quantity[$i],
-            ]);
-        }else {
-        $bed = PropertyBed::create([
-            'property_id' => $this->room->id,
-                'bed_type' => $bedType,
-                'bed_quantity' => $this->bed_quantity[$i],
-            ]);
-    }
-    }
+                PropertyBed::where('id', $this->bed_ids[$i])->update([
+                    'bed_type' => $bedType,
+                    'bed_quantity' => $this->bed_quantity[$i],
+                ]);
+            } else {
+                $bed = PropertyBed::create([
+                    'property_id' => $this->room->id,
+                    'bed_type' => $bedType,
+                    'bed_quantity' => $this->bed_quantity[$i],
+                ]);
+            }
+        }
 
         $this->room->features()->sync($this->selectedFeatures);
 
@@ -355,8 +358,9 @@ class EditRoom extends Component
             'occupancy_type' => 'required|in:combinations,whole_number,ideal_guest',
             'turnover_duration' => 'required|min:1|max:20',
             'property_status' => 'required|in:available,booked,out_of_service',
-            'amount' => 'required|numeric|min:100|max:20000.00',
+            'amount' => 'required|numeric|min:100|max:100000.00',
             'extra_person_charge' => 'required|numeric|min:100|max:10000.00',
+            'extra_charge_per_hour' => 'required|numeric|min:100|max:10000.00',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
             'newImages' => 'nullable|array',
             'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',

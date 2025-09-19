@@ -260,11 +260,6 @@
                     </div>
 
                     <div>
-                        <strong>Convenience Fee (3%):</strong>
-                        <div>₱{{ number_format($transaction->convenience_fee, 2) }}</div>
-                    </div>
-
-                    <div>
                         <strong>Promo Applied:</strong>
                         <div>
                             @if ($transaction->promoCode)
@@ -1659,16 +1654,19 @@
                                     {{ $service->description ?? 'No description provided for this service.' }}
                                 </p>
 
-                                <div class="text-lg font-bold text-green-700 dark:text-green-300">
-                                    @if($service->id == 10)
-                                    <span class="text-lg font-bold text-green-700 dark:text-green-300">Depends on room
-                                        rate</span>
-                                    <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{
-                                        $service->unit }}</span>
+                                  <div class="text-lg font-bold text-green-700 dark:text-green-300">
+                                    @if($service->name === 'Extra Hour') <!-- dynamic check -->
+                                        <span class="text-lg font-bold text-green-700 dark:text-green-300">
+                                            Depends on room rate
+                                        </span>
+                                        <span class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                            / {{ $service->unit }}
+                                        </span>
                                     @else
-                                    ₱{{ number_format($service->amount, 2) }}
-                                    <span class="text-base font-normal text-gray-500 dark:text-gray-400">/ {{
-                                        $service->unit }}</span>
+                                        ₱{{ number_format($service->amount, 2) }}
+                                        <span class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                            / {{ $service->unit }}
+                                        </span>
                                     @endif
                                 </div>
 

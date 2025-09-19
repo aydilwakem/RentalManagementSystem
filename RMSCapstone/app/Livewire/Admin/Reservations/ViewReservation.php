@@ -342,7 +342,9 @@ class ViewReservation extends Component
 
             $propertyName = null;
             $propertyExtraHourCharge = null;
-            if ($service->pivot->service_id == 10 && $service->pivot->property_id) {
+
+            // Dynamically check for "Extra Hour" instead of hardcoding ID 10
+            if (strtolower($service->name) === 'extra hour' && $service->pivot->property_id) {
                 $property = \App\Models\Property::find($service->pivot->property_id);
                 $propertyName = $property?->name_number;
                 $propertyExtraHourCharge = $property?->extra_charge_per_hour;
@@ -351,7 +353,7 @@ class ViewReservation extends Component
             $items[] = [
                 'type'          => 'service',
                 'service_id'    => $service->pivot->service_id,
-                'service_name'    => $service->name,
+                'service_name'  => $service->name,
                 'property_id'   => $service->pivot->property_id,
                 'name'          => $service->name,
                 'property_name' => $propertyName,
@@ -368,6 +370,7 @@ class ViewReservation extends Component
                 'pivot_id'      => $service->pivot->id,
             ];
         }
+
 
 
 
