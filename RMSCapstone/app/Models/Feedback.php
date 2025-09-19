@@ -20,12 +20,19 @@ class Feedback extends Model
         'transaction_number',
         'submitted_at',
         'comments',
-        'is_approved',
+        'status',
     ];
 
+        // Add date casting
     protected $casts = [
-        'is_approved'        => 'boolean',
+        'submitted_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+
+
+
 
     // --------------------- Activity Logs ------------------ //
     protected static $logOnlyDirty = true; //Only changed attributes are logged 
@@ -58,4 +65,17 @@ class Feedback extends Model
     {
         return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
     }
+
+        public function user()
+    {
+        return $this->hasOneThrough(
+            TransactionUser::class,
+            Transaction::class,
+            'id', // Foreign key on transactions table
+            'id', // Foreign key on transaction_users table
+            'transaction_id', // Local key on feedback table
+            'created_by' // Local key on transactions table
+        );
+    }
+
 }
