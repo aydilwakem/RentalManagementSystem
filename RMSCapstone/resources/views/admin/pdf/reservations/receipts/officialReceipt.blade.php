@@ -283,7 +283,7 @@
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Convenience Fee</strong></td>
-                        <td><strong> PHP{{ number_format($transaction->convenience_fee, 2) }}</strong></td>
+                        <td><strong> PHP {{ number_format($convenienceFeeTotal, 2) }}</strong></td>
                     </tr>
                     <tr style="background-color: #f5f5f5;">
                         <td><strong>Amount Received</strong></td>

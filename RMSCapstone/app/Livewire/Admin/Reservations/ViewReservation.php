@@ -1564,7 +1564,7 @@ class ViewReservation extends Component
             'days'
         )->get();
 
-        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
+        $convenienceFeeTotal = $this->invoice->payments->sum('convenience_fee');
 
         // Merge all necessary data for the PDF and email
         $data = array_merge(
@@ -1731,7 +1731,7 @@ class ViewReservation extends Component
         $this->properties = $this->transaction->properties()
             ->withPivot('adults', 'kids', 'extra_guest', 'extra_charge', 'amount', 'total_amount', 'days')->get();
 
-        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
+        $convenienceFeeTotal = $this->invoice->payments->sum('convenience_fee');
 
         $data = [
             'receipt' => $this->receipt,

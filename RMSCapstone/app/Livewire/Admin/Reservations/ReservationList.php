@@ -174,7 +174,13 @@ class ReservationList extends Component
 
     public function confirmReservation($id)
     {
-        $transaction = Transaction::with(['transactionUser', 'invoice', 'properties.category', 'activities', 'services', 'promoCode'])->find($id);
+        $transaction = Transaction::with(['transactionUser', 
+        'invoice.payments', 
+        'properties.category', 
+        'activities', 
+        'services', 
+        'promoCode'])
+        ->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -199,6 +205,9 @@ class ReservationList extends Component
             return;
         }
 
+        //Add convenience fee total
+        $convenienceFeeTotal = $invoice->payments->sum('convenience_fee');
+
         //Call setting
         $setting = Setting::first();
 
@@ -215,7 +224,7 @@ class ReservationList extends Component
             'check_in' => $transaction->start_datetime,
             'check_out' => $transaction->end_datetime,
             'deposit' => $transaction->deposit_paid,
-            'convenience_fee' => $transaction->convenience_fee,
+            'convenience_fee' => $convenienceFeeTotal,
             'deposit_amount' => $transaction->deposit_amount,
             'sub_total' => $transaction->sub_total,
             'promo_discount_amount' => $transaction->promo_discount_amount,
