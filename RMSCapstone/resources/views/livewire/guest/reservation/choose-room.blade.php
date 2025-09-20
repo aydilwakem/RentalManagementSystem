@@ -56,7 +56,7 @@
                         <div class=" space-y-6" wire:key="room-{{ $room->id }}">
                             <div
                                 class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
-                                <div class="md:flex">
+                                <div class="    md:flex">
 
                                     <div class="w-full md:w-1/3">
                                         <!-- Image Container -->
@@ -84,6 +84,11 @@
 
                                             <h4 class="text-2xl font-semibold mb-2">{{ ucwords($room->name_number) }}
                                             </h4>
+
+                                                <div class="mb-3">
+                                                    @livewire('guest.reservation.property-reviews', ['propertyId' => $room->id], key('reviews-'.$room->id))
+                                                </div>
+
                                             <p class="text-base font-normal text-gray-700  ">
                                                 <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
                                             </p>
@@ -300,103 +305,6 @@
                                                                 @endif
                                                             </div>
                                                             <hr>
-                                                            <!--------------------------- ROOM RATING -------------------------------->
-                                                            <div class="mt-4">
-
-                                                                @php
-                                                                    $allRatings = collect();
-                                                                    $comments = [];
-
-                                                                    foreach ($room->transactions as $transaction) {
-                                                                        foreach ($transaction->feedbacks as $feedback) {
-
-                                                                            // Skips sfeedbacks that are not approved
-                                                                            if ($feedback->status !== 'approved') {
-                                                                                continue;
-                                                                            }
-
-                                                                            $feedbackRatings = $feedback->feedbackRatings;
-                                                                            $individualRatingValues = $feedbackRatings->pluck('rating_value');
-                                                                            $individualAvg = $individualRatingValues->count() ? $individualRatingValues->avg() : null;
-
-                                                                            // Push all ratings for room average
-                                                                            $allRatings = $allRatings->merge($individualRatingValues);
-
-                                                                            $comments[] = [
-                                                                                'text' => $feedback->comments ?? '',
-                                                                                'user' => optional($transaction->transactionUser)->first_name . ' ' . optional($transaction->transactionUser)->last_name ?? 'Guest',
-                                                                                'date' => \Carbon\Carbon::parse($feedback->created_at)->format('F j, Y'),
-                                                                                'rating' => $individualAvg,
-                                                                            ];
-                                                                        }
-                                                                    }
-
-                                                                    $averageRating = $allRatings->count() ? $allRatings->avg() : null;
-
-                                                                @endphp
-
-                                                                <!------------------- Avrage of Rating ---------------------->
-                                                                @if ($averageRating)
-                                                                    <div class="flex items-center gap-2 mb-2">
-                                                                        <span class="text-yellow-500">
-                                                                            @for ($i = 1; $i <= 5; $i++)
-                                                                                @if ($i <= floor($averageRating))
-                                                                                    <i class="fas fa-star"></i>
-                                                                                @elseif ($i - $averageRating < 1)
-                                                                                    <i class="fas fa-star-half-alt"></i>
-                                                                                @else
-                                                                                    <i class="far fa-star"></i>
-                                                                                @endif
-                                                                            @endfor
-                                                                        </span>
-                                                                        <span
-                                                                            class="text-gray-600">({{ number_format($averageRating, 1) }}/5)</span>
-                                                                    </div>
-                                                                @endif
-
-                                                                <!------------------------ Comments ---------------------->
-                                                                @if (count($comments))
-                                                                    @foreach ($comments as $comment)
-                                                                        <div class="border rounded-md p-2 mt-2">
-                                                                            <img src="{{ asset('images/canopy-logo.png') }}"
-                                                                                alt="User Avatar" class="w-8 h-8 rounded-full inline-block">
-                                                                            <div class="inline-block align-middle ms-2">
-                                                                                <p class="text-gray-700 font-semibold">
-                                                                                    {{ $comment['user'] }}
-                                                                                    <span class="text-sm text-gray-400">•
-                                                                                        {{ $comment['date'] }}</span>
-                                                                                </p>
-
-                                                                                <!-- Stars per feedback -->
-                                                                                @if (!is_null($comment['rating']))
-                                                                                    <div class="text-yellow-500 text-sm mb-1">
-                                                                                        @for ($i = 1; $i <= 5; $i++)
-                                                                                            @if ($i <= floor($comment['rating']))
-                                                                                                <i class="fas fa-star"></i>
-                                                                                            @elseif ($i - $comment['rating'] < 1)
-                                                                                                <i class="fas fa-star-half-alt"></i>
-                                                                                            @else
-                                                                                                <i class="far fa-star"></i>
-                                                                                            @endif
-                                                                                        @endfor
-                                                                                        <span
-                                                                                            class="text-gray-500 ms-1">({{ number_format($comment['rating'], 1) }}/5)</span>
-                                                                                    </div>
-                                                                                @endif
-
-                                                                                <p class="text-gray-500">
-                                                                                    {{ $comment['text'] !== '' ? $comment['text'] : 'No comment provided.' }}
-                                                                                </p>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    @endforeach
-
-                                                                @else
-                                                                    <p class="text-sm text-gray-400">No comments yet.</p>
-                                                                @endif
-                                                            </div>
-                                                            <!--------------------------- End kf Rating -------------------------------->
 
                                                         </div>
                                                     </div>
