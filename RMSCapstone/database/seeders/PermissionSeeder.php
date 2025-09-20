@@ -14,12 +14,18 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            //Backup
+            "backup-create",
+            "backup-delete",
+            "backup-download",
+            "backup-view",
+            
             //Services
-            "service-list",
-            "service-create",
-            "service-edit",
-            "service-view",
-            "service-soft-delete",
+            // "service-list",
+            // "service-create",
+            // "service-edit",
+            // "service-view",
+            // "service-soft-delete",
 
             //Activity Logs
             // "activity-logs-view",
