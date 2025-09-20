@@ -54,7 +54,7 @@ class ProofOfPaymentPage extends Component
     public function mount()
     {
         Log::info('Mount is called.');
-        $this->payment_methods = PaymentMethod::all();
+        $this->payment_methods = PaymentMethod::where('mode_of_payment_name', '!=', 'Cash')->get();
     }
 
     public function updatedTransactionNumber()
@@ -83,7 +83,7 @@ class ProofOfPaymentPage extends Component
             'transaction_number' => 'required|exists:trn_transactions,transaction_number',
             'payment_reference_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
             'payment_screenshot' => 'required|image|max:2048',
-            'notes' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
+            'notes' => 'nullable|string|max:255|not_regex:/[<>?!@#$]/',
         ]);
     }
 

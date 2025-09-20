@@ -18,6 +18,8 @@ use App\Livewire\Admin\Activities\ViewActivity;
 use App\Livewire\Admin\Activities\EditActivity;
 use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
+use App\Livewire\Admin\Backups\CreateBackup;
+use App\Livewire\Admin\Backups\ViewBackups;
 use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\Features\EditFeature;
@@ -882,6 +884,16 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })
         ->name('admin.deleted-tenants')
         ->middleware('can:tenant-soft-delete');
+
+
+        // Backup routes
+    Route::get('view/backups', ViewBackups::class)
+        ->name('admin.view-backups')
+        ->middleware('can:backup-view');
+
+    Route::get('create/backup', CreateBackup::class)
+        ->name('admin.create-backup')
+        ->middleware('can:backup-create');
 
 
     // ----------------- Activity Logs

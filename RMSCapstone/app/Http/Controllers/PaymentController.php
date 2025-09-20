@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Payment;
 use App\Services\PaymentService;
+use App\Services\InvoiceService;
 use App\Services\ServiceBag;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Log;
@@ -18,10 +19,12 @@ class PaymentController extends Controller
 
     protected ServiceBag $service;
     protected PaymentService $paymentService;
+    protected InvoiceService $invoiceService;
 
     public function boot(ServiceBag $services)
     {
         $this->paymentService = $services->paymentService;
+        $this->invoiceService = $services->invoiceService;
     }
 
     /**
@@ -37,7 +40,7 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\JsonResponse A JSON response indicating success or error.
      */
 
-    public function webhook(Request $request, PaymentService $paymentService)
+    public function webhook(Request $request, PaymentService $paymentService, InvoiceService $invoiceService)
     {
         // Log that the webhook endpoint has been hit
         Log::info('Webhook Triggered');
@@ -99,13 +102,10 @@ class PaymentController extends Controller
             // Handle 'payment.paid' and 'payment.failed' events
             if ($eventType === 'payment.paid' || $eventType === 'payment.failed') {
 
-                $amountPaid = $attributes['amount'] ?? 0;
                 $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
                 $paymentReferenceNumber = $data['id'] ?? null;
                 $metadata = $attributes['metadata'] ?? [];
-
                 $invoiceId = (int)($metadata['invoice_id'] ?? 0);
-                $convenienceFee = (int)($metadata['convenience_fee'] ?? 0);
                 $invoice = Invoice::find($invoiceId);
 
                 if (!$invoice) {
@@ -115,8 +115,10 @@ class PaymentController extends Controller
 
                 $transaction = $invoice->transaction;
 
-                $convenienceFeeInPesos = $convenienceFee / 100;
-                $amountInPesos = $amountPaid / 100;
+                // PayMongo amount is in cents → convert to pesos
+                $amountInPesos = ($attributes['amount'] ?? 0) / 100;
+                // Take convenience fee directly from metadata as float (already in pesos)
+                $convenienceFeeInPesos = (float)($metadata['convenience_fee'] ?? 0);
 
                 try {
                     DB::transaction(function () use (
@@ -130,6 +132,7 @@ class PaymentController extends Controller
                         $metadata,
                         $paymentService,
                         $transaction,
+                        $invoiceService,
                     ) {
                         // Save payment record regardless of event type
                         $payment = Payment::create([
@@ -163,6 +166,10 @@ class PaymentController extends Controller
                                     'completed_at' => now(),
                                 ]);
                             }
+
+                            $invoiceService->updateGrandTotal($invoice, $transaction); // includes convenience fee
+                            $invoiceService->updateBalanceDue($invoice);
+                            $invoiceService->updateStatus($invoice);
 
                             if ($transaction && $transaction->transaction_status === 'pending') {
                                 $transaction->update([

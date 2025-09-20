@@ -24,14 +24,14 @@ class ServiceTransactionService
 
                 // Save services
                 if ($item['type'] === 'service') {
-                    // Special handling for Extra Hour (service_id = 10)
-                    if ($item['service_id'] == 10 && !empty($item['properties_with_extra_hour'])) {
+
+                    // Special handling for "Extra Hour" by name
+                    $service = \App\Models\Service::find($item['service_id']);
+                    if (strtolower($service->name) === 'extra hour' && !empty($item['properties_with_extra_hour'])) {
                         $propertyIds = array_keys($item['properties_with_extra_hour']); // get actual IDs
                         foreach ($propertyIds as $propertyId) {
                             $property = $transaction->properties->firstWhere('id', $propertyId);
-                            if (!$property) {
-                                continue;
-                            }
+                            if (!$property) continue;
 
                             $amount = $property->extra_charge_per_hour * $item['quantity'];
 
@@ -71,15 +71,13 @@ class ServiceTransactionService
                 'requested_remaining_balance' => false,
             ]);
 
-            if (
-                $invoice->balance_due > 0 &&
-                $invoice->invoice_status === 'completed'
-            ) {
+            if ($invoice->balance_due > 0 && $invoice->invoice_status === 'completed') {
                 $invoice->invoice_status = 'pending';
                 $invoice->save();
             }
         });
     }
+
 
 
     public function deleteService($pivotId, Transaction $transaction, Invoice $invoice)
