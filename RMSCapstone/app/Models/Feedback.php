@@ -67,7 +67,6 @@ class Feedback extends Model
     {
         return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
     }
-
     public function user()
     {
         return $this->hasOneThrough(
