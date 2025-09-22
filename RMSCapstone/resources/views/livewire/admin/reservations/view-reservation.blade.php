@@ -169,63 +169,54 @@
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Transaction Details') }}
                 </h2>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700 dark:text-gray-200">
-
-                    <div class="col-span-full flex flex-wrap items-center gap-4">
-                        <!-- Transaction Status -->
-                        <div class="flex flex-col">
-                            <strong>Transaction Status:</strong>
-                            <div class="mt-1">
-                                @if ($transaction->transaction_status === 'pending')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting Payment</span>
-                                @elseif ($transaction->transaction_status === 'reserved')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending Verification</span>
-                                @elseif ($transaction->transaction_status === 'receipt_verified')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment Verified</span>
-                                @elseif ($transaction->transaction_status === 'confirmed')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
-                                @elseif ($transaction->transaction_status === 'ongoing')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going</span>
-                                @elseif ($transaction->transaction_status === 'done')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
-                                @elseif ($transaction->transaction_status === 'no_show')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No Show</span>
-                                @elseif ($transaction->transaction_status === 'terminated')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
-                                @elseif ($transaction->transaction_status === 'expired')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
-                                @elseif ($transaction->transaction_status === 'cancelled')
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
-                                @else
-                                {{ ucfirst($transaction->transaction_status) }}
-                                @endif
-                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
-                                    Free breakfast for {{$transaction->pax}}
+                    <div class="col-span-full">
+                        <strong>Transaction Status:</strong>
+                        <div class="mt-1">
+                            @if ($transaction->transaction_status === 'pending')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
+                                    Payment</span>
+                            @elseif ($transaction->transaction_status === 'reserved')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
+                                    Verification</span>
+                            @elseif ($transaction->transaction_status === 'receipt_verified')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
+                                    Verified</span>
+                            @elseif ($transaction->transaction_status === 'confirmed')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
+                            @elseif ($transaction->transaction_status === 'ongoing')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
                                 </span>
-                            </div>
+                            @elseif ($transaction->transaction_status === 'done')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
+                            @elseif ($transaction->transaction_status === 'no_show')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
+                                    Show</span>
+                            @elseif ($transaction->transaction_status === 'terminated')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
+                            @elseif ($transaction->transaction_status === 'expired')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
+                            @elseif ($transaction->transaction_status === 'cancelled')
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
+                            @else
+                                {{ ucfirst($transaction->transaction_status) }}
+                            @endif
                         </div>
-
-
-
-
                     </div>
-
-
                     <div>
                         <strong>Transaction ID:</strong>
                         <div>{{ $transaction->transaction_number }}</div>
                     </div>
-
-                     <div>
-                        <strong>Check-in Date:</strong>
-                        <div>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</div>
-                    </div>
-                    <div>
-                        <strong>Check-out Date:</strong>
-                        <div>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</div>
-                    </div>
-
                     <div>
                         <strong>Reservation Created At:</strong>
                         <div>{{ $transaction->created_at->format('F j, Y') }} at
@@ -235,7 +226,14 @@
                         <strong>Heard From:</strong>
                         <div>{{ $transaction->heard_from }}</div>
                     </div>
-
+                    <div>
+                        <strong>Check-in Date:</strong>
+                        <div>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</div>
+                    </div>
+                    <div>
+                        <strong>Check-out Date:</strong>
+                        <div>{{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</div>
+                    </div>
                     <div>
                         <strong>Duration of Stay:</strong>
                         <div>{{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)</div>
@@ -264,8 +262,15 @@
                     </div>
 
                     <div>
+                        <strong>Convenience Fee (3%):</strong>
+                        <div>₱{{ number_format($transaction->convenience_fee, 2) }}</div>
+                    </div>
+
+                    <div>
                         <strong>Promo Applied:</strong>
                         <div>
+                            {{ $transaction->promoCode->code ?? '' }}
+
                             @if ($transaction->promoCode)
                                 <div>
                                     <strong>Promo Code:</strong>
@@ -297,9 +302,10 @@
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
+                </div>
 
 
-                <div>
+                <div class="mt-4">
                     <strong>Requests:</strong>
 
                     @if (!empty($transaction->requests))
@@ -320,41 +326,6 @@
                         </div>
                     @endif
                 </div>
-
-                <div>
-                    <strong>Vouchers:</strong>
-
-                    @if ($transaction->vouchers->count())
-                        <div class="mt-2 flex flex-wrap items-center gap-2">
-                            @foreach ($transaction->vouchers as $voucher)
-                                <div class="flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                    <span>
-                                        {{ ucfirst(strtolower($voucher->voucher_type)) }}: ₱{{ number_format($voucher->voucher_amount, 2) }}
-                                    </span>
-                                    <button wire:click="deleteVoucher({{ $voucher->id }})"
-                                            class="text-red-500 hover:text-red-700 ml-2">
-                                        &times;
-                                    </button>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-gray-500 italic mt-2">No vouchers.</div>
-                    @endif
-
-                    <div class="mt-2">
-                        <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
-                            Add Voucher
-                        </x-button>
-                    </div>
-                </div>
-
-
-                </div>
-
-
-
-
 
             </div>
             <!------------------------- END OF TRANSACTION DETAILS ----------------------------->
@@ -2115,23 +2086,44 @@
                         </div>
 
 
-                        <!-- Guest Type -->
-                       <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
-                                Guest Type <span class="text-red-500">*</span>
-                            </label>
-                            <select wire:model.defer="guest.guest_type_id"
-                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+
+                        <!-- Birthdate -->
+                        <div class="mt-4">
+                            <label
+                                class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Birthdate</label>
+                            <input type="date" wire:model.live="guest.birthdate"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                            @error('guest.birthdate')
+                                <span class="text-red-500 text-sm">
+                                    {{ $message == 'The guest.birthdate field is required.' ? 'Please enter the birthdate.' : $message }}
+                                </span>
+                            @enderror
+                        </div>
+
+
+                        <!-- Guest Type -->
+                        <!-- Optional: Guest Type (can be hidden or locked to a default) -->
+                        {{-- If you want admin to skip selecting guest type, skip this field --}}
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest
+                                Type</label>
+                            <select wire:model.defer="guest.guest_type_id"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Guest Type</option>
-                                @foreach ($guestTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @foreach ($filteredGuestTypes as $type)
+                                    <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
                                 @endforeach
                             </select>
                             @error('guest.guest_type_id')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
+                            <span class="text-sm text-gray-500">(Free of charge)</span>
+                        @endif
 
 
                         <!-- Gender -->
@@ -2211,9 +2203,7 @@
                                 </div>
                             </x-button>
                         </div>
-
-
-
+                    </div>
                 </div>
             @endif
 
@@ -2298,57 +2288,6 @@
                     </div>
                 </div>
             @endif
-
-            {{-- Add Voucher Modal --}}
-            @if ($activeModal === 'voucher')
-            <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div
-                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-
-                    {{-- Header --}}
-                    <div
-                        class="relative -mt-6 -mx-6 mb-6 bg-blue-50 text-blue-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-blue-300">
-                        <h2 class="text-2xl font-bold text-center">Add Voucher</h2>
-                        <button wire:click="closeModal"
-                            class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                            <span class="-translate-y-[2px]">&times;</span>
-                        </button>
-                    </div>
-
-                    {{-- Form Fields --}}
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block font-medium mb-1">Voucher Type</label>
-                            <select wire:model="voucher_type"
-                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                                <option value="">-- Select Type --</option>
-                                <option value="Food">Food</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            @error('voucher_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div>
-                            <label class="block font-medium mb-1">Voucher Amount</label>
-                            <input type="number" min="0" step="0.01" wire:model="voucher_amount"
-                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('voucher_amount') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-
-                    {{-- Actions --}}
-                    <div class="flex justify-between mt-6">
-                        <x-ghost-button wire:click="closeModal">
-                            Cancel
-                        </x-ghost-button>
-                        <x-button wire:click="saveVoucher">
-                            Save Voucher
-                        </x-button>
-                    </div>
-                </div>
-            </div>
-            @endif
-
 
 
             <!-- Add Request Modal -->
@@ -2803,7 +2742,6 @@
                             </x-button>
                         </div>
                     </div>
-
                 </div>
             @endif
 

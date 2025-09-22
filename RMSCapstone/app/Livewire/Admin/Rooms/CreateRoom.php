@@ -36,7 +36,6 @@ class CreateRoom extends Component
     protected $listeners = ['updateImageOrder'];
     public $image;
     public $extra_person_charge;
-    public $extra_charge_per_hour;
     public $selectedFeatures = []; // Selected feature IDs
     public $features = []; // All features
     public $roomCategories; // All room categories
@@ -183,7 +182,6 @@ class CreateRoom extends Component
             'turnover_duration' => $this->turnover_duration,
             'property_status' => $this->property_status,
             'extra_person_charge' => $this->extra_person_charge,
-            'extra_charge_per_hour' => $this->extra_charge_per_hour,
             'amount' => $this->amount,
             'image' => $mainImagePath,
             'images' => $allStoredImagePaths,
@@ -192,7 +190,7 @@ class CreateRoom extends Component
         ]);
 
         //Table for beds
-        foreach ($this->bed_type as $i => $bedType) {
+        foreach($this->bed_type as $i => $bedType){
             PropertyBed::create([
                 'property_id' => $room->id,
                 'bed_type' => $bedType,
@@ -206,7 +204,7 @@ class CreateRoom extends Component
             $room->features()->attach($this->selectedFeatures);
         }
 
-        $this->reset(['name_number', 'property_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'max_guests', 'occupancy_type', 'turnover_duration', 'property_status', 'amount', 'extra_person_charge', 'extra_charge_per_hour', 'image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'selectedFeatures', 'occupancy_rules', 'freebies']);
+        $this->reset(['name_number', 'property_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'max_guests', 'occupancy_type', 'turnover_duration', 'property_status', 'amount', 'extra_person_charge', 'image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'selectedFeatures', 'occupancy_rules', 'freebies']);
 
         session()->flash('message', 'Room successfully created!');
         return redirect()->route('admin.rooms');
@@ -230,9 +228,8 @@ class CreateRoom extends Component
             'occupancy_type' => 'required|in:combinations,whole_number,ideal_guest',
             'turnover_duration' => 'required|string',
             'property_status' => 'required|in:available,booked,out_of_service',
-            'amount' => 'required|numeric|min:100|max:100000.00',
+            'amount' => 'required|numeric|min:100|max:20000.00',
             'extra_person_charge' => 'required|numeric|min:100|max:10000.00',
-            'extra_charge_per_hour' => 'required|numeric|min:100|max:10000.00',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
             'newImages' => 'nullable|array',
             'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',

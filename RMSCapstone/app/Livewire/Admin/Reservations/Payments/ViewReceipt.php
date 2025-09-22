@@ -103,42 +103,25 @@ class ViewReceipt extends Component
     // Confirm Receipt
     public function confirmReceipt(PaymentService $paymentService)
     {
-        try {
-            $this->validate([
-                'amount_paid' => 'required|numeric|min:100|max:1000000.00',
-                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->confirmReceiptItem = false;
-            $this->setErrorBag($e->validator->getMessageBag());
-            return;
-        }
+        $this->validate([
+            'amount_paid' => 'required|numeric|min:0|max:1000000.00',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
+        ]);
 
         try {
-            $this->paymentService->confirmUploadedPaymentReceipt(
-                $this->payment,
-                (float) $this->amount_paid,
-                $this->payment_type
-            );
+            $this->paymentService->confirmUploadedPaymentReceipt($this->payment, (float) $this->amount_paid, $this->payment_type);
             $this->updatePaymentStatus($paymentService, $this->amount_paid);
         } catch (\Exception $e) {
             Log::error('Confirm Receipt Failed: ' . $e->getMessage());
-
-            // show the real reason to the user
-            session()->flash('error', $e->getMessage());
-
-            $this->confirmReceiptItem = false;
+            session()->flash('error', 'Failed to confirm receipt.');
             return;
         }
 
         $this->recalculateInvoice();
         $this->confirmReceiptItem = false;
 
-        return redirect()->route('admin.view-reservation', [
-            'transaction' => $this->transaction
-        ]);
+        return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }
-
 
 
     // Reject receipt 

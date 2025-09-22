@@ -73,7 +73,7 @@ class ViewBranding extends Component
                 'newImage' => 'nullable|image|max:2048',
                 'email' => 'required|email|max:255',
                 'contact_number' => 'nullable|string|max:255|regex:/^[0-9]{11}$/',
-                'address' => 'nullable|string|max:255|regex:/^[A-Za-z0-9\s\-,.]+$/',
+                'address' => 'nullable|string|max:255|regex:/^[A-Za-z\s\-]+$/',
                 'facebook' => 'required|string|max:255',
                 'instagram' => 'required|string|max:255',
                 'terms_and_conditions' => 'nullable|string',

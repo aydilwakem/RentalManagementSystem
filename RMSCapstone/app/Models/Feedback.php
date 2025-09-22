@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use App\Models\FeedbackRating;
 
 class Feedback extends Model
 {
@@ -23,16 +22,6 @@ class Feedback extends Model
         'comments',
         'status',
     ];
-
-    // Add date casting
-    protected $casts = [
-        'submitted_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
-    ];
-
-
 
 
     // --------------------- Activity Logs ------------------ //
@@ -66,17 +55,5 @@ class Feedback extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
-    }
-
-    public function user()
-    {
-        return $this->hasOneThrough(
-            TransactionUser::class,
-            Transaction::class,
-            'id', // Foreign key on transactions table
-            'id', // Foreign key on transaction_users table
-            'transaction_id', // Local key on feedback table
-            'created_by' // Local key on transactions table
-        );
     }
 }

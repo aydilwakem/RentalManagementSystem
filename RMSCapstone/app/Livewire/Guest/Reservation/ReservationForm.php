@@ -521,6 +521,27 @@ class ReservationForm extends Component
     }
 
 
+
+    /**
+     * ---------------------------- SPECIAL REQUESTS LOGIC ----------------------------
+     *
+     * Handles the addition and removal of special requests in the reservation form.
+     * Each request has a status that can be updated.
+     *
+     * Responsibilities:
+     * - `addSpecialRequest`: Adds a new special request to the list.
+     * - `removeSpecialRequest`: Removes a special request by its index.
+     *
+     * ----------------------------------------------------------------------------------
+     */
+
+
+
+
+
+
+
+
     /**
      * ---------------------------- RESERVATION COMPUTATIONS ----------------------------
      *
@@ -717,6 +738,7 @@ class ReservationForm extends Component
     {
         // Always recompute subtotal so it’s fresh
         $this->computeSubtotalAmount();
+        $this->computeConvenienceFee();
 
         if ($this->enable_deposit_percentage) {
             // Deposit based on current discounted subtotal
@@ -724,7 +746,7 @@ class ReservationForm extends Component
             return max(0, $this->deposit + $this->convenience_fee);
         } else {
             // Full amount already includes subtotal + convenience fee
-            return max(0, $this->sub_total + $this->convenience_fee);
+            return max(0, $this->total_amount + $this->convenience_fee);
         }
     }
 

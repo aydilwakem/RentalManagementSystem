@@ -50,7 +50,6 @@ class ReservationCompletedMail extends Mailable
 
                 'promo_discount_amount' => $this->reservationData['promo_discount_amount'],
                 'sub_total' => $this->reservationData['sub_total'],
-                //'convenience_fee' => $this->reservationData['convenience_fee'],
                 'convenience_fee' => $this->reservationData['convenience_fee'],
                 'invoice_number' => $this->reservationData['invoice_number'],
                 'invoice_basesubtotal' =>  $this->reservationData['invoice_basesubtotal'],

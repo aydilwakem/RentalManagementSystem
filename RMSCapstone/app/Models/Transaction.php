@@ -272,11 +272,6 @@ class Transaction extends Model
             ->orderByPivot('created_at');
     }
 
-    public function vouchers()
-    {
-        return $this->hasMany(TransactionVoucher::class, 'transaction_id');
-    }
-
 
     //  ------------------------------ SCOPES --------------------------------- //
 
