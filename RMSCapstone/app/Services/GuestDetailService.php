@@ -32,7 +32,6 @@ class GuestDetailService
             'gender' => $data['gender'],
             'residency' => $data['residency'],
             'country_of_origin' => $data['country_of_origin'],
-            'birthdate' => $data['birthdate'],
         ]);
     }
 

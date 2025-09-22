@@ -45,6 +45,7 @@ class BackupService
             ]);
 
             return $backup;
+
         } catch (Exception $e) {
             // Update backup record with error
             if (isset($backup)) {
@@ -127,9 +128,9 @@ class BackupService
         do {
             // Get data in chunks
             $rows = DB::table($tableName)
-                ->skip($offset)
-                ->take($chunkSize)
-                ->get();
+                     ->skip($offset)
+                     ->take($chunkSize)
+                     ->get();
 
             if ($rows->count() > 0) {
                 $hasData = true;
@@ -166,6 +167,7 @@ class BackupService
             } else {
                 break;
             }
+
         } while (true);
 
         if ($hasData) {

@@ -84,6 +84,12 @@
                 </a>
             </p>
 
+
+            {{-- Disclaimer --}}
+            <p style="text-align: center; font-size: 13px; color: #555; margin-top: -10px;">
+                <em>Note: A convenience fee will be applied to your total during payment processing.</em>
+            </p>
+
             {{-- Manual Payment Options --}}
             {{-- <p style="margin-bottom: 15px;">
                 <strong>Prefer to pay manually?</strong><br>
@@ -150,7 +156,7 @@
 
 
             <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-                $branding_company_name }}. All rights reserved.</span>
+    $branding_company_name }}. All rights reserved.</span>
         </div>
     </div>
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\FeedbackRating;
 
 class Feedback extends Model
 {
@@ -22,6 +23,16 @@ class Feedback extends Model
         'comments',
         'status',
     ];
+
+    // Add date casting
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
+
 
 
     // --------------------- Activity Logs ------------------ //
