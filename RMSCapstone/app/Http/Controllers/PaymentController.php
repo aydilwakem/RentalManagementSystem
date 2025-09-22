@@ -61,10 +61,20 @@ class PaymentController extends Controller
                 return response()->json(['error' => 'Signature header missing.'], 400);
             }
 
-            // Parse the signature header: it should look like "t=timestamp,v1=signature"
+            // Parse the signature header into key/value pairs
             $parts = explode(',', $webhook_signature);
-            $timestamp = explode('=', $parts[0])[1] ?? null;
-            $signature = explode('=', $parts[1])[1] ?? null;
+            $parsed = [];
+
+            foreach ($parts as $part) {
+                [$key, $value] = array_pad(explode('=', $part, 2), 2, null);
+                if ($key && $value !== null && $value !== '') {
+                    $parsed[trim($key)] = trim($value);
+                }
+            }
+
+            // Support both standard PayMongo format (v1) and observed format (li)
+            $timestamp = $parsed['t'] ?? null;
+            $signature = $parsed['v1'] ?? ($parsed['li'] ?? null);
 
             // If parsing fails or components are missing, return a 400 error
             if (!$timestamp || !$signature) {

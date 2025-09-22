@@ -25,7 +25,7 @@ class Feedback extends Model
 
 
     // --------------------- Activity Logs ------------------ //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; //Only changed attributes are logged
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -38,7 +38,7 @@ class Feedback extends Model
                 'comments',
                 'is_approved'
             ])
-            // 4.2 Automatically log only the attributes that have changed  
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the feedback log event
             ->setDescriptionForEvent(fn(string $eventName) => "Feedback has been {$eventName}")
@@ -55,5 +55,16 @@ class Feedback extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
+    }
+    public function user()
+    {
+        return $this->hasOneThrough(
+            TransactionUser::class,
+            Transaction::class,
+            'id', // Foreign key on transactions table
+            'id', // Foreign key on transaction_users table
+            'transaction_id', // Local key on feedback table
+            'created_by' // Local key on transactions table
+        );
     }
 }
