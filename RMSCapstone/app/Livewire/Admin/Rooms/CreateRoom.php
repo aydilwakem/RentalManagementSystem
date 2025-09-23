@@ -221,7 +221,7 @@ class CreateRoom extends Component
                 'required',
                 'string',
                 'max:100',
-                'regex:/^[A-Za-z\s\-]+$/',
+                'regex:/^[A-Za-z0-9\s\-,.()]+$/',
                 Rule::unique('properties', 'name_number')->where(function ($query) {
                     return $query->where('property_type_id', $this->property_type_id)->whereNull('deleted_at');
                 }),
