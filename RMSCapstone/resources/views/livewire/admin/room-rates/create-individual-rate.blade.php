@@ -72,23 +72,17 @@
                     </label>
 
                     <div class="flex items-center gap-2">
-                        <input type="number" wire:model.live="rate_percentage" id="rate_percentage" min="0" max="100"
-                            onwheel="this.blur()" class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 
+                        <input type="number" wire:model="amount" id="amount" min="0" max="500000" onwheel="this.blur()"
+                            class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 
             focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 
             dark:text-white dark:placeholder-gray-400" placeholder="Ex. 10">
-                        <span class="text-sm">%</span>
                     </div>
 
-                    @error('rate_percentage')
+                    @error('amount')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
 
-                    @if(!is_null($this->adjustedRate))
-                        <p class="mt-1 text-sm text-green-700">
-                            New Rate:
-                            <strong>{{ number_format($this->adjustedRate, 2) }}</strong>
-                        </p>
-                    @endif
+
 
                 </div>
 

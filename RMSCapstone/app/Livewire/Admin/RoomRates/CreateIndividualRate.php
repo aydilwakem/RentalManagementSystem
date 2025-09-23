@@ -37,6 +37,7 @@ class CreateIndividualRate extends Component
         ]);
     }
 
+
     public function mount($roomId)
     {
         $this->roomId = (int) $roomId;
@@ -46,24 +47,18 @@ class CreateIndividualRate extends Component
         $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
     }
 
-    public function getAdjustedRateProperty()
-    {
-        if (is_numeric($this->rate_percentage)) {
-            return $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
-        }
-        return null;
-    }
-
     public function saveIndividualRoomRate()
     {
+
+
         // Validate the form input
         $this->validate([
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'rate_percentage' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|string',
             'rate_type' => 'required|in:Weekdays,Weekend,Holiday,Peak',
+            'amount' => 'required|numeric|min:100|max:500000.00',
             'freebies' => 'nullable|boolean',
             'priority' => 'nullable|integer|min:1|max:10',
             'is_active' => 'required|boolean',
@@ -71,14 +66,12 @@ class CreateIndividualRate extends Component
             'max_stay_nights' => 'nullable|integer|min:1|max:90',
         ]);
 
-        $adjustedAmount = $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
-
         RoomRate::create([
             'name' => $this->name,
             'property_id' => $this->roomId,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'amount' => $adjustedAmount,
+            'amount' => $this->amount,
             'rate_type' => $this->rate_type,
             'description' => $this->description,
             'freebies' => (bool) $this->freebies,

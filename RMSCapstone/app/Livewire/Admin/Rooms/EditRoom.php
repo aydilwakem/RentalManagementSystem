@@ -49,6 +49,7 @@ class EditRoom extends Component
     public $roomId;
     public $amenities;
     public $freebies = false;
+    public $description;
 
     //For beds
     public $bed_ids = [];
@@ -92,6 +93,7 @@ class EditRoom extends Component
         $this->extra_charge_per_hour = $room->extra_charge_per_hour;
         $this->features = PropertyFeature::all();
         $this->occupancy_type = $room->occupancy_type;
+        $this->description = $room->description;
 
         $this->selectedFeatures = $room->features()->pluck('property_features.id')->toArray();
         $this->freebies = (bool) $room->freebies;
@@ -311,6 +313,7 @@ class EditRoom extends Component
             'image' => $this->image,
             'images' => $finalImagePaths,
             'freebies' => (bool) $this->freebies,
+            'description' => $this->description,
             'occupancy_rules' => $this->occupancy_type === 'combinations' ? $finalOccupancy : null,
             'max_guests' => $this->occupancy_type === 'whole_number' ? $this->max_guests : null,
         ]);
@@ -345,7 +348,7 @@ class EditRoom extends Component
                 'required',
                 'string',
                 'max:100',
-                'regex:/^[A-Za-z\s\-]+$/',
+                'regex:/^[A-Za-z0-9\s\-]+$/',
                 Rule::unique('properties', 'name_number')
                     ->ignore($this->roomId)
                     ->where(function ($query) {
@@ -368,6 +371,7 @@ class EditRoom extends Component
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
             'freebies' => 'nullable|boolean',
+            'description' => 'nullable|string|max:1000',
 
             //For bed validation
             'bed_type.*' => 'required|in:single,double,queen,king,sofa_bed,single with pull-out',
