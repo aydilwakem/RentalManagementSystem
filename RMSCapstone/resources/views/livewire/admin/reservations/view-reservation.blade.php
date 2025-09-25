@@ -885,53 +885,48 @@
                                     </span>
                                 </td> --}}
                                 {{-- Activity Actions --}}
-                                <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
-                                    @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
+                               <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
 
+    @if ($item['type'] == 'property')
+        <button wire:click="editRoom({{ $property->pivot->id }})"
+            class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+            title="Edit">
+            <i class="fas fa-edit"></i>
+        </button>
 
-                                    @if ($item['type'] == 'property')
+        <!-- Add Another Guest Button -->
+        <button wire:click="addGuest({{ $property->pivot->id }})"
+            class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
+            title="Add Another Guest">
+            <i class="fas fa-user-plus"></i>
+        </button>
+    @else
+        <button wire:click="
+            @if ($item['type'] === 'activity')
+                editActivity({{ $item['pivot_id'] }})
+            @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
+                editExtraHour({{ $item['pivot_id'] }})
+            @elseif ($item['type'] === 'service')
+                editService({{ $item['pivot_id'] }})
+            @endif
+        "
+        class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+        title="Edit">
+            <i class="fas fa-edit"></i>
+        </button>
 
-                                    <button wire:click="editRoom({{ $property->pivot->id }})"
-                                        class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
-                                        title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+        <button wire:click="
+            @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
+            @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
+        "
+        class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
+        title="Delete">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    @endif
 
-                                    <!-- Add Another Guest Button -->
-                                    <button wire:click="addGuest({{ $property->pivot->id }})"
-                                        class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
-                                        title="Add Another Guest">
-                                        <i class="fas fa-user-plus"></i>
-                                    </button>
-                                    @else
-
-                                    <button wire:click="
-                                                        @if ($item['type'] === 'activity')
-                                                            editActivity({{ $item['pivot_id'] }})
-                                                        @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
-                                                            editExtraHour({{ $item['pivot_id'] }})
-                                                        @elseif ($item['type'] === 'service')
-                                                            editService({{ $item['pivot_id'] }})
-                                                        @endif
-                                                    "
-                                        class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
-                                        title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-
-                                    <button wire:click="
-                                                            @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
-                                                            @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
-                                                        "
-                                        class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
-                                        title="Delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    @endif
-                                    @else
-                                    <span class="text-gray-400 italic"><i class="fas fa-lock mr-1"></i></span>
-                                    @endif
-                                </td>
+</td>
+ 
                             </tr>
 
                             @if ($item['type'] === 'property' && $item['extra_guest'] > 0)
