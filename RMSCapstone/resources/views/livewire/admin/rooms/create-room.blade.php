@@ -156,7 +156,7 @@
                                     <span class="text-red-500">*</span></label>
                                 <input type="number" wire:model="max_guests" id="max_guests" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                                                                                                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                                                                                                                                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                     placeholder="Ex. 2" onwheel="this.blur()" />
                                 @error('max_guests')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -335,7 +335,6 @@
                         </div>
                     </div>
 
-
                     <!-- Image Upload -->
                     <div class="mb-4 col-span-2">
                         <label for="newImageInput"
@@ -425,6 +424,21 @@
                             <span>Uploading...</span>
                         </div>
                     </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Description
+                        </label>
+                        <textarea wire:model="description" id="description" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Enter description here..."></textarea>
+                        @error('description')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
 
                 </div>
 

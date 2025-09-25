@@ -176,11 +176,12 @@
 
 
         <div class="intro-text">
-            <strong style="font-size: 16px;">Prefer to pay manually?</strong><br>
-            You may use any of the following options and upload your screenshot or deposit slip as proof of payment
-            through the link below:
+            <strong>Having trouble completing your payment online?</strong><br>
+            You may use any of the following payment method options listed in the attached PDF and upload your receipt
+            or deposit slip as proof
+            of payment.
             <br>
-            <a href="https://larabelles-rms.com/guest/proof-of-payment-page" target="_blank"
+            <a href="https://canopyfarmph.com/guest/proof-of-payment-page" target="_blank"
                 style="color: #007bff; text-decoration: underline;">
                 Upload Proof of Payment
             </a>:

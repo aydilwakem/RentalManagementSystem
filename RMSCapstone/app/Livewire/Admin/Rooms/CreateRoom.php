@@ -46,6 +46,7 @@ class CreateRoom extends Component
     //For pivot beds
     public $bed_type = [];
     public $bed_quantity = [];
+    public $description;
 
     public function confirmCreate()
     {
@@ -189,6 +190,7 @@ class CreateRoom extends Component
             'images' => $allStoredImagePaths,
             'occupancy_rules' => $finalOccupancy,
             'freebies' => (bool) $this->freebies,
+            'description' => $this->description,
         ]);
 
         //Table for beds
@@ -206,7 +208,7 @@ class CreateRoom extends Component
             $room->features()->attach($this->selectedFeatures);
         }
 
-        $this->reset(['name_number', 'property_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'max_guests', 'occupancy_type', 'turnover_duration', 'property_status', 'amount', 'extra_person_charge', 'extra_charge_per_hour', 'image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'selectedFeatures', 'occupancy_rules', 'freebies']);
+        $this->reset(['name_number', 'property_category_id', 'ideal_guest', 'max_adults', 'max_kids', 'max_guests', 'occupancy_type', 'turnover_duration', 'property_status', 'amount', 'extra_person_charge', 'extra_charge_per_hour', 'image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths', 'selectedFeatures', 'occupancy_rules', 'freebies', 'description']);
 
         session()->flash('message', 'Room successfully created!');
         return redirect()->route('admin.rooms');
@@ -219,7 +221,7 @@ class CreateRoom extends Component
                 'required',
                 'string',
                 'max:100',
-                'regex:/^[A-Za-z\s\-]+$/',
+                'regex:/^[A-Za-z0-9\s\-,.()]+$/',
                 Rule::unique('properties', 'name_number')->where(function ($query) {
                     return $query->where('property_type_id', $this->property_type_id)->whereNull('deleted_at');
                 }),
@@ -240,6 +242,7 @@ class CreateRoom extends Component
             'selectedFeatures' => 'nullable|array',
             'selectedFeatures.*' => 'exists:property_features,id',
             'freebies' => 'nullable|boolean',
+            'description' => 'nullable|string|max:1000',
 
             //For bed validation
             'bed_type.*' => 'required|in:single,double,queen,king,sofa_bed,single with pull-out',

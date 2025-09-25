@@ -86,7 +86,7 @@ class EditIndividualRate extends Component
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'rate_percentage' => 'required|numeric|min:0|max:100',
+            'amount' => 'required|numeric|min:100|max:500000.00',
             'description' => 'nullable|string',
             'rate_type' => 'required|string|max:50',
             'priority' => 'nullable|integer|min:1|max:10',
@@ -102,14 +102,12 @@ class EditIndividualRate extends Component
             $this->$field = $this->$field === '' ? null : $this->$field;
         }
 
-        $adjustedAmount = $this->room->amount + ($this->room->amount * ($this->rate_percentage / 100));
-
         $this->roomRate->update([
             'property_id' => $this->room_id,
             'name' => $this->name,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'amount' => $adjustedAmount,
+            'amount' => $this->amount,
             'description' => $this->description,
             'rate_type' => $this->rate_type,
             'freebies' => (bool) $this->freebies,
