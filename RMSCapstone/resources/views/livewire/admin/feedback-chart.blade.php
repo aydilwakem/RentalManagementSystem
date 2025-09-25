@@ -260,10 +260,11 @@
                 {{ __('Cancel') }}
             </x-secondary-button>
 
-            <x-danger-button class="ms-3" wire:click="RemoveRatingType({{ $ratingType->id }})"
+            <x-danger-button class="ms-3" wire:click="RemoveRatingType"
                 wire:loading.attr="disabled">
                 {{ __('Delete Rating Category') }}
             </x-danger-button>
+
         </x-slot>
     </x-dialog-modal>
 </div>

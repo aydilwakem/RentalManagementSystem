@@ -379,8 +379,7 @@
                                         Category</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        Total Guests
-                                    </th>
+                                        Total Guests</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Ideal Guests</th>
@@ -389,8 +388,7 @@
                                         Extra Guests</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
-                                        Extra Guest Charge
-                                    </th>
+                                        Extra Guest Charge</th>
                                     <th
                                         class="border px-4 py-2 font-medium text-gray-900 text-center dark:text-gray-200 dark:border-gray-500">
                                         Stay Duration

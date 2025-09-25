@@ -44,7 +44,7 @@ class CreateIndividualRate extends Component
         $this->room = Property::findOrFail($this->roomId);
         $now = Carbon::now('Asia/Manila');
         $this->start_date = $now->copy()->startOfMonth()->format('Y-m-d');
-        $this->end_date = $now->copy()->endOfMonth()->format('Y-m-d');
+        $this->end_date = $now->copy()->endOfYear()->format('Y-m-d');
     }
 
     public function saveIndividualRoomRate()

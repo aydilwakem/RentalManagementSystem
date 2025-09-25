@@ -91,10 +91,25 @@
                 <div class="p-5 pb-3">
                     <!-- Property name and description -->
                     <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ $house->name_number }}</h2>
-                    @if (!empty($house->description))
+                    {{-- @if (!empty($house->description))
                         <p>{{ $house->description }}</p>
                     @else
                         <p>Rent Now!</p>
+                    @endif --}}
+                    @if (empty($house->description))
+                        <span class="text-gray-600">Rent Now!</span>
+                    @elseif ($expandedHouse === $house->id)
+                        {{ $house->description }}
+                        <a href="#" wire:click.prevent="toggleDescription({{ $house->id }})"
+                            class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                            less</a>
+                    @else
+                        {{ Str::limit($house->description, 120, '...') }}
+                        @if (Str::length($house->description) > 100)
+                            <a href="#" wire:click.prevent="toggleDescription({{ $house->id }})"
+                                class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                more</a>
+                        @endif
                     @endif
 
                     <!-- Address -->
