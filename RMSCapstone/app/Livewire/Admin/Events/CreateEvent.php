@@ -108,9 +108,9 @@ class CreateEvent extends Component
                 'middle_name' => 'nullable|string|max:100|regex:/^[A-Za-z\s\-]+$/',
                 'last_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
                 'email' => 'required|email|max:100',
-                'contact_number' => 'required|string|max:20|regex:/^[0-9]{11}$/',
+                'contact_number' => 'required|string|max:11|regex:/^[0-9]{11}$/',
                 'city_municipality' => 'nullable|string|max:100',
-                'company_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-]+$/',
+                'company_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-\/]+$/',
                 'country' => 'required|string|max:100',
 
                 // Transaction Fields
@@ -312,8 +312,8 @@ class CreateEvent extends Component
         $this->computeTotalPax();
     }
 
-    // Accepts input like "50,000"; 
-    // Removes the comma and space for integer values 
+    // Accepts input like "50,000";
+    // Removes the comma and space for integer values
     public function updatedTotalAmount($value)
     {
         $this->total_amount = str_replace(',', '', $value);

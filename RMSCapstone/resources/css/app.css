@@ -700,6 +700,28 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     font-weight: 500;
 }
 
+.room-reservation {
+    background-color: #20c997 !important;
+    color: white !important;
+    padding: 4px 8px !important;
+    border-radius: 0.375rem !important;
+    border: 2px solid #198754 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease-in-out !important;
+    font-weight: 500 !important;
+}
+
+.event-booking {
+    background-color: #fde68a !important;
+    color: #1f2937 !important;
+    padding: 4px 8px !important;
+    border-radius: 0.375rem !important;
+    border: 2px solid #facc15 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease-in-out !important;
+    font-weight: 500 !important;
+}
+
 .fc-event-text {
     white-space: nowrap;
     overflow: hidden;
@@ -713,10 +735,31 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     overflow: hidden;
 }
 
+.room-reservation:hover {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    cursor: pointer !important;
+}
+
+.event-booking:hover {
+    background-color: #facc15 !important;
+    border-color: #facc15 !important;
+    cursor: pointer !important;
+}
+
 .fc-event:hover {
     background-color: #198754;
     border-color: #198754;
     cursor: pointer;
+}
+
+
+.fc-event .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 100%;
 }
 
 .status-done {

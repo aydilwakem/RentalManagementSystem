@@ -16,28 +16,58 @@
         <div class="max-w-7xl mx-auto sm:px-6 space-y-6">
 
 
-            <!---------------------------- EXPORT DETAILS ---------------------------------------->
-            <x-button wire:click="exportReservationDetails">
-                <!-- Spinner -->
-                <span wire:loading wire:target="exportReservationDetails" class="mr-2">
-                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                        </path>
-                    </svg>
-                </span>
+            <div class="flex space-x-2">
+                <!---------------------------- EXPORT DETAILS ---------------------------------------->
+                <x-button wire:click="exportReservationDetails">
+                    <!-- Spinner -->
+                    <span wire:loading wire:target="exportReservationDetails" class="mr-2">
+                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                            </path>
+                        </svg>
+                    </span>
 
-                <i class="fas fa-file mr-2" wire:loading.remove wire:target="exportReservationDetails"></i>
+                    <i class="fas fa-file mr-2" wire:loading.remove wire:target="exportReservationDetails"></i>
 
-                <!-- Button Text -->
-                <span wire:loading.remove wire:target="exportReservationDetails">
-                    Export PDF
-                </span>
+                    <!-- Button Text -->
+                    <span wire:loading.remove wire:target="exportReservationDetails">
+                        Export PDF
+                    </span>
 
-            </x-button>
+                </x-button>
+
+                <!------------------------- GENERATE RECEIPT ---------------------------------->
+                @if ($transaction->transaction_status == 'done')
+                    <div>
+                        @if (is_null($transaction->invoice->receipt))
+                            <!-- Show this if receipt does NOT exist -->
+                            <x-button wire:click="GenerateReceipt" wire:loading.attr="disabled"
+                                wire:target="GenerateReceipt">
+
+                                <!-- Show spinner and text while loading -->
+                                <span wire:loading wire:target="GenerateReceipt" class=" items-center gap-2">
+                                    <span>Generating...</span>
+                                </span>
+
+                                <!-- Show default text when not loading -->
+                                <span wire:loading.remove wire:target="GenerateReceipt">
+                                    <i class="fas fa-receipt"></i>
+                                    Generate Acknowledgement Receipt
+                                </span>
+                            </x-button>
+                        @else
+                            <!-- Show this if receipt already exists -->
+                            <x-button wire:click="ShowReceipt" icon="fas fa-eye">
+                                View Receipt
+                            </x-button>
+                        @endif
+                    </div>
+                @endif
+            </div>
 
 
             <!---------------------------- GUEST DETAILS ---------------------------------------->
@@ -178,54 +208,45 @@
                             <strong>Transaction Status:</strong>
                             <div class="mt-1">
                                 @if ($transaction->transaction_status === 'pending')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
-                                    Payment</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
+                                        Payment</span>
                                 @elseif ($transaction->transaction_status === 'reserved')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
-                                    Verification</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
+                                        Verification</span>
                                 @elseif ($transaction->transaction_status === 'receipt_verified')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
-                                    Verified</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
+                                        Verified</span>
                                 @elseif ($transaction->transaction_status === 'confirmed')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
                                 @elseif ($transaction->transaction_status === 'ongoing')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going</span>
                                 @elseif ($transaction->transaction_status === 'done')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-600">Completed</span>
                                 @elseif ($transaction->transaction_status === 'no_show')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
-                                    Show</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
+                                        Show</span>
                                 @elseif ($transaction->transaction_status === 'terminated')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
                                 @elseif ($transaction->transaction_status === 'expired')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
                                 @elseif ($transaction->transaction_status === 'cancelled')
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
+                                    <span
+                                        class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
                                 @else
-                                {{ ucfirst($transaction->transaction_status) }}
+                                    {{ ucfirst($transaction->transaction_status) }}
                                 @endif
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
-                                    Free breakfast for {{$transaction->pax}}
-                                </span>
                             </div>
                         </div>
-
-
-
-
                     </div>
-
 
                     <div>
                         <strong>Transaction ID:</strong>
@@ -313,25 +334,30 @@
                         <div>{{ $transaction->reservation_source }}</div>
                     </div>
 
+                    <div>
+                        <strong>Free Breakfast Inclusion:</strong>
+                        <div>Free breakfast for {{ $transaction->pax }}</div>
+                    </div>
 
                     <div>
                         <strong>Requests:</strong>
 
-                        @if(!empty($transaction->requests))
-                        <div class="mt-2">
-                            <span class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                {{ Str::limit($transaction->requests, 50) }}
-                            </span>
+                        @if (!empty($transaction->requests))
+                            <div class="mt-2">
+                                <span
+                                    class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
+                                    {{ Str::limit($transaction->requests, 50) }}
+                                </span>
 
-                            <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
-                                View & Reply
-                            </x-button>
+                                <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
+                                    View & Reply
+                                </x-button>
 
-                        </div>
+                            </div>
                         @else
-                        <div class="text-gray-500 italic mt-2">
-                            No requests.
-                        </div>
+                            <div class="text-gray-500 italic mt-2">
+                                No requests.
+                            </div>
                         @endif
                     </div>
 
@@ -339,23 +365,23 @@
                         <strong>Vouchers:</strong>
 
                         @if ($transaction->vouchers->count())
-                        <div class="mt-2 flex flex-wrap items-center gap-2">
-                            @foreach ($transaction->vouchers as $voucher)
-                            <div
-                                class="flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                <span>
-                                    {{ ucfirst(strtolower($voucher->voucher_type)) }}: ₱{{
-                                    number_format($voucher->voucher_amount, 2) }}
-                                </span>
-                                <button wire:click="deleteVoucher({{ $voucher->id }})"
-                                    class="text-red-500 hover:text-red-700 ml-2">
-                                    &times;
-                                </button>
+                            <div class="mt-2 flex flex-wrap items-center gap-2">
+                                @foreach ($transaction->vouchers as $voucher)
+                                    <div
+                                        class="flex items-center bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
+                                        <span>
+                                            {{ ucfirst(strtolower($voucher->voucher_type)) }}:
+                                            ₱{{ number_format($voucher->voucher_amount, 2) }}
+                                        </span>
+                                        <button wire:click="deleteVoucher({{ $voucher->id }})"
+                                            class="text-red-500 hover:text-red-700 ml-2">
+                                            &times;
+                                        </button>
+                                    </div>
+                                @endforeach
                             </div>
-                            @endforeach
-                        </div>
                         @else
-                        <div class="text-gray-500 italic mt-2">No vouchers.</div>
+                            <div class="text-gray-500 italic mt-2">No vouchers.</div>
                         @endif
 
                         <div class="mt-2">
@@ -437,44 +463,44 @@
                                                 , {{ $property->pivot->kids }} Kid(s)
                                             @endif
 
-                                    @if ($property->pivot->non_chargeable_guests)
-                                    @if ($property->pivot->kids)
-                                    ,
-                                    @endif
-                                    {{ $property->pivot->non_chargeable_guests }} Infant(s)
-                                    @endif
-                                </td>
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                    {{ (($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0)) -
-                                    ($property->pivot->extra_guest ?? 0) }}</td>
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                    {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
-                                {{-- <td
+                                            @if ($property->pivot->non_chargeable_guests)
+                                                @if ($property->pivot->kids)
+                                                    ,
+                                                @endif
+                                                {{ $property->pivot->non_chargeable_guests }} Infant(s)
+                                            @endif
+                                        </td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) - ($property->pivot->extra_guest ?? 0) }}
+                                        </td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            {{ $property->pivot->extra_guest ?? 'N/A' }}</td>
+                                        {{-- <td
                                     class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                     ₱{{ number_format($property->pivot->extra_charge ?? 0, 2) }}</td> --}}
-                                @if(($property->pivot->extra_guest ?? 0) > 0)
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                    ₱{{ number_format($property->pivot->extra_charge, 2) }}
-                                </td>
-                                @else
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-400 dark:border-gray-500">
-                                    ₱0.00
-                                </td>
-                                @endif
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                    {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
-                                    ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
-                                <td
-                                    class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
-                                    ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
-                                {{-- <td
+                                        @if (($property->pivot->extra_guest ?? 0) > 0)
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                                ₱{{ number_format($property->pivot->extra_charge, 2) }}
+                                            </td>
+                                        @else
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 text-center dark:text-gray-400 dark:border-gray-500">
+                                                ₱0.00
+                                            </td>
+                                        @endif
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
+                                            {{ $property->pivot->days ?? 'N/A' }} day(s)</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right dark:text-gray-200 dark:border-gray-500">
+                                            ₱{{ number_format($property->pivot->amount ?? 0, 2) }}</td>
+                                        <td
+                                            class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
+                                            ₱{{ number_format($property->pivot->total_amount ?? 0, 2) }}</td>
+                                        {{-- <td
                                     class="border px-4 py-2 text-gray-700 text-right font-semibold dark:text-gray-200 dark:border-gray-500">
                                     <button wire:click="editRoom({{ $property->pivot->id }})"
                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
@@ -727,10 +753,7 @@
                         <div>
                             <div><strong>Due Date:</strong></div>
                             <div>
-                                {{ $invoice->due_date
-                                    ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y')
-                                    : 'Not
-                                                                                            yet set' }}
+                                {{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') : 'Not yet set' }}
                             </div>
                         </div>
 
@@ -1194,38 +1217,6 @@
             <!------------------------  END OF INVOICE ----------------------------------------->
 
 
-
-
-            <!------------------------- GENERATE RECEIPT ---------------------------------->
-            @if ($transaction->transaction_status == 'done')
-                <div>
-                    @if (is_null($transaction->invoice->receipt))
-                        <!-- Show this if receipt does NOT exist -->
-                        <x-button wire:click="GenerateReceipt" wire:loading.attr="disabled"
-                            wire:target="GenerateReceipt">
-
-                            <!-- Show spinner and text while loading -->
-                            <span wire:loading wire:target="GenerateReceipt" class=" items-center gap-2">
-                                <span>Generating...</span>
-                            </span>
-
-                            <!-- Show default text when not loading -->
-                            <span wire:loading.remove wire:target="GenerateReceipt">
-                                <i class="fas fa-receipt"></i>
-                                Generate Official Receipt
-                            </span>
-                        </x-button>
-                    @else
-                        <!-- Show this if receipt already exists -->
-                        <x-button wire:click="ShowReceipt" icon="fas fa-eye">
-                            View Receipt
-                        </x-button>
-                    @endif
-                </div>
-            @endif
-            <!---------------------- END OF GENERATE RECEIPT ------------------------------>
-
-
             <!----------------------------- PAYMENTS -------------------------------------->
             <section id="payments">
                 <div
@@ -1379,116 +1370,140 @@
 
             <!-- Show Receipt Modal -->
             @if ($showReceiptModal && $receipt)
-                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden dark:bg-gray-800">
                         <!-- Header -->
-                        <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
-                            <h2 class="text-2xl font-semibold text-gray-800">Acknowledgement Receipt</h2>
+                        <div
+                            class="bg-green-50 flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-900 dark:border-gray-700">
+                            <h2 class="text-xl font-bold tracking-wide text-green-700 dark:text-green-300">
+                                Acknowledgment Receipt
+                            </h2>
                             <button wire:click="$set('showReceiptModal', false)"
-                                class="flex items-center justify-center w-7 h-7 rounded-full bg-gray-200 text-gray-600 hover:bg-red-100 hover:text-red-600 transition duration-200 text-2xl ">
-                                <span class="leading-none translate-y-[-3px]">&times;</span>
+                                class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-red-100 hover:text-red-600 transition duration-200 text-xl"
+                                title="Close">
+                                &times;
                             </button>
-
                         </div>
 
-                        {{-- Display Session Message --}}
+                        <!-- Session Alert -->
                         @if (session('message'))
                             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-md
+                                {{ session('alert-type') === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
                                 {{ session('message') }}
                             </div>
                         @endif
 
-                        <!-- Content -->
-                        <div class="px-6 py-5 space-y-4 text-gray-700 text-sm">
-                            <div class="flex justify-between">
-                                <span class="font-semibold">Receipt Number:</span>
-                                <span class="text-gray-900">{{ $receipt->receipt_number }}</span>
+                        <!-- Receipt Details -->
+                        <div class="p-6 space-y-4 text-gray-700 text-sm">
+                            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <div class="flex justify-between py-2">
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">Receipt Number</span>
+                                    <span class="font-semibold text-gray-900">{{ $receipt->receipt_number }}</span>
+                                </div>
+
+                                <div class="flex justify-between py-2">
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">Receipt Date</span>
+                                    <span class="text-gray-900">{{ $receipt->receipt_date->format('F d, Y') }}</span>
+                                </div>
+
+                                <div class="flex justify-between py-2">
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">Invoice Number</span>
+                                    <span class="text-gray-900">{{ $invoice->invoice_number }}</span>
+                                </div>
+
+                                <div class="flex justify-between py-2">
+                                    <span class="font-semibold text-gray-800 dark:text-gray-100">Guest</span>
+                                    <span class="text-gray-900">
+                                        {{ $transaction->transactionUser->first_name ?? 'N/A' }}
+                                        {{ $transaction->transactionUser->last_name ?? '' }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-semibold">Receipt Date:</span>
-                                <span class="text-gray-900">{{ $receipt->receipt_date->format('F d, Y') }}</span>
+
+                            <!-- Payment Summary Table -->
+                            <div class="mt-6">
+                                <h2 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">Payment Summary:</h2>
+                                <div class="border border-gray-300 rounded-lg overflow-hidden text-sm">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-100 dark:bg-gray-700">
+                                            <tr>
+                                                <th class="text-left px-4 py-2 font-medium">Description</th>
+                                                <th class="text-right px-4 py-2 font-medium">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="px-4 py-2">Amount Received</td>
+                                                <td class="px-4 py-2 text-right font-semibold text-green-700">
+                                                    ₱{{ number_format($receipt->amount_received, 2) }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-semibold">Invoice Number:</span>
-                                <span class="text-gray-900">{{ $invoice->invoice_number }}</span>
+
+                            <!-- Notes Section -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                                <span class="block font-medium text-gray-800 dark:text-gray-300 mb-1">Notes</span>
+                                <p class="text-gray-600 dark:text-gray-400 italic text-sm">
+                                    {{ $receipt->notes ?? 'None' }}
+                                </p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-semibold">Guest:</span>
-                                <span class="text-gray-900">
-                                    {{ $transaction->transactionUser->first_name ?? 'N/A' }}
-                                    {{ $transaction->transactionUser->last_name ?? '' }}
-                                </span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="font-semibold">Amount Received:</span>
-                                <span
-                                    class="text-green-600 font-semibold">₱{{ number_format($receipt->amount_received, 2) }}</span>
-                            </div>
-                            <div>
-                                <span class="font-semibold">Notes:</span>
-                                <p class="mt-1 text-gray-600 italic">{{ $receipt->notes ?? 'None' }}</p>
+
+                            <!-- Footer Text -->
+                            <div class="text-center text-xs text-gray-500 dark:text-gray-400">
+                                <p>This receipt acknowledges payment for the specified invoice.</p>
+                                <p class="mt-1">Generated on {{ $receipt->created_at->format('F d, Y h:i A') }}</p>
                             </div>
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-200">
-
-                            <!-- Print Receipt Button -->
+                        <div
+                            class="flex items-center justify-between gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                            <!-- Print Receipt -->
                             <x-button wire:click="printOfficialReceipt" wire:loading.attr="disabled">
-                                <div class="flex items-center justify-center">
-                                    <!-- Spinner -->
-                                    <span wire:loading class="mr-2" wire:target="printOfficialReceipt">
+                                <div class="flex items-center">
+                                    <span wire:loading wire:target="printOfficialReceipt" class="mr-2">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4">
-                                            </circle>
+                                                stroke="currentColor" stroke-width="4" />
                                             <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                            </path>
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                         </svg>
                                     </span>
-
                                     <i class="fas fa-print mr-2" wire:loading.remove
                                         wire:target="printOfficialReceipt"></i>
-
-                                    <!-- Button Text -->
                                     <span wire:loading.remove wire:target="printOfficialReceipt">
                                         Print Receipt
                                     </span>
                                 </div>
                             </x-button>
 
-                            <!-- Send to Email Button -->
+                            <!-- Send Email -->
                             <x-warning-button wire:click="sendReceiptToEmail" wire:loading.attr="disabled">
-                                <div class="flex items-center justify-center">
-                                    <!-- Spinner -->
-                                    <span wire:loading class="mr-2" wire:target="sendReceiptToEmail">
+                                <div class="flex items-center">
+                                    <span wire:loading wire:target="sendReceiptToEmail" class="mr-2">
                                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4">
-                                            </circle>
+                                                stroke="currentColor" stroke-width="4" />
                                             <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                            </path>
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                                         </svg>
                                     </span>
-
                                     <i class="fas fa-envelope mr-2" wire:loading.remove
                                         wire:target="sendReceiptToEmail"></i>
-
-                                    <!-- Button Text -->
                                     <span wire:loading.remove wire:target="sendReceiptToEmail">
                                         Send to Email
                                     </span>
                                 </div>
                             </x-warning-button>
-
                         </div>
-
                     </div>
                 </div>
+
             @endif
 
             <!-- Cannot Generate Receipt -->
@@ -2140,22 +2155,23 @@
                         </div>
 
 
-                    <!-- Guest Type -->
-                    <div class="mt-4">
-                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
-                            Guest Type <span class="text-red-500">*</span>
-                        </label>
-                        <select wire:model.defer="guest.guest_type_id" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                        <!-- Guest Type -->
+                        <div class="mt-4">
+                            <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">
+                                Guest Type <span class="text-red-500">*</span>
+                            </label>
+                            <select wire:model.defer="guest.guest_type_id"
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
-                            <option value="">Select Guest Type</option>
-                            @foreach ($guestTypes as $type)
-                            <option value="{{ $type->id }}">{{ $type->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('guest.guest_type_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                                <option value="">Select Guest Type</option>
+                                @foreach ($guestTypes as $type)
+                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('guest.guest_type_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
 
 
                         <!-- Gender -->
@@ -2226,19 +2242,19 @@
                                         </svg>
                                     </span>
 
-                                <!-- Button Text -->
-                                <span wire:loading.remove wire:target="saveGuest">
-                                    Add Guest
-                                </span>
+                                    <!-- Button Text -->
+                                    <span wire:loading.remove wire:target="saveGuest">
+                                        Add Guest
+                                    </span>
 
 
-                            </div>
-                        </x-button>
+                                </div>
+                            </x-button>
+                        </div>
+
+
+
                     </div>
-
-
-
-                </div>
             @endif
 
             <!-- Add Pet Modal -->
@@ -2325,52 +2341,56 @@
 
             {{-- Add Voucher Modal --}}
             @if ($activeModal === 'voucher')
-            <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div
-                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-
-                    {{-- Header --}}
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div
-                        class="relative -mt-6 -mx-6 mb-6 bg-blue-50 text-blue-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-blue-300">
-                        <h2 class="text-2xl font-bold text-center">Add Voucher</h2>
-                        <button wire:click="closeModal"
-                            class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                            <span class="-translate-y-[2px]">&times;</span>
-                        </button>
-                    </div>
+                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
 
-                    {{-- Form Fields --}}
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block font-medium mb-1">Voucher Type</label>
-                            <select wire:model="voucher_type"
-                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                                <option value="">-- Select Type --</option>
-                                <option value="Food">Food</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            @error('voucher_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        {{-- Header --}}
+                        <div
+                            class="relative -mt-6 -mx-6 mb-6 bg-blue-50 text-blue-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-blue-300">
+                            <h2 class="text-2xl font-bold text-center">Add Voucher</h2>
+                            <button wire:click="closeModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
                         </div>
 
-                        <div>
-                            <label class="block font-medium mb-1">Voucher Amount</label>
-                            <input type="number" min="0" step="0.01" wire:model="voucher_amount"
-                                class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            @error('voucher_amount') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
+                        {{-- Form Fields --}}
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-medium mb-1">Voucher Type</label>
+                                <select wire:model="voucher_type"
+                                    class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <option value="">-- Select Type --</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                @error('voucher_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                    {{-- Actions --}}
-                    <div class="flex justify-between mt-6">
-                        <x-ghost-button wire:click="closeModal">
-                            Cancel
-                        </x-ghost-button>
-                        <x-button wire:click="saveVoucher">
-                            Save Voucher
-                        </x-button>
+                            <div>
+                                <label class="block font-medium mb-1">Voucher Amount</label>
+                                <input type="number" min="0" step="0.01" wire:model="voucher_amount"
+                                    class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                                @error('voucher_amount')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="flex justify-between mt-6">
+                            <x-ghost-button wire:click="closeModal">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button wire:click="saveVoucher">
+                                Save Voucher
+                            </x-button>
+                        </div>
                     </div>
                 </div>
-            </div>
             @endif
 
 
@@ -3336,7 +3356,7 @@
 
 
 
-    {{-- <h2><strong>PAYMENT DETAILS:</strong></h2>
+{{-- <h2><strong>PAYMENT DETAILS:</strong></h2>
     @if ($payments->isNotEmpty())
     <table class="table-auto w-full border-collapse">
         <thead>
@@ -3354,7 +3374,7 @@
                 <td class="border px-4 py-2">{{ $payment->invoice_id }}</td>
                 <td class="border px-4 py-2">
                     {{-- Display the payment screenshot as an image --}}
-                    {{-- @if ($payment->payment_screenshot)
+{{-- @if ($payment->payment_screenshot)
                     <img src="{{ asset('storage/' . $payment->payment_screenshot) }}" alt="Payment Screenshot"
                         style="max-width: 200px; max-height: 200px;">
                     @else
@@ -3372,7 +3392,7 @@
 
 
 
-    {{--
+{{--
     @if ($activityInCart)
 
     <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
@@ -3409,8 +3429,8 @@
 
 
 
-    <!-- Add Guest Modal -->
-    {{-- @if ($activeModal === 'guest-info')
+<!-- Add Guest Modal -->
+{{-- @if ($activeModal === 'guest-info')
     <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
         <div
             class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
@@ -3510,7 +3530,7 @@
                 @enderror
             </div>
 
-            @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category']==='Kid-Free' )
+            @if (isset($guest['age'], $guest['category']) && $guest['age'] <= 2 && $guest['category'] === 'Kid-Free')
                 <span class="text-sm text-gray-500">(Free of charge)</span>
                 @endif
 
@@ -3590,7 +3610,7 @@
     @endif --}}
 
 
-    {{-- @if ($isFull)
+{{-- @if ($isFull)
     <!-- Fill Reserved Guest Info (non-billable) -->
     <x-button wire:click="openModal('guest-info')" icon="fas fa-id-card">
         Fill Guest Info

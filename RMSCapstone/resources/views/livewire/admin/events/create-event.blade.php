@@ -43,7 +43,7 @@
                                 <input type="text" wire:model="first_name" placeholder="Ex. Juan" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('first_name')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -54,7 +54,7 @@
                                 <input type="text" wire:model="middle_name" placeholder="Ex. Mercado"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('middle_name')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -65,7 +65,7 @@
                                 <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz" required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('last_name')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                                     placeholder="Ex. juan.delacruz@example.com"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('email')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -87,10 +87,12 @@
                                 <label for="contact_number"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact
                                     Number <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="contact_number" required placeholder="Ex. 0912 3456 7890"
+                                <input type="tel" wire:model="contact_number" required inputmode="numeric" maxlength="11"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    placeholder="Ex. 0912 3456 7890"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('contact_number')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -102,7 +104,7 @@
                                     placeholder="Ex. Event Management Inc."
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('company_name')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -119,44 +121,44 @@
                                     <option value="Other">Other</option>
                                 </select>
                                 @error('country')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             {{-- Show only when "Other" is selected --}}
-                            @if($country === 'Other')
-                            <div>
-                                <label for="otherCountry"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Please specify your country <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" wire:model="country" placeholder="Enter your country"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                            @if ($country === 'Other')
+                                <div>
+                                    <label for="otherCountry"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Please specify your country <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="country" placeholder="Enter your country"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
 
-                                @error('country')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                                    @error('country')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             @endif
 
                             @if ($country === 'Philippines')
-                            <div>
-                                <label for="city_municipality"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
-                                    Municipality <span class="text-red-500">*</span></label>
-                                <select id="city_municipality" wire:model="city_municipality" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                    <option value="">Select Municipality</option>
-                                    @foreach ($municipalities as $municipality)
-                                    <option value="{{ $municipality->PSGC_MUNC_DESC }}">
-                                        {{ $municipality->PSGC_MUNC_DESC }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                @error('city_municipality')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                                <div>
+                                    <label for="city_municipality"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
+                                        Municipality <span class="text-red-500">*</span></label>
+                                    <select id="city_municipality" wire:model="city_municipality" required
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                        <option value="">Select Municipality</option>
+                                        @foreach ($municipalities as $municipality)
+                                            <option value="{{ $municipality->PSGC_MUNC_DESC }}">
+                                                {{ $municipality->PSGC_MUNC_DESC }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('city_municipality')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             @endif
 
                         </div>
@@ -175,7 +177,7 @@
                                     required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('start_datetime')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -184,10 +186,11 @@
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event End
                                     Date and Time <span class="text-red-500">*</span>
                                 </label>
-                                <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime" required
+                                <input type="datetime-local" wire:model.live="end_datetime" id="end_datetime"
+                                    required
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('end_datetime')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -199,15 +202,16 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Event Hall</option>
                                     @foreach ($halls as $hall)
-                                    <option value="{{ $hall->id }}" @if ($hall->isBooked) disabled @endif>
-                                        {{ $hall->name_number }} - {{ $hall->capacity }} Pax Capacity @if ($hall->isBooked)
-                                        - (Booked)
-                                        @endif
-                                    </option>
+                                        <option value="{{ $hall->id }}"
+                                            @if ($hall->isBooked) disabled @endif>
+                                            {{ $hall->name_number }} - {{ $hall->capacity }} Pax Capacity @if ($hall->isBooked)
+                                                - (Booked)
+                                            @endif
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('selected_hall')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -219,11 +223,11 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">Select Event Type</option>
                                     @foreach ($eventTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('event_type_id')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -233,11 +237,11 @@
                                 <label for="total_adults"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                                     Adults <span class="text-red-500">*</span></label>
-                                <input type="number" wire:model.live="total_adults" id="total_adults" min="0"
-                                    onwheel="this.blur()" required placeholder="Ex. 100 Adults"
+                                <input type="number" wire:model.live="total_adults" id="total_adults"
+                                    min="0" onwheel="this.blur()" required placeholder="Ex. 100 Adults"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('total_adults')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -245,11 +249,11 @@
                                 <label for="total_kids"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                                     Kids </label>
-                                <input type="number" wire:model.live="total_kids" id="total_kids" onwheel="this.blur()"
-                                    placeholder="Ex. 50 Kids"
+                                <input type="number" wire:model.live="total_kids" id="total_kids"
+                                    onwheel="this.blur()" placeholder="Ex. 50 Kids"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('total_kids')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -257,10 +261,12 @@
                                 <label for="pax"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total
                                     Pax <span class="text-red-500">*</span></label>
-                                <input type="number" id="pax" min="0" disabled value="{{ $pax }}" class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
+                                <input type="number" id="pax" min="0" disabled
+                                    value="{{ $pax }}"
+                                    class="bg-gray-50 border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 cursor-not-allowed
                              dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 @error('pax')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -281,7 +287,7 @@
                                     <option value="terminated">Terminated</option>
                                 </select>
                                 @error('transaction_status')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
 
@@ -289,11 +295,12 @@
                                 <label for="total_amount"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Agreed Event
                                     Cost <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="total_amount" id="total_amount" required class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
+                                <input type="text" wire:model="total_amount" id="total_amount" required
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
                                     dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                     placeholder="Ex. 50,000.00">
                                 @error('total_amount')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
