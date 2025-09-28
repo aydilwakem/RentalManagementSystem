@@ -594,6 +594,23 @@
                     //     const fullNumber = iti.getNumber();
                     //     console.log(fullNumber); // e.g. +639951189968
                     // });
+
+                    function toggleRateBreakdown(roomId) {
+                        const breakdown = document.getElementById('rate-breakdown-' + roomId);
+                        const arrow = document.getElementById('breakdown-arrow-' + roomId);
+                        
+                        if (breakdown.classList.contains('hidden')) {
+                            breakdown.classList.remove('hidden');
+                            arrow.classList.remove('fa-chevron-down');
+                            arrow.classList.add('fa-chevron-up');
+                        } else {
+                            breakdown.classList.add('hidden');
+                            arrow.classList.remove('fa-chevron-up');
+                            arrow.classList.add('fa-chevron-down');
+                        }
+                    }
+
+
                 </script>
 
 
@@ -842,108 +859,197 @@
                                         class="bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-6 dark:bg-gray-500 dark:border-gray-400">
                                         <div class="flex flex-col md:flex-row md:space-x-6">
 
-                                            <!-- Room Info -->
-                                            <div class="md:w-2/3 space-y-2">
-                                                <h4 class="text-xl font-semibold text-gray-800 dark:text-white">
-                                                    {{ ucfirst($room->name_number) }}</h4>
+<!-- Room Info -->
+<div class="md:w-2/3">
+    <h4 class="text-2xl font-semibold mb-2">{{ ucfirst($room->name_number) }}</h4>
 
-                                                <p
-                                                    class="tblock text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                                                    <i class="fas fa-user mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                    Ideal Guests:
-                                                    {{ $room->ideal_guest }}
-                                                </p>
+    <p class="text-base font-normal text-gray-700">
+        <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
+    </p>
 
-                                                @if ($room->occupancy_type === 'whole_number')
-                                                    <p
-                                                        class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                                                        <i
-                                                            class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                        Maximum Capacity: {{ $room->max_guests }} Guests
-                                                    </p>
-                                                @elseif ($room->occupancy_type === 'combinations')
-                                                    @php
-                                                        $originalCombinations = collect($room->occupancy_rules)->where(
-                                                            'type',
-                                                            'original',
-                                                        );
+    @if ($room->occupancy_type === 'whole_number')
+        <p class="text-base font-normal text-gray-700">
+            <i class="fas fa-users mr-2"></i>
+            Maximum Capacity: {{ $room->max_guests }} guests
+        </p>
+    @elseif ($room->occupancy_type === 'combinations')
+        @php
+            $originalCombinations = collect($room->occupancy_rules)->where('type', 'original');
+            $formatted = $originalCombinations->map(function ($combo) {
+                $parts = [];
+                if (!empty($combo['adults'])) {
+                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                }
+                if (!empty($combo['kids'])) {
+                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                }
+                return implode(' and ', $parts);
+            });
+        @endphp
 
-                                                        $formatted = $originalCombinations->map(function ($combo) {
-                                                            $parts = [];
+        @if ($formatted->isNotEmpty())
+            <p class="text-base font-normal text-gray-700">
+                <i class="fas fa-users mr-2"></i>
+                Max occupancy: {{ $formatted->implode(' or ') }}
+            </p>
+        @endif
+    @endif
 
-                                                            if (!empty($combo['adults'])) {
-                                                                $parts[] =
-                                                                    $combo['adults'] .
-                                                                    ' adult' .
-                                                                    ($combo['adults'] > 1 ? 's' : '');
-                                                            }
+    <p class="text-base font-normal text-gray-700">
+        <i class="fas fa-plus mr-2"></i> Extra Person Charge:
+        ₱{{ number_format($room->extra_person_charge, 2) }}
+    </p>
 
-                                                            if (!empty($combo['kids'])) {
-                                                                $parts[] =
-                                                                    $combo['kids'] .
-                                                                    ' kid' .
-                                                                    ($combo['kids'] > 1 ? 's' : '');
-                                                            }
+    @if ($room->freebies)
+        <p class="text-base font-normal text-gray-700">
+            <i class="fas fa-utensils mr-2"></i> Free breakfast included
+        </p>
+    @endif
 
-                                                            return implode(' and ', $parts);
-                                                        });
-                                                    @endphp
+    <p class="text-sm italic text-gray-500 mt-1">{{ $room->description }}</p>
 
-                                                    @if ($formatted->isNotEmpty())
-                                                        <p
-                                                            class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                                                            <i
-                                                                class="fas fa-users mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                            Max Occupancy: {{ $formatted->implode(' / ') }}
-                                                        </p>
-                                                    @endif
-                                                @endif
+    <p class="text-sm italic text-gray-500 mt-1">Children 2 years old and below are free of charge.</p>
 
-                                                <p
-                                                    class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                                                    <i class="fas fa-plus mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                    Extra Person Charge:
-                                                    ₱{{ number_format($room->extra_person_charge, 2) }}
-                                                </p>
-                                                @if ($room->freebies)
-                                                    <p
-                                                        class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
-                                                        <i
-                                                            class="fas fa-utensils mr-2 text-gray-500 dark:text-gray-300"></i>
-                                                        Free breakfast included
-                                                    </p>
-                                                @endif
-                                                <p class="text-xs italic text-gray-500 mt-1 dark:text-gray-200">
-                                                    {{ $room->description }}
-                                                </p>
+    <!-- Rate Information -->
+    <div class="mt-4">
+        @php
+            // Get all rates information
+            $allRates = $this->getAllRoomRates($room);
+            
+            // Get ALL applied rates for the entire stay period
+            $appliedRates = $this->roomRateService->getAppliedRatesForStay(
+                $room, 
+                $this->check_in_date, 
+                $this->check_out_date
+            );
+            
+            $baseRate = $room->amount;
+            
+            // Calculate rate breakdown for selected dates
+            $rateSummary = $this->roomRateService->getRateSummary(
+                $room, 
+                $this->check_in_date, 
+                $this->check_out_date
+            );
+            $nights = $rateSummary['nights'] ?? 0;
+            $totalRate = $rateSummary['total_amount'] ?? 0;
+            
+            // Calculate average rate per night
+            $averageRatePerNight = $nights > 0 ? $totalRate / $nights : $baseRate;
+            
+            // Determine if we're showing multiple rates or single rate
+            $hasMultipleRates = count($appliedRates) > 1;
+            $hasSpecialRate = count($appliedRates) > 0 && $appliedRates[0]['rate_type'] !== null;
+            $isBaseRateOnly = !$hasSpecialRate || (count($appliedRates) === 1 && $appliedRates[0]['rate_type'] === null);
+        @endphp
 
-                                                <p class="mt-3 text-base font-medium text-gray-800">
-                                                    Rate Per Night:
-                                                    @if ($room->rate_name || $room->rate_type)
-                                                        <span
-                                                            class="text-green-700 dark:text-green-300 font-bold mb-1">
-                                                            ₱{{ number_format($room->dynamic_rate, 2) }}
-                                                        </span> <br>
-                                                        <span
-                                                            class="mt-2 inline-block py-1 px-2 rounded-full text-xs font-semibold mb-2
-                                                            @if ($room->rate_type === 'Weekend') bg-yellow-100 text-yellow-700
-                                                            @elseif ($room->rate_type === 'Weekdays') bg-green-100 text-green-700
-                                                            @elseif ($room->rate_type === 'Peak') bg-red-100 text-red-700
-                                                            @elseif ($room->rate_type === 'Holiday') bg-purple-100 text-purple-700
-                                                            @else bg-gray-200 text-gray-600 border @endif">
-                                                            {{ $room->rate_name }}
-                                                            @if ($room->rate_type)
-                                                                - {{ $room->rate_type }} Rate
-                                                            @endif
-                                                        </span>
-                                                    @else
-                                                        <span class="text-red-600 text-sm">No rate info
-                                                            available</span>
-                                                    @endif
-                                                </p>
+        <!-- Main Rate Display -->
+        <div class="space-y-2">
+            @if($this->check_in_date && $this->check_out_date && $nights > 0)
+                <!-- Show rates per night when dates are selected -->
+                @if($isBaseRateOnly)
+                    <!-- Only base rate applied -->
+                    <p class="text-lg font-medium">
+                        <span class="text-green-700 font-bold">
+                            Base Rate - ₱{{ number_format($baseRate, 2) }} per night
+                        </span>
+                    </p>
+                @else
+                    <!-- Special rates applied -->
+                    @foreach($appliedRates as $appliedRate)
+                        <p class="text-lg font-medium">
+                            @if($appliedRate['rate_type'] === null)
+                                <!-- Base Rate -->
+                                <span class="text-gray-500 line-through">
+                                    Base Rate - ₱{{ number_format($appliedRate['average_rate'], 2) }} per night
+                                </span>
+                            @else
+                                <!-- Special Rate -->
+                                <span class="text-green-700 font-bold">
+                                    {{ $appliedRate['name'] }} - ₱{{ number_format($appliedRate['average_rate'], 2) }} per night
+                                </span>
+                                <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold ml-2
+                                    @if ($appliedRate['rate_type'] === 'Weekend') bg-yellow-100 text-yellow-700
+                                    @elseif ($appliedRate['rate_type'] === 'Weekdays') bg-green-100 text-green-700
+                                    @elseif ($appliedRate['rate_type'] === 'Peak') bg-red-100 text-red-700
+                                    @elseif ($appliedRate['rate_type'] === 'Holiday') bg-purple-100 text-purple-700
+                                    @else bg-blue-100 text-blue-700
+                                    @endif ">
+                                    {{ $appliedRate['rate_type'] }}
+                                </span>
+                            @endif
+                        </p>
+                    @endforeach
+                @endif
 
+                <!-- Total Stay Cost -->
+                <p class="text-sm text-gray-600 mt-2">
+                    Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}: 
+                    <span class="font-semibold text-gray-700">₱{{ number_format($totalRate, 2) }}</span>
+                </p>
 
-                                            </div>
+            @else
+                <!-- Show base rate when no dates selected -->
+                <p class="text-lg font-medium">
+                    <span class="text-green-700 font-bold">
+                        Base Rate - ₱{{ number_format($baseRate, 2) }} per night
+                    </span>
+                </p>
+            @endif
+        </div>
+
+        <!-- Detailed Breakdown (Collapsible) -->
+        @if($this->check_in_date && $this->check_out_date && count($appliedRates) > 0 && $hasMultipleRates)
+            <div class="mt-3 text-sm">
+                <button type="button" 
+                    class="text-green-600 hover:text-green-800 font-medium flex items-center"
+                    onclick="toggleRateBreakdown({{ $room->id }})">
+                    <i class="fas fa-calculator mr-2"></i>
+                    View Rate Breakdown
+                    <i class="fas fa-chevron-down ml-1 text-xs" id="breakdown-arrow-{{ $room->id }}"></i>
+                </button>
+                
+                <div id="rate-breakdown-{{ $room->id }}" class="mt-2 hidden">
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <p class="font-semibold text-gray-700 mb-2 text-sm">Rate Calculation:</p>
+                        
+                        <div class="space-y-2">
+                            @foreach($appliedRates as $appliedRate)
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-gray-600">
+                                        {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @ 
+                                        <span class="font-medium">{{ $appliedRate['name'] }}</span>
+                                        <span class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2) }}/night)</span>
+                                    </span>
+                                    <span class="font-semibold text-gray-700">
+                                        ₱{{ number_format($appliedRate['total_amount'], 2) }}
+                                    </span>
+                                </div>
+                            @endforeach
+                            
+                            <div class="border-t border-gray-300 pt-2 mt-2">
+                                <div class="flex justify-between items-center font-semibold">
+                                    <span class="text-gray-700">Total Room Rate:</span>
+                                    <span class="text-green-700">₱{{ number_format($totalRate, 2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(!$this->check_in_date || !$this->check_out_date)
+            <!-- No dates selected message -->
+            <div class="mt-2 text-center p-2 bg-yellow-50 rounded border border-yellow-200">
+                <p class="text-yellow-700 text-xs font-medium">
+                    <i class="fas fa-calendar-plus mr-1"></i>
+                    Select dates to see special rates
+                </p>
+            </div>
+        @endif
+    </div>
+</div>
 
                                             <!-- Booking Controls -->
                                             <div class="md:w-1/3 flex flex-col justify-between mt-4 md:mt-0 space-y-4">

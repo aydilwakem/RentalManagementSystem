@@ -267,6 +267,16 @@
                                         <span
                                             class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
                                     @endif
+
+                                    <!-- Rebooked Indicator -->
+                                    @if($transaction->is_rebooked)
+                                        <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
+                                            <i class="fas fa-calendar-repeat mr-1"></i>
+                                            Rebooked
+                                        </span>
+                                    @endif
+
+
                                 </td>
 
                                 {{-- Action Icons --}}
@@ -364,6 +374,17 @@
                                                         as Done
                                                     </a>
                                                 @endif
+
+
+                                                <!-- Rebook -->
+                                                @if($transaction->transaction_status === 'confirmed')
+                                                    <a href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}"
+                                                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-calendar-plus mr-2 text-purple-600"></i> Rebook
+                                                    </a>
+                                                @endif
+
+
 
                                                 <!-- Mark as No Show -->
                                                 @if ($transaction->transaction_status === 'confirmed')

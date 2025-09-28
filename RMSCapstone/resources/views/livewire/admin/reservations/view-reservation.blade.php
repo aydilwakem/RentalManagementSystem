@@ -214,12 +214,21 @@
                                     class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
                                     Free breakfast for {{$transaction->pax}}
                                 </span>
+
+                                <!-- Rebooked Indicator -->
+                                @if($transaction->is_rebooked)
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-600 border border-purple-200">
+                                        <i class="fas fa-calendar-repeat mr-1"></i>
+                                        Rebooked Reservation
+                                    </span>
+                                @endif
+
                             </div>
                         </div>
 
-
-
-
+                    
+                           
+                        
                     </div>
 
 
@@ -353,12 +362,22 @@
                         <div class="text-gray-500 italic mt-2">No vouchers.</div>
                         @endif
 
-                        <div class="mt-2">
-                            <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
-                                Add Voucher
-                            </x-button>
-                        </div>
+                    <div class="mt-2">
+                        <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
+                            Add Voucher
+                        </x-button>
                     </div>
+
+                    @if($transaction->transaction_status === 'confirmed')
+                    <div class="mt-2">
+                        <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
+                            Rebook Reservation
+                        </x-button>
+                    </div>
+                    @endif
+
+                    
+                </div>
 
 
                 </div>
