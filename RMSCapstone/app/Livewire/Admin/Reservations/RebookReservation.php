@@ -199,6 +199,7 @@ class RebookReservation extends Component
                     'start_datetime' => $this->check_in_date . ' 14:00:00', // Default check-in time
                     'end_datetime' => $new_check_out_date . ' 12:00:00', // Default check-out time
                     'updated_at' => now(),
+                    'is_rebooked' => true,
                 ]);
 
                 // Update transaction_properties record
