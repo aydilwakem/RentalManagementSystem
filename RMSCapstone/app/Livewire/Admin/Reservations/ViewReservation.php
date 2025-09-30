@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOfficialReceiptMail;
 use App\Mail\RequestRemainingBalanceMail;
 use App\Models\Invoice;
+use App\Models\Property;
 use App\Models\Setting;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -47,6 +48,7 @@ use App\Services\PaymentService;
 use App\Services\CartService;
 use App\Services\GuestDetailService;
 use App\Services\PaymentMethodService;
+use App\Services\RoomAvailabilityService;
 use PragmaRX\Countries\Package\Countries;
 
 #[Layout('layouts.app')]
@@ -150,6 +152,14 @@ class ViewReservation extends Component
     public $countries;
 
 
+    // Room Change Modal
+    public $showChangeRoomModal = false;
+    public $changingRoomPivotId;
+    public $availableRooms = [];
+    public $selectedNewRoomId;
+
+    // Room change related
+    public $currentRoomDetails;
 
 
 
@@ -384,6 +394,105 @@ class ViewReservation extends Component
 
         // dd($this->allItems);
     }
+
+
+    /**
+ * ------------------------- ROOM CHANGE MANAGEMENT ---------------------------
+ *
+ * Handles changing rooms for existing reservations.
+ * ----------------------------------------------------------------------------
+ */
+
+public function openChangeRoomModal($pivotId)
+{
+    Log::info('Open Change Room modal called for pivot ID: ' . $pivotId);
+    
+    $this->changingRoomPivotId = $pivotId;
+    
+    // Get current room details
+    $currentPivot = TransactionProperty::with('property')->find($pivotId);
+    $this->currentRoomDetails = $currentPivot;
+    $currentRoom = $currentPivot->property;
+    
+    // Get available rooms for the reservation dates
+    $availableRooms = app(RoomAvailabilityService::class)->getAvailableRooms(
+        $this->transaction->start_datetime,
+        $this->transaction->end_datetime
+    );
+    
+    // Create a collection and ensure all items are Property models
+    $roomsCollection = collect();
+    
+    // Add all available rooms
+    foreach ($availableRooms as $room) {
+        $roomsCollection->push($room);
+    }
+    
+    // Add current room if not already in the list
+    if ($currentRoom) {
+        $roomExists = $roomsCollection->contains(function ($room) use ($currentRoom) {
+            return $room->id === $currentRoom->id;
+        });
+        
+        if (!$roomExists) {
+            // Add current room and mark it as available
+            $currentRoom->is_booked = false;
+            $roomsCollection->push($currentRoom);
+        } else {
+            // Ensure current room is marked as available
+            $roomsCollection = $roomsCollection->map(function ($room) use ($currentRoom) {
+                if ($room->id === $currentRoom->id) {
+                    $room->is_booked = false;
+                }
+                return $room;
+            });
+        }
+    }
+    
+    $this->availableRooms = $roomsCollection;
+    $this->selectedNewRoomId = $currentRoom->id ?? null;
+    $this->showChangeRoomModal = true;
+}
+
+public function changeRoom()
+{
+    Log::info('Change Room method called.');
+    
+    $this->validate([
+        'selectedNewRoomId' => 'required|exists:properties,id',
+    ]);
+    
+    try {
+        $currentPivot = TransactionProperty::find($this->changingRoomPivotId);
+        $newRoom = Property::find($this->selectedNewRoomId);
+        
+        if (!$currentPivot || !$newRoom) {
+            throw new \Exception('Room not found.');
+        }
+        
+        // Update the transaction property with new room
+        $currentPivot->update([
+            'property_id' => $this->selectedNewRoomId,
+            'amount' => $newRoom->amount * $currentPivot->days,
+            'updated_at' => now(),
+        ]);
+        
+        // Recalculate the transaction property amounts
+        $this->recalculateTransactionProperty($this->changingRoomPivotId);
+        
+        // Update invoice totals
+        $this->recalculateInvoice();
+        $this->loadAllInvoiceItems();
+        
+        // Close modal and show success message
+        $this->showChangeRoomModal = false;
+        session()->flash('success', 'Room changed successfully!');
+        
+    } catch (\Exception $e) {
+        Log::error('Room change failed: ' . $e->getMessage());
+        session()->flash('error', 'Failed to change room: ' . $e->getMessage());
+    }
+}
 
 
 

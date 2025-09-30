@@ -61,7 +61,8 @@ class Transaction extends Model
         'actual_start_datetime',
         'actual_end_datetime',
         'start_datetime',
-        'end_datetime'
+        'end_datetime',
+        'is_rebooked',
     ];
 
     /**

@@ -244,8 +244,25 @@
                                 @else
                                     {{ ucfirst($transaction->transaction_status) }}
                                 @endif
+                                <span
+                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
+                                    Free breakfast for {{$transaction->pax}}
+                                </span>
+
+                                <!-- Rebooked Indicator -->
+                                @if($transaction->is_rebooked)
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-600 border border-purple-200">
+                                        <i class="fas fa-calendar-repeat mr-1"></i>
+                                        Rebooked Reservation
+                                    </span>
+                                @endif
+
                             </div>
                         </div>
+
+
+
+
                     </div>
 
                     <div>
@@ -384,12 +401,22 @@
                             <div class="text-gray-500 italic mt-2">No vouchers.</div>
                         @endif
 
-                        <div class="mt-2">
-                            <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
-                                Add Voucher
-                            </x-button>
-                        </div>
+                    <div class="mt-2">
+                        <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
+                            Add Voucher
+                        </x-button>
                     </div>
+
+                    @if($transaction->transaction_status === 'confirmed')
+                    <div class="mt-2">
+                        <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
+                            Rebook Reservation
+                        </x-button>
+                    </div>
+                    @endif
+
+
+                </div>
 
 
                 </div>
@@ -927,25 +954,35 @@
                                                         <i class="fas fa-edit"></i>
                                                     </button>
 
-                                                    <!-- Add Another Guest Button -->
-                                                    <button wire:click="addGuest({{ $property->pivot->id }})"
-                                                        class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
-                                                        title="Add Another Guest">
-                                                        <i class="fas fa-user-plus"></i>
+                                                    <!-- Change Room Button -->
+                                                    <button wire:click="openChangeRoomModal({{ $property->pivot->id }})"
+                                                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                                                        title="Change Room">
+                                                        <i class="fas fa-exchange-alt"></i>
                                                     </button>
-                                                @else
-                                                    <button
-                                                        wire:click="
-                                                        @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
-                                                        @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
-                                                            editExtraHour({{ $item['pivot_id'] }})
-                                                        @elseif ($item['type'] === 'service')
-                                                            editService({{ $item['pivot_id'] }}) @endif
-                                                    "
+
+
+
+                                                        <!-- Add Another Guest Button -->
+                                                        <button wire:click="addGuest({{ $property->pivot->id }})"
+                                                            class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
+                                                            title="Add Another Guest">
+                                                            <i class="fas fa-user-plus"></i>
+                                                        </button>
+                                                    @else
+                                                        <button wire:click="
+                                                            @if ($item['type'] === 'activity')
+                                                                editActivity({{ $item['pivot_id'] }})
+                                                            @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
+                                                                editExtraHour({{ $item['pivot_id'] }})
+                                                            @elseif ($item['type'] === 'service')
+                                                                editService({{ $item['pivot_id'] }})
+                                                            @endif
+                                                        "
                                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                         title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
 
                                                     <button
                                                         wire:click="
@@ -3237,7 +3274,89 @@
 
 
 
+<!-- Change Room Modal -->
+@if ($showChangeRoomModal)
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <div class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+            <h2 class="text-2xl font-bold text-center">Change Room</h2>
+        </div>
 
+        <!-- Current Room Info -->
+        @if($currentRoomDetails)
+        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">Current Room:</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                {{ $currentRoomDetails->property->name_number ?? 'N/A' }} -
+                {{ optional($currentRoomDetails->property->category)->name ?? 'N/A' }}
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Rate: ₱{{ number_format($currentRoomDetails->property->amount ?? 0, 2) }}/night
+            </p>
+        </div>
+        @endif
+
+        <!-- Available Rooms Dropdown -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                Select New Room <span class="text-red-500">*</span>
+            </label>
+            <select wire:model="selectedNewRoomId"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Choose a room...</option>
+                @foreach($availableRooms as $room)
+                    <option value="{{ $room->id }}"
+                        {{ $room->is_booked ? 'disabled' : '' }}
+                        class="{{ $room->is_booked ? 'text-red-500 bg-red-50' : 'text-gray-900' }}">
+                        {{ $room->name_number }} - {{ optional($room->category)->name }}
+                        @if($room->dynamic_rate)
+                            - ₱{{ number_format($room->dynamic_rate, 2) }}/night
+                        @else
+                            - ₱{{ number_format($room->amount, 2) }}/night
+                        @endif
+                        @if($room->is_booked)
+                            (Booked)
+                        @elseif($room->id === $currentRoomDetails->property_id)
+                            (Current Room)
+                        @else
+                            (Available)
+                        @endif
+                    </option>
+                @endforeach
+            </select>
+            @error('selectedNewRoomId')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <!-- Room Availability Note -->
+        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            <p>Only available rooms for your stay dates are shown.</p>
+            <p>Booked rooms are disabled and marked in red.</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between mt-6">
+            <x-ghost-button wire:click="$set('showChangeRoomModal', false)">
+                Cancel
+            </x-ghost-button>
+            <x-button wire:click="changeRoom" wire:loading.attr="disabled">
+                <div class="flex items-center justify-center">
+                    <span wire:loading class="mr-2" wire:target="changeRoom">
+                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                        </svg>
+                    </span>
+                    <span wire:loading.remove wire:target="changeRoom">
+                        Change Room
+                    </span>
+                </div>
+            </x-button>
+        </div>
+    </div>
+</div>
+@endif
 
 
                     <!-------------------------- END OF MODALS ---------------------------------->

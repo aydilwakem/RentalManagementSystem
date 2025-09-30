@@ -1746,12 +1746,16 @@ class ReservationForm extends Component
      */
     protected function prepareRoomCartContext($room, $roomId): array
     {
-        $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+        $rateSummary = $this->roomRateService->getRateSummary($room, $this->check_in_date, $this->check_out_date);
+        $appliedRates = $this->roomRateService->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
+        
         $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
         $stayDuration = $this->getStayDurationProperty();
         $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-        $roomAmount = $rate['amount'] * $stayDuration;
+        
+        // Use the total rate from the breakdown instead of dynamic rate for single day
+        $roomAmount = $rateSummary['total_amount'] ?? 0;
         $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
         return [
@@ -1761,11 +1765,13 @@ class ReservationForm extends Component
             'adults'        => $adults,
             'kids'          => $kids,
             'roomAmount'    => $roomAmount,
-            'roomRateName'  => $rate['name'],
-            'rate_id'       => $rate['rate_id'],
+            'roomRateName'  => 'Multiple Rates Applied', // Updated to reflect multiple rates
+            'rate_id'       => null, // Multiple rates may apply
             'extra_charge'  => $extraCharge,
             'total_amount'  => $roomAmount + $extraCharge,
             'image'         => $room->images[0] ?? null,
+            'rate_breakdown' => $rateSummary, // Include breakdown for reference
+            'applied_rates' => $appliedRates, // Include applied rates
         ];
     }
 
@@ -2119,10 +2125,10 @@ class ReservationForm extends Component
 
                 $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
                 $stayDuration = $this->getStayDurationProperty();
-                $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
-
-                $roomAmount = $rate['amount'] * $stayDuration;
-                $rate_id = $rate['rate_id'];
+                
+                // Use the new rate summary instead of single dynamic rate
+                $rateSummary = $this->roomRateService->getRateSummary($room, $this->check_in_date, $this->check_out_date);
+                $roomAmount = $rateSummary['total_amount'] ?? 0;
                 $extraCharge = $room->extra_person_charge * $extraGuests * $stayDuration;
 
                 $this->cart[$index]['adults'] = $adults;
@@ -2130,8 +2136,9 @@ class ReservationForm extends Component
                 $this->cart[$index]['extra_guest'] = $extraGuests;
                 $this->cart[$index]['extra_charge'] = $extraCharge;
                 $this->cart[$index]['roomAmount'] = $roomAmount;
-                $this->cart[$index]['rate_id'] = $rate_id;
+                $this->cart[$index]['rate_id'] = null; // Multiple rates may apply
                 $this->cart[$index]['total_amount'] = $roomAmount + $extraCharge;
+                $this->cart[$index]['rate_breakdown'] = $rateSummary;
             }
         }
 
@@ -2189,19 +2196,22 @@ class ReservationForm extends Component
     protected function loadRooms(): void
     {
         $this->rooms = Property::ofType('Room')
-            ->availableRooms()
-            ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
-            ->get()
-            ->map(function ($room) {
-                $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+        ->availableRooms()
+        ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
+        ->get()
+        ->map(function ($room) {
+            // Get rate summary instead of single dynamic rate
+            $rateSummary = $this->roomRateService->getRateSummary($room, $this->check_in_date, $this->check_out_date);
+            
+            $room->dynamic_rate = $rateSummary['total_amount'] ?? $room->amount;
+            $room->rate_name = 'Multiple Rates';
+            $room->rate_type = 'Multiple';
+            $room->rate_id = null;
+            $room->rate_summary = $rateSummary;
+            $room->applied_rates = $this->roomRateService->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
 
-                $room->dynamic_rate = $rate['amount'];
-                $room->rate_name = $rate['name'];
-                $room->rate_type = $rate['rate_type'];
-                $room->rate_id = $rate['rate_id'];
-
-                return $room;
-            });
+            return $room;
+        });
     }
 
 
@@ -2292,4 +2302,75 @@ class ReservationForm extends Component
         //     'Content-Disposition' => 'inline; filename="Available_Payment_Methods.pdf"',
         // ]);
     }
+
+
+    /**
+     * Get all room rates including base rate for display
+     */
+    public function getAllRoomRates($room)
+    {
+        $rates = [];
+        
+        // Base rate (always available)
+        $rates[] = [
+            'rate_type' => null,
+            'name' => 'Base Rate',
+            'amount' => $room->amount,
+        ];
+        
+        // Get all active special rates with proper name handling
+        $specialRates = \App\Models\RoomRate::where('property_id', $room->id)
+            ->where('is_active', true)
+            ->whereNull('deleted_at')
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+        
+        foreach ($specialRates as $rate) {
+            // Use the rate's name if available, otherwise fall back to rate_type + "Rate"
+            $rateName = $rate->name ?? ucfirst($rate->rate_type) . ' Rate';
+            
+            $rates[] = [
+                'rate_type' => $rate->rate_type,
+                'name' => $rateName,
+                'amount' => $rate->amount,
+            ];
+        }
+        
+        // Sort by priority: Peak > Holiday > Weekend > Weekdays > Base
+        usort($rates, function($a, $b) {
+            $priority = ['Peak' => 1, 'Holiday' => 2, 'Weekend' => 3, 'Weekdays' => 4, null => 5];
+            $aPriority = $priority[$a['rate_type']] ?? 6;
+            $bPriority = $priority[$b['rate_type']] ?? 6;
+            
+            return $aPriority - $bPriority;
+        });
+        
+        return $rates;
+    }
+
+    /**
+     * Get applied rates for the entire stay period
+     */
+    public function getAppliedRatesForStay($room, $checkInDate, $checkOutDate)
+    {
+        return $this->roomRateService->getAppliedRatesForStay($room, $checkInDate, $checkOutDate);
+    }
+
+    /**
+     * Get rate summary for display
+     */
+    public function getRateSummary($room, $checkInDate, $checkOutDate)
+    {
+        return $this->roomRateService->getRateSummary($room, $checkInDate, $checkOutDate);
+    }
+
+    /**
+     * Get detailed rate breakdown
+     */
+    public function getRoomRateBreakdown($room, $checkInDate, $checkOutDate)
+    {
+        return $this->roomRateService->getRateBreakdown($room, $checkInDate, $checkOutDate);
+    }
+
 }

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationSubmittedMail;
 use App\Models\PaymentMethod;
 use App\Models\GuestType;
+use App\Models\RoomRate;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use App\Services\ServiceBag;
@@ -1665,40 +1666,44 @@ class CreateReservation extends Component
         // Step 2: Fetch the ideal guests for the room
         $included_guests = $room->ideal_guest;
 
-        // Step 3: Fetch the dynamic rate for the room
-        $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
+        // Step 3: Calculate total rate for the entire stay period
+        $rateBreakdown = $this->roomRateService->getRateBreakdown(
+            $room, 
+            $this->check_in_date, 
+            $this->check_out_date
+        );
+        
+        $totalRoomRate = $rateBreakdown['total_amount'];
+        $averageNightlyRate = $stayDuration > 0 ? $totalRoomRate / $stayDuration : 0;
 
-        if (!$rate) {
+        if (!$totalRoomRate) {
             Log::error("No valid rate found for room ID {$roomId}.");
             throw new \Exception("No valid rate found for room ID {$roomId}.");
         }
 
-        // Step 4: Fetch the room rate amount
-        $roomRate =  $rate['amount'];
-
-        // Step 5: Fetch the extra charge per person for the room
+        // Step 4: Fetch the extra charge per person for the room
         $extraCharge = $room->extra_person_charge;
 
         // --------------------- ASSIGN VALUES ----------------------- //
 
-        // Step 6: Assign adults and kids from the component properties
+        // Step 5: Assign adults and kids from the component properties
         $adults = (int) ($this->adults[$roomId] ?? 1);
         $kids = (int) ($this->kids[$roomId] ?? 0);
 
-        // Step 7: Assign total pax as the sum of adults and kids
+        // Step 6: Assign total pax as the sum of adults and kids
         $total_pax = $adults + $kids;
 
-        // Step 8: Calculate extra guests beyond the included guests
+        // Step 7: Calculate extra guests beyond the included guests
         $extraGuests = max(0, $total_pax - $included_guests);
 
-        // Step 9: Assign the room amount based on the rate and stay duration
-        $roomAmount = $roomRate * $stayDuration;
+        // Step 8: Assign the room amount based on the total rate for stay duration
+        $roomAmount = $totalRoomRate;
 
-        // Step 10: Calculate the total extra charge based on the extra guests, extra charge per person, and stay duration
+        // Step 9: Calculate the total extra charge based on the extra guests, extra charge per person, and stay duration
         $extraChargeTotal = $extraCharge * $extraGuests * $stayDuration;
 
         // --------------------- RETURN CONTEXT ----------------------- //
-        // Step 11: Return the prepared context array for the cart item
+        // Step 10: Return the prepared context array for the cart item
         return [
             'room_name'     => $room->name_number,
             'days'          => $stayDuration,
@@ -1706,9 +1711,10 @@ class CreateReservation extends Component
             'kids'          => $kids,
             'included_guests'  => $included_guests,
             'extra_guest'   => $extraGuests,
-            'rate_id'       => $rate['rate_id'],
-            'roomRateName'  => $rate['name'],
-            'roomRate' => $roomRate,
+            'rate_id'       => null, // Now we have multiple rates, so we can't store a single rate_id
+            'rate_breakdown' => $rateBreakdown['breakdown'],
+            'roomRateName'  => 'Dynamic Rate (Mixed)', // Since rates may vary by day
+            'roomRate' => $averageNightlyRate, // Average rate for display purposes
             'extra_charge'  => $extraCharge,
             'roomAmount'    => $roomAmount,
             'extra_charge_total'  => $extraChargeTotal,
@@ -1905,6 +1911,75 @@ class CreateReservation extends Component
             $this->kids[$roomId] = 0;
         }
     }
+    //display section to show the detailed rate breakdown
+    public function getRateBreakdownDisplay($room)
+    {
+        if (!isset($room['rate_breakdown'])) {
+            return 'Standard Rate';
+        }
+
+        $breakdown = collect($room['rate_breakdown'])->groupBy('rate_type')->map(function($days, $rateType) {
+            $count = count($days);
+            $total = $days->sum('amount');
+            return "{$count} night(s) at {$rateType} rate: ₱" . number_format($total, 2);
+        })->implode('<br>');
+
+        return $breakdown;
+    }
+
+    /**
+     * Get rate breakdown for display in the view
+     */
+    public function getRoomRateBreakdown($room, $checkInDate, $checkOutDate)
+    {
+        return $this->roomRateService->getRateBreakdown($room, $checkInDate, $checkOutDate);
+    }
+
+    /**
+     * Get all room rates including base rate
+     */
+    public function getAllRoomRates($room)
+    {
+        $rates = [];
+        
+        // Base rate (always available)
+        $rates[] = [
+            'rate_type' => null,
+            'name' => 'Base Rate',
+            'amount' => $room->amount,
+        ];
+        
+        // Get all active special rates with proper name handling
+        $specialRates = RoomRate::where('property_id', $room->id)
+            ->where('is_active', true)
+            ->whereNull('deleted_at')
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+        
+        foreach ($specialRates as $rate) {
+            // Use the rate's name if available, otherwise fall back to rate_type + "Rate"
+            $rateName = $rate->name ?? ucfirst($rate->rate_type) . ' Rate';
+            
+            $rates[] = [
+                'rate_type' => $rate->rate_type,
+                'name' => $rateName,
+                'amount' => $rate->amount,
+            ];
+        }
+        
+        // Sort by priority: Peak > Holiday > Weekend > Weekdays > Base
+        usort($rates, function($a, $b) {
+            $priority = ['Peak' => 1, 'Holiday' => 2, 'Weekend' => 3, 'Weekdays' => 4, null => 5];
+            $aPriority = $priority[$a['rate_type']] ?? 6;
+            $bPriority = $priority[$b['rate_type']] ?? 6;
+            
+            return $aPriority - $bPriority;
+        });
+        
+        return $rates;
+    }
+
 
     protected function updateSelectedRoomDetails($roomId, $room): void
     {
@@ -1915,8 +1990,17 @@ class CreateReservation extends Component
                 $stayDuration = $this->getStayDurationProperty();
 
                 $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-                $rate = $this->roomRateService->getDynamicRate($room, $this->check_in_date ?? null);
-                $roomAmount = $rate['amount'] * $stayDuration;
+                
+                // Recalculate rate breakdown with new dates if needed
+                $rateBreakdown = $this->roomRateService->getRateBreakdown(
+                    $room, 
+                    $this->check_in_date, 
+                    $this->check_out_date
+                );
+                
+                $totalRoomRate = $rateBreakdown['total_amount'];
+                $averageNightlyRate = $stayDuration > 0 ? $totalRoomRate / $stayDuration : 0;
+
                 $extraCharge = $room->extra_person_charge;
                 $extraChargeTotal = $room->extra_person_charge * $extraGuests * $stayDuration;
 
@@ -1926,9 +2010,10 @@ class CreateReservation extends Component
                     'extra_guest'   => $extraGuests,
                     'extra_charge'  => $extraCharge,
                     'extra_charge_total'  => $extraChargeTotal,
-                    'roomAmount'    => $roomAmount,
-                    'rate_id'       => $rate['rate_id'],
-                    'total_amount'  => $roomAmount + $extraChargeTotal,
+                    'roomAmount'    => $totalRoomRate,
+                    'rate_breakdown' => $rateBreakdown['breakdown'],
+                    'roomRate' => $averageNightlyRate,
+                    'total_amount'  => $totalRoomRate + $extraChargeTotal,
                 ]);
             }
         }

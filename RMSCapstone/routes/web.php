@@ -51,6 +51,7 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Reservations\RebookReservation;
 use App\Livewire\Admin\Services\EditService;
 use App\Livewire\Admin\Services\ViewService;
 use App\Livewire\Admin\Settings\PromoCodes\EditPromoCode;
@@ -645,6 +646,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     // Add Transaction
     Route::get('add/transaction/{transaction}', AddTransaction::class)->name('admin.add-transaction');
+
+    // Rebook Reservation
+    Route::get('rebook/reservation/{transaction}', RebookReservation::class)->name('admin.rebook-reservation');
 
     /**
      * Payments
