@@ -95,9 +95,9 @@
 
 
                             @if ($company_name)
-                                <p class="text-sm text-gray-600">
-                                    Company: {{ $company_name }}
-                                </p>
+                            <p class="text-sm text-gray-600">
+                                Company: {{ $company_name }}
+                            </p>
                             @endif
                         </div>
 
@@ -106,55 +106,55 @@
 
                 <!-- Additional Guest Details -->
                 @if (count($guests) > 0)
-                    <div
-                        class="border rounded-md bg-white p-4 mt-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
-                        <h2 class="text-green-700 font-semibold flex items-center gap-2">
-                            <i class="fa-solid fa-users"></i>
-                            Additional Guest Details
-                        </h2>
-                        @foreach ($guests as $guest)
-                            <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
-                                <p><span class="font-medium text-gray-900">Name:</span>
-                                    {{ $guest['guest_first_name'] }}
-                                    {{ $guest['guest_middle_name'] ?? '' }}
-                                    {{ $guest['guest_last_name'] }}
-                                    {{ $guest['guest_suffix'] ?? '' }}
-                                </p>
-                                <p><span class="font-medium text-gray-900">Gender:</span>
-                                    {{ ucfirst($guest['guest_gender']) }}</p>
-                                <p><span class="font-medium text-gray-900">Residency:</span>
-                                    {{ ucfirst($guest['guest_residency']) }}</p>
-                                <p><span class="font-medium text-gray-900">Country of Origin:</span>
-                                    {{ $guest['guest_country_of_origin'] }}</p>
-                            </div>
-                        @endforeach
+                <div
+                    class="border rounded-md bg-white p-4 mt-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
+                    <h2 class="text-green-700 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i>
+                        Additional Guest Details
+                    </h2>
+                    @foreach ($guests as $guest)
+                    <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
+                        <p><span class="font-medium text-gray-900">Name:</span>
+                            {{ $guest['guest_first_name'] }}
+                            {{ $guest['guest_middle_name'] ?? '' }}
+                            {{ $guest['guest_last_name'] }}
+                            {{ $guest['guest_suffix'] ?? '' }}
+                        </p>
+                        <p><span class="font-medium text-gray-900">Gender:</span>
+                            {{ ucfirst($guest['guest_gender']) }}</p>
+                        <p><span class="font-medium text-gray-900">Residency:</span>
+                            {{ ucfirst($guest['guest_residency']) }}</p>
+                        <p><span class="font-medium text-gray-900">Country of Origin:</span>
+                            {{ $guest['guest_country_of_origin'] }}</p>
                     </div>
+                    @endforeach
+                </div>
                 @endif
 
                 <!-- Pet Details -->
                 @if (!empty($pets))
-                    <div
-                        class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
-                        <h2 class="text-green-700 font-semibold flex items-center gap-2">
-                            <i class="fa-solid fa-paw"></i>
-                            Pet Details
-                        </h2>
-                        @foreach ($pets as $index => $pet)
-                            <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
-                                <p><span class="font-medium text-gray-900">Breed:</span> {{ $pet['breed'] }}</p>
-                                <p><span class="font-medium text-gray-900">Quantity:</span> 1</p>
-                            </div>
-                        @endforeach
-
-                        @php
-                            $totalPetFee = number_format($this->computePetTotal(), 2);
-                        @endphp
-
-                        <div class="flex justify-between">
-                            <p class="font-semibold">Pet Fee Subtotal:</p>
-                            <p class="font-semibold">₱{{ $totalPetFee }}</p>
-                        </div>
+                <div
+                    class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
+                    <h2 class="text-green-700 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-paw"></i>
+                        Pet Details
+                    </h2>
+                    @foreach ($pets as $index => $pet)
+                    <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
+                        <p><span class="font-medium text-gray-900">Breed:</span> {{ $pet['breed'] }}</p>
+                        <p><span class="font-medium text-gray-900">Quantity:</span> 1</p>
                     </div>
+                    @endforeach
+
+                    @php
+                    $totalPetFee = number_format($this->computePetTotal(), 2);
+                    @endphp
+
+                    <div class="flex justify-between">
+                        <p class="font-semibold">Pet Fee Subtotal:</p>
+                        <p class="font-semibold">₱{{ $totalPetFee }}</p>
+                    </div>
+                </div>
                 @endif
 
                 <!-- Rooms Section -->
@@ -167,32 +167,57 @@
 
                     <!-- Room Item -->
                     @foreach ($cart as $item)
-                        @if ($item['type'] === 'room')
-                            <div class="flex gap-4 items-start border-b pb-3 mb-3">
-                                {{-- <img src="{{ asset('images/rms-default.png') }}" alt="Room Image"
-                            class="w-20 h-20 object-cover rounded-md"> --}}
-                                <div class="flex-1">
-                                    {{-- <p class="text-sm font-medium text-gray-800">Solah</p>
-                            <p class="text-xs text-gray-500">2 Extra Guest(s)</p>
-                            <p class="text-xs text-gray-500">3 Night(s)</p> --}}
-                                    <p class="text-sm font-medium text-gray-800">{{ $item['room_name'] }}</p>
-                                    @if ($item['extra_guest'])
-                                        <p class="text-xs text-gray-500">{{ $item['extra_guest'] }} Extra Guest(s)</p>
-                                    @endif
-                                    <p class="text-xs text-gray-500">{{ $item['days'] }} Night(s)</p>
-                                </div>
-                                <div class="text-right text-sm">
-                                    {{-- <p class="text-gray-700">₱2,400</p>
-                            <p class="text-gray-500">₱1,000</p>
-                            <p class="text-gray-500">x3</p> --}}
-                                    <p class="text-gray-700">₱{{ number_format($item['roomAmount'], 2) }}</p>
-                                    @if ($item['extra_guest'])
-                                        <p class="text-gray-500">₱{{ number_format($item['extra_charge'], 2) }}</p>
-                                    @endif
-                                    <p class="text-gray-500">x{{ $item['days'] }}</p>
-                                </div>
-                            </div>
-                        @endif
+                    @if ($item['type'] === 'room')
+
+                    <!-- Rate Breakdown -->
+                    @php
+                    //Assign a variable -> Fetch all rooms
+                    $roomModel = $rooms->firstWhere('id', $item['room_id']);
+
+                    //Get rates of the room and stay duration using method ni Leo
+                    $appliedRates = $roomModel ? $this->getAppliedRatesForStay($roomModel, $check_in_date,
+                    $check_out_date) : [];
+                    //Calculate nights na nasa cart na agad
+                    $nights = $item['days'] ?? 0;
+                    //Total amount na nasa cart
+                    $totalRate = $item['roomAmount'] ?? 0;
+                    @endphp
+
+
+                    @if($roomModel && count($appliedRates) > 0)
+                    <div class="mt-2 text-xs bg-gray-50 rounded p-2 border border-gray-200">
+                        <span class="font-semibold text-gray-700 mb-1">Rate Breakdown:</span>
+                        <ul class="space-y-1 mt-1">
+                            @foreach($appliedRates as $appliedRate)
+                            <li class="flex justify-between items-center">
+                                <span class="text-gray-600">
+                                    {{-- # of nights and rate name--}}
+                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @
+                                    <span class="font-medium">{{ $appliedRate['name'] }}</span>
+                                    <span class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2)
+                                        }}/night)</span>
+                                </span>
+                                <span class="font-semibold text-gray-700 ml-2">
+                                    {{-- rate amount per night--}}
+                                    ₱{{ number_format($appliedRate['total_amount'], 2) }}
+                                </span>
+
+
+                            </li>
+                            @endforeach
+                        </ul>
+                        <div class="border-t border-gray-300 pt-2 mt-2 flex justify-between font-semibold">
+                            <span class="text-gray-700">Total Room Rate:</span>
+                            <span class="text-green-700">₱{{ number_format($totalRate, 2) }}</span>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="border-t border-gray-300 pt-2 mt-2 flex justify-between font-semibold">
+                        <span class="text-gray-700 text-sm">{{ $item['extra_guest'] }} Extra Guest(s)</span>
+                        <span class="text-green-700 text-sm">₱{{ number_format($item['extra_charge'], 2) }}</span>
+                    </div>
+                    @endif
                     @endforeach
                     <div class="flex justify-between">
                         <p class="font-semibold">Room Subtotal:</p>
@@ -203,98 +228,98 @@
 
                 <!-- Activities Section -->
                 @if (collect($cart)->contains('type', 'activity'))
-                    <div
-                        class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
-                        <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
-                            <i class="fa-solid fa-person-swimming"></i>
-                            Activity Details
-                        </h3>
+                <div
+                    class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
+                    <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-person-swimming"></i>
+                        Activity Details
+                    </h3>
 
-                        <!-- Activity Item -->
-                        @foreach ($cart as $item)
-                            @if ($item['type'] === 'activity')
-                                <div class="flex gap-4 items-start border-b pb-3 mb-3">
-                                    {{-- <img src="{{ asset('images/rms-default.png') }}" alt="Activity Image"
+                    <!-- Activity Item -->
+                    @foreach ($cart as $item)
+                    @if ($item['type'] === 'activity')
+                    <div class="flex gap-4 items-start border-b pb-3 mb-3">
+                        {{-- <img src="{{ asset('images/rms-default.png') }}" alt="Activity Image"
                             class="w-20 h-20 object-cover rounded-md"> --}}
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-800">{{ $item['activity_name'] }}</p>
-                                        <p class="text-xs text-gray-500">
-                                            @if (!empty($item['activity_datetime']))
-                                                {{ \Carbon\Carbon::parse($item['activity_datetime'])->format('g:i A') }}
-                                            @else
-                                                No schedule
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <div class="text-right text-sm">
-                                        <p class="text-gray-700">₱{{ number_format($item['activity_rate'], 2) }}</p>
-                                        <p class="text-gray-500">x{{ $item['quantity'] }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                        <div class="flex justify-between">
-                            <p class="font-semibold">Activity Subtotal:</p>
-                            <p class="font-semibold">
-                                ₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</p>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-800">{{ $item['activity_name'] }}</p>
+                            <p class="text-xs text-gray-500">
+                                @if (!empty($item['activity_datetime']))
+                                {{ \Carbon\Carbon::parse($item['activity_datetime'])->format('g:i A') }}
+                                @else
+                                No schedule
+                                @endif
+                            </p>
+                        </div>
+                        <div class="text-right text-sm">
+                            <p class="text-gray-700">₱{{ number_format($item['activity_rate'], 2) }}</p>
+                            <p class="text-gray-500">x{{ $item['quantity'] }}</p>
                         </div>
                     </div>
+                    @endif
+                    @endforeach
+                    <div class="flex justify-between">
+                        <p class="font-semibold">Activity Subtotal:</p>
+                        <p class="font-semibold">
+                            ₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</p>
+                    </div>
+                </div>
                 @endif
 
                 <!-- Service details -->
                 @if (collect($cart)->contains('type', 'service'))
-                    <div
-                        class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
-                        <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
-                            <i class="fa-solid fa-campground"></i>
-                            Service Details
-                        </h3>
+                <div
+                    class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
+                    <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-campground"></i>
+                        Service Details
+                    </h3>
 
-                        <!-- Activity Item -->
-                        @foreach ($cart as $item)
-                            @if ($item['type'] === 'service')
-                                <div class="flex gap-4 items-start border-b pb-3 mb-3">
-                                    {{-- <img src="{{ asset('images/rms-default.png') }}" alt="Activity Image"
+                    <!-- Activity Item -->
+                    @foreach ($cart as $item)
+                    @if ($item['type'] === 'service')
+                    <div class="flex gap-4 items-start border-b pb-3 mb-3">
+                        {{-- <img src="{{ asset('images/rms-default.png') }}" alt="Activity Image"
                             class="w-20 h-20 object-cover rounded-md"> --}}
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-800">{{ $item['service_name'] }}</p>
-                                    </div>
-                                    <div class="text-right text-sm">
-                                        <p class="text-gray-700">₱{{ number_format($item['service_rate'], 2) }}</p>
-                                        <p class="text-gray-500">x{{ $item['quantity'] }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                        <div class="flex justify-between">
-                            <p class="font-semibold">Service Subtotal:</p>
-                            <p class="font-semibold">
-                                ₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</p>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-800">{{ $item['service_name'] }}</p>
+                        </div>
+                        <div class="text-right text-sm">
+                            <p class="text-gray-700">₱{{ number_format($item['service_rate'], 2) }}</p>
+                            <p class="text-gray-500">x{{ $item['quantity'] }}</p>
                         </div>
                     </div>
+                    @endif
+                    @endforeach
+                    <div class="flex justify-between">
+                        <p class="font-semibold">Service Subtotal:</p>
+                        <p class="font-semibold">
+                            ₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</p>
+                    </div>
+                </div>
                 @endif
 
                 @if (!empty($requests))
-                    <div
-                        class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
-                        <h2 class="text-green-700 font-semibold flex items-center gap-2 mb-2">
-                            <i class="fa-solid fa-comment-dots"></i>
-                            Special Requests
-                        </h2>
-                        <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
-                            <div class="space-y-3 mb-3">
-                                <!-- Request Item -->
-                                <div class="bg-white border border-l-4 border-gray-400 rounded-md p-3 shadow-sm">
-                                    <p class="text-gray-700 text-sm leading-relaxed">
-                                        {{ $requests }}
-                                    </p>
-                                </div>
+                <div
+                    class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out mt-4">
+                    <h2 class="text-green-700 font-semibold flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        Special Requests
+                    </h2>
+                    <div class="mt-1 space-y-1 text-sm text-gray-700 border-b pb-3 mb-3">
+                        <div class="space-y-3 mb-3">
+                            <!-- Request Item -->
+                            <div class="bg-white border border-l-4 border-gray-400 rounded-md p-3 shadow-sm">
+                                <p class="text-gray-700 text-sm leading-relaxed">
+                                    {{ $requests }}
+                                </p>
                             </div>
                         </div>
-                        <p class="text-sm text-gray-600">Note: We’ll do our best to accommodate your special requests,
-                            but
-                            they are still subject to approval and availability.</p>
                     </div>
+                    <p class="text-sm text-gray-600">Note: We’ll do our best to accommodate your special requests,
+                        but
+                        they are still subject to approval and availability.</p>
+                </div>
                 @endif
 
                 <!-- Discount Notice -->
@@ -320,19 +345,19 @@
                         <div>Subtotal</div>
                         <div class="font-semibold flex flex-col items-end">
                             @if ($discountMessage)
-                                <!-- Original subtotal with strikethrough -->
-                                <span class="line-through text-gray-400">
-                                    ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                                </span>
-                                <!-- Subtotal after discount -->
-                                <span class="text-green-700 font-semibold">
-                                    ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
-                                </span>
+                            <!-- Original subtotal with strikethrough -->
+                            <span class="line-through text-gray-400">
+                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                            </span>
+                            <!-- Subtotal after discount -->
+                            <span class="text-green-700 font-semibold">
+                                ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+                            </span>
                             @else
-                                <!-- No discount applied -->
-                                <span>
-                                    ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-                                </span>
+                            <!-- No discount applied -->
+                            <span>
+                                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                            </span>
                             @endif
                         </div>
                     </div>
@@ -345,12 +370,12 @@
 
                     <!-- Deposit (if enabled) -->
                     @if ($this->enable_deposit_percentage)
-                        <div class="flex justify-between items-center text-sm text-yellow-700">
-                            <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
-                            <div class="font-semibold">
-                                ₱{{ number_format($this->deposit ?? 0, 2) }}
-                            </div>
+                    <div class="flex justify-between items-center text-sm text-yellow-700">
+                        <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+                        <div class="font-semibold">
+                            ₱{{ number_format($this->deposit ?? 0, 2) }}
                         </div>
+                    </div>
                     @endif
 
                     <!-- Convenience Fee -->
@@ -385,30 +410,31 @@
                     <div class="text-center justify-between flex pt-4">
                         <!-- Back button -->
                         @if ($currentStep == 2 || $currentStep == 3 || $currentStep == 4)
-                            <x-ghost-button type="button" wire:loading.attr="disabled" wire:click="decreaseStep()">
-                                <div class="flex items-center justify-center">
-                                    <!-- Spinner -->
-                                    <span wire:loading wire:target="decreaseStep()" class="mr-2">
-                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                            </path>
-                                        </svg>
-                                    </span>
-                                    <!-- Button Text -->
-                                    <span wire:loading.remove wire:target="decreaseStep()">
-                                        Back
-                                    </span>
-                                </div>
-                            </x-ghost-button>
+                        <x-ghost-button type="button" wire:loading.attr="disabled" wire:click="decreaseStep()">
+                            <div class="flex items-center justify-center">
+                                <!-- Spinner -->
+                                <span wire:loading wire:target="decreaseStep()" class="mr-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <!-- Button Text -->
+                                <span wire:loading.remove wire:target="decreaseStep()">
+                                    Back
+                                </span>
+                            </div>
+                        </x-ghost-button>
                         @endif
                         {{-- <x-button
                             class="bg-green-600 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out">
                             Proceed to Payment
                         </x-button> --}}
-                        <div x-data="{ showModal: false, agreed: false }" x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
+                        <div x-data="{ showModal: false, agreed: false }"
+                            x-init="$watch('showModal', value => document.body.classList.toggle('overflow-hidden', value))"
                             @keydown.escape.window="showModal = false">
 
                             <x-button type="button" icon="fas fa-check-circle" @click="showModal = true">
@@ -471,8 +497,8 @@
                                                 <!-- Spinner -->
                                                 <span wire:loading wire:target="register" class="mr-2">
                                                     <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                        <circle class="opacity-25" cx="12" cy="12"
-                                                            r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                            stroke="currentColor" stroke-width="4"></circle>
                                                         <path class="opacity-75" fill="currentColor"
                                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
                                                         </path>
