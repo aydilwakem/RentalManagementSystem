@@ -42,7 +42,7 @@
             <!-- Icon -->
             <div class="flex-shrink-0">
                 <div class="w-20 h-20 rounded-full bg-yellow-200 flex items-center justify-center">
-                    <i class="fas fa-calendar-check text-yellow-700 text-4xl"></i>
+                    <i class="fas fa-bed text-yellow-700 text-4xl"></i>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
             <!-- Icon -->
             <div class="flex-shrink-0">
                 <div class="w-20 h-20 rounded-full bg-yellow-200 flex items-center justify-center">
-                    <i class="fas fa-bed text-yellow-700 text-4xl"></i>
+                    <i class="fas fa-calendar-check text-yellow-700 text-4xl"></i>
                 </div>
             </div>
 
@@ -163,16 +163,29 @@
     </div>
 
     <!-- Calendar Sort -->
-    <div class="mb-4 flex items-center space-x-2">
-        <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
-        <select id="reservationFilter"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
-        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-            <option value="all">All</option>
-            <option value="2">Room Reservation</option>
-            <option value="3">Event Bookings</option>
-        </select>
+    <div class="flex justify-between">
+        <div class="mb-4 flex items-center space-x-2">
+            <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
+            <select id="reservationFilter"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
+            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                <option value="all">All</option>
+                <option value="2">Room Reservation</option>
+                <option value="3">Event Bookings</option>
+            </select>
+        </div>
+        <div class="flex items-center space-x-4 mb-3">
+            <div class="flex items-center space-x-2">
+                <span class="inline-block w-4 h-4 rounded" style="background-color: #86efac;"></span>
+                <span class="text-sm">Room Reservations</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-block w-4 h-4 rounded" style="background-color: #fde68a;"></span>
+                <span class="text-sm">Event Bookings</span>
+            </div>
+        </div>
     </div>
+
 
     <div id='calendar'></div>
 
@@ -216,10 +229,18 @@
                         }
                     },
                     eventDidMount: function(info) {
+                        //Status Styling
                         if (info.event.extendedProps.transaction_status === 'done') {
                             info.el.classList.add('status-done');
                         } else {
                             info.el.classList.add('status-active');
+                        }
+
+                        //Reservation Type Styling
+                        if (info.event.extendedProps.type_id == 3) {
+                            info.el.classList.add('event-booking');
+                        } else if (info.event.extendedProps.type_id == 2) {
+                            info.el.classList.add('room-reservation');
                         }
                     },
                     eventContent: function(arg) {
@@ -228,13 +249,13 @@
                         let pax = arg.event.extendedProps.pax || '';
                         let status = arg.event.extendedProps.transaction_status || '';
 
-                        let firstLine = '<div class="text-sm">';
+                        let firstLine = '<div class="text-sm truncate overflow-hidden whitespace-nowrap">';
                         if (status === 'done') {
                             firstLine += 'Reservation Completed | Click to View Details';
                         } else {
+                            if (room) firstLine += ` ${room}`;
+                            if (pax) firstLine += ` | ${pax} pax | `;
                             firstLine += title;
-                            if (room) firstLine += ` | Room: ${room}`;
-                            if (pax) firstLine += ` | ${pax} pax`;
                         }
                         firstLine += '</div>';
 

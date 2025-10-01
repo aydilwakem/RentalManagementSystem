@@ -7,7 +7,7 @@
         <!-- Navigation -->
         <x-breadcrumbs :items="[
             ['label' => 'Events', 'url' => route('admin.events')],
-            ['label' => 'View Event', 'url' => route('admin.view-event', ['event'=> $event->id])],
+            ['label' => 'View Event', 'url' => route('admin.view-event', ['event' => $event->id])],
         ]" />
     </x-slot>
 
@@ -17,6 +17,10 @@
             class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-lg border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
+                <x-button icon="fa-solid fa-file" wire:click="exportEventDetails" class="w-40">
+                    Export PDF
+                </x-button>
+
                 <!-- Title -->
                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Event ID:
                     {{ $event->invoice->transaction->transaction_number ?? 'N/A' }}
@@ -41,17 +45,17 @@
                     <div><strong>Company Name:</strong> {{ $event->transactionUser->company_name }}</div>
                     <div class="md:col-span-2"><strong>Location:</strong>
                         {{-- If there is municipality and country, it will show both. --}}
-                        @if($event->transactionUser->city_municipality && $event->transactionUser->country)
-                        {{ Str::title(strtolower($event->transactionUser->city_municipality)) }},
-                        {{$event->transactionUser->country }}
-                        {{-- If there is only municipality, it will show municipality only. --}}
+                        @if ($event->transactionUser->city_municipality && $event->transactionUser->country)
+                            {{ Str::title(strtolower($event->transactionUser->city_municipality)) }},
+                            {{ $event->transactionUser->country }}
+                            {{-- If there is only municipality, it will show municipality only. --}}
                         @elseif($event->transactionUser->city_municipality)
-                        {{ Str::title(strtolower($event->transactionUser->city_municipality)) }}
-                        {{-- If there is only country, it will show country only. --}}
+                            {{ Str::title(strtolower($event->transactionUser->city_municipality)) }}
+                            {{-- If there is only country, it will show country only. --}}
                         @elseif($event->transactionUser->country)
-                        {{ $event->transactionUser->country }}
+                            {{ $event->transactionUser->country }}
                         @else
-                        N/A
+                            N/A
                         @endif
                     </div>
                 </div>
@@ -96,15 +100,15 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         @if ($event->actual_start_datetime)
-                                        {{ $event->actual_start_datetime->format('F j, Y') }}
+                                            {{ $event->actual_start_datetime->format('F j, Y') }}
                                         @else
-                                        Not yet started
+                                            Not yet started
                                         @endif
                                         <br>
                                         @if ($event->actual_start_datetime)
-                                        {{ $event->actual_start_datetime->format('h:i A') }}
+                                            {{ $event->actual_start_datetime->format('h:i A') }}
                                         @else
-                                        Time not yet indicated
+                                            Time not yet indicated
                                         @endif
                                     </td>
                                 </tr>
@@ -120,7 +124,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-gray-600 dark:text-gray-200">
                     <div><strong>Event Hall:</strong>
                         @foreach ($event->properties as $property)
-                        {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
+                            {{ $property->name_number ?? 'No Event Hall Booked' }}<br>
                         @endforeach
 
                     </div>
@@ -142,103 +146,127 @@
                         {{ $event->invoice->transaction->transaction_number ?? 'N/A' }}
                     </div>
                     <div><strong>Invoice Number:</strong> {{ $event->invoice->invoice_number }}</div>
-                    <div><strong>Sub Total:</strong> ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
-                    <div><strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}</div>
                     <div><strong>Due Date:</strong> {{ $event->invoice->due_date->format('F j, Y') }}</div>
                     <div><strong>Invoice Status:</strong> {{ ucfirst($event->invoice->invoice_status) }}</div>
+                    <div class="text-green-600"><strong>Total:</strong>
+                        ₱{{ number_format($event->invoice->sub_total, 2) }}</div>
+                    @if ($event->invoice->balance_due == $event->invoice->sub_total)
+                        {{-- Unpaid --}}
+                        <div class="text-red-600">
+                            <strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}
+                        </div>
+                    @elseif ($event->invoice->balance_due > 0)
+                        {{-- Partially paid --}}
+                        <div class="text-yellow-500">
+                            <strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}
+                        </div>
+                    @else
+                        {{-- Fully paid --}}
+                        <div class="text-green-600">
+                            <strong>Balance Due:</strong> ₱{{ number_format($event->invoice->balance_due, 2) }}
+                        </div>
+                    @endif
                 </div>
             </div>
 
             <!-- Payments  -->
             <section id="payments">
-                <div class="text-left mb-3 flex items-center gap-2 mt-8">
+                <h2 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">
+                    Payments
+                </h2>
+                <div class="bg-gray-50 rounded-lg p-6 mb-6 dark:bg-gray-600 dark:border-gray-500 border">
                     <!-- Info Icon with Tooltip -->
-                    <div class="relative group inline-block">
-                        <x-button wire:click="OpenCreatePaymentModal">
-                            <i class="fas fa-plus mr-2"></i>
-                            Create Payment
-                        </x-button>
-                        <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-white"></i>
-                        <!-- Tooltip -->
-                        <div
-                            class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                            Create Payment is for cash payments only.
+                    <div class="text-left mb-3 flex items-center gap-2">
+                        <div class="relative group inline-block">
+                            <x-button wire:click="OpenCreatePaymentModal">
+                                <i class="fas fa-plus mr-2"></i>
+                                Create Payment
+                            </x-button>
+                            <i class="fas fa-info-circle text-gray-500 text-sm cursor-pointer dark:text-white"></i>
+                            <!-- Tooltip -->
+                            <div
+                                class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-sm text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                Create Payment is for cash payments only.
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="bg-white rounded-lg border border-gray-200 p-6 dark:bg-gray-600 dark:border-gray-500">
-                    <h2 class="font-bold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
-                        {{ __('Payments') }}
-                    </h2>
                     @if ($payments->isNotEmpty())
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border-collapse border border-gray-300 text-sm dark:text-gray-200">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Payment ID</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Invoice ID</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Method</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Amount Paid</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Type</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Reference No.</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Payment Date</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Status</th>
-                                    <th
-                                        class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                        Notes</th>
-                                    {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full border-collapse border border-gray-300 text-sm dark:text-gray-200">
+                                <thead class="bg-green-50 dark:bg-green-200">
+                                    <tr>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Payment ID</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Invoice ID</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Method</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Amount Paid</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Type</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Reference No.</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Payment Date</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Status</th>
+                                        <th
+                                            class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Notes</th>
+                                        {{-- <th class="border px-4 py-2 font-medium text-gray-900">Verified At</th>
                                     <th class="border px-4 py-2 font-medium text-gray-900">Action</th> --}}
-                                </tr>
-                            </thead>
-                            <tbody
-                                class="bg-white dark:bg-gray-500 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-500">
-                                @foreach ($payments as $payment)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-400">
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ $payment->id }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ $payment->invoice->invoice_number }}
-                                    </td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ ucfirst($payment->mode_of_payment) }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        ₱{{ number_format($payment->amount_paid, 2) }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ ucfirst($payment->payment_type) }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ $payment->payment_reference_number ?? 'N/A' }}</td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ $payment->payment_date ?? 'N/A' }}</td>
-                                    <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-600">
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-xs font-semibold
+                                    </tr>
+                                </thead>
+                                <tbody
+                                    class="bg-white dark:bg-gray-500 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-500">
+                                    @foreach ($payments as $payment)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-400 text-center">
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ $payment->id }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ $payment->invoice->invoice_number }}
+                                            </td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ ucfirst($payment->mode_of_payment) }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                ₱{{ number_format($payment->amount_paid, 2) }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ ucfirst($payment->payment_type) }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ $payment->payment_reference_number ?? 'N/A' }}</td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ $payment->payment_date ? \Carbon\Carbon::parse($payment->payment_date)->format('F j, Y') : 'N/A' }}
+                                            </td>
+                                            <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-600">
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                 {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
                                                 {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
                                                 {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
-                                            {{ ucfirst($payment->payment_status) }}
-                                        </span>
-                                    </td>
-                                    <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
-                                        {{ $payment->notes ?? '-' }}
-                                    </td>
-                                    {{-- <td class="border px-4 py-2 text-gray-700">
+                                                    {{ ucfirst($payment->payment_status) }}
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-600">
+                                                {{ $payment->notes ?? '-' }}
+                                            </td>
+                                            {{-- <td class="border px-4 py-2 text-gray-700">
                                         {{ $payment->verified_at ?? 'To be verified' }}</td>
                                     <td class="border px-4 py-2 space-x-2">
                                         @if ($payment->payment_status === 'pending')
@@ -254,13 +282,13 @@
                                         </a>
                                         @endif
                                     </td> --}}
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @else
-                    <p class="text-gray-600 italic">No payments found for this invoice.</p>
+                        <p class="text-gray-600 italic">No payments found for this invoice.</p>
                     @endif
                 </div>
             </section>
@@ -269,79 +297,95 @@
             <!---------------------------- MODALS ---------------------------------------->
             <div>
                 @if ($createPaymentModal)
-                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div
-                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200">
-                        <h2 class="text-lg font-semibold mb-4 text-green-700 dark:text-green-300">Add Payment</h2>
+                    <div id="guestModal"
+                        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200">
 
-                        <!-- Amount Paid -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Amount Paid <span
-                                    class="text-red-500">*</span></label>
-                            <input type="number" wire:model="amount_paid" placeholder="Ex. 10,000.00" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                required>
-                            @error('amount_paid')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
+                            <div
+                                class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b">
+                                <!-- Title -->
+                                <h2 class="text-2xl font-bold text-center">Add Payment</h2>
+
+                                <!-- Close Button -->
+                                <button wire:click="CloseCreatePaymentModal"
+                                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                    <span class="-translate-y-[2px]">&times;</span>
+                                </button>
+                            </div>
+                            <!-- Amount Paid -->
+                            <div class="mt-4">
+                                <label class="block text-sm text-gray-700 font-semibold dark:text-gray-200">Amount Paid
+                                    <span class="text-red-500">*</span></label>
+                                <input type="number" wire:model="amount_paid" placeholder="Ex. 10,000.00"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('amount_paid')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Date -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200">Payment Date
+                                    <span class="text-red-500">*</span></label>
+                                <input type="date" wire:model="payment_date"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                @error('payment_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Type -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200">Payment
+                                    Type <span class="text-red-500">*</span></label>
+                                <select wire:model="payment_type"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 focus:ring-green-600 focus:border-green-600"
+                                    required>
+                                    <option value="">Select Payment Type</option>
+                                    <option value="Room Rent">Room Rent</option>
+                                    <option value="House Rent">House Rent</option>
+                                    <option value="Activity Fee">Activity Fee</option>
+                                    <option value="Event Hall">Event Hall</option>
+                                    <option value="Event Package">Event Package</option>
+                                    <option value="Security Deposit">Security Deposit</option>
+                                    <option value="Remaining Balance">Remaining Balance</option>
+                                </select>
+                                @error('payment_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mt-4">
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200">Notes</label>
+                                <input type="text" wire:model="notes"
+                                    placeholder="Optional notes about the payment"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 focus:ring-green-600 focus:border-green-600">
+                                @error('notes')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center gap-2 mt-6">
+                                <x-ghost-button type="button" wire:click="CloseCreatePaymentModal">
+                                    Cancel
+                                </x-ghost-button>
+                                <x-button type="button" wire:click="CreatePayment">
+                                    Save Changes
+                                </x-button>
+                            </div>
+
                         </div>
-
-                        <!-- Payment Date -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Date <span
-                                    class="text-red-500">*</span></label>
-                            <input type="date" wire:model="payment_date" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                required>
-                            @error('payment_date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Payment Type -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Payment Type <span
-                                    class="text-red-500">*</span></label>
-                            <select wire:model="payment_type" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                required>
-                                <option value="">Select Payment Type</option>
-                                <option value="Room Rent">Room Rent</option>
-                                <option value="House Rent">House Rent</option>
-                                <option value="Activity Fee">Activity Fee</option>
-                                <option value="Event Hall">Event Hall</option>
-                                <option value="Event Package">Event Package</option>
-                                <option value="Security Deposit">Security Deposit</option>
-                                <option value="Remaining Balance">Remaining Balance</option>
-                            </select>
-                            @error('payment_type')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="mt-4">
-                            <label class="block text-sm text-gray-700 dark:text-gray-200">Notes</label>
-                            <input type="text" wire:model="notes" placeholder="Optional notes about the payment" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                            @error('notes')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex justify-between items-center gap-2 mt-6">
-                            <x-button type="button" wire:click="CloseCreatePaymentModal"
-                                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                Cancel
-                            </x-button>
-                            <x-button type="button" wire:click="CreatePayment">
-                                Save Changes
-                            </x-button>
-                        </div>
-
                     </div>
-                </div>
                 @endif
             </div>
 
@@ -359,9 +403,6 @@
                         Edit
                     </x-ghost-button>
 
-                    <x-button icon="fa-solid fa-file" wire:click="exportEventDetails">
-                        Export PDF
-                    </x-button>
                 </div>
             </div>
 

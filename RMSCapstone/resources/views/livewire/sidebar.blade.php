@@ -474,47 +474,48 @@
                     @endcan
 
                     <!-- Settings Dropdown content -->
-<div x-cloak x-show="open" @click.outside="open = false"
-    x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
-    class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
+                    <div x-cloak x-show="open" @click.outside="open = false"
+                        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+                        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
-    @can('user-list')
-    <a href="{{ route('admin.manage-users') }}" wire:navigate
-        class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-        <h1 class="cursor-pointer">User Management</h1>
-    </a>
-    @endcan
+                        @can('user-list')
+                        <a href="{{ route('admin.manage-users') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.manage-users') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">User Management</h1>
+                        </a>
+                        @endcan
 
-    @can('branding-view')
-    <a href="{{ route('admin.branding') }}" wire:navigate
-        class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-        <h1 class="cursor-pointer">Branding</h1>
-    </a>
-    @endcan
+                        @can('branding-view')
+                        <a href="{{ route('admin.branding') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.payments') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Branding</h1>
+                        </a>
+                        @endcan
 
-    @can('appearance-view')
-    <a href="{{ route('admin.appearance') }}" wire:navigate
-        class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-        <h1 class="cursor-pointer">Appearance</h1>
-    </a>
-    @endcan
+                        @can('appearance-view')
+                        <a href="{{ route('admin.appearance') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.appearance') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Appearance</h1>
+                        </a>
+                        @endcan
 
-    @can('activity-logs-view')
-    <a href="{{ route('admin.activity-logs') }}" wire:navigate
-        class="block px-3 py-2 {{ Route::is('admin.activity-logs') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-        <h1 class="cursor-pointer">Activity Logs</h1>
-    </a>
-    @endcan
+                        @can('activity-logs-view')
+                        <a href="{{ route('admin.activity-logs') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.activity-logs') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Activity Logs</h1>
+                        </a>
+                        @endcan
 
-    {{-- Backup Management --}}
-    @can('backup-view')
-    <a href="{{ route('admin.view-backups') }}" wire:navigate
-        class="block px-3 py-2 {{ Route::is('admin.view-backups') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-        <h1 class="cursor-pointer">Backup Management</h1>
-    </a>
-    @endcan
+                        {{-- Backup Management --}}
+                        @can('backup-view')
+                        <a href="{{ route('admin.view-backups') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.view-backups') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Backup Management</h1>
+                        </a>
+                        @endcan
 
-</div>                </div>
+                    </div>
+                </div>
 
                 <!-- Account Management -->
                 <div class="relative">

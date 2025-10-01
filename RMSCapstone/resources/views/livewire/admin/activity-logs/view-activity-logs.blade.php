@@ -23,9 +23,9 @@
                 </div>
 
                 <div class="ml-auto">
-                    <label for="view_mode" class="sr-only">Select View Mode</label>
+                    <label for="view_mode" class=" mb-2 text-sm text-gray-900 dark:text-gray-200">View Mode:</label>
                     <select id="view_mode" wire:model.live="viewMode"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white w-20">
                         <option value="cards">Cards</option>
                         <option value="table">Table</option>
                     </select>
@@ -157,8 +157,10 @@
                                             <div
                                                 class="w-10 h-10 flex items-center justify-center rounded-full z-10
                                             @if (Str::contains($log->description, 'created')) bg-green-100 text-green-600
-                                            @elseif(Str::contains($log->description, 'updated')) bg-blue-100 text-blue-600
+                                            @elseif(Str::contains($log->description, 'updated')) bg-yellow-100 text-yellow-600
                                             @elseif(Str::contains($log->description, 'deleted')) bg-red-100 text-red-600
+                                            @elseif(Str::contains($log->description, 'logged in')) bg-blue-100 text-blue-600
+                                            @elseif(Str::contains($log->description, 'logged out')) bg-purple-100 text-purple-600
                                             @else bg-gray-100 text-gray-600 @endif">
                                                 @if (Str::contains($log->description, 'created'))
                                                     <i class="fas fa-plus"></i>
@@ -167,9 +169,9 @@
                                                 @elseif(Str::contains($log->description, 'deleted'))
                                                     <i class="fas fa-trash"></i>
                                                 @elseif (Str::contains($log->description, 'logged in'))
-                                                    <i class="fas fa-sign-in-alt text-green-500"></i>
+                                                    <i class="fas fa-sign-in-alt"></i>
                                                 @elseif (Str::contains($log->description, 'logged out'))
-                                                    <i class="fas fa-sign-out-alt text-yellow-500"></i>
+                                                    <i class="fas fa-sign-out-alt"></i>
                                                 @else
                                                     <i class="fas fa-info-circle"></i>
                                                 @endif

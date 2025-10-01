@@ -36,7 +36,7 @@ class Feedback extends Model
 
 
     // --------------------- Activity Logs ------------------ //
-    protected static $logOnlyDirty = true; //Only changed attributes are logged 
+    protected static $logOnlyDirty = true; //Only changed attributes are logged
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -49,7 +49,7 @@ class Feedback extends Model
                 'comments',
                 'is_approved'
             ])
-            // 4.2 Automatically log only the attributes that have changed  
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the feedback log event
             ->setDescriptionForEvent(fn(string $eventName) => "Feedback has been {$eventName}")

@@ -53,7 +53,7 @@ class Dashboard extends Component
                 ->count();
 
             $this->reservations = Transaction::where('reservation_type_id', 2)->get();
-            // Fetch only transactions with reservation_type_id 1 or 2
+            // Fetch only transactions with reservation_type_id 2 or 3
             $allTransactions = Transaction::with('reservationType', 'transactionUser', 'properties')
                 ->whereIn('reservation_type_id', [2, 3])
                 ->get();
