@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 max-w-full">
+<div class="max-h-200px container mx-auto max-w-full p-6">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
             {{ __('Room Categories') }}
@@ -101,135 +101,137 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            {{-- Checkboxes --}}
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                    class="accent-blue-600 w-4 h-4">
-
-                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                    <span>ID</span>
-                                    @if ($sortBy !== 'id')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </div>
-
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                <button class="flex items-center">
-                                    Name
-                                    @if ($sortBy !== 'name')
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            <th scope="col" class="px-4 py-3">Description</th>
-
-                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
-                        @forelse ($roomCategories as $roomCategory)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
-                                    <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
-                                        value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
-                                    <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>
-                                </th>
-                                <td class="px-4 py-3">{{ $roomCategory->name }}</td>
-                                <td class="px-4 py-3">
-                                    @if (!empty($roomCategory->description))
-                                        {{ Str::limit($roomCategory->description, 80) }}
-                                    @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
-                                            provided.</em>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
-                                    <!-- View Icon -->
-                                    @can('room-category-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Edit Icon -->
-                                    @can('room-category-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Delete Icon -->
-                                    @can('room-category-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
-                                            wire:click="confirmDelete({{ $roomCategory->id }})"
-                                            wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
-
-                                </td>
-                            </tr>
-                        @empty
+                <div class="overflow-y-auto overflow-x-auto max-h-[350px] max-w-screen">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700 sticky top-0 z-10">
                             <tr>
-                                <!-- No Match Search / Filter Result Message -->
-                                <td colspan="15" class="text-center py-10 text-gray-500 dark:text-white">
-                                    No room categories found.
-                                </td>
+                                {{-- Checkboxes --}}
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+
+                                    <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                        <span>ID</span>
+                                        @if ($sortBy !== 'id')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </div>
+
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                    <button class="flex items-center">
+                                        Name
+                                        @if ($sortBy !== 'name')
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+
+                                <th scope="col" class="px-4 py-3">Description</th>
+
+                                <th scope="col" class="px-4 py-3 text-center">Actions</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
+                            @forelse ($roomCategories as $roomCategory)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                        <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
+                                            value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
+                                        <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>
+                                    </th>
+                                    <td class="px-4 py-3">{{ $roomCategory->name }}</td>
+                                    <td class="px-4 py-3">
+                                        @if (!empty($roomCategory->description))
+                                            {{ Str::limit($roomCategory->description, 80) }}
+                                        @else
+                                            <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                                provided.</em>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                                        <!-- View Icon -->
+                                        @can('room-category-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                                wire:navigate
+                                                href="{{ route('admin.view-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Edit Icon -->
+                                        @can('room-category-edit')
+                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                                wire:navigate
+                                                href="{{ route('admin.edit-room-category', ['roomCategory' => $roomCategory->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Delete Icon -->
+                                        @can('room-category-delete')
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
+                                                wire:click="confirmDelete({{ $roomCategory->id }})"
+                                                wire:loading.attr="disabled">
+                                            </i>
+                                        @endcan
+
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <!-- No Match Search / Filter Result Message -->
+                                    <td colspan="15" class="text-center py-10 text-gray-500 dark:text-white">
+                                        No room categories found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                 {{-- Per Page --}}
-                <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
+                <div class="py-3 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex ">
-                        <div class="flex space-x-2 items-center mb-3">
+                        <div class="flex space-x-2 items-center">
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live='perPage'
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5

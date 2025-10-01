@@ -353,7 +353,7 @@
 
                     <div>
                         <strong>Free Breakfast Inclusion:</strong>
-                        <div>Free breakfast for {{ $transaction->pax }}</div>
+                        <div>Free breakfast for {{ $transaction->pax }} pax</div>
                     </div>
 
                     <div>

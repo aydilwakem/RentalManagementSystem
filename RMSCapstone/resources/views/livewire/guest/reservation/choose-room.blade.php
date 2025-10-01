@@ -153,17 +153,17 @@
                                                     @php
                                                         // Get all rates information
                                                         $allRates = $this->getAllRoomRates($room);
-                                                        
+
                                                         // Get ALL applied rates for the entire stay period
                                                         $appliedRates = $this->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
-                                                        
+
                                                         $baseRate = $room->amount;
-                                                        
+
                                                         // Calculate rate breakdown for selected dates
                                                         $rateSummary = $this->getRateSummary($room, $this->check_in_date, $this->check_out_date);
                                                         $nights = $rateSummary['nights'] ?? 0;
                                                         $totalRate = $rateSummary['total_amount'] ?? 0;
-                                                        
+
                                                         // Determine if we're showing multiple rates or single rate
                                                         $hasMultipleRates = count($appliedRates) > 1;
                                                         $hasSpecialRate = count($appliedRates) > 0 && $appliedRates[0]['rate_type'] !== null;
@@ -211,7 +211,7 @@
 
                                                             <!-- Total Stay Cost -->
                                                             <p class="text-sm text-gray-600 mt-2">
-                                                                Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}: 
+                                                                Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}:
                                                                 <span class="font-semibold text-gray-700">₱{{ number_format($totalRate, 2) }}</span>
                                                             </p>
 
@@ -228,23 +228,23 @@
                                                     <!-- Detailed Breakdown (Collapsible) -->
                                                     @if($this->check_in_date && $this->check_out_date && count($appliedRates) > 0 && $hasMultipleRates)
                                                         <div class="mt-3 text-sm">
-                                                            <button type="button" 
+                                                            <button type="button"
                                                                 class="text-green-600 hover:text-green-800 font-medium flex items-center"
                                                                 onclick="toggleRateBreakdown({{ $room->id }})">
                                                                 <i class="fas fa-calculator mr-2"></i>
                                                                 View Rate Breakdown
                                                                 <i class="fas fa-chevron-down ml-1 text-xs" id="breakdown-arrow-{{ $room->id }}"></i>
                                                             </button>
-                                                            
+
                                                             <div id="rate-breakdown-{{ $room->id }}" class="mt-2 hidden">
                                                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
                                                                     <p class="font-semibold text-gray-700 mb-2 text-sm">Rate Calculation:</p>
-                                                                    
+
                                                                     <div class="space-y-2">
                                                                         @foreach($appliedRates as $appliedRate)
                                                                             <div class="flex justify-between items-center text-xs">
                                                                                 <span class="text-gray-600">
-                                                                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @ 
+                                                                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @
                                                                                     <span class="font-medium">{{ $appliedRate['name'] }}</span>
                                                                                     <span class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2) }}/night)</span>
                                                                                 </span>
@@ -253,7 +253,7 @@
                                                                                 </span>
                                                                             </div>
                                                                         @endforeach
-                                                                        
+
                                                                         <div class="border-t border-gray-300 pt-2 mt-2">
                                                                             <div class="flex justify-between items-center font-semibold">
                                                                                 <span class="text-gray-700">Total Room Rate:</span>
@@ -380,7 +380,7 @@
                                                                     The base rate is ₱{{ number_format($room->amount, 2) }}{{ $room->extra_person_charge ? ', with an extra charge of ₱' . number_format($room->extra_person_charge, 2) . ' per additional guest per night' : '' }}.
 
                                                                 </li>
-                                                                
+
                                                                 <li><strong>Base Rate Per Night:</strong>
                                                                     ₱{{ number_format($room->amount, 2) }}
                                                                 </li>
@@ -389,7 +389,7 @@
                                                                         $appliedRates = $this->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
                                                                         $hasSpecialRate = count($appliedRates) > 0 && $appliedRates[0]['rate_type'] !== null;
                                                                     @endphp
-                                                                    
+
                                                                     @if($hasSpecialRate)
                                                                         <!-- Show applied rates -->
                                                                         @foreach($appliedRates as $appliedRate)
@@ -401,12 +401,12 @@
                                                                                         {{ $appliedRate['name'] }}:
                                                                                     @endif
                                                                                 </strong>
-                                                                                ₱{{ number_format($appliedRate['average_rate'], 2) }} per night 
+                                                                                ₱{{ number_format($appliedRate['average_rate'], 2) }} per night
                                                                                 ({{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }})
                                                                             </li>
                                                                         @endforeach
                                                                     @endif
-                                                                    
+
                                                                     <li><strong>Total Rate for Stay:</strong>
                                                                         ₱{{ number_format($totalRate, 2) }} for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}
                                                                     </li>
@@ -585,7 +585,7 @@
         function toggleRateBreakdown(roomId) {
             const breakdown = document.getElementById('rate-breakdown-' + roomId);
             const arrow = document.getElementById('breakdown-arrow-' + roomId);
-            
+
             if (breakdown.classList.contains('hidden')) {
                 breakdown.classList.remove('hidden');
                 arrow.classList.remove('fa-chevron-down');
