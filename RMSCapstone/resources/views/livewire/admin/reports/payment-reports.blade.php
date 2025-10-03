@@ -45,6 +45,10 @@
                         <option value="Event Package">Event Package</option>
                         <option value="Security Deposit">Security Deposit</option>
                         <option value="Remaining Balance">Remaining Balance</option>
+                        <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
+                        <option value="Accommodation Downpayment">Accommodation Downpayment</option>
+                        <option value="Accommodation Balance">Accommodation Balance</option>
+
                     </select>
                 </div>
 

@@ -12,13 +12,15 @@ class PromoCodeService
 {
     /**
      * Validates the promo code and applies the appropriate discount if valid.
+     * Applies discount only to room charges that match the property category.
      *
      * @param string $promoCode      The promo code entered by the user.
      * @param float  $bookingAmount  The total booking amount before applying promo.
-     * @param float  $subTotal       The subtotal before tax/fees to apply discount on.
+     * @param float  $roomSubTotal   The subtotal of room charges only.
+     * @param array  $roomBreakdown  Array containing property category breakdown for discount calculation
      * @return array                 Result containing success status, message, and discount.
      */
-    public function validateAndApply(string $promoCode, float $bookingAmount, float $subTotal): array
+    public function validateAndApply(string $promoCode, float $bookingAmount, float $roomSubTotal, array $roomBreakdown = []): array
     {
         $promo = $this->findPromo($promoCode);
 
@@ -43,12 +45,19 @@ class PromoCodeService
             return $this->error('This promo code is currently inactive.');
         }
 
-        $discount = $this->calculateDiscount($promo, $subTotal);
+        // Calculate discount based on eligible room charges (considering property categories)
+        $discount = $this->calculateDiscount($promo, $roomSubTotal, $roomBreakdown);
+
+        // Check if discount is applicable to any rooms in the cart
+        if ($discount <= 0 && !empty($roomBreakdown) && $promo->isCategorySpecific()) {
+            $categoryName = $promo->propertyCategory?->name ?? 'the selected category';
+            return $this->error("This promo code only applies to {$categoryName} rooms. No eligible rooms found in your cart.");
+        }
 
         return [
             'success' => true,
             'discount' => $discount,
-            'message' => 'Promo code applied! You saved ₱' . number_format($discount, 2) . '.',
+            'message' => $this->generateSuccessMessage($promo, $discount),
             'promo' => $promo,
         ];
     }
@@ -112,18 +121,66 @@ class PromoCodeService
 
     /**
      * Calculates the discount amount based on the promo code's type and value.
+     * Considers property categories for discount calculation.
      *
      * @param PromoCode $promo
-     * @param float $subTotal
+     * @param float $roomSubTotal  The subtotal of room charges only
+     * @param array $roomBreakdown Array with property category breakdown
      * @return float
      */
-    protected function calculateDiscount(PromoCode $promo, float $subTotal): float
+    protected function calculateDiscount(PromoCode $promo, float $roomSubTotal, array $roomBreakdown): float
     {
+        // If no room breakdown provided or promo is not category-specific, apply to all room charges
+        if (empty($roomBreakdown) || !$promo->isCategorySpecific()) {
+            return match ($promo->discount_type) {
+                'percentage' => ($promo->discount_value / 100) * $roomSubTotal,
+                'fixed' => min($promo->discount_value, $roomSubTotal),
+                default => 0,
+            };
+        }
+
+        // Calculate discount only for eligible property categories
+        $eligibleRoomAmount = 0;
+
+        foreach ($roomBreakdown as $room) {
+            $propertyCategoryId = $room['property_category_id'] ?? null;
+            
+            if ($promo->appliesToPropertyCategory($propertyCategoryId)) {
+                $eligibleRoomAmount += $room['amount'] ?? 0;
+            }
+        }
+
+        if ($eligibleRoomAmount <= 0) {
+            return 0; // No eligible rooms for this promo
+        }
+
         return match ($promo->discount_type) {
-            'percentage' => ($promo->discount_value / 100) * $subTotal,
-            'fixed' => $promo->discount_value,
+            'percentage' => ($promo->discount_value / 100) * $eligibleRoomAmount,
+            'fixed' => min($promo->discount_value, $eligibleRoomAmount),
             default => 0,
         };
+    }
+
+    /**
+     * Generates appropriate success message based on promo type and property category
+     *
+     * @param PromoCode $promo
+     * @param float $discount
+     * @return string
+     */
+    protected function generateSuccessMessage(PromoCode $promo, float $discount): string
+    {
+        $baseMessage = 'Promo code applied! You saved ₱' . number_format($discount, 2);
+
+        if (!$promo->isCategorySpecific()) {
+            return $baseMessage . ' on all room charges.';
+        }
+
+        if ($promo->propertyCategory) {
+            return $baseMessage . ' on ' . $promo->propertyCategory->name . ' rooms.';
+        }
+
+        return $baseMessage . ' on eligible room charges.';
     }
 
     /**

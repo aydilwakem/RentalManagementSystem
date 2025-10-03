@@ -948,23 +948,21 @@
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
                                             @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
                                                 @if ($item['type'] == 'property')
-                                                    <button wire:click="editRoom({{ $property->pivot->id }})"
+                                                    <button wire:click="editRoom({{ $item['pivot_id'] }})"
                                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                         title="Edit">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
 
                                                     <!-- Change Room Button -->
-                                                    <button wire:click="openChangeRoomModal({{ $property->pivot->id }})"
+                                                    <button wire:click="openChangeRoomModal({{ $item['pivot_id']  }})"
                                                         class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                                                         title="Change Room">
                                                         <i class="fas fa-exchange-alt"></i>
                                                     </button>
 
-
-
-                                                        <!-- Add Another Guest Button -->
-                                                        <button wire:click="addGuest({{ $property->pivot->id }})"
+                                                    <!-- Add Another Guest Button -->
+                                                    <button wire:click="addGuest({{ $item['pivot_id']  }})"
                                                             class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
                                                             title="Add Another Guest">
                                                             <i class="fas fa-user-plus"></i>
@@ -1073,7 +1071,7 @@
                                         <span>
                                             - {{ strtoupper($type->name) }} x {{ $count }}
                                             @if ($type->type === 'percent' && $perPersonAmount)
-                                                ({{ $type->rate }}% of Subtotal ÷ {{ $pax }} pax)
+                                                ({{ $type->rate }}% of Extra charge per guest ÷ {{ $pax }} pax)
                                             @else
                                                 (Fixed)
                                             @endif
@@ -1208,6 +1206,45 @@
                     {{-- Add Item Button Row --}}
 
 
+
+                    <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
+                    @if (!$this->discountsApplied)
+                        @if ($transaction->promoCode)
+                            <div class="mb-4">
+                                @if ($this->getTotalExtraGuests() > 0)
+                                    <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-2">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                            <span class="text-blue-700 font-semibold">Limited Discount Availability</span>
+                                        </div>
+                                        <p class="text-blue-600 text-sm mt-1">
+                                            PWD/Senior discounts are available only for the {{ $this->getTotalExtraGuests() }} extra guest(s) 
+                                            since a promo code is applied to this reservation.
+                                        </p>
+                                    </div>
+                                    <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
+                                        Add PWD/SENIOR DISCOUNT (Extra Guests Only)
+                                    </x-button>
+                                @else
+                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                            <span class="text-yellow-700 font-semibold">Discounts Not Available</span>
+                                        </div>
+                                        <p class="text-yellow-600 text-sm mt-1">
+                                            PWD/Senior discounts are not available when a promo code is applied, unless there are extra guests in the reservation.
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
+                                Add PWD/SENIOR DISCOUNT
+                            </x-button>
+                        @endif
+                    @endif
+                    <!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
+
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
                     <div class="flex justify-center">
                         @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
@@ -1238,14 +1275,6 @@
                         @endif
                     </div>
                     <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
-
-                    <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
-                    @if (!$this->discountsApplied)
-                        <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
-                            Add PWD/SENIOR DISCOUNT
-                        </x-button>
-                    @endif
-                    <!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
 
             </div>
         @else
@@ -1616,10 +1645,14 @@
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
                                     required>
                                     <option value="">Select Payment Type</option>
-                                    <option value="Room Rent">Room Rent</option>
+                                    {{-- <option value="Room Rent">Room Rent</option>
                                     <option value="Security Deposit">Security Deposit</option>
                                     <option value="Remaining Balance">Remaining Balance</option>
-                                    <option value="Merchandise">Merchandise</option>
+                                    <option value="Merchandise">Merchandise</option> --}}
+                                    <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
+                                    <option value="Accommodation Downpayment">Accommodation Downpayment</option>
+                                    <option value="Accommodation Balance">Accommodation Balance</option>
+
                                 </select>
                                 @error('payment_type')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -2333,48 +2366,70 @@
             @endif
 
 
-            {{-- Add Discounts Modal --}}
-            @if ($activeModal === 'discounts')
-                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div
-                        class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+@if ($activeModal === 'discounts')
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+            <!-- Header -->
+            <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                <h2 class="text-2xl font-bold text-center">
+                    @if($transaction->promoCode)
+                        Add Discounts (Extra Adult Guests Only)
+                    @else
+                        Add PWD/Senior Discounts
+                    @endif
+                </h2>
+                <button wire:click="closeModal"
+                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                    <span class="-translate-y-[2px]">&times;</span>
+                </button>
+            </div>
 
-                        {{-- Header --}}
-                        <div
-                            class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
-                            <h2 class="text-2xl font-bold text-center">Add PWD/Senior Discounts</h2>
-                            <button wire:click="closeModal"
-                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                                <span class="-translate-y-[2px]">&times;</span>
-                            </button>
-                        </div>
-
-                        {{-- Form Fields --}}
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-medium mb-1">Number of PWDs</label>
-                                <input type="number" min="0" wire:model="pwdCount"
-                                    class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            </div>
-                            <div>
-                                <label class="block font-medium mb-1">Number of Seniors</label>
-                                <input type="number" min="0" wire:model="seniorCount"
-                                    class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            </div>
-                        </div>
-
-                        {{-- Actions --}}
-                        <div class="flex justify-between mt-6">
-                            <x-ghost-button wire:click="closeModal">
-                                Cancel
-                            </x-ghost-button>
-                            <x-button wire:click="applyDiscounts">
-                                Save Changes
-                            </x-button>
-                        </div>
-                    </div>
+            <!-- Promo Code Warning -->
+            @if($transaction->promoCode)
+                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-blue-700 text-sm">
+                        <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s) 
+                        since a promo code is applied to this reservation. (Kids are excluded from capacity count)
+                    </p>
                 </div>
             @endif
+
+            <!-- Form Fields -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-medium mb-1">Number of PWDs</label>
+                    <input type="number" min="0" 
+                        @if($transaction->promoCode) max="{{ $this->getTotalExtraGuests() }}" @endif
+                        wire:model="pwdCount"
+                        class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                    @if($transaction->promoCode)
+                        <p class="text-xs text-gray-500 mt-1">Max: {{ $this->getTotalExtraGuests() }} (extra adult guests only)</p>
+                    @endif
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Number of Seniors</label>
+                    <input type="number" min="0" 
+                        @if($transaction->promoCode) max="{{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}" @endif
+                        wire:model="seniorCount"
+                        class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                    @if($transaction->promoCode)
+                        <p class="text-xs text-gray-500 mt-1">Remaining: {{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-between mt-6">
+                <x-ghost-button wire:click="closeModal">
+                    Cancel
+                </x-ghost-button>
+                <x-button wire:click="applyDiscounts">
+                    Apply Discounts
+                </x-button>
+            </div>
+        </div>
+    </div>
+@endif
 
             {{-- Add Voucher Modal --}}
             @if ($activeModal === 'voucher')
@@ -2921,6 +2976,89 @@
                 </div>
             @endif
 
+<!-- Change Room Modal -->
+@if ($showChangeRoomModal)
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <div class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
+            <h2 class="text-2xl font-bold text-center">Change Room</h2>
+        </div>
+
+        <!-- Current Room Info -->
+        @if($currentRoomDetails)
+        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">Current Room:</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                {{ $currentRoomDetails->property->name_number ?? 'N/A' }} -
+                {{ optional($currentRoomDetails->property->category)->name ?? 'N/A' }}
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Rate: ₱{{ number_format($currentRoomDetails->property->amount ?? 0, 2) }}/night
+            </p>
+        </div>
+        @endif
+
+        <!-- Available Rooms Dropdown -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                Select New Room <span class="text-red-500">*</span>
+            </label>
+            <select wire:model="selectedNewRoomId"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Choose a room...</option>
+                @foreach($availableRooms as $room)
+                    <option value="{{ $room->id }}"
+                        {{ $room->is_booked ? 'disabled' : '' }}
+                        class="{{ $room->is_booked ? 'text-red-500 bg-red-50' : 'text-gray-900' }}">
+                        {{ $room->name_number }} - {{ optional($room->category)->name }}
+                        @if($room->dynamic_rate)
+                            - ₱{{ number_format($room->dynamic_rate, 2) }}/night
+                        @else
+                            - ₱{{ number_format($room->amount, 2) }}/night
+                        @endif
+                        @if($room->is_booked)
+                            (Booked)
+                        @elseif($room->id === $currentRoomDetails->property_id)
+                            (Current Room)
+                        @else
+                            (Available)
+                        @endif
+                    </option>
+                @endforeach
+            </select>
+            @error('selectedNewRoomId')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <!-- Room Availability Note -->
+        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            <p>Only available rooms for your stay dates are shown.</p>
+            <p>Booked rooms are disabled and marked in red.</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between mt-6">
+            <x-ghost-button wire:click="$set('showChangeRoomModal', false)">
+                Cancel
+            </x-ghost-button>
+            <x-button wire:click="changeRoom" wire:loading.attr="disabled">
+                <div class="flex items-center justify-center">
+                    <span wire:loading class="mr-2" wire:target="changeRoom">
+                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                        </svg>
+                    </span>
+                    <span wire:loading.remove wire:target="changeRoom">
+                        Change Room
+                    </span>
+                </div>
+            </x-button>
+        </div>
+    </div>
+</div>
+@endif
 
 
 
@@ -3274,89 +3412,6 @@
 
 
 
-<!-- Change Room Modal -->
-@if ($showChangeRoomModal)
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-        <div class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
-            <h2 class="text-2xl font-bold text-center">Change Room</h2>
-        </div>
-
-        <!-- Current Room Info -->
-        @if($currentRoomDetails)
-        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">Current Room:</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                {{ $currentRoomDetails->property->name_number ?? 'N/A' }} -
-                {{ optional($currentRoomDetails->property->category)->name ?? 'N/A' }}
-            </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-                Rate: ₱{{ number_format($currentRoomDetails->property->amount ?? 0, 2) }}/night
-            </p>
-        </div>
-        @endif
-
-        <!-- Available Rooms Dropdown -->
-        <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Select New Room <span class="text-red-500">*</span>
-            </label>
-            <select wire:model="selectedNewRoomId"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="">Choose a room...</option>
-                @foreach($availableRooms as $room)
-                    <option value="{{ $room->id }}"
-                        {{ $room->is_booked ? 'disabled' : '' }}
-                        class="{{ $room->is_booked ? 'text-red-500 bg-red-50' : 'text-gray-900' }}">
-                        {{ $room->name_number }} - {{ optional($room->category)->name }}
-                        @if($room->dynamic_rate)
-                            - ₱{{ number_format($room->dynamic_rate, 2) }}/night
-                        @else
-                            - ₱{{ number_format($room->amount, 2) }}/night
-                        @endif
-                        @if($room->is_booked)
-                            (Booked)
-                        @elseif($room->id === $currentRoomDetails->property_id)
-                            (Current Room)
-                        @else
-                            (Available)
-                        @endif
-                    </option>
-                @endforeach
-            </select>
-            @error('selectedNewRoomId')
-            <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-
-        <!-- Room Availability Note -->
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            <p>Only available rooms for your stay dates are shown.</p>
-            <p>Booked rooms are disabled and marked in red.</p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-between mt-6">
-            <x-ghost-button wire:click="$set('showChangeRoomModal', false)">
-                Cancel
-            </x-ghost-button>
-            <x-button wire:click="changeRoom" wire:loading.attr="disabled">
-                <div class="flex items-center justify-center">
-                    <span wire:loading class="mr-2" wire:target="changeRoom">
-                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                        </svg>
-                    </span>
-                    <span wire:loading.remove wire:target="changeRoom">
-                        Change Room
-                    </span>
-                </div>
-            </x-button>
-        </div>
-    </div>
-</div>
-@endif
 
 
                     <!-------------------------- END OF MODALS ---------------------------------->

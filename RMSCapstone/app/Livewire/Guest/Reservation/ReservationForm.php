@@ -794,14 +794,36 @@ class ReservationForm extends Component
      * -----------------------------------------------------------------------------
      */
 
+    /**
+     * Get room breakdown with property category information for promo code validation
+     */
+    protected function getPropertyCategoryBreakdown(): array
+    {
+        $breakdown = [];
+        
+        foreach ($this->cart as $item) {
+            if ($item['type'] === 'room') {
+                $roomModel = Property::find($item['room_id']);
+                if ($roomModel) {
+                    $breakdown[] = [
+                        'room_id' => $item['room_id'],
+                        'property_category_id' => $roomModel->property_category_id,
+                        'amount' => $item['total_amount'] ?? 0,
+                        'room_name' => $item['room_name'] ?? 'Unknown Room',
+                    ];
+                }
+            }
+        }
+        
+        return $breakdown;
+    }
 
     public function applyPromoCode()
     {
-
         Log::info('Apply Promo Code method called with promoCode: ' . $this->promoCode);
 
         if (empty($this->promoCode) || !is_string($this->promoCode)) {
-            Log::warning(message: 'No valid promo code provided. Skipping promo application.');
+            Log::warning('No valid promo code provided. Skipping promo application.');
             $this->promoDiscount = 0;
             $this->promo_discount_amount = 0;
             $this->discountMessage = null;
@@ -811,30 +833,41 @@ class ReservationForm extends Component
 
         $this->reset(['discountMessage', 'errorMessage']);
 
-        // Compute base subtotal (without discount)
+        // Step 1: Compute the base subtotal (for minimum booking amount check)
         $baseSubtotal = $this->computeBaseSubtotal();
+        
+        // Step 2: Compute room-only subtotal for promo discount calculation
+        $roomSubTotal = $this->computeTotalAmountOfAllRooms();
+        
+        // Step 3: Get property category breakdown for category-specific promo validation
+        $propertyBreakdown = $this->getPropertyCategoryBreakdown();
 
-        // Validate promo based on base subtotal
+        // Step 4: Call the promo code service to validate and apply the promo code
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
-            $this->total_amount,
-            $baseSubtotal
+            $baseSubtotal, // For minimum booking amount validation
+            $roomSubTotal,  // For discount calculation (rooms only)
+            $propertyBreakdown  // For property category validation
         );
 
-        if (!$response['success']) {
-            return $this->failPromo($response['message']);
+        // Step 5: If promo validation fails, handle the error and exit
+        if (!isset($response['success']) || !$response['success']) {
+            return $this->failPromo($response['message'] ?? 'Invalid promo code.');
         }
 
-        // Apply discount
+        // Step 6: Apply the discount to the booking
         $this->promoDiscount = $response['discount'];
         $this->promo_discount_amount = $this->promoDiscount;
 
-        // Compute final discounted subtotal
+        // Step 7: Calculate the new subtotal after applying the discount
+        // The discount only applies to room charges, so subtract from base subtotal
         $this->sub_total = max(0, $baseSubtotal - $this->promoDiscount);
 
+        // Step 8: Show the user a success message, and clear any error messages
         $this->discountMessage = $response['message'];
         $this->errorMessage = null;
 
+        // Step 9: Refresh the available rooms list, possibly affected by promo logic
         $this->getAvailableRooms();
     }
 
