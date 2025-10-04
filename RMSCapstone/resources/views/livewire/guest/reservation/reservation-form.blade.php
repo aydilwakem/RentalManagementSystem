@@ -368,7 +368,9 @@
                         <!-- Discount Code -->
                         <hr class="my-2 border-gray-200">
                         @if ($discountMessage)
-                            <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
+                            <div class="bg-green-50 border border-green-200 rounded p-3 mb-3">
+                                <p class="text-sm text-green-700 font-semibold">{{ $discountMessage }}</p>
+                            </div>
                         @endif
 
                         @if ($errorMessage)
@@ -384,11 +386,9 @@
 
                         <div class="relative w-full mt-4">
                             <input type="text" wire:model="promoCode"
-                                wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
                                 class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
                                 {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                                placeholder="Enter Promo Code" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}
-                                >
+                                placeholder="Enter Promo Code (applies to rooms only)" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}>
 
 
                             @if ($discountMessage)
@@ -798,7 +798,9 @@
                                     <!-- Discount Code -->
                                     <hr class="my-1 border-gray-200">
                                     @if ($discountMessage)
-                                        <p class="text-sm mt-1 text-green-600">{{ $discountMessage }}</p>
+                                    <div class="bg-green-50 border border-green-200 rounded p-3 mb-3">
+                                        <p class="text-sm text-green-700 font-semibold">{{ $discountMessage }}</p>
+                                    </div>  
                                     @endif
 
                                     @if ($errorMessage)
@@ -814,11 +816,9 @@
 
                                     <div class="relative w-full mt-4">
                                         <input type="text" wire:model="promoCode"
-                                            wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
                                             class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
                                             {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                                            placeholder="Enter Promo Code" autocomplete="off"
-                                            {{ $hasCode ? 'disabled' : '' }}>
+                                            placeholder="Enter Promo Code (applies to rooms only)" autocomplete="off" {{ $hasCode ? 'disabled' : '' }}>
 
                                         @if ($discountMessage)
                                             <button wire:key="remove-promo-button" type="button"

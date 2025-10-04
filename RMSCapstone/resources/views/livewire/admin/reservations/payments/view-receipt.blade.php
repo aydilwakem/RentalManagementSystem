@@ -49,25 +49,11 @@
             <div class="bg-gray-50 rounded-md p-4">
                 <div class="flex justify-between items-center">
                     <div class="font-medium text-gray-700">Payment Type:</div>
-                    <div class="text-gray-900">
-                        <select wire:model="payment_type"
-                            class="form-select mt-1 block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm">
-                            <option value="">Select Payment Type</option>
-                            <option value="Room Rent">Room Rent</option>
-                            <option value="House Rent">House Rent</option>
-                            <option value="Activity Fee">Activity Fee</option>
-                            <option value="Event Hall">Event Hall</option>
-                            <option value="Event Package">Event Package</option>
-                            <option value="Security Deposit">Security Deposit</option>
-                            <option value="Remaining Balance">Remaining Balance</option>
-                        </select>
+                    <div class="text-gray-900 font-semibold">
+                        {{ $payment_type ?? 'Not specified' }}
                     </div>
                 </div>
-                @error('payment_type')
-                    <span class="text-sm text-red-600 mt-1">{{ $message }}</span>
-                @enderror
             </div>
-
 
             <div class="bg-gray-50 rounded-md p-4">
                 <div class="flex justify-between items-center">

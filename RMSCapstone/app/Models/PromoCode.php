@@ -86,4 +86,29 @@ class PromoCode extends Model
     {
         return $this->hasMany(Transaction::class, 'promo_id');
     }
+    
+        /**
+     * Check if promo applies to a specific property category
+     */
+    public function appliesToPropertyCategory(?int $propertyCategoryId): bool
+    {
+        // If promo has no property category assigned, it applies to all rooms
+        if (is_null($this->property_category_id)) {
+            return true;
+        }
+
+        if (is_null($propertyCategoryId)) {
+            return false;
+        }
+
+        return $this->property_category_id == $propertyCategoryId;
+    }
+
+    /**
+     * Check if this is a category-specific promo
+     */
+    public function isCategorySpecific(): bool
+    {
+        return !is_null($this->property_category_id);
+    }
 }

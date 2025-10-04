@@ -264,13 +264,17 @@
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" required>
                                 <option value="">Select Payment Type</option>
-                                <option value="Room Rent">Room Rent</option>
+                                {{-- <option value="Room Rent">Room Rent</option>
                                 <option value="House Rent">House Rent</option>
                                 <option value="Activity Fee">Activity Fee</option>
                                 <option value="Event Hall">Event Hall</option>
                                 <option value="Event Package">Event Package</option>
                                 <option value="Security Deposit">Security Deposit</option>
-                                <option value="Remaining Balance">Remaining Balance</option>
+                                <option value="Remaining Balance">Remaining Balance</option> --}}
+                                <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
+                                <option value="Accommodation Downpayment">Accommodation Downpayment</option>
+                                <option value="Accommodation Balance">Accommodation Balance</option>
+
                             </select>
                             @error('payment_type')
                             <span class="text-red-500 text-sm">{{ $message }}</span>

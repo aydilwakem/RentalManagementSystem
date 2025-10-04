@@ -403,9 +403,25 @@ class ViewReservation extends Component
  * ----------------------------------------------------------------------------
  */
 
+public function resetChangeRoomModal()
+{
+    $this->reset([
+        'changingRoomPivotId',
+        'currentRoomDetails', 
+        'availableRooms',
+        'selectedNewRoomId',
+        'showChangeRoomModal'
+    ]);
+}
+
+
+
 public function openChangeRoomModal($pivotId)
 {
     Log::info('Open Change Room modal called for pivot ID: ' . $pivotId);
+    
+    // Reset modal state first
+    $this->resetChangeRoomModal();
     
     $this->changingRoomPivotId = $pivotId;
     
@@ -454,6 +470,7 @@ public function openChangeRoomModal($pivotId)
     $this->showChangeRoomModal = true;
 }
 
+
 public function changeRoom()
 {
     Log::info('Change Room method called.');
@@ -484,8 +501,8 @@ public function changeRoom()
         $this->recalculateInvoice();
         $this->loadAllInvoiceItems();
         
-        // Close modal and show success message
-        $this->showChangeRoomModal = false;
+        // Reset modal state and close
+        $this->resetChangeRoomModal();
         session()->flash('success', 'Room changed successfully!');
         
     } catch (\Exception $e) {
@@ -535,76 +552,175 @@ public function changeRoom()
     public $pwdCount = 0;
     public $seniorCount = 0;
 
-    public function applyDiscounts()
-    {
-        // Validate inputs
-        $this->validate([
-            'pwdCount' => 'required|integer|min:0',
-            'seniorCount' => 'required|integer|min:0',
-        ]);
 
-        $totalDiscount = 0;
+public function applyDiscounts()
+{
+    // Validate inputs
+    $this->validate([
+        'pwdCount' => 'required|integer|min:0',
+        'seniorCount' => 'required|integer|min:0',
+    ]);
 
-        // Fetch discount types
-        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
-        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
+    $totalDiscount = 0;
 
-        // Helper function to calculate discount per person
-        $calculateDiscount = function ($discountType, $count = 1) {
-            if (!$discountType || $count <= 0) return 0;
+    // Check if promo code is applied and there are no extra guests
+    if ($this->transaction->promoCode && $this->getTotalExtraGuests() === 0) {
+        session()->flash('warning', 'PWD/Senior discounts are not available when a promo code is applied, unless there are extra adult guests in the reservation.');
+        $this->closeModal();
+        return;
+    }
 
-            if ($discountType->type === 'percent') {
-                return ($this->computeBaseSubtotal() / $this->transaction->pax) * ($discountType->rate / 100) * $count;
-            } elseif ($discountType->type === 'fixed') {
-                return $discountType->rate * $count;
-            }
+    // Fetch discount types
+    $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+    $seniorDiscountType = DiscountType::where('name', 'senior')->first();
 
-            return 0;
-        };
+    // Helper function to calculate discount per extra guest
+    $calculateDiscountForExtraGuest = function ($discountType, $property, $days = 1) {
+        if (!$discountType || !$property) return 0;
 
-        // Delete existing PWD & Senior discount rows before applying new ones
-        InvoiceDiscount::where('invoice_id', $this->invoice->id)
-            ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
-            ->delete();
+        // Get the extra person charge for this property
+        $extraPersonCharge = $property->extra_person_charge ?? 0;
+        
+        if ($discountType->type === 'percent') {
+            return ($extraPersonCharge * $days) * ($discountType->rate / 100);
+        } elseif ($discountType->type === 'fixed') {
+            return $discountType->rate * $days;
+        }
 
-        // Apply PWD discounts per person
-        for ($i = 0; $i < $this->pwdCount; $i++) {
-            $amount = $calculateDiscount($pwdDiscountType, 1);
+        return 0;
+    };
+
+    // Delete existing PWD & Senior discount rows before applying new ones
+    InvoiceDiscount::where('invoice_id', $this->invoice->id)
+        ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
+        ->delete();
+
+    // When promo is applied, limit discounts to extra guest count (adults only)
+    $maxAllowedDiscounts = $this->transaction->promoCode ? $this->getTotalExtraGuests() : null;
+
+    if ($maxAllowedDiscounts !== null) {
+        // Enforce limit when promo is applied
+        $totalRequestedDiscounts = $this->pwdCount + $this->seniorCount;
+        
+        if ($totalRequestedDiscounts > $maxAllowedDiscounts) {
+            session()->flash('warning', "Only {$maxAllowedDiscounts} discount(s) can be applied (matching the number of extra adult guests) when a promo code is active.");
+            $this->pwdCount = min($this->pwdCount, $maxAllowedDiscounts);
+            $this->seniorCount = min($this->seniorCount, $maxAllowedDiscounts - $this->pwdCount);
+        }
+    }
+
+    // Get all rooms with extra guests and their distribution
+    $roomsWithExtraGuests = $this->getRoomsWithExtraGuests();
+    $extraGuestsDistribution = $this->distributeDiscountsToRooms($this->pwdCount + $this->seniorCount, $roomsWithExtraGuests);
+
+    // Apply PWD discounts to extra guests
+    $pwdApplied = 0;
+    foreach ($extraGuestsDistribution as $roomId => $guestCount) {
+        if ($pwdApplied >= $this->pwdCount) break;
+        
+        $transactionProperty = $this->transactionProperties->firstWhere('id', $roomId);
+        if (!$transactionProperty) continue;
+        
+        $pwdToApply = min($guestCount, $this->pwdCount - $pwdApplied);
+        
+        for ($i = 0; $i < $pwdToApply; $i++) {
+            $amount = $calculateDiscountForExtraGuest($pwdDiscountType, $transactionProperty->property, $transactionProperty->days);
             InvoiceDiscount::create([
                 'invoice_id' => $this->invoice->id,
                 'discount_type_id' => $pwdDiscountType->id,
                 'discount_value' => $amount,
                 'quantity' => 1,
+                'transaction_property_id' => $roomId, // Track which room this discount applies to
             ]);
             $totalDiscount += $amount;
+            $pwdApplied++;
         }
+    }
 
-        // Apply Senior discounts per person
-        for ($i = 0; $i < $this->seniorCount; $i++) {
-            $amount = $calculateDiscount($seniorDiscountType, 1);
+    // Apply Senior discounts to remaining extra guests
+    $seniorApplied = 0;
+    foreach ($extraGuestsDistribution as $roomId => $guestCount) {
+        if ($seniorApplied >= $this->seniorCount) break;
+        
+        $transactionProperty = $this->transactionProperties->firstWhere('id', $roomId);
+        if (!$transactionProperty) continue;
+        
+        $remainingGuests = $guestCount - min($guestCount, $this->pwdCount); // Subtract PWDs already applied
+        $seniorToApply = min($remainingGuests, $this->seniorCount - $seniorApplied);
+        
+        for ($i = 0; $i < $seniorToApply; $i++) {
+            $amount = $calculateDiscountForExtraGuest($seniorDiscountType, $transactionProperty->property, $transactionProperty->days);
             InvoiceDiscount::create([
                 'invoice_id' => $this->invoice->id,
                 'discount_type_id' => $seniorDiscountType->id,
                 'discount_value' => $amount,
                 'quantity' => 1,
+                'transaction_property_id' => $roomId, // Track which room this discount applies to
             ]);
             $totalDiscount += $amount;
+            $seniorApplied++;
         }
-
-        // Update invoice totals
-        $this->invoice->update([
-            'total_discount' => $totalDiscount,
-            'sub_total' => $this->invoice->base_subtotal - $totalDiscount,
-            'balance_due' => $this->invoice->base_subtotal - $totalDiscount - $this->invoice->amount_paid,
-        ]);
-
-        // Refresh model and relationships so Blade sees updated discounts
-        $this->invoice->refresh();
-
-        $this->closeModal();
-
-        session()->flash('success', 'Discounts applied successfully!');
     }
+
+    // Update invoice totals
+    $this->invoice->update([
+        'total_discount' => $totalDiscount,
+        'sub_total' => $this->invoice->base_subtotal - $totalDiscount,
+        'balance_due' => $this->invoice->base_subtotal - $totalDiscount - $this->invoice->amount_paid,
+    ]);
+
+    // Refresh model and relationships so Blade sees updated discounts
+    $this->invoice->refresh();
+
+    $this->closeModal();
+
+    $message = 'Discounts applied successfully!';
+    if ($this->transaction->promoCode) {
+        $message .= ' (Applied only to extra adult guest charges)';
+    }
+    
+    session()->flash('success', $message);
+}
+
+/**
+ * Distribute discounts proportionally across rooms with extra guests
+ */
+private function distributeDiscountsToRooms($totalDiscounts, $roomsWithExtraGuests)
+{
+    $distribution = [];
+    $totalExtraGuests = $roomsWithExtraGuests->sum('extra_guest');
+    
+    if ($totalExtraGuests === 0) {
+        return $distribution;
+    }
+    
+    // First pass: distribute based on extra guest count
+    $remainingDiscounts = $totalDiscounts;
+    
+    foreach ($roomsWithExtraGuests as $room) {
+        $proportion = $room->extra_guest / $totalExtraGuests;
+        $allocated = min($room->extra_guest, floor($totalDiscounts * $proportion));
+        $distribution[$room->id] = $allocated;
+        $remainingDiscounts -= $allocated;
+    }
+    
+    // Second pass: distribute any remaining discounts
+    if ($remainingDiscounts > 0) {
+        foreach ($roomsWithExtraGuests as $room) {
+            if ($remainingDiscounts <= 0) break;
+            
+            $alreadyAllocated = $distribution[$room->id] ?? 0;
+            $remainingCapacity = $room->extra_guest - $alreadyAllocated;
+            
+            if ($remainingCapacity > 0) {
+                $distribution[$room->id] += 1;
+                $remainingDiscounts -= 1;
+            }
+        }
+    }
+    
+    return $distribution;
+}
 
     public function getDiscountsAppliedProperty()
     {
@@ -782,10 +898,24 @@ public function changeRoom()
      * -------------------------------------------------------------------------------------
      */
 
+    public function resetEditRoomModal()
+    {
+        $this->reset([
+            'editingRoomId',
+            'roomTotalAdults', 
+            'roomTotalKids',
+            'showEditRoomModal'
+        ]);
+    }
+
+    // Update your editRoom method to reset first:
     public function editRoom($pivotId)
     {
-        Log::info('Edit Room modal called.');
+        Log::info('Edit Room modal called for pivot ID: ' . $pivotId);
 
+        // Reset modal state first
+        $this->resetEditRoomModal();
+        
         $pivot = DB::table('transaction_properties')->where('id', $pivotId)->first();
 
         if ($pivot) {
@@ -796,9 +926,11 @@ public function changeRoom()
         }
     }
 
+
+    // Update updateRoom to reset after success:
     public function updateRoom()
     {
-        Log::info('Update Room modal called.');
+        Log::info('Update Room modal called for editingRoomId: ' . $this->editingRoomId);
 
         $this->validate([
             'roomTotalAdults' => 'required|integer|min:1',
@@ -806,7 +938,6 @@ public function changeRoom()
         ]);
 
         try {
-
             $this->propertyTransactionService->updateRoomQuantity(
                 $this->editingRoomId,
                 $this->roomTotalAdults,
@@ -819,9 +950,9 @@ public function changeRoom()
             $this->recalculateInvoice();
             $this->loadAllInvoiceItems();
 
-            // Closes the modal
-            $this->showEditRoomModal = false;
-            $this->dispatch('room-updated');
+            // Reset and close the modal
+            $this->resetEditRoomModal();
+            session()->flash('success', 'Room updated successfully!');
         } catch (\Exception $e) {
             Log::error('Room update failed: ' . $e->getMessage());
             session()->flash('error', 'Something went wrong: ' . $e->getMessage());
@@ -1930,6 +2061,195 @@ public function changeRoom()
     }
 
 
+/**
+ * Get discount breakdown by room for display
+ */
+public function getDiscountBreakdown()
+{
+    $discounts = InvoiceDiscount::with(['discountType', 'transactionProperty.property'])
+        ->where('invoice_id', $this->invoice->id)
+        ->whereIn('discount_type_id', function($query) {
+            $query->select('id')
+                  ->from('discount_types')
+                  ->whereIn('name', ['pwd', 'senior']);
+        })
+        ->get()
+        ->groupBy('transaction_property_id');
+
+    $breakdown = [];
+    
+    foreach ($discounts as $roomId => $roomDiscounts) {
+        $transactionProperty = $this->transactionProperties->firstWhere('id', $roomId);
+        if (!$transactionProperty) continue;
+        
+        $roomBreakdown = [
+            'room_name' => $transactionProperty->property->name_number,
+            'pwd_count' => $roomDiscounts->where('discountType.name', 'pwd')->count(),
+            'senior_count' => $roomDiscounts->where('discountType.name', 'senior')->count(),
+            'pwd_amount' => $roomDiscounts->where('discountType.name', 'pwd')->sum('discount_value'),
+            'senior_amount' => $roomDiscounts->where('discountType.name', 'senior')->sum('discount_value'),
+            'total_amount' => $roomDiscounts->sum('discount_value'),
+        ];
+        
+        $breakdown[] = $roomBreakdown;
+    }
+    
+    return $breakdown;
+}
+/**
+ * Check if PWD/Senior discounts are available based on promo code
+ */
+public function isDiscountAvailable(): bool
+{
+    // If promo code is applied to the transaction, disable discounts for main guests
+    // But allow for extra guests
+    return !$this->transaction->promoCode || $this->getTotalExtraGuests() > 0;
+}
+
+/**
+ * Check if a specific guest is eligible for discounts when promo is applied
+ */
+public function isGuestEligibleForDiscount($guestDetail): bool
+{
+    // If no promo code, all guests are eligible
+    if (!$this->transaction->promoCode) {
+        return true;
+    }
+    
+    // Check if this guest is in a room that has extra guests
+    $transactionProperty = $guestDetail->transactionProperty;
+    
+    if (!$transactionProperty) {
+        return false;
+    }
+    
+    // Get the extra guest count for this room (adults only, excluding kids)
+    $extraGuestCount = $transactionProperty->extra_guest ?? 0;
+    
+    if ($extraGuestCount > 0) {
+        // This room has extra guests, check if this guest is one of them
+        return $this->isGuestInExtraGuestSlot($guestDetail, $transactionProperty);
+    }
+    
+    return false;
+}
+
+/**
+ * Determine if a guest occupies an extra guest slot (considering room capacity and excluding kids)
+ */
+private function isGuestInExtraGuestSlot($guestDetail, $transactionProperty): bool
+{
+    $assignedGuests = $this->getGuestsAssignedToRoom($transactionProperty->id);
+    $property = $transactionProperty->property;
+    
+    // Get room capacity (max adults only, excluding kids)
+    $roomCapacity = $property->max_adults ?? $property->ideal_guest ?? 2;
+    
+    // Count only adult guests (excluding kids) for capacity calculation
+    $adultGuests = $assignedGuests->filter(function($guest) {
+        // Assuming guest_type_id can help identify adults vs kids
+        // Or you might have an age field. Adjust based on your actual data structure
+        return $this->isAdultGuest($guest);
+    });
+    
+    // Find the position of this guest in the adult assignment order
+    $guestPosition = $adultGuests->values()->search(function($guest) use ($guestDetail) {
+        return $guest->id === $guestDetail->id;
+    });
+    
+    // If guest position is beyond room capacity, they're an extra guest
+    return $guestPosition !== false && $guestPosition >= $roomCapacity;
+}
+
+/**
+ * Determine if a guest is considered an adult (for capacity purposes)
+ */
+private function isAdultGuest($guest): bool
+{
+    // Adjust this logic based on your actual data structure
+    // Options: check guest_type_id, age field, or other criteria
+    
+    // Option 1: If you have guest types for adults/kids
+    if (isset($guest->guest_type_id)) {
+        $adultGuestTypes = [1, 2]; // Adjust with your actual adult guest type IDs
+        return in_array($guest->guest_type_id, $adultGuestTypes);
+    }
+    
+    // Option 2: Default to true if no specific logic (all guests count toward capacity)
+    return true;
+}
+
+/**
+ * Get all guests assigned to a specific room
+ */
+private function getGuestsAssignedToRoom($transactionPropertyId)
+{
+    return $this->guestDetails->filter(function($guest) use ($transactionPropertyId) {
+        return $guest->transaction_property_id == $transactionPropertyId;
+    })->sortBy('created_at'); // Sort by assignment order
+}
+
+/**
+ * Get total extra guests across all rooms (adults only, excluding kids)
+ */
+public function getTotalExtraGuests(): int
+{
+    return $this->transactionProperties->sum('extra_guest') ?? 0;
+}
+
+/**
+ * Get rooms that have extra guests
+ */
+public function getRoomsWithExtraGuests()
+{
+    return $this->transactionProperties->filter(function($property) {
+        return ($property->extra_guest ?? 0) > 0;
+    });
+}
+
+/**
+ * Get room capacity information for display
+ */
+public function getRoomCapacityInfo($transactionProperty)
+{
+    $property = $transactionProperty->property;
+    $adultGuests = $this->getAdultGuestsInRoom($transactionProperty->id);
+    $kidGuests = $this->getKidGuestsInRoom($transactionProperty->id);
+    
+    $maxAdults = $property->max_adults ?? $property->ideal_guest ?? 2;
+    $maxKids = $property->max_kids ?? 0;
+    
+    return [
+        'max_adults' => $maxAdults,
+        'max_kids' => $maxKids,
+        'current_adults' => $adultGuests->count(),
+        'current_kids' => $kidGuests->count(),
+        'extra_guests' => $transactionProperty->extra_guest ?? 0,
+        'is_at_capacity' => $adultGuests->count() > $maxAdults
+    ];
+}
+
+/**
+ * Get adult guests in a room (for capacity calculation)
+ */
+private function getAdultGuestsInRoom($transactionPropertyId)
+{
+    return $this->getGuestsAssignedToRoom($transactionPropertyId)->filter(function($guest) {
+        return $this->isAdultGuest($guest);
+    });
+}
+
+/**
+ * Get kid guests in a room (excluded from capacity calculation)
+ */
+private function getKidGuestsInRoom($transactionPropertyId)
+{
+    return $this->getGuestsAssignedToRoom($transactionPropertyId)->filter(function($guest) {
+        return !$this->isAdultGuest($guest);
+    });
+}
+    
+
     /**
      * ---------------------------- MODALS ----------------------------------------
      *
@@ -2003,7 +2323,7 @@ public function changeRoom()
 
         $this->validate([
             'amount_paid' => 'required|numeric|min:0',
-            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
             'payment_method_id' => 'required|exists:pm_payment_methods,id',
@@ -2074,6 +2394,7 @@ public function changeRoom()
         return $this->payment_screenshot->store('proof-of-payments', 'public');
     }
 
+    
 
     // --------------------- HELPER METHODS --------------------------- //
 

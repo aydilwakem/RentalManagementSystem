@@ -226,4 +226,10 @@ class Property extends Model
     {
         return Barangay::where('PSGC_BRGY_CODE', $this->barangay)->value('PSGC_BRGY_DESC');
     }
+
+        public function propertyCategory()
+    {
+        return $this->belongsTo(PropertyCategory::class, 'property_category_id');
+    }
+
 }

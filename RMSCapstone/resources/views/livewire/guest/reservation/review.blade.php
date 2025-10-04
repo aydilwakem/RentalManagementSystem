@@ -322,6 +322,21 @@
                 </div>
                 @endif
 
+
+                <!-- Promo Code Applied Notice -->
+                @if($discountMessage)
+                    <div class="md:px-12">
+                        <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-4 text-green-700 text-sm leading-relaxed">
+                            <div class="flex items-start">
+                                <i class="fas fa-tag mt-0.5 mr-3 text-green-600"></i>
+                                <div>
+                                    <strong class="font-semibold">Promo Code Applied:</strong> {{ $discountMessage }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 <!-- Discount Notice -->
                 <div class="md:px-12">
                     <div
@@ -344,20 +359,20 @@
                     <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
                         <div>Subtotal</div>
                         <div class="font-semibold flex flex-col items-end">
-                            @if ($discountMessage)
-                            <!-- Original subtotal with strikethrough -->
-                            <span class="line-through text-gray-400">
-                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                            </span>
-                            <!-- Subtotal after discount -->
-                            <span class="text-green-700 font-semibold">
-                                ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
-                            </span>
+                            @if($discountMessage)
+                                <!-- Original subtotal with strikethrough -->
+                                <span class="line-through text-gray-400 text-xs">
+                                    ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                </span>
+                                <!-- Subtotal after discount -->
+                                <span class="text-green-700 font-semibold">
+                                    ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
+                                </span>
                             @else
-                            <!-- No discount applied -->
-                            <span>
-                                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-                            </span>
+                                <!-- No discount applied -->
+                                <span>
+                                    ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                                </span>
                             @endif
                         </div>
                     </div>
