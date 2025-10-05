@@ -1070,10 +1070,18 @@
                                     <div class="flex justify-between items-center mb-1">
                                         <span>
                                             - {{ strtoupper($type->name) }} x {{ $count }}
-                                            @if ($type->type === 'percent' && $perPersonAmount)
-                                                ({{ $type->rate }}% of Extra charge per guest ÷ {{ $pax }} pax)
+                                            @if ($transaction->promoCode)
+                                                @if ($type->type === 'percent' && $perPersonAmount)
+                                                    ({{ $type->rate }}% of Extra charge per guest ÷ {{ $count }} pax)
+                                                @else
+                                                        (Fixed)
+                                                @endif
                                             @else
-                                                (Fixed)
+                                                @if ($type->type === 'percent' && $perPersonAmount)
+                                                    ({{ $type->rate }}% of Room Subtotal ÷ {{ $count }} pax)
+                                                @else
+                                                    (Fixed)
+                                                @endif
                                             @endif
                                         </span>
 
@@ -2373,7 +2381,7 @@
             <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
                 <h2 class="text-2xl font-bold text-center">
                     @if($transaction->promoCode)
-                        Add Discounts (Extra Adult Guests Only)
+                        Add Discounts (Extra Guests Only)
                     @else
                         Add PWD/Senior Discounts
                     @endif
@@ -2389,9 +2397,16 @@
                 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-blue-700 text-sm">
                         <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s) 
-                        since a promo code is applied to this reservation. (Kids are excluded from capacity count)
+                        since a promo code is applied to this reservation.
+                </div>
+                            @else
+                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-blue-700 text-sm">
+                        <strong>Note:</strong> Discounts are limited to {{ $transaction->pax }} guest(s) 
+                        (total number of guests in this reservation).
                     </p>
                 </div>
+
             @endif
 
             <!-- Form Fields -->
