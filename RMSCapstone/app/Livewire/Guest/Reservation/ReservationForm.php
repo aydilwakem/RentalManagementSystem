@@ -808,7 +808,9 @@ class ReservationForm extends Component
                     $breakdown[] = [
                         'room_id' => $item['room_id'],
                         'property_category_id' => $roomModel->property_category_id,
-                        'amount' => $item['total_amount'] ?? 0,
+                        'base_amount' => $item['roomAmount'] ?? 0, // Base room rate only
+                        'extra_guest_amount' => $item['extra_charge'] ?? 0, // Extra guest charges
+                        'total_amount' => $item['total_amount'] ?? 0, // Total (base + extra)
                         'room_name' => $item['room_name'] ?? 'Unknown Room',
                     ];
                 }
@@ -836,8 +838,8 @@ class ReservationForm extends Component
         // Step 1: Compute the base subtotal (for minimum booking amount check)
         $baseSubtotal = $this->computeBaseSubtotal();
         
-        // Step 2: Compute room-only subtotal for promo discount calculation
-        $roomSubTotal = $this->computeTotalAmountOfAllRooms();
+        // Step 2: Compute BASE room-only subtotal for promo discount calculation (EXCLUDING extra guest charges)
+        $roomBaseSubTotal = $this->computeBaseRoomSubtotal();
         
         // Step 3: Get property category breakdown for category-specific promo validation
         $propertyBreakdown = $this->getPropertyCategoryBreakdown();
@@ -846,7 +848,7 @@ class ReservationForm extends Component
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
             $baseSubtotal, // For minimum booking amount validation
-            $roomSubTotal,  // For discount calculation (rooms only)
+            $roomBaseSubTotal,  // For discount calculation (BASE room rates only - no extra charges)
             $propertyBreakdown  // For property category validation
         );
 
@@ -870,6 +872,15 @@ class ReservationForm extends Component
         // Step 9: Refresh the available rooms list, possibly affected by promo logic
         $this->getAvailableRooms();
     }
+
+/**
+ * Computes the subtotal of base room rates only, excluding extra guest charges
+ */
+public function computeBaseRoomSubtotal(): float
+{
+    return collect($this->getItemsByType('room'))
+        ->sum('roomAmount'); // This is the base room rate without extra charges
+}
 
     public function computeSubtotalAfterDiscount(): float
     {

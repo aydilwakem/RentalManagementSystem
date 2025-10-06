@@ -744,8 +744,8 @@ class CreateReservation extends Component
         // Step 3: Compute the base subtotal (for minimum booking amount check)
         $baseSubtotal = $this->computeBaseSubtotal();
         
-        // Step 4: Compute room-only subtotal for promo discount calculation
-        $roomSubTotal = $this->computeTotalAmountOfAllRooms();
+        // Step 4: Compute BASE room-only subtotal for promo discount calculation (EXCLUDING extra guest charges)
+        $roomBaseSubTotal = $this->computeBaseRoomSubtotal();
         
         // Step 5: Get property category breakdown for category-specific promo validation
         $propertyBreakdown = $this->getPropertyCategoryBreakdown();
@@ -754,7 +754,7 @@ class CreateReservation extends Component
         $response = $this->promoCodeService->validateAndApply(
             $this->promoCode,
             $baseSubtotal, // For minimum booking amount validation
-            $roomSubTotal,  // For discount calculation (rooms only)
+            $roomBaseSubTotal,  // For discount calculation (BASE room rates only - no extra charges)
             $propertyBreakdown  // For property category validation
         );
 
@@ -779,6 +779,15 @@ class CreateReservation extends Component
         $this->getAvailableRooms();
     }
 
+    /**
+     * Computes the subtotal of base room rates only, excluding extra guest charges
+     */
+    public function computeBaseRoomSubtotal(): float
+    {
+        return collect($this->getItemsByType('room'))
+            ->sum('roomAmount'); // This is the base room rate without extra charges
+    }
+
 
     /**
      * Generates a breakdown of room charges by property category.
@@ -797,7 +806,9 @@ class CreateReservation extends Component
                     $breakdown[] = [
                         'room_id' => $room['room_id'],
                         'property_category_id' => $roomModel->property_category_id,
-                        'amount' => $room['total_amount'] ?? 0,
+                        'base_amount' => $room['roomAmount'] ?? 0, // Base room rate only
+                        'extra_guest_amount' => $room['extra_charge_total'] ?? 0, // Extra guest charges
+                        'total_amount' => $room['total_amount'] ?? 0, // Total (base + extra)
                         'room_name' => $room['room_name'] ?? 'Unknown Room',
                         'category_name' => $roomModel->propertyCategory->name ?? 'Uncategorized'
                     ];
