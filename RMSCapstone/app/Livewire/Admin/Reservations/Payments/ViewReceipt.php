@@ -106,7 +106,7 @@ class ViewReceipt extends Component
         try {
             $this->validate([
                 'amount_paid' => 'required|numeric|min:100|max:1000000.00',
-                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
+                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmReceiptItem = false;

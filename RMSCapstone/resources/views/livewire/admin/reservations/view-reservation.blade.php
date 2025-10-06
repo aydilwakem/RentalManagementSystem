@@ -484,7 +484,7 @@
                                         </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
-                                            {{ ($property->pivot->adults ?? 0) + ($property->pivot->kids ?? 0) - ($property->pivot->extra_guest ?? 0) }}
+                                            {{ ($property->ideal_guest ?? 0)  }}
                                         </td>
                                         <td
                                             class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
@@ -897,7 +897,7 @@
                                         Add Other Charges
                                     </button>
 
-                                    <div class="border-t border-gray-200 my-1"></div>
+                                    {{-- <div class="border-t border-gray-200 my-1"></div>
 
                                     <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
                                     @if (!$this->discountsApplied)
@@ -916,7 +916,7 @@
                                                     </div> --}}
                                                     {{-- <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
                                                         Add PWD/SENIOR DISCOUNT (Extra Guests Only)
-                                                    </x-button> --}}
+                                                    </x-button>
                                                     <button
                                                         wire:click="openModal('discounts')"
                                                         class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -944,7 +944,7 @@
                                                 Add PWD/Senior Discount
                                             </button>
                                         @endif
-                                    @endif
+                                    @endif --}}
                                 </div>
                             </div>
                         </div>
@@ -1049,7 +1049,7 @@
                                 </td> --}}
                                         {{-- Activity Actions --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
-                                            @if ($item['payment_status'] !== 'paid' && $item['payment_status'] !== 'partial')
+
                                                 @if ($item['type'] == 'property')
                                                     <button wire:click="editRoom({{ $item['pivot_id'] }})"
                                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
@@ -1064,12 +1064,12 @@
                                                         <i class="fas fa-exchange-alt"></i>
                                                     </button>
 
-                                                    <!-- Add Another Guest Button -->
+                                                    {{-- <!-- Add Another Guest Button -->
                                                     <button wire:click="addGuest({{ $item['pivot_id']  }})"
                                                             class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
                                                             title="Add Another Guest">
                                                             <i class="fas fa-user-plus"></i>
-                                                        </button>
+                                                        </button> --}}
                                                     @else
                                                         <button wire:click="
                                                             @if ($item['type'] === 'activity')
@@ -1095,10 +1095,7 @@
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 @endif
-                                            @else
-                                                <span class="text-gray-400 italic"><i
-                                                        class="fas fa-lock mr-1"></i></span>
-                                            @endif
+
                                         </td>
                                     </tr>
 
