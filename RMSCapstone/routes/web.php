@@ -1026,7 +1026,7 @@ Route::get('/reservation-completed', function () {
         ]),
     ];
 
-    return new ReservationCompletedMail($reservationData);
+    //return new ReservationCompletedMail($reservationData);
 });
 
 

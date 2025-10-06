@@ -710,8 +710,11 @@
                                                                 </div>
                                                             @endif
                                                             <div class="text-sm text-gray-600">
-                                                                {{ $item['roomRateName'] }} (x
-                                                                {{ $this->stayDuration }} Night/s):
+                                                                @if (isset($item['roomRateName']) && $item['roomRateName'] === 'Multiple rates applied' && isset($item['appliedRates']) && count($item['appliedRates']) === 1)
+                                                                    {{ $item['appliedRates'][0]['name'] }} (x {{ $this->stayDuration }} Night/s):
+                                                                @else
+                                                                    {{ $item['roomRateName'] }} (x {{ $this->stayDuration }} Night/s):
+                                                                @endif
                                                             </div>
                                                         </div>
 
@@ -800,7 +803,7 @@
                                     @if ($discountMessage)
                                     <div class="bg-green-50 border border-green-200 rounded p-3 mb-3">
                                         <p class="text-sm text-green-700 font-semibold">{{ $discountMessage }}</p>
-                                    </div>  
+                                    </div>
                                     @endif
 
                                     @if ($errorMessage)

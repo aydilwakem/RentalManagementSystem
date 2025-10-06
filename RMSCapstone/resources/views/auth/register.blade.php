@@ -258,7 +258,7 @@
                                     class=" mt-5 mb-1 text-sm font-medium text-gray-700 flex-col">Middle Name</label>
                                 <input id="middle_name"
                                     class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    type="text" name="middle_name" :value="old('middle_name')" required autofocus
+                                    type="text" name="middle_name" :value="old('middle_name')"  autofocus
                                     placeholder="Ex. Mercado" />
 
                                 <!-- icon -->
@@ -307,7 +307,7 @@
                                     class=" mt-5 mb-1 text-sm font-medium text-gray-700 flex-col">Suffix</label>
                                 <input id="suffix"
                                     class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    type="text" name="suffix" :value="old('suffix')" required autofocus
+                                    type="text" name="suffix" :value="old('suffix')"  autofocus
                                     placeholder="Ex. Jr." />
 
                                 <!-- icon -->

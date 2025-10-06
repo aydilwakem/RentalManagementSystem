@@ -86,7 +86,7 @@
                                         <div class="md:w-2/3">
 
                                             <div class="flex space-x-1">
-                                                <h4 class="text-2xl font-semibold mb-2">{{ ucwords($room->name_number) }} </h4>
+                                                <h4 class="text-2xl font-semibold mb-1">{{ ucwords($room->name_number) }} </h4>
                                                 <div class="mt-1">
                                                     @livewire('guest.reservation.property-reviews', ['propertyId' => $room->id], key('reviews-' . $room->id))
                                                 </div>
@@ -94,6 +94,8 @@
 
                                             <!-- Room Capacity and Charges -->
                                             <div>
+                                                {{-- <p class="text-sm text-gray-700 mb-1"> {{ $room->description }}</p> --}}
+
                                                 <p class="text-base font-normal text-gray-700  ">
                                                     <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
                                                 </p>
@@ -149,8 +151,6 @@
                                                         <i class="fas fa-utensils mr-2"></i> Free breakfast included
                                                     </p>
                                                 @endif
-
-                                                <p class="text-sm italic text-gray-500 mt-1"> {{ $room->description }}</p>
 
                                                 <p class="text-sm italic text-gray-500 mt-1"> Children 2 years old and below
                                                     are free of charge.</p>
@@ -329,21 +329,23 @@
                                             <div id="modal-room-{{ $room->id }}"
                                                 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                                                 <div
-                                                    class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-4 relative max-h-[80vh] overflow-y-auto">
+                                                    class="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-6 relative max-h-[80vh] overflow-y-auto">
                                                     <button type="button"
                                                         onclick="closeRoomModal({{ $room->id }})"
                                                         class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-2xl focus:outline-none">
                                                         <span
                                                             class="w-full h-full flex items-center justify-center pointer-events-none">&times;</span>
                                                     </button>
+
                                                     <!-- Carousel -->
                                                     @php
                                                         $images = $room->images ?? [];
                                                     @endphp
                                                     <div class="relative mb-4 px-12 mt-3">
                                                         <img id="modal-room-img-{{ $room->id }}"
-                                                            src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
-                                                            class="w-full h-84 object-cover rounded-lg shadow" />
+                                                        src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
+                                                        class="w-full max-h-[350px] object-contain rounded-lg shadow bg-gray-100 mx-auto" />
+
                                                         @if (count($images) > 1)
                                                             <!-- Prev Button -->
                                                             <button
@@ -369,11 +371,22 @@
                                                             @endforeach
                                                         </div>
                                                     </div>
+
                                                     <!-- Modal Body -->
                                                     <div class="mt-4 text-sm text-gray-700 p-3">
-                                                        <h2 class="text-xl font-bold mb-1 text-green-700">
+                                                        <h2 class="text-2xl font-extrabold text-green-700">
                                                             Room: {{ ucwords($room->name_number) }}
                                                         </h2>
+
+                                                        <p class="text-md font-semibold text-gray-700 mb-3"> {{ $room->description }}</p>
+                                                                {{-- {{ $room->name_number }} is a room ideal for
+                                                                {{ $room->ideal_guest }}
+                                                                guest{{ $room->ideal_guest > 1 ? 's' : '' }} with a
+                                                                maximum capacity of {{ $room->max_adults }} Adults and
+                                                                {{ $room->max_kids }} Kids.
+                                                                The base rate is
+                                                                ₱{{ number_format($room->amount, 2) }}{{ $room->extra_person_charge ? ', with an extra charge of ₱' . number_format($room->extra_person_charge, 2) . ' per additional guest per night' : '' }}. --}}
+
                                                         <ul class="list-disc list-inside space-y-1">
                                                             <li><strong>Ideal Guests:</strong>
                                                                 {{ $room->ideal_guest }}
@@ -423,17 +436,6 @@
                                                                 ₱{{ number_format($room->extra_person_charge, 2) }}
                                                             </li>
 
-                                                            <li><strong>Description:</strong>
-                                                                {{ $room->name_number }} is a room ideal for
-                                                                {{ $room->ideal_guest }}
-                                                                guest{{ $room->ideal_guest > 1 ? 's' : '' }} with a
-                                                                maximum capacity of {{ $room->max_adults }} Adults and
-                                                                {{ $room->max_kids }} Kids.
-                                                                The base rate is
-                                                                ₱{{ number_format($room->amount, 2) }}{{ $room->extra_person_charge ? ', with an extra charge of ₱' . number_format($room->extra_person_charge, 2) . ' per additional guest per night' : '' }}.
-
-                                                            </li>
-
                                                             <li><strong>Base Rate Per Night:</strong>
                                                                 ₱{{ number_format($room->amount, 2) }}
                                                             </li>
@@ -478,25 +480,26 @@
                                                             {{-- <li><strong>Rate Per Night:</strong> ₱{{
                                                                     number_format($room->dynamic_rate, 2) }}</li> --}}
                                                         </ul>
+                                                        <hr class="my-2">
+
                                                         <!-- Room Amenities -->
                                                         <div class="mt-2 mb-4">
-                                                            <strong>Included Amenities</strong>
+                                                            <h3 class="font-semibold text-gray-700 mb-2 text-lg">Included Amenities</h3>
+
                                                             @if ($room->features && count($room->features))
-                                                                <div class="flex flex-wrap gap-2 mt-1">
+                                                                <div class="grid grid-cols-2 md:grid-cols-3 gap-y-2">
                                                                     @foreach ($room->features as $feature)
-                                                                        <span
-                                                                            class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700 mr-2">
-                                                                            {{ $feature->name }}
-                                                                        </span>
+                                                                        <div class="flex items-center space-x-2">
+                                                                            <!-- Check Icon -->
+                                                                            <i class="fa-solid fa-check text-green-700"></i>
+                                                                            <span class="text-gray-700 text-md">{{ $feature->name }}</span>
+                                                                        </div>
                                                                     @endforeach
                                                                 </div>
                                                             @else
-                                                                <span class="text-gray-400 text-sm">No amenities
-                                                                    listed.</span>
+                                                                <span class="text-gray-400 text-sm">No amenities listed.</span>
                                                             @endif
                                                         </div>
-
-                                                        <hr>
 
                                                     </div>
                                                 </div>
