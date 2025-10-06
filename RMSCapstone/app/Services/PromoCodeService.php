@@ -140,23 +140,23 @@ class PromoCodeService
         }
 
         // Calculate discount only for eligible property categories
-        $eligibleRoomAmount = 0;
+        $eligibleBaseRoomAmount = 0;
 
         foreach ($roomBreakdown as $room) {
             $propertyCategoryId = $room['property_category_id'] ?? null;
             
             if ($promo->appliesToPropertyCategory($propertyCategoryId)) {
-                $eligibleRoomAmount += $room['amount'] ?? 0;
+                $eligibleBaseRoomAmount += $room['base_amount'] ?? $room['roomAmount'] ?? 0;
             }
         }
 
-        if ($eligibleRoomAmount <= 0) {
+        if ($eligibleBaseRoomAmount <= 0) {
             return 0; // No eligible rooms for this promo
         }
 
         return match ($promo->discount_type) {
-            'percentage' => ($promo->discount_value / 100) * $eligibleRoomAmount,
-            'fixed' => min($promo->discount_value, $eligibleRoomAmount),
+            'percentage' => ($promo->discount_value / 100) * $eligibleBaseRoomAmount,
+            'fixed' => min($promo->discount_value, $eligibleBaseRoomAmount),
             default => 0,
         };
     }
