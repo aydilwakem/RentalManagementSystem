@@ -14,11 +14,49 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
-use App\Models\Payment;
+use App\Models\PaymentMethod;
+use App\Services\PaymentService;
+use App\Services\ServiceBag;
+use App\Services\TransactionLoader;
+use App\Services\ActivityCartService;
+use App\Services\RoomCartService;
+use App\Services\ActivityTransactionService;
+use App\Services\ServiceTransactionService;
+use App\Services\PropertyTransactionService;
+use App\Services\InvoiceService;
+use App\Services\NotificationService;
+use App\Services\ReceiptService;
+use App\Services\CartService;
+use App\Services\GuestDetailService;
+use App\Services\PaymentMethodService;
+use App\Services\RoomAvailabilityService;
+use App\Services\EmailService;
+use App\Services\BrandingService;
+use App\Services\PayMongoService;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class ViewEvent extends Component
 {
+
+    use WithFileUploads;
+    protected PaymentService $paymentService;
+    protected ServiceBag $service;
+    protected TransactionLoader $loader;
+    protected ActivityCartService $activityCartService;
+    protected RoomCartService $roomCartService;
+    protected ActivityTransactionService $activityTransactionService;
+    protected ServiceTransactionService $serviceTransactionService;
+    protected PropertyTransactionService $propertyTransactionService;
+    protected InvoiceService $invoiceService;
+    protected EmailService $emailService;
+    protected BrandingService $brandingService;
+    protected NotificationService $notificationService;
+    protected PaymongoService $payMongoService;
+    protected ReceiptService $receiptService;
+    protected GuestDetailService $guestDetailService;
+    protected CartService $cartService;
+
     // Create a public property
     public Transaction $event;
     public $transaction;
@@ -49,6 +87,39 @@ class ViewEvent extends Component
 
     public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
+    public $payment_methods;
+    public $payment_method_id;
+    public $payment_screenshot;
+    public $sub_total;
+    public $balance_due;
+
+    public function boot(ServiceBag $services)
+    {
+        $this->loader = $services->loader;
+        $this->activityCartService = $services->activityCartService;
+        $this->roomCartService = $services->roomCartService;
+        $this->activityTransactionService = $services->activityTransactionService;
+        $this->serviceTransactionService = $services->serviceTransactionService;
+        $this->propertyTransactionService = $services->propertyTransactionService;
+        $this->invoiceService = $services->invoiceService;
+        $this->emailService = $services->emailService;
+        $this->brandingService = $services->brandingService;
+        $this->payMongoService = $services->payMongoService;
+        $this->notificationService = $services->notificationService;
+        $this->receiptService = $services->receiptService;
+        $this->paymentService = $services->paymentService;
+        $this->cartService = $services->cartService;
+        $this->guestDetailService = $services->guestDetailService;
+    }
+
+
+    public function render()
+    {
+        return view(
+            'livewire.admin.events.view-event',
+            ['payment_methods' => $this->payment_methods,]
+        );
+    }
 
     public function confirmDelete($id)
     {
@@ -63,6 +134,7 @@ class ViewEvent extends Component
         $this->halls = Property::ofType('Event Hall')->where('property_status', 'available')->get();
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
         $this->loadTransactionData($event);
+        $this->payment_methods = PaymentMethod::all();
 
         //default date in create payment
         $now = now('Asia/Manila');
@@ -93,7 +165,7 @@ class ViewEvent extends Component
     public function exportEventDetails()
     {
         //eager load the relationship
-         $event = Transaction::with([
+        $event = Transaction::with([
             'invoice.payments',
         ])->findOrFail($this->transaction->id);
 
@@ -147,67 +219,55 @@ class ViewEvent extends Component
         $this->createPaymentModal = false;
     }
 
-    public function CreatePayment()
+
+    public function CreatePayment(PaymentService $paymentService)
     {
         Log::info('Create Payment method called.');
 
-        // Validate the input data
         $this->validate([
             'amount_paid' => 'required|numeric|min:0',
-            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
+            'payment_method_id' => 'required|exists:pm_payment_methods,id',
+            'payment_screenshot' => 'nullable|image|max:2048',
         ]);
 
-        // Ensure the invoice exists
         if (!$this->invoice) {
-            abort(404, 'No invoice found for this transaction.');
+            abort(404, 'No invoice found.');
         }
 
-        // Create the payment record
-        Payment::create([
-            'invoice_id' => $this->invoice->id,
-            'amount_paid' => $this->amount_paid,
-            'mode_of_payment' => 'cash',
-            'payment_type' => $this->payment_type,
-            'payment_date' => $this->payment_date,
-            'payment_status' => 'completed',
-            'notes' => $this->notes,
-            'currency' => 'PHP',
-            'verified_at' => now(),
+        // Upload screenshot if provided
+        $screenshotPath = $this->uploadScreenshot();
+
+        // 1️⃣ Create payment
+        $paymentService->create([
+            'invoice'             => $this->invoice,
+            'transaction'         => $this->transaction,
+            'amount_paid'         => $this->amount_paid,
+            'payment_type'        => $this->payment_type,
+            'mode_of_payment'     => 'cash',
+            'payment_date'        => $this->payment_date,
+            'notes'               => $this->notes,
+            'payment_status'      => 'completed',
+            'currency'            => 'PHP',
+            'verified_at'         => now(),
+            'payment_screenshot'  => $screenshotPath,
+            'payment_method_id'   => $this->payment_method_id,
         ]);
 
+        // 2️⃣ Recalculate invoice totals
+        $this->recalculateInvoice();
 
-
-        // Update the invoice with the new amount paid and balance due
-        $newAmountPaid = $this->invoice->amount_paid + $this->amount_paid;
-        $newBalanceDue = max($this->invoice->sub_total - $newAmountPaid, 0);
-
-        $this->invoice->update([
-            'amount_paid' => $newAmountPaid,
-            'balance_due' => $newBalanceDue,
-        ]);
-
-        // If the balance is 0, update invoice status to 'completed'
-        if ($newBalanceDue == 0) {
-            $this->invoice->update([
-                'invoice_status' => 'completed',
-                'completed_at' => now(),
+        // 3️⃣ Update transaction status if needed
+        if ($this->transaction->transaction_status === 'reserved') {
+            $this->transaction->update([
+                'transaction_status' => 'receipt_verified',
+                'updated_at' => now(),
             ]);
-
-            // Log status change
-            Log::info("Invoice status updated to 'completed' because balance due is 0.");
         }
 
-        // If the new amount paid is greater than or equal to the deposit amount, update transaction status to 'receipt_verified'
-        if ($newAmountPaid >= $this->transaction->deposit_amount) {
-            $this->transaction->update(['transaction_status' => 'receipt_verified']);
-            Log::info("Transaction status updated to 'reserved' because amount paid is greater than or equal to deposit amount.");
-        }
-
-
-
-        // Reset the form fields after successful creation
+        // 4️⃣ Reset form fields
         $this->reset([
             'amount_paid',
             'mode_of_payment',
@@ -217,15 +277,73 @@ class ViewEvent extends Component
             'notes',
             'currency',
             'verified_at',
+            'payment_screenshot',
         ]);
 
-        // Redirect to the same reservation view to refresh data
         return redirect()->route('admin.view-event', ['event' => $this->event->id])
-            ->with('success', 'Payment created successfully.');
+            ->with('success', 'Payment created and invoice recalculated successfully.');
     }
 
-    public function render()
+    protected function recalculateInvoice()
     {
-        return view('livewire.admin.events.view-event');
+        // Refresh the invoice to ensure latest values
+        $this->invoice->refresh();
+
+        // Get total payments linked to this invoice
+        $totalPaid = $this->invoice->payments()->sum('amount_paid');
+
+        // Base subtotal minus discount gives actual total due
+        $totalDue = ($this->invoice->sub_total - $this->invoice->total_discount);
+
+        // Adjust total due if a deposit was already paid
+        $totalDue -= $this->invoice->deposit_paid;
+
+        // Calculate remaining balance
+        $newBalance = max(0, $totalDue - $totalPaid);
+
+        // Determine invoice status
+        $newStatus = match (true) {
+            $newBalance <= 0 => 'completed',
+            now()->gt($this->invoice->due_date) => 'overdue',
+            default => 'pending',
+        };
+
+        // Update the invoice record
+        $this->invoice->update([
+            'amount_paid'  => $totalPaid,
+            'balance_due'  => $newBalance,
+            'invoice_status' => $newStatus,
+            'completed_at' => $newBalance <= 0 ? now() : null,
+            'updated_at'   => now(),
+        ]);
+    }
+
+
+
+
+
+    protected function uploadScreenshot(): ?string
+    {
+        // If no file was uploaded, return null
+        if (!$this->payment_screenshot) {
+            return null;
+        }
+
+        // If uploaded file is invalid
+        if (!$this->payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
+        }
+
+        // Store and return the file path
+        return $this->payment_screenshot->store('proof-of-payments', 'public');
+    }
+
+
+
+    public function updatePaymentStatus(PaymentService $paymentService, float $amountPaid)
+    {
+        $paymentService->applyPaymentToUnpaidItems($this->transaction, $amountPaid);
+
+        $this->transaction->load('activities', 'properties', 'services', 'guestPets');
     }
 }

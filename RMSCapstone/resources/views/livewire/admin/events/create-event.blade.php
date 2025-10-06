@@ -194,26 +194,42 @@
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="hall"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Event
-                                    Hall <span class="text-red-500">*</span></label>
-                                <select id="hall" wire:model="selected_hall" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                    <option value="">Select Event Hall</option>
-                                    @foreach ($halls as $hall)
-                                        <option value="{{ $hall->id }}"
-                                            @if ($hall->isBooked) disabled @endif>
-                                            {{ $hall->name_number }} - {{ $hall->capacity }} Pax Capacity @if ($hall->isBooked)
-                                                - (Booked)
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('selected_hall')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                            <div class="mb-4">
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Select Event Halls <span class="text-red-500">*</span>
+    </label>
+
+    <div class="space-y-2 bg-gray-50 dark:bg-gray-600 p-3 rounded-lg border border-gray-300 dark:border-gray-500 max-h-64 overflow-y-auto">
+        @foreach ($halls as $hall)
+            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                
+                <!-- ✅ Always checkboxes, allow selecting multiple halls -->
+                <input type="checkbox" 
+                       wire:model="selected_halls" 
+                       value="{{ $hall->id }}" 
+                       @if ($hall->isBooked) disabled @endif
+                       class="form-checkbox text-green-600 h-4 w-4">
+
+                <div>
+                    <span class="@if($hall->isBooked) text-gray-400 line-through @else text-gray-900 dark:text-white @endif font-medium">
+                        {{ $hall->name_number }} — {{ $hall->capacity }} Pax
+                    </span>
+                    <span class="ml-2 text-sm @if($hall->isBooked) text-red-500 @else text-green-600 @endif">
+                        {{ $hall->isBooked ? '(Booked)' : '(Available)' }}
+                    </span>
+                </div>
+            </label>
+        @endforeach
+    </div>
+
+    <!-- Validation error -->
+    @error('selected_halls')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+
+                            
+                        
 
                             <div>
                                 <label for="event_type_id"

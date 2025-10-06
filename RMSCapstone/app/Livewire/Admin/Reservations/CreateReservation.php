@@ -743,10 +743,10 @@ class CreateReservation extends Component
 
         // Step 3: Compute the base subtotal (for minimum booking amount check)
         $baseSubtotal = $this->computeBaseSubtotal();
-        
+
         // Step 4: Compute BASE room-only subtotal for promo discount calculation (EXCLUDING extra guest charges)
         $roomBaseSubTotal = $this->computeBaseRoomSubtotal();
-        
+
         // Step 5: Get property category breakdown for category-specific promo validation
         $propertyBreakdown = $this->getPropertyCategoryBreakdown();
 
@@ -798,7 +798,7 @@ class CreateReservation extends Component
     protected function getPropertyCategoryBreakdown(): array
     {
         $breakdown = [];
-        
+
         foreach ($this->selectedRooms as $room) {
             if ($room['type'] === 'room') {
                 $roomModel = Property::with('propertyCategory')->find($room['room_id']);
@@ -815,10 +815,10 @@ class CreateReservation extends Component
                 }
             }
         }
-        
+
         return $breakdown;
     }
-    
+
     /**
      * Removes the applied promo code, resetting all related discount values.
      * This method is called when the user decides to clear the promo code input.
@@ -1710,11 +1710,11 @@ class CreateReservation extends Component
 
         // Step 3: Calculate total rate for the entire stay period
         $rateBreakdown = $this->roomRateService->getRateBreakdown(
-            $room, 
-            $this->check_in_date, 
+            $room,
+            $this->check_in_date,
             $this->check_out_date
         );
-        
+
         $totalRoomRate = $rateBreakdown['total_amount'];
         $averageNightlyRate = $stayDuration > 0 ? $totalRoomRate / $stayDuration : 0;
 
@@ -1960,7 +1960,7 @@ class CreateReservation extends Component
             return 'Standard Rate';
         }
 
-        $breakdown = collect($room['rate_breakdown'])->groupBy('rate_type')->map(function($days, $rateType) {
+        $breakdown = collect($room['rate_breakdown'])->groupBy('rate_type')->map(function ($days, $rateType) {
             $count = count($days);
             $total = $days->sum('amount');
             return "{$count} night(s) at {$rateType} rate: ₱" . number_format($total, 2);
@@ -1983,14 +1983,14 @@ class CreateReservation extends Component
     public function getAllRoomRates($room)
     {
         $rates = [];
-        
+
         // Base rate (always available)
         $rates[] = [
             'rate_type' => null,
             'name' => 'Base Rate',
             'amount' => $room->amount,
         ];
-        
+
         // Get all active special rates with proper name handling
         $specialRates = RoomRate::where('property_id', $room->id)
             ->where('is_active', true)
@@ -1998,27 +1998,27 @@ class CreateReservation extends Component
             ->whereDate('start_date', '<=', now())
             ->whereDate('end_date', '>=', now())
             ->get();
-        
+
         foreach ($specialRates as $rate) {
             // Use the rate's name if available, otherwise fall back to rate_type + "Rate"
             $rateName = $rate->name ?? ucfirst($rate->rate_type) . ' Rate';
-            
+
             $rates[] = [
                 'rate_type' => $rate->rate_type,
                 'name' => $rateName,
                 'amount' => $rate->amount,
             ];
         }
-        
+
         // Sort by priority: Peak > Holiday > Weekend > Weekdays > Base
-        usort($rates, function($a, $b) {
+        usort($rates, function ($a, $b) {
             $priority = ['Peak' => 1, 'Holiday' => 2, 'Weekend' => 3, 'Weekdays' => 4, null => 5];
             $aPriority = $priority[$a['rate_type']] ?? 6;
             $bPriority = $priority[$b['rate_type']] ?? 6;
-            
+
             return $aPriority - $bPriority;
         });
-        
+
         return $rates;
     }
 
@@ -2032,14 +2032,14 @@ class CreateReservation extends Component
                 $stayDuration = $this->getStayDurationProperty();
 
                 $extraGuests = max(0, $adults + $kids - $room->ideal_guest);
-                
+
                 // Recalculate rate breakdown with new dates if needed
                 $rateBreakdown = $this->roomRateService->getRateBreakdown(
-                    $room, 
-                    $this->check_in_date, 
+                    $room,
+                    $this->check_in_date,
                     $this->check_out_date
                 );
-                
+
                 $totalRoomRate = $rateBreakdown['total_amount'];
                 $averageNightlyRate = $stayDuration > 0 ? $totalRoomRate / $stayDuration : 0;
 

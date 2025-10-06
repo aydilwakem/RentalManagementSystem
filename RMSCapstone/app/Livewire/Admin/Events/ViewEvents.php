@@ -101,7 +101,7 @@ class ViewEvents extends Component
         $event = Transaction::query()
             ->select('trn_transactions.*')
             ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
-            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id') //join trn_users for sort direction
+            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id')
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 3)
             ->when($this->search !== '', function ($query) {
@@ -115,15 +115,17 @@ class ViewEvents extends Component
                     })
                     ->orWhereHas('properties', function ($subQuery) use ($search) {
                         $subQuery
-                            ->where('name_number', 'like', $search) // Search by event hall name
+                            ->where('name_number', 'like', $search)
                             ->where('property_type_id', 3);
                     });
             })
             ->when($this->transactionStatus !== '', function ($query) {
                 $query->where('transaction_status', $this->transactionStatus);
             })
+            ->groupBy('trn_transactions.id') // ✅ this prevents duplicates
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
+
 
         // For fake IDs: get all event-type transactions ordered by creation
         $eventTransactions = Transaction::where('reservation_type_id', 3)->orderBy('created_at', 'ASC')->get();

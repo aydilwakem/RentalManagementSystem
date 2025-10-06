@@ -123,13 +123,9 @@ class CreateEvent extends Component
                 'total_amount' => 'required|numeric|min:10000|max:5000000.00',
                 'reservation_source' => 'required|string|max:100',
 
-
-                // Dynamic guests per hall (optional validation)
-                'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
-                'adults.*' => 'nullable|integer|min:0|max:200',
-                'kids.*' => 'nullable|integer|min:0|max:50',
-                'extra_guest.*' => 'nullable|integer|min:0',
-                'extra_charge.*' => 'nullable|numeric|min:0',
+                // Dynamic hall validation
+                'selected_halls' => 'required|array|min:1',
+                'selected_halls.*' => 'exists:properties,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmCreateItem = false;
@@ -139,7 +135,6 @@ class CreateEvent extends Component
         $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
 
         DB::transaction(function () {
-
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
@@ -165,7 +160,6 @@ class CreateEvent extends Component
                 'end_datetime' => $this->end_datetime,
                 'total_adults' => $this->total_adults,
                 'total_kids' => $this->total_kids,
-                // 'pax' => $this->total_kids + $this->total_adults,
                 'pax' => $this->pax,
                 'total_amount' => $this->total_amount,
                 'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
@@ -174,10 +168,7 @@ class CreateEvent extends Component
             ]);
 
             // Step 3: Generate invoice number
-            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
             $invoiceNumber = 'INV-' . strtoupper(Str::random(8));
-            //'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
-            //$invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
 
             // Step 4: Create invoice
             $invoice = Invoice::create([
@@ -192,21 +183,26 @@ class CreateEvent extends Component
                 'invoice_status' => 'pending',
             ]);
 
-            // Step 5: Attach halls to transaction
-            $transaction->properties()->attach($this->selected_hall, [
-                'adults' => $this->total_adults,
-                'kids' => $this->total_kids ?? 0,
-                'extra_guest' => 0,
-                'extra_charge' => 0,
-                'amount' => $this->total_amount,
-                'total_amount' => $this->total_amount,
-                'days' => $this->stayDuration ?? 1,
-            ]);
+
+            foreach ($this->selected_halls as $hallId) {
+
+                $transaction->properties()->attach($hallId, [
+                    'adults' => $this->total_adults,
+                    'kids' => $this->total_kids ?? 0,
+                    'extra_guest' => 0,
+                    'extra_charge' => 0,
+                    'amount' => $this->total_amount,
+                    'total_amount' => $this->total_amount,
+                    'days' => $this->stayDuration ?? 1,
+                ]);
+            }
         });
 
         session()->flash('success', 'Event reservation successfully saved.');
         return redirect()->route('admin.events');
     }
+
+
 
 
 
@@ -224,35 +220,33 @@ class CreateEvent extends Component
             return;
         }
 
-        //Parse the start and end datetime to Carbon instances
+        // Parse the start and end datetime to Carbon instances
         $startDate = \Carbon\Carbon::parse($this->start_datetime)->setSeconds(0);
         $endDate = \Carbon\Carbon::parse($this->end_datetime)->setSeconds(0);
-
-
 
         // Step 1: Get all available event halls (unfiltered)
         $allHalls = Property::ofType('Event Hall')
             ->where('property_status', 'available')
             ->get();
 
-        // Step 2: Load only overlapping transactions manually
+        // Step 2: Load only transactions that truly overlap
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
-        $query->where(function ($q) use ($startDate, $endDate) {
-            $q->whereBetween('start_datetime', [$startDate, $endDate])
-              ->orWhereBetween('end_datetime', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('start_datetime', '<=', $startDate)
-                     ->where('end_datetime', '>=', $endDate);
-              });
-        });
-    }]);
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->where('end_datetime', '>', $startDate)   // existing ends after new starts
+                    ->where('start_datetime', '<', $endDate); // existing starts before new ends
+            });
+        }]);
 
-        // Step 3: Flag each hall as booked if it has any overlapping transactions
+        // Step 3: Flag each hall as booked if it has overlapping transactions
         $this->halls = $allHalls->map(function ($hall) {
             $hall->isBooked = $hall->transactions->isNotEmpty();
             return $hall;
         });
     }
+
+    public $multipleHalls = false;      // toggle for multi-select mode
+    public $selected_halls = [];        // store multiple hall IDs
+
 
     public function updatedStartDatetime($value)
     {

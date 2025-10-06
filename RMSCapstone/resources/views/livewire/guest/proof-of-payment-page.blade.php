@@ -84,14 +84,17 @@
                     <select wire:model="payment_type" id="payment_type"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Select Payment Type</option>
-                        <option value="Room Rent">Room Rent</option>
+                        {{-- <option value="Room Rent">Room Rent</option>
                         <option value="House Rent">House Rent</option>
-                        <option value="Activity Fee">Activity Fee</option>
-                        <option value="Event Hall">Event Hall</option>
+                        <option value="Activity Fee">Activity Fee</option> --}}
+                        {{-- <option value="Event Hall">Event Hall</option>
                         <option value="Event Package">Event Package</option>
                         <option value="Security Deposit">Security Deposit</option>
                         <option value="Remaining Balance">Remaining Balance</option>
-                        <option value="Merchandise">Merchandise</option>
+                        <option value="Merchandise">Merchandise</option> --}}
+                        <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
+                        <option value="Accommodation Downpayment">Accommodation Downpayment</option>
+                        <option value="Accommodation Balance">Accommodation Balance</option>
                     </select>
                     @error('payment_type')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
