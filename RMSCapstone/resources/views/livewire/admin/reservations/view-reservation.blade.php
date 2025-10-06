@@ -244,10 +244,6 @@
                                 @else
                                     {{ ucfirst($transaction->transaction_status) }}
                                 @endif
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
-                                    Free breakfast for {{$transaction->pax}}
-                                </span>
 
                                 <!-- Rebooked Indicator -->
                                 @if($transaction->is_rebooked)
@@ -256,13 +252,8 @@
                                         Rebooked Reservation
                                     </span>
                                 @endif
-
                             </div>
                         </div>
-
-
-
-
                     </div>
 
                     <div>
@@ -372,7 +363,7 @@
 
                             </div>
                         @else
-                            <div class="text-gray-500 italic mt-2">
+                            <div class="text-gray-500 italic">
                                 No requests.
                             </div>
                         @endif
@@ -398,21 +389,25 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-gray-500 italic mt-2">No vouchers.</div>
+                            <div class="text-gray-500 italic">No vouchers.</div>
                         @endif
 
-                    <div class="mt-2">
-                        <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
+                    <div class="mt-2 flex">
+                        {{-- <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
                             Add Voucher
-                        </x-button>
+                        </x-button> --}}
+                        <button type="button" wire:click="openModal('voucher')"
+                            class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                            <i class="fa-solid fa-circle-plus"></i> Add Voucher
+                        </button>
                     </div>
 
                     @if($transaction->transaction_status === 'confirmed')
-                    <div class="mt-2">
-                        <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
-                            Rebook Reservation
-                        </x-button>
-                    </div>
+                        <div class="mt-2">
+                            <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
+                                Rebook Reservation
+                            </x-button>
+                        </div>
                     @endif
 
 
@@ -1226,7 +1221,7 @@
                                             <span class="text-blue-700 font-semibold">Limited Discount Availability</span>
                                         </div>
                                         <p class="text-blue-600 text-sm mt-1">
-                                            PWD/Senior discounts are available only for the {{ $this->getTotalExtraGuests() }} extra guest(s) 
+                                            PWD/Senior discounts are available only for the {{ $this->getTotalExtraGuests() }} extra guest(s)
                                             since a promo code is applied to this reservation.
                                         </p>
                                     </div>
@@ -2243,7 +2238,7 @@
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Guest Type</option>
                                 @foreach ($guestTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                 @endforeach
                             </select>
                             @error('guest.guest_type_id')
@@ -2396,13 +2391,13 @@
             @if($transaction->promoCode)
                 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-blue-700 text-sm">
-                        <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s) 
+                        <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s)
                         since a promo code is applied to this reservation.
                 </div>
-                            @else
+            @else
                 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-blue-700 text-sm">
-                        <strong>Note:</strong> Discounts are limited to {{ $transaction->pax }} guest(s) 
+                        <strong>Note:</strong> Discounts are limited to {{ $transaction->pax }} guest(s)
                         (total number of guests in this reservation).
                     </p>
                 </div>
@@ -2413,7 +2408,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block font-medium mb-1">Number of PWDs</label>
-                    <input type="number" min="0" 
+                    <input type="number" min="0"
                         @if($transaction->promoCode) max="{{ $this->getTotalExtraGuests() }}" @endif
                         wire:model="pwdCount"
                         class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
@@ -2423,7 +2418,7 @@
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Number of Seniors</label>
-                    <input type="number" min="0" 
+                    <input type="number" min="0"
                         @if($transaction->promoCode) max="{{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}" @endif
                         wire:model="seniorCount"
                         class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
