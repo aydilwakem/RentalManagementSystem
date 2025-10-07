@@ -105,19 +105,20 @@
             @endif
 
             <!-- Room Charges Breakdown -->
-            <div class="space-y-2 mb-3">
+            <div class="space-y-1 mb-3">
                 <!-- Total Room Charge -->
                 <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
                     <div class="text-sm">Room Subtotal: </div>
                     <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
                 </div>
-                            <!-- Promo Discount Display -->
-            @if($discountMessage)
-                <div class="flex justify-between items-center text-sm text-green-700 mb-2">
-                    <div class="font-semibold">Promo Discount (Rooms Only)</div>
-                    <div class="font-semibold">-₱{{ number_format($this->promoDiscount, 2) }}</div>
-                </div>
-            @endif
+
+                <!-- Promo Discount Display -->
+                @if($discountMessage)
+                    <div class="flex justify-between items-center text-sm text-green-700 mb-2">
+                        <div class="font-semibold">Promo Discount (Rooms Only)</div>
+                        <div class="font-semibold">- ₱{{ number_format($this->promoDiscount, 2) }}</div>
+                    </div>
+                @endif
 
                 <!-- Total Activity Charge -->
                 <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
@@ -138,36 +139,34 @@
 
 
             <!-- Subtotal -->
-            <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
-                <div>Subtotal</div>
-                <div class="font-semibold flex flex-col items-end">
-                    @if($discountMessage)
-                        <!-- Original subtotal with strikethrough -->
-                        <span class="line-through text-gray-400 text-xs">
-                            ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                        </span>
-                        <!-- Subtotal after discount -->
-                        <span class="text-green-700 font-semibold">
-                            ₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}
-                        </span>
-                    @else
-                        <!-- No discount applied -->
-                        <span>
-                            ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-                        </span>
-                    @endif
+            @if($discountMessage)
+                <div class="flex justify-between items-center font-semibold text-gray-500 dark:text-white">
+                    <div>Subtotal</div>
+                    <div class="font-semibold flex flex-col items-end">
+                        @if($discountMessage)
+                            <!-- Original subtotal with strikethrough -->
+                            <span class="line-through text-gray-500">
+                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                            </span>
+                        @else
+                            <!-- No discount applied -->
+                            <span>
+                                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <!-- Final Total (after discount) -->
-            <div class="flex justify-between items-center text-lg font-bold text-gray-600 mt-2">
+            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
                 <div>Total</div>
                 <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
             </div>
-            
+
             <!-- Deposit (if enabled) -->
             @if ($this->enable_deposit_percentage)
-                <div class="flex justify-between items-center text-sm text-yellow-700 mt-2">
+                <div class="flex justify-between items-center text-sm text-yellow-700">
                     <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
                     <div class="font-semibold">
                         ₱{{ number_format($this->deposit ?? 0, 2) }}
@@ -176,9 +175,9 @@
             @endif
 
             <!-- Convenience Fee -->
-            <div class="flex justify-between items-center font-semibold text-gray-800 mt-2 dark:text-white">
+            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
                 <div class="flex items-center space-x-2 text-sm">
-                    <span>Apply Convenience Fee</span>
+                    <span>Convenience Fee</span>
                     <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
                 </div>
 
@@ -219,8 +218,8 @@
                         wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
                         class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
                         {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                        placeholder="Enter Promo Code (applies to rooms only)" 
-                        autocomplete="off" 
+                        placeholder="Enter Promo Code (applies to rooms only)"
+                        autocomplete="off"
                         {{ $hasCode ? 'disabled' : '' }}>
 
                     @if ($discountMessage)
@@ -616,7 +615,7 @@
                     function toggleRateBreakdown(roomId) {
                         const breakdown = document.getElementById('rate-breakdown-' + roomId);
                         const arrow = document.getElementById('breakdown-arrow-' + roomId);
-                        
+
                         if (breakdown.classList.contains('hidden')) {
                             breakdown.classList.remove('hidden');
                             arrow.classList.remove('fa-chevron-down');
@@ -936,28 +935,28 @@
                                                     @php
                                                         // Get all rates information
                                                         $allRates = $this->getAllRoomRates($room);
-                                                        
+
                                                         // Get ALL applied rates for the entire stay period
                                                         $appliedRates = $this->roomRateService->getAppliedRatesForStay(
-                                                            $room, 
-                                                            $this->check_in_date, 
+                                                            $room,
+                                                            $this->check_in_date,
                                                             $this->check_out_date
                                                         );
-                                                        
+
                                                         $baseRate = $room->amount;
-                                                        
+
                                                         // Calculate rate breakdown for selected dates
                                                         $rateSummary = $this->roomRateService->getRateSummary(
-                                                            $room, 
-                                                            $this->check_in_date, 
+                                                            $room,
+                                                            $this->check_in_date,
                                                             $this->check_out_date
                                                         );
                                                         $nights = $rateSummary['nights'] ?? 0;
                                                         $totalRate = $rateSummary['total_amount'] ?? 0;
-                                                        
+
                                                         // Calculate average rate per night
                                                         $averageRatePerNight = $nights > 0 ? $totalRate / $nights : $baseRate;
-                                                        
+
                                                         // Determine if we're showing multiple rates or single rate
                                                         $hasMultipleRates = count($appliedRates) > 1;
                                                         $hasSpecialRate = count($appliedRates) > 0 && $appliedRates[0]['rate_type'] !== null;
@@ -1005,7 +1004,7 @@
 
                                                             <!-- Total Stay Cost -->
                                                             <p class="text-sm text-gray-600 mt-2">
-                                                                Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}: 
+                                                                Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}:
                                                                 <span class="font-semibold text-gray-700">₱{{ number_format($totalRate, 2) }}</span>
                                                             </p>
 
@@ -1022,23 +1021,23 @@
                                                     <!-- Detailed Breakdown (Collapsible) -->
                                                     @if($this->check_in_date && $this->check_out_date && count($appliedRates) > 0 && $hasMultipleRates)
                                                         <div class="mt-3 text-sm">
-                                                            <button type="button" 
+                                                            <button type="button"
                                                                 class="text-green-600 hover:text-green-800 font-medium flex items-center"
                                                                 onclick="toggleRateBreakdown({{ $room->id }})">
                                                                 <i class="fas fa-calculator mr-2"></i>
                                                                 View Rate Breakdown
                                                                 <i class="fas fa-chevron-down ml-1 text-xs" id="breakdown-arrow-{{ $room->id }}"></i>
                                                             </button>
-                                                            
+
                                                             <div id="rate-breakdown-{{ $room->id }}" class="mt-2 hidden">
                                                                 <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
                                                                     <p class="font-semibold text-gray-700 mb-2 text-sm">Rate Calculation:</p>
-                                                                    
+
                                                                     <div class="space-y-2">
                                                                         @foreach($appliedRates as $appliedRate)
                                                                             <div class="flex justify-between items-center text-xs">
                                                                                 <span class="text-gray-600">
-                                                                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @ 
+                                                                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @
                                                                                     <span class="font-medium">{{ $appliedRate['name'] }}</span>
                                                                                     <span class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2) }}/night)</span>
                                                                                 </span>
@@ -1047,7 +1046,7 @@
                                                                                 </span>
                                                                             </div>
                                                                         @endforeach
-                                                                        
+
                                                                         <div class="border-t border-gray-300 pt-2 mt-2">
                                                                             <div class="flex justify-between items-center font-semibold">
                                                                                 <span class="text-gray-700">Total Room Rate:</span>

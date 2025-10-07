@@ -244,10 +244,6 @@
                                 @else
                                     {{ ucfirst($transaction->transaction_status) }}
                                 @endif
-                                <span
-                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
-                                    Free breakfast for {{$transaction->pax}}
-                                </span>
 
                                 <!-- Rebooked Indicator -->
                                 @if($transaction->is_rebooked)
@@ -256,13 +252,8 @@
                                         Rebooked Reservation
                                     </span>
                                 @endif
-
                             </div>
                         </div>
-
-
-
-
                     </div>
 
                     <div>
@@ -353,7 +344,7 @@
 
                     <div>
                         <strong>Free Breakfast Inclusion:</strong>
-                        <div>Free breakfast for {{ $transaction->pax }}</div>
+                        <div>Free breakfast for {{ $transaction->pax }} pax</div>
                     </div>
 
                     <div>
@@ -372,7 +363,7 @@
 
                             </div>
                         @else
-                            <div class="text-gray-500 italic mt-2">
+                            <div class="text-gray-500 italic">
                                 No requests.
                             </div>
                         @endif
@@ -398,31 +389,25 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-gray-500 italic mt-2">No vouchers.</div>
+                            <div class="text-gray-500 italic">No vouchers.</div>
                         @endif
 
-                    <div class="mt-2">
-                        <x-button wire:click="openModal('voucher')" icon="fas fa-ticket-alt">
-                            Add Voucher
-                        </x-button>
+                            <button type="button" wire:click="openModal('voucher')"
+                                class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                                <i class="fa-solid fa-circle-plus"></i> Add Voucher
+                            </button>
                     </div>
 
                     @if($transaction->transaction_status === 'confirmed')
-                    <div class="mt-2">
-                        <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
-                            Rebook Reservation
-                        </x-button>
-                    </div>
+                        <div class="mt-2">
+                            <x-button href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}" icon="fas fa-calendar-plus">
+                                Rebook Reservation
+                            </x-button>
+                        </div>
                     @endif
 
 
                 </div>
-
-
-                </div>
-
-
-
 
 
             </div>
@@ -845,8 +830,126 @@
                         </div>
                     </div>
                     <hr class="py-2 mt-4">
-                    <!-- Items Table -->
+
+                    <!-- Actions Dropdown -->
                     <div class="flex justify-between">
+                        <!-- Email Balance Request -->
+                        <div>
+                            @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
+                                <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled">
+                                    <div class="flex items-center justify-center">
+                                        <!-- Spinner -->
+                                        <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
+                                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                </path>
+                                            </svg>
+                                        </span>
+
+                                        <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
+                                            wire:target="requestRemainingBalance"></i>
+
+                                        <span wire:loading.remove wire:target="requestRemainingBalance">
+                                            Email Balance Request
+                                        </span>
+                                    </div>
+                                </x-button>
+                            @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
+                                <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
+                            @endif
+                        </div>
+
+                        <div class="relative inline-block text-left" x-data="{ open: false }">
+                            <!-- Main button -->
+                            <x-button icon="fas fa-chevron-down" @click="open = !open">
+                                Actions
+                            </x-button>
+
+                            <!-- Dropdown -->
+                            <div
+                                x-show="open"
+                                @click.away="open = false"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="opacity-0 transform scale-95"
+                                x-transition:enter-end="opacity-100 transform scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="opacity-100 transform scale-100"
+                                x-transition:leave-end="opacity-0 transform scale-95"
+                                class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20 origin-top-right"
+                            >
+                                <div class="py-1">
+                                    <button
+                                        wire:click="openModal('activity')"
+                                        class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        <i class="fas fa-calendar-plus mr-2 text-green-600"></i>
+                                        Add Activity
+                                    </button>
+
+                                    <button
+                                        wire:click="openModal('service')"
+                                        class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        <i class="fas fa-plus-circle mr-2 text-green-600"></i>
+                                        Add Other Charges
+                                    </button>
+
+                                    {{-- <div class="border-t border-gray-200 my-1"></div>
+
+                                    <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
+                                    @if (!$this->discountsApplied)
+                                        @if ($transaction->promoCode)
+                                            <div class="mb-4">
+                                                @if ($this->getTotalExtraGuests() > 0)
+                                                    {{-- <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-2">
+                                                        <div class="flex items-center">
+                                                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                                                            <span class="text-blue-700 font-semibold">Limited Discount Availability</span>
+                                                        </div>
+                                                        <p class="text-blue-600 text-sm mt-1">
+                                                            PWD/Senior discounts are available only for the {{ $this->getTotalExtraGuests() }} extra guest(s)
+                                                            since a promo code is applied to this reservation.
+                                                        </p>
+                                                    </div> --}}
+                                                    {{-- <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
+                                                        Add PWD/SENIOR DISCOUNT (Extra Guests Only)
+                                                    </x-button>
+                                                    <button
+                                                        wire:click="openModal('discounts')"
+                                                        class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                        <i class="fas fa-percent mr-2 text-green-600"></i>
+                                                        Add PWD/Senior Discount <br>
+                                                        <span class="text-xs">(Extra Guests Only)</span>
+                                                    </button>
+                                                @else
+                                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                        <div class="flex items-center">
+                                                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                                            <span class="text-yellow-700 font-semibold">Discounts Not Available</span>
+                                                        </div>
+                                                        <p class="text-yellow-600 text-sm mt-1">
+                                                            PWD/Senior discounts are not available when a promo code is applied, unless there are extra guests in the reservation.
+                                                        </p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <button
+                                                wire:click="openModal('discounts')"
+                                                class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <i class="fas fa-percent mr-2 text-green-600"></i>
+                                                Add PWD/Senior Discount
+                                            </button>
+                                        @endif
+                                    @endif --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div class="flex justify-between">
                         <x-button wire:click="openModal('activity')" icon="fas fa-plus">
                             Add Activity
                         </x-button>
@@ -854,7 +957,7 @@
                         <x-button wire:click="openModal('service')" icon="fas fa-plus">
                             Add Other Charges
                         </x-button>
-                    </div>
+                    </div> --}}
 
                     <div class=" mt-4">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
@@ -946,7 +1049,7 @@
                                 </td> --}}
                                         {{-- Activity Actions --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
-                                          
+
                                                 @if ($item['type'] == 'property')
                                                     <button wire:click="editRoom({{ $item['pivot_id'] }})"
                                                         class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
@@ -992,7 +1095,7 @@
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 @endif
-                                           
+
                                         </td>
                                     </tr>
 
@@ -1066,7 +1169,7 @@
 
                                     <div class="flex justify-between items-center mb-1">
                                         <span>
-                                            - {{ strtoupper($type->name) }} x {{ $count }}
+                                            - {{ $count }} {{ strtoupper($type->name) }}
                                             @if ($transaction->promoCode)
                                                 @if ($type->type === 'percent' && $perPersonAmount)
                                                     ({{ $type->rate }}% of Extra charge per guest ÷ {{ $count }} pax)
@@ -1096,7 +1199,7 @@
                                                 wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
                                                 class="text-red-500 hover:text-red-700 text-xs"
                                                 title="Remove discount">
-                                                <i class="fas fa-trash-alt"></i>
+                                                <i class="fas fa-circle-xmark"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -1104,24 +1207,15 @@
                             </div>
                         @endif
 
-
-
-
-
-
                         <!-- Subtotal with discount -->
                         {{-- <div class="flex justify-between font-semibold text-base text-gray-700">
                         <span>Subtotal with discount:</span>
                         <span>₱{{ number_format($this->computeInvoiceWithDiscount(), 2) }}</span>
                     </div> --}}
 
-
-
-
-
                         @if ($transaction->promoCode)
                             <!-- Promo Applied -->
-                            <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            <div class="flex justify-between font-semibold text-base text-gray-700">
                                 Promo Applied:
                                 <div>
                                     {{ $transaction->promoCode->code ?? '' }}
@@ -1138,18 +1232,15 @@
                             </div>
                         @endif
 
-
-
-                        @if ($transaction->promoCode)
+                        {{-- @if ($transaction->promoCode)
                             <!-- Sub Total with discount -->
-                            <div class="flex justify-between font-semibold text-base mt-2 text-gray-700">
+                            <div class="flex justify-between font-semibold text-base text-gray-700">
                                 Subtotal after discount:
                                 <div>
                                     ₱{{ number_format($this->computeBaseSubtotalAfterDiscount(), 2) }}
                                 </div>
                             </div>
-                        @endif
-
+                        @endif --}}
 
                         @if ($this->computeConvenienceFeeTotal() > 0)
                             <!-- Convenience Fee -->
@@ -1161,15 +1252,10 @@
                             </div>
                         @endif
 
-
-
-
-                        <hr>
-
-
+                        <hr class="my-2">
 
                         <!-- Grand Total -->
-                        <div class="flex justify-between font-bold text-base mt-2 text-green-700">
+                        <div class="flex justify-between font-bold text-base text-green-700">
                             Grand Total:
                             <div>
                                 ₱{{ number_format($this->invoice->sub_total, 2) }}
@@ -1209,77 +1295,6 @@
                     </div>
 
                     {{-- Add Item Button Row --}}
-
-{{-- 
-
-                    <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
-                    @if (!$this->discountsApplied)
-                        @if ($transaction->promoCode)
-                            <div class="mb-4">
-                                @if ($this->getTotalExtraGuests() > 0)
-                                    <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-2">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                            <span class="text-blue-700 font-semibold">Limited Discount Availability</span>
-                                        </div>
-                                        <p class="text-blue-600 text-sm mt-1">
-                                            PWD/Senior discounts are available only for the {{ $this->getTotalExtraGuests() }} extra guest(s) 
-                                            since a promo code is applied to this reservation.
-                                        </p>
-                                    </div>
-                                    <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
-                                        Add PWD/SENIOR DISCOUNT (Extra Guests Only)
-                                    </x-button>
-                                @else
-                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                            <span class="text-yellow-700 font-semibold">Discounts Not Available</span>
-                                        </div>
-                                        <p class="text-yellow-600 text-sm mt-1">
-                                            PWD/Senior discounts are not available when a promo code is applied, unless there are extra guests in the reservation.
-                                        </p>
-                                    </div>
-                                @endif
-                            </div>
-                        @else
-                            <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
-                                Add PWD/SENIOR DISCOUNT
-                            </x-button>
-                        @endif
-                    @endif
-                    <!--------------------  END OF PWD/SENIOR DISCOUNT ----------------------------------> --}}
-
-                    <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
-                    <div class="flex justify-center">
-                        @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
-                            <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled"
-                                class="mt-6">
-                                <div class="flex items-center justify-center">
-                                    <!-- Spinner -->
-                                    <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
-                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                            </path>
-                                        </svg>
-                                    </span>
-
-                                    <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
-                                        wire:target="requestRemainingBalance"></i>
-
-                                    <span wire:loading.remove wire:target="requestRemainingBalance">
-                                        Email Balance Request
-                                    </span>
-                                </div>
-                            </x-button>
-                        @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
-                            <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
-                        @endif
-                    </div>
-                    <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
 
             </div>
         @else
@@ -2240,7 +2255,7 @@
                                         dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                                 <option value="">Select Guest Type</option>
                                 @foreach ($guestTypes as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
                                 @endforeach
                             </select>
                             @error('guest.guest_type_id')
@@ -2330,6 +2345,7 @@
 
 
                     </div>
+                </div>
             @endif
 
             <!-- Add Pet Modal -->
@@ -2371,77 +2387,79 @@
             @endif
 
 
-@if ($activeModal === 'discounts')
-    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-            <!-- Header -->
-            <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
-                <h2 class="text-2xl font-bold text-center">
-                    @if($transaction->promoCode)
-                        Add Discounts (Extra Guests Only)
-                    @else
-                        Add PWD/Senior Discounts
-                    @endif
-                </h2>
-                <button wire:click="closeModal"
-                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                    <span class="-translate-y-[2px]">&times;</span>
-                </button>
-            </div>
+            @if ($activeModal === 'discounts')
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                        <!-- Header -->
+                        <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                            <h2 class="text-2xl font-bold text-center">
+                                @if($transaction->promoCode)
+                                    Add Discounts (Extra Guests Only)
+                                @else
+                                    Add PWD/Senior Discounts
+                                @endif
+                            </h2>
+                            <button wire:click="closeModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
+                        </div>
 
-            <!-- Promo Code Warning -->
-            @if($transaction->promoCode)
-                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-blue-700 text-sm">
-                        <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s) 
-                        since a promo code is applied to this reservation.
-                </div>
-                            @else
-                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-blue-700 text-sm">
-                        <strong>Note:</strong> Discounts are limited to {{ $transaction->pax }} guest(s) 
-                        (total number of guests in this reservation).
-                    </p>
-                </div>
+                        <!-- Promo Code Warning -->
+                        @if($transaction->promoCode)
+                            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p class="text-blue-700 text-sm">
+                                    <strong>Note:</strong> Discounts are limited to {{ $this->getTotalExtraGuests() }} extra adult guest(s)
+                                    since a promo code is applied to this reservation.
+                            </div>
+                        @else
+                            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p class="text-blue-700 text-sm">
+                                    <strong>Note:</strong> Discounts are limited to {{ $transaction->pax }} guest(s)
+                                    (total number of guests in this reservation).
+                                </p>
+                            </div>
 
+                        @endif
+
+                        <!-- Form Fields -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold mb-1">Number of PWDs</label>
+                                <input type="number" min="0"
+                                    @if($transaction->promoCode) max="{{ $this->getTotalExtraGuests() }}" @endif
+                                    wire:model="pwdCount" onwheel="this.blur()"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                @if($transaction->promoCode)
+                                    <p class="text-xs text-gray-500 mt-1">Max: {{ $this->getTotalExtraGuests() }} (extra adult guests only)</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold mb-1">Number of Seniors</label>
+                                <input type="number" min="0"
+                                    @if($transaction->promoCode) max="{{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}" @endif
+                                    wire:model="seniorCount" onwheel="this.blur()"
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                @if($transaction->promoCode)
+                                    <p class="text-xs text-gray-500 mt-1">Remaining: {{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between mt-6">
+                            <x-ghost-button wire:click="closeModal">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button wire:click="applyDiscounts">
+                                Apply Discount
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
             @endif
-
-            <!-- Form Fields -->
-            <div class="space-y-4">
-                <div>
-                    <label class="block font-medium mb-1">Number of PWDs</label>
-                    <input type="number" min="0" 
-                        @if($transaction->promoCode) max="{{ $this->getTotalExtraGuests() }}" @endif
-                        wire:model="pwdCount"
-                        class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                    @if($transaction->promoCode)
-                        <p class="text-xs text-gray-500 mt-1">Max: {{ $this->getTotalExtraGuests() }} (extra adult guests only)</p>
-                    @endif
-                </div>
-                <div>
-                    <label class="block font-medium mb-1">Number of Seniors</label>
-                    <input type="number" min="0" 
-                        @if($transaction->promoCode) max="{{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}" @endif
-                        wire:model="seniorCount"
-                        class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                    @if($transaction->promoCode)
-                        <p class="text-xs text-gray-500 mt-1">Remaining: {{ max(0, $this->getTotalExtraGuests() - $pwdCount) }}</p>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex justify-between mt-6">
-                <x-ghost-button wire:click="closeModal">
-                    Cancel
-                </x-ghost-button>
-                <x-button wire:click="applyDiscounts">
-                    Apply Discounts
-                </x-button>
-            </div>
-        </div>
-    </div>
-@endif
 
             {{-- Add Voucher Modal --}}
             @if ($activeModal === 'voucher')
@@ -2855,11 +2873,11 @@
 
 
                         <!-- Birthdate -->
-                        <div class="mb-4">
+                        {{-- <div class="mb-4">
                             <label class="block text-sm text-gray-700 dark:text-gray-200">Birthdate</label>
                             <input type="date" wire:model="editingBirthDate"
                                 class="w-full border px-3 py-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        </div>
+                        </div> --}}
 
                         <!-- Guest Type -->
                         <!-- Optional: Guest Type (can be hidden or locked to a default) -->

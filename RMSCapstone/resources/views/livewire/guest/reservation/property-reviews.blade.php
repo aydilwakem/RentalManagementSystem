@@ -1,8 +1,8 @@
 <div x-data="{ open: @entangle('showReviewsModal') }">
     <!-- Star Rating Button -->
     @if ($totalReviews > 0)
-        <button x-on:click="$wire.showReviews()" 
-                class="flex items-center space-x-1 text-yellow-500 hover:text-yellow-600 transition-colors group"
+        <button x-on:click="$wire.showReviews()"
+                class="flex items-center space-x-1 text-yellow-500 hover:text-yellow-600 transition-colors  hover:underline"
                 title="View {{ $totalReviews }} reviews">
             <!-- Star icons -->
             <div class="flex">
@@ -16,19 +16,19 @@
                     @endif
                 @endfor
             </div>
-            
+
             <span class="text-sm text-gray-600 ml-1 group-hover:text-gray-800">
                 {{ $averageRating }} ({{ $totalReviews }} review{{ $totalReviews > 1 ? 's' : '' }})
             </span>
         </button>
     @else
-        <span class="text-sm text-gray-500 italic">No reviews yet</span>
+        <span class="text-sm text-gray-500 italic">(No reviews yet)</span>
     @endif
 
     <!-- Reviews Modal -->
-    <div x-cloak x-show="open" x-transition:enter="ease-out duration-300" 
+    <div x-cloak x-show="open" x-transition:enter="ease-out duration-300"
          x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" 
+         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
@@ -72,7 +72,7 @@
                                     <span class="text-sm text-gray-600 w-4">{{ $i }}</span>
                                     <i class="fas fa-star text-yellow-400 text-xs"></i>
                                     <div class="w-32 bg-gray-200 rounded-full h-2.5 flex-1">
-                                        <div class="bg-yellow-400 h-2.5 rounded-full" 
+                                        <div class="bg-yellow-400 h-2.5 rounded-full"
                                              style="width: {{ $totalReviews > 0 ? ($ratingBreakdown[$i] / $totalReviews) * 100 : 0 }}%"></div>
                                     </div>
                                     <span class="text-sm text-gray-600 w-8 text-right">{{ $ratingBreakdown[$i] }}</span>

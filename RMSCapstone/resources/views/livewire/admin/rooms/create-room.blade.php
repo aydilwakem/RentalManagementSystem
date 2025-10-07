@@ -322,7 +322,7 @@
                     <div class="sm:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
-                            @foreach ($features as $feature)
+                            @forelse ($features as $feature)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-green-600 focus:border-green-600 focus:outline-none">
@@ -330,9 +330,25 @@
                                         {{ $feature->name }}
                                     </label>
                                 </div>
-                            @endforeach
+                            @empty
+                                <p class="text-sm text-gray-500 w-full">No amenities available. Create an amenity to attach to a room.</p>
+                            @endforelse
 
                         </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Description
+                        </label>
+                        <textarea wire:model="description" id="description" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400 resize-none"
+                            placeholder="Ex. Not senior/PWD friendly as it requires going down 10-20 steps"></textarea>
+                        @error('description')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <!-- Image Upload -->
@@ -425,19 +441,7 @@
                         </div>
                     </div>
 
-                    <!-- Description -->
-                    <div>
-                        <label for="description"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Description
-                        </label>
-                        <textarea wire:model="description" id="description" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Enter description here..."></textarea>
-                        @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+
 
 
                 </div>
