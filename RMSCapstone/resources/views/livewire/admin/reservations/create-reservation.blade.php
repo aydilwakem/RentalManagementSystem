@@ -100,37 +100,56 @@
 
             @if ($bringingPets)
                 <!-- Total Pets -->
-                <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No.of Pets:
+                <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Pets:
                     {{ $this->pet_count }}</p>
             @endif
 
             <!-- Room Charges Breakdown -->
-            <div class="space-y-1 mb-3">
-                <!-- Total Room Charge -->
-                <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                    <div class="text-sm">Room Subtotal: </div>
-                    <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
-                </div>
+            <div class="space-y-1 mb-2">
 
                 <!-- Promo Discount Display -->
                 @if($discountMessage)
-                    <div class="flex justify-between items-center text-sm text-green-700 mb-2">
-                        <div class="font-semibold">Promo Discount (Rooms Only)</div>
-                        <div class="font-semibold">- ₱{{ number_format($this->promoDiscount, 2) }}</div>
+                    @foreach ($selectedRooms as $room)
+                        <div class="flex justify-between items-center text-sm text-gray-800">
+                            <div class="font-semibold">Room Base Rate</div>
+                            <div class="font-semibold">₱{{ number_format($room['roomAmount'],2) }}</div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-sm text-green-700">
+                            <div class="font-semibold">Promo Discount</div>
+                            <div class="font-semibold">- ₱{{ number_format($this->promoDiscount, 2) }}</div>
+                        </div>
+
+                        @if($room['extra_guest'] > 0)
+                            <div class="flex justify-between items-center text-sm text-gray-800">
+                                <div class="font-semibold">Extra Person Charge</div>
+                                <div class="font-semibold">₱{{ number_format($room['extra_charge_total'],2) }}</div>
+                            </div>
+                        @endif
+                    @endforeach
+                @else
+                    <!-- Total Room Charge -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                        <div class="text-sm">Room Subtotal: </div>
+                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
                     </div>
                 @endif
 
                 <!-- Total Activity Charge -->
-                <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                    <div class="text-sm">Activity Subtotal: </div>
-                    <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
-                </div>
+                @if(count($selectedActivities) > 0)
+                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                        <div class="text-sm">Activity Subtotal: </div>
+                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
+                    </div>
+                @endif
 
                 <!-- Total Services Charge -->
-                <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                    <div class="text-sm">Services Subtotal: </div>
-                    <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</div>
-                </div>
+                @if(count($selectedServices) > 0)
+                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                        <div class="text-sm">Services Subtotal: </div>
+                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</div>
+                    </div>
+                @endif
             </div>
 
             <!-- Discount Code Section -->
@@ -166,7 +185,7 @@
 
             <!-- Deposit (if enabled) -->
             @if ($this->enable_deposit_percentage)
-                <div class="flex justify-between items-center text-sm text-yellow-700">
+                <div class="flex justify-between items-center text-sm font-semibold text-yellow-700">
                     <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
                     <div class="font-semibold">
                         ₱{{ number_format($this->deposit ?? 0, 2) }}
@@ -240,7 +259,7 @@
             <!-- Promo Code Note -->
             <p class="text-xs text-gray-500 text-center mt-1">
                 <i class="fas fa-info-circle mr-1"></i>
-                Promo codes apply to room charges only
+                Promo codes apply to Room Base Rate only
             </p>
         @endif
 
