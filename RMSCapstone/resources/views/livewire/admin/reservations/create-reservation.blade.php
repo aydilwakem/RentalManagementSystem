@@ -52,230 +52,240 @@
 
         </div>
 
-<!------------------------------ Reservation Date Details --------------------------->
-@php
-    use Carbon\Carbon;
-@endphp
+        <!------------------------------ Reservation Date Details --------------------------->
+        @php
+            use Carbon\Carbon;
+        @endphp
 
-<div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-    <h2
-        class="font-bold text-xl text-green-700 text-center leading-tight mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
-        Reservation Summary
-    </h2>
-    <div class="px-6 py-2">
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+            <h2
+                class="font-bold text-xl text-green-700 text-center leading-tight mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
+                Reservation Summary
+            </h2>
+            <div class="px-6 py-2">
 
-        @if ($check_in_date)
-            <div class="flex justify-center items-center text-md text-gray-800 space-x-4 dark:text-white">
-                <span>
-                    {{ Carbon::parse($check_in_date)->format('F j, Y') }}
-                </span>
+                @if ($check_in_date)
+                    <div class="flex justify-center items-center text-md text-gray-800 space-x-4 dark:text-white">
+                        <span>
+                            {{ Carbon::parse($check_in_date)->format('F j, Y') }}
+                        </span>
 
-                @error('check_in_date')
-                    <span class="text-red-600">{{ $message }}</span>
-                @enderror
+                        @error('check_in_date')
+                            <span class="text-red-600">{{ $message }}</span>
+                        @enderror
 
-                <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                        @if ($check_out_date)
+                            <span>
+                                {{ Carbon::parse($check_out_date)->format('F j, Y') }}
+                            </span>
+                        @endif
+                    </div>
+                @endif
 
                 @if ($check_out_date)
-                    <span>
-                        {{ Carbon::parse($check_out_date)->format('F j, Y') }}
-                    </span>
+                    <!-- Stay Duration -->
+                    <div class="flex justify-center items-center text-md text-gray-800 mb-4 space-x-4 dark:text-white">
+                        <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
+                    </div>
                 @endif
-            </div>
-        @endif
 
-        @if ($check_out_date)
-            <!-- Stay Duration -->
-            <div class="flex justify-center items-center text-md text-gray-800 mb-4 space-x-4 dark:text-white">
-                <p class="text-center">Stay Duration: {{ $this->stayDuration }} night(s)</p>
-            </div>
-        @endif
+                @if ($selectedRooms)
+                    <hr class="my-2 border-gray-200">
 
-        @if ($selectedRooms)
-            <hr class="my-2 border-gray-200">
+                    <!-- Total Pax -->
+                    <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
+                        {{ $this->total_pax }}</p>
 
-            <!-- Total Pax -->
-            <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Guests:
-                {{ $this->total_pax }}</p>
+                    @if ($bringingPets)
+                        <!-- Total Pets -->
+                        <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Pets:
+                            {{ $this->pet_count }}</p>
+                    @endif
 
-            @if ($bringingPets)
-                <!-- Total Pets -->
-                <p class=" text-gray-800 text-sm font-semibold mb-1 dark:text-white">No. of Pets:
-                    {{ $this->pet_count }}</p>
-            @endif
+                    <!-- Room Charges Breakdown -->
+                    <div class="space-y-1 mb-3">
 
-            <!-- Room Charges Breakdown -->
-            <div class="space-y-1 mb-2">
-
-                <!-- Promo Discount Display -->
-                @if($discountMessage)
-                    @foreach ($selectedRooms as $room)
-                        <div class="flex justify-between items-center text-sm text-gray-800">
-                            <div class="font-semibold">Room Base Rate</div>
-                            <div class="font-semibold">₱{{ number_format($room['roomAmount'],2) }}</div>
+                        <!-- Base Room Charges -->
+                        <div class="flex justify-between items-center text-gray-800 text-sm font-semibold dark:text-white">
+                            <div>Base Room Charges:</div>
+                            <div>₱{{ number_format($this->computeBaseRoomSubtotal(), 2) }}</div>
                         </div>
 
-                        <div class="flex justify-between items-center text-sm text-green-700">
-                            <div class="font-semibold">Promo Discount</div>
-                            <div class="font-semibold">- ₱{{ number_format($this->promoDiscount, 2) }}</div>
-                        </div>
-
-                        @if($room['extra_guest'] > 0)
-                            <div class="flex justify-between items-center text-sm text-gray-800">
-                                <div class="font-semibold">Extra Person Charge</div>
-                                <div class="font-semibold">₱{{ number_format($room['extra_charge_total'],2) }}</div>
+                        <!-- Promo Discount Display -->
+                        @if ($discountMessage)
+                            <div class="flex justify-between items-center text-sm text-green-700">
+                                <div class="font-semibold">Promo Discount</div>
+                                <div class="font-semibold">- ₱{{ number_format($this->promoDiscount, 2) }}</div>
                             </div>
                         @endif
-                    @endforeach
-                @else
-                    <!-- Total Room Charge -->
-                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                        <div class="text-sm">Room Subtotal: </div>
-                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
-                    </div>
-                @endif
 
-                <!-- Total Activity Charge -->
-                @if(count($selectedActivities) > 0)
-                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                        <div class="text-sm">Activity Subtotal: </div>
-                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
-                    </div>
-                @endif
+                        <!-- Extra Guest Charges -->
+                        @if ($this->computeTotalExtraGuestCharges() > 0)
+                            <div class="flex justify-between items-center text-sm font-semibold text-gray-800 dark:text-white mb-1">
+                                <div class="flex items-center">
+                                    <span>Extra Guest Charge</span>
+                                    <span class="text-xs text-gray-500 ml-1">({{ $this->getTotalExtraGuests() }} extra
+                                        guest/s)</span>
+                                </div>
+                                <div>₱{{ number_format($this->computeTotalExtraGuestCharges(), 2) }}</div>
+                            </div>
+                        @endif
 
-                <!-- Total Services Charge -->
-                @if(count($selectedServices) > 0)
-                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                        <div class="text-sm">Services Subtotal: </div>
-                        <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}</div>
-                    </div>
-                @endif
-            </div>
+                        <hr class="my-2 border-gray-200 mt-">
 
-            <!-- Discount Code Section -->
-            <hr class="my-2 border-gray-200">
+                        <!-- Total Room Charge -->
+                        <div
+                            class="flex justify-between items-center font-semibold text-gray-800 dark:text-whitet">
+                            <div class="text-sm">Room Subtotal: </div>
+                            <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
 
+                        </div>
 
+                        <!-- Total Activity Charge -->
+                        @if (count($selectedActivities) > 0)
+                            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                                <div class="text-sm">Activity Subtotal: </div>
+                                <div class="text-sm">
+                                    ₱{{ number_format($this->computeTotalAmountOfAllActivities(), 2) }}</div>
+                            </div>
+                        @endif
 
-            <!-- Subtotal -->
-            @if($discountMessage)
-                <div class="flex justify-between items-center font-semibold text-gray-500 dark:text-white">
-                    <div>Subtotal</div>
-                    <div class="font-semibold flex flex-col items-end">
-                        @if($discountMessage)
-                            <!-- Original subtotal with strikethrough -->
-                            <span class="line-through text-gray-500">
-                                ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
-                            </span>
-                        @else
-                            <!-- No discount applied -->
-                            <span>
-                                ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
-                            </span>
+                        <!-- Total Services Charge -->
+                        @if (count($selectedServices) > 0)
+                            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                                <div class="text-sm">Services Subtotal: </div>
+                                <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllServices(), 2) }}
+                                </div>
+                            </div>
                         @endif
                     </div>
-                </div>
-            @endif
 
-            <!-- Final Total (after discount) -->
-            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                <div>Total</div>
-                <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
-            </div>
+                    <!-- Discount Code Section -->
+                    <hr class="my-2 border-gray-200">
 
-            <!-- Deposit (if enabled) -->
-            @if ($this->enable_deposit_percentage)
-                <div class="flex justify-between items-center text-sm font-semibold text-yellow-700">
-                    <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
-                    <div class="font-semibold">
-                        ₱{{ number_format($this->deposit ?? 0, 2) }}
-                    </div>
-                </div>
-            @endif
 
-            <!-- Convenience Fee -->
-            <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
-                <div class="flex items-center space-x-2 text-sm">
-                    <span>Convenience Fee</span>
-                    <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
-                </div>
 
-                @if ($apply_convenience_fee)
-                    <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
-                @endif
-            </div>
-
-            <!-- Total Payable Now -->
-            <div class="flex justify-between items-center text-xl font-bold text-green-700 mt-3 pt-2 border-t border-gray-200">
-                <div>Amount Due Now</div>
-                <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
-            </div>
-
-            <hr class="my-3">
-
-            <!-- Promo Code Messages -->
-            @if ($discountMessage)
-                <p class="text-sm mt-1 text-green-600 bg-green-50 p-2 rounded border border-green-200">
-                    <i class="fas fa-tag mr-1"></i> {{ $discountMessage }}
-                </p>
-            @endif
-
-            @if ($errorMessage)
-                <p class="text-sm mt-1 text-red-500 bg-red-50 p-2 rounded border border-red-200">
-                    <i class="fas fa-exclamation-circle mr-1"></i> {{ $errorMessage }}
-                </p>
-            @endif
-
-            @php
-                $hasCode = !empty($promoCode) && empty($discountMessage) === false;
-            @endphp
-
-            <!-- Promo Code Input -->
-            <div class="flex justify-center mt-4">
-                <div class="relative max-w-xl mb-2 flex justify-center w-full">
-                    <input type="text" wire:model="promoCode"
-                        wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
-                        class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
-                        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
-                        placeholder="Enter Promo Code (applies to rooms only)"
-                        autocomplete="off"
-                        {{ $hasCode ? 'disabled' : '' }}>
-
+                    <!-- Subtotal -->
                     @if ($discountMessage)
-                        <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-lg font-bold hover:text-red-800 focus:outline-none transition-colors"
-                            title="Remove Promo Code">
-                            &times;
-                        </button>
-                    @else
-                        <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none transition-colors">
-                            Apply
-                        </button>
+                        <div class="flex justify-between items-center font-semibold text-gray-500 dark:text-white">
+                            <div>Subtotal</div>
+                            <div class="font-semibold flex flex-col items-end">
+                                @if ($discountMessage)
+                                    <!-- Original subtotal with strikethrough -->
+                                    <span class="line-through text-gray-500">
+                                        ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                    </span>
+                                @else
+                                    <!-- No discount applied -->
+                                    <span>
+                                        ₱{{ number_format($this->computeSubtotalAmount(), 2) }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
                     @endif
-                </div>
+
+                    <!-- Final Total (after discount) -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                        <div>Total</div>
+                        <div>₱{{ number_format($this->computeSubtotalAfterDiscount(), 2) }}</div>
+                    </div>
+
+                    <!-- Deposit (if enabled) -->
+                    @if ($this->enable_deposit_percentage)
+                        <div class="flex justify-between items-center text-sm font-semibold text-yellow-700">
+                            <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
+                            <div class="font-semibold">
+                                ₱{{ number_format($this->deposit ?? 0, 2) }}
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Convenience Fee -->
+                    <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span>Convenience Fee</span>
+                            <input type="checkbox" wire:model.live="apply_convenience_fee" class="form-checkbox">
+                        </div>
+
+                        @if ($apply_convenience_fee)
+                            <div class="text-sm">₱{{ number_format($this->computeConvenienceFee(), 2) }}</div>
+                        @endif
+                    </div>
+
+                    <!-- Total Payable Now -->
+                    <div
+                        class="flex justify-between items-center text-xl font-bold text-green-700 mt-3 pt-2 border-t border-gray-200">
+                        <div>Amount Due Now</div>
+                        <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Promo Code Messages -->
+                    @if ($discountMessage)
+                        <p class="text-sm mt-1 text-green-600 bg-green-50 p-2 rounded border border-green-200">
+                            <i class="fas fa-tag mr-1"></i> {{ $discountMessage }}
+                        </p>
+                    @endif
+
+                    @if ($errorMessage)
+                        <p class="text-sm mt-1 text-red-500 bg-red-50 p-2 rounded border border-red-200">
+                            <i class="fas fa-exclamation-circle mr-1"></i> {{ $errorMessage }}
+                        </p>
+                    @endif
+
+                    @php
+                        $hasCode = !empty($promoCode) && empty($discountMessage) === false;
+                    @endphp
+
+                    <!-- Promo Code Input -->
+                    <div class="flex justify-center mt-4">
+                        <div class="relative max-w-xl mb-2 flex justify-center w-full">
+                            <input type="text" wire:model="promoCode"
+                                wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
+                                class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+                        {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
+                                placeholder="Enter Promo Code (applies to rooms only)" autocomplete="off"
+                                {{ $hasCode ? 'disabled' : '' }}>
+
+                            @if ($discountMessage)
+                                <button wire:key="remove-promo-button" type="button" wire:click="removePromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-red-600 text-lg font-bold hover:text-red-800 focus:outline-none transition-colors"
+                                    title="Remove Promo Code">
+                                    &times;
+                                </button>
+                            @else
+                                <button wire:key="apply-promo-button" type="button" wire:click="applyPromoCode"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 text-sm font-medium hover:underline focus:outline-none transition-colors">
+                                    Apply
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Promo Code Note -->
+                    <p class="text-xs text-gray-500 text-center mt-1">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Promo codes apply to Room Base Rate only
+                    </p>
+                @endif
+
+                <!-- Empty message -->
+                @if (!$check_in_date && !$check_out_date && !$selectedRooms)
+                    <div class="text-center text-gray-500 mt-6 mb-6">
+                        No reservation details available yet.
+                    </div>
+                @endif
+
+                {{-- <button wire:click="debug"
+                    class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+                    + Debug
+                </button> --}}
             </div>
-
-            <!-- Promo Code Note -->
-            <p class="text-xs text-gray-500 text-center mt-1">
-                <i class="fas fa-info-circle mr-1"></i>
-                Promo codes apply to Room Base Rate only
-            </p>
-        @endif
-
-        <!-- Empty message -->
-        @if (!$check_in_date && !$check_out_date && !$selectedRooms)
-            <div class="text-center text-gray-500 mt-6 mb-6">
-                No reservation details available yet.
-            </div>
-        @endif
-
-        {{-- <button wire:click="debug"
-            class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400">
-            + Debug
-        </button> --}}
-    </div>
-</div>
+        </div>
 
 
         <!---------------------- ROOM AND ACTIVITY CART -------------------------->
@@ -499,7 +509,8 @@
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $service['service_name'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                    ₱{{ number_format($service['service_rate'], 2) }} / {{ $service['service_unit'] }}</td>
+                                    ₱{{ number_format($service['service_rate'], 2) }} / {{ $service['service_unit'] }}
+                                </td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
                                     {{ $service['quantity'] }}</td>
                                 <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
@@ -645,8 +656,6 @@
                             arrow.classList.add('fa-chevron-down');
                         }
                     }
-
-
                 </script>
 
 
@@ -900,10 +909,12 @@
 
                                             <!-- Room Info -->
                                             <div class="md:w-2/3">
-                                                <h4 class="text-2xl font-semibold mb-2">{{ ucfirst($room->name_number) }}</h4>
+                                                <h4 class="text-2xl font-semibold mb-2">
+                                                    {{ ucfirst($room->name_number) }}</h4>
 
                                                 <p class="text-base font-normal text-gray-700">
-                                                    <i class="fas fa-user mr-2"></i> Ideal Guests: {{ $room->ideal_guest }}
+                                                    <i class="fas fa-user mr-2"></i> Ideal Guests:
+                                                    {{ $room->ideal_guest }}
                                                 </p>
 
                                                 @if ($room->occupancy_type === 'whole_number')
@@ -913,14 +924,23 @@
                                                     </p>
                                                 @elseif ($room->occupancy_type === 'combinations')
                                                     @php
-                                                        $originalCombinations = collect($room->occupancy_rules)->where('type', 'original');
+                                                        $originalCombinations = collect($room->occupancy_rules)->where(
+                                                            'type',
+                                                            'original',
+                                                        );
                                                         $formatted = $originalCombinations->map(function ($combo) {
                                                             $parts = [];
                                                             if (!empty($combo['adults'])) {
-                                                                $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                                                                $parts[] =
+                                                                    $combo['adults'] .
+                                                                    ' adult' .
+                                                                    ($combo['adults'] > 1 ? 's' : '');
                                                             }
                                                             if (!empty($combo['kids'])) {
-                                                                $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                                                                $parts[] =
+                                                                    $combo['kids'] .
+                                                                    ' kid' .
+                                                                    ($combo['kids'] > 1 ? 's' : '');
                                                             }
                                                             return implode(' and ', $parts);
                                                         });
@@ -945,9 +965,12 @@
                                                     </p>
                                                 @endif
 
-                                                <p class="text-sm italic text-gray-500 mt-1">{{ $room->description }}</p>
+                                                <p class="text-sm italic text-gray-500 mt-1">{{ $room->description }}
+                                                </p>
 
-                                                <p class="text-sm italic text-gray-500 mt-1">Children 2 years old and below are free of charge.</p>
+                                                <p class="text-sm italic text-gray-500 mt-1">Children 2 years old and
+                                                    below are free
+                                                    of charge.</p>
 
                                                 <!-- Rate Information -->
                                                 <div class="mt-4">
@@ -959,7 +982,7 @@
                                                         $appliedRates = $this->roomRateService->getAppliedRatesForStay(
                                                             $room,
                                                             $this->check_in_date,
-                                                            $this->check_out_date
+                                                            $this->check_out_date,
                                                         );
 
                                                         $baseRate = $room->amount;
@@ -968,52 +991,63 @@
                                                         $rateSummary = $this->roomRateService->getRateSummary(
                                                             $room,
                                                             $this->check_in_date,
-                                                            $this->check_out_date
+                                                            $this->check_out_date,
                                                         );
                                                         $nights = $rateSummary['nights'] ?? 0;
                                                         $totalRate = $rateSummary['total_amount'] ?? 0;
 
                                                         // Calculate average rate per night
-                                                        $averageRatePerNight = $nights > 0 ? $totalRate / $nights : $baseRate;
+                                                        $averageRatePerNight =
+                                                            $nights > 0 ? $totalRate / $nights : $baseRate;
 
                                                         // Determine if we're showing multiple rates or single rate
-                                                        $hasMultipleRates = count($appliedRates) > 1;
-                                                        $hasSpecialRate = count($appliedRates) > 0 && $appliedRates[0]['rate_type'] !== null;
-                                                        $isBaseRateOnly = !$hasSpecialRate || (count($appliedRates) === 1 && $appliedRates[0]['rate_type'] === null);
+$hasMultipleRates = count($appliedRates) > 1;
+$hasSpecialRate =
+    count($appliedRates) > 0 &&
+    $appliedRates[0]['rate_type'] !== null;
+$isBaseRateOnly =
+    !$hasSpecialRate ||
+    (count($appliedRates) === 1 &&
+        $appliedRates[0]['rate_type'] === null);
                                                     @endphp
 
                                                     <!-- Main Rate Display -->
                                                     <div class="space-y-2">
-                                                        @if($this->check_in_date && $this->check_out_date && $nights > 0)
+                                                        @if ($this->check_in_date && $this->check_out_date && $nights > 0)
                                                             <!-- Show rates per night when dates are selected -->
-                                                            @if($isBaseRateOnly)
+                                                            @if ($isBaseRateOnly)
                                                                 <!-- Only base rate applied -->
                                                                 <p class="text-lg font-medium">
                                                                     <span class="text-green-700 font-bold">
-                                                                        Base Rate - ₱{{ number_format($baseRate, 2) }} per night
+                                                                        Base Rate - ₱{{ number_format($baseRate, 2) }}
+                                                                        per night
                                                                     </span>
                                                                 </p>
                                                             @else
                                                                 <!-- Special rates applied -->
-                                                                @foreach($appliedRates as $appliedRate)
+                                                                @foreach ($appliedRates as $appliedRate)
                                                                     <p class="text-lg font-medium">
-                                                                        @if($appliedRate['rate_type'] === null)
+                                                                        @if ($appliedRate['rate_type'] === null)
                                                                             <!-- Base Rate -->
                                                                             <span class="text-gray-500 line-through">
-                                                                                Base Rate - ₱{{ number_format($appliedRate['average_rate'], 2) }} per night
+                                                                                Base Rate -
+                                                                                ₱{{ number_format($appliedRate['average_rate'], 2) }}
+                                                                                per night
                                                                             </span>
                                                                         @else
                                                                             <!-- Special Rate -->
                                                                             <span class="text-green-700 font-bold">
-                                                                                {{ $appliedRate['name'] }} - ₱{{ number_format($appliedRate['average_rate'], 2) }} per night
+                                                                                {{ $appliedRate['name'] }} -
+                                                                                ₱{{ number_format($appliedRate['average_rate'], 2) }}
+                                                                                per night
                                                                             </span>
-                                                                            <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold ml-2
+                                                                            <span
+                                                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold ml-2
                                                                                 @if ($appliedRate['rate_type'] === 'Weekend') bg-yellow-100 text-yellow-700
                                                                                 @elseif ($appliedRate['rate_type'] === 'Weekdays') bg-green-100 text-green-700
                                                                                 @elseif ($appliedRate['rate_type'] === 'Peak') bg-red-100 text-red-700
                                                                                 @elseif ($appliedRate['rate_type'] === 'Holiday') bg-purple-100 text-purple-700
-                                                                                @else bg-blue-100 text-blue-700
-                                                                                @endif ">
+                                                                                @else bg-blue-100 text-blue-700 @endif ">
                                                                                 {{ $appliedRate['rate_type'] }}
                                                                             </span>
                                                                         @endif
@@ -1023,53 +1057,71 @@
 
                                                             <!-- Total Stay Cost -->
                                                             <p class="text-sm text-gray-600 mt-2">
-                                                                Total for {{ $nights }} night{{ $nights > 1 ? 's' : '' }}:
-                                                                <span class="font-semibold text-gray-700">₱{{ number_format($totalRate, 2) }}</span>
+                                                                Total for {{ $nights }}
+                                                                night{{ $nights > 1 ? 's' : '' }}:
+                                                                <span
+                                                                    class="font-semibold text-gray-700">₱{{ number_format($totalRate, 2) }}</span>
                                                             </p>
-
                                                         @else
                                                             <!-- Show base rate when no dates selected -->
                                                             <p class="text-lg font-medium">
                                                                 <span class="text-green-700 font-bold">
-                                                                    Base Rate - ₱{{ number_format($baseRate, 2) }} per night
+                                                                    Base Rate - ₱{{ number_format($baseRate, 2) }} per
+                                                                    night
                                                                 </span>
                                                             </p>
                                                         @endif
                                                     </div>
 
                                                     <!-- Detailed Breakdown (Collapsible) -->
-                                                    @if($this->check_in_date && $this->check_out_date && count($appliedRates) > 0 && $hasMultipleRates)
+                                                    @if ($this->check_in_date && $this->check_out_date && count($appliedRates) > 0 && $hasMultipleRates)
                                                         <div class="mt-3 text-sm">
                                                             <button type="button"
                                                                 class="text-green-600 hover:text-green-800 font-medium flex items-center"
                                                                 onclick="toggleRateBreakdown({{ $room->id }})">
                                                                 <i class="fas fa-calculator mr-2"></i>
                                                                 View Rate Breakdown
-                                                                <i class="fas fa-chevron-down ml-1 text-xs" id="breakdown-arrow-{{ $room->id }}"></i>
+                                                                <i class="fas fa-chevron-down ml-1 text-xs"
+                                                                    id="breakdown-arrow-{{ $room->id }}"></i>
                                                             </button>
 
-                                                            <div id="rate-breakdown-{{ $room->id }}" class="mt-2 hidden">
-                                                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                                                    <p class="font-semibold text-gray-700 mb-2 text-sm">Rate Calculation:</p>
+                                                            <div id="rate-breakdown-{{ $room->id }}"
+                                                                class="mt-2 hidden">
+                                                                <div
+                                                                    class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                                                    <p
+                                                                        class="font-semibold text-gray-700 mb-2 text-sm">
+                                                                        Rate
+                                                                        Calculation:</p>
 
                                                                     <div class="space-y-2">
-                                                                        @foreach($appliedRates as $appliedRate)
-                                                                            <div class="flex justify-between items-center text-xs">
+                                                                        @foreach ($appliedRates as $appliedRate)
+                                                                            <div
+                                                                                class="flex justify-between items-center text-xs">
                                                                                 <span class="text-gray-600">
-                                                                                    {{ $appliedRate['nights'] }} night{{ $appliedRate['nights'] > 1 ? 's' : '' }} @
-                                                                                    <span class="font-medium">{{ $appliedRate['name'] }}</span>
-                                                                                    <span class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2) }}/night)</span>
+                                                                                    {{ $appliedRate['nights'] }}
+                                                                                    night{{ $appliedRate['nights'] > 1 ? 's' : '' }}
+                                                                                    @
+                                                                                    <span
+                                                                                        class="font-medium">{{ $appliedRate['name'] }}</span>
+                                                                                    <span
+                                                                                        class="text-gray-500">(₱{{ number_format($appliedRate['average_rate'], 2) }}/night)</span>
                                                                                 </span>
-                                                                                <span class="font-semibold text-gray-700">
+                                                                                <span
+                                                                                    class="font-semibold text-gray-700">
                                                                                     ₱{{ number_format($appliedRate['total_amount'], 2) }}
                                                                                 </span>
                                                                             </div>
                                                                         @endforeach
 
-                                                                        <div class="border-t border-gray-300 pt-2 mt-2">
-                                                                            <div class="flex justify-between items-center font-semibold">
-                                                                                <span class="text-gray-700">Total Room Rate:</span>
-                                                                                <span class="text-green-700">₱{{ number_format($totalRate, 2) }}</span>
+                                                                        <div
+                                                                            class="border-t border-gray-300 pt-2 mt-2">
+                                                                            <div
+                                                                                class="flex justify-between items-center font-semibold">
+                                                                                <span class="text-gray-700">Total Room
+                                                                                    Rate:</span>
+                                                                                <span
+                                                                                    class="text-green-700">₱{{ number_format($totalRate, 2) }}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1078,9 +1130,10 @@
                                                         </div>
                                                     @endif
 
-                                                    @if(!$this->check_in_date || !$this->check_out_date)
+                                                    @if (!$this->check_in_date || !$this->check_out_date)
                                                         <!-- No dates selected message -->
-                                                        <div class="mt-2 text-center p-2 bg-yellow-50 rounded border border-yellow-200">
+                                                        <div
+                                                            class="mt-2 text-center p-2 bg-yellow-50 rounded border border-yellow-200">
                                                             <p class="text-yellow-700 text-xs font-medium">
                                                                 <i class="fas fa-calendar-plus mr-1"></i>
                                                                 Select dates to see special rates
