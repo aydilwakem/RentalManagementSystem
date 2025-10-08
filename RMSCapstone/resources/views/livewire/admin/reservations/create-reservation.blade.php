@@ -106,10 +106,28 @@
 
             <!-- Room Charges Breakdown -->
             <div class="space-y-2 mb-3">
+                <!-- Base Room Charges -->
+                <div class="flex justify-between items-center text-sm text-gray-800 dark:text-white">
+                    <div>Base Room Charges:</div>
+                    <div>₱{{ number_format($this->computeBaseRoomSubtotal(), 2) }}</div>
+                </div>
+
+                <!-- Extra Guest Charges -->
+                @if($this->computeTotalExtraGuestCharges() > 0)
+                <div class="flex justify-between items-center text-sm text-gray-800 dark:text-white">
+                    <div class="flex items-center">
+                        <span>Extra Guest Charges</span>
+                        <span class="text-xs text-gray-500 ml-1">({{ $this->getTotalExtraGuests() }} extra guest(s))</span>
+                    </div>
+                    <div>₱{{ number_format($this->computeTotalExtraGuestCharges(), 2) }}</div>
+                </div>
+                @endif
+
                 <!-- Total Room Charge -->
-                <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
+                <div class="flex justify-between items-center font-semibold text-gray-800 dark:text-white border-t pt-1">
                     <div class="text-sm">Room Subtotal: </div>
                     <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
+
                 </div>
                             <!-- Promo Discount Display -->
             @if($discountMessage)
