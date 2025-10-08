@@ -818,6 +818,26 @@ class CreateReservation extends Component
 
         return $breakdown;
     }
+    
+
+    /**
+     * Computes the total extra guest charges across all rooms
+     */
+    public function computeTotalExtraGuestCharges(): float
+    {
+        return collect($this->getItemsByType('room'))
+            ->sum('extra_charge_total');
+    }
+
+    /**
+     * Gets the total number of extra guests across all rooms
+     */
+    public function getTotalExtraGuests(): int
+    {
+        return collect($this->getItemsByType('room'))
+            ->sum('extra_guest');
+    }
+
 
     /**
      * Removes the applied promo code, resetting all related discount values.
