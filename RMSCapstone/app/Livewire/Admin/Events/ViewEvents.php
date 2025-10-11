@@ -51,6 +51,7 @@ class ViewEvents extends Component
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
     }
 
+    // ---------------- DELETE EVENT ------------------ //
     public function deleteEvent()
     {
         if ($this->confirmItemDelete) {
@@ -100,24 +101,22 @@ class ViewEvents extends Component
 
         $event = Transaction::query()
             ->select('trn_transactions.*')
-            ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
-            ->join('trn_users', 'trn_transactions.created_by', '=', 'trn_users.id')
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 3)
             ->when($this->search !== '', function ($query) {
                 $search = '%' . $this->search . '%';
-                $query
-                    ->whereHas('transactionUser', function ($subQuery) use ($search) {
-                        $subQuery
-                            ->where('first_name', 'like', $search)
-                            ->orWhere('last_name', 'like', $search)
-                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
-                    })
-                    ->orWhereHas('properties', function ($subQuery) use ($search) {
-                        $subQuery
-                            ->where('name_number', 'like', $search)
-                            ->where('property_type_id', 3);
-                    });
+                $query->where(function($q) use ($search) {
+                    $q->where('transaction_number', 'like', $search)
+                      ->orWhereHas('transactionUser', function ($subQuery) use ($search) {
+                          $subQuery
+                              ->where('first_name', 'like', $search)
+                              ->orWhere('last_name', 'like', $search)
+                              ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+                      })
+                      ->orWhereHas('properties', function ($subQuery) use ($search) {
+                          $subQuery->where('name_number', 'like', $search);
+                      });
+                });
             })
             ->when($this->transactionStatus !== '', function ($query) {
                 $query->where('transaction_status', $this->transactionStatus);
