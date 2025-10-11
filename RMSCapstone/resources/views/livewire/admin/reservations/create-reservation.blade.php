@@ -104,7 +104,7 @@
                             {{ $this->pet_count }}</p>
                     @endif
 
-                    <!-- Room Charges Breakdown -->
+                    <!-- Total Charges Breakdown -->
                     <div class="space-y-1 mb-3">
 
                         <!-- Base Room Charges -->
@@ -164,8 +164,6 @@
 
                     <!-- Discount Code Section -->
                     <hr class="my-2 border-gray-200">
-
-
 
                     <!-- Subtotal -->
                     @if ($discountMessage)
