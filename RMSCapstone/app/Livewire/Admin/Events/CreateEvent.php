@@ -16,6 +16,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Models\Activity;
+use App\Models\Service;
+use App\Services\RoomAvailabilityService;
+
 
 class CreateEvent extends Component
 {
@@ -41,6 +45,8 @@ class CreateEvent extends Component
     public $city_municipality;
     public $country;
     public $otherCountry = '';
+    public $dishes = '';
+
 
     // ----------------------- Halls (transaction_properties)---------------------------- //
     public $allHalls = [];
@@ -75,6 +81,188 @@ class CreateEvent extends Component
     // ------------------- Modal -------------------- //
     public $confirmCreateItem = false;
 
+
+    // ----------------------- CART ITEMS ---------------------------- //
+    public $selectedRooms = [];
+    public $selectedActivities = [];
+    public $selectedServices = [];
+
+    // ----------------------- MODALS ------------------------ //
+    public $roomModal = false, $activityModal = false, $servicesModal = false;
+
+    // ----------------------- ROOMS ------------------------ //
+    public $rooms = [];
+    // public $adultsroom = [];
+    // public $kidsroom = [];
+    // public $roomTotalAdults = 1;
+    // public $roomTotalKids = 0;
+
+    // ----------------------- ACTIVITIES ------------------------ //
+    public $activities = [];
+    public $quantity = [];
+    public $activity_datetime = [];
+    public $selectedTimes = [];
+
+    // ----------------------- SERVICES ------------------------ //
+    public $services_charges = [];
+
+
+    public function boot()
+    {
+        $this->loadStaticData();
+    }
+
+    protected function loadStaticData()
+    {
+        $this->activities = Activity::availableActivities()->get();
+        $this->services_charges = Service::all();
+    }
+
+    // Fetch available rooms based on selected date range
+    public function getAvailableRooms()
+    {
+        if (!$this->start_datetime || !$this->end_datetime) {
+            $this->rooms = collect();
+            return;
+        }
+
+        $roomService = app(RoomAvailabilityService::class);
+        
+        // Use the service directly like your working code
+        $this->rooms = $roomService->getAvailableRooms(
+            \Carbon\Carbon::parse($this->start_datetime)->format('Y-m-d'),
+            \Carbon\Carbon::parse($this->end_datetime)->format('Y-m-d')
+        );
+    }
+
+    // ----------------------------- MODALS -----------------------------
+    public function openModal(string $type): void
+    {
+        if ($type === 'room') {
+            $this->getAvailableRooms();
+            $this->roomModal = true;
+        } elseif ($type === 'activity') {
+            $this->activityModal = true;
+        } elseif ($type === 'services') {
+            $this->servicesModal = true;
+        }
+    }
+
+    // ----------------------------- ROOM CART LOGIC -----------------------------
+    public function SelectedRooms($roomId)
+    {
+        $room = \App\Models\Property::findOrFail($roomId);
+        
+        // Check if already in cart
+        if ($this->isItemAlreadyInCart('room', $roomId)) {
+            return;
+        }
+
+        $this->selectedRooms[] = [
+            'type' => 'room',
+            'room_id' => $room->id,
+            'room_name' => $room->name_number,
+            'ideal_guest' => $room->ideal_guest, // Just store ideal guest count
+        ];
+
+        $this->roomModal = false;
+    }
+
+    public function RemoveRoom($roomId)
+    {
+        $this->selectedRooms = array_filter($this->selectedRooms, function($item) use ($roomId) {
+            return !($item['type'] === 'room' && $item['room_id'] == $roomId);
+        });
+        $this->selectedRooms = array_values($this->selectedRooms);
+    }
+
+    // ----------------------------- ACTIVITY CART LOGIC -----------------------------
+    public function SelectedActivities($activityId)
+    {
+        $activity = Activity::findOrFail($activityId);
+        
+        // Check if already in cart
+        if ($this->isItemAlreadyInCart('activity', $activityId)) {
+            return;
+        }
+
+        $activityItem = [
+            'type' => 'activity',
+            'activity_id' => $activity->id,
+            'activity_name' => $activity->name,
+            'quantity' => $this->quantity[$activityId] ?? 1,
+        ];
+
+        // Add schedule if needed
+        if ($activity->schedule_type !== 'no_schedule') {
+            $date = \Carbon\Carbon::parse($this->start_datetime)->format('Y-m-d');
+            $time = $this->selectedTimes[$activityId] ?? null;
+            if ($time) {
+                $activityItem['activity_datetime'] = \Carbon\Carbon::parse("$date $time")->format('Y-m-d H:i:s');
+            }
+        }
+
+        $this->selectedActivities[] = $activityItem;
+        $this->activityModal = false;
+    }
+
+    public function RemoveActivity($activityId)
+    {
+        $this->selectedActivities = array_filter($this->selectedActivities, function($item) use ($activityId) {
+            return !($item['type'] === 'activity' && $item['activity_id'] == $activityId);
+        });
+        $this->selectedActivities = array_values($this->selectedActivities);
+    }
+
+    // ----------------------------- SERVICE CART LOGIC -----------------------------
+    public function SelectedServices($serviceId)
+    {
+        $service = Service::findOrFail($serviceId);
+        
+        // Check if already in cart
+        if ($this->isItemAlreadyInCart('service', $serviceId)) {
+            return;
+        }
+
+        $this->selectedServices[] = [
+            'type' => 'service',
+            'service_id' => $service->id,
+            'service_name' => $service->name,
+            'quantity' => $this->quantity[$serviceId] ?? 1,
+            'service_unit' => $service->unit,
+        ];
+
+        $this->servicesModal = false;
+    }
+
+    // ----------------------------- REMOVE ITEM FROM CART -----------------------------
+    public function RemoveService($serviceId)
+    {
+        $this->selectedServices = array_filter($this->selectedServices, function($item) use ($serviceId) {
+            return !($item['type'] === 'service' && $item['service_id'] == $serviceId);
+        });
+        $this->selectedServices = array_values($this->selectedServices);
+    }
+
+
+    // ----------------------- HELPERS -----------------------------
+    protected function isItemAlreadyInCart(string $type, int $itemId): bool
+    {
+        $cart = [];
+        if ($type === 'room') $cart = $this->selectedRooms;
+        if ($type === 'activity') $cart = $this->selectedActivities;
+        if ($type === 'service') $cart = $this->selectedServices;
+
+        foreach ($cart as $item) {
+            if ($item['type'] === $type && $item["{$type}_id"] == $itemId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     public function mount()
     {
         $this->eventTypes = EventType::all();
@@ -98,7 +286,7 @@ class CreateEvent extends Component
         $this->confirmCreateItem = true;
     }
 
-
+    // ----------------------- SAVE EVENT -----------------------------
     public function saveEvent()
     {
         try {
@@ -112,6 +300,8 @@ class CreateEvent extends Component
                 'city_municipality' => 'nullable|string|max:100',
                 'company_name' => 'required|string|max:100|regex:/^[A-Za-z\s\-\/]+$/',
                 'country' => 'required|string|max:100',
+                'dishes' => 'nullable|string|max:1000',
+
 
                 // Transaction Fields
                 'event_type_id' => 'required|integer|exists:event_types,id',
@@ -123,13 +313,9 @@ class CreateEvent extends Component
                 'total_amount' => 'required|numeric|min:10000|max:5000000.00',
                 'reservation_source' => 'required|string|max:100',
 
-
-                // Dynamic guests per hall (optional validation)
-                'selected_hall' => 'required|exists:properties,id|not_in:' . implode(',', $this->halls->where('is_booked', true)->pluck('id')->toArray()),
-                'adults.*' => 'nullable|integer|min:0|max:200',
-                'kids.*' => 'nullable|integer|min:0|max:50',
-                'extra_guest.*' => 'nullable|integer|min:0',
-                'extra_charge.*' => 'nullable|numeric|min:0',
+                // Dynamic hall validation
+                'selected_halls' => 'required|array|min:1',
+                'selected_halls.*' => 'exists:properties,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmCreateItem = false;
@@ -138,8 +324,7 @@ class CreateEvent extends Component
 
         $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
 
-        DB::transaction(function () {
-
+        DB::transaction(function () use ($finalCountry) {
             // Step 1: Create transaction user
             $transactionUser = TransactionUser::create([
                 'first_name' => $this->first_name,
@@ -149,13 +334,13 @@ class CreateEvent extends Component
                 'contact_number' => $this->contact_number,
                 'city_municipality' => $this->city_municipality,
                 'company_name' => $this->company_name,
-                'country' => $this->country,
+                'country' => $finalCountry, // Use the computed final country
                 'trn_user_type' => $this->trn_user_type,
             ]);
 
             $depositPercentage = DB::table('st_settings')->value('deposit_percentage');
 
-            // Step 2: Create transaction
+            // Step 2: Create transaction (ONLY ONCE)
             $transaction = Transaction::create([
                 'transaction_number' => 'EVT-' . strtoupper(Str::random(8)),
                 'reservation_type_id' => $this->reservation_type_id,
@@ -165,19 +350,16 @@ class CreateEvent extends Component
                 'end_datetime' => $this->end_datetime,
                 'total_adults' => $this->total_adults,
                 'total_kids' => $this->total_kids,
-                // 'pax' => $this->total_kids + $this->total_adults,
                 'pax' => $this->pax,
                 'total_amount' => $this->total_amount,
                 'deposit_amount' => $this->total_amount * ($depositPercentage / 100),
                 'reservation_source' => $this->reservation_source,
-                'transaction_status' => $this->transaction_status,
+                'transaction_status' => $this->transaction_status ?: 'pending', // Default to 'pending' if empty
+                'dishes' => $this->dishes,
             ]);
 
             // Step 3: Generate invoice number
-            $latestInvoice = Invoice::whereYear('created_at', now()->year)->orderBy('created_at', 'desc')->first();
             $invoiceNumber = 'INV-' . strtoupper(Str::random(8));
-            //'invoice_number' => 'INV-' . strtoupper(Str::random(8)),
-            //$invoiceNumber = 'INV-' . now()->year . '-' . str_pad(($latestInvoice ? (int)substr($latestInvoice->invoice_number, -3) + 1 : 1), 3, '0', STR_PAD_LEFT);
 
             // Step 4: Create invoice
             $invoice = Invoice::create([
@@ -192,23 +374,70 @@ class CreateEvent extends Component
                 'invoice_status' => 'pending',
             ]);
 
-            // Step 5: Attach halls to transaction
-            $transaction->properties()->attach($this->selected_hall, [
-                'adults' => $this->total_adults,
-                'kids' => $this->total_kids ?? 0,
-                'extra_guest' => 0,
-                'extra_charge' => 0,
-                'amount' => $this->total_amount,
-                'total_amount' => $this->total_amount,
-                'days' => $this->stayDuration ?? 1,
-            ]);
+            // Combine all property attachments (halls + rooms)
+            $allProperties = [];
+            
+            // Add halls
+            foreach ($this->selected_halls as $hallId) {
+                $allProperties[$hallId] = [
+                    'adults' => $this->total_adults,
+                    'kids' => $this->total_kids ?? 0,
+                    'extra_guest' => 0,
+                    'extra_charge' => 0,
+                    'amount' => $this->total_amount,
+                    'total_amount' => $this->total_amount,
+                    'days' => $this->stayDuration ?? 1,
+                ];
+            }
+            
+            // Add rooms if any
+            if (!empty($this->selectedRooms)) {
+                foreach ($this->selectedRooms as $room) {
+                    $allProperties[$room['room_id']] = [
+                        'adults' => 0,
+                        'kids' => 0,
+                        'extra_guest' => 0,
+                        'extra_charge' => 0,
+                        'amount' => 0,
+                        'total_amount' => 0,
+                        'days' => $this->stayDuration ?? 1,
+                    ];
+                }
+            }
+
+            // Attach properties to transaction
+            if (!empty($allProperties)) {
+                $transaction->properties()->attach($allProperties);
+            }
+
+            // Attach selected activities
+            if (!empty($this->selectedActivities)) {
+                foreach ($this->selectedActivities as $activity) {
+                    $transaction->activities()->attach($activity['activity_id'], [
+                        'quantity' => $activity['quantity'],
+                        'amount' => 0, // No amount since it's included in agreed cost
+                        'payment_status' => 'unpaid',
+                        'activity_datetime' => $activity['activity_datetime'] ?? null,
+                    ]);
+                }
+            }
+
+            // Attach selected services
+            if (!empty($this->selectedServices)) {
+                foreach ($this->selectedServices as $service) {
+                    $transaction->services()->attach($service['service_id'], [
+                        'quantity' => $service['quantity'],
+                        'amount' => 0, // No amount since it's included in agreed cost
+                        'days' => $this->stayDuration ?? 1,
+                        'payment_status' => 'unpaid',
+                    ]);
+                }
+            }
         });
 
         session()->flash('success', 'Event reservation successfully saved.');
         return redirect()->route('admin.events');
     }
-
-
 
     public function render()
     {
@@ -217,56 +446,57 @@ class CreateEvent extends Component
         ]);
     }
 
-
+    // ----------------------- DYNAMIC HALL AVAILABILITY -----------------------------
     public function getAvailableHalls()
     {
         if (!$this->start_datetime || !$this->end_datetime) {
             return;
         }
 
-        //Parse the start and end datetime to Carbon instances
+        // Parse the start and end datetime to Carbon instances
         $startDate = \Carbon\Carbon::parse($this->start_datetime)->setSeconds(0);
         $endDate = \Carbon\Carbon::parse($this->end_datetime)->setSeconds(0);
-
-
 
         // Step 1: Get all available event halls (unfiltered)
         $allHalls = Property::ofType('Event Hall')
             ->where('property_status', 'available')
             ->get();
 
-        // Step 2: Load only overlapping transactions manually
+        // Step 2: Load only transactions that truly overlap
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
-        $query->where(function ($q) use ($startDate, $endDate) {
-            $q->whereBetween('start_datetime', [$startDate, $endDate])
-              ->orWhereBetween('end_datetime', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('start_datetime', '<=', $startDate)
-                     ->where('end_datetime', '>=', $endDate);
-              });
-        });
-    }]);
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->where('end_datetime', '>', $startDate)   // existing ends after new starts
+                    ->where('start_datetime', '<', $endDate); // existing starts before new ends
+            });
+        }]);
 
-        // Step 3: Flag each hall as booked if it has any overlapping transactions
+        // Step 3: Flag each hall as booked if it has overlapping transactions
         $this->halls = $allHalls->map(function ($hall) {
             $hall->isBooked = $hall->transactions->isNotEmpty();
             return $hall;
         });
     }
 
+    // To handle multiple hall selection
+    public $multipleHalls = false;
+    public $selected_halls = [];
+
+
     public function updatedStartDatetime($value)
     {
         $this->getAvailableHalls();
-
+        $this->getAvailableRooms();
         if ($value) {
             $start = \Carbon\Carbon::parse($value);
             $this->end_datetime = $start->copy()->addHours(4)->format('Y-m-d\TH:i');
         }
     }
 
+    // This function is triggered when the end datetime is updated
     public function updatedEndDatetime()
     {
         $this->getAvailableHalls();
+        $this->getAvailableRooms();
     }
 
 
