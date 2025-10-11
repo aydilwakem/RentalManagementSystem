@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Events;
 
+use App\Mail\EventConfirmedMail;
 use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\EventHall;
@@ -13,9 +14,12 @@ use App\Models\Transaction;
 use App\Models\TransactionUser;
 use App\Models\Activity;
 use App\Models\Service;
+use App\Models\Setting;
 use App\Services\RoomAvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -459,6 +463,10 @@ class EditEvent extends Component
     $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
     
     DB::transaction(function() use ($finalCountry){
+        
+        //old transaction status before updating to confirmed or ongoing
+        $oldStatus = $this->event->transaction_status;
+
         //Update transaction details
         $this->event->update([
             'event_type_id' => $this->event_type_id,
@@ -474,14 +482,32 @@ class EditEvent extends Component
 
         ]);
 
+        Log::info('Event status updated to confirmed, preparing email');
+        //If status is changed to confirmed
+        //Prepare data for email body
+        if($oldStatus !== 'confirmed' && $this->transaction_status === 'confirmed'){
+            $event = $this->event->fresh([
+                'invoice.payments',
+                'properties',
+                'activities',
+                'services',
+            ]);
+
+            $branding = Setting::first(); 
+
+            Mail::to($event->transactionUser->email)->send(new EventConfirmedMail($event, $branding));  
+            Log::info('Email Success');
+        }
+
         //If status is changed to ongoing
         if (
-            $this->transaction_status === 'ongoing' &&
-            $this->event->transaction_status !== 'ongoing' &&
+            $oldStatus !== 'ongoing' && 
+            $this->transaction_status === 'ongoing' && 
             $this->event->actual_start_datetime === null
-        ) {
-            $this->event->actual_start_datetime = now();
-            $this->event->save();
+        ){
+            $this->event->update([
+                'actual_start_datetime' => now(),
+            ]); 
         }
 
         // Sync all properties (halls + rooms)
@@ -554,6 +580,8 @@ class EditEvent extends Component
         return redirect()->route('admin.events');
     }
 
+
+    // ----------------------------- RETRIEVE HALLS ----------------------------- //
     // This function retrieves available halls based on the selected date range
     public function getAvailableHalls()
     {

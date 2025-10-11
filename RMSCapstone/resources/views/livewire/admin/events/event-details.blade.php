@@ -160,7 +160,7 @@
         </table>
     </div>
 
-    {{-- EVent Hall Details --}}
+    {{-- Event Hall Details --}}
     <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
         <h2
             style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
@@ -226,6 +226,142 @@
         <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
             Total Agreed Amount: PHP {{ number_format($event->total_amount, 2) }}
         </div>
+    </div>
+
+    {{-- Catering Details --}}
+    @if(!empty($event->dishes) && is_array($event->dishes) && count($event->dishes) > 0)
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Catering Details
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Dishes
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 10px; text-align: center; font-size: 14px;">
+                        {{ implode(', ', array_map('trim', $event->dishes)) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    @else
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Catering Details
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Dishes
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td
+                        style="border: 1px solid #d1d5db; padding: 10px; text-align: center; font-size: 14px; color: #6b7280;">
+                        No Catering Services Availed
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    @endif
+
+
+
+    {{-- Added Activities --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Activities Details
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Activity</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ($event->activities->isEmpty())
+                <tr>
+                    <td colspan="2"
+                        style="border: 1px solid #d1d5db; padding: 10px; text-align: center; font-size: 14px; color: #6b7280;">
+                        No additional activities availed
+                    </td>
+                </tr>
+                @else
+                @foreach ($event->activities as $activity)
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $activity->name ?? 'No Activity Booked' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $activity->pivot->quantity ?? 'N/A' }}</td>
+                </tr>
+                @endforeach
+                @endif
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Added Services --}}
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Services Details
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Service</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ($event->services->isEmpty())
+                <tr>
+                    <td colspan="2"
+                        style="border: 1px solid #d1d5db; padding: 10px; text-align: center; font-size: 14px; color: #6b7280;">
+                        No additional services availed
+                    </td>
+                </tr>
+                @else
+                @foreach ($event->services as $service)
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $service->name ?? 'No Service Booked' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $service->pivot->quantity ?? 'N/A' }}</td>
+                </tr>
+                @endforeach
+                @endif
+            </tbody>
+        </table>
     </div>
 
     {{-- Invoice Details --}}

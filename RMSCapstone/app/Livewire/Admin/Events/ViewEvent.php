@@ -87,7 +87,7 @@ class ViewEvent extends Component
 
     public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
-    public $payment_methods;
+    public $payment_methods = [];
     public $payment_method_id;
     public $payment_screenshot;
     public $sub_total;
@@ -141,6 +141,7 @@ class ViewEvent extends Component
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
         $this->loadTransactionData($event);
 
+        $this->payment_methods = PaymentMethod::all();
         // Load existing additional items
         $this->loadExistingItems($event);
 
@@ -219,6 +220,8 @@ class ViewEvent extends Component
         //eager load the relationship
         $event = Transaction::with([
             'invoice.payments',
+            'activities', 
+            'services',
         ])->findOrFail($this->transaction->id);
 
         $pdf = Pdf::loadView('livewire.admin.events.event-details', [
@@ -226,6 +229,8 @@ class ViewEvent extends Component
             //pass the relationship
             'invoice' => $event->invoice,
             'payments' => $event->invoice->payments,
+            'activities' => $event->activities, 
+            'services' => $event->services, 
         ]);
 
         // Optional: Download directly or store then return URL
@@ -277,7 +282,7 @@ class ViewEvent extends Component
         Log::info('Create Payment method called.');
 
         $this->validate([
-            'amount_paid' => 'required|numeric|min:0',
+            'amount_paid' => 'required|numeric|min:100',
             'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',

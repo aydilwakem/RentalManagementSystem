@@ -204,9 +204,10 @@
                                     <label
                                         class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
 
-                                        <input type="checkbox" wire:model="selected_halls" value="{{ $hall->id }}" @if
-                                            ($hall->isBooked) disabled @endif
-                                        class="form-checkbox text-green-600 h-4 w-4">
+                                        <input type="checkbox" wire:model="selected_halls" value="{{ $hall->id }}"
+                                            class="form-checkbox text-green-600 h-4 w-4" @if ($hall->isBooked) disabled
+                                        @endif
+                                        >
 
                                         <div>
                                             <span
