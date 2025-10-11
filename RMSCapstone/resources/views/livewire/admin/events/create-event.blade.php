@@ -132,10 +132,10 @@
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Please specify your country <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" wire:model="country" placeholder="Enter your country"
+                                    <input type="text" wire:model="otherCountry" placeholder="Enter your country"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
 
-                                    @error('country')
+                                    @error('otherCountry')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -195,41 +195,40 @@
                             </div>
 
                             <div class="mb-4">
-    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        Select Event Halls <span class="text-red-500">*</span>
-    </label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    Select Event Halls <span class="text-red-500">*</span>
+                                </label>
 
-    <div class="space-y-2 bg-gray-50 dark:bg-gray-600 p-3 rounded-lg border border-gray-300 dark:border-gray-500 max-h-64 overflow-y-auto">
-        @foreach ($halls as $hall)
-            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                
-                <!-- ✅ Always checkboxes, allow selecting multiple halls -->
-                <input type="checkbox" 
-                       wire:model="selected_halls" 
-                       value="{{ $hall->id }}" 
-                       @if ($hall->isBooked) disabled @endif
-                       class="form-checkbox text-green-600 h-4 w-4">
+                                <div class="space-y-2 bg-gray-50 dark:bg-gray-600 p-3 rounded-lg border border-gray-300 dark:border-gray-500 max-h-64 overflow-y-auto">
+                                    @foreach ($halls as $hall)
+                                        <label class="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
 
-                <div>
-                    <span class="@if($hall->isBooked) text-gray-400 line-through @else text-gray-900 dark:text-white @endif font-medium">
-                        {{ $hall->name_number }} — {{ $hall->capacity }} Pax
-                    </span>
-                    <span class="ml-2 text-sm @if($hall->isBooked) text-red-500 @else text-green-600 @endif">
-                        {{ $hall->isBooked ? '(Booked)' : '(Available)' }}
-                    </span>
-                </div>
-            </label>
-        @endforeach
-    </div>
+                                            <input type="checkbox"
+                                                wire:model="selected_halls"
+                                                value="{{ $hall->id }}"
+                                                @if ($hall->isBooked) disabled @endif
+                                                class="form-checkbox text-green-600 h-4 w-4">
 
-    <!-- Validation error -->
-    @error('selected_halls')
-        <span class="text-red-500 text-sm">{{ $message }}</span>
-    @enderror
-</div>
+                                            <div>
+                                                <span class="@if($hall->isBooked) text-gray-400 line-through @else text-gray-900 dark:text-white @endif font-medium">
+                                                    {{ $hall->name_number }} — {{ $hall->capacity }} Pax
+                                                </span>
+                                                <span class="ml-2 text-sm @if($hall->isBooked) text-red-500 @else text-green-600 @endif">
+                                                    {{ $hall->isBooked ? '(Booked)' : '(Available)' }}
+                                                </span>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
 
-                            
-                        
+                                <!-- Validation error -->
+                                @error('selected_halls')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                        </div>
+
+
+
 
                             <div>
                                 <label for="event_type_id"
@@ -319,8 +318,106 @@
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
+
+                            <div class="md:col-span-2">
+                                <label for="dishes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    Dishes
+                                </label>
+                                <textarea wire:model="dishes" id="dishes" rows="3"
+                                    placeholder="Enter dishes for the event (e.g., Adobo, Sinigang, Tinola, Lechon, etc.)"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                </textarea>
+                                @error('dishes')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                                <p class="text-xs text-gray-500 mt-1 dark:text-gray-400">
+                                    List the dishes separated by commas. Example: "Adobo, Sinigang, Tinola"
+                                </p>
+                            </div>
+
                         </div>
                     </div>
+
+
+                <!-- Additional Items Section -->
+                <div class="col-span-full md:col-span-2 mt-4">
+                    <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Additional Items</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <!-- Add Rooms Button -->
+                        <x-button type="button" wire:click="openModal('room')" icon="fas fa-bed" class="w-full">
+                            Add Rooms
+                        </x-button>
+
+                        <!-- Add Activities Button -->
+                        <x-button type="button" wire:click="openModal('activity')" icon="fas fa-hiking" class="w-full">
+                            Add Activities
+                        </x-button>
+
+                        <!-- Add Services Button -->
+                        <x-button type="button" wire:click="openModal('services')" icon="fas fa-concierge-bell" class="w-full">
+                            Add Services
+                        </x-button>
+                    </div>
+
+                    <!-- Selected Items Display -->
+                    @if(count($selectedRooms) > 0 || count($selectedActivities) > 0 || count($selectedServices) > 0)
+                    <div class="bg-gray-50 dark:bg-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-500">
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Selected Items:</h4>
+
+                    <!-- Rooms -->
+                    @if(count($selectedRooms) > 0)
+                    <div class="mb-3">
+                        <h5 class="font-medium text-gray-700 dark:text-gray-300">Rooms:</h5>
+                        @foreach($selectedRooms as $index => $room)
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">
+                                {{ $room['room_name'] }} ({{ $room['ideal_guest'] }} guests)
+                            </span>
+                            <button wire:click="RemoveRoom({{ $room['room_id'] }})" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+
+                        <!-- Activities -->
+                        @if(count($selectedActivities) > 0)
+                        <div class="mb-3">
+                            <h5 class="font-medium text-gray-700 dark:text-gray-300">Activities:</h5>
+                            @foreach($selectedActivities as $index => $activity)
+                            <div class="flex justify-between items-center py-1">
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $activity['activity_name'] }} (Qty: {{ $activity['quantity'] }})
+                                </span>
+                                <button wire:click="RemoveActivity({{ $activity['activity_id'] }})" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+
+                        <!-- Services -->
+                        @if(count($selectedServices) > 0)
+                        <div class="mb-3">
+                            <h5 class="font-medium text-gray-700 dark:text-gray-300">Services:</h5>
+                            @foreach($selectedServices as $index => $service)
+                            <div class="flex justify-between items-center py-1">
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $service['service_name'] }} (Qty: {{ $service['quantity'] }})
+                                </span>
+                                <button wire:click="RemoveService({{ $service['service_id'] }})" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+                </div>
 
 
                     {{-- FOR SCREENSHOT PAYMENT UPLOAD --}}
@@ -411,4 +508,203 @@
             </x-dialog-modal>
         </div>
     </div>
+
+
+    <!-- Add Room Modal -->
+    @if ($roomModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
+            <!-- Header -->
+            <div class="bg-green-50 flex justify-between items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
+                <h2 class="text-2xl font-semibold text-green-700 dark:text-green-200">Choose Rooms</h2>
+                <button wire:click="$set('roomModal', false)" class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Room Selection Controls -->
+            {{-- <div class="p-4 border-b border-gray-200 dark:border-gray-600">
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 me-3">Adults</label>
+                        <input type="number" wire:model="roomTotalAdults" min="1" class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 dark:bg-gray-600 dark:text-white">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800">Children</label>
+                        <input type="number" wire:model="roomTotalKids" min="0" class="mt-1 block w-full border border-gray-300 rounded px-2 py-1 dark:bg-gray-600 dark:text-white">
+                    </div>
+                </div>
+            </div> --}}
+
+            <!-- Body / Room List -->
+            <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+        @if ($rooms->count() === 0)
+            <div class="text-center text-gray-500 py-8">
+                <p>No rooms available for the selected event dates.</p>
+            </div>
+        @else
+            @foreach ($rooms as $room)
+                @if(collect($selectedRooms)->contains('room_id', $room->id))
+                    @continue
+                @endif
+
+                {{-- Check if room is booked - THIS IS THE KEY FIX --}}
+                @if(!$room->is_booked)
+                    <div class="bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">{{ $room->name_number }}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    Ideal Guests: {{ $room->ideal_guest }}
+                                </p>
+                                <!-- Availability Status -->
+                                <p class="text-sm text-green-600 font-medium mt-1">
+                                    <i class="fas fa-check-circle"></i> Available
+                                </p>
+                            </div>
+                            <button wire:click="SelectedRooms({{ $room->id }})"
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Add Room
+                            </button>
+                        </div>
+                    </div>
+                @else
+                    {{-- Show unavailable rooms --}}
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 dark:bg-red-900/20 dark:border-red-800 opacity-60">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2 text-gray-400">{{ $room->name_number }}</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Ideal Guests: {{ $room->ideal_guest }}
+                                </p>
+                                <!-- Unavailable Status -->
+                                <p class="text-sm text-red-600 font-medium mt-1">
+                                    <i class="fas fa-times-circle"></i> Not Available
+                                </p>
+                            </div>
+                            <button class="bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium cursor-not-allowed" disabled>
+                                Unavailable
+                            </button>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+        @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Add Activity Modal -->
+    @if ($activityModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
+            <!-- Header -->
+            <div class="flex justify-between items-center border-b bg-green-50 border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
+                <h2 class="text-2xl font-semibold text-green-700 dark:text-green-300">Choose Activities</h2>
+                <button wire:click="$set('activityModal', false)" class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Body / Activity List -->
+            <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                @if ($activities->count() === 0)
+                    <div class="text-center text-gray-500 py-8">
+                        <p>No activities available.</p>
+                    </div>
+                @else
+                    @foreach ($activities as $activity)
+                        @if(collect($selectedActivities)->contains('activity_id', $activity->id))
+                            @continue
+                        @endif
+
+                        <div class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $activity->name }}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{ Str::limit($activity->description, 100) }}</p>
+
+                                @if ($activity->schedule_type !== 'no_schedule')
+                                <div class="mt-2">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Preferred Time</label>
+                                    @if ($activity->schedule_type === 'guest')
+                                        <input type="time" wire:model="selectedTimes.{{ $activity->id }}"
+                                            class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm mt-1 dark:bg-gray-600 dark:text-white">
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Qty:</label>
+                                    <input type="number" wire:model="quantity.{{ $activity->id }}" min="1" value="1"
+                                        class="w-16 border border-gray-300 rounded px-2 py-1 text-sm dark:bg-gray-600 dark:text-white">
+                                </div>
+                                <button wire:click="SelectedActivities({{ $activity->id }})"
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Add Services Modal -->
+    @if ($servicesModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden dark:bg-gray-700">
+            <!-- Header -->
+            <div class="flex justify-between bg-green-50 items-center border-b border-gray-200 px-6 py-4 dark:border-gray-500 dark:bg-gray-800">
+                <h2 class="text-2xl font-semibold text-green-700 dark:text-green-300">Choose Services</h2>
+                <button wire:click="$set('servicesModal', false)" class="text-gray-500 hover:text-gray-700 text-2xl font-bold focus:outline-none dark:text-gray-200 dark:hover:text-gray-400">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Body / Services List -->
+            <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                @if ($services_charges->count() === 0)
+                    <div class="text-center text-gray-500 py-8">
+                        <p>No services available.</p>
+                    </div>
+                @else
+                    @foreach ($services_charges as $service)
+                        @if(collect($selectedServices)->contains('service_id', $service->id))
+                            @continue
+                        @endif
+
+                        <div class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-white">{{ $service->name }}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ Str::limit($service->description, 100) }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Unit: {{ $service->unit }}</p>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Qty:</label>
+                                    <input type="number" wire:model="quantity.{{ $service->id }}" min="1" value="1"
+                                        class="w-16 border border-gray-300 rounded px-2 py-1 text-sm dark:bg-gray-600 dark:text-white">
+                                </div>
+                                <button wire:click="SelectedServices({{ $service->id }})"
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+
+
+
 </div>
+

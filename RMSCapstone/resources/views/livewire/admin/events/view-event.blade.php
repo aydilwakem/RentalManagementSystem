@@ -135,8 +135,104 @@
                     <div><strong>Event Status:</strong>
                         {{ ucfirst($event->transaction_status) }}
                     </div>
+
+                    @if($event->dishes && is_array($event->dishes) && count($event->dishes) > 0)
+                        <div class="md:col-span-2 mt-2">
+                            <strong>Dishes:</strong>
+                            <div class="mt-1 flex flex-wrap gap-1">
+                                @foreach($event->dishes as $dish)
+                                    <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded dark:bg-green-900 dark:text-green-200">
+                                        {{ trim($dish) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                        @elseif($event->dishes)
+                        <div class="md:col-span-2">
+                            <strong>Dishes:</strong> {{ $event->dishes }}
+                        </div>
+                    @endif
+
+
+
                 </div>
             </div>
+
+            <!-- Additional Items Section -->
+            @if(count($selectedRooms) > 0 || count($selectedActivities) > 0 || count($selectedServices) > 0)
+            <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Additional Items</h3>
+            <div class="bg-gray-50 rounded-lg p-6 mb-6 dark:bg-gray-600 dark:border-gray-500 border">
+
+                <!-- Rooms -->
+                @if(count($selectedRooms) > 0)
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Rooms:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        @foreach($selectedRooms as $room)
+                        <div class="flex justify-between items-center py-2 px-3 bg-white rounded border dark:bg-gray-500 dark:border-gray-400">
+                            <span class="text-sm text-gray-600 dark:text-gray-300">
+                                {{ $room['room_name'] }}
+                            </span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ $room['ideal_guest'] }} guests
+                            </span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Activities -->
+                @if(count($selectedActivities) > 0)
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Activities:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        @foreach($selectedActivities as $activity)
+                        <div class="flex justify-between items-center py-2 px-3 bg-white rounded border dark:bg-gray-500 dark:border-gray-400">
+                            <span class="text-sm text-gray-600 dark:text-gray-300">
+                                {{ $activity['activity_name'] }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    Qty: {{ $activity['quantity'] }}
+                                </span>
+                                @if($activity['activity_datetime'])
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ \Carbon\Carbon::parse($activity['activity_datetime'])->format('M j, g:i A') }}
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Services -->
+                @if(count($selectedServices) > 0)
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-800 dark:text-white mb-2">Services:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        @foreach($selectedServices as $service)
+                        <div class="flex justify-between items-center py-2 px-3 bg-white rounded border dark:bg-gray-500 dark:border-gray-400">
+                            <span class="text-sm text-gray-600 dark:text-gray-300">
+                                {{ $service['service_name'] }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    Qty: {{ $service['quantity'] }}
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ $service['service_unit'] }}
+                                </span>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+            @endif
 
             <!-- Event Invoice -->
             <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Event Invoice</h3>
@@ -169,7 +265,7 @@
                 </div>
             </div>
 
-            
+
             <!----------------------------- PAYMENTS -------------------------------------->
             <section id="payments">
                 <div
@@ -315,7 +411,7 @@
             </section>
             <!-------------------------- END OF PAYMENTS ---------------------------------->
 
-           
+
 
 
             <!---------------------------- MODALS ---------------------------------------->
@@ -370,10 +466,13 @@
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
                                     required>
                                     <option value="">Select Payment Type</option>
-                                    {{-- <option value="Room Rent">Room Rent</option>
+                                    <option value="Room Rent">Room Rent</option>
+                                    <option value="House Rent">House Rent</option>
+                                    <option value="Activity Fee">Activity Fee</option>
+                                    <option value="Event Hall">Event Hall</option>
+                                    <option value="Event Package">Event Package</option>
                                     <option value="Security Deposit">Security Deposit</option>
                                     <option value="Remaining Balance">Remaining Balance</option>
-                                    <option value="Merchandise">Merchandise</option> --}}
                                     <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
                                     <option value="Accommodation Downpayment">Accommodation Downpayment</option>
                                     <option value="Accommodation Balance">Accommodation Balance</option>
@@ -498,7 +597,7 @@
                     </div>
                 </div>
             @endif
-          
+
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-between space-x-4 mt-12 mb-3">

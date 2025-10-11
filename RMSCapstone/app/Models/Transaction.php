@@ -63,6 +63,8 @@ class Transaction extends Model
         'start_datetime',
         'end_datetime',
         'is_rebooked',
+        'dishes',
+
     ];
 
     /**
@@ -87,6 +89,10 @@ class Transaction extends Model
         'actual_end_datetime' => 'datetime',
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
+        
+        // dishes as array
+        'dishes' => 'array',
+
     ];
 
     /**
@@ -326,4 +332,33 @@ class Transaction extends Model
     {
         return $this->activities->sum('pivot.amount');
     }
+
+        // Add these methods for dishes handling
+    public function getDishesFormattedAttribute()
+    {
+        if (empty($this->dishes)) {
+            return '';
+        }
+        
+        if (is_array($this->dishes)) {
+            return implode(', ', $this->dishes);
+        }
+        
+        return $this->dishes;
+    }
+
+    public function setDishesAttribute($value)
+    {
+        if (is_string($value)) {
+            // Convert comma-separated string to array
+            $dishesArray = array_map('trim', explode(',', $value));
+            $dishesArray = array_filter($dishesArray); // Remove empty values
+            $this->attributes['dishes'] = !empty($dishesArray) ? json_encode($dishesArray) : null;
+        } else {
+            $this->attributes['dishes'] = $value;
+        }
+    }
+
+
+    
 }

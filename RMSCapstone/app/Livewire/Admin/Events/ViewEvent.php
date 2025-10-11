@@ -126,6 +126,12 @@ class ViewEvent extends Component
         $this->confirmItemDelete = $id;
     }
 
+    // ---------------- ROOM, ACTIVITY, SERVICE RELATED PROPERTIES ------------------ //
+    public $selectedRooms = [];
+    public $selectedActivities = [];
+    public $selectedServices = [];
+
+
     //To display foreign keys
     public function mount(Transaction $event)
     {
@@ -136,11 +142,57 @@ class ViewEvent extends Component
         $this->loadTransactionData($event);
         $this->payment_methods = PaymentMethod::all();
 
+        // Load existing additional items
+        $this->loadExistingItems($event);
+
         //default date in create payment
         $now = now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
     }
 
+    // Load existing rooms, activities, and services associated with the event
+    protected function loadExistingItems(Transaction $event)
+    {
+        // Load existing rooms
+        $existingRooms = $event->properties()->whereHas('type', function($q) {
+            $q->where('name', 'Room');
+        })->get();
+
+        foreach ($existingRooms as $room) {
+            $this->selectedRooms[] = [
+                'type' => 'room',
+                'room_id' => $room->id,
+                'room_name' => $room->name_number,
+                'ideal_guest' => $room->ideal_guest,
+            ];
+        }
+
+        // Load existing activities
+        $existingActivities = $event->activities()->get();
+        foreach ($existingActivities as $activity) {
+            $this->selectedActivities[] = [
+                'type' => 'activity',
+                'activity_id' => $activity->id,
+                'activity_name' => $activity->name,
+                'quantity' => $activity->pivot->quantity,
+                'activity_datetime' => $activity->pivot->activity_datetime,
+            ];
+        }
+
+        // Load existing services
+        $existingServices = $event->services()->get();
+        foreach ($existingServices as $service) {
+            $this->selectedServices[] = [
+                'type' => 'service',
+                'service_id' => $service->id,
+                'service_name' => $service->name,
+                'quantity' => $service->pivot->quantity,
+                'service_unit' => $service->unit,
+            ];
+        }
+    }
+
+    // Load transaction, invoice, and payments data
     public function loadTransactionData(Transaction $transaction)
     {
         // Eager-load related models to avoid N+1 query problem.
@@ -162,6 +214,7 @@ class ViewEvent extends Component
     }
 
 
+    // ---------------- EXPORT TO PDF ------------------ //
     public function exportEventDetails()
     {
         //eager load the relationship
@@ -204,7 +257,7 @@ class ViewEvent extends Component
         }
     }
 
-
+    // ---------------- CREATE PAYMENT ------------------ //
     public function OpenCreatePaymentModal()
     {
 
@@ -219,8 +272,8 @@ class ViewEvent extends Component
         $this->createPaymentModal = false;
     }
 
-
-    public function CreatePayment(PaymentService $paymentService)
+    // Create Payment
+    public function CreatePayment()
     {
         Log::info('Create Payment method called.');
 
