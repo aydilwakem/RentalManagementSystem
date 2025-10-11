@@ -273,7 +273,7 @@ class ViewEvent extends Component
     }
 
     // Create Payment
-    public function CreatePayment()
+    public function CreatePayment(PaymentService $paymentService)
     {
         Log::info('Create Payment method called.');
 

@@ -486,10 +486,10 @@
                             {{-- Payment Methods --}}
                             <div class="mt-4">
                                 <label for="payment_method_id"
-                                    class="bblock text-sm text-gray-700 font-semibold">Payment
+                                    class="block text-sm text-gray-700 font-semibold">Payment
                                     Method <span class="text-red-500">*</span></label>
                                 <select wire:model="payment_method_id" id="payment_method_id"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                                    class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
                                     <option value="">Select Payment Method</option>
                                     @foreach ($payment_methods as $payment_method)
                                         <option value="{{ $payment_method->id }}">
