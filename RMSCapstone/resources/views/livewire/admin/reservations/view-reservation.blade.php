@@ -312,7 +312,6 @@
                         <div>
                             @if ($transaction->promoCode)
                                 <div>
-                                    <strong>Promo Code:</strong>
                                     {{ $transaction->promoCode->code }}
 
                                     @if ($transaction->promoCode->discount_type === 'percentage')
@@ -496,6 +495,7 @@
                                             <td
                                                 class="border px-4 py-2 text-gray-700 text-center dark:text-gray-200 dark:border-gray-500">
                                                 ₱{{ number_format($property->pivot->extra_charge, 2) }}
+                                                {{-- ₱{{ number_format($totalExtraGuestCharge, 2) }} --}}
                                             </td>
                                         @else
                                             <td
@@ -1031,6 +1031,7 @@
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             ₱{{ number_format($item['total'], 2) }}
                                         </td>
+
                                         {{-- Timestamp --}}
                                         <td class="border px-4 py-2 text-center dark:border-gray-500">
                                             <span title="{{ $item['created_at']->format('F j, Y - g:i A') }}">

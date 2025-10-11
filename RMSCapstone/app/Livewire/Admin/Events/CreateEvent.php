@@ -127,7 +127,7 @@ class CreateEvent extends Component
         }
 
         $roomService = app(RoomAvailabilityService::class);
-        
+
         // Use the service directly like your working code
         $this->rooms = $roomService->getAvailableRooms(
             \Carbon\Carbon::parse($this->start_datetime)->format('Y-m-d'),
@@ -152,7 +152,7 @@ class CreateEvent extends Component
     public function SelectedRooms($roomId)
     {
         $room = \App\Models\Property::findOrFail($roomId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('room', $roomId)) {
             return;
@@ -180,7 +180,7 @@ class CreateEvent extends Component
     public function SelectedActivities($activityId)
     {
         $activity = Activity::findOrFail($activityId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('activity', $activityId)) {
             return;
@@ -218,7 +218,7 @@ class CreateEvent extends Component
     public function SelectedServices($serviceId)
     {
         $service = Service::findOrFail($serviceId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('service', $serviceId)) {
             return;
@@ -376,7 +376,7 @@ class CreateEvent extends Component
 
             // Combine all property attachments (halls + rooms)
             $allProperties = [];
-            
+
             // Add halls
             foreach ($this->selected_halls as $hallId) {
                 $allProperties[$hallId] = [
@@ -389,7 +389,7 @@ class CreateEvent extends Component
                     'days' => $this->stayDuration ?? 1,
                 ];
             }
-            
+
             // Add rooms if any
             if (!empty($this->selectedRooms)) {
                 foreach ($this->selectedRooms as $room) {
@@ -438,8 +438,6 @@ class CreateEvent extends Component
         session()->flash('success', 'Event reservation successfully saved.');
         return redirect()->route('admin.events');
     }
-
-
 
     public function render()
     {

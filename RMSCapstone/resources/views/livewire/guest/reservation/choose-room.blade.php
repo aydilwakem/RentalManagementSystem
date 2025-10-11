@@ -59,7 +59,7 @@
                         <div class=" space-y-6" wire:key="room-{{ $room->id }}">
                             <div
                                 class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition mb-0">
-                                <div class="    md:flex">
+                                <div class="md:flex">
 
                                     <div class="w-full md:w-1/3">
                                         <!-- Image Container -->
@@ -76,6 +76,14 @@
                                                 <img src="{{ asset('images/rms-default.png') }}"
                                                     class="absolute inset-0 w-full h-full object-cover" />
                                             @endif
+
+                                            {{-- SOLD OUT Badge --}}
+                                            @if ($room->is_booked)
+                                                    <div class="absolute top-3 right-[-40px] bg-red-600 text-white text-xs font-bold py-1 px-12
+                                                                transform rotate-45 shadow-lg">
+                                                        SOLD OUT
+                                                    </div>
+                                                @endif
                                         </div>
                                     </div>
 
@@ -565,9 +573,9 @@
                                                         </span>
                                                     </x-warning-button>
                                                 @elseif ($room->is_booked)
-                                                    <x-danger-button>
+                                                    {{-- <x-danger-button>
                                                         <i class="fa-solid fa-circle-xmark me-1"></i> Sold Out
-                                                    </x-danger-button>
+                                                    </x-danger-button> --}}
                                                 @else
                                                     <x-button wire:click="addRoomToCart({{ $room->id }})"
                                                         wire:loading.attr="disabled"
