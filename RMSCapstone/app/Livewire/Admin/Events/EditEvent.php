@@ -422,6 +422,21 @@ class EditEvent extends Component
             return;
         }
 
+        //If status is changed to done, when transaction has balance, 
+        //add error message, transaction has balance
+        if ($this->transaction_status === 'done' && $this->event->invoice) {
+            $balance_due = $this->event->invoice->sub_total - $this->event->invoice->amount_paid;
+
+            if ($balance_due > 0) {
+                $this->addError(
+                    'transaction_status',
+                    'Cannot change status to "Completed". Transaction still has a balance of ₱' . number_format($balance_due, 2)
+                );
+                $this->confirmEditItem = false;
+                return;
+            }
+        }
+
     try{
          $this->validate([
                 // Transaction User Fields

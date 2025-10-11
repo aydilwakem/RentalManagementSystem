@@ -87,7 +87,8 @@ class ViewEvent extends Component
 
     public $cannotDeleteItem = false;
     public $confirmItemDelete = false;
-    public $payment_methods = [];
+    //public $payment_methods = [];
+    public $payment_methods;
     public $payment_method_id;
     public $payment_screenshot;
     public $sub_total;
@@ -141,7 +142,8 @@ class ViewEvent extends Component
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
         $this->loadTransactionData($event);
 
-        $this->payment_methods = PaymentMethod::all();
+        //$this->payment_methods = PaymentMethod::all();
+        
         // Load existing additional items
         $this->loadExistingItems($event);
 
