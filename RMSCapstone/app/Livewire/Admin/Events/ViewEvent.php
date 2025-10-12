@@ -142,8 +142,8 @@ class ViewEvent extends Component
         $this->guests = TransactionUser::where('trn_user_type', 'guest')->get();
         $this->loadTransactionData($event);
 
-        //$this->payment_methods = PaymentMethod::all();
-        
+        $this->payment_methods = PaymentMethod::all();
+
         // Load existing additional items
         $this->loadExistingItems($event);
 
@@ -222,7 +222,7 @@ class ViewEvent extends Component
         //eager load the relationship
         $event = Transaction::with([
             'invoice.payments',
-            'activities', 
+            'activities',
             'services',
         ])->findOrFail($this->transaction->id);
 
@@ -231,8 +231,8 @@ class ViewEvent extends Component
             //pass the relationship
             'invoice' => $event->invoice,
             'payments' => $event->invoice->payments,
-            'activities' => $event->activities, 
-            'services' => $event->services, 
+            'activities' => $event->activities,
+            'services' => $event->services,
         ]);
 
         // Optional: Download directly or store then return URL

@@ -181,7 +181,7 @@
                                 </td>
                                 <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A' }} </td>
                                 <td class="px-4 py-3">
-                                    @foreach ($eventItem->properties as $property)
+                                    @foreach ($eventItem->properties->where('property_type_id', 3) as $property)
                                         {{ $property->name_number ?? 'N/A' }}<br>
                                     @endforeach
                                 </td>

@@ -29,22 +29,22 @@ use Illuminate\Support\Str;
 class EditEvent extends Component
 {
     public Transaction $event;
-    
-    // ----------------------- Types ---------------------------- // 
+
+    // ----------------------- Types ---------------------------- //
     public $reservation_type_id = 3; // This reservation is for Events
     public $trn_user_type = 'guest'; // This reservation is made by a 'guest'
-    
-    // ----------------------- Heard From, Status Defaults ---------------------------- // 
+
+    // ----------------------- Heard From, Status Defaults ---------------------------- //
     public $reservation_source = 'Website';
     public $transaction_status = 'confirmed';
 
     // ------------------- Address -------------------- //
     public $municipalities = [];
     public $otherCountry;
-    
-    // ----------------------- EVENT DETAILS ---------------------------- // 
-    
-    // ----------------------- Guest ---------------------------- // 
+
+    // ----------------------- EVENT DETAILS ---------------------------- //
+
+    // ----------------------- Guest ---------------------------- //
     public $first_name;
     public $middle_name;
     public $last_name;
@@ -52,9 +52,9 @@ class EditEvent extends Component
     public $contact_number;
     public $company_name;
     public $city_municipality;
-    public $country; 
+    public $country;
 
-    // ----------------------- Halls (transaction_properties)---------------------------- // 
+    // ----------------------- Halls (transaction_properties)---------------------------- //
     public $halls;
     public $selected_halls = [];
     public $multipleHalls = false;
@@ -62,23 +62,23 @@ class EditEvent extends Component
     public $kids = [];
     public $extra_guest = [];
     public $extra_charge = [];
-    public $hall_amount; 
+    public $hall_amount;
 
-    // ----------------------- Halls (trn_transactions)---------------------------- // 
+    // ----------------------- Halls (trn_transactions)---------------------------- //
     public $total_amount; // Total amount for the reservation
     public $pax = 0; // Total number of guests (adults + kids)
-    
+
     public $start_datetime; //Start Date Time of Event
     public $end_datetime; //End Date Time of Event
     public $total_adults;
-    public $total_kids; 
+    public $total_kids;
     public $actual_start_datetime; // Actual start datetime when the event is ongoing
 
-    // ------------------- INVOICE AND EVENT TYPE -------------------- // 
+    // ------------------- INVOICE AND EVENT TYPE -------------------- //
     public $invoice_number;
     public $eventTypes;
     public $event_type_id;
-    public $guests; 
+    public $guests;
 
     // ----------------------- CART ITEMS ---------------------------- //
     public $selectedRooms = [];
@@ -128,7 +128,7 @@ class EditEvent extends Component
         }
 
         $roomService = app(RoomAvailabilityService::class);
-        
+
         // Use the service directly like in CreateEvent
         $this->rooms = $roomService->getAvailableRooms(
             \Carbon\Carbon::parse($this->start_datetime)->format('Y-m-d'),
@@ -152,7 +152,7 @@ class EditEvent extends Component
     public function SelectedRooms($roomId)
     {
         $room = \App\Models\Property::findOrFail($roomId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('room', $roomId)) {
             return;
@@ -181,7 +181,7 @@ class EditEvent extends Component
     public function SelectedActivities($activityId)
     {
         $activity = Activity::findOrFail($activityId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('activity', $activityId)) {
             return;
@@ -220,7 +220,7 @@ class EditEvent extends Component
     public function SelectedServices($serviceId)
     {
         $service = Service::findOrFail($serviceId);
-        
+
         // Check if already in cart
         if ($this->isItemAlreadyInCart('service', $serviceId)) {
             return;
@@ -302,7 +302,7 @@ class EditEvent extends Component
         $this->contact_number = $event->transactionUser->contact_number ?? '';
         $this->company_name = $event->transactionUser->company_name ?? '';
         $this->city_municipality = $event->transactionUser->city_municipality ?? '';
-        
+
         // ------------------ Country Handling ------------------ //
         $presetCountries = ['Philippines', 'Other'];
         if (!in_array($event->transactionUser->country, $presetCountries)) {
@@ -407,22 +407,22 @@ class EditEvent extends Component
         $this->getAvailableRooms();
     }
 
-    
+
     // ----------------------- UPDATE EVENT -----------------------------
     public function updateEvent()
     {
         //Cannot change status to receipt_verified, reserved, or confirmed if amount paid is zero
         if(
             in_array($this->transaction_status, ['receipt_verified', 'reserved', 'confirmed', 'ongoing', 'done']) &&
-            $this->event->invoice && 
+            $this->event->invoice &&
             $this->event->invoice->amount_paid == 0
         ){
-        $this->addError('transaction_status', 'Cannot change status to "' . str_replace('_', ' ', $this->transaction_status) . '". No payments found.');            
+        $this->addError('transaction_status', 'Cannot change status to "' . str_replace('_', ' ', $this->transaction_status) . '". No payments found.');
         $this->confirmEditItem = false;
             return;
         }
 
-        //If status is changed to done, when transaction has balance, 
+        //If status is changed to done, when transaction has balance,
         //add error message, transaction has balance
         if ($this->transaction_status === 'done' && $this->event->invoice) {
             $balance_due = $this->event->invoice->sub_total - $this->event->invoice->amount_paid;
@@ -476,9 +476,9 @@ class EditEvent extends Component
     }
 
     $finalCountry = $this->country === 'Other' ? $this->otherCountry : $this->country;
-    
+
     DB::transaction(function() use ($finalCountry){
-        
+
         //old transaction status before updating to confirmed or ongoing
         $oldStatus = $this->event->transaction_status;
 
@@ -508,21 +508,21 @@ class EditEvent extends Component
                 'services',
             ]);
 
-            $branding = Setting::first(); 
+            $branding = Setting::first();
 
-            Mail::to($event->transactionUser->email)->send(new EventConfirmedMail($event, $branding));  
+            Mail::to($event->transactionUser->email)->send(new EventConfirmedMail($event, $branding));
             Log::info('Email Success');
         }
 
         //If status is changed to ongoing
         if (
-            $oldStatus !== 'ongoing' && 
-            $this->transaction_status === 'ongoing' && 
+            $oldStatus !== 'ongoing' &&
+            $this->transaction_status === 'ongoing' &&
             $this->event->actual_start_datetime === null
         ){
             $this->event->update([
                 'actual_start_datetime' => now(),
-            ]); 
+            ]);
         }
 
         // Sync all properties (halls + rooms)
@@ -586,7 +586,7 @@ class EditEvent extends Component
                 'sub_total' => $this->total_amount,
                 'balance_due' => $this->total_amount - $this->event->invoice->amount_paid,
                 'due_date' => $this->end_datetime,
-            ]); 
+            ]);
         }
     });
 

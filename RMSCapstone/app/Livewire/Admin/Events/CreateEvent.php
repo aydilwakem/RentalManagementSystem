@@ -548,4 +548,11 @@ class CreateEvent extends Component
     {
         $this->total_amount = str_replace(',', '', $value);
     }
+
+    public function getTotalHallCapacityProperty()
+    {
+        // $this->selected_halls is an array of hall IDs
+        // $this->halls is a collection of all halls
+        return $this->halls->whereIn('id', $this->selected_halls)->sum('capacity');
+    }
 }
