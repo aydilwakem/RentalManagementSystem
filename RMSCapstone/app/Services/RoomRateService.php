@@ -15,7 +15,7 @@ class RoomRateService
 
         $rate = $this->getRate($room->id, 'Peak', $date)
             ?? $this->getRate($room->id, 'Holiday', $date)
-            ?? $this->getRate($room->id, $this->getDayRateType($dayOfWeek), $date);
+            ?? $this->getSpecificDayRate($room->id, $dayOfWeek, $date); // Use the new specific day logic
 
         return $rate
             ? $this->formatRate($rate)
@@ -25,6 +25,22 @@ class RoomRateService
                 'name' => 'Base Rate',
                 'rate_type' => null,
             ];
+    }
+
+    /**
+     * Get rate based on specific day logic:
+     * - Sunday to Thursday: Weekday rate (or Base rate if no weekday rate exists)
+     * - Friday to Saturday: Weekend rate
+     */
+    protected function getSpecificDayRate($propertyId, $dayOfWeek, $date)
+    {
+        // Friday (5) and Saturday (6): Weekend rate
+        if (in_array($dayOfWeek, [5, 6])) {
+            return $this->getRate($propertyId, 'Weekend', $date);
+        }
+        
+        // Sunday (0) to Thursday (4): Weekday rate
+        return $this->getRate($propertyId, 'Weekdays', $date);
     }
 
     /**
@@ -111,7 +127,6 @@ class RoomRateService
         ];
     }
 
-
     /**
      * Get a summary of rates by type for display
      */
@@ -164,23 +179,16 @@ class RoomRateService
             ->first();
     }
 
-    protected function getDayRateType($dayOfWeek)
-    {
-        // Saturday (6) and Sunday (0) are weekends
-        return $this->isWeekendByDay($dayOfWeek) ? 'Weekend' : 'Weekdays';
-    }
-
     /**
-     * Check if a specific day of week is weekend
-     * Saturday = 6, Sunday = 0
+     * Check if a specific day of week is weekend (Friday or Saturday)
      */
     protected function isWeekendByDay($dayOfWeek)
     {
-        return in_array($dayOfWeek, [0, 6]); // Sunday=0, Saturday=6
+        return in_array($dayOfWeek, [5, 6]); // Friday=5, Saturday=6
     }
 
     /**
-     * Check if a Carbon date is weekend
+     * Check if a Carbon date is weekend (Friday or Saturday)
      */
     protected function isWeekend($date)
     {
@@ -189,7 +197,7 @@ class RoomRateService
 
     protected function formatRate($rate)
     {
-         $rateName = $rate->name ?? ucfirst($rate->rate_type) . ' Rate';
+        $rateName = $rate->name ?? ucfirst($rate->rate_type) . ' Rate';
         return [
             'rate_id' => $rate->id,
             'amount' => $rate->amount,
@@ -197,7 +205,6 @@ class RoomRateService
             'rate_type' => $rate->rate_type,
         ];
     }
-
 
     /**
      * Get all rates that will be applied during the stay period
@@ -225,7 +232,7 @@ class RoomRateService
                     'nights' => $count,
                     'total_amount' => $total,
                     'average_rate' => $average,
-                    'percentage' => 0, // You can calculate percentage if needed
+                    'percentage' => 0, // calculate percentage if needed
                 ];
             })
             ->values()
@@ -233,5 +240,4 @@ class RoomRateService
         
         return $appliedRates;
     }
-
 }

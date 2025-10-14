@@ -20,6 +20,16 @@ use App\Livewire\Admin\Amenities\ViewAmenity;
 use App\Livewire\Admin\Amenities\EditAmenity;
 use App\Livewire\Admin\Backups\CreateBackup;
 use App\Livewire\Admin\Backups\ViewBackups;
+use App\Livewire\Admin\DayTourRates\CreateDayTourRate;
+use App\Livewire\Admin\DayTourRates\DeletedDayTourRates;
+use App\Livewire\Admin\DayTourRates\EditDayTourRate;
+use App\Livewire\Admin\DayTourRates\ViewDayTourRate;
+use App\Livewire\Admin\DayTourRates\ViewDayTourRates;
+use App\Livewire\Admin\DayTours\CreateDayTour;
+use App\Livewire\Admin\DayTours\DeletedDayTours;
+use App\Livewire\Admin\DayTours\EditDayTour;
+use App\Livewire\Admin\DayTours\ViewDayTour;
+use App\Livewire\Admin\DayTours\ViewDayTours;
 use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\Features\EditFeature;
@@ -51,11 +61,14 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Reservations\DayTourReservationList;
 use App\Livewire\Admin\Reservations\RebookReservation;
+use App\Livewire\Admin\Reservations\ViewDaytourReservation;
 use App\Livewire\Admin\Services\EditService;
 use App\Livewire\Admin\Services\ViewService;
 use App\Livewire\Admin\Settings\PromoCodes\EditPromoCode;
 use App\Livewire\Admin\Settings\PromoCodes\ViewPromoCode;
+use App\Livewire\Guest\Reservation\DayTourReservationForm;
 use App\Livewire\Guest\Reservation\ReservationForm;
 use App\Mail\EventQuotesMail;
 use App\Mail\PaymentUploadedMail;
@@ -514,6 +527,50 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })->name('admin.deleted-inclusions')
         ->middleware('can:event-inclusions-soft-delete');
 
+
+    // --------------------- Day Tours ---------------------------------------
+    Route::get('/day-tours', ViewDayTours::class)
+        ->name('admin.day-tours')
+        ->middleware('can:daytour-list');
+
+    Route::get('create/day-tour', CreateDayTour::class)
+        ->name('admin.create-day-tour')
+        ->middleware('can:daytour-create');
+
+    Route::get('view/day-tour/{dayTour}', ViewDayTour::class)
+        ->name('admin.view-day-tour')
+        ->middleware('can:daytour-view');
+
+    Route::get('edit/day-tour/{dayTour}', EditDayTour::class)
+        ->name('admin.edit-day-tour')
+        ->middleware('can:daytour-edit');
+
+    Route::get('deleted-day-tours', DeletedDayTours::class)
+        ->name('admin.deleted-day-tours')
+        ->middleware('can:daytour-soft-delete');
+
+    // --------------------- Day Tour Rates ---------------------------------------
+    Route::get('/day-tour-rates', ViewDayTourRates::class)
+        ->name('admin.day-tour-rates')
+        ->middleware('can:daytourrate-list');
+
+    Route::get('create/day-tour-rate', CreateDayTourRate::class)
+        ->name('admin.create-day-tour-rate')
+        ->middleware('can:daytourrate-create');
+
+    Route::get('view/day-tour-rate/{dayTourRate}', ViewDayTourRate::class)
+        ->name('admin.view-day-tour-rate')
+        ->middleware('can:daytourrate-view');
+
+    Route::get('edit/day-tour-rate/{dayTourRate}', EditDayTourRate::class)
+        ->name('admin.edit-day-tour-rate')
+        ->middleware('can:daytourrate-edit');
+
+    Route::get('deleted-day-tour-rates', DeletedDayTourRates::class)
+        ->name('admin.deleted-day-tour-rates')
+        ->middleware('can:daytourrate-soft-delete');
+
+
     // --------------------- Maintenance ---------------------------------------
 
     // New Maintenance
@@ -725,6 +782,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     })
         ->name('admin.view-old-transactions')
         ->middleware('can:old-booking-list');
+
+
+        // Day Tour Routes
+    Route::get('/daytour-reservations', DayTourReservationList::class)
+        ->name('admin.daytour-reservations-list')
+        ->middleware(['auth', 'can:daytour-reservation-list']);
+
+    Route::get('/daytour-reservations/{transaction}', ViewDaytourReservation::class)
+        ->name('admin.view-daytour-reservation')
+        ->middleware(['auth', 'can:daytour-reservation-view']);
+
 
     /***
      * These routes are for Long-Term Rentals.
@@ -1398,6 +1466,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/reservation-form', function () {
         return view('guest.reservation.reservation-form');
     })->name('guest.reservation-form');
+
+    // Day Tour Reservation Form (Livewire)
+    Route::get('/day-tour-reservation', DayTourReservationForm::class)->name('guest.day-tour-reservation');
+
 
     Route::get('/proof-of-payment-page', function () {
         return view('guest.proof-of-payment-page');

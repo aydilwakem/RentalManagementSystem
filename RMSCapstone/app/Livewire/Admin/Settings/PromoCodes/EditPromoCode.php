@@ -32,6 +32,8 @@ class EditPromoCode extends Component
     public $is_active = false;
     public $property_category_id;
     public $propertyCategories;
+    public $stay_start_date;
+    public $stay_end_date;
 
     // --------------- Modals ------------------ //
     public $confirmEditItem = false;
@@ -64,6 +66,10 @@ class EditPromoCode extends Component
         $this->duration_days = $promoCode->duration_days;
         // $this->has_expiration = $promoCode->has_expiration;
         // $this->is_active = $promoCode->is_active;
+        
+        $this->stay_start_date = optional($promoCode->stay_start_date)->format('Y-m-d');
+        $this->stay_end_date = optional($promoCode->stay_end_date)->format('Y-m-d');
+
         $this->property_category_id = $promoCode->property_category_id;
 
         $this->propertyCategories = PropertyCategory::get();
@@ -104,6 +110,8 @@ class EditPromoCode extends Component
                 'min_booking_amount' => 'nullable|numeric|min:3000|max:20000',
                 'start_date' => 'nullable|date|before_or_equal:end_date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
+                'stay_start_date' => 'nullable|date|before_or_equal:stay_end_date',
+                'stay_end_date' => 'nullable|date|after_or_equal:stay_start_date',
                 'duration_days' => 'nullable|numeric|min:5|max:30',
                 'has_expiration' => 'required|in:0,1',
                 'is_active' => 'required|in:0,1',
@@ -118,7 +126,7 @@ class EditPromoCode extends Component
 
 
         // Convert blank optional numeric/date fields to NULL
-        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'duration_days', 'property_category_id'] as $field) {
+        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'stay_start_date', 'stay_end_date', 'duration_days', 'property_category_id'] as $field) {
             if (!isset($validated[$field]) || $validated[$field] === '') {
                 $validated[$field] = null;
             }
@@ -135,6 +143,8 @@ class EditPromoCode extends Component
             'min_booking_amount' => $this->min_booking_amount,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            'stay_start_date' => $this->stay_start_date,
+            'stay_end_date' => $this->stay_end_date,
             'duration_days' => $this->duration_days,
             'has_expiration' => $this->has_expiration,
             'is_active' => $this->is_active,

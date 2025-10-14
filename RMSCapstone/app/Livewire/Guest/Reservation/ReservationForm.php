@@ -849,7 +849,10 @@ class ReservationForm extends Component
             $this->promoCode,
             $baseSubtotal, // For minimum booking amount validation
             $roomBaseSubTotal,  // For discount calculation (BASE room rates only - no extra charges)
-            $propertyBreakdown  // For property category validation
+            $propertyBreakdown,  // For property category validation
+            $this->check_in_date,  // For date range validation
+            $this->check_out_date  // For date range validation
+
         );
 
         // Step 5: If promo validation fails, handle the error and exit

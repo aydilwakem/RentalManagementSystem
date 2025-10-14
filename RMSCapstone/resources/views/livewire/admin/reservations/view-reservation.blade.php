@@ -1216,7 +1216,7 @@
 
 
                     <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
-                    @if (!$this->discountsApplied)
+                    {{-- @if (!$this->discountsApplied)
                         @if ($transaction->promoCode)
                             <div class="mb-4">
                                 @if ($this->getTotalExtraGuests() > 0)
@@ -1250,7 +1250,15 @@
                                 Add PWD/SENIOR DISCOUNT
                             </x-button>
                         @endif
+                    @endif --}}
+
+                    @if (!$this->discountsApplied)
+                        <x-button wire:click="openDiscountModal" icon="fas fa-percent">
+                            Add PWD/SENIOR DISCOUNT
+                        </x-button>
                     @endif
+
+
                     <!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
 
                     <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
@@ -2373,7 +2381,7 @@
                 </div>
             @endif
 
-
+{{-- 
 @if ($activeModal === 'discounts')
     <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
         <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
@@ -2444,7 +2452,54 @@
             </div>
         </div>
     </div>
+@endif --}}
+
+<!-- Manual PWD/Senior Discount Modal -->
+@if ($showDiscountModal)
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+            <!-- Header -->
+            <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                <h2 class="text-2xl font-bold text-center">Apply PWD/Senior Discount</h2>
+                <button wire:click="closeDiscountModal"
+                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                    <span class="-translate-y-[2px]">&times;</span>
+                </button>
+            </div>
+
+            <!-- Simple Amount Input -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-medium mb-1">Total PWD/Senior Discount Amount <span class="text-red-500">*</span></label>
+                    <input type="number" 
+                           wire:model="manualDiscountAmount" 
+                           min="0" 
+                           max="{{ $this->computeBaseSubtotal() }}"
+                           step="0.01"
+                           class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"
+                           placeholder="0.00">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Maximum allowed: ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                    </p>
+                    @error('manualDiscountAmount')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-between mt-6">
+                <x-ghost-button wire:click="closeDiscountModal">
+                    Cancel
+                </x-ghost-button>
+                <x-button wire:click="applyDiscounts">
+                    Apply Discount
+                </x-button>
+            </div>
+        </div>
+    </div>
 @endif
+
 
             {{-- Add Voucher Modal --}}
             @if ($activeModal === 'voucher')

@@ -20,7 +20,7 @@ class PromoCodeService
      * @param array  $roomBreakdown  Array containing property category breakdown for discount calculation
      * @return array                 Result containing success status, message, and discount.
      */
-    public function validateAndApply(string $promoCode, float $bookingAmount, float $roomSubTotal, array $roomBreakdown = []): array
+    public function validateAndApply(string $promoCode, float $bookingAmount, float $roomSubTotal, array $roomBreakdown = [], ?string $checkInDate = null, ?string $checkOutDate = null): array
     {
         $promo = $this->findPromo($promoCode);
 
@@ -40,6 +40,14 @@ class PromoCodeService
         if ($this->hasReachedUsageLimit($promo)) {
             return $this->error('This promo code has reached its maximum usage limit.');
         }
+
+    // ADD THIS VALIDATION - Check stay date range (only if dates are provided)
+    if ($checkInDate && $checkOutDate && !$this->isWithinValidStayDateRange($promo, $checkInDate, $checkOutDate)) {
+        $stayStart = $promo->stay_start_date ? Carbon::parse($promo->stay_start_date)->format('M j, Y') : 'any date';
+        $stayEnd = $promo->stay_end_date ? Carbon::parse($promo->stay_end_date)->format('M j, Y') : 'any date';
+        return $this->error("This promo code is only valid for stays between {$stayStart} and {$stayEnd}.");
+    }
+
 
         if (!$promo->is_active) {
             return $this->error('This promo code is currently inactive.');
@@ -198,4 +206,40 @@ class PromoCodeService
             'promo' => null,
         ];
     }
+
+/**
+ * Checks if the reservation dates are within the valid stay date range of the promo code.
+ *
+ * @param PromoCode $promo
+ * @param string|null $checkInDate
+ * @param string|null $checkOutDate
+ * @return bool
+ */
+protected function isWithinValidStayDateRange(PromoCode $promo, ?string $checkInDate, ?string $checkOutDate): bool
+{
+    // If no stay date range is set, promo applies to all stay dates
+    if (is_null($promo->stay_start_date) && is_null($promo->stay_end_date)) {
+        return true;
+    }
+
+    // If no check-in/check-out dates provided, we can't validate stay dates
+    if (is_null($checkInDate) || is_null($checkOutDate)) {
+        return true;
+    }
+
+    $checkIn = Carbon::parse($checkInDate);
+    $checkOut = Carbon::parse($checkOutDate);
+
+    // Check if the entire stay falls within the promo's valid stay period
+    if ($promo->stay_start_date && $checkIn->lessThan(Carbon::parse($promo->stay_start_date))) {
+        return false; // Check-in is before promo's valid stay start
+    }
+
+    if ($promo->stay_end_date && $checkOut->greaterThan(Carbon::parse($promo->stay_end_date))) {
+        return false; // Check-out is after promo's valid stay end
+    }
+
+    return true;
+}
+
 }
