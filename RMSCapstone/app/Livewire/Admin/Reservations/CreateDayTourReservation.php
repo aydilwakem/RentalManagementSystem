@@ -49,7 +49,7 @@ class CreateDayTourReservation extends Component
     public $company_name;
     public $country;
     public $heard_from;
-    public $terms = 1;
+    // public $terms = 1;
 
     // Additional Guest related properties
     public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
@@ -405,7 +405,7 @@ class CreateDayTourReservation extends Component
             'heard_from' => $this->heard_from,
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
-            'terms' => $this->terms,
+            // 'terms' => $this->terms,
         ]);
     }
 
@@ -503,7 +503,7 @@ class CreateDayTourReservation extends Component
             'country' => 'required|string',
             'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
-            'terms' => 'required|accepted',
+            // 'terms' => 'required|accepted',
         ], [
             'selectedTour.required' => 'Please select a day tour.',
             'selectedRate.required' => 'Please select a rate for the tour.',
