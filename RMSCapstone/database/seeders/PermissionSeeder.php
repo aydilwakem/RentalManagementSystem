@@ -14,11 +14,32 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            //Daytours
+            "daytour-list",
+            "daytour-create", 
+            "daytour-view", 
+            "daytour-edit", 
+            "daytour-soft-delete", 
+
+            //Daytour Rates
+            "daytourrate-list", 
+            "daytourrate-create", 
+            "daytourrate-view", 
+            "daytourrate-edit", 
+            "daytourrate-soft-delete", 
+
+            //Daytour reservations
+            "daytour-reservation-list", 
+            "daytour-reservation-view", 
+            
+
+
+
             //Backup
-            "backup-create",
-            "backup-delete",
-            "backup-download",
-            "backup-view",
+            // "backup-create",
+            // "backup-delete",
+            // "backup-download",
+            // "backup-view",
             
             //Services
             // "service-list",

@@ -88,6 +88,10 @@
             'Promo Codes' => fn($p) => str_starts_with($p->name, 'promo-code'),
             ],
 
+            'Day Tour' => [
+            'Day Tour' => fn($p) => str_starts_with($p->name, 'daytour') || str_ends_with($p->name, 'daytour'),
+            ],
+
             'Reports' => [
             'Reports' => fn($p) => str_starts_with($p->name, 'reports') || str_ends_with($p->name, 'reports'),
             'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),

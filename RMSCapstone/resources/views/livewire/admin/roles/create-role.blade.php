@@ -127,6 +127,9 @@
                                 'Services' => [
                                 'Service' => fn($p) => str_starts_with($p->name, 'service'),
                                 ],
+                                'Day Tours' => [
+                                'Day Tours' => fn($p) => str_starts_with($p->name, 'daytour'),
+                                ],
                                 'Activity Logs' => [
                                 'Activity Logs' => fn($p) => str_starts_with($p->name, 'activity-logs'),
                                 ],

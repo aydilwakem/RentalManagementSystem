@@ -101,6 +101,9 @@
                         'Activities' => [
                         'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
                         ],
+                        'Day Tour' => [
+                        'Day Tour' => fn($p) => str_starts_with($p->name, 'daytour'),
+                        ],
                         'Services' => [
                         'Service' => fn($p) => str_starts_with($p->name, 'service'),
                         ],
