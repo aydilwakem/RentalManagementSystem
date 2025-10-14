@@ -1,7 +1,7 @@
 <div>
     <!-- HERO -->
     <section class="min-h-[70vh] md:h-screen bg-cover bg-center relative pt-20"
-        style="background-image: url('{{ asset('images/canopy-login2.png') }}');">
+        style="background-image: url('{{ asset('images/canopy-login2.webp') }}');">
         <div class="absolute inset-0 flex items-center justify-center text-center px-4">
             <div>
                 <h1 class="text-yellow-50 text-4xl md:text-6xl font-bold mb-2"
