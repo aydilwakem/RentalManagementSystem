@@ -28,6 +28,8 @@ class CreatePromoCode extends Component
     public $has_expiration = '';
     public $is_active = '';
     public $property_category_id;
+    public $stay_start_date;
+    public $stay_end_date;
 
 
     // ---------------------- MOUNT --------------------------------- //
@@ -70,6 +72,9 @@ class CreatePromoCode extends Component
                 'has_expiration' => 'required|in:0,1',
                 'is_active' => 'required|in:0,1',
                 'property_category_id' => 'nullable|exists:property_categories,id',
+                'stay_start_date' => 'nullable|date|before_or_equal:stay_end_date',
+                'stay_end_date' => 'nullable|date|after_or_equal:stay_start_date',
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmCreateItem = false;
@@ -77,7 +82,7 @@ class CreatePromoCode extends Component
         }
 
         // Convert blank optional numeric/date fields to NULL
-        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'duration_days', 'property_category_id'] as $field) {
+        foreach (['max_uses', 'min_booking_amount', 'start_date', 'end_date', 'stay_start_date', 'stay_end_date', 'duration_days', 'property_category_id'] as $field) {
             if (!isset($validated[$field]) || $validated[$field] === '') {
                 $validated[$field] = null;
             }

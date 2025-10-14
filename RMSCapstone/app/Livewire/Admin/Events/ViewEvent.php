@@ -284,7 +284,7 @@ class ViewEvent extends Component
         Log::info('Create Payment method called.');
 
         $this->validate([
-            'amount_paid' => 'required|numeric|min:100',
+            'amount_paid' => 'required|numeric|min:0',
             'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',

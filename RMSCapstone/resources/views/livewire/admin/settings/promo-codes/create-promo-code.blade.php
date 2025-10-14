@@ -273,7 +273,42 @@
                     </div>
                     @endif
 
+                    <!-- Stay Date Range Section -->
+<div class="col-span-2 mt-6">
+    <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Valid Stay Dates (Optional)</h3>
+    <p class="text-sm text-gray-600 mb-4 dark:text-gray-300">
+        If set, this promo will only apply to reservations with check-in/check-out dates within this range.
+        Leave blank to apply to all stay dates.
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Valid Stay Start Date -->
+        <div>
+            <label for="stay_start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                Valid Stay Start Date
+            </label>
+            <input type="date" wire:model="stay_start_date" id="stay_start_date" 
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+            @error('stay_start_date')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
 
+        <!-- Valid Stay End Date -->
+        <div>
+            <label for="stay_end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                Valid Stay End Date
+            </label>
+            <input type="date" wire:model="stay_end_date" id="stay_end_date" 
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+            @error('stay_end_date')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+</div>
 
                 </div>
 

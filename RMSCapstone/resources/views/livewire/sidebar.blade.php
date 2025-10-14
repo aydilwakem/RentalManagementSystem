@@ -312,6 +312,59 @@
                     </div>
                 </div>
 
+
+<!-- Day Tours Menu -->
+<div x-data="dropdown" class="relative">
+    @can('daytour-reservation-list')
+    <div @click="toggle('daytours')"
+        class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                {{ Route::is('admin.daytour-reservations-list*') || Route::is('admin.day-tour-rates*') || Route::is('admin.day-tours*') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+        <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-sun"></i>
+            <h1 x-cloak x-show="$store.sidebar.full">
+                Day Tours
+            </h1>
+        </div>
+        <svg x-cloak x-bind:class="$store.sidebar.full ? '' : 'sm:hidden'"
+            xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor">
+            <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+        </svg>
+    </div>
+    @endcan
+
+    <!-- Day Tours Dropdown content -->
+    <div x-cloak x-show="open" @click.outside="open = false"
+        x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
+        class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
+
+        <!-- Day Tour Reservations -->
+        @can('daytour-reservation-list')
+        <a href="{{ route('admin.daytour-reservations-list') }}" wire:navigate
+            class="block px-3 py-2 {{ Route::is('admin.daytour-reservations-list') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+            <h1 class="cursor-pointer">Reservations</h1>
+        </a>
+        @endcan
+
+        <!-- Day Tours -->
+        @can('daytour-list')
+        <a href="{{ route('admin.day-tours') }}" wire:navigate
+            class="block px-3 py-2 {{ Route::is('admin.day-tours') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+            <h1 class="cursor-pointer">Day Tours</h1>
+        </a>
+        @endcan
+
+        <!-- Day Tour Rates -->
+        @can('daytourrate-list')
+        <a href="{{ route('admin.day-tour-rates') }}" wire:navigate
+            class="block px-3 py-2 {{ Route::is('admin.day-tour-rates') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+            <h1 class="cursor-pointer">Rates</h1>
+        </a>
+        @endcan
+
+    </div>
+</div>
                 <!-- Payments Menu -->
                 <div x-data="dropdown" class="relative">
                     @can('house-list')

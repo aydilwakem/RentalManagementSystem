@@ -30,6 +30,8 @@ class PromoCode extends Model
         'has_expiration',
         'is_active',
         'property_category_id',
+        'stay_start_date',
+        'stay_end_date',
     ];
 
     protected $casts = [
@@ -37,6 +39,8 @@ class PromoCode extends Model
         'min_booking_amount'    => 'decimal:2',
         'start_date'            => 'datetime',
         'end_date'              => 'datetime',
+        'stay_start_date'       => 'datetime',
+        'stay_end_date'         => 'datetime',
         'has_expiration'        => 'boolean',
         'is_active'             => 'boolean',
         'max_uses'              => 'integer',

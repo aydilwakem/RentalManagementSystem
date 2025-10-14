@@ -74,6 +74,10 @@
                                 {{ \Carbon\Carbon::parse($promoCode->start_date)->format('F j, Y') }} </div>
                             <div><strong>Promo End Date:</strong>
                                 {{ \Carbon\Carbon::parse($promoCode->end_date)->format('F j, Y') }} </div>
+                            <div><strong>Promo Stay Start Date:</strong>
+                                {{ \Carbon\Carbon::parse($promoCode->stay_start_date)->format('F j, Y') }} </div>
+                            <div><strong>Promo Stay End Date:</strong>
+                                {{ \Carbon\Carbon::parse($promoCode->stay_end_date)->format('F j, Y') }} </div>
                         @else
                             <strong>Validity:</strong> No Expiration
                         @endif
