@@ -1,4 +1,13 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
+
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
+            {{ __('Day Tours') }}
+        </h2>
+    </x-slot>
+
+
+
     {{-- If there's no reservation, show this --}}
     @if ($transactions->isEmpty() && !$statusFilter && !$search)
         <!-- Empty Page Message -->
@@ -10,40 +19,41 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
-        
+
         <div class="mb-4">
             <div class="flex items-center justify-between">
                 {{-- <div class="flex items-center space-x-2">
                     <!-- Export Today's Tours Button -->
                     @can('daytour-reservation-export')
-                        <x-warning-button icon="fa fa-file" wire:click="exportToursToday">
-                            Export Today's Day Tours
-                        </x-warning-button>
+                    <x-warning-button icon="fa fa-file" wire:click="exportToursToday">
+                        Export Today's Day Tours
+                    </x-warning-button>
                     @endcan
                 </div> --}}
 
                 {{-- <!-- Soft Deletes -->
                 @can('daytour-reservation-soft-delete')
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-daytour-transactions') }}">
-                        Deleted Day Tours
-                    </x-button>
+                <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-daytour-transactions') }}">
+                    Deleted Day Tours
+                </x-button>
                 @endcan --}}
 
-                                    @can('')
-                            <x-button icon="fas fa-plus" href="{{ route('admin.create-day-tour-reservation') }}">
-                                New Transaction
-                            </x-button>
-                        @endcan
+                @can('')
+                    <x-button icon="fas fa-plus" href="{{ route('admin.create-day-tour-reservation') }}">
+                        New Transaction
+                    </x-button>
+                @endcan
             </div>
         </div>
 
         <!-- Table Container -->
-        <div class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+        <div
+            class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
             <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
                 <!-- Search-->
@@ -59,7 +69,8 @@
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search by name, email, or transaction number" required="">
+                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Search by name, email, or transaction number" required="">
                     </div>
                 </div>
 
@@ -69,7 +80,7 @@
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation Status:</label>
                         <select wire:model.live="statusFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -99,7 +110,7 @@
                     <span class="text-green-700 text-sm">Loading...</span>
                 </div>
             </div>
-            
+
             <div>
                 <table class="min-w-full text-left">
                     <thead wire:loading.remove wire:target="search, statusFilter"
@@ -161,10 +172,11 @@
                             <th scope="col" class="px-4 py-3">Action</th>
                         </tr>
                     </thead>
-                    
+
                     <tbody wire:loading.remove wire:target="search, statusFilter" class="text-left dark:bg-gray-700">
                         @forelse ($transactions as $transaction)
-                            <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                            <tr
+                                class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 {{-- ID --}}
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     <span>{{ $transaction->transaction_number }}</span>
@@ -193,7 +205,7 @@
 
                                 {{-- Guests --}}
                                 <td class="px-4 py-3">
-                                    {{ $transaction->pax }} 
+                                    {{ $transaction->pax }}
                                 </td>
 
                                 {{-- Amount --}}
@@ -204,25 +216,39 @@
                                 {{-- Transaction Status --}}
                                 <td class="px-4 py-2">
                                     @if ($transaction->transaction_status === 'pending')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting Payment</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
+                                            Payment</span>
                                     @elseif ($transaction->transaction_status === 'reserved')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending Verification</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
+                                            Verification</span>
                                     @elseif ($transaction->transaction_status === 'receipt_verified')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment Verified</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
+                                            Verified</span>
                                     @elseif ($transaction->transaction_status === 'confirmed')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
                                     @elseif ($transaction->transaction_status === 'ongoing')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going</span>
                                     @elseif ($transaction->transaction_status === 'done')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600">Completed</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600">Completed</span>
                                     @elseif ($transaction->transaction_status === 'no_show')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No Show</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
+                                            Show</span>
                                     @elseif ($transaction->transaction_status === 'terminated')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
                                     @elseif ($transaction->transaction_status === 'expired')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
                                     @elseif ($transaction->transaction_status === 'cancelled')
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
                                     @endif
                                 </td>
 
@@ -398,7 +424,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>

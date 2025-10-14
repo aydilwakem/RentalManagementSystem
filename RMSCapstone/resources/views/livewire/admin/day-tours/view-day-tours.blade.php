@@ -1,4 +1,5 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
+
     @if ($dayTours->isEmpty() && !$search && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
