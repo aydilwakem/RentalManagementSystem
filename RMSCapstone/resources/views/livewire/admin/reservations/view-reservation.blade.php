@@ -881,55 +881,24 @@
                                     Add Other Charges
                                 </button>
 
-                                {{-- <div class="border-t border-gray-200 my-1"></div>
+                                <div class="border-t border-gray-200 my-1"></div>
 
                                 <!------------------------  ADD PWD/SENIOR DISCOUNT ------------------------------------->
                                 @if (!$this->discountsApplied)
-                                @if ($transaction->promoCode)
+                               
                                 <div class="mb-4">
-                                    @if ($this->getTotalExtraGuests() > 0)
-                                    {{-- <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-2">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                            <span class="text-blue-700 font-semibold">Limited Discount
-                                                Availability</span>
-                                        </div>
-                                        <p class="text-blue-600 text-sm mt-1">
-                                            PWD/Senior discounts are available only for the {{
-                                            $this->getTotalExtraGuests() }} extra guest(s)
-                                            since a promo code is applied to this reservation.
-                                        </p>
-                                    </div> --}}
-                                    {{-- <x-button wire:click="openModal('discounts')" icon="fas fa-percent">
-                                        Add PWD/SENIOR DISCOUNT (Extra Guests Only)
-                                    </x-button>
-                                    <button wire:click="openModal('discounts')"
-                                        class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-percent mr-2 text-green-600"></i>
-                                        Add PWD/Senior Discount <br>
-                                        <span class="text-xs">(Extra Guests Only)</span>
-                                    </button>
-                                    @else
-                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
-                                            <span class="text-yellow-700 font-semibold">Discounts Not Available</span>
-                                        </div>
-                                        <p class="text-yellow-600 text-sm mt-1">
-                                            PWD/Senior discounts are not available when a promo code is applied, unless
-                                            there are extra guests in the reservation.
-                                        </p>
-                                    </div>
-                                    @endif
-                                </div>
-                                @else
-                                <button wire:click="openModal('discounts')"
+                                 
+                    
+                                <button wire:click="openDiscountModal"
                                     class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-percent mr-2 text-green-600"></i>
                                     Add PWD/Senior Discount
                                 </button>
                                 @endif
-                                @endif --}}
+
+
+                            </div>
+
                             </div>
                         </div>
                     </div>
@@ -1321,44 +1290,10 @@
                 @endif
                 @endif --}}
 
-                @if (!$this->discountsApplied)
-                <x-button wire:click="openDiscountModal" icon="fas fa-percent">
-                    Add PWD/SENIOR DISCOUNT
-                </x-button>
-                @endif
-
 
                 <!--------------------  END OF PWD/SENIOR DISCOUNT ---------------------------------->
 
-                <!------------------------  REQUEST REMAINING BALANCE ------------------------------------->
-                <div class="flex justify-center">
-                    @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
-                    <x-button wire:click="requestRemainingBalance" wire:loading.attr="disabled" class="mt-6">
-                        <div class="flex items-center justify-center">
-                            <!-- Spinner -->
-                            <span wire:loading class="mr-2" wire:target="requestRemainingBalance">
-                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                    </path>
-                                </svg>
-                            </span>
-
-                            <i class="fas fa-money-bill-wave mr-2" wire:loading.remove
-                                wire:target="requestRemainingBalance"></i>
-
-                            <span wire:loading.remove wire:target="requestRemainingBalance">
-                                Email Balance Request
-                            </span>
-                        </div>
-                    </x-button>
-                    @elseif ($invoice->balance_due > 0 && $invoice->requested_remaining_balance)
-                    <p class="text-gray-500 italic">Waiting for guest to pay remaining balance...</p>
-                    @endif
-                </div>
-                <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
+           
 
             </div>
             @else
@@ -2488,6 +2423,55 @@
                 </div>
             </div>
             @endif
+
+            --}}
+
+            <!-- Manual PWD/Senior Discount Modal -->
+            @if ($showDiscountModal)
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[500px] max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                        <!-- Header -->
+                        <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                            <h2 class="text-2xl font-bold text-center">Apply PWD/Senior Discount</h2>
+                            <button wire:click="closeDiscountModal"
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                                <span class="-translate-y-[2px]">&times;</span>
+                            </button>
+                        </div>
+
+                        <!-- Simple Amount Input -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-medium mb-1 dark:text-gray-300">Total PWD/Senior Discount Amount <span class="text-red-500">*</span></label>
+                                <input type="number" 
+                                    wire:model="manualDiscountAmount" 
+                                    min="0" 
+                                    max="{{ $this->computeBaseSubtotal() }}"
+                                    step="0.01"
+                                    class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="0.00">
+                                <p class="text-xs text-gray-500 mt-1 dark:text-gray-400">
+                                    Maximum allowed: ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
+                                </p>
+                                @error('manualDiscountAmount')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between mt-6">
+                            <x-ghost-button wire:click="closeDiscountModal" class="dark:bg-gray-700 dark:text-gray-300">
+                                Cancel
+                            </x-ghost-button>
+                            <x-button wire:click="applyDiscounts">
+                                Apply Discount
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+                        
 
             {{-- Add Voucher Modal --}}
             @if ($activeModal === 'voucher')

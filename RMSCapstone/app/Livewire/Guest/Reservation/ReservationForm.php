@@ -876,14 +876,14 @@ class ReservationForm extends Component
         $this->getAvailableRooms();
     }
 
-/**
- * Computes the subtotal of base room rates only, excluding extra guest charges
- */
-public function computeBaseRoomSubtotal(): float
-{
-    return collect($this->getItemsByType('room'))
-        ->sum('roomAmount'); // This is the base room rate without extra charges
-}
+    /**
+     * Computes the subtotal of base room rates only, excluding extra guest charges
+     */
+    public function computeBaseRoomSubtotal(): float
+    {
+        return collect($this->getItemsByType('room'))
+            ->sum('roomAmount'); // This is the base room rate without extra charges
+    }
 
     public function computeSubtotalAfterDiscount(): float
     {
@@ -2255,22 +2255,22 @@ public function computeBaseRoomSubtotal(): float
     protected function loadRooms(): void
     {
         $this->rooms = Property::ofType('Room')
-        ->availableRooms()
-        ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
-        ->get()
-        ->map(function ($room) {
-            // Get rate summary instead of single dynamic rate
-            $rateSummary = $this->roomRateService->getRateSummary($room, $this->check_in_date, $this->check_out_date);
+            ->availableRooms()
+            ->with(['transactions.feedbacks.feedbackRatings', 'transactions.transactionUser'])
+            ->get()
+            ->map(function ($room) {
+                // Get rate summary instead of single dynamic rate
+                $rateSummary = $this->roomRateService->getRateSummary($room, $this->check_in_date, $this->check_out_date);
 
-            $room->dynamic_rate = $rateSummary['total_amount'] ?? $room->amount;
-            $room->rate_name = 'Multiple Rates';
-            $room->rate_type = 'Multiple';
-            $room->rate_id = null;
-            $room->rate_summary = $rateSummary;
-            $room->applied_rates = $this->roomRateService->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
+                $room->dynamic_rate = $rateSummary['total_amount'] ?? $room->amount;
+                $room->rate_name = 'Multiple Rates';
+                $room->rate_type = 'Multiple';
+                $room->rate_id = null;
+                $room->rate_summary = $rateSummary;
+                $room->applied_rates = $this->roomRateService->getAppliedRatesForStay($room, $this->check_in_date, $this->check_out_date);
 
-            return $room;
-        });
+                return $room;
+            });
     }
 
 
@@ -2397,7 +2397,7 @@ public function computeBaseRoomSubtotal(): float
         }
 
         // Sort by priority: Peak > Holiday > Weekend > Weekdays > Base
-        usort($rates, function($a, $b) {
+        usort($rates, function ($a, $b) {
             $priority = ['Peak' => 1, 'Holiday' => 2, 'Weekend' => 3, 'Weekdays' => 4, null => 5];
             $aPriority = $priority[$a['rate_type']] ?? 6;
             $bPriority = $priority[$b['rate_type']] ?? 6;
@@ -2431,5 +2431,4 @@ public function computeBaseRoomSubtotal(): float
     {
         return $this->roomRateService->getRateBreakdown($room, $checkInDate, $checkOutDate);
     }
-
 }

@@ -129,46 +129,46 @@ class DayTourReservationForm extends Component
     }
 
     // ----------------------- TOUR SELECTION LOGIC ---------------------------- //
-public function loadAvailableTours()
-{
-    $this->availableTours = DayTour::active()
-        ->with(['activeRates']) // Eager load the relationship
-        ->get()
-        ->map(function ($tour) {
-            $tour->available_rates = $this->getAvailableRatesForTour($tour);
-            return $tour;
-        })
-        ->filter(function ($tour) {
-            // Only show tours that have available rates
-            return $tour->available_rates->isNotEmpty();
-        });
-}
-
-public function getAvailableRatesForTour($tour)
-{
-    $dayType = $this->getDayType($this->tourDate);
-    
-    Log::info("Getting rates for tour: {$tour->id}, Date: {$this->tourDate}, Day Type: {$dayType}");
-    
-    // Ensure we have active rates relationship loaded
-    if (!$tour->relationLoaded('activeRates')) {
-        $tour->load('activeRates');
+    public function loadAvailableTours()
+    {
+        $this->availableTours = DayTour::active()
+            ->with(['activeRates']) // Eager load the relationship
+            ->get()
+            ->map(function ($tour) {
+                $tour->available_rates = $this->getAvailableRatesForTour($tour);
+                return $tour;
+            })
+            ->filter(function ($tour) {
+                // Only show tours that have available rates
+                return $tour->available_rates->isNotEmpty();
+            });
     }
-    
-    Log::info("Available rates count: " . $tour->activeRates->count());
-    
-    $availableRates = $tour->activeRates
-        ->filter(function ($rate) use ($dayType) {
-            $matches = $rate->day_type === $dayType;
-            Log::info("Rate {$rate->id}: day_type={$rate->day_type}, matches={$matches}");
-            return $matches;
-        })
-        ->values();
 
-    Log::info("Filtered rates count: " . $availableRates->count());
-    
-    return $availableRates ?? collect();
-}
+    public function getAvailableRatesForTour($tour)
+    {
+        $dayType = $this->getDayType($this->tourDate);
+
+        Log::info("Getting rates for tour: {$tour->id}, Date: {$this->tourDate}, Day Type: {$dayType}");
+
+        // Ensure we have active rates relationship loaded
+        if (!$tour->relationLoaded('activeRates')) {
+            $tour->load('activeRates');
+        }
+
+        Log::info("Available rates count: " . $tour->activeRates->count());
+
+        $availableRates = $tour->activeRates
+            ->filter(function ($rate) use ($dayType) {
+                $matches = $rate->day_type === $dayType;
+                Log::info("Rate {$rate->id}: day_type={$rate->day_type}, matches={$matches}");
+                return $matches;
+            })
+            ->values();
+
+        Log::info("Filtered rates count: " . $availableRates->count());
+
+        return $availableRates ?? collect();
+    }
 
     public function getDayType($date)
     {
@@ -179,18 +179,17 @@ public function getAvailableRatesForTour($tour)
     public function selectTour($tourId, $rateId = null)
     {
         $this->selectedTour = DayTour::find($tourId);
-        
+
         if ($this->selectedTour) {
             $availableRates = $this->getAvailableRatesForTour($this->selectedTour);
-            
+
             if ($rateId) {
                 $this->selectedRate = $availableRates->firstWhere('id', $rateId);
             } else {
                 $this->selectedRate = $availableRates->first();
             }
         }
-        $this->calculateSubtotal(); 
-
+        $this->calculateSubtotal();
     }
 
     public function updatedTourDate()
@@ -200,37 +199,36 @@ public function getAvailableRatesForTour($tour)
         $this->loadAvailableTours();
     }
 
-public function calculateSubtotal()
-{
-    if (!$this->selectedRate) {
-        $this->subtotal = 0;
-        $this->convenience_fee = 0;
-        $this->total_amount = 0;
-        return;
-    }
+    public function calculateSubtotal()
+    {
+        if (!$this->selectedRate) {
+            $this->subtotal = 0;
+            $this->convenience_fee = 0;
+            $this->total_amount = 0;
+            return;
+        }
 
-    $adultTotal = $this->adultCount * $this->selectedRate->adult_rate;
-    $kidTotal = $this->kidCount * $this->selectedRate->kid_rate;
-    $this->subtotal = $adultTotal + $kidTotal;
-    
-    // Automatically calculate convenience fee (3%)
-    $this->convenience_fee = $this->subtotal * 0.03;
-    $this->total_amount = $this->subtotal + $this->convenience_fee;
-}
+        $adultTotal = $this->adultCount * $this->selectedRate->adult_rate;
+        $kidTotal = $this->kidCount * $this->selectedRate->kid_rate;
+        $this->subtotal = $adultTotal + $kidTotal;
+
+        // Automatically calculate convenience fee (3%)
+        $this->convenience_fee = $this->subtotal * 0.03;
+        $this->total_amount = $this->subtotal + $this->convenience_fee;
+    }
 
     public function updatedAdultCount()
     {
-    $this->totalGuests = $this->adultCount + $this->kidCount;
-    $this->validateGuestCount();
-    $this->calculateSubtotal();
-
+        $this->totalGuests = $this->adultCount + $this->kidCount;
+        $this->validateGuestCount();
+        $this->calculateSubtotal();
     }
 
     public function updatedKidCount()
     {
-    $this->totalGuests = $this->adultCount + $this->kidCount;
-    $this->validateGuestCount();
-    $this->calculateSubtotal();
+        $this->totalGuests = $this->adultCount + $this->kidCount;
+        $this->validateGuestCount();
+        $this->calculateSubtotal();
     }
 
     protected function validateGuestCount()
@@ -309,7 +307,7 @@ public function calculateSubtotal()
     public function addMultipleGuests()
     {
         $this->validateGuestData();
-        
+
         if (count($this->guests) >= ($this->totalGuests - 1)) {
             $this->addError('guests', 'Maximum number of additional guests reached.');
             return;
@@ -473,7 +471,7 @@ public function calculateSubtotal()
             'invoice_number' => 'INV-DT-' . strtoupper(Str::random(8)),
             'invoice_type' => 'Day_Tour',
             'base_subtotal' => $this->subtotal,
-            'sub_total' => $this->subtotal,
+            'sub_total' => $this->total_amount,
             'deposit_paid' => 0,
             'amount_paid' => 0,
             'balance_due' => $this->total_amount,

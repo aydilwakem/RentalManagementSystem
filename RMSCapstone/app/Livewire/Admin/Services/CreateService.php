@@ -40,7 +40,7 @@ class CreateService extends Component
             $validated =  $this->validate([
                 'name' => 'required|string|max:100|unique:prd_services,name',
                 'description' => 'nullable|string|max:255',
-                'amount' => 'required|numeric|min:100|max:10000',
+                'amount' => 'required|numeric|min:5|max:10000',
                 'type' => 'required|in:addon,penalty,package,food,merchandise',
                 'unit' => 'required|string|max:255',
                 'is_active' => 'required|in:0,1',

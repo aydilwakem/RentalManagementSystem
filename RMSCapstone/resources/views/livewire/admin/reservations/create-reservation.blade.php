@@ -26,13 +26,12 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
         <!------------------------- ENTER DATES SECTION -------------------------->
-        <!-- Check in and check out dates-->
+           <!-- Check in and check out dates-->
         <div class="justify-center items-center text-center">
             <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-3">
                 <div class="flex flex-col">
                     <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Check-In</label>
                     <input type="date" wire:model.live="check_in_date"
-                        min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
                         class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Check-in">
@@ -43,7 +42,6 @@
                 <div class="flex flex-col">
                     <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Check-Out</label>
                     <input type="date" wire:model.live="check_out_date"
-                        min="{{ isset($check_in_date) ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : \Carbon\Carbon::now('Asia/Manila')->addDay()->format('Y-m-d') }}"
                         class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Check-out">
@@ -51,6 +49,7 @@
             </div>
 
         </div>
+
 
         <!------------------------------ Reservation Date Details --------------------------->
         @php

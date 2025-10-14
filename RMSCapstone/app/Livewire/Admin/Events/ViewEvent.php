@@ -156,7 +156,7 @@ class ViewEvent extends Component
     protected function loadExistingItems(Transaction $event)
     {
         // Load existing rooms
-        $existingRooms = $event->properties()->whereHas('type', function($q) {
+        $existingRooms = $event->properties()->whereHas('type', function ($q) {
             $q->where('name', 'Room');
         })->get();
 
@@ -317,14 +317,6 @@ class ViewEvent extends Component
 
         // 2️⃣ Recalculate invoice totals
         $this->recalculateInvoice();
-
-        // 3️⃣ Update transaction status if needed
-        if ($this->transaction->transaction_status === 'reserved') {
-            $this->transaction->update([
-                'transaction_status' => 'receipt_verified',
-                'updated_at' => now(),
-            ]);
-        }
 
         // 4️⃣ Reset form fields
         $this->reset([

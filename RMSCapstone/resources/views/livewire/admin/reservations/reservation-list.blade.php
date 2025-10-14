@@ -13,9 +13,8 @@
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                        {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -62,7 +61,7 @@
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search" required="">
+                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search" required="">
                     </div>
 
                     <!-- Bulk Actions Button -->
@@ -94,7 +93,7 @@
                             Status:</label>
                         <select wire:model.live="statusFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -195,13 +194,15 @@
                                     class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
 
                                     {{-- ID --}}
-                                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{-- <span>{{ $fakeIDs[$transaction->id] ?? 'TXN-???' }}</span> --}}
                                         <span>{{ $transaction->transaction_number }}</span>
                                     </th>
 
                                     {{-- First Name and Last Name --}}
-                                    <td scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <td scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         {{ $transaction->transactionUser->first_name }}
                                         {{ $transaction->transactionUser->last_name }}
                                     </td>
@@ -272,7 +273,8 @@
 
                                         <!-- Rebooked Indicator -->
                                         @if($transaction->is_rebooked)
-                                            <span class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
                                                 <i class="fas fa-calendar-repeat mr-1"></i>
                                                 Rebooked
                                             </span>
@@ -381,7 +383,7 @@
                                                     <!-- Rebook -->
                                                     @if($transaction->transaction_status === 'confirmed')
                                                         <a href="{{ route('admin.rebook-reservation', ['transaction' => $transaction->id]) }}"
-                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                             <i class="fas fa-calendar-plus mr-2 text-purple-600"></i> Rebook
                                                         </a>
                                                     @endif
@@ -496,7 +498,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>

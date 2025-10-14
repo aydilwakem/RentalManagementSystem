@@ -87,10 +87,11 @@ class PaymentService
                 ]);
             }
 
+
             // Update transaction status if applicable
             if (
                 in_array($transaction->transaction_status, ['pending', 'reserved']) &&
-                $totalPaid >= $transaction->deposit_amount
+                $totalPaid > 0
             ) {
                 $transaction->update(['transaction_status' => 'receipt_verified']);
             }

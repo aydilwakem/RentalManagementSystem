@@ -308,7 +308,6 @@ class ViewReservation extends Component
         $this->guest['country_of_origin'] = $this->guest['country_of_origin'] ?? 'Philippines';
 
         $this->updateTransactionPax();
-
     }
 
     public function loadAllInvoiceItems()
@@ -400,119 +399,118 @@ class ViewReservation extends Component
 
 
     /**
- * ------------------------- ROOM CHANGE MANAGEMENT ---------------------------
- *
- * Handles changing rooms for existing reservations.
- * ----------------------------------------------------------------------------
- */
+     * ------------------------- ROOM CHANGE MANAGEMENT ---------------------------
+     *
+     * Handles changing rooms for existing reservations.
+     * ----------------------------------------------------------------------------
+     */
 
-public function resetChangeRoomModal()
-{
-    $this->reset([
-        'changingRoomPivotId',
-        'currentRoomDetails', 
-        'availableRooms',
-        'selectedNewRoomId',
-        'showChangeRoomModal'
-    ]);
-}
-
-
-
-public function openChangeRoomModal($pivotId)
-{
-    Log::info('Open Change Room modal called for pivot ID: ' . $pivotId);
-    
-    // Reset modal state first
-    $this->resetChangeRoomModal();
-    
-    $this->changingRoomPivotId = $pivotId;
-    
-    // Get current room details
-    $currentPivot = TransactionProperty::with('property')->find($pivotId);
-    $this->currentRoomDetails = $currentPivot;
-    $currentRoom = $currentPivot->property;
-    
-    // Get available rooms for the reservation dates
-    $availableRooms = app(RoomAvailabilityService::class)->getAvailableRooms(
-        $this->transaction->start_datetime,
-        $this->transaction->end_datetime
-    );
-    
-    // Create a collection and ensure all items are Property models
-    $roomsCollection = collect();
-    
-    // Add all available rooms
-    foreach ($availableRooms as $room) {
-        $roomsCollection->push($room);
-    }
-    
-    // Add current room if not already in the list
-    if ($currentRoom) {
-        $roomExists = $roomsCollection->contains(function ($room) use ($currentRoom) {
-            return $room->id === $currentRoom->id;
-        });
-        
-        if (!$roomExists) {
-            // Add current room and mark it as available
-            $currentRoom->is_booked = false;
-            $roomsCollection->push($currentRoom);
-        } else {
-            // Ensure current room is marked as available
-            $roomsCollection = $roomsCollection->map(function ($room) use ($currentRoom) {
-                if ($room->id === $currentRoom->id) {
-                    $room->is_booked = false;
-                }
-                return $room;
-            });
-        }
-    }
-    
-    $this->availableRooms = $roomsCollection;
-    $this->selectedNewRoomId = $currentRoom->id ?? null;
-    $this->showChangeRoomModal = true;
-}
-
-
-public function changeRoom()
-{
-    Log::info('Change Room method called.');
-    
-    $this->validate([
-        'selectedNewRoomId' => 'required|exists:properties,id',
-    ]);
-    
-    try {
-        $currentPivot = TransactionProperty::find($this->changingRoomPivotId);
-        $newRoom = Property::find($this->selectedNewRoomId);
-        
-        if (!$currentPivot || !$newRoom) {
-            throw new \Exception('Room not found.');
-        }
-        
-        // Update the transaction property with new room
-        $currentPivot->update([
-            'property_id' => $this->selectedNewRoomId,
-            'amount' => $newRoom->amount * $currentPivot->days,
-            'updated_at' => now(),
+    public function resetChangeRoomModal()
+    {
+        $this->reset([
+            'changingRoomPivotId',
+            'currentRoomDetails',
+            'availableRooms',
+            'selectedNewRoomId',
+            'showChangeRoomModal'
         ]);
-        
-        // Recalculate the transaction property amounts
-        $this->recalculateTransactionProperty($this->changingRoomPivotId);
-        
-        // Update invoice totals
-        $this->recalculateInvoice();
-        $this->loadAllInvoiceItems();
-        
-        // Reset modal state and close
-        $this->resetChangeRoomModal();
-        session()->flash('success', 'Room changed successfully!');
-        
-    } catch (\Exception $e) {
-        Log::error('Room change failed: ' . $e->getMessage());
-        session()->flash('error', 'Failed to change room: ' . $e->getMessage());
     }
-}
+
+
+
+    public function openChangeRoomModal($pivotId)
+    {
+        Log::info('Open Change Room modal called for pivot ID: ' . $pivotId);
+
+        // Reset modal state first
+        $this->resetChangeRoomModal();
+
+        $this->changingRoomPivotId = $pivotId;
+
+        // Get current room details
+        $currentPivot = TransactionProperty::with('property')->find($pivotId);
+        $this->currentRoomDetails = $currentPivot;
+        $currentRoom = $currentPivot->property;
+
+        // Get available rooms for the reservation dates
+        $availableRooms = app(RoomAvailabilityService::class)->getAvailableRooms(
+            $this->transaction->start_datetime,
+            $this->transaction->end_datetime
+        );
+
+        // Create a collection and ensure all items are Property models
+        $roomsCollection = collect();
+
+        // Add all available rooms
+        foreach ($availableRooms as $room) {
+            $roomsCollection->push($room);
+        }
+
+        // Add current room if not already in the list
+        if ($currentRoom) {
+            $roomExists = $roomsCollection->contains(function ($room) use ($currentRoom) {
+                return $room->id === $currentRoom->id;
+            });
+
+            if (!$roomExists) {
+                // Add current room and mark it as available
+                $currentRoom->is_booked = false;
+                $roomsCollection->push($currentRoom);
+            } else {
+                // Ensure current room is marked as available
+                $roomsCollection = $roomsCollection->map(function ($room) use ($currentRoom) {
+                    if ($room->id === $currentRoom->id) {
+                        $room->is_booked = false;
+                    }
+                    return $room;
+                });
+            }
+        }
+
+        $this->availableRooms = $roomsCollection;
+        $this->selectedNewRoomId = $currentRoom->id ?? null;
+        $this->showChangeRoomModal = true;
+    }
+
+
+    public function changeRoom()
+    {
+        Log::info('Change Room method called.');
+
+        $this->validate([
+            'selectedNewRoomId' => 'required|exists:properties,id',
+        ]);
+
+        try {
+            $currentPivot = TransactionProperty::find($this->changingRoomPivotId);
+            $newRoom = Property::find($this->selectedNewRoomId);
+
+            if (!$currentPivot || !$newRoom) {
+                throw new \Exception('Room not found.');
+            }
+
+            // Update the transaction property with new room
+            $currentPivot->update([
+                'property_id' => $this->selectedNewRoomId,
+                'amount' => $newRoom->amount * $currentPivot->days,
+                'updated_at' => now(),
+            ]);
+
+            // Recalculate the transaction property amounts
+            $this->recalculateTransactionProperty($this->changingRoomPivotId);
+
+            // Update invoice totals
+            $this->recalculateInvoice();
+            $this->loadAllInvoiceItems();
+
+            // Reset modal state and close
+            $this->resetChangeRoomModal();
+            session()->flash('success', 'Room changed successfully!');
+        } catch (\Exception $e) {
+            Log::error('Room change failed: ' . $e->getMessage());
+            session()->flash('error', 'Failed to change room: ' . $e->getMessage());
+        }
+    }
 
 
 
@@ -557,91 +555,91 @@ public function changeRoom()
 
     public $showDiscountModal = false;
     public $manualDiscountAmount = 0;
-                
-
-
-public function updateTransactionPax()
-{
-    $totalAdults = $this->transactionProperties->sum('adults');
-    $totalKids = $this->transactionProperties->sum('kids');
-    $totalPax = $totalAdults + $totalKids;
-
-    // Update the transaction's pax field
-    $this->transaction->update([
-        'pax' => $totalPax
-    ]);
-
-    // Refresh the transaction model
-    $this->transaction->refresh();
-}
 
 
 
+    public function updateTransactionPax()
+    {
+        $totalAdults = $this->transactionProperties->sum('adults');
+        $totalKids = $this->transactionProperties->sum('kids');
+        $totalPax = $totalAdults + $totalKids;
 
-/**
- * -------------------- MANUAL PWD/SENIOR DISCOUNT -----------------------------
- * Simple manual input for PWD/Senior discount amount
- * ---------------------------------------------------------------------------------
- */
-public function applyDiscounts()
-{
-    $this->validate([
-        'manualDiscountAmount' => 'required|numeric|min:0|max:' . $this->computeBaseSubtotal(),
-    ]);
+        // Update the transaction's pax field
+        $this->transaction->update([
+            'pax' => $totalPax
+        ]);
 
-    // Fetch PWD and Senior discount types
-    $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
-    $seniorDiscountType = DiscountType::where('name', 'senior')->first();
-
-    if (!$pwdDiscountType || !$seniorDiscountType) {
-        session()->flash('error', 'PWD/Senior discount types not found in system.');
-        return;
+        // Refresh the transaction model
+        $this->transaction->refresh();
     }
 
-    // Delete existing PWD & Senior discount rows before applying new ones
-    InvoiceDiscount::where('invoice_id', $this->invoice->id)
-        ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
-        ->delete();
 
-    // Apply the manual amount as PWD discount
-    InvoiceDiscount::create([
-        'invoice_id' => $this->invoice->id,
-        'discount_type_id' => $pwdDiscountType->id,
-        'discount_value' => $this->manualDiscountAmount,
-        'quantity' => 1,
-        'notes' => 'Manual PWD/Senior Discount',
-    ]);
 
-    // Use the same recalculation pattern as promo codes
-    $this->recalculateInvoice();
-    
-    $this->closeDiscountModal();
-    session()->flash('success', 'PWD/Senior discount applied successfully!');
-}
 
-public function openDiscountModal()
-{
-    $this->manualDiscountAmount = 0;
-    $this->showDiscountModal = true;
-}
+    /**
+     * -------------------- MANUAL PWD/SENIOR DISCOUNT -----------------------------
+     * Simple manual input for PWD/Senior discount amount
+     * ---------------------------------------------------------------------------------
+     */
+    public function applyDiscounts()
+    {
+        $this->validate([
+            'manualDiscountAmount' => 'required|numeric|min:0|max:' . $this->computeBaseSubtotal(),
+        ]);
 
-public function closeDiscountModal()
-{
-    $this->showDiscountModal = false;
-    $this->reset(['manualDiscountAmount']);
-}
+        // Fetch PWD and Senior discount types
+        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
 
-/**
- * Check if PWD/Senior discount is already applied
- */
-public function getDiscountsAppliedProperty()
-{
-    $appliedTypes = $this->invoice->discounts->pluck('discount_type_id')->toArray();
-    $requiredTypes = DiscountType::whereIn('name', ['pwd', 'senior'])->pluck('id')->toArray();
+        if (!$pwdDiscountType || !$seniorDiscountType) {
+            session()->flash('error', 'PWD/Senior discount types not found in system.');
+            return;
+        }
 
-    // Check if any PWD/Senior discount is applied
-    return !empty(array_intersect($requiredTypes, $appliedTypes));
-}
+        // Delete existing PWD & Senior discount rows before applying new ones
+        InvoiceDiscount::where('invoice_id', $this->invoice->id)
+            ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
+            ->delete();
+
+        // Apply the manual amount as PWD discount
+        InvoiceDiscount::create([
+            'invoice_id' => $this->invoice->id,
+            'discount_type_id' => $pwdDiscountType->id,
+            'discount_value' => $this->manualDiscountAmount,
+            'quantity' => 1,
+            'notes' => 'Manual PWD/Senior Discount',
+        ]);
+
+        // Use the same recalculation pattern as promo codes
+        $this->recalculateInvoice();
+
+        $this->closeDiscountModal();
+        session()->flash('success', 'PWD/Senior discount applied successfully!');
+    }
+
+    public function openDiscountModal()
+    {
+        $this->manualDiscountAmount = 0;
+        $this->showDiscountModal = true;
+    }
+
+    public function closeDiscountModal()
+    {
+        $this->showDiscountModal = false;
+        $this->reset(['manualDiscountAmount']);
+    }
+
+    /**
+     * Check if PWD/Senior discount is already applied
+     */
+    public function getDiscountsAppliedProperty()
+    {
+        $appliedTypes = $this->invoice->discounts->pluck('discount_type_id')->toArray();
+        $requiredTypes = DiscountType::whereIn('name', ['pwd', 'senior'])->pluck('id')->toArray();
+
+        // Check if any PWD/Senior discount is applied
+        return !empty(array_intersect($requiredTypes, $appliedTypes));
+    }
 
 
 
@@ -664,23 +662,23 @@ public function getDiscountsAppliedProperty()
     }
 
 
-public function removeDiscount($invoiceId, $discountTypeId)
-{
-    $discount = InvoiceDiscount::where('invoice_id', $invoiceId)
-        ->where('discount_type_id', $discountTypeId)
-        ->first();
+    public function removeDiscount($invoiceId, $discountTypeId)
+    {
+        $discount = InvoiceDiscount::where('invoice_id', $invoiceId)
+            ->where('discount_type_id', $discountTypeId)
+            ->first();
 
-    if ($discount) {
-        $discount->delete(); // remove the row completely
-        Log::info("Discount type {$discountTypeId} removed from invoice {$invoiceId}");
+        if ($discount) {
+            $discount->delete(); // remove the row completely
+            Log::info("Discount type {$discountTypeId} removed from invoice {$invoiceId}");
+        }
+
+        // Use the same recalculation pattern as promo codes
+        $this->recalculateInvoice();
+
+        Log::info("Invoice {$invoiceId} recalculated after discount removal.");
+        session()->flash('success', 'Discount removed successfully!');
     }
-
-    // Use the same recalculation pattern as promo codes
-    $this->recalculateInvoice();
-
-    Log::info("Invoice {$invoiceId} recalculated after discount removal.");
-    session()->flash('success', 'Discount removed successfully!');
-}
 
     /**
      * ----------------------------- ITEM CART MANAGEMENT ------------------------------
@@ -813,7 +811,7 @@ public function removeDiscount($invoiceId, $discountTypeId)
     {
         $this->reset([
             'editingRoomId',
-            'roomTotalAdults', 
+            'roomTotalAdults',
             'roomTotalKids',
             'showEditRoomModal'
         ]);
@@ -827,7 +825,7 @@ public function removeDiscount($invoiceId, $discountTypeId)
 
         // Reset modal state first
         $this->resetEditRoomModal();
-        
+
         $pivot = DB::table('transaction_properties')->where('id', $pivotId)->first();
 
         if ($pivot) {
@@ -839,7 +837,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
 
         // save guest
         $this->updateTransactionPax();
-
     }
 
 
@@ -876,7 +873,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
 
         // save guest
         $this->updateTransactionPax();
-
     }
 
     public function incrementAdults()
@@ -884,7 +880,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
         $this->roomTotalAdults++;
         // save guest
         $this->updateTransactionPax();
-
     }
 
     public function decrementAdults()
@@ -894,7 +889,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
         }
         // save guest
         $this->updateTransactionPax();
-
     }
 
     public function incrementKids()
@@ -902,7 +896,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
         $this->roomTotalKids++;
         // save guest
         $this->updateTransactionPax();
-
     }
 
     public function decrementKids()
@@ -1081,7 +1074,7 @@ public function removeDiscount($invoiceId, $discountTypeId)
 
         // Reset guest input fields
         $this->reset('guest');
-        
+
         // save guest
         $this->updateTransactionPax();
 
@@ -1138,7 +1131,7 @@ public function removeDiscount($invoiceId, $discountTypeId)
         $this->loadGuestDetails();
         $this->loadAllInvoiceItems();
         $this->recalculateInvoice();
-        
+
         // save guest
         $this->updateTransactionPax();
 
@@ -1348,7 +1341,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
         $this->showAddGuestModal = true;
         // save guest
         $this->updateTransactionPax();
-
     }
 
     public $addingGuestPivotId;
@@ -2009,8 +2001,8 @@ public function removeDiscount($invoiceId, $discountTypeId)
     }
 
 
- 
-    
+
+
 
     /**
      * ---------------------------- MODALS ----------------------------------------
@@ -2117,12 +2109,6 @@ public function removeDiscount($invoiceId, $discountTypeId)
 
         $this->updatePaymentStatus($paymentService, $this->amount_paid);
         $this->recalculateInvoice();
-        if ($this->transaction->transaction_status === 'reserved') {
-            $this->transaction->update([
-                'transaction_status' => 'receipt_verified',
-                'updated_at' => now(),
-            ]);
-        }
 
         $this->reset([
             'amount_paid',
@@ -2156,7 +2142,7 @@ public function removeDiscount($invoiceId, $discountTypeId)
         return $this->payment_screenshot->store('proof-of-payments', 'public');
     }
 
-    
+
 
     // --------------------- HELPER METHODS --------------------------- //
 
