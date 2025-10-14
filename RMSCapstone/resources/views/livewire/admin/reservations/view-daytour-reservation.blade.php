@@ -17,7 +17,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 space-y-6">
             <div class="flex space-x-2">
                 <!---------------------------- EXPORT DETAILS ---------------------------------------->
-                <x-button wire:click="exportDayTourDetails">
+                {{-- <x-button wire:click="exportDayTourDetails">
                     <span wire:loading wire:target="exportDayTourDetails" class="mr-2">
                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -33,7 +33,7 @@
                     <span wire:loading.remove wire:target="exportDayTourDetails">
                         Export PDF
                     </span>
-                </x-button>
+                </x-button> --}}
 
                 <!------------------------- GENERATE RECEIPT ---------------------------------->
                 @if ($transaction->transaction_status == 'done')

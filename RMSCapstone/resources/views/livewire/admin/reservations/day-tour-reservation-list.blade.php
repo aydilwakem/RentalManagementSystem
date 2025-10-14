@@ -17,14 +17,14 @@
         
         <div class="mb-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
+                {{-- <div class="flex items-center space-x-2">
                     <!-- Export Today's Tours Button -->
                     @can('daytour-reservation-export')
                         <x-warning-button icon="fa fa-file" wire:click="exportToursToday">
                             Export Today's Day Tours
                         </x-warning-button>
                     @endcan
-                </div>
+                </div> --}}
 
                 {{-- <!-- Soft Deletes -->
                 @can('daytour-reservation-soft-delete')
@@ -33,6 +33,12 @@
                         Deleted Day Tours
                     </x-button>
                 @endcan --}}
+
+                                    @can('')
+                            <x-button icon="fas fa-plus" href="{{ route('admin.create-day-tour-reservation') }}">
+                                New Transaction
+                            </x-button>
+                        @endcan
             </div>
         </div>
 

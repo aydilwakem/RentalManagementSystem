@@ -4,13 +4,14 @@
             {{ __('Create Day Tour') }}
         </h2>
         <x-breadcrumbs :items="[
-            ['label' => 'Day Tours', 'url' => route('admin.day-tours')],
-            ['label' => 'Create Day Tour', 'url' => route('admin.create-day-tour')],
-        ]" />
+        ['label' => 'Day Tours', 'url' => route('admin.day-tours')],
+        ['label' => 'Create Day Tour', 'url' => route('admin.create-day-tour')],
+    ]" />
     </x-slot>
 
     <div class="py-3">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        <div
+            class="mx-auto max-w-7xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Day Tour</h2>
@@ -27,7 +28,7 @@
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Tour Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="name" id="name" required 
+                        <input type="text" wire:model="name" id="name" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Standard Day Tour Package">
                         @error('name')
@@ -37,10 +38,11 @@
 
                     <!-- Description -->
                     <div class="md:col-span-2">
-                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="description"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Description <span class="text-red-500">*</span>
                         </label>
-                        <textarea wire:model="description" id="description" rows="4" 
+                        <textarea wire:model="description" id="description" rows="4"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Describe the day tour package..."></textarea>
                         @error('description')
@@ -50,10 +52,11 @@
 
                     <!-- Duration and Time -->
                     <div>
-                        <label for="duration_hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="duration_hours"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Duration (Hours) <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="duration_hours" id="duration_hours" required 
+                        <input type="number" wire:model="duration_hours" id="duration_hours" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="8" min="1" max="24">
                         @error('duration_hours')
@@ -65,7 +68,7 @@
                         <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Guests <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="max_guests" id="max_guests" required 
+                        <input type="number" wire:model="max_guests" id="max_guests" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="50" min="1" max="1000">
                         @error('max_guests')
@@ -78,7 +81,7 @@
                         <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Start Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="start_time" id="start_time" required 
+                        <input type="time" wire:model="start_time" id="start_time" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('start_time')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -89,7 +92,7 @@
                         <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             End Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="end_time" id="end_time" required 
+                        <input type="time" wire:model="end_time" id="end_time" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('end_time')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -118,8 +121,12 @@
                             <span class="text-gray-800 dark:text-gray-200 text-sm">Inactive</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="is_active" value="1" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition"></div>
-                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5"></div>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                </div>
                             </label>
                             <span class="text-gray-800 dark:text-gray-200 text-sm">Active</span>
                         </div>
@@ -153,7 +160,8 @@
 
                     <!-- Terms & Conditions -->
                     <div class="md:col-span-2">
-                        <label for="terms_conditions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="terms_conditions"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Terms & Conditions
                         </label>
                         <textarea wire:model="terms_conditions" id="terms_conditions" rows="4"
@@ -171,14 +179,15 @@
                         </label>
                         @if ($main_image)
                             <div class="relative mb-2">
-                                <img src="{{ $main_image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Main Image Preview">
+                                <img src="{{ $main_image->temporaryUrl() }}"
+                                    class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Main Image Preview">
                                 <button type="button" wire:click="$set('main_image', null)"
                                     class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
                                     ×
                                 </button>
                             </div>
                         @endif
-                        <input type="file" wire:model="main_image" id="main_image" accept="image/png, image/jpeg" 
+                        <input type="file" wire:model="main_image" id="main_image" accept="image/png, image/jpeg"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
                         @error('main_image')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -187,14 +196,16 @@
 
                     <!-- Additional Images Upload -->
                     <div class="mb-4">
-                        <label for="newImageInput" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="newImageInput"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Additional Images
                         </label>
                         <div class="flex flex-wrap gap-4">
                             @if (count($uploadedImagePreviews) > 0)
                                 @foreach ($uploadedImagePreviews as $index => $image)
                                     <div class="relative shrink-0">
-                                        <img src="{{ $image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
+                                        <img src="{{ $image->temporaryUrl() }}"
+                                            class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
                                         <button type="button" wire:click="removeImage({{ $index }})"
                                             class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
                                             ×
@@ -203,22 +214,29 @@
                                 @endforeach
                             @endif
 
-                            <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="newImages">
-                                <div class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
+                                wire:target="newImages">
+                                <div
+                                    class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     <span class="text-xs">Add image</span>
                                 </div>
                             </label>
 
-                            <input multiple type="file" wire:model="newImages" id="newImageInput" accept="image/png, image/jpeg" class="hidden">
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
+                                accept="image/png, image/jpeg" class="hidden">
                         </div>
 
                         <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
                             </svg>
                             <span>Uploading...</span>
                         </div>
@@ -231,7 +249,8 @@
                         Cancel
                     </x-ghost-button>
 
-                    <x-button wire:loading.attr="disabled" wire:target="main_image,newImages" wire:click="confirmCreate">
+                    <x-button wire:loading.attr="disabled" wire:target="main_image,newImages"
+                        wire:click="confirmCreate">
                         Create Day Tour
                     </x-button>
                 </div>

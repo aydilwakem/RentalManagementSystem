@@ -61,6 +61,7 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Reservations\CreateDayTourReservation;
 use App\Livewire\Admin\Reservations\DayTourReservationList;
 use App\Livewire\Admin\Reservations\RebookReservation;
 use App\Livewire\Admin\Reservations\ViewDaytourReservation;
@@ -787,7 +788,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // Day Tour Routes
     Route::get('/daytour-reservations', DayTourReservationList::class)
         ->name('admin.daytour-reservations-list')
-        ->middleware(['auth', 'can:daytour-reservation-list']);
+        ->middleware(['auth', 'can:daytour-reservation-list'] );
+
+    Route::get('/day-tour-reservations/create', CreateDayTourReservation::class)
+        ->name('admin.create-day-tour-reservation')
+        ->middleware(['auth', 'can:daytour-reservation-create']);
 
     Route::get('/daytour-reservations/{transaction}', ViewDaytourReservation::class)
         ->name('admin.view-daytour-reservation')
