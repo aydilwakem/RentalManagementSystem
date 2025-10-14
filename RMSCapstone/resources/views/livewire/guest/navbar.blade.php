@@ -28,10 +28,10 @@
                     {{ __('Activities') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
+                {{-- <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
                     wire:navigate>
                     {{ __('Spaces') }}
-                </x-nav-link>
+                </x-nav-link> --}}
 
                 <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')"
                     wire:navigate>
@@ -86,6 +86,11 @@
 
             <x-responsive-nav-link href="{{ route('guest.event-halls') }}"
                 :active="request()->routeIs('guest.event-halls')" wire:navigate>
+                {{ __('Event Halls') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link href="{{ route('guest.feedback-form') }}"
+                :active="request()->routeIs('guest.feedback-form')" wire:navigate>
                 {{ __('Event Halls') }}
             </x-responsive-nav-link>
         </div>

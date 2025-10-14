@@ -68,17 +68,20 @@
             <div style="margin-bottom: 10px;">
                 <p style="margin: 0; font-weight: 500; margin: 8px 8px;">Connect with us!</span></p>
 
-                <a href="https://www.facebook.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-facebook-f fa-lg"></i>
+                <a href="{{ $facebook_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <i class="fa-brands fa-facebook" alt="Facebook"></i>
+                    {{-- <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;"> --}}
                 </a>
-                <a href="https://www.instagram.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-instagram fa-lg"></i>
+
+                <a href="{{ $instagram_link }}" target="_blank" style="margin: 0 8px; text-decoration: none;">
+                    <i class="fa-brands fa-instagram" alt="Instagram"></i>
+                    {{-- <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;"> --}}
                 </a>
-                <a href="https://twitter.com/CanopyFarmPH" target="_blank"
-                    style="color: #fff; margin: 0 8px; text-decoration: none;">
-                    <i class="fab fa-twitter fa-lg"></i>
+
+                <a href="https://canopyfarmph.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; text-decoration: none;">
+                    <i class="fa-solid fa-globe" alt="Website"></i>
+                    {{-- <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;"> --}}
                 </a>
             </div>
 
