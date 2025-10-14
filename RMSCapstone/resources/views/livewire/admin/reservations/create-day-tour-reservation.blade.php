@@ -456,7 +456,7 @@
 
         <!------------------------- TERMS AND SUBMIT SECTION -------------------------->
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-            <div class="flex items-center mb-4">
+            {{-- <div class="flex items-center mb-4">
                 <input type="checkbox" wire:model="terms" class="mr-2">
                 <label class="text-sm font-medium text-gray-700 dark:text-gray-200">
                     I agree to the terms and conditions
@@ -464,7 +464,7 @@
             </div>
             @error('terms')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+            @enderror --}}
 
             <div class="flex justify-between items-center space-y-2">
                 <x-button onclick="history.back()" type="button"
