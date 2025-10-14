@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Guest\Reservation;
+namespace App\Livewire\Admin\Reservations;
 
 use Livewire\Component;
 use App\Models\DayTour;
@@ -15,160 +15,138 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use App\Services\PayMongoService;
 use App\Services\EmailService;
 use App\Services\BrandingService;
 use App\Services\PaymentMethodService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PragmaRX\Countries\Package\Countries;
 use Livewire\Attributes\Layout;
 
-
-#[Layout('layouts.guest')]
-
-class DayTourReservationForm extends Component
+#[Layout('layouts.app')]
+class CreateDayTourReservation extends Component
 {
-    // ----------------------- GENERAL ---------------------------- //
-    public $currentStep = 1;
-    public $totalSteps = 3;
     public $reservation_type_id = 4; // Day Tour reservation type
+    public $transaction_number;
     public $trn_user_type = 'guest';
-    public $reservation_source = 'Website';
+    public $reservation_source;
     public $transaction_status = 'pending';
 
-    // ----------------------- TOUR SELECTION ---------------------------- //
+    // Tour related properties
+    public $tour_date;
     public $selectedTour = null;
-    public $tourDate;
+    public $selectedRate = null;
     public $adultCount = 1;
     public $kidCount = 0;
     public $totalGuests = 1;
-    public $selectedRate = null;
     public $availableTours = [];
 
-    // ----------------------- GUEST DETAILS ---------------------------- //
+    // Primary Guest related properties
     public $first_name;
     public $middle_name;
     public $last_name;
     public $email;
     public $contact_number;
     public $company_name;
-    public $country = 'Philippines';
+    public $country;
     public $heard_from;
+    public $terms = 1;
 
-    // ----------------------- ADDITIONAL GUESTS ---------------------------- //
-    public $guests = [];
+    // Additional Guest related properties
     public $guest_first_name, $guest_middle_name, $guest_last_name, $guest_suffix, $guest_type_id;
-    public $guest_gender, $guest_residency, $guest_country_of_origin;
+    public $guest_gender, $guest_residency, $guest_country_of_origin, $countries;
     public $guest_types = [];
-    public $showGuestModal = false;
+    public $guests = [];
     public $editingGuestIndex = null;
-    public $editingGuest = [];
+    public $editingGuest = [
+        'guest_first_name' => '',
+        'guest_middle_name' => '',
+        'guest_last_name' => '',
+        'guest_suffix' => '',
+        'guest_type_id' => '',
+        'guest_gender' => '',
+        'guest_residency' => '',
+        'guest_country_of_origin' => '',
+    ];
 
-    // ----------------------- PRICE CALCULATIONS ---------------------------- //
+    // Invoice related properties
+    public $invoice_number;
+
+    // Price calculations
     public $subtotal = 0;
     public $total_amount = 0;
+    // public $convenience_fee = 0;
 
+    // Modals
+    public $guestModal = false;
+    public $editGuestModal = false;
 
-
-    // ----------------------- PAYMENT & TERMS ---------------------------- //
-    public $terms = 0;
-    public $terms_and_conditions;
-    public $enable_deposit_percentage = false;
-    public $deposit_percentage;
-    public $convenience_fee = 0;
-
-    // ----------------------- SERVICES ---------------------------- //
-    protected PayMongoService $payMongo;
+    // Services
     protected EmailService $emailService;
     protected BrandingService $brandingService;
     protected PaymentMethodService $paymentMethodService;
 
-    // ----------------------- BRANDING ---------------------------- //
+    // Branding
     public string $companyName = 'Company';
     public string $logoPath = '';
     public string $companyEmail;
     public string $companyContact;
     public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
     public function boot(
-        PayMongoService $payMongo,
         EmailService $emailService,
         BrandingService $brandingService,
         PaymentMethodService $paymentMethodService
     ) {
-        $this->payMongo = $payMongo;
         $this->emailService = $emailService;
         $this->brandingService = $brandingService;
         $this->paymentMethodService = $paymentMethodService;
     }
 
-    public function mount()
-    {
-        $this->loadBranding();
-        $this->loadStaticData();
-        $this->loadAvailableTours();
-        $this->tourDate = now()->format('Y-m-d');
-    }
-
     public function render()
     {
-        return view('livewire.guest.reservation.day-tour-reservation-form');
+        return view('livewire.admin.reservations.create-day-tour-reservation');
     }
 
-    // ----------------------- STEP NAVIGATION ---------------------------- //
-    public function increaseStep()
+    public function mount(): void
     {
-        $this->resetErrorBag();
-        $this->validateData();
-        $this->currentStep = min($this->currentStep + 1, $this->totalSteps);
-    }
-
-    public function decreaseStep()
-    {
-        $this->resetErrorBag();
-        $this->currentStep = max($this->currentStep - 1, 1);
+        $this->initializeDates();
+        $this->loadStaticData();
+        $this->loadAvailableTours();
+        $this->loadBranding();
+        $this->initializeCountries();
     }
 
     // ----------------------- TOUR SELECTION LOGIC ---------------------------- //
-public function loadAvailableTours()
-{
-    $this->availableTours = DayTour::active()
-        ->with(['activeRates']) // Eager load the relationship
-        ->get()
-        ->map(function ($tour) {
-            $tour->available_rates = $this->getAvailableRatesForTour($tour);
-            return $tour;
-        })
-        ->filter(function ($tour) {
-            // Only show tours that have available rates
-            return $tour->available_rates->isNotEmpty();
-        });
-}
-
-public function getAvailableRatesForTour($tour)
-{
-    $dayType = $this->getDayType($this->tourDate);
-    
-    Log::info("Getting rates for tour: {$tour->id}, Date: {$this->tourDate}, Day Type: {$dayType}");
-    
-    // Ensure we have active rates relationship loaded
-    if (!$tour->relationLoaded('activeRates')) {
-        $tour->load('activeRates');
+    public function loadAvailableTours()
+    {
+        $this->availableTours = DayTour::active()
+            ->with(['activeRates'])
+            ->get()
+            ->map(function ($tour) {
+                $tour->available_rates = $this->getAvailableRatesForTour($tour);
+                return $tour;
+            })
+            ->filter(function ($tour) {
+                return $tour->available_rates->isNotEmpty();
+            });
     }
-    
-    Log::info("Available rates count: " . $tour->activeRates->count());
-    
-    $availableRates = $tour->activeRates
-        ->filter(function ($rate) use ($dayType) {
-            $matches = $rate->day_type === $dayType;
-            Log::info("Rate {$rate->id}: day_type={$rate->day_type}, matches={$matches}");
-            return $matches;
-        })
-        ->values();
 
-    Log::info("Filtered rates count: " . $availableRates->count());
-    
-    return $availableRates ?? collect();
-}
+    public function getAvailableRatesForTour($tour)
+    {
+        $dayType = $this->getDayType($this->tour_date);
+        
+        if (!$tour->relationLoaded('activeRates')) {
+            $tour->load('activeRates');
+        }
+        
+        return $tour->activeRates
+            ->filter(function ($rate) use ($dayType) {
+                return $rate->day_type === $dayType;
+            })
+            ->values();
+    }
 
     public function getDayType($date)
     {
@@ -189,8 +167,7 @@ public function getAvailableRatesForTour($tour)
                 $this->selectedRate = $availableRates->first();
             }
         }
-        $this->calculateSubtotal(); 
-
+        $this->calculateSubtotal();
     }
 
     public function updatedTourDate()
@@ -198,48 +175,27 @@ public function getAvailableRatesForTour($tour)
         $this->selectedTour = null;
         $this->selectedRate = null;
         $this->loadAvailableTours();
+        $this->calculateSubtotal();
     }
 
-public function calculateSubtotal()
-{
-    if (!$this->selectedRate) {
-        $this->subtotal = 0;
-        $this->convenience_fee = 0;
-        $this->total_amount = 0;
-        return;
-    }
-
-    $adultTotal = $this->adultCount * $this->selectedRate->adult_rate;
-    $kidTotal = $this->kidCount * $this->selectedRate->kid_rate;
-    $this->subtotal = $adultTotal + $kidTotal;
-    
-    // Automatically calculate convenience fee (3%)
-    $this->convenience_fee = $this->subtotal * 0.03;
-    $this->total_amount = $this->subtotal + $this->convenience_fee;
-}
-
-    public function updatedAdultCount()
+    public function calculateSubtotal()
     {
-    $this->totalGuests = $this->adultCount + $this->kidCount;
-    $this->validateGuestCount();
-    $this->calculateSubtotal();
-
-    }
-
-    public function updatedKidCount()
-    {
-    $this->totalGuests = $this->adultCount + $this->kidCount;
-    $this->validateGuestCount();
-    $this->calculateSubtotal();
-    }
-
-    protected function validateGuestCount()
-    {
-        if ($this->selectedRate && $this->totalGuests > $this->selectedRate->max_guests) {
-            $this->addError('guest_count', "Maximum guests for this rate is {$this->selectedRate->max_guests}");
+        if (!$this->selectedRate) {
+            $this->subtotal = 0;
+            // $this->convenience_fee = 0;
+            $this->total_amount = 0;
+            return;
         }
-    }
 
+        $adultTotal = $this->adultCount * $this->selectedRate->adult_rate;
+        $kidTotal = $this->kidCount * $this->selectedRate->kid_rate;
+        $this->subtotal = $adultTotal + $kidTotal;
+        
+        // $this->convenience_fee = $this->subtotal * 0.03;
+        // $this->total_amount = $this->subtotal + $this->convenience_fee;
+        $this->total_amount = $this->subtotal;
+
+    }
 
     public function incrementAdult()
     {
@@ -277,32 +233,23 @@ public function calculateSubtotal()
         }
     }
 
-
-    // ----------------------- PRICE CALCULATIONS ---------------------------- //
-    public function getSubtotalProperty()
+    protected function validateGuestCount()
     {
-        return $this->subtotal;
-    }
-
-    public function getTotalAmountProperty()
-    {
-        return $this->total_amount;
-    }
-
-    public function getConvenienceFeeProperty()
-    {
-        return $this->convenience_fee;
+        if ($this->selectedRate && $this->totalGuests > $this->selectedRate->max_guests) {
+            $this->addError('guest_count', "Maximum guests for this rate is {$this->selectedRate->max_guests}");
+        }
     }
 
     // ----------------------- GUEST MANAGEMENT ---------------------------- //
     public function openGuestModal()
     {
-        $this->showGuestModal = true;
+        $this->resetErrorBag();
+        $this->guestModal = true;
     }
 
     public function closeGuestModal()
     {
-        $this->showGuestModal = false;
+        $this->guestModal = false;
         $this->resetGuestInputFields();
     }
 
@@ -316,7 +263,7 @@ public function calculateSubtotal()
         }
 
         $this->guests[] = $this->makeGuestArray();
-        $this->showGuestModal = false;
+        $this->guestModal = false;
         $this->resetGuestInputFields();
     }
 
@@ -324,7 +271,7 @@ public function calculateSubtotal()
     {
         $this->editingGuestIndex = $index;
         $this->editingGuest = $this->guests[$index];
-        $this->showGuestModal = true;
+        $this->editGuestModal = true;
     }
 
     public function updateGuest()
@@ -333,7 +280,7 @@ public function calculateSubtotal()
             $this->guests[$this->editingGuestIndex] = $this->editingGuest;
         }
 
-        $this->showGuestModal = false;
+        $this->editGuestModal = false;
         $this->reset('editingGuestIndex', 'editingGuest');
     }
 
@@ -341,6 +288,15 @@ public function calculateSubtotal()
     {
         unset($this->guests[$index]);
         $this->guests = array_values($this->guests);
+    }
+
+    public function updatedGuestResidency($value)
+    {
+        if ($value === 'local') {
+            $this->guest_country_of_origin = 'Philippines';
+        } else {
+            $this->guest_country_of_origin = '';
+        }
     }
 
     protected function makeGuestArray()
@@ -372,14 +328,19 @@ public function calculateSubtotal()
     }
 
     // ----------------------- RESERVATION CREATION ---------------------------- //
-    public function register()
+    public function createDayTourReservation()
     {
+        Log::info('CreateDayTourReservation method called');
+
         $this->resetErrorBag();
         $this->validateData();
 
         $reservationData = [];
+        $transaction = null;
 
-        DB::transaction(function () use (&$reservationData) {
+        DB::transaction(function () use (&$reservationData, &$transaction) {
+            Log::info('Starting day tour reservation creation transaction...');
+
             // Create Transaction User
             $transactionUser = $this->createTransactionUser();
 
@@ -392,27 +353,11 @@ public function calculateSubtotal()
             // Insert Guest Details
             $this->insertGuestDetails($transaction);
 
-            // Prepare PayMongo payload
-            $amountInCentavos = intval($this->total_amount * 100);
-            $payload = $this->preparePayMongoPayload($amountInCentavos, $transaction, $invoice);
-
-            try {
-                $response = $this->payMongo->createCheckoutSession($payload);
-                $paymentLink = $response['data']['attributes']['checkout_url'] ?? null;
-
-                if ($paymentLink) {
-                    $transaction->update(['payment_link' => $paymentLink]);
-                }
-            } catch (\Exception $e) {
-                Log::error('PayMongo link creation failed: ' . $e->getMessage());
-                $paymentLink = null;
-            }
-
             // Prepare reservation data for email
-            $reservationData = $this->prepareReservationData($transaction, $invoice, $paymentLink);
+            $reservationData = $this->prepareReservationData($transaction, $invoice);
         });
 
-        // Send confirmation email
+        // Attempt to send confirmation emails
         try {
             $pdfContent = $this->generateAvailablePaymentMethods();
             $this->emailService->sendReservationEmails($reservationData, $pdfContent);
@@ -420,15 +365,13 @@ public function calculateSubtotal()
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
         }
 
-        session()->flash('success', 'Day Tour reservation successfully submitted!');
-
-        // Redirect to payment page if available
-        if (!empty($reservationData['payment_link'])) {
-            session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
-            return redirect()->away($reservationData['payment_link']);
+        if (!$transaction) {
+            session()->flash('error', 'Something went wrong while creating reservation.');
+            return redirect()->route('admin.reservations-list');
         }
 
-        return redirect()->route('guest.proof-of-payment-page');
+        session()->flash('success', 'Day Tour reservation successfully created!');
+        return redirect()->route('admin.view-daytour-reservation', ['transaction' => $transaction->id]);
     }
 
     protected function createTransactionUser(): TransactionUser
@@ -451,14 +394,14 @@ public function calculateSubtotal()
             'transaction_number' => 'DT-' . strtoupper(Str::random(8)),
             'reservation_type_id' => $this->reservation_type_id,
             'created_by' => $transactionUser->id,
-            'start_datetime' => $this->tourDate,
-            'end_datetime' => $this->tourDate,
+            'start_datetime' => $this->tour_date,
+            'end_datetime' => $this->tour_date,
             'total_adults' => $this->adultCount,
             'total_kids' => $this->kidCount,
             'pax' => $this->totalGuests,
             'sub_total' => $this->subtotal,
             'total_amount' => $this->total_amount,
-            'convenience_fee' => $this->convenience_fee,
+            // 'convenience_fee' => $this->convenience_fee,
             'heard_from' => $this->heard_from,
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
@@ -477,7 +420,7 @@ public function calculateSubtotal()
             'deposit_paid' => 0,
             'amount_paid' => 0,
             'balance_due' => $this->total_amount,
-            'due_date' => $this->tourDate,
+            'due_date' => $this->tour_date,
             'invoice_status' => 'pending',
         ]);
     }
@@ -509,46 +452,14 @@ public function calculateSubtotal()
         }
     }
 
-    // ----------------------- PAYMONGO & EMAIL ---------------------------- //
-    protected function preparePayMongoPayload(int $amountInCentavos, $transaction, $invoice): array
-    {
-        return [
-            'data' => [
-                'attributes' => [
-                    'send_email_receipt' => true,
-                    'show_description' => true,
-                    'show_line_items' => true,
-                    'payment_method_types' => ['gcash', 'paymaya'],
-                    'success_url' => route('guest.thank-you-page'),
-                    'cancel_url' => url('/payment-failed'),
-                    'line_items' => [
-                        [
-                            'currency' => 'PHP',
-                            'amount' => $amountInCentavos,
-                            'description' => 'Day Tour reservation fee for booking #' . $transaction->transaction_number,
-                            'name' => 'Day Tour Reservation Fee',
-                            'quantity' => 1,
-                        ],
-                    ],
-                    'description' => 'Day Tour Reservation for ' . $this->first_name . ' ' . $this->last_name,
-                    'metadata' => [
-                        'invoice_id' => (string) $invoice->id,
-                        'payment_type' => 'Day Tour Reservation',
-                        'notes' => 'Payment for Day Tour',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    protected function prepareReservationData($transaction, $invoice, $paymentLink): array
+    protected function prepareReservationData($transaction, $invoice): array
     {
         return [
             'name' => $this->first_name . ' ' . $this->last_name,
             'transaction_number' => $transaction->transaction_number,
             'email' => $this->email,
             'invoice_number' => $invoice->invoice_number,
-            'tour_date' => $this->tourDate,
+            'tour_date' => $this->tour_date,
             'tour_name' => $this->selectedTour->name,
             'rate_name' => $this->selectedRate->rate_name,
             'adult_count' => $this->adultCount,
@@ -556,14 +467,15 @@ public function calculateSubtotal()
             'adult_rate' => $this->selectedRate->adult_rate,
             'kid_rate' => $this->selectedRate->kid_rate,
             'subtotal' => $this->subtotal,
-            'convenience_fee' => $this->convenience_fee,
+            // 'convenience_fee' => $this->convenience_fee,
             'total_amount' => $this->total_amount,
-            'payment_link' => $paymentLink,
             'branding_company_name' => $this->companyName,
             'logo_path' => $this->logoPath,
             'branding_company_email' => $this->companyEmail,
             'branding_company_contact' => $this->companyContact,
             'company_address' => $this->companyAddress,
+            'facebook_link' => $this->facebookLink,
+            'instagram_link' => $this->instagramLink,
         ];
     }
 
@@ -577,36 +489,25 @@ public function calculateSubtotal()
     // ----------------------- VALIDATION ---------------------------- //
     public function validateData()
     {
-        if ($this->currentStep == 1) {
-            $this->validate([
-                'selectedTour' => 'required',
-                'selectedRate' => 'required',
-                'tourDate' => 'required|date|after_or_equal:today',
-                'adultCount' => 'required|integer|min:1',
-                'kidCount' => 'required|integer|min:0',
-            ], [
-                'selectedTour.required' => 'Please select a day tour.',
-                'selectedRate.required' => 'Please select a rate for the tour.',
-            ]);
-        }
-
-        if ($this->currentStep == 2) {
-            $this->validate([
-                'first_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
-                'middle_name' => 'nullable|string|regex:/^[A-Za-z\s\-]+$/',
-                'last_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
-                'email' => 'required|email',
-                'contact_number' => 'required|string|regex:/^[0-9]{11}$/',
-                'country' => 'required|string',
-                'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
-            ]);
-        }
-
-        if ($this->currentStep == 3) {
-            $this->validate([
-                'terms' => 'accepted',
-            ]);
-        }
+        $this->validate([
+            'selectedTour' => 'required',
+            'selectedRate' => 'required',
+            'tour_date' => 'required|date|after_or_equal:today',
+            'adultCount' => 'required|integer|min:1',
+            'kidCount' => 'required|integer|min:0',
+            'first_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
+            'middle_name' => 'nullable|string|regex:/^[A-Za-z\s\-]+$/',
+            'last_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
+            'email' => 'required|email',
+            'contact_number' => 'required|string|regex:/^[0-9]{11}$/',
+            'country' => 'required|string',
+            'heard_from' => 'required|in:Facebook,Instagram,Tiktok,Youtube,Google',
+            'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
+            'terms' => 'required|accepted',
+        ], [
+            'selectedTour.required' => 'Please select a day tour.',
+            'selectedRate.required' => 'Please select a rate for the tour.',
+        ]);
     }
 
     protected function validateGuestData()
@@ -617,13 +518,30 @@ public function calculateSubtotal()
             'guest_last_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
             'guest_suffix' => 'nullable|string|max:10|regex:/^[A-Za-z\s\-]+$/',
             'guest_gender' => 'nullable|in:male,female,other',
-            'guest_residency' => 'nullable|in:local,foreigner',
-            'guest_country_of_origin' => 'nullable|string|max:100',
+            'guest_residency' => 'required|in:local,foreigner',
+            'guest_country_of_origin' => 'required|string|max:100',
             'guest_type_id' => 'required|exists:trn_guest_type,id',
         ]);
     }
 
-    // ----------------------- LOADERS ---------------------------- //
+    // ----------------------- HELPERS ---------------------------- //
+    protected function initializeDates()
+    {
+        $this->tour_date = now()->format('Y-m-d');
+    }
+
+    protected function initializeCountries()
+    {
+        $this->countries = Countries::all()->pluck('name.common')->sort()->values()->toArray();
+        $this->country = 'Philippines';
+        $this->guest_country_of_origin = 'Philippines';
+    }
+
+    protected function loadStaticData()
+    {
+        $this->guest_types = GuestType::all();
+    }
+
     protected function loadBranding(): void
     {
         $branding = $this->brandingService->getBrandingData();
@@ -632,13 +550,17 @@ public function calculateSubtotal()
         $this->companyEmail = $branding['branding_company_email'];
         $this->companyContact = $branding['branding_company_contact'];
         $this->companyAddress = $branding['company_address'];
-        $this->enable_deposit_percentage = $branding['enable_deposit_percentage'];
-        $this->deposit_percentage = $branding['deposit_percentage'];
-        $this->terms_and_conditions = $branding['terms_and_conditions'] ?? '';
+        $this->facebookLink = $branding['facebook_link'];
+        $this->instagramLink = $branding['instagram_link'];
     }
 
-    protected function loadStaticData()
+    protected function generateInvoiceNumber(): string
     {
-        $this->guest_types = GuestType::all();
+        return 'INV-DT-' . strtoupper(Str::random(8));
+    }
+
+    protected function generateTransactionNumber(): string
+    {
+        return 'DT-' . strtoupper(Str::random(8));
     }
 }
