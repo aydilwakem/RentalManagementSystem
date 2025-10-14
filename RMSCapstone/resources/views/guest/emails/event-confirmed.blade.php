@@ -112,6 +112,7 @@
                     <th style="padding: 12px; border-bottom: 1px solid #eee;">Total Pax</th>
                 </tr>
                 @foreach ($properties as $property)
+                @if ($property->property_type_id == 3)
                 <tr>
                     <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
                     <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
@@ -122,6 +123,62 @@
                     {{-- <td style="padding: 10px; border: 1px solid #eee;">{{ $property->pivot->kids ?? '0' }}</td>
                     --}}
                 </tr>
+                @endif
+                @endforeach
+            </table>
+
+            {{-- Room Details --}}
+            <h3 style="color: #166534; font-size: 20px; font-weight: 600; margin-top: 30px; margin-bottom: 15px;">
+                Rooms</h3>
+            <table cellpadding="10" cellspacing="0"
+                style="width: 100%; border-collapse: collapse; margin: 15px auto 25px auto;">
+                <tr style="background-color: #E8F5E9;">
+                    <th align="left" style="padding: 12px; border-bottom: 1px solid #eee;">Room</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Room Category</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Ideal Guests</th>
+                    <th style="padding: 12px; border-bottom: 1px solid #eee;">Maximum Occupancy</th>
+                </tr>
+                @foreach ($properties as $property)
+                @if ($property->property_type_id == 1)
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $property->name_number }}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                        {{ $property->category->name ?? 'N/A' }}
+                    </td>
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                        {{ $property->ideal_guest ?? 'N/A' }}
+                    </td>
+                    @if ($property->occupancy_type === 'whole_number')
+                    <td style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                        {{ $property->max_guests ?? 'N/A' }}
+                    </td>
+                    @elseif ($property->occupancy_type === 'combinations')
+                    @php
+                    $originalCombinations = collect($property->occupancy_rules)
+                    ->where('type', 'original');
+
+                    $formatted = $originalCombinations->map(function ($combo) {
+                    $parts = [];
+
+                    if (!empty($combo['adults'])) {
+                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                    }
+
+                    if (!empty($combo['kids'])) {
+                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                    }
+
+                    return implode(' and ', $parts);
+                    });
+                    @endphp
+
+                    @if ($formatted->isNotEmpty())
+                    <td style=style="padding: 12px; border-bottom: 1px solid #eee;  text-align: center;">
+                        {{ $formatted->implode(' or ') }}</td>
+                    @endif
+                    @endif
+                </tr>
+                @endif
                 @endforeach
             </table>
 

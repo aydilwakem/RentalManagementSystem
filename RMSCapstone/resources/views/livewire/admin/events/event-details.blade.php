@@ -201,6 +201,7 @@
             </thead>
             <tbody>
                 @foreach ($event->properties as $property)
+                @if ($property->property_type_id == 3)
                 <tr>
                     <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
                         {{ $property->name_number ?? 'No Event Hall Booked' }}</td>
@@ -219,6 +220,7 @@
                     <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
                         {{ ucfirst($event->transaction_status) }}</td>
                 </tr>
+                @endif
                 @endforeach
             </tbody>
         </table>
@@ -227,6 +229,80 @@
             Total Agreed Amount: PHP {{ number_format($event->total_amount, 2) }}
         </div>
     </div>
+
+
+    {{-- Room Details --}}
+    @if ($event->properties->where('property_type_id', 1)->count() > 0)
+    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
+        <h2
+            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
+            Room Details
+        </h2>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+            <thead style="background-color: #166534; color: #fff;">
+                <tr>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Room</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Room Category</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Ideal Guests</th>
+                    <th
+                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 13px;">
+                        Maximum Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($event->properties as $property)
+                @if ($property->property_type_id == 1)
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $property->name_number ?? 'No Room Booked' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $property->category->name ?? 'N/A' }}</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $property->ideal_guest ?? '—' }}</td>
+
+                    @if ($property->occupancy_type === 'whole_number')
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $property->max_guests }}</td>
+
+                    @elseif ($property->occupancy_type === 'combinations')
+                    @php
+                    $originalCombinations = collect($property->occupancy_rules)
+                    ->where('type', 'original');
+
+                    $formatted = $originalCombinations->map(function ($combo) {
+                    $parts = [];
+
+                    if (!empty($combo['adults'])) {
+                    $parts[] = $combo['adults'] . ' adult' . ($combo['adults'] > 1 ? 's' : '');
+                    }
+
+                    if (!empty($combo['kids'])) {
+                    $parts[] = $combo['kids'] . ' kid' . ($combo['kids'] > 1 ? 's' : '');
+                    }
+
+                    return implode(' and ', $parts);
+                    });
+                    @endphp
+
+                    @if ($formatted->isNotEmpty())
+                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
+                        {{ $formatted->implode(' or ') }}</td>
+                    @endif
+                    @endif
+                </tr>
+                @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
 
     {{-- Catering Details --}}
     @if(!empty($event->dishes) && is_array($event->dishes) && count($event->dishes) > 0)
