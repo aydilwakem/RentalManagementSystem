@@ -1487,6 +1487,10 @@ Route::prefix('guest')->group(function () {
     Route::get('/feedback-form', function () {
         return view('guest.feedback.feedback-form');
     })->name('guest.feedback-form');
+
+    Route::get('/about-our-developers', function () {
+        return view('guest.about-us');
+    })->name('guest.our-developers');
 });
 
 

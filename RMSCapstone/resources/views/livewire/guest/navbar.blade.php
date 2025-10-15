@@ -42,6 +42,11 @@
                     wire:navigate>
                     {{ __('Feedback Form') }}
                 </x-nav-link>
+
+                <x-nav-link href="{{ route('guest.our-developers') }}" :active="request()->routeIs('guest.our-developers')"
+                    wire:navigate>
+                    {{ __('Our Developers') }}
+                </x-nav-link>
             </div>
 
             <!-- Hamburger -->
@@ -79,10 +84,10 @@
                 {{ __('Activities') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
+            {{-- <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
                 wire:navigate>
                 {{ __('Spaces') }}
-            </x-responsive-nav-link>
+            </x-responsive-nav-link> --}}
 
             <x-responsive-nav-link href="{{ route('guest.event-halls') }}"
                 :active="request()->routeIs('guest.event-halls')" wire:navigate>
@@ -92,6 +97,11 @@
             <x-responsive-nav-link href="{{ route('guest.feedback-form') }}"
                 :active="request()->routeIs('guest.feedback-form')" wire:navigate>
                 {{ __('Event Halls') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link href="{{ route('guest.our-developers') }}"
+                :active="request()->routeIs('guest.our-developers')" wire:navigate>
+                {{ __('Our Developers') }}
             </x-responsive-nav-link>
         </div>
 
