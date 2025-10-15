@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOfficialReceiptMail;
 use App\Mail\RequestRemainingBalanceMail;
 use App\Models\Invoice;
+use App\Models\PromoCode;
 use App\Models\Property;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -48,6 +49,7 @@ use App\Services\PaymentService;
 use App\Services\CartService;
 use App\Services\GuestDetailService;
 use App\Services\PaymentMethodService;
+use App\Services\PromoCodeService;
 use App\Services\RoomAvailabilityService;
 use PragmaRX\Countries\Package\Countries;
 
@@ -161,6 +163,15 @@ class ViewReservation extends Component
     // Room change related
     public $currentRoomDetails;
 
+    // ---------------- PROMO CODE ------------------ //
+    public $promoCode;
+    public $discountMessage;
+    public $errorMessage;
+    public $promoDiscount = 0;
+    public $promo_discount_amount = 0;
+    protected PromoCodeService $promoCodeService;
+
+
 
 
 
@@ -263,6 +274,8 @@ class ViewReservation extends Component
         $this->paymentService = $services->paymentService;
         $this->cartService = $services->cartService;
         $this->guestDetailService = $services->guestDetailService;
+        $this->promoCodeService = $services->promoCodeService;
+
     }
 
 
@@ -308,6 +321,14 @@ class ViewReservation extends Component
         $this->guest['country_of_origin'] = $this->guest['country_of_origin'] ?? 'Philippines';
 
         $this->updateTransactionPax();
+
+            // Initialize promo code values from existing transaction
+        if ($transaction->promoCode) {
+            $this->promoCode = $transaction->promoCode->code;
+            $this->promoDiscount = $transaction->promo_discount_amount;
+            $this->promo_discount_amount = $transaction->promo_discount_amount;
+        }
+
     }
 
     public function loadAllInvoiceItems()
@@ -563,8 +584,7 @@ class ViewReservation extends Component
         $totalAdults = $this->transactionProperties->sum('adults');
         $totalKids = $this->transactionProperties->sum('kids');
         $totalPax = $totalAdults + $totalKids;
-
-        // Update the transaction's pax field
+                // Update the transaction's pax field
         $this->transaction->update([
             'pax' => $totalPax
         ]);
@@ -572,9 +592,6 @@ class ViewReservation extends Component
         // Refresh the transaction model
         $this->transaction->refresh();
     }
-
-
-
 
     /**
      * -------------------- MANUAL PWD/SENIOR DISCOUNT -----------------------------
@@ -678,6 +695,162 @@ class ViewReservation extends Component
 
         Log::info("Invoice {$invoiceId} recalculated after discount removal.");
         session()->flash('success', 'Discount removed successfully!');
+    }
+
+
+    /**
+     * ----------------------------- PROMO CODE LOGIC -----------------------------
+     *
+     * Applies promo code to existing reservation
+     * ----------------------------------------------------------------------------
+     */
+    public function applyPromoCode()
+    {
+        Log::info('Apply Promo Code method called in ViewReservation with promoCode: ' . $this->promoCode);
+
+        // Step 1: Check if promo code is valid
+        if (empty($this->promoCode) || !is_string($this->promoCode)) {
+            Log::warning('No valid promo code provided.');
+            $this->promoDiscount = 0;
+            $this->promo_discount_amount = 0;
+            $this->discountMessage = null;
+            $this->errorMessage = null;
+            return;
+        }
+
+        // Step 2: Reset previous messages
+        $this->reset(['discountMessage', 'errorMessage']);
+
+        // Step 3: Compute base subtotal for validation
+        $baseSubtotal = $this->computeBaseSubtotal();
+
+        // Step 4: Compute room-only subtotal for discount calculation
+        $roomBaseSubTotal = $this->computeBaseRoomSubtotal();
+
+        // Step 5: Get property category breakdown
+        $propertyBreakdown = $this->getPropertyCategoryBreakdown();
+
+        // Step 6: Validate and apply promo code
+        $response = $this->promoCodeService->validateAndApply(
+            $this->promoCode,
+            $baseSubtotal, // For minimum booking amount validation
+            $roomBaseSubTotal,  // For discount calculation (rooms only)
+            $propertyBreakdown,  // For property category validation
+            $this->transaction->start_datetime,  // For date range validation
+            $this->transaction->end_datetime  // For date range validation
+        );
+
+        // Step 7: Handle validation failure
+        if (!isset($response['success']) || !$response['success']) {
+            return $this->failPromo($response['message'] ?? 'Invalid promo code.');
+        }
+
+        // Step 8: Apply the discount
+        $this->promoDiscount = $response['discount'];
+        $this->promo_discount_amount = $this->promoDiscount;
+
+        // Step 9: Update transaction with promo details
+        $this->updateTransactionWithPromo();
+
+        // Step 10: Show success message
+        $this->discountMessage = $response['message'];
+        $this->errorMessage = null;
+
+        // Step 11: Recalculate invoice
+        $this->recalculateInvoice();
+    }
+
+    /**
+     * Updates transaction with promo code details
+     */
+    protected function updateTransactionWithPromo()
+    {
+        $promo = PromoCode::where('code', $this->promoCode)->first();
+
+        $this->transaction->update([
+            'promo_id' => $promo?->id,
+            'promo_discount_amount' => $this->promoDiscount,
+        ]);
+
+        // Increment promo usage count
+        if ($promo) {
+            $promo->increment('uses_count');
+        }
+    }
+
+    /**
+     * Computes the subtotal of base room rates only
+     */
+    public function computeBaseRoomSubtotal(): float
+    {
+        return $this->transaction->properties->sum(function($property) {
+            return $property->pivot->amount ?? 0;
+        });
+    }
+
+    /**
+     * Generates a breakdown of room charges by property category
+     */
+    protected function getPropertyCategoryBreakdown(): array
+    {
+        $breakdown = [];
+
+        foreach ($this->transaction->properties as $property) {
+            $breakdown[] = [
+                'room_id' => $property->id,
+                'property_category_id' => $property->property_category_id,
+                'base_amount' => $property->pivot->amount ?? 0,
+                'extra_guest_amount' => $property->pivot->extra_charge ?? 0,
+                'total_amount' => $property->pivot->total_amount ?? 0,
+                'room_name' => $property->name_number ?? 'Unknown Room',
+                'category_name' => $property->propertyCategory->name ?? 'Uncategorized'
+            ];
+        }
+
+        return $breakdown;
+    }
+
+    /**
+     * Removes applied promo code
+     */
+    public function removePromoCode()
+    {
+        Log::info('removePromoCode called in ViewReservation');
+
+        $this->promoCode = '';
+        $this->promoDiscount = 0;
+        $this->promo_discount_amount = 0;
+        $this->discountMessage = null;
+        $this->errorMessage = null;
+
+        // Remove promo from transaction
+        $this->transaction->update([
+            'promo_id' => null,
+            'promo_discount_amount' => 0,
+        ]);
+
+        $this->recalculateInvoice();
+    }
+
+    /**
+     * Fallback handler for invalid promo codes
+     */
+    private function failPromo(string $message)
+    {
+        $this->errorMessage = $message;
+        $this->promoCode = '';
+        $this->recalculateInvoice();
+    }
+
+    /**
+     * Compute subtotal after applying promo discount
+     */
+    public function computeSubtotalAfterDiscount(): float
+    {
+        $subtotal = $this->computeBaseSubtotal();
+        $promoDiscount = $this->promoDiscount ?? 0;
+
+        return max($subtotal - $promoDiscount, 0);
     }
 
     /**
