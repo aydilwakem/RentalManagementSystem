@@ -1292,6 +1292,67 @@
                     </div>
                     <!--------------------  END OF REQUEST REMAINING BALANCE ---------------------------------->
 
+<!-- Add this in your view-reservation.blade.php in the Invoice Details section -->
+
+<!-- Promo Code Section -->
+<div class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Apply Promo Code</h3>
+    
+    @if ($transaction->promoCode)
+        <!-- Promo already applied -->
+        <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700">
+            <div>
+                <span class="font-semibold text-green-700 dark:text-green-300">
+                    Promo Applied: {{ $transaction->promoCode->code }}
+                </span>
+                <p class="text-sm text-green-600 dark:text-green-400 mt-1">
+                    Discount: ₱{{ number_format($transaction->promo_discount_amount, 2) }}
+                </p>
+            </div>
+            <button wire:click="removePromoCode" 
+                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                    title="Remove Promo Code">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    @else
+        <!-- Promo code input -->
+        <div class="flex space-x-2">
+            <div class="flex-grow">
+                <input type="text" 
+                       wire:model="promoCode"
+                       placeholder="Enter promo code"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                       {{ $transaction->promoCode ? 'disabled' : '' }}>
+            </div>
+            <button wire:click="applyPromoCode"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                Apply
+            </button>
+        </div>
+    @endif
+
+    <!-- Promo Code Messages -->
+    @if ($discountMessage)
+        <p class="mt-2 text-sm text-green-600 bg-green-50 p-2 rounded border border-green-200 dark:bg-green-900 dark:text-green-300">
+            <i class="fas fa-check-circle mr-1"></i> {{ $discountMessage }}
+        </p>
+    @endif
+
+    @if ($errorMessage)
+        <p class="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200 dark:bg-red-900 dark:text-red-300">
+            <i class="fas fa-exclamation-circle mr-1"></i> {{ $errorMessage }}
+        </p>
+    @endif
+
+    <!-- Promo Code Note -->
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        <i class="fas fa-info-circle mr-1"></i>
+        Promo codes apply to room charges only and cannot be combined with other offers.
+    </p>
+</div>
+
+
             </div>
         @else
             <p class="text-gray-600 italic">No invoice found for this transaction.</p>
