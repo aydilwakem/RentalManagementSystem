@@ -2,24 +2,25 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
-            {{ __('Day Tours') }}
+            {{ __('Day Tour Reservations') }}
         </h2>
     </x-slot>
-
-
 
     {{-- If there's no reservation, show this --}}
     @if ($transactions->isEmpty() && !$statusFilter && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No day tour reservations yet.</p>
+            <p class="text-gray-500 text-lg font-semibold">No day tour reservations yet. <br> Click "Create Day Tour Reservation" to add a new reservation.</p>
+            <x-button class="mt-4" href="{{ route('admin.create-day-tour-reservation') }}" icon="fas fa-plus">
+                Create Day Tour Reservation
+            </x-button>
         </div>
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -69,8 +70,8 @@
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="Search by name, email, or transaction number" required="">
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Search" required="">
                     </div>
                 </div>
 
@@ -151,22 +152,22 @@
                             <th scope="col" class="px-4 py-3">Guest Name</th>
 
                             {{-- Email --}}
-                            <th scope="col" class="px-4 py-3">Email</th>
+                            {{-- <th scope="col" class="px-4 py-3">Email</th> --}}
 
                             {{-- Contact --}}
-                            <th scope="col" class="px-4 py-3">Contact</th>
+                            {{-- <th scope="col" class="px-4 py-3">Contact</th> --}}
 
                             {{-- Tour Date --}}
                             <th scope="col" class="px-4 py-3">Tour Date</th>
 
                             {{-- Guests --}}
-                            <th scope="col" class="px-4 py-3">Guests</th>
+                            <th scope="col" class="px-4 py-3">Total Pax</th>
 
                             {{-- Amount --}}
                             <th scope="col" class="px-4 py-3">Amount</th>
 
                             {{-- Status --}}
-                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3 justify-center">Status</th>
 
                             {{-- Action Buttons --}}
                             <th scope="col" class="px-4 py-3">Action</th>
@@ -189,14 +190,14 @@
                                 </td>
 
                                 {{-- Email --}}
-                                <td class="px-4 py-3">
+                                {{-- <td class="px-4 py-3">
                                     {{ $transaction->transactionUser->email }}
-                                </td>
+                                </td> --}}
 
                                 {{-- Contact --}}
-                                <td class="px-4 py-3">
+                                {{-- <td class="px-4 py-3">
                                     {{ $transaction->transactionUser->contact_number }}
-                                </td>
+                                </td> --}}
 
                                 {{-- Tour Date --}}
                                 <td class="px-4 py-3">

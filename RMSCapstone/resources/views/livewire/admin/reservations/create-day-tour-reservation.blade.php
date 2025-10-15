@@ -56,19 +56,35 @@
                         <div class="border-2 rounded-lg overflow-hidden transition-all duration-200 cursor-pointer
                             {{ $selectedTour && $selectedTour->id == $tour->id ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 hover:border-gray-300' }}"
                             wire:click="selectTour({{ $tour->id }})">
-                            
+
                             @if($selectedTour && $selectedTour->id == $tour->id)
                                 <div class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold z-10">
                                     <i class="fas fa-check mr-1"></i> Selected
                                 </div>
                             @endif
 
-                            <img src="{{ $tour->main_image_url }}" alt="{{ $tour->name }}" 
-                                 class="w-full h-40 object-cover">
-                            
+                            @php
+                                $firstImage = isset($tour->images[0]) ? $tour->images[0] : null;
+                            @endphp
+
+                            <img src="{{ $firstImage ? asset('storage/' . $firstImage) : asset('images/daytour-default.png') }}"
+                                alt="{{ $tour->name }}"
+                                class="w-full h-40 object-cover">
+
+
                             <div class="p-4">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2 dark:text-white">{{ $tour->name }}</h3>
-                                
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2 dark:text-white">
+                                    {{ $tour->name }}
+                                    @if($tour->activeRates && count($tour->activeRates) > 0)
+                                        @php
+                                            $firstRate = $tour->activeRates->first();
+                                        @endphp
+                                        - <span class="text-green-700 font-semibold">
+                                            ₱{{ number_format($firstRate->adult_rate, 2) }}
+                                        </span>
+                                    @endif
+                                </h3>
+
                                 <!-- Show rates -->
                                 <div class="space-y-2">
                                     @if($tour->activeRates && count($tour->activeRates) > 0)
@@ -77,19 +93,16 @@
                                                 $isAvailableForDate = $this->tour_date ? $rate->day_type === $this->getDayType($this->tour_date) : true;
                                                 $isSelected = $selectedTour && $selectedTour->id == $tour->id && $selectedRate && $selectedRate->id == $rate->id;
                                             @endphp
-                                            
-                                            <div class="text-sm {{ $isSelected ? 'text-green-600 font-semibold' : ($isAvailableForDate ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400') }}">
-                                                <div class="flex items-center justify-between">
-                                                    <span>
-                                                        • {{ $rate->rate_name }} - ₱{{ number_format($rate->adult_rate, 2) }}
-                                                    </span>
-                                                    @if(!$isAvailableForDate && $this->tour_date)
-                                                        <span class="text-xs text-orange-500" title="Not available for selected date">
-                                                            <i class="fas fa-calendar-times"></i>
+
+                                            @if($isAvailableForDate)
+                                                <div class="text-sm {{ $isSelected ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300' }}">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">
+                                                            {{ $rate->rate_name }}
                                                         </span>
-                                                    @endif
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         @endforeach
                                     @else
                                         <div class="text-center p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-700 text-sm dark:bg-yellow-900 dark:border-yellow-800 dark:text-yellow-200">
@@ -98,6 +111,7 @@
                                     @endif
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 @endforeach
@@ -116,7 +130,7 @@
             <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-200">
                 Guest Count
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Adult Selector -->
                 <div class="bg-gray-50 dark:bg-gray-600 p-4 rounded-lg border border-gray-200 dark:border-gray-500">
@@ -124,9 +138,9 @@
                         <h4 class="font-semibold text-gray-800 dark:text-white">Adults</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-300">12 years old and above</p>
                     </div>
-                    
+
                     <div class="flex items-center justify-between">
-                        <button type="button" 
+                        <button type="button"
                                 wire:click="decrementAdult"
                                 class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-500 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 {{ $adultCount <= 1 ? 'disabled' : '' }}>
@@ -134,17 +148,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                             </svg>
                         </button>
-                        
+
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">{{ $adultCount }}</div>
+                            <div class="text-2xl font-bold text-green-700">{{ $adultCount }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                                ₱{{ number_format($selectedRate->adult_rate, 2) }} each
+                                ₱{{ number_format($selectedRate->adult_rate, 2) }} / Per Pax
                             </div>
                         </div>
-                        
-                        <button type="button" 
+
+                        <button type="button"
                                 wire:click="incrementAdult"
-                                class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center hover:bg-green-700 transition text-white">
+                                class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -158,9 +172,9 @@
                         <h4 class="font-semibold text-gray-800 dark:text-white">Children</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-300">3-11 years old</p>
                     </div>
-                    
+
                     <div class="flex items-center justify-between">
-                        <button type="button" 
+                        <button type="button"
                                 wire:click="decrementKid"
                                 class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-500 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 {{ $kidCount <= 0 ? 'disabled' : '' }}>
@@ -168,17 +182,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                             </svg>
                         </button>
-                        
+
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">{{ $kidCount }}</div>
+                            <div class="text-2xl font-bold text-green-700">{{ $kidCount }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                                ₱{{ number_format($selectedRate->kid_rate, 2) }} each
+                                ₱{{ number_format($selectedRate->kid_rate, 2) }} / Per Pax
                             </div>
                         </div>
-                        
-                        <button type="button" 
+
+                        <button type="button"
                                 wire:click="incrementKid"
-                                class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center hover:bg-green-700 transition text-white">
+                                class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -203,68 +217,69 @@
 
         <!------------------------- PRICE SUMMARY SECTION -------------------------->
         @if($selectedTour && $selectedRate)
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-            <h2 class="font-bold text-xl text-green-700 text-center leading-tight mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
-                Price Summary
-            </h2>
-            <div class="px-6 py-4">
-                <!-- Tour Details -->
-                <div class="mb-4">
-                    <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Tour Details</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
-                        <div>
-                            <p><strong>Tour:</strong> {{ $selectedTour->name }}</p>
-                            <p><strong>Rate:</strong> {{ $selectedRate->rate_name }}</p>
-                            <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($tour_date)->format('M d, Y') }}</p>
-                        </div>
-                        <div>
-                            <p><strong>Adults:</strong> {{ $adultCount }} x ₱{{ number_format($selectedRate->adult_rate, 2) }}</p>
-                            @if($kidCount > 0)
-                            <p><strong>Children:</strong> {{ $kidCount }} x ₱{{ number_format($selectedRate->kid_rate, 2) }}</p>
-                            @endif
-                            <p><strong>Total Guests:</strong> {{ $totalGuests }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="my-4 border-gray-200 dark:border-gray-600">
-
-                <!-- Price Breakdown -->
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-                        <span>Adults ({{ $adultCount }}):</span>
-                        <span>₱{{ number_format($adultCount * $selectedRate->adult_rate, 2) }}</span>
-                    </div>
-                    @if($kidCount > 0)
-                    <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-                        <span>Children ({{ $kidCount }}):</span>
-                        <span>₱{{ number_format($kidCount * $selectedRate->kid_rate, 2) }}</span>
-                    </div>
-                    @endif
-                    <div class="flex justify-between font-semibold text-gray-800 dark:text-white border-t pt-2 mt-2">
-                        <span>Subtotal:</span>
-                        <span>₱{{ number_format($subtotal, 2) }}</span>
-                    </div>
-                    {{-- <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-                        <div class="flex items-center gap-2">
-                            <span>Convenience Fee (3%):</span>
-                            <div class="relative group inline-block">
-                                <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
-                                <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                                    A processing fee is applied for secure online payments.
-                                </div>
+            <div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                <h2 class="font-bold text-2xl text-green-700 text-center leading-snug mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
+                    Reservation Summary
+                </h2>
+                <div class="px-6 py-4">
+                    <!-- Tour Details -->
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Tour Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-base text-gray-700 dark:text-gray-300">
+                            <div class="space-y-1">
+                                <p><span class="font-medium text-gray-800 dark:text-white">Package:</span> {{ $selectedTour->name }}</p>
+                                <p><span class="font-medium text-gray-800 dark:text-white">Rate:</span> {{ $selectedRate->rate_name }}</p>
+                                <p><span class="font-medium text-gray-800 dark:text-white">Date:</span> {{ \Carbon\Carbon::parse($tour_date)->format('M d, Y') }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p><span class="font-medium text-gray-800 dark:text-white">Adults:</span> {{ $adultCount }} × ₱{{ number_format($selectedRate->adult_rate, 2) }}</p>
+                                @if($kidCount > 0)
+                                <p><span class="font-medium text-gray-800 dark:text-white">Children:</span> {{ $kidCount }} × ₱{{ number_format($selectedRate->kid_rate, 2) }}</p>
+                                @endif
+                                <p><span class="font-medium text-gray-800 dark:text-white">Total Guests:</span> {{ $totalGuests }}</p>
                             </div>
                         </div>
-                        <span>₱{{ number_format($convenience_fee, 2) }}</span>
-                    </div> --}}
-                    <div class="flex justify-between text-lg font-bold text-gray-800 dark:text-white border-t pt-2 mt-2">
-                        <span>Total Amount:</span>
-                        <span class="text-green-600">₱{{ number_format($total_amount, 2) }}</span>
+                    </div>
+
+                    <hr class="my-4 border-gray-200 dark:border-gray-600">
+
+                    <!-- Price Breakdown -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-base text-gray-700 dark:text-gray-300">
+                            <span>Adults ({{ $adultCount }}):</span>
+                            <span class="font-medium">₱{{ number_format($adultCount * $selectedRate->adult_rate, 2) }}</span>
+                        </div>
+                        @if($kidCount > 0)
+                        <div class="flex justify-between text-base text-gray-700 dark:text-gray-300">
+                            <span>Children ({{ $kidCount }}):</span>
+                            <span class="font-medium">₱{{ number_format($kidCount * $selectedRate->kid_rate, 2) }}</span>
+                        </div>
+                        @endif
+                        <div class="flex justify-between font-semibold text-gray-900 dark:text-white border-t pt-2 mt-2">
+                            <span>Subtotal:</span>
+                            <span>₱{{ number_format($subtotal, 2) }}</span>
+                        </div>
+                        {{-- <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                            <div class="flex items-center gap-2">
+                                <span>Convenience Fee (3%):</span>
+                                <div class="relative group inline-block">
+                                    <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
+                                    <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                        A processing fee is applied for secure online payments.
+                                    </div>
+                                </div>
+                            </div>
+                            <span>₱{{ number_format($convenience_fee, 2) }}</span>
+                        </div> --}}
+                        <div class="flex justify-between text-xl font-semibold text-gray-800 dark:text-white border-t pt-3 mt-3">
+                            <span>Total Amount:</span>
+                            <span class="text-green-700">₱{{ number_format($total_amount, 2) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
+
 
         <!------------------------- GUEST DETAIL SECTION -------------------------->
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
@@ -455,7 +470,7 @@
         </div> --}}
 
         <!------------------------- TERMS AND SUBMIT SECTION -------------------------->
-        <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+
             {{-- <div class="flex items-center mb-4">
                 <input type="checkbox" wire:model="terms" class="mr-2">
                 <label class="text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -492,7 +507,6 @@
                     </div>
                 </x-button>
             </div>
-        </div>
     </div>
 
     <!------------------------- MODALS SECTION ------------------------->

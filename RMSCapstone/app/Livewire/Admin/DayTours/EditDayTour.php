@@ -6,9 +6,9 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\DayTour;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
-
 
 #[Layout('layouts.app')]
 class EditDayTour extends Component
@@ -31,13 +31,16 @@ class EditDayTour extends Component
 
     public $main_image;
     public $newMainImage;
+
     public $newImages = [];
     public $storedImages = [];
     public $displayImages = [];
-    
+
     public $confirmDeleteImage = false;
     public $imageToDeleteId = null;
     public $confirmEditItem = false;
+
+    protected $listeners = ['updateImageOrder'];
 
     public function mount(DayTour $dayTour)
     {
@@ -53,11 +56,12 @@ class EditDayTour extends Component
         $this->max_guests = $dayTour->max_guests;
         $this->base_price = $dayTour->base_price;
         $this->is_active = $dayTour->is_active;
+        $this->main_image = $dayTour->main_image;
 
-        // Initialize stored images
+        // Initialize stored images with IDs for reordering/removal
         $this->storedImages = collect($dayTour->images ?? [])
             ->map(function ($path) {
-                return ['id' => uniqid(), 'path' => $path];
+                return ['id' => Str::random(10), 'path' => $path];
             })
             ->toArray();
 
@@ -76,16 +80,23 @@ class EditDayTour extends Component
 
     protected function updateDisplayImages()
     {
+        // Keep current temp images
         $existingTempImages = collect($this->displayImages)->filter(function ($image) {
             return !in_array($image, $this->storedImages);
         });
 
+        // Wrap new uploads
         $newImagePreviewsWithIds = collect($this->newImages)->map(function ($image) {
             return ['id' => $image->getFilename(), 'object' => $image];
         });
 
-        $this->displayImages = array_merge($this->storedImages, $existingTempImages->toArray(), $newImagePreviewsWithIds->toArray());
-        $this->newImages = [];
+        $this->displayImages = array_merge(
+            $this->storedImages,
+            $existingTempImages->toArray(),
+            $newImagePreviewsWithIds->toArray()
+        );
+
+        $this->newImages = []; // reset input
     }
 
     public function confirmImageDelete($id)
@@ -107,25 +118,24 @@ class EditDayTour extends Component
         if (is_numeric($indexToRemove)) {
             $imageToRemove = $this->displayImages[$indexToRemove];
 
+            // Stored image
             if (isset($imageToRemove['path'])) {
                 Storage::disk('public')->delete($imageToRemove['path']);
                 $this->storedImages = collect($this->storedImages)
-                    ->filter(function ($img) use ($imageToRemove) {
-                        return $img['id'] !== $imageToRemove['id'];
-                    })
+                    ->reject(fn($img) => $img['id'] === $imageToRemove['id'])
                     ->values()
                     ->toArray();
-            } elseif (isset($imageToRemove['object'])) {
+            }
+            // Temp uploaded image
+            elseif (isset($imageToRemove['object'])) {
                 $this->newImages = collect($this->newImages)
-                    ->filter(function ($img) use ($imageToRemove) {
-                        return $img->getFilename() !== $imageToRemove['id'];
-                    })
+                    ->reject(fn($img) => $img->getFilename() === $imageToRemove['id'])
                     ->values()
                     ->toArray();
             }
 
             $this->displayImages = collect($this->displayImages)
-                ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
+                ->reject(fn($img) => $img['id'] === $this->imageToDeleteId)
                 ->values()
                 ->toArray();
 
@@ -145,6 +155,7 @@ class EditDayTour extends Component
             throw $e;
         }
 
+        // Process all images
         $finalImagePaths = [];
         foreach ($this->displayImages as $imageItem) {
             if (isset($imageItem['path'])) {
@@ -155,10 +166,9 @@ class EditDayTour extends Component
             }
         }
 
-        // Update main image if new one uploaded
+        // Handle main image replacement
         $mainImagePath = $this->dayTour->main_image;
         if ($this->newMainImage && $this->newMainImage->isValid()) {
-            // Delete old main image
             if ($mainImagePath) {
                 Storage::disk('public')->delete($mainImagePath);
             }
@@ -194,7 +204,7 @@ class EditDayTour extends Component
                 'max:255',
                 Rule::unique('day_tours', 'name')->ignore($this->dayTour->id)->whereNull('deleted_at'),
             ],
-            'description' => 'required|string|min:10|max:1000',
+            'description' => 'nullable|string|min:10|max:1000',
             'inclusions' => 'nullable|string|max:2000',
             'exclusions' => 'nullable|string|max:2000',
             'terms_conditions' => 'nullable|string|max:2000',

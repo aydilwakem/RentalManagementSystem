@@ -1,4 +1,9 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
+            {{ __('Day Tour Rates') }}
+        </h2>
+    </x-slot>
     @if ($dayTourRates->isEmpty() && !$search && !$dayTourFilter && !$rateTypeFilter && !$dayTypeFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
@@ -151,11 +156,8 @@
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                     class="accent-blue-600 w-4 h-4">
-                                <span>Select</span>
+                                <p>Rate Name</p>
                             </th>
-
-                            <!-- Rate Name -->
-                            <th scope="col" class="px-4 py-3">Rate Name</th>
 
                             <!-- Day Tour -->
                             <th scope="col" class="px-4 py-3">Day Tour</th>
@@ -167,10 +169,10 @@
                             <th scope="col" class="px-4 py-3">Day Type</th>
 
                             <!-- Adult Rate -->
-                            <th scope="col" class="px-4 py-3">Adult Rate</th>
+                            <th scope="col" class="px-4 py-3">Adjusted Rate</th>
 
                             <!-- Kid Rate -->
-                            <th scope="col" class="px-4 py-3">Kid Rate</th>
+                            {{-- <th scope="col" class="px-4 py-3">Kid Rate</th> --}}
 
                             <!-- Status -->
                             <th scope="col" class="px-4 py-3">Status</th>
@@ -187,31 +189,31 @@
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="rate[]"
                                         value="{{ $rate->id }}" class="accent-blue-600 w-4 h-4">
+                                    {{ $rate->rate_name }}
                                 </th>
-                                <td class="px-4 py-3">{{ $rate->rate_name }}</td>
                                 <td class="px-4 py-3">{{ $rate->dayTour->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    <span class="nline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                         {{ $rate->rate_type_label }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    <span class="nline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
                                            ($rate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                         {{ $rate->day_type_label }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($rate->adult_rate, 2) }}</td>
-                                <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($rate->kid_rate, 2) }}</td>
+                                <td class="px-4 py-3 font-semibold text-green-700">₱{{ number_format($rate->adult_rate, 2) }}</td>
+                                {{-- <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($rate->kid_rate, 2) }}</td> --}}
                                 <td class="px-4 py-3">
                                     @if ($rate->is_active)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
                                             Active
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                             Inactive
                                         </span>
                                     @endif

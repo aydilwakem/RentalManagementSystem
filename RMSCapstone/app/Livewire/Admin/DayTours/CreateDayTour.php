@@ -8,7 +8,6 @@ use App\Models\DayTour;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 
-
 #[Layout('layouts.app')]
 class CreateDayTour extends Component
 {
@@ -23,13 +22,13 @@ class CreateDayTour extends Component
     public $start_time = '08:00';
     public $end_time = '16:00';
     public $max_guests = 50;
-    public $base_price = 0;
+    public $base_price;
     public $is_active = true;
 
-    public $main_image;
     public $newImages = [];
     public $uploadedImagePreviews = [];
     public $persistedImagePaths = [];
+    protected $listeners = ['reorderImages'];
 
     public $confirmCreateItem = false;
 
@@ -45,7 +44,7 @@ class CreateDayTour extends Component
         ]);
 
         foreach ($this->newImages as $image) {
-            $this->uploadedImagePreviews[] = $image;
+            $this->uploadedImagePreviews[] = $image; // store temporary for preview
         }
         $this->newImages = [];
     }
@@ -61,6 +60,28 @@ class CreateDayTour extends Component
         }
     }
 
+    public function reorderImages($order)
+    {
+        // Merge both arrays
+        $allImages = array_merge($this->uploadedImagePreviews, $this->persistedImagePaths);
+
+        $reordered = collect($order)->map(function ($i) use ($allImages) {
+            return $allImages[$i];
+        })->toArray();
+
+        // Reset arrays
+        $this->uploadedImagePreviews = [];
+        $this->persistedImagePaths = [];
+
+        foreach ($reordered as $img) {
+            if (is_object($img) && method_exists($img, 'temporaryUrl')) {
+                $this->uploadedImagePreviews[] = $img;
+            } else {
+                $this->persistedImagePaths[] = $img;
+            }
+        }
+    }
+
     public function saveDayTour()
     {
         try {
@@ -72,23 +93,19 @@ class CreateDayTour extends Component
 
         $allStoredImagePaths = [];
 
-        // Store newly uploaded images
+        // Save uploaded previews
         foreach ($this->uploadedImagePreviews as $imageObject) {
-            if (is_object($imageObject) && method_exists($imageObject, 'isValid')) {
-                if ($imageObject->isValid()) {
-                    $path = $imageObject->store('daytours', 'public');
-                    $allStoredImagePaths[] = $path;
-                }
+            if (is_object($imageObject) && $imageObject->isValid()) {
+                $path = $imageObject->store('daytours', 'public');
+                $allStoredImagePaths[] = $path;
             }
         }
 
+        // Merge persisted ones
         $allStoredImagePaths = array_merge($allStoredImagePaths, $this->persistedImagePaths);
 
-        // Store main image
-        $mainImagePath = null;
-        if ($this->main_image && $this->main_image->isValid()) {
-            $mainImagePath = $this->main_image->store('daytours', 'public');
-        }
+        // First image = main image
+        $mainImagePath = $allStoredImagePaths[0] ?? null;
 
         // Create the day tour
         $dayTour = DayTour::create([
@@ -110,7 +127,7 @@ class CreateDayTour extends Component
         $this->reset([
             'name', 'description', 'inclusions', 'exclusions', 'terms_conditions',
             'duration_hours', 'start_time', 'end_time', 'max_guests', 'base_price',
-            'is_active', 'main_image', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths'
+            'is_active', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths'
         ]);
 
         session()->flash('message', 'Day Tour successfully created!');
@@ -126,7 +143,7 @@ class CreateDayTour extends Component
                 'max:255',
                 Rule::unique('day_tours', 'name')->whereNull('deleted_at'),
             ],
-            'description' => 'required|string|min:10|max:1000',
+            'description' => 'nullable|string|min:10|max:1000',
             'inclusions' => 'nullable|string|max:2000',
             'exclusions' => 'nullable|string|max:2000',
             'terms_conditions' => 'nullable|string|max:2000',
@@ -136,7 +153,6 @@ class CreateDayTour extends Component
             'max_guests' => 'required|integer|min:1|max:1000',
             'base_price' => 'required|numeric|min:0|max:100000',
             'is_active' => 'boolean',
-            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2024',
             'newImages' => 'nullable|array',
             'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
         ];

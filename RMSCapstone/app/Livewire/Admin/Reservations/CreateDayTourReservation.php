@@ -136,11 +136,11 @@ class CreateDayTourReservation extends Component
     public function getAvailableRatesForTour($tour)
     {
         $dayType = $this->getDayType($this->tour_date);
-        
+
         if (!$tour->relationLoaded('activeRates')) {
             $tour->load('activeRates');
         }
-        
+
         return $tour->activeRates
             ->filter(function ($rate) use ($dayType) {
                 return $rate->day_type === $dayType;
@@ -157,10 +157,10 @@ class CreateDayTourReservation extends Component
     public function selectTour($tourId, $rateId = null)
     {
         $this->selectedTour = DayTour::find($tourId);
-        
+
         if ($this->selectedTour) {
             $availableRates = $this->getAvailableRatesForTour($this->selectedTour);
-            
+
             if ($rateId) {
                 $this->selectedRate = $availableRates->firstWhere('id', $rateId);
             } else {
@@ -190,7 +190,7 @@ class CreateDayTourReservation extends Component
         $adultTotal = $this->adultCount * $this->selectedRate->adult_rate;
         $kidTotal = $this->kidCount * $this->selectedRate->kid_rate;
         $this->subtotal = $adultTotal + $kidTotal;
-        
+
         // $this->convenience_fee = $this->subtotal * 0.03;
         // $this->total_amount = $this->subtotal + $this->convenience_fee;
         $this->total_amount = $this->subtotal;
@@ -256,7 +256,7 @@ class CreateDayTourReservation extends Component
     public function addMultipleGuests()
     {
         $this->validateGuestData();
-        
+
         if (count($this->guests) >= ($this->totalGuests - 1)) {
             $this->addError('guests', 'Maximum number of additional guests reached.');
             return;
@@ -434,6 +434,7 @@ class CreateDayTourReservation extends Component
             'middle_name' => $this->middle_name,
             'last_name' => $this->last_name,
             'guest_type_id' => 1, // Primary guest type
+            'country_of_origin' => $this->country ?? 'Philippines',
         ]);
 
         // Insert additional guests
@@ -493,8 +494,8 @@ class CreateDayTourReservation extends Component
             'selectedTour' => 'required',
             'selectedRate' => 'required',
             'tour_date' => 'required|date|after_or_equal:today',
-            'adultCount' => 'required|integer|min:1',
-            'kidCount' => 'required|integer|min:0',
+            'adultCount' => 'nullable|integer|min:1',
+            'kidCount' => 'nullable|integer|min:0',
             'first_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',
             'middle_name' => 'nullable|string|regex:/^[A-Za-z\s\-]+$/',
             'last_name' => 'required|string|regex:/^[A-Za-z\s\-]+$/',

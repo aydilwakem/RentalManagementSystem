@@ -16,8 +16,8 @@ class CreateDayTourRate extends Component
     public $rate_name;
     public $rate_type = 'without_room';
     public $day_type = 'weekday';
-    public $adult_rate = 0;
-    public $kid_rate = 0;
+    public $adult_rate;
+    public $kid_rate;
     public $min_guests = 1;
     public $max_guests;
     public $is_active = true;
@@ -60,7 +60,7 @@ class CreateDayTourRate extends Component
         ]);
 
         $this->reset([
-            'day_tour_id', 'rate_name', 'rate_type', 'day_type', 'adult_rate', 
+            'day_tour_id', 'rate_name', 'rate_type', 'day_type', 'adult_rate',
             'kid_rate', 'min_guests', 'max_guests', 'is_active', 'notes'
         ]);
 

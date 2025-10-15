@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="overflow-hidden sm:rounded-lg">
+    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg dark:bg-gray-800 dark:text-white">
         @livewire('admin.day-tours.view-day-tours')
     </div>
 

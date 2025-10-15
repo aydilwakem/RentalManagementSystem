@@ -25,32 +25,32 @@
             <!-- Day Tour Details -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="grid grid-cols-1 gap-2">
-                    <!-- Main Image -->
-                    @if ($dayTour->main_image)
+                    <!-- DayTour Image Array -->
+                    @if (isset($dayTour->images) && count($dayTour->images) > 0)
+                        <!-- Main Image -->
                         <div class="w-full">
-                            <img src="{{ $dayTour->main_image_url }}" 
-                                class="w-full h-72 object-cover rounded border cursor-pointer" 
+                            <img src="{{ asset('storage/' . $dayTour->images[0]) }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer"
                                 alt="Main Day Tour Image"
-                                onclick="openModal('{{ $dayTour->main_image_url }}')">
+                                onclick="openModal('{{ asset('storage/' . $dayTour->images[0]) }}')">
                         </div>
-                    @else
-                        <div class="w-full">
-                            <img src="{{ asset('images/daytour-default.png') }}" 
-                                class="w-full h-72 object-cover rounded border cursor-pointer" 
-                                alt="Default Day Tour Image"
-                                onclick="openModal('{{ asset('images/daytour-default.png') }}')">
-                        </div>
-                    @endif
 
-                    <!-- Additional Images -->
-                    @if (count($dayTour->images) > 0)
+                        <!-- Additional Images -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            @foreach (array_slice($dayTour->images, 0, 3) as $img)
-                                <img src="{{ asset('storage/' . $img) }}" 
-                                    class="w-full h-44 object-cover rounded border cursor-pointer" 
+                            @foreach (array_slice($dayTour->images, 1) as $img)
+                                <img src="{{ asset('storage/' . $img) }}"
+                                    class="w-full h-44 object-cover rounded border cursor-pointer"
                                     alt="Day Tour Image"
                                     onclick="openModal('{{ asset('storage/' . $img) }}')">
                             @endforeach
+                        </div>
+                    @else
+                        <!-- Default Image -->
+                        <div class="w-full">
+                            <img src="{{ asset('images/rms-default.png') }}"
+                                class="w-full h-72 object-cover rounded border cursor-pointer"
+                                alt="Default Day Tour Image"
+                                onclick="openModal('{{ asset('images/rms-default.png') }}')">
                         </div>
                     @endif
                 </div>
@@ -58,7 +58,7 @@
                 <!-- Image Popup View -->
                 <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
                     <div class="flex items-center justify-center min-h-screen">
-                        <div class=" relative modal-content">
+                        <div class="relative modal-content">
                             <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
                             <button onclick="closeModal()"
                                 class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
@@ -67,6 +67,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Day Tour Details -->
                 <div>
@@ -79,7 +80,7 @@
                         <li><strong>Maximum Guests:</strong> {{ $dayTour->max_guests }}</li>
                         <li><strong>Base Price:</strong> ₱{{ number_format($dayTour->base_price, 2) }}</li>
                         <li>
-                            <strong>Status:</strong> 
+                            <strong>Status:</strong>
                             @if ($dayTour->is_active)
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                     Active <i class="fa-solid fa-check pl-1"></i>
@@ -90,8 +91,6 @@
                                 </span>
                             @endif
                         </li>
-                        <li><strong>Created:</strong> {{ $dayTour->created_at->format('M d, Y h:i A') }}</li>
-                        <li><strong>Last Updated:</strong> {{ $dayTour->updated_at->format('M d, Y h:i A') }}</li>
                     </ul>
 
                     <!-- Inclusions -->
@@ -145,14 +144,14 @@
                                     <tr class="border-b dark:border-gray-600">
                                         <td class="px-4 py-2 dark:text-white">{{ $rate->rate_name }}</td>
                                         <td class="px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs 
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
                                                 {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                                 {{ $rate->rate_type_label }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs 
-                                                {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' : 
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
+                                                {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
                                                    ($rate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                                 {{ $rate->day_type_label }}
                                             </span>

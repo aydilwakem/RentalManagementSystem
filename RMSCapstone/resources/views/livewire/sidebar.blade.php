@@ -166,7 +166,7 @@
                         @can('daytour-list')
                         <a href="{{ route('admin.day-tours') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.day-tours') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-                            <h1 class="cursor-pointer">Day Tours</h1>
+                            <h1 class="cursor-pointer">Packages</h1>
                         </a>
                         @endcan
 

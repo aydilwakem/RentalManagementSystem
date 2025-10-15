@@ -184,6 +184,8 @@ class ViewDaytourReservation extends Component
             'payment_status' => 'unpaid',
             'id' => $this->transaction->id,
             'pivot_id' => null,
+            'pax' => $this->transaction->pax,
+
         ];
 
         // Sort by created_at
@@ -345,7 +347,7 @@ public function recalculateInvoice()
     // Only update discount and grand total, don't touch payment calculations
     $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
     $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
-    
+
     // Refresh the display values
     $this->refreshInvoice();
 }
@@ -748,10 +750,10 @@ public function recalculateInvoice()
         $this->transaction->refresh();
         $this->invoice->refresh();
         $this->payments = $this->invoice->payments ?? collect();
-        
+
         // Reload guest details
         $this->loadGuestDetails();
-        
+
         // Reload invoice items
         $this->loadAllInvoiceItems();
     }
@@ -869,7 +871,7 @@ public function recalculateInvoice()
 
         // Manually update invoice totals instead of relying solely on recalculateInvoice
         $this->manualInvoiceRecalculation();
-        
+
         $this->closeDiscountModal();
         session()->flash('success', 'PWD/Senior discount applied successfully!');
     }
@@ -882,9 +884,9 @@ public function recalculateInvoice()
         $baseSubtotal = $this->computeBaseSubtotal();
         $totalDiscount = $this->invoice->discounts->sum('discount_value') ?? 0;
         $convenienceFee = $this->computeConvenienceFeeTotal();
-        
+
         $grandTotal = max(($baseSubtotal - $totalDiscount) + $convenienceFee, 0);
-        
+
         // Update the invoice
         $this->invoice->update([
             'base_subtotal' => $baseSubtotal,
@@ -892,7 +894,7 @@ public function recalculateInvoice()
             'sub_total' => $grandTotal,
             'balance_due' => max($grandTotal - $this->invoice->amount_paid, 0),
         ]);
-        
+
         // Refresh the invoice
         $this->invoice = $this->invoice->fresh();
         $this->refreshInvoice();
@@ -939,5 +941,5 @@ public function recalculateInvoice()
         Log::info("Invoice {$invoiceId} recalculated after discount removal.");
         session()->flash('success', 'Discount removed successfully!');
     }
-    
+
 }

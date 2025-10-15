@@ -1,13 +1,13 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
-            {{ __('Day Tour List') }}
+            {{ __('Day Tour Packages') }}
         </h2>
     </x-slot>
     @if ($dayTours->isEmpty() && !$search && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No day tours yet.<br> Click "Create Day Tour" to add a new day tour package.</p>
+            <p class="text-gray-500 text-lg font-semibold">No day tours packages yet.<br> Click "Create Day Tour" to add a new day tour package.</p>
             <x-button class="mt-4" href="{{ route('admin.create-day-tour') }}" icon="fas fa-plus">
                 Create Day Tour
             </x-button>
@@ -63,7 +63,7 @@
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="Search day tours..." required="">
+                            placeholder="Search" required="">
                     </div>
 
                     <!-- Bulk Delete Button -->
@@ -140,13 +140,13 @@
                             <th scope="col" class="px-4 py-3">Duration</th>
 
                             <!-- Max Guests -->
-                            <th scope="col" class="px-4 py-3">Max Guests</th>
+                            {{-- <th scope="col" class="px-4 py-3">Max Guests</th> --}}
 
                             <!-- Base Price -->
                             <th scope="col" class="px-4 py-3">Base Price</th>
 
                             <!-- Number of Rates -->
-                            <th scope="col" class="px-4 py-3">Rates</th>
+                            {{-- <th scope="col" class="px-4 py-3">Rates</th> --}}
 
                             <!-- Status -->
                             <th scope="col" class="px-4 py-3">Status</th>
@@ -166,21 +166,21 @@
                                         {{ $tour->name }}
                                 </th>
                                 <td class="px-4 py-3">{{ $tour->duration_hours }} hours</td>
-                                <td class="px-4 py-3">{{ $tour->max_guests }} guests</td>
+                                {{-- <td class="px-4 py-3">{{ $tour->max_guests }} guests</td> --}}
                                 <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($tour->base_price, 2) }}</td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {{-- <td class="px-4 py-3">
+                                    <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $tour->rates_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                         {{ $tour->rates_count }} rate(s)
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td class="px-4 py-3">
                                     @if ($tour->is_active)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
                                             Active
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                             Inactive
                                         </span>
                                     @endif
