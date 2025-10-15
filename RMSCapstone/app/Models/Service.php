@@ -47,7 +47,7 @@ class Service extends Model
     public function scopeAvailableServices($query)
     {
         return $query->where('is_active', true)
-            ->where('type', '!=', 'penalty')
+            ->whereNotIn('type', ['penalty', 'merchandise', 'food'])
             ->whereNotIn('name', ['Extra Hour', 'Pet Fee']);
     }
 }
