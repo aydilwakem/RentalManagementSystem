@@ -28,7 +28,7 @@
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Tour Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" wire:model="name" id="name" required 
+                        <input type="text" wire:model="name" id="name" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Standard Day Tour Package">
                         @error('name')
@@ -41,7 +41,7 @@
                         <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Description <span class="text-red-500">*</span>
                         </label>
-                        <textarea wire:model="description" id="description" rows="4" 
+                        <textarea wire:model="description" id="description" rows="4"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Describe the day tour package..."></textarea>
                         @error('description')
@@ -54,7 +54,7 @@
                         <label for="duration_hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Duration (Hours) <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="duration_hours" id="duration_hours" required 
+                        <input type="number" wire:model="duration_hours" id="duration_hours" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="8" min="1" max="24">
                         @error('duration_hours')
@@ -66,7 +66,7 @@
                         <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Guests <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="max_guests" id="max_guests" required 
+                        <input type="number" wire:model="max_guests" id="max_guests" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="50" min="1" max="1000">
                         @error('max_guests')
@@ -79,7 +79,7 @@
                         <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Start Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="start_time" id="start_time" required 
+                        <input type="time" wire:model="start_time" id="start_time" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('start_time')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -90,7 +90,7 @@
                         <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             End Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="end_time" id="end_time" required 
+                        <input type="time" wire:model="end_time" id="end_time" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('end_time')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -104,7 +104,7 @@
                         </label>
                         <input type="number" wire:model="base_price" id="base_price" required step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0">
+                            placeholder="0.00" min="0" onwheel="this.blur()">
                         @error('base_price')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -170,7 +170,7 @@
                         <label for="newMainImage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Main Image
                         </label>
-                        
+
                         @if ($dayTour->main_image)
                             <div class="relative mb-2">
                                 <img src="{{ asset('storage/' . $dayTour->main_image) }}" class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Current Main Image">
@@ -193,7 +193,7 @@
                             </div>
                         @endif
 
-                        <input type="file" wire:model="newMainImage" id="newMainImage" accept="image/png, image/jpeg" 
+                        <input type="file" wire:model="newMainImage" id="newMainImage" accept="image/png, image/jpeg"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
                         @error('newMainImage')
                             <span class="text-red-500 text-sm">{{ $message }}</span>

@@ -121,10 +121,8 @@ class ViewEvents extends Component
             ->when($this->transactionStatus !== '', function ($query) {
                 $query->where('transaction_status', $this->transactionStatus);
             })
-            ->groupBy('trn_transactions.id') // ✅ this prevents duplicates
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
-
 
         // For fake IDs: get all event-type transactions ordered by creation
         $eventTransactions = Transaction::where('reservation_type_id', 3)->orderBy('created_at', 'ASC')->get();

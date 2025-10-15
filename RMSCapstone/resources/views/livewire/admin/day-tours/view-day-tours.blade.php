@@ -1,5 +1,9 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
-
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
+            {{ __('Day Tour List') }}
+        </h2>
+    </x-slot>
     @if ($dayTours->isEmpty() && !$search && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
@@ -13,7 +17,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -123,15 +127,14 @@
                     <thead wire:loading.remove wire:target="search, statusFilter"
                         class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
-                            <!-- Select All Checkbox -->
+                            <!-- Select All Checkbox and Tour Name -->
                             <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                 <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
                                     class="accent-blue-600 w-4 h-4">
-                                <span>Select</span>
+                                <div class="flex items-center space-x-2 cursor-pointer">
+                                    <span>Tour Name</span>
+                                </div>
                             </th>
-
-                            <!-- Tour Name -->
-                            <th scope="col" class="px-4 py-3">Tour Name</th>
 
                             <!-- Duration -->
                             <th scope="col" class="px-4 py-3">Duration</th>
@@ -160,13 +163,13 @@
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="tour[]"
                                         value="{{ $tour->id }}" class="accent-blue-600 w-4 h-4">
+                                        {{ $tour->name }}
                                 </th>
-                                <td class="px-4 py-3 capitalize">{{ $tour->name }}</td>
                                 <td class="px-4 py-3">{{ $tour->duration_hours }} hours</td>
                                 <td class="px-4 py-3">{{ $tour->max_guests }} guests</td>
                                 <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($tour->base_price, 2) }}</td>
                                 <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         {{ $tour->rates_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                         {{ $tour->rates_count }} rate(s)
                                     </span>
@@ -182,7 +185,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2 mt-1">
+                                <td class="px-4 py-3 flex   space-x-2 mt-1">
                                     <!-- View Icon -->
                                     @can('daytour-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"

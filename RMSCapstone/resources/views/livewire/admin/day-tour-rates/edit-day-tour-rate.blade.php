@@ -90,7 +90,7 @@
                         </label>
                         <input type="number" wire:model="adult_rate" id="adult_rate" required step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0">
+                            placeholder="0.00" min="0" onwheel="this.blur()">
                         @error('adult_rate')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -102,7 +102,7 @@
                         </label>
                         <input type="number" wire:model="kid_rate" id="kid_rate" required step="0.01"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0">
+                            placeholder="0.00" min="0" onwheel="this.blur()">
                         @error('kid_rate')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -115,7 +115,7 @@
                         </label>
                         <input type="number" wire:model="min_guests" id="min_guests" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="1" min="1">
+                            placeholder="1" min="1" onwheel="this.blur()">
                         @error('min_guests')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -127,7 +127,7 @@
                         </label>
                         <input type="number" wire:model="max_guests" id="max_guests"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Leave empty for no limit" min="1">
+                            placeholder="Leave empty for no limit" min="1" onwheel="this.blur()">
                         @error('max_guests')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
