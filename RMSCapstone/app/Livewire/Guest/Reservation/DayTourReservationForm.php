@@ -88,6 +88,8 @@ class DayTourReservationForm extends Component
     public string $companyEmail;
     public string $companyContact;
     public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
     public function boot(
         PayMongoService $payMongo,
@@ -413,7 +415,7 @@ class DayTourReservationForm extends Component
         // Send confirmation email
         try {
             $pdfContent = $this->generateAvailablePaymentMethods();
-            $this->emailService->sendReservationEmails($reservationData, $pdfContent);
+            $this->emailService->sendDayTourReservationEmails($reservationData, $pdfContent);
         } catch (\Exception $e) {
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
         }
@@ -562,6 +564,8 @@ class DayTourReservationForm extends Component
             'branding_company_email' => $this->companyEmail,
             'branding_company_contact' => $this->companyContact,
             'company_address' => $this->companyAddress,
+            'facebook_link' => $this->facebookLink,
+            'instagram_link' => $this->instagramLink,
         ];
     }
 
@@ -630,6 +634,8 @@ class DayTourReservationForm extends Component
         $this->companyEmail = $branding['branding_company_email'];
         $this->companyContact = $branding['branding_company_contact'];
         $this->companyAddress = $branding['company_address'];
+        $this->facebookLink = $branding['facebook_link'];
+        $this->instagramLink = $branding['instagram_link'];
         $this->enable_deposit_percentage = $branding['enable_deposit_percentage'];
         $this->deposit_percentage = $branding['deposit_percentage'];
         $this->terms_and_conditions = $branding['terms_and_conditions'] ?? '';

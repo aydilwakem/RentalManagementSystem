@@ -13,7 +13,9 @@
             </div>
             <div>
                 <p><strong>Adults:</strong> {{ $adultCount }} x ₱{{ number_format($selectedRate->adult_rate, 2) }}</p>
-                <p><strong>Children:</strong> {{ $kidCount }} x ₱{{ number_format($selectedRate->kid_rate, 2) }}</p>
+                @if($kidCount > 0)
+                    <p><strong>Children:</strong> {{ $kidCount }} x ₱{{ number_format($selectedRate->kid_rate, 2) }}</p>
+                @endif
                 <p><strong>Total Guests:</strong> {{ $totalGuests }}</p>
             </div>
         </div>
@@ -27,7 +29,7 @@
                 <span>Subtotal:</span>
                 <span>₱{{ number_format($this->subtotal, 2) }}</span>
             </div>
-            
+
             <!-- Convenience Fee (Always shown) -->
             <div class="flex justify-between">
                 <div class="flex items-center gap-2">
@@ -35,14 +37,15 @@
                     <div class="relative group inline-block">
                         <i class="fas fa-info-circle text-gray-500 text-xs cursor-pointer"></i>
                         <!-- Tooltip -->
-                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                        <div
+                            class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-max max-w-xs text-xs text-white bg-gray-800 rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
                             A processing fee is applied for secure online payments.
                         </div>
                     </div>
                 </div>
                 <span>₱{{ number_format($this->convenience_fee, 2) }}</span>
             </div>
-            
+
             <hr>
             <div class="flex justify-between text-lg font-bold">
                 <span>Total Amount:</span>
@@ -57,7 +60,7 @@
         <div class="prose max-w-none mb-4">
             {!! $terms_and_conditions !!}
         </div>
-        
+
         <label class="flex items-center">
             <input type="checkbox" wire:model="terms" class="mr-2">
             <span>I agree to the terms and conditions</span>

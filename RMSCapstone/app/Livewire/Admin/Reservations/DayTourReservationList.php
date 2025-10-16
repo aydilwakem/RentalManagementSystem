@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Reservations;
 
 use App\Mail\DayTourConfirmedMail;
 use App\Mail\DayTourCompletedMail;
+use App\Mail\DayTouReservationCompletedMail;
+use App\Mail\DayTouReservationConfirmedMail;
 use App\Mail\ReservationCompletedMail;
 use App\Mail\ReservationConfirmedMail;
 use App\Models\Transaction;
@@ -153,8 +155,8 @@ class DayTourReservationList extends Component
     public function confirmReservation($id)
     {
         $transaction = Transaction::with([
-            'transactionUser', 
-            'invoice.payments', 
+            'transactionUser',
+            'invoice.payments',
             'guestDetails.guestType'
         ])->find($id);
 
@@ -326,7 +328,7 @@ class DayTourReservationList extends Component
         ];
 
         try {
-            Mail::to($dayTourData['email'])->send(new ReservationConfirmedMail($dayTourData));
+            Mail::to($dayTourData['email'])->send(new DayTouReservationConfirmedMail($dayTourData));
         } catch (\Exception $e) {
             logger()->error('Day Tour confirmation email send failed: ' . $e->getMessage());
             session()->flash('error', 'Reservation confirmed, but email failed to send.');
@@ -381,7 +383,7 @@ class DayTourReservationList extends Component
         ];
 
         try {
-            Mail::to($dayTourData['email'])->send(new ReservationCompletedMail($dayTourData));
+            Mail::to($dayTourData['email'])->send(new DayTouReservationCompletedMail($dayTourData));
         } catch (\Exception $e) {
             logger()->error('Day Tour completion email send failed: ' . $e->getMessage());
             session()->flash('error', 'Day Tour marked as done, but email failed to send.');
