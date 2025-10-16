@@ -191,7 +191,22 @@ class DayTourReservationForm extends Component
                 $this->selectedRate = $availableRates->first();
             }
         }
+
+        $this->terms_and_conditions = $this->selectedTour->terms_and_conditions
+                ?? $this->terms_and_conditions;
+
         $this->calculateSubtotal();
+    }
+
+    public function updatedSelectedTour($tourId)
+    {
+        if ($tourId) {
+            $this->selectTour($tourId);
+        } else {
+            // if deselected, reset selectedRate and terms
+            $this->selectedRate = null;
+            $this->terms_and_conditions = $this->brandingService->getBrandingData()['terms_and_conditions'] ?? $this->terms_and_conditions;
+        }
     }
 
     public function updatedTourDate()
@@ -491,6 +506,7 @@ class DayTourReservationForm extends Component
             'middle_name' => $this->middle_name,
             'last_name' => $this->last_name,
             'guest_type_id' => 1, // Primary guest type
+            'country_of_origin' => $this->country ?? 'Philippines',
         ]);
 
         // Insert additional guests

@@ -4,9 +4,9 @@
             {{ __('Create Day Tour') }}
         </h2>
         <x-breadcrumbs :items="[
-        ['label' => 'Day Tours', 'url' => route('admin.day-tours')],
-        ['label' => 'Create Day Tour', 'url' => route('admin.create-day-tour')],
-    ]" />
+            ['label' => 'Day Tours', 'url' => route('admin.day-tours')],
+            ['label' => 'Create Day Tour', 'url' => route('admin.create-day-tour')],
+        ]" />
     </x-slot>
 
     <div class="py-3">
@@ -24,7 +24,7 @@
             <form wire:submit.prevent="">
                 <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
                     <!-- Tour Name -->
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Tour Name <span class="text-red-500">*</span>
                         </label>
@@ -36,35 +36,77 @@
                         @enderror
                     </div>
 
+                    <!-- Base Price -->
+                    <div>
+                        <label for="base_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Base Price <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" wire:model="base_price" id="base_price" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. ₱650.00" onwheel="this.blur()">
+                        @error('base_price')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
                     <!-- Description -->
                     <div class="md:col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Description <span class="text-red-500">*</span>
+                            Description
                         </label>
-                        <textarea wire:model="description" id="description" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                        <textarea wire:model="description" id="description" rows="3"
+                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Describe the day tour package..."></textarea>
                         @error('description')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Duration and Time -->
-                    <div>
-                        <label for="duration_hours"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Duration (Hours) <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" wire:model="duration_hours" id="duration_hours" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="8" min="1" max="24">
-                        @error('duration_hours')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    <div class="grid grid-cols-3 col-span-2 space-x-3">
+                        <!-- Duration and Time -->
+                        <div>
+                            <label for="duration_hours"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Duration (Hours) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" wire:model="duration_hours" id="duration_hours" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                placeholder="8" min="1" max="24">
+                            @error('duration_hours')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Start and End Time -->
+                        <div>
+                            <label for="start_time"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Start Time <span class="text-red-500">*</span>
+                            </label>
+                            <input type="time" wire:model="start_time" id="start_time" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                            @error('start_time')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="end_time"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                End Time <span class="text-red-500">*</span>
+                            </label>
+                            <input type="time" wire:model="end_time" id="end_time" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                            @error('end_time')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
 
-                    <div>
+
+
+                    {{-- <div>
                         <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Guests <span class="text-red-500">*</span>
                         </label>
@@ -74,43 +116,125 @@
                         @error('max_guests')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
-                    <!-- Start and End Time -->
+
+
+                    <!-- Inclusions -->
                     <div>
-                        <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Start Time <span class="text-red-500">*</span>
+                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Inclusions
                         </label>
-                        <input type="time" wire:model="start_time" id="start_time" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('start_time')
+                        <textarea wire:model="inclusions" id="inclusions" rows="4"
+                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="List what's included in the tour (one per line)&#10;• Swimming pool access&#10;• Lunch buffet&#10;• Welcome drinks"></textarea>
+                        @error('inclusions')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div>
-                        <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            End Time <span class="text-red-500">*</span>
+                    <!-- Exclusions -->
+                    {{-- <div>
+                        <label for="exclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Exclusions
                         </label>
-                        <input type="time" wire:model="end_time" id="end_time" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('end_time')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Base Price -->
-                    <div>
-                        <label for="base_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Base Price <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" wire:model="base_price" id="base_price" required step="0.01"
+                        <textarea wire:model="exclusions" id="exclusions" rows="4"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0" onwheel="this.blur()">
-                        @error('base_price')
+                            placeholder="List what's not included in the tour (one per line)&#10;• Alcoholic beverages&#10;• Spa services&#10;• Transportation"></textarea>
+                        @error('exclusions')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div> --}}
+
+                    <!-- Terms & Conditions -->
+                    <div>
+                        <label for="terms_conditions"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Terms & Conditions
+                        </label>
+                        <textarea wire:model="terms_conditions" id="terms_conditions" rows="4"
+                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Enter terms and conditions..."></textarea>
+                        @error('terms_conditions')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+                    <!-- Images Upload -->
+                    <div class="mb-4 col-span-2">
+                        <label for="newImageInput" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Day Tour Images
+                        </label>
+
+                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                            @php
+                                $displayImages = array_merge($uploadedImagePreviews, $persistedImagePaths);
+                            @endphp
+
+                            @if ($displayImages && count($displayImages) > 0)
+                                @foreach ($displayImages as $index => $image)
+                                    <div class="relative shrink-0" wire:sortable.item="{{ $index }}" wire:key="image-{{ $index }}">
+                                        @if (is_object($image) && method_exists($image, 'temporaryUrl'))
+                                            <img src="{{ $image->temporaryUrl() }}" class="w-52 h-40 object-cover rounded-md shadow-sm">
+                                        @else
+                                            <img src="{{ asset('storage/' . $image) }}" class="w-52 h-40 object-cover rounded-md shadow-sm">
+                                        @endif
+
+                                        <button type="button" wire:click="removeImage({{ $index }})"
+                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-300 hover:text-red-700 transition">
+                                            ×
+                                        </button>
+
+                                        @if ($loop->first)
+                                            <span class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
+                                                Main Image
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endforeach
+
+                                <!-- Add more placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                    </div>
+                                </label>
+                            @else
+                                <!-- First upload placeholder -->
+                                <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove wire:target="newImages">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        <span class="text-xs">Add image</span>
+                                    </div>
+                                </label>
+                            @endif
+
+                            <!-- Hidden Input -->
+                            <input multiple type="file" wire:model="newImages" id="newImageInput"
+                                accept="image/png, image/jpeg" class="hidden">
+
+                            @error('newImages.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
+                        <!-- Upload Spinner -->
+                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span>Uploading...</span>
+                        </div>
+                    </div>
+
 
                     <!-- Status -->
                     <div>
@@ -132,115 +256,6 @@
                         </div>
                     </div>
 
-                    <!-- Inclusions -->
-                    <div>
-                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Inclusions
-                        </label>
-                        <textarea wire:model="inclusions" id="inclusions" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="List what's included in the tour (one per line)&#10;• Swimming pool access&#10;• Lunch buffet&#10;• Welcome drinks"></textarea>
-                        @error('inclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Exclusions -->
-                    <div>
-                        <label for="exclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Exclusions
-                        </label>
-                        <textarea wire:model="exclusions" id="exclusions" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="List what's not included in the tour (one per line)&#10;• Alcoholic beverages&#10;• Spa services&#10;• Transportation"></textarea>
-                        @error('exclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Terms & Conditions -->
-                    <div class="md:col-span-2">
-                        <label for="terms_conditions"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Terms & Conditions
-                        </label>
-                        <textarea wire:model="terms_conditions" id="terms_conditions" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Enter terms and conditions..."></textarea>
-                        @error('terms_conditions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Main Image Upload -->
-                    <div class="mb-4">
-                        <label for="main_image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Main Image
-                        </label>
-                        @if ($main_image)
-                            <div class="relative mb-2">
-                                <img src="{{ $main_image->temporaryUrl() }}"
-                                    class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Main Image Preview">
-                                <button type="button" wire:click="$set('main_image', null)"
-                                    class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                    ×
-                                </button>
-                            </div>
-                        @endif
-                        <input type="file" wire:model="main_image" id="main_image" accept="image/png, image/jpeg"
-                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
-                        @error('main_image')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Additional Images Upload -->
-                    <div class="mb-4">
-                        <label for="newImageInput"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Additional Images
-                        </label>
-                        <div class="flex flex-wrap gap-4">
-                            @if (count($uploadedImagePreviews) > 0)
-                                @foreach ($uploadedImagePreviews as $index => $image)
-                                    <div class="relative shrink-0">
-                                        <img src="{{ $image->temporaryUrl() }}"
-                                            class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
-                                        <button type="button" wire:click="removeImage({{ $index }})"
-                                            class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-semibold leading-none hover:bg-red-300 hover:text-red-700 transition">
-                                            ×
-                                        </button>
-                                    </div>
-                                @endforeach
-                            @endif
-
-                            <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
-                                wire:target="newImages">
-                                <div
-                                    class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                    <span class="text-xs">Add image</span>
-                                </div>
-                            </label>
-
-                            <input multiple type="file" wire:model="newImages" id="newImageInput"
-                                accept="image/png, image/jpeg" class="hidden">
-                        </div>
-
-                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
-                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                            </svg>
-                            <span>Uploading...</span>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Action Buttons -->

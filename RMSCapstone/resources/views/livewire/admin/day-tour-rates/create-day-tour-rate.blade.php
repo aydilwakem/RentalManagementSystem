@@ -23,11 +23,11 @@
             <form wire:submit.prevent="">
                 <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
                     <!-- Day Tour Selection -->
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="day_tour_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Day Tour Package <span class="text-red-500">*</span>
                         </label>
-                        <select wire:model="day_tour_id" id="day_tour_id" required
+                        <select wire:model.live="day_tour_id" id="day_tour_id" required
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Day Tour Package</option>
                             @foreach ($dayTours as $tour)
@@ -40,7 +40,7 @@
                     </div>
 
                     <!-- Rate Name -->
-                    <div class="md:col-span-2">
+                    <div>
                         <label for="rate_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Rate Name <span class="text-red-500">*</span>
                         </label>
@@ -82,20 +82,9 @@
                         @enderror
                     </div>
 
-                    <!-- Adult and Kid Rates -->
-                    <div>
-                        <label for="adult_rate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Adult Rate (₱) <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" wire:model="adult_rate" id="adult_rate" required step="0.01"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0" onwheel="this.blur()">
-                        @error('adult_rate')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <div>
+
+                    {{-- <div>
                         <label for="kid_rate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Kid Rate (₱) <span class="text-red-500">*</span>
                         </label>
@@ -105,10 +94,10 @@
                         @error('kid_rate')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <!-- Guest Range -->
-                    <div>
+                    {{-- <div>
                         <label for="min_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Minimum Guests <span class="text-red-500">*</span>
                         </label>
@@ -118,9 +107,9 @@
                         @error('min_guests')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
-                    <div>
+                    {{-- <div>
                         <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Guests
                         </label>
@@ -128,6 +117,45 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Leave empty for no limit" min="1" onwheel="this.blur()">
                         @error('max_guests')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div> --}}
+
+                    <!-- Adult and Kid Rates -->
+                    <div>
+                        <label for="adult_rate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Adult Rate <span class="text-red-500">*</span>
+                            {{-- <span class="text-xs text-gray-500">(Current Base Rate: ₱{{ number_format($baseRate, 2)}} )</span> --}}
+                        </label>
+                        <input type="number" wire:model.live="adult_rate" id="adult_rate" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. ₱750.00" min="0" onwheel="this.blur()">
+                        @error('adult_rate')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="kid_rate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Child Rate<span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" wire:model="kid_rate" id="kid_rate" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. ₱650.00" min="0" onwheel="this.blur()">
+                        @error('kid_rate')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="md:col-span-2">
+                        <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Additional Notes
+                        </label>
+                        <textarea wire:model="notes" id="notes" rows="3"
+                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Any additional information about this rate..."></textarea>
+                        @error('notes')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
@@ -148,18 +176,7 @@
                         </div>
                     </div>
 
-                    <!-- Notes -->
-                    <div class="md:col-span-2">
-                        <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Additional Notes
-                        </label>
-                        <textarea wire:model="notes" id="notes" rows="3"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Any additional information about this rate..."></textarea>
-                        @error('notes')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+
                 </div>
 
                 <!-- Action Buttons -->

@@ -12,7 +12,8 @@
     <div class="py-3 mb-4">
         <div class="mx-auto max-w-4xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600">
 
-            <div class="relative flex items-center mb-6">
+            <!-- Title -->
+            <div class="relative flex items-center mb-8">
                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">
                     Day Tour Rate: {{ $dayTourRate->rate_name }}
                 </h2>
@@ -22,52 +23,64 @@
                 </button>
             </div>
 
-            <!-- Rate Details -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Rate Information</h3>
-                    <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300 space-y-2">
-                        <li><strong>Day Tour Package:</strong> {{ $dayTourRate->dayTour->name ?? 'N/A' }}</li>
-                        <li><strong>Rate Type:</strong> 
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+            <!-- Details Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4 border-b pb-2">
+                        Rate Information
+                    </h3>
+                    <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+                        <li>
+                            <strong>Day Tour Package:</strong>
+                            <span class="ml-1">{{ $dayTourRate->dayTour->name ?? 'N/A' }}</span>
+                        </li>
+                        <li>
+                            <strong>Rate Type:</strong>
+                            <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $dayTourRate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                 {{ $dayTourRate->rate_type_label }}
                             </span>
                         </li>
-                        <li><strong>Day Type:</strong> 
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                {{ $dayTourRate->day_type === 'holiday' ? 'bg-red-100 text-red-800' : 
+                        <li>
+                            <strong>Day Type:</strong>
+                            <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {{ $dayTourRate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
                                    ($dayTourRate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                 {{ $dayTourRate->day_type_label }}
                             </span>
                         </li>
-                        <li><strong>Adult Rate:</strong> {{ $dayTourRate->formatted_adult_rate }}</li>
-                        <li><strong>Kid Rate:</strong> {{ $dayTourRate->formatted_kid_rate }}</li>
-                        <li><strong>Guest Range:</strong> {{ $dayTourRate->guest_range }}</li>
+                        <li>
+                            <strong>Adjusted Rate:</strong>
+                            <span class="ml-1 font-medium">{{ $dayTourRate->formatted_adult_rate }}</span>
+                        </li>
+                        {{-- <li><strong>Kid Rate:</strong> {{ $dayTourRate->formatted_kid_rate }}</li> --}}
+                        {{-- <li><strong>Guest Range:</strong> {{ $dayTourRate->guest_range }}</li> --}}
                     </ul>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Status & Notes</h3>
-                    <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300 space-y-2">
+                <!-- Right Column -->
+                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4 border-b pb-2">
+                        Status & Notes
+                    </h3>
+                    <ul class="space-y-3 text-gray-600 dark:text-gray-300">
                         <li>
-                            <strong>Status:</strong> 
+                            <strong>Status:</strong>
                             @if ($dayTourRate->is_active)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                     Active <i class="fa-solid fa-check pl-1"></i>
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                     Inactive
                                 </span>
                             @endif
                         </li>
-                        <li><strong>Created:</strong> {{ $dayTourRate->created_at->format('M d, Y h:i A') }}</li>
-                        <li><strong>Last Updated:</strong> {{ $dayTourRate->updated_at->format('M d, Y h:i A') }}</li>
                         @if($dayTourRate->notes)
-                            <li class="mt-4">
-                                <strong>Notes:</strong><br>
-                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 p-3 rounded-lg">
+                            <li>
+                                <strong>Notes:</strong>
+                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border rounded-lg p-3 shadow-sm">
                                     {{ $dayTourRate->notes }}
                                 </p>
                             </li>
@@ -76,8 +89,8 @@
                 </div>
             </div>
 
-            <!-- Pricing Summary -->
-            <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-600">
+            <!-- Pricing Summary (commented out) -->
+            {{-- <div class="mt-8 p-5 bg-gray-50 rounded-lg dark:bg-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-3">Pricing Summary</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="text-center p-3 bg-white rounded-lg shadow-sm dark:bg-gray-700">
@@ -97,10 +110,10 @@
                         Free for 2 years old & below
                     </p>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Action Buttons -->
-            <div class="flex items-center justify-between space-x-4 mt-6">
+            <div class="flex items-center justify-between space-x-4 mt-8">
                 <x-ghost-button type="button" icon="fas fa-pen-to-square" wire:navigate
                     href="{{ route('admin.edit-day-tour-rate', ['dayTourRate' => $dayTourRate->id]) }}">
                     Edit
