@@ -37,11 +37,36 @@
 
                 <x-validation-errors class="mb-4" />
 
-                    @session('status')
-                        <div class="mb-4 font-medium text-sm text-green-600">
-                            {{ $value }}
-                        </div>
-                    @endsession
+                @session('status')
+                <div class="mb-4 font-medium text-sm text-green-600">
+                    {{ $value }}
+                </div>
+                @endsession
+
+                @php
+                $maxAttempts = 3;
+                $throttleKey = Str::transliterate(
+                strtolower(old(\Laravel\Fortify\Fortify::username())) . '|' . request()->ip()
+                );
+                $attempts = RateLimiter::attempts($throttleKey);
+                $attemptsLeft = max(0, $maxAttempts - $attempts);
+                $secondsLeft = RateLimiter::availableIn($throttleKey);
+                $minutesLeft = $secondsLeft > 0 ? ceil($secondsLeft / 60) : 0;
+                @endphp
+
+                @if ($errors->has('email'))
+                <div class="mb-4 font-medium text-sm text-red-600">
+                    {{-- {{ $errors->first('email') }} --}}
+                    @if ($attemptsLeft > 0)
+                    <span>
+                        {{ $attemptsLeft }} out of {{ $maxAttempts }} attempts left.
+                    </span>
+                    @else
+                    <span>No more attempts left. Try again in {{ $minutesLeft }} minute{{ $minutesLeft == 1 ? '' : 's'
+                        }}.</span>
+                    @endif
+                </div>
+                @endif
 
                 <div class="w-full flex flex-col items-center justify-center">
 
@@ -88,10 +113,10 @@
                                 <label for="remember_me" class="ml-2 text-gray-600">Remember me</label>
                             </div>
                             @if (Route::has('password.request'))
-                                <a class="text-gray-600 hover:text-green-700 hover:underline focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none"
-                                    href="{{ route('password.request') }}">
-                                    Forgot Password?
-                                </a>
+                            <a class="text-gray-600 hover:text-green-700 hover:underline focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none"
+                                href="{{ route('password.request') }}">
+                                Forgot Password?
+                            </a>
                             @endif
                         </div>
 
@@ -103,7 +128,8 @@
 
                         <div class="mt-4 text-sm text-gray-600 flex justify-center space-x-1">
                             <p>Don't have an account?</p>
-                            <a href="{{ route('register') }}" class="text-primary font-semibold hover:underline hover:text-green-700">Sign
+                            <a href="{{ route('register') }}"
+                                class="text-primary font-semibold hover:underline hover:text-green-700">Sign
                                 Up</a>
                         </div>
                     </form>
@@ -112,7 +138,7 @@
         </div>
 
         @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
+        <div class="h-14.5 hidden lg:block"></div>
         @endif
 
     </body>
