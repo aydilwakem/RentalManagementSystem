@@ -13,7 +13,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                    {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                            {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -56,8 +56,7 @@
                             {{-- Search Bar --}}
                             <input wire:model.live.debounce.300ms="search" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Search" required="">
+                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search" required="">
                         </div>
                     </div>
 
@@ -67,7 +66,7 @@
                             <label class="w-40 text-sm font-medium text-gray-900 dark:text-white">Event Status :</label>
                             <select wire:model.live="transactionStatus"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">All</option>
                                 <option value="pending">Pending</option>
                                 <option value="receipt_verified">Payment Verified</option>
@@ -86,8 +85,7 @@
                     <div class="flex flex-col items-center justify-center text-center">
                         <!-- Spinner -->
                         <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4" />
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                             <path class="opacity-75" fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                         </svg>
@@ -100,6 +98,7 @@
                         <tr>
                             {{-- Transaction Number --}}
                             <th scope="col" class="px-4 py-3">Event ID</th>
+                            <th scope="col" class="px-4 py-3">Company Name</th>
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
                                 <button class="flex items-center">
                                     Booked By
@@ -144,17 +143,15 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -171,10 +168,14 @@
                         @forelse ($event as $eventItem)
                             <tr
                                 class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $eventItem->transaction_number }}
                                 </th>
+
+                                <td class="px-4 py-3">
+                                    {{ $eventItem->transactionUser->company_name ?? 'N/A' }}
+                                </td>
+
                                 <td class="px-4 py-3">
                                     {{ $eventItem->transactionUser->first_name }}
                                     {{ $eventItem->transactionUser->last_name }}
@@ -235,24 +236,21 @@
                                     <!-- View Icon -->
                                     @can('event-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
+                                            wire:navigate href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('event-edit')
                                         <i class=" fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
+                                            wire:navigate href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('event-delete')
                                         <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                            wire:click="confirmDelete({{ $eventItem->id }})"
-                                            wire:loading.attr="disabled">
+                                            wire:click="confirmDelete({{ $eventItem->id }})" wire:loading.attr="disabled">
                                         </i>
                                     @endcan
 
@@ -275,7 +273,7 @@
                             <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                             <select wire:model.live="perPage"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
@@ -297,8 +295,7 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
-                            wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 

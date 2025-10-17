@@ -194,7 +194,6 @@ class CreateDayTourReservation extends Component
         // $this->convenience_fee = $this->subtotal * 0.03;
         // $this->total_amount = $this->subtotal + $this->convenience_fee;
         $this->total_amount = $this->subtotal;
-
     }
 
     public function incrementAdult()
@@ -371,7 +370,7 @@ class CreateDayTourReservation extends Component
         }
 
         session()->flash('success', 'Day Tour reservation successfully created!');
-        return redirect()->route('admin.view-daytour-reservation', ['transaction' => $transaction->id]);
+        return redirect()->route('admin.admin.day-tours', ['transaction' => $transaction->id]);
     }
 
     protected function createTransactionUser(): TransactionUser

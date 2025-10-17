@@ -36,6 +36,20 @@
                         <h3 class="block mb-2 text-xl font-bold text-green-800 dark:text-green-300">Booking Contact
                             Details</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                                                        <div>
+                                <label for="company_name"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company
+                                    Name <span class="text-red-500">*</span></label>
+                                <input type="text" wire:model="company_name" required
+                                    placeholder="Ex. Event Management Inc."
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                @error('company_name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+
                             <div>
                                 <label for="first_name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First
@@ -58,6 +72,9 @@
                                 @enderror
                             </div>
 
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                             <div>
                                 <label for="last_name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last
@@ -68,9 +85,7 @@
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                             <div>
                                 <label for="email"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email <span
@@ -96,17 +111,7 @@
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="company_name"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company
-                                    Name <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="company_name" required
-                                    placeholder="Ex. Event Management Inc."
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                @error('company_name')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

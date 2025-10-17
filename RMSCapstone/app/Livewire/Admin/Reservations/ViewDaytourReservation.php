@@ -342,15 +342,17 @@ class ViewDaytourReservation extends Component
     /**
      * --------------------------------- INVOICE RECALCULATION ---------------------------------
      */
-public function recalculateInvoice()
-{
-    // Only update discount and grand total, don't touch payment calculations
-    $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
-    $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
 
-    // Refresh the display values
-    $this->refreshInvoice();
-}
+
+    public function recalculateInvoice()
+    {
+        // Only update discount and grand total, don't touch payment calculations
+        $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
+
+        // Refresh the display values
+        $this->refreshInvoice();
+    }
 
 
     public function refreshInvoice()
@@ -624,7 +626,7 @@ public function recalculateInvoice()
 
         $this->validate([
             'amount_paid' => 'required|numeric|min:0',
-            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance,Day Tour',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
             'payment_method_id' => 'required|exists:pm_payment_methods,id',
@@ -690,7 +692,6 @@ public function recalculateInvoice()
             $this->refreshComponentData();
 
             session()->flash('success', 'Payment created successfully.');
-
         } catch (\Exception $e) {
             Log::error('Payment creation failed: ' . $e->getMessage());
             session()->flash('error', 'Payment creation failed: ' . $e->getMessage());
@@ -805,7 +806,7 @@ public function recalculateInvoice()
     }
 
 
-        // Add these properties with the other properties
+    // Add these properties with the other properties
     public $showDiscountModal = false;
     public $manualDiscountAmount = 0;
 
@@ -941,5 +942,4 @@ public function recalculateInvoice()
         Log::info("Invoice {$invoiceId} recalculated after discount removal.");
         session()->flash('success', 'Discount removed successfully!');
     }
-
 }

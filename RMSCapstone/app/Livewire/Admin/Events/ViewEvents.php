@@ -105,17 +105,18 @@ class ViewEvents extends Component
             ->where('reservation_type_id', 3)
             ->when($this->search !== '', function ($query) {
                 $search = '%' . $this->search . '%';
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('transaction_number', 'like', $search)
-                      ->orWhereHas('transactionUser', function ($subQuery) use ($search) {
-                          $subQuery
-                              ->where('first_name', 'like', $search)
-                              ->orWhere('last_name', 'like', $search)
-                              ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
-                      })
-                      ->orWhereHas('properties', function ($subQuery) use ($search) {
-                          $subQuery->where('name_number', 'like', $search);
-                      });
+                        ->orWhereHas('transactionUser', function ($subQuery) use ($search) {
+                            $subQuery
+                                ->where('first_name', 'like', $search)
+                                ->orWhere('last_name', 'like', $search)
+                                ->orWhere('company_name', 'like', $search)
+                                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
+                        })
+                        ->orWhereHas('properties', function ($subQuery) use ($search) {
+                            $subQuery->where('name_number', 'like', $search);
+                        });
                 });
             })
             ->when($this->transactionStatus !== '', function ($query) {

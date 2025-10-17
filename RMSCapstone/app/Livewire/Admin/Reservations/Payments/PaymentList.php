@@ -53,6 +53,7 @@ class PaymentList extends Component
             ->when($this->paymentStatusFilter, function ($query) {
                 $query->where('payment_status', $this->paymentStatusFilter);
             })
+            ->orderBy($this->sortField, $this->sortDirection)
             ->get();
 
         return view('livewire.admin.reservations.payments.payment-list');

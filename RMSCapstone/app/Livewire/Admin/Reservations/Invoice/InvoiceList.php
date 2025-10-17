@@ -18,7 +18,7 @@ class InvoiceList extends Component
     public $transaction;
     public $sortField = 'created_at'; // default sort column
     public $sortDirection = 'desc';   // or 'asc'
-    
+
     public $invoiceTypeFilter = '';
     public $invoiceStatusFilter = '';
 
@@ -55,8 +55,9 @@ class InvoiceList extends Component
                 $query->where('invoice_status', $this->invoiceStatusFilter);
             })
             ->when($this->invoiceTypeFilter, function ($query) {
-            $query->where('invoice_type', $this->invoiceTypeFilter);
-        })
+                $query->where('invoice_type', $this->invoiceTypeFilter);
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
             ->get();
 
         return view('livewire.admin.reservations.invoice.invoice-list');

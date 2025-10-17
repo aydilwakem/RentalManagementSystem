@@ -65,8 +65,8 @@ class CreateEvent extends Component
 
     public $start_datetime; //Start Date Time of Event
     public $end_datetime; //End Date Time of Event
-    public $total_adults;
-    public $total_kids;
+    public $total_adults = 0;
+    public $total_kids = 0;
     //public $heard_from;
 
     // ------------------- INVOICE AND EVENT TYPE -------------------- //
@@ -170,7 +170,7 @@ class CreateEvent extends Component
 
     public function RemoveRoom($roomId)
     {
-        $this->selectedRooms = array_filter($this->selectedRooms, function($item) use ($roomId) {
+        $this->selectedRooms = array_filter($this->selectedRooms, function ($item) use ($roomId) {
             return !($item['type'] === 'room' && $item['room_id'] == $roomId);
         });
         $this->selectedRooms = array_values($this->selectedRooms);
@@ -208,7 +208,7 @@ class CreateEvent extends Component
 
     public function RemoveActivity($activityId)
     {
-        $this->selectedActivities = array_filter($this->selectedActivities, function($item) use ($activityId) {
+        $this->selectedActivities = array_filter($this->selectedActivities, function ($item) use ($activityId) {
             return !($item['type'] === 'activity' && $item['activity_id'] == $activityId);
         });
         $this->selectedActivities = array_values($this->selectedActivities);
@@ -238,7 +238,7 @@ class CreateEvent extends Component
     // ----------------------------- REMOVE ITEM FROM CART -----------------------------
     public function RemoveService($serviceId)
     {
-        $this->selectedServices = array_filter($this->selectedServices, function($item) use ($serviceId) {
+        $this->selectedServices = array_filter($this->selectedServices, function ($item) use ($serviceId) {
             return !($item['type'] === 'service' && $item['service_id'] == $serviceId);
         });
         $this->selectedServices = array_values($this->selectedServices);
