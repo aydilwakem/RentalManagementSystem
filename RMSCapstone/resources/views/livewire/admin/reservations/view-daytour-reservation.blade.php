@@ -256,6 +256,53 @@
                 </div>
             </div>
 
+<!---------------------------- ADDITIONAL ROOMS ---------------------------------------->
+@if($hasRoomRate)
+    @if(count($selectedRooms) > 0)
+    <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-300">
+                {{ __('Additional Rooms') }}
+            </h2>
+            <x-button wire:click="openAddRoomModal" icon="fas fa-plus">
+                Add Room
+            </x-button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @foreach($selectedRooms as $index => $room)
+            <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg border dark:bg-gray-600 dark:border-gray-500">
+                <div class="flex-1">
+                    <div class="font-semibold text-gray-800 dark:text-white">{{ $room['room_name'] }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        {{ $room['ideal_guest'] }} guests • 
+                        {{ \Carbon\Carbon::parse($room['check_in_date'])->format('M j, Y') }}
+                    </div>
+                </div>
+                <button wire:click="removeRoom({{ $index }})" 
+                        class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 ml-4"
+                        title="Remove Room">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @else
+    <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
+        <div class="text-center">
+            <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
+                {{ __('Additional Rooms') }}
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">No additional rooms added to this day tour.</p>
+            <x-button wire:click="openAddRoomModal" icon="fas fa-plus">
+                Add Room
+            </x-button>
+        </div>
+    </div>
+    @endif
+@endif
+
 <!----------------------------- INVOICE -------------------------------------------->
 <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
     <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
@@ -919,6 +966,105 @@
             </div>
         </div>
     </div>
+@endif
+
+<!-- Add Room Modal -->
+@if ($showAddRoomModal)
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto dark:bg-gray-800 dark:text-gray-200">
+        <!-- Header -->
+        <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+            <h2 class="text-2xl font-bold text-center">Add Room to Day Tour</h2>
+            <div class="text-center text-sm mt-1">
+                Tour Date: {{ $transaction->start_datetime->format('F j, Y') }}
+            </div>
+            <button wire:click="closeAddRoomModal"
+                class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                <span class="-translate-y-[2px]">&times;</span>
+            </button>
+        </div>
+
+        <!-- Available Rooms -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Available Rooms for {{ $transaction->start_datetime->format('F j, Y') }}</h3>
+            
+            @if(count($availableRooms) > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach($availableRooms as $room)
+                <div class="border rounded-lg p-4 dark:border-gray-600 {{ $room->is_booked ? 'bg-red-50 border-red-200 dark:bg-red-900/20' : 'bg-green-50 border-green-200 dark:bg-green-900/20' }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800 dark:text-white">{{ $room->name_number }}</h4>
+                        <span class="text-sm font-semibold {{ $room->is_booked ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
+                            {{ $room->is_booked ? 'Booked' : 'Available' }}
+                        </span>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                        <div>Ideal for: {{ $room->ideal_guest }} guests</div>
+                        @if($room->dynamic_rate)
+                        <div>Rate: ₱{{ number_format($room->dynamic_rate, 2) }}</div>
+                        @endif
+                        @if($room->rate_name)
+                        <div>Rate Type: {{ $room->rate_name }}</div>
+                        @endif
+                    </div>
+                    
+                    @if(!$room->is_booked)
+                    <x-button wire:click="addRoom({{ $room->id }})" 
+                              class="w-full" 
+                              size="sm">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Room
+                    </x-button>
+                    @else
+                    <x-button class="w-full bg-gray-400 cursor-not-allowed" size="sm" disabled>
+                        Not Available
+                    </x-button>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+            @else
+            <div class="text-center py-8">
+                <i class="fas fa-bed text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-600 dark:text-gray-300">No rooms available for the tour date.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Please check back later for availability.</p>
+            </div>
+            @endif
+        </div>
+
+        <!-- Selected Rooms Preview -->
+        @if(count($selectedRooms) > 0)
+        <div class="border-t pt-6 dark:border-gray-600">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Selected Rooms</h3>
+            <div class="space-y-3">
+                @foreach($selectedRooms as $index => $room)
+                <div class="flex justify-between items-center p-3 bg-blue-50 rounded border dark:bg-blue-900/20 dark:border-blue-700">
+                    <div>
+                        <div class="font-medium text-gray-800 dark:text-white">{{ $room['room_name'] }}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">
+                            {{ \Carbon\Carbon::parse($room['check_in_date'])->format('M j, Y') }}
+                        </div>
+                    </div>
+                    <button wire:click="removeRoom({{ $index }})" 
+                            class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500"
+                            title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-3 mt-6">
+            <x-ghost-button wire:click="closeAddRoomModal" class="dark:bg-gray-700 dark:text-gray-300">
+                Close
+            </x-ghost-button>
+        </div>
+    </div>
+</div>
 @endif
 
 <!-------------------------- END OF MODALS ---------------------------------->

@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendOfficialReceiptMail;
 use App\Mail\RequestRemainingBalanceMail;
+use App\Models\DayTourRate;
 use App\Models\DiscountType;
 use App\Models\Invoice;
 use App\Models\InvoiceDiscount;
@@ -120,6 +121,14 @@ class ViewDaytourReservation extends Component
     public $payment_method_id;
     public $request_reply;
 
+
+    // ---------------- ROOM RELATED PROPERTIES ------------------ //
+    public $selectedRooms = [];
+    public $availableRooms = [];
+    public $showAddRoomModal = false;
+    public $hasRoomRate = false;
+
+
     public function render()
     {
         $this->guestTypes = GuestType::all();
@@ -157,6 +166,12 @@ class ViewDaytourReservation extends Component
         $now = Carbon::now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
 
+        // Load existing rooms
+        $this->loadExistingRooms();
+        
+        // Check if rate type is 'with_room'
+        $this->checkRoomRateType();
+
         $this->guestTypes = GuestType::all();
         $this->payment_methods = PaymentMethod::all();
 
@@ -193,6 +208,136 @@ class ViewDaytourReservation extends Component
 
         $this->allItems = $items;
     }
+
+    // ---------------- ROOM MANAGEMENT METHODS ------------------ //
+
+public function openAddRoomModal()
+{
+    $this->loadAvailableRooms();
+    $this->showAddRoomModal = true;
+}
+
+public function closeAddRoomModal()
+{
+    $this->showAddRoomModal = false;
+    $this->availableRooms = [];
+}
+
+public function loadAvailableRooms()
+{
+    try {
+        $roomService = app(\App\Services\RoomAvailabilityService::class);
+        
+        // Use the day tour date for room availability
+        $tourDate = $this->transaction->start_datetime->format('Y-m-d');
+        $checkOutDate = $this->transaction->start_datetime->copy()->addDay()->format('Y-m-d');
+        
+        $this->availableRooms = $roomService->getAvailableRooms($tourDate, $checkOutDate);
+    } catch (\Exception $e) {
+        Log::error('Error loading available rooms: ' . $e->getMessage());
+        $this->availableRooms = [];
+    }
+}
+
+public function addRoom($roomId)
+{
+    $room = \App\Models\Property::find($roomId);
+    
+    if ($room) {
+        // Check if room is already added
+        if (!collect($this->selectedRooms)->contains('room_id', $roomId)) {
+            $this->selectedRooms[] = [
+                'type' => 'room',
+                'room_id' => $room->id,
+                'room_name' => $room->name_number,
+                'ideal_guest' => $room->ideal_guest,
+                'check_in_date' => $this->transaction->start_datetime->format('Y-m-d'),
+                'check_out_date' => $this->transaction->start_datetime->copy()->addDay()->format('Y-m-d'),
+            ];
+            
+            session()->flash('message', 'Room added successfully!');
+        } else {
+            session()->flash('error', 'Room already added!');
+        }
+    }
+}
+
+public function removeRoom($index)
+{
+    if (isset($this->selectedRooms[$index])) {
+        unset($this->selectedRooms[$index]);
+        $this->selectedRooms = array_values($this->selectedRooms); // Reindex array
+        session()->flash('message', 'Room removed successfully!');
+    }
+}
+
+// Updated checkRoomRateType() method if you store the info
+protected function checkRoomRateType()
+{
+    try {
+        // Check if day_tour_rate_type is stored in transaction
+        if (isset($this->transaction->day_tour_rate_type) && $this->transaction->day_tour_rate_type === 'with_room') {
+            $this->hasRoomRate = true;
+            Log::info('Room rate detected from transaction:', [
+                'day_tour_rate_type' => $this->transaction->day_tour_rate_type
+            ]);
+            return;
+        }
+
+        // Check if we have day_tour_id and can check the rate
+        if (isset($this->transaction->day_tour_id) && $this->transaction->day_tour_id) {
+            $hasRoomRate = \App\Models\DayTourRate::where('day_tour_id', $this->transaction->day_tour_id)
+                ->where('rate_type', 'with_room')
+                ->where('is_active', true)
+                ->exists();
+                
+            $this->hasRoomRate = $hasRoomRate;
+            Log::info('Checked room rate by day_tour_id:', [
+                'day_tour_id' => $this->transaction->day_tour_id,
+                'hasRoomRate' => $hasRoomRate
+            ]);
+            return;
+        }
+
+        // Fallback to reservation type check
+        if ($this->transaction->reservation_type_id == 4) {
+            $hasRoomRate = \App\Models\DayTourRate::where('rate_type', 'with_room')
+                ->where('is_active', true)
+                ->exists();
+                
+            $this->hasRoomRate = $hasRoomRate;
+            return;
+        }
+
+        $this->hasRoomRate = false;
+
+    } catch (\Exception $e) {
+        Log::error('Error checking room rate type: ' . $e->getMessage());
+        $this->hasRoomRate = false;
+    }
+}
+
+// Load existing rooms when component mounts
+protected function loadExistingRooms()
+{
+    $existingRooms = $this->transaction->properties()
+        ->whereHas('type', function($q) {
+            $q->where('name', 'Room');
+        })
+        ->get();
+
+    foreach ($existingRooms as $room) {
+        $this->selectedRooms[] = [
+            'type' => 'room',
+            'room_id' => $room->id,
+            'room_name' => $room->name_number,
+            'ideal_guest' => $room->ideal_guest,
+            'check_in_date' => $this->transaction->start_datetime->format('Y-m-d'),
+            'check_out_date' => $this->transaction->end_datetime->format('Y-m-d'),
+        ];
+    }
+}
+
 
     /**
      * ------------------------------ REQUESTS ----------------------------------------
