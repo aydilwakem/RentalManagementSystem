@@ -275,7 +275,6 @@ class ViewReservation extends Component
         $this->cartService = $services->cartService;
         $this->guestDetailService = $services->guestDetailService;
         $this->promoCodeService = $services->promoCodeService;
-
     }
 
 
@@ -322,13 +321,12 @@ class ViewReservation extends Component
 
         $this->updateTransactionPax();
 
-            // Initialize promo code values from existing transaction
+        // Initialize promo code values from existing transaction
         if ($transaction->promoCode) {
             $this->promoCode = $transaction->promoCode->code;
             $this->promoDiscount = $transaction->promo_discount_amount;
             $this->promo_discount_amount = $transaction->promo_discount_amount;
         }
-
     }
 
     public function loadAllInvoiceItems()
@@ -584,7 +582,7 @@ class ViewReservation extends Component
         $totalAdults = $this->transactionProperties->sum('adults');
         $totalKids = $this->transactionProperties->sum('kids');
         $totalPax = $totalAdults + $totalKids;
-                // Update the transaction's pax field
+        // Update the transaction's pax field
         $this->transaction->update([
             'pax' => $totalPax
         ]);
@@ -783,7 +781,7 @@ class ViewReservation extends Component
      */
     public function computeBaseRoomSubtotal(): float
     {
-        return $this->transaction->properties->sum(function($property) {
+        return $this->transaction->properties->sum(function ($property) {
             return $property->pivot->amount ?? 0;
         });
     }

@@ -109,23 +109,21 @@ class PaymentService
             throw new \Exception("Invoice or transaction missing.");
         }
 
-        if ($invoice->balance_due < $amountPaid) {
-            throw new \Exception("Payment exceeds invoice balance.");
-        }
-
         $payment->update([
-            'amount_paid' => $amountPaid,
+            'amount_paid' => $amountPaid, // 500
             'payment_type' => $paymentType,
             'payment_status' => 'completed',
             'verified_at' => now(),
         ]);
 
-        $newAmountPaid = $invoice->amount_paid + $amountPaid;
-        $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
+        $newAmountPaid = $invoice->amount_paid + $amountPaid; // 0 + 500
+
+
+        $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0); // 1300 - 500 = 800
 
         $invoice->update([
-            'amount_paid' => $newAmountPaid,
-            'balance_due' => $newBalanceDue,
+            'amount_paid' => $newAmountPaid, // 500
+            'balance_due' => $newBalanceDue, // 800
         ]);
 
         // Mark invoice status
@@ -152,18 +150,24 @@ class PaymentService
         }
     }
 
-    public function rejectUploadedPaymentReceipt(Payment $payment, string $reason, $user): void
+    public function rejectUploadedPaymentReceipt(Payment $payment, string $reason, $user, BrandingService $brandingService = null): void
     {
         $payment->update([
             'payment_status' => 'failed',
             'rejection_reason' => $reason,
         ]);
 
+        // Use provided branding service or create new instance
+        $brandingService = $brandingService ?? app(BrandingService::class);
+        $brandingData = $brandingService->getBrandingData();
+
         Mail::to($user->email)->send(new ReceiptRejectedMail([
             'rejection_reason' => $reason,
             'user_email' => $user->email,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
+            'facebook_link' => $brandingData['facebook_link'],
+            'instagram_link' => $brandingData['instagram_link'],
         ]));
     }
 

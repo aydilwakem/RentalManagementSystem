@@ -849,6 +849,7 @@
                                         <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
                                         <option value="Accommodation Downpayment">Accommodation Downpayment</option>
                                         <option value="Accommodation Balance">Accommodation Balance</option>
+                                         <option value="Day Tour">Day Tour</option>
                                     </select>
                                     @error('payment_type')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>

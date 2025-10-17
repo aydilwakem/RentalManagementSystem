@@ -352,25 +352,26 @@ class CreateDayTourReservation extends Component
             // Insert Guest Details
             $this->insertGuestDetails($transaction);
 
+            $paymentLink = null;
             // Prepare reservation data for email
-            $reservationData = $this->prepareReservationData($transaction, $invoice);
+            $reservationData = $this->prepareReservationData($transaction, $invoice, $paymentLink);
         });
 
         // Attempt to send confirmation emails
         try {
             $pdfContent = $this->generateAvailablePaymentMethods();
-            $this->emailService->sendReservationEmails($reservationData, $pdfContent);
+            $this->emailService->sendDayTourReservationEmails($reservationData, $pdfContent);
         } catch (\Exception $e) {
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
         }
 
         if (!$transaction) {
             session()->flash('error', 'Something went wrong while creating reservation.');
-            return redirect()->route('admin.reservations-list');
+            return redirect()->route('admin.daytour-reservations-list');
         }
 
         session()->flash('success', 'Day Tour reservation successfully created!');
-        return redirect()->route('admin.admin.day-tours', ['transaction' => $transaction->id]);
+        return redirect()->route('admin.view-daytour-reservation', ['transaction' => $transaction->id]);
     }
 
     protected function createTransactionUser(): TransactionUser
@@ -452,7 +453,9 @@ class CreateDayTourReservation extends Component
         }
     }
 
-    protected function prepareReservationData($transaction, $invoice): array
+
+
+    protected function prepareReservationData($transaction, $invoice, $paymentLink): array
     {
         return [
             'name' => $this->first_name . ' ' . $this->last_name,
@@ -467,8 +470,9 @@ class CreateDayTourReservation extends Component
             'adult_rate' => $this->selectedRate->adult_rate,
             'kid_rate' => $this->selectedRate->kid_rate,
             'subtotal' => $this->subtotal,
-            // 'convenience_fee' => $this->convenience_fee,
+            'convenience_fee' => $this->convenience_fee ?? 0,
             'total_amount' => $this->total_amount,
+            'payment_link' => $paymentLink ?? null,
             'branding_company_name' => $this->companyName,
             'logo_path' => $this->logoPath,
             'branding_company_email' => $this->companyEmail,

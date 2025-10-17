@@ -81,7 +81,7 @@ class ProofOfPaymentPage extends Component
         $this->validate([
             'payment_method_id' => 'required|exists:pm_payment_methods,id',
             'transaction_number' => 'required|exists:trn_transactions,transaction_number',
-            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
+            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance,Day Tour',
             'payment_reference_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
             'payment_screenshot' => 'required|image|max:2048',
             'notes' => 'nullable|string|max:255|not_regex:/[<>?!@#$]/',

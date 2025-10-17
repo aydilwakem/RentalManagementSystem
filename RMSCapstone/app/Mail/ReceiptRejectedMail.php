@@ -35,6 +35,8 @@ class ReceiptRejectedMail extends Mailable
                 'user_email' => $this->paymentDetails['user_email'],
                 'first_name' => $this->paymentDetails['first_name'],
                 'last_name' => $this->paymentDetails['last_name'],
+                'facebook_link' => $this->paymentDetails['facebook_link'],
+                'instagram_link' => $this->paymentDetails['instagram_link'],
             ]);
     }
 }

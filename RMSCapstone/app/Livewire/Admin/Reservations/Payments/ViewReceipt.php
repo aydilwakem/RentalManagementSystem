@@ -14,6 +14,8 @@ use App\Services\InvoiceService;
 use App\Services\ServiceBag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Services\BrandingService;
+
 
 #[Layout('layouts.app')]
 
@@ -29,11 +31,17 @@ class ViewReceipt extends Component
     public $rejection_reason;
     public $confirmReceiptItem = false;
     public $showRejectModal = false;
+    public $sub_total;
+    public $balance_due;
 
+    public string $facebookLink;
+
+    public string $instagramLink;
     protected ServiceBag $services;
     protected PaymentService $paymentService;
     protected InvoiceService $invoiceService;
 
+    protected BrandingService $brandingService;
     // -------------------------------- RENDER ---------------------------- //
     public function render()
     {
@@ -44,6 +52,7 @@ class ViewReceipt extends Component
     {
         $this->invoiceService = $services->invoiceService;
         $this->paymentService = $services->paymentService;
+        $this->brandingService = $services->brandingService;
     }
 
     // -------------------------------- MODALS --------------------------- //
@@ -95,18 +104,33 @@ class ViewReceipt extends Component
 
     public function recalculateInvoice()
     {
+        // Only update discount and grand total, don't touch payment calculations
+        $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
         $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
-        $this->invoiceService->updateBalanceDue($this->invoice);
-        $this->invoiceService->updateStatus($this->invoice);
+
+        // Refresh the display values
+        $this->refreshInvoice();
     }
+
+
+    public function refreshInvoice()
+    {
+        $this->invoice = $this->invoice->fresh();
+        $this->sub_total = $this->invoice->sub_total;
+        $this->balance_due = $this->invoice->balance_due;
+    }
+
+
+
+
 
     // Confirm Receipt
     public function confirmReceipt(PaymentService $paymentService)
     {
         try {
             $this->validate([
-                'amount_paid' => 'required|numeric|min:100|max:1000000.00',
-                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
+                'amount_paid' => 'required|numeric|min:10|max:1000000.00',
+                'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance,Day Tour',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->confirmReceiptItem = false;
@@ -133,15 +157,10 @@ class ViewReceipt extends Component
 
         $this->recalculateInvoice();
         $this->confirmReceiptItem = false;
-
-        return redirect()->route('admin.view-reservation', [
-            'transaction' => $this->transaction
-        ]);
     }
 
 
 
-    // Reject receipt 
     public function rejectReceipt()
     {
         $this->validate([
@@ -149,16 +168,20 @@ class ViewReceipt extends Component
         ]);
 
         try {
-            $this->paymentService->rejectUploadedPaymentReceipt($this->payment, $this->rejection_reason, $this->transactionUser);
+            $this->paymentService->rejectUploadedPaymentReceipt(
+                $this->payment,
+                $this->rejection_reason,
+                $this->transactionUser,
+                $this->brandingService // Inject the service if you used the constructor approach
+            );
         } catch (\Exception $e) {
             Log::error('Reject Receipt Failed: ' . $e->getMessage());
             session()->flash('error', 'Failed to reject receipt.');
+            $this->showRejectModal = false;
             return;
         }
 
         $this->showRejectModal = false;
-
-        return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction]);
     }
 
     public function updatePaymentStatus(PaymentService $paymentService,  float $amountPaid)

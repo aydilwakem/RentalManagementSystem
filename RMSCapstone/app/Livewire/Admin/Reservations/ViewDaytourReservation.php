@@ -346,11 +346,11 @@ class ViewDaytourReservation extends Component
 
     public function recalculateInvoice()
     {
-        // Only update discount and grand total, don't touch payment calculations
         $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
         $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateBalanceDue($this->invoice);
+        $this->invoiceService->updateStatus($this->invoice);
 
-        // Refresh the display values
         $this->refreshInvoice();
     }
 
