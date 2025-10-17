@@ -404,7 +404,7 @@
                                         @foreach ($allItems as $item)
                                                             <tr>
                                                                 <td class="border px-4 py-2 dark:border-gray-500">{{ $rowNumber++ }}</td>
-                                                                <td class="border px-4 py-2 dark:border-gray-500">{{ $item['name'] }}</td>
+                                                                <td class="border px-4 py-2 dark:border-gray-500">{{ $item['name'] }} ({{ $item['rate_type'] }} - {{ $item['rate_name'] }} )</td>
                                                                 <td class="border px-4 py-2 text-center dark:border-gray-500">{{ $item['pax'] }}</td>
                                                                 <td class="border px-4 py-2 text-center dark:border-gray-500">₱{{
                                             number_format($item['amount'], 2) }}</td>

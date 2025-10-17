@@ -64,6 +64,10 @@ class Transaction extends Model
         'end_datetime',
         'is_rebooked',
         'dishes',
+        'day_tour_id',
+        'day_tour_rate_id',
+        'day_tour_rate_type',
+
 
     ];
 
@@ -93,9 +97,6 @@ class Transaction extends Model
         // dishes as array
         'dishes' => 'array',
 
-        'day_tour_id',
-        'day_tour_rate_id',
-        'day_tour_rate_type',
 
 
     ];
@@ -289,6 +290,21 @@ class Transaction extends Model
         return $this->hasMany(TransactionVoucher::class, 'transaction_id');
     }
 
+    /**
+     * Relationship with DayTour model
+     */
+    public function dayTour()
+    {
+        return $this->belongsTo(DayTour::class, 'day_tour_id');
+    }
+
+    /**
+     * Relationship with DayTourRate model
+     */
+    public function dayTourRate()
+    {
+        return $this->belongsTo(DayTourRate::class, 'day_tour_rate_id');
+    }
 
     //  ------------------------------ SCOPES --------------------------------- //
 

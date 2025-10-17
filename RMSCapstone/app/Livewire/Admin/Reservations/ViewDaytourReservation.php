@@ -173,12 +173,14 @@ class ViewDaytourReservation extends Component
         // Day Tour base charge
         $items[] = [
             'type' => 'daytour',
-            'name' => 'Day Tour Package',
+            'name' =>  $this->transaction->dayTour->name,
             'quantity' => 1,
             'days' => null,
             'extra_guest' => 0,
             'extra_charge' => 0,
-            'amount' => $this->transaction->sub_total,
+            'amount' => $this->transaction->dayTourRate->adult_rate,
+            'rate_type' => $this->transaction->dayTourRate->rate_type,
+            'rate_name' => $this->transaction->dayTourRate->rate_name,
             'total' => $this->transaction->sub_total,
             'created_at' => $this->transaction->created_at,
             'payment_status' => 'unpaid',

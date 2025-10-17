@@ -27,6 +27,8 @@ class TransactionLoader
             'activities',
             'services',
             'guestPets',     // Additional services or activities booked
+            'dayTour',
+            'dayTourRate',
         ]);
 
         // Abort with 404 if invoice is missing

@@ -59,6 +59,12 @@ class DayTourRate extends Model
         return $this->belongsTo(DayTour::class);
     }
 
+    // Add to DayTourRate model
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'day_tour_rate_id');
+    }
+
     // Scopes
     public function scopeActive($query)
     {

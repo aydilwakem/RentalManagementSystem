@@ -71,6 +71,11 @@ class DayTour extends Model
         return $this->hasMany(DayTourRate::class)->where('is_active', true);
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'day_tour_id');
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -80,7 +85,7 @@ class DayTour extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+            ->orWhere('description', 'like', "%{$search}%");
     }
 
     // Accessors
