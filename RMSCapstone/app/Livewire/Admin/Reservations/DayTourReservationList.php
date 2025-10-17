@@ -78,7 +78,7 @@ class DayTourReservationList extends Component
     {
         $transactions = Transaction::query()
             ->select('trn_transactions.*')
-            ->with(['transactionUser', 'guestDetails', 'invoice.payments'])
+            ->with(['transactionUser', 'guestDetails', 'dayTour', 'dayTourRate', 'invoice.payments'])
             ->where('reservation_type_id', $this->reservation_type_id)
             ->when($this->search !== '', function ($query) {
                 $query
@@ -156,6 +156,8 @@ class DayTourReservationList extends Component
     {
         $transaction = Transaction::with([
             'transactionUser',
+            'dayTour',
+            'dayTourRate',
             'invoice.payments',
             'guestDetails.guestType'
         ])->find($id);
@@ -199,6 +201,8 @@ class DayTourReservationList extends Component
     {
         $transaction = Transaction::with([
             'transactionUser',
+            'dayTour',
+            'dayTourRate',
             'invoice.payments',
             'guestDetails.guestType'
         ])->find($id);
@@ -282,6 +286,8 @@ class DayTourReservationList extends Component
         $user = $transaction->transactionUser;
         $invoice = $transaction->invoice;
         $guestDetails = $transaction->guestDetails;
+        $dayTour = $transaction->dayTour;
+        $dayTourRate = $transaction->dayTourRate;
 
         if (!$user || !$invoice) {
             logger()->error('User or invoice not found for transaction ID ' . $transaction->id);
@@ -325,6 +331,10 @@ class DayTourReservationList extends Component
             'company_address' => $setting->address,
             'facebook_link' => $setting->facebook,
             'instagram_link' => $setting->instagram,
+
+            // Day Tour Specifics
+            'day_tour_name' => $dayTour->name,
+            'day_tour_rate' => $dayTourRate->rate,
         ];
 
         try {

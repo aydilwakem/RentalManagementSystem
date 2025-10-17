@@ -10,7 +10,8 @@
     @if ($transactions->isEmpty() && !$statusFilter && !$search)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No day tour reservations yet. <br> Click "Create Day Tour Reservation" to add a new reservation.</p>
+            <p class="text-gray-500 text-lg font-semibold">No day tour reservations yet. <br> Click "Create Day Tour
+                Reservation" to add a new reservation.</p>
             <x-button class="mt-4" href="{{ route('admin.create-day-tour-reservation') }}" icon="fas fa-plus">
                 Create Day Tour Reservation
             </x-button>
@@ -20,7 +21,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -70,7 +71,7 @@
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
                 </div>
@@ -81,7 +82,7 @@
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation Status:</label>
                         <select wire:model.live="statusFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -157,6 +158,9 @@
                             {{-- Contact --}}
                             {{-- <th scope="col" class="px-4 py-3">Contact</th> --}}
 
+                            {{-- Tour Package --}}
+                            <th scope="col" class="px-4 py-3">Tour Package</th>
+
                             {{-- Tour Date --}}
                             <th scope="col" class="px-4 py-3">Tour Date</th>
 
@@ -198,6 +202,11 @@
                                 {{-- <td class="px-4 py-3">
                                     {{ $transaction->transactionUser->contact_number }}
                                 </td> --}}
+
+                                {{-- Tour Package --}}
+                                <td class="px-4 py-3">
+                                    {{ $transaction->dayTour->name }}
+                                </td>
 
                                 {{-- Tour Date --}}
                                 <td class="px-4 py-3">
@@ -372,7 +381,8 @@
                                                     @if (
                                                             $transaction->transaction_status !== 'pending' &&
                                                             $transaction->transaction_status !== 'reserved' &&
-                                                            $transaction->transaction_status !== 'expired'
+                                                            $transaction->transaction_status !== 'expired' &&
+                                                            $transaction->transaction_status !== 'receipt_verified'  // Add this condition
                                                         )
                                                         <a href="#"
                                                             wire:click.prevent="showActionModal('rollbackStatus', 'Undo Day Tour Status', 'Are you sure you want to undo the status of this day tour?', {{ $transaction->id }}, 'danger')"
@@ -425,7 +435,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>

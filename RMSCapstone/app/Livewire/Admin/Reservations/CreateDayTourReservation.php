@@ -122,14 +122,11 @@ class CreateDayTourReservation extends Component
     public function loadAvailableTours()
     {
         $this->availableTours = DayTour::active()
-            ->with(['activeRates'])
+            ->with(['activeRates']) // Eager load the relationship
             ->get()
             ->map(function ($tour) {
                 $tour->available_rates = $this->getAvailableRatesForTour($tour);
                 return $tour;
-            })
-            ->filter(function ($tour) {
-                return $tour->available_rates->isNotEmpty();
             });
     }
 

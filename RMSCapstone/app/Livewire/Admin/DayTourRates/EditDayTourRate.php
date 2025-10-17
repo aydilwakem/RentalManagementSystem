@@ -84,10 +84,10 @@ class EditDayTourRate extends Component
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('day_tour_rates', 'rate_name')
-                    ->ignore($this->dayTourRate->id)
-                    ->where('day_tour_id', $this->day_tour_id)
-                    ->whereNull('deleted_at')
+                // Rule::unique('day_tour_rates', 'rate_name')
+                //     ->ignore($this->dayTourRate->id)
+                //     ->where('day_tour_id', $this->day_tour_id)
+                //     ->whereNull('deleted_at')
             ],
             'rate_type' => 'required|in:with_room,without_room',
             'day_type' => 'required|in:weekday,weekend,holiday',

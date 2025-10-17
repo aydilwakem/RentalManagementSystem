@@ -13,8 +13,9 @@
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                        {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                                                                {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -61,7 +62,8 @@
                         </div>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search" required="">
+                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search"
+                            required="">
                     </div>
 
                     <!-- Bulk Actions Button -->
@@ -93,7 +95,7 @@
                             Status:</label>
                         <select wire:model.live="statusFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -443,7 +445,8 @@
                                                         @if (
                                                                 $transaction->transaction_status !== 'pending' &&
                                                                 $transaction->transaction_status !== 'reserved' &&
-                                                                $transaction->transaction_status !== 'expired'
+                                                                $transaction->transaction_status !== 'expired' &&
+                                                                $transaction->transaction_status !== 'receipt_verified'
                                                             )
                                                             <a href="#"
                                                                 wire:click.prevent="showActionModal('rollbackStatus', 'Undo Reservation Status', 'Are you sure you want to undo the status of this reservation?', {{ $transaction->id }}, 'danger')"
@@ -451,7 +454,6 @@
                                                                 <i class="fas fa-undo mr-2"></i> Undo Status
                                                             </a>
                                                         @endif
-
                                                     </div>
                                                 </ul>
                                             </div>
@@ -498,7 +500,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>

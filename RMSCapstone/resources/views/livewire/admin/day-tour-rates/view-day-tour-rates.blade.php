@@ -4,7 +4,7 @@
             {{ __('Day Tour Rates') }}
         </h2>
     </x-slot>
-    @if ($dayTourRates->isEmpty() && !$search && !$dayTourFilter && !$rateTypeFilter && !$dayTypeFilter)
+   @if ($dayTourRates->isEmpty() && !$search && !$dayTourFilter && !$rateTypeFilter && !$dayTypeFilter && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
             <p class="text-gray-500 text-lg font-semibold">No day tour rates yet.<br> Click "Create Day Tour Rate" to add a new rate.</p>

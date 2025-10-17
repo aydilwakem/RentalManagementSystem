@@ -60,8 +60,16 @@ class CreateDayTourRate extends Component
         ]);
 
         $this->reset([
-            'day_tour_id', 'rate_name', 'rate_type', 'day_type', 'adult_rate',
-            'kid_rate', 'min_guests', 'max_guests', 'is_active', 'notes'
+            'day_tour_id',
+            'rate_name',
+            'rate_type',
+            'day_type',
+            'adult_rate',
+            'kid_rate',
+            'min_guests',
+            'max_guests',
+            'is_active',
+            'notes'
         ]);
 
         session()->flash('message', 'Day Tour Rate successfully created!');
@@ -76,9 +84,9 @@ class CreateDayTourRate extends Component
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('day_tour_rates', 'rate_name')
-                    ->where('day_tour_id', $this->day_tour_id)
-                    ->whereNull('deleted_at')
+                // Rule::unique('day_tour_rates', 'rate_name')
+                //     ->where('day_tour_id', $this->day_tour_id)
+                //     ->whereNull('deleted_at')
             ],
             'rate_type' => 'required|in:with_room,without_room',
             'day_type' => 'required|in:weekday,weekend,holiday',

@@ -223,11 +223,11 @@
                         <div>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}</div>
                     </div>
 
-                    <div>
-                        <strong>Reservation Created At:</strong>
-                        <div>{{ $transaction->created_at->format('F j, Y') }} at {{
-                            $transaction->created_at->format('g:i A') }}</div>
+                     <div>
+                        <strong>Tour Package:</strong>
+                        <div>{{ $this->transaction->dayTour->name }}</div>
                     </div>
+
 
                     <div>
                         <strong>Total Guests:</strong>
@@ -236,11 +236,11 @@
 
                     <div>
                         <strong>Total Adults:</strong>
-                        <div>{{ $transaction->total_adults }}</div>
+                        <div>{{ $transaction->total_adults }}  ( {{ $transaction->dayTourRate->adult_rate }} )</div>
                     </div>
                     <div>
                         <strong>Total Kids:</strong>
-                        <div>{{ $transaction->total_kids }}</div>
+                        <div>{{ $transaction->total_kids }} ( {{ $transaction->dayTourRate->kid_rate }} )</div>
                     </div>
 
                     <div>
@@ -266,6 +266,12 @@
                     <div>
                         <strong>Reservation Source:</strong>
                         <div>{{ $transaction->reservation_source }}</div>
+                    </div>
+
+                    <div>
+                        <strong>Reservation Created At:</strong>
+                        <div>{{ $transaction->created_at->format('F j, Y') }} at {{
+                            $transaction->created_at->format('g:i A') }}</div>
                     </div>
 
                 </div>

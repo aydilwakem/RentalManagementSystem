@@ -139,10 +139,6 @@ class DayTourReservationForm extends Component
             ->map(function ($tour) {
                 $tour->available_rates = $this->getAvailableRatesForTour($tour);
                 return $tour;
-            })
-            ->filter(function ($tour) {
-                // Only show tours that have available rates
-                return $tour->available_rates->isNotEmpty();
             });
     }
 
@@ -193,7 +189,7 @@ class DayTourReservationForm extends Component
         }
 
         $this->terms_and_conditions = $this->selectedTour->terms_and_conditions
-                ?? $this->terms_and_conditions;
+            ?? $this->terms_and_conditions;
 
         $this->calculateSubtotal();
     }
