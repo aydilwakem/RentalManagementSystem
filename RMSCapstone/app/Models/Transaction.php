@@ -89,9 +89,14 @@ class Transaction extends Model
         'actual_end_datetime' => 'datetime',
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
-        
+
         // dishes as array
         'dishes' => 'array',
+
+        'day_tour_id',
+        'day_tour_rate_id',
+        'day_tour_rate_type',
+
 
     ];
 
@@ -333,17 +338,17 @@ class Transaction extends Model
         return $this->activities->sum('pivot.amount');
     }
 
-        // Add these methods for dishes handling
+    // Add these methods for dishes handling
     public function getDishesFormattedAttribute()
     {
         if (empty($this->dishes)) {
             return '';
         }
-        
+
         if (is_array($this->dishes)) {
             return implode(', ', $this->dishes);
         }
-        
+
         return $this->dishes;
     }
 
@@ -358,7 +363,4 @@ class Transaction extends Model
             $this->attributes['dishes'] = $value;
         }
     }
-
-
-    
 }
