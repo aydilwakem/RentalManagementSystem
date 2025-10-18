@@ -1568,9 +1568,9 @@ Route::prefix('guest')->group(function () {
         return view('guest.feedback.feedback-form');
     })->name('guest.feedback-form');
 
-    Route::get('/about-our-developers', function () {
+    Route::get('/about-us', function () {
         return view('guest.about-us');
-    })->name('guest.our-developers');
+    })->name('guest.about-us');
 });
 
 // ------------------------------- WEBHOOK ----------------------------------------- //
