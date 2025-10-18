@@ -50,14 +50,16 @@
             </div>
 
             <div>
-                <p class="text-gray-600 mb-1 font-medium">Adults ({{ $adultCount }} @
-                    ₱{{ number_format($selectedRate->adult_rate, 2) }}):</p>
+                <!-- Adult Rate -->
+                <p class="text-gray-600 mb-1 font-medium">Adults (₱{{ number_format($selectedRate->adult_rate, 2) }}
+                    x {{ $adultCount }}):</p>
                 <p class="font-semibold text-gray-800 mb-2">
                     ₱{{ number_format($adultCount * $selectedRate->adult_rate, 2) }}</p>
 
+                <!-- Kid Rate -->
                 @if ($kidCount > 0)
-                    <p class="text-gray-600 mb-1 font-medium">Children ({{ $kidCount }} @
-                        ₱{{ number_format($selectedRate->kid_rate, 2) }}):</p>
+                    <p class="text-gray-600 mb-1 font-medium">Children (₱{{ number_format($selectedRate->kid_rate, 2) }}
+                    x {{ $kidCount }}):</p>
                     <p class="font-semibold text-gray-800 mb-2">
                         ₱{{ number_format($kidCount * $selectedRate->kid_rate, 2) }}</p>
                 @endif
@@ -144,8 +146,7 @@
 
         <div class="mt-6 flex justify-center">
             <button wire:click="register" wire:loading.attr="disabled" {{ !$terms ? 'disabled' : '' }}
-                class="px-4 py-2 rounded-lg font-bold text-sm transition duration-150 ease-in-out shadow-md uppercase
-               {{-- FIX: Use a ternary check to explicitly set colors based on the state --}}
+                class="px-4 py-2 rounded-lg font-bold text-xs transition duration-150 ease-in-out shadow-md uppercase tracking-widest
                {{ $terms ? 'bg-green-700 text-white hover:bg-green-800 cursor-pointer' : 'bg-gray-400 text-gray-700 cursor-not-allowed' }}">
 
                 <div wire:loading wire:target="register" class="flex items-center justify-center">

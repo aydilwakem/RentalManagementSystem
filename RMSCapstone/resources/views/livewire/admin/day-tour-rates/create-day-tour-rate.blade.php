@@ -53,7 +53,7 @@
                     </div>
 
                     <!-- Rate Type and Day Type -->
-                    <div>
+                    {{-- <div>
                         <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Rate Type <span class="text-red-500">*</span>
                         </label>
@@ -65,22 +65,9 @@
                         @error('rate_type')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
-                    <div>
-                        <label for="day_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Day Type <span class="text-red-500">*</span>
-                        </label>
-                        <select wire:model="day_type" id="day_type" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                            <option value="weekday">Weekday</option>
-                            <option value="weekend">Weekend</option>
-                            <option value="holiday">Holiday</option>
-                        </select>
-                        @error('day_type')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+
 
 
 
@@ -147,15 +134,17 @@
                         @enderror
                     </div>
 
-                    <!-- Notes -->
-                    <div class="md:col-span-2">
-                        <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Additional Notes
+                    <div>
+                        <label for="day_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Day Type <span class="text-red-500">*</span>
                         </label>
-                        <textarea wire:model="notes" id="notes" rows="3"
-                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Any additional information about this rate..."></textarea>
-                        @error('notes')
+                        <select wire:model="day_type" id="day_type" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                            <option value="weekday">Weekday</option>
+                            <option value="weekend">Weekend</option>
+                            <option value="holiday">Holiday</option>
+                        </select>
+                        @error('day_type')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
@@ -176,6 +165,18 @@
                         </div>
                     </div>
 
+                    <!-- Notes -->
+                    <div class="col-span-2">
+                        <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Additional Notes
+                        </label>
+                        <textarea wire:model="notes" id="notes" rows="3"
+                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Any additional information about this rate..."></textarea>
+                        @error('notes')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
 
                 </div>
 

@@ -168,20 +168,25 @@
             <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
             <select id="reservationFilter"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5 w-40
-            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring-green-600 focus:border-green-600 focus:outline-none">
                 <option value="all">All</option>
                 <option value="2">Room Reservation</option>
                 <option value="3">Event Bookings</option>
+                <option value="4">Day Tour Bookings</option>
             </select>
         </div>
         <div class="flex items-center space-x-4 mb-3">
             <div class="flex items-center space-x-2">
-                <span class="inline-block w-4 h-4 rounded" style="background-color: #86efac;"></span>
+                <span class="inline-block w-4 h-4 rounded bg-green-300"></span>
                 <span class="text-sm">Room Reservations</span>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="inline-block w-4 h-4 rounded" style="background-color: #fde68a;"></span>
+                <span class="inline-block w-4 h-4 rounded bg-cyan-300"></span>
                 <span class="text-sm">Event Bookings</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-block w-4 h-4 rounded bg-yellow-200"></span>
+                <span class="text-sm">Day Tour Bookings</span>
             </div>
         </div>
     </div>
@@ -206,7 +211,8 @@
                 const labelMap = {
                     'all': 'All Transactions',
                     '2': 'Room Reservations',
-                    '3': 'Event Bookings'
+                    '3': 'Event Bookings',
+                    '4': 'Day Tour Bookings'
                 };
 
                 // Default label
@@ -229,22 +235,24 @@
                         }
                     },
                     eventDidMount: function(info) {
-                        //Status Styling
+                        // Status Styling
                         if (info.event.extendedProps.transaction_status === 'done') {
                             info.el.classList.add('status-done');
                         } else {
                             info.el.classList.add('status-active');
                         }
 
-                        //Reservation Type Styling
+                        // Reservation Type Styling
                         if (info.event.extendedProps.type_id == 3) {
                             info.el.classList.add('event-booking');
                         } else if (info.event.extendedProps.type_id == 2) {
                             info.el.classList.add('room-reservation');
+                        } else if (info.event.extendedProps.type_id == 4) {
+                            info.el.classList.add('daytour-booking');
                         }
                     },
                     eventContent: function(arg) {
-                        let title = arg.event.title;
+                        let title = arg.event.title || '';
                         let room = arg.event.extendedProps.room || '';
                         let pax = arg.event.extendedProps.pax || '';
                         let status = arg.event.extendedProps.transaction_status || '';
@@ -254,14 +262,15 @@
                             firstLine += 'Reservation Completed | Click to View Details';
                         } else {
                             if (room) firstLine += ` ${room}`;
-                            if (pax) firstLine += ` | ${pax} pax | `;
-                            firstLine += title;
+                            if (pax) firstLine += ` | ${pax} pax`;
+                            if (title) {
+                                if (room || pax) firstLine += ' | ';
+                                firstLine += title;
+                            }
                         }
                         firstLine += '</div>';
 
-                        return {
-                            html: firstLine
-                        };
+                        return { html: firstLine };
                     },
                     eventClick: function(info) {
                         info.jsEvent.preventDefault();
@@ -305,21 +314,4 @@
         </script>
     @endscript
 
-    {{-- <style>
-        .status-done {
-            background-color: #9ca3af !important;
-            /* gray-400 */
-            border-color: #6b7280 !important;
-            /* gray-500 */
-            color: #fff !important;
-        }
-
-        .status-active {
-            background-color: #4ade80 !important;
-            /* green-400 */
-            border-color: #22c55e !important;
-            /* green-500 */
-            color: #fff !important;
-        }
-    </style> --}}
 </div>
