@@ -1,4 +1,4 @@
-<div class="min-h-[550px] container mx-auto p-6 ">
+<div class="min-h-[550px] container mx-auto p-6 bg-white rounded-lg border ">
 
     <!-- Back Button -->
     <div class="mb-4">
@@ -63,14 +63,14 @@
                                 <td class="px-4 py-3 text-left">{{ $rate->rate_name }}</td>
                                 <td class="px-4 py-3 text-left">{{ $rate->dayTour->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-left">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                         {{ $rate->rate_type_label }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                        {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' : 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
                                            ($rate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                         {{ $rate->day_type_label }}
                                     </span>

@@ -106,7 +106,7 @@
                             2) }}</span>
                     </div>
                     @endif
-                    <div class="flex justify-between border-t border-green-200 pt-3 mt-3">
+                    <div class="flex justify-between border-t border-gray-200 pt-3 mt-3">
                         <span class="font-bold text-base text-gray-800">Subtotal:</span>
                         <span class="font-extrabold text-xl text-green-700">₱{{ number_format($this->subtotal, 2)
                             }}</span>

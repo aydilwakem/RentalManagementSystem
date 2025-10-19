@@ -105,13 +105,13 @@
                             @endforeach
                         </select>
 
-                        <select wire:model.live="rateTypeFilter"
+                        {{-- <select wire:model.live="rateTypeFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-40 p-2.5
                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All Rate Types</option>
                             <option value="with_room">With Room</option>
                             <option value="without_room">Without Room</option>
-                        </select>
+                        </select> --}}
 
                         <select wire:model.live="dayTypeFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-40 p-2.5
@@ -163,7 +163,7 @@
                             <th scope="col" class="px-4 py-3">Day Tour</th>
 
                             <!-- Rate Type -->
-                            <th scope="col" class="px-4 py-3">Rate Type</th>
+                            {{-- <th scope="col" class="px-4 py-3">Rate Type</th> --}}
 
                             <!-- Day Type -->
                             <th scope="col" class="px-4 py-3">Day Type</th>
@@ -192,12 +192,12 @@
                                     {{ $rate->rate_name }}
                                 </th>
                                 <td class="px-4 py-3">{{ $rate->dayTour->name ?? 'N/A' }}</td>
-                                <td class="px-4 py-3">
+                                {{-- <td class="px-4 py-3">
                                     <span class="nline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                         {{ $rate->rate_type_label }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td class="px-4 py-3">
                                     <span class="nline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :

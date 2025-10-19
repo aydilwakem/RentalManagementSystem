@@ -26,6 +26,7 @@ class DayTour extends Model
         'is_active',
         'images',
         'main_image',
+        'package_type',
     ];
 
     protected $casts = [
@@ -94,13 +95,13 @@ class DayTour extends Model
         if ($this->main_image) {
             return asset('storage/' . $this->main_image);
         }
-        return asset('images/daytour-default.png');
+        return asset('images/rms-default.png');
     }
 
     public function getImageUrlsAttribute()
     {
         if (!$this->images) {
-            return [asset('images/daytour-default.png')];
+            return [asset('images/rms-default.png')];
         }
 
         return collect($this->images)->map(function ($image) {

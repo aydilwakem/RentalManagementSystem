@@ -5,173 +5,199 @@
     <meta charset="UTF-8">
     <title>Day Tour Reservation Completed</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f9f9f9;
-            padding: 20px;
-            color: #333;
+        body,
+        p,
+        h3,
+        td {
+            font-family: 'Poppins', sans-serif;
         }
 
-        .email-container {
-            max-width: 650px;
-            margin: auto;
-            background: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid #ddd;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .header img {
-            max-width: 100px;
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            color: #444;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        table td {
-            padding: 6px 0;
-            vertical-align: top;
-        }
-
-        .footer {
-            border-top: 1px solid #eee;
-            margin-top: 20px;
-            padding-top: 10px;
-            text-align: center;
-            font-size: 13px;
-            color: #777;
-        }
-
-        .brand {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .social a {
-            text-decoration: none;
-            color: #555;
-            margin: 0 5px;
+        @media only screen and (max-width: 600px) {
+            .table-container {
+                overflow-x: auto;
+                display: block;
+                width: 100%;
+            }
+            table {
+                min-width: 480px;
+            }
         }
     </style>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
-    <div class="email-container">
-        <div class="header">
-            @if(!empty($logo_path))
-                <img src="{{ $logo_path }}" alt="Company Logo">
+<body style="margin: 0; padding: 0; background-color: #f0f0f0; color: #333;">
+
+    <div
+        style="max-width: 800px; margin: 30px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+
+        {{-- Header --}}
+        <div
+            style="background-color: #166534; color: #fff; padding: 25px 30px; text-align: center;">
+            @if (!empty($logo_path))
+                <img src="{{ asset('storage/' . $logo_path) }}" alt="{{ $branding_company_name }}"
+                    style="max-height: 50px; margin-bottom: 10px;">
             @endif
-            <h2>Day Tour Reservation Completed</h2>
-            <p>Thank you, {{ $name }}! Your day tour has been successfully completed.</p>
+            <h1 style="font-size: 26px; font-weight: 700; margin: 0;">Day Tour Reservation Completed!</h1>
+            <p style="font-size: 15px; margin: 8px 0 0;">We hope you had an amazing experience with us.</p>
         </div>
 
-        <h3>Reservation Details</h3>
-        <table>
-            <tr>
-                <td><strong>Transaction No.:</strong></td>
-                <td>{{ $transaction_number }}</td>
-            </tr>
-            <tr>
-                <td><strong>Tour Date:</strong></td>
-                <td>{{ $tour_date }}</td>
-            </tr>
-            <tr>
-                <td><strong>Completion Date:</strong></td>
-                <td>{{ $completion_date }}</td>
-            </tr>
-            <tr>
-                <td><strong>Adults:</strong></td>
-                <td>{{ $adult_count }}</td>
-            </tr>
-            <tr>
-                <td><strong>Kids:</strong></td>
-                <td>{{ $kid_count }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total Guests:</strong></td>
-                <td>{{ $total_guests }}</td>
-            </tr>
-            <tr>
-                <td><strong>Subtotal:</strong></td>
-                <td>₱{{ number_format($subtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Convenience Fee:</strong></td>
-                <td>₱{{ number_format($convenience_fee, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total Amount:</strong></td>
-                <td><strong>₱{{ number_format($total_amount, 2) }}</strong></td>
-            </tr>
-        </table>
+        {{-- Transaction Header --}}
+        <div style="padding: 20px 30px; text-align: center; background-color: #f8fcf8; border-bottom: 2px solid #166534;">
+            <p style="font-size: 16px; color: #555; margin: 0;">Transaction Number:</p>
+            <h1 style="font-size: 30px; color: #166534; margin: 8px 0 0; font-weight: 700;">
+                {{ $transaction_number }}
+            </h1>
+        </div>
 
-        <h3>Invoice Details</h3>
-        <table>
-            <tr>
-                <td><strong>Invoice No.:</strong></td>
-                <td>{{ $invoice_number }}</td>
-            </tr>
-            <tr>
-                <td><strong>Base Subtotal:</strong></td>
-                <td>₱{{ number_format($invoice_basesubtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total Discount:</strong></td>
-                <td>₱{{ number_format($invoice_total_discount, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Invoice Subtotal:</strong></td>
-                <td>₱{{ number_format($invoice_subtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Amount Paid:</strong></td>
-                <td>₱{{ number_format($amount_paid, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>Balance Due:</strong></td>
-                <td>₱{{ number_format($balance_due, 2) }}</td>
-            </tr>
-        </table>
+        {{-- Main Content --}}
+        <div style="padding: 25px 30px; line-height: 1.6; font-size: 16px;">
+            <p><strong>Hi {{ $name }},</strong></p>
 
-        <h3>Guest Details</h3>
-        @if(!empty($guest_details) && count($guest_details) > 0)
-            <ul>
-                @foreach($guest_details as $guest)
-                    <li>{{ $guest->name ?? 'Unnamed Guest' }}</li>
-                @endforeach
-            </ul>
-        @else
-            <p>No guest details available.</p>
-        @endif
+            <p>
+                Thank you for joining our <strong>Day Tour</strong> at
+                <strong>{{ $branding_company_name }}</strong>!
+                Your reservation has been successfully marked as <strong>completed</strong>.
+                Here’s a summary of your visit:
+            </p>
 
-        <div class="footer">
-            <p class="brand">{{ $branding_company_name }}</p>
-            <p>{{ $company_address }}</p>
-            <p>Email: {{ $branding_company_email }} | Contact: {{ $branding_company_contact }}</p>
-            <div class="social">
-                @if(!empty($facebook_link))
-                    <a href="{{ $facebook_link }}">Facebook</a>
-                @endif
-                @if(!empty($instagram_link))
-                    <a href="{{ $instagram_link }}">Instagram</a>
-                @endif
+            {{-- Reservation Details --}}
+            <div
+                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Reservation Details</h3>
+
+                <div class="table-container">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px;">Tour Date:</td>
+                                <td style="padding: 8px; text-align: right;">{{ \Carbon\Carbon::parse($tour_date)->format('F j, Y') }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Completion Date:</td>
+                                <td style="padding: 8px; text-align: right;">{{ \Carbon\Carbon::parse($completion_date)->format('F j, Y') }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Adults:</td>
+                                <td style="padding: 8px; text-align: right;">{{ $adult_count }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Kids:</td>
+                                <td style="padding: 8px; text-align: right;">{{ $kid_count }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Total Guests:</td>
+                                <td style="padding: 8px; text-align: right;">{{ $total_guests }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Subtotal:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($subtotal, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Convenience Fee:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($convenience_fee, 2) }}</td>
+                            </tr>
+                            <tr style="font-weight: bold; border-top: 2px solid #166534;">
+                                <td style="padding: 8px;">Total Amount:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($total_amount, 2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            {{-- Invoice Details --}}
+            <div
+                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Invoice Details</h3>
+
+                <div class="table-container">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px;">Invoice No.:</td>
+                                <td style="padding: 8px; text-align: right;">{{ $invoice_number }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Base Subtotal:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($invoice_basesubtotal, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Total Discount:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($invoice_total_discount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Invoice Subtotal:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($invoice_subtotal, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Amount Paid:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($amount_paid, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;">Balance Due:</td>
+                                <td style="padding: 8px; text-align: right;">₱{{ number_format($balance_due, 2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Guest Details --}}
+            @if (!empty($guest_details) && count($guest_details) > 0)
+                <div
+                    style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach ($guest_details as $guest)
+                            <li>{{ $guest->name ?? 'Unnamed Guest' }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                <p>No guest details available.</p>
+            @endif
+
+            <p>
+                We hope your visit was memorable!
+                Thank you for spending your day with <strong>{{ $branding_company_name }}</strong>.
+                We can’t wait to welcome you again soon!
+            </p>
+
+            <p style="margin-top: 20px;">
+                Best regards,<br>
+                <strong>{{ $branding_company_name }}</strong>
+            </p>
+        </div>
+
+        {{-- Footer --}}
+        <div
+            style="background-color: #166534; color: #fff; text-align: center; padding: 15px; font-size: 14px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+            <div style="margin-bottom: 10px;">
+                <p style="margin: 0; font-weight: 500;">Connect with us!</p>
+                <a href="{{ $facebook_link }}" target="_blank" style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+                <a href="{{ $instagram_link }}" target="_blank" style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://canopyfarmph.com/guest/homepage" target="_blank"
+                    style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <i class="fa-solid fa-globe"></i>
+                </a>
+            </div>
+
+            <div style="font-size: 0.9em; margin-bottom: 10px; line-height: 1.6;">
+                <p style="margin: 0;">Phone: <strong>{{ $branding_company_contact }}</strong></p>
+                <p style="margin: 0;">Address: {{ $company_address }}</p>
+            </div>
+
+            <span style="font-weight: 600; display: block;">&copy; {{ date('Y') }} {{ $branding_company_name }}. All rights reserved.</span>
         </div>
     </div>
-</body>
 
+</body>
 </html>

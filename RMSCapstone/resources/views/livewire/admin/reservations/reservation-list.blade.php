@@ -183,7 +183,7 @@
                                 <th scope="col" class="px-4 py-3">Check-out Date</th>
 
                                 {{-- Status --}}
-                                <th scope="col" class="px-4 py-3">Status</th>
+                                <th scope="col" class="px-4 py-3 text-center">Status</th>
 
                                 {{-- Action Buttonss --}}
                                 <th scope="col" class="px-4 py-3">Action</th>
@@ -234,56 +234,69 @@
                                         {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}
                                     </td>
 
-                                    {{-- Transaction Status --}}
-                                    <td class=" px-4 py-2">
-                                        @if ($transaction->transaction_status === 'pending')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Awaiting
-                                                Payment</span>
-                                        @elseif ($transaction->transaction_status === 'reserved')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">Pending
-                                                Verification</span>
-                                        @elseif ($transaction->transaction_status === 'receipt_verified')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Payment
-                                                Verified</span>
-                                        @elseif ($transaction->transaction_status === 'confirmed')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Confirmed</span>
-                                        @elseif ($transaction->transaction_status === 'ongoing')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
-                                            </span>
-                                        @elseif ($transaction->transaction_status === 'done')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600">Completed</span>
-                                        @elseif ($transaction->transaction_status === 'no_show')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500">No
-                                                Show</span>
-                                        @elseif ($transaction->transaction_status === 'terminated')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Terminated</span>
-                                        @elseif ($transaction->transaction_status === 'expired')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">Expired</span>
-                                        @elseif ($transaction->transaction_status === 'cancelled')
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Cancelled</span>
-                                        @endif
+                                    <td class="px-4 py-2 text-center align-middle">
+                                        <div class="flex items-center justify-center text-center">
+                                            @if ($transaction->transaction_status === 'pending')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 text-center">
+                                                    Awaiting Payment
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'reserved')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500 text-center">
+                                                    Pending Verification
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'receipt_verified')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500 text-center">
+                                                    Payment Verified
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'confirmed')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600 text-center">
+                                                    Confirmed
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'ongoing')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600 text-center">
+                                                    On-Going
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'done')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600 text-center">
+                                                    Completed
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'no_show')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500 text-center">
+                                                    No Show
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'terminated')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600 text-center">
+                                                    Terminated
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'expired')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500 text-center">
+                                                    Expired
+                                                </span>
+                                            @elseif ($transaction->transaction_status === 'cancelled')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600 text-center">
+                                                    Cancelled
+                                                </span>
+                                            @endif
 
-                                        <!-- Rebooked Indicator -->
-                                        @if($transaction->is_rebooked)
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
-                                                <i class="fas fa-calendar-repeat mr-1"></i>
-                                                Rebooked
-                                            </span>
-                                        @endif
-
-
+                                            @if($transaction->is_rebooked)
+                                                <span
+                                                    class="ml-2 inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
+                                                    <i class="fas fa-calendar-repeat mr-1"></i> Rebooked
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
+
 
                                     {{-- Action Icons --}}
                                     <td class="px-6 py-3 relative">

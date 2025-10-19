@@ -72,25 +72,38 @@
                 <!-- Day Tour Details -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">Tour Details</h3>
-                    <ul class="list-disc pl-5 text-gray-600 mb-3 dark:text-gray-300 space-y-2">
-                        <li><strong>Description:</strong> {{ $dayTour->description }}</li>
-                        <li><strong>Duration:</strong> {{ $dayTour->duration_hours }} hours</li>
-                        <li><strong>Start Time:</strong> {{ $dayTour->start_time->format('h:i A') }}</li>
-                        <li><strong>End Time:</strong> {{ $dayTour->end_time->format('h:i A') }}</li>
-                        <li><strong>Maximum Guests:</strong> {{ $dayTour->max_guests }}</li>
-                        <li><strong>Base Price:</strong> ₱{{ number_format($dayTour->base_price, 2) }}</li>
+                    <ul class="list-disc pl-5 text-gray-600 mb-2 dark:text-gray-300 space-y-1">
                         <li>
                             <strong>Status:</strong>
                             @if ($dayTour->is_active)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    Active <i class="fa-solid fa-check pl-1"></i>
+                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                                    Active
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-800">
                                     Inactive
                                 </span>
                             @endif
                         </li>
+                        <li>
+                            <strong>Package Type:</strong> {{ $dayTour->description }}
+                            @if ($dayTour->package_type == 'with_room')
+                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-800">
+                                    With Room
+                                </span>
+                            @else
+                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-800">
+                                    Without Room
+                                </span>
+                            @endif
+                        </li>
+                        <li><strong>Description:</strong> {{ $dayTour->description }}</li>
+                        <li><strong>Duration:</strong> {{ $dayTour->duration_hours }} hours</li>
+                        <li><strong>Time:</strong> {{ $dayTour->start_time->format('h:i A') }} - {{ $dayTour->end_time->format('h:i A') }}</li>
+                        {{-- <li><strong>End Time:</strong> {{ $dayTour->end_time->format('h:i A') }}</li> --}}
+                        <li><strong>Maximum Guests:</strong> {{ $dayTour->max_guests }}</li>
+                        <li><strong>Base Price:</strong> ₱{{ number_format($dayTour->base_price, 2) }}</li>
+
                     </ul>
 
                     <!-- Inclusions -->

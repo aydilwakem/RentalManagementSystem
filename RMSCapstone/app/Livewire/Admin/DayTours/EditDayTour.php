@@ -19,6 +19,7 @@ class EditDayTour extends Component
 
     public $name;
     public $description;
+    public $package_type;
     public $inclusions;
     public $exclusions;
     public $terms_conditions;
@@ -47,6 +48,7 @@ class EditDayTour extends Component
         $this->dayTour = $dayTour;
         $this->name = $dayTour->name;
         $this->description = $dayTour->description;
+        $this->package_type = $dayTour->package_type;
         $this->inclusions = $dayTour->inclusions;
         $this->exclusions = $dayTour->exclusions;
         $this->terms_conditions = $dayTour->terms_conditions;
@@ -178,6 +180,7 @@ class EditDayTour extends Component
         $this->dayTour->update([
             'name' => $this->name,
             'description' => $this->description,
+            'package_type' => $this->package_type,
             'inclusions' => $this->inclusions,
             'exclusions' => $this->exclusions,
             'terms_conditions' => $this->terms_conditions,
@@ -205,6 +208,7 @@ class EditDayTour extends Component
                 Rule::unique('day_tours', 'name')->ignore($this->dayTour->id)->whereNull('deleted_at'),
             ],
             'description' => 'nullable|string|min:10|max:1000',
+            'package_type' => 'required|in:with_room,without_room',
             'inclusions' => 'nullable|string|max:2000',
             'exclusions' => 'nullable|string|max:2000',
             'terms_conditions' => 'nullable|string|max:2000',

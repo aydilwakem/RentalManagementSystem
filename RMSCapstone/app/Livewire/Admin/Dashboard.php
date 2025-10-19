@@ -13,6 +13,7 @@ class Dashboard extends Component
     public $newReservations = 0;
     public $upcomingEvents = 0;
     public $pendingMaintenances = 0;
+    public $dayTours = 0;
     public $reservations;
     public $events = [];
     public $first_name;
@@ -40,7 +41,6 @@ class Dashboard extends Component
                 ->whereYear('start_datetime', now()->year)
                 ->count();
 
-
             // Get pending events
             $this->upcomingEvents = Transaction::where('reservation_type_id', 3)
                 ->whereNotIn('transaction_status', ['done'])
@@ -48,14 +48,20 @@ class Dashboard extends Component
                 ->whereYear('start_datetime', now()->year)
                 ->count();
 
-            // Get pending/unresolved maintenance requests
-            $this->pendingMaintenances = Maintenance::where('resolved_at', null)
+            // Get day tours
+            $this->dayTours = Transaction::where('reservation_type_id', 4)
+                ->whereNotIn('transaction_status', ['done'])
+                ->whereMonth('start_datetime', now()->month)
+                ->whereYear('start_datetime', now()->year)
                 ->count();
+
+            // Get pending/unresolved maintenance requests
+            $this->pendingMaintenances = Maintenance::where('resolved_at', null)->count();
 
             $this->reservations = Transaction::where('reservation_type_id', 2)->get();
             // Fetch only transactions with reservation_type_id 2 or 3
             $allTransactions = Transaction::with('reservationType', 'transactionUser', 'properties')
-                ->whereIn('reservation_type_id', [2, 3])
+                ->whereIn('reservation_type_id', [2, 3, 4])
                 ->get();
 
             // ->whereNotIn('transaction_status', ['done'])
@@ -63,22 +69,52 @@ class Dashboard extends Component
             // ->get();
 
             foreach ($allTransactions as $transaction) {
-                // Get room names
+                // Get room names (if available)
                 $rooms = $transaction->properties->pluck('name_number')->implode(', ');
 
+                // Always show guest name
+                $title = $transaction->transactionUser->first_name . ' ' . $transaction->transactionUser->last_name;
+
+                // Always show pax
+                $title .= ' | ' . $transaction->pax . ' pax';
+
+                // Show room only if exists
+                if (!empty($rooms)) {
+                    $title .= ' | ' . $rooms;
+                }
+
+                // Determine URL based on reservation type
+                switch ($transaction->reservation_type_id) {
+                    case 2:
+                        $url = route('admin.view-reservation', ['transaction' => $transaction->id]); // Room
+                        break;
+
+                    case 3:
+                        $url = route('admin.view-event', ['event' => $transaction->id]); // ✅ Fix: use 'event' here
+                        break;
+
+                    case 4:
+                        $url = route('admin.view-daytour-reservation', ['transaction' => $transaction->id]); // Day Tour
+                        break;
+
+                    default:
+                        $url = null;
+                        break;
+                }
+
+
                 $this->events[] = [
-                    'title' => $transaction->transactionUser->first_name . ' ' . $transaction->transactionUser->last_name,
+                    'title' => $title,
                     'start' => $transaction->start_datetime,
                     'end' => $transaction->end_datetime,
                     'type' => $transaction->reservationType?->name ?? 'N/A',
                     'category' => 'transaction',
                     'id' => $transaction->id,
                     'type_id' => $transaction->reservation_type_id,
-                    'url' => route('admin.view-reservation', ['transaction' => $transaction->id]),
+                    'url' => $url,
                     'transaction_status' => $transaction->transaction_status,
-                    'room' => $rooms,
+                    'room' => $rooms ?: null,
                     'pax' => $transaction->pax,
-                    //'time' => \Carbon\Carbon::parse($transaction->start_datetime)->format('g:i A') . ' - ' . \Carbon\Carbon::parse($transaction->end_datetime)->format('g:i A'),
                 ];
             }
         }

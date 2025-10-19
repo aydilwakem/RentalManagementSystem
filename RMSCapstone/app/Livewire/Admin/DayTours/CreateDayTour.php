@@ -15,6 +15,7 @@ class CreateDayTour extends Component
 
     public $name;
     public $description;
+    public $package_type = 'without_room';
     public $inclusions;
     public $exclusions;
     public $terms_conditions;
@@ -111,6 +112,7 @@ class CreateDayTour extends Component
         $dayTour = DayTour::create([
             'name' => $this->name,
             'description' => $this->description,
+            'package_type' => $this->package_type,
             'inclusions' => $this->inclusions,
             'exclusions' => $this->exclusions,
             'terms_conditions' => $this->terms_conditions,
@@ -125,7 +127,7 @@ class CreateDayTour extends Component
         ]);
 
         $this->reset([
-            'name', 'description', 'inclusions', 'exclusions', 'terms_conditions',
+            'name', 'description', 'package_type', 'inclusions', 'exclusions', 'terms_conditions',
             'duration_hours', 'start_time', 'end_time', 'max_guests', 'base_price',
             'is_active', 'newImages', 'uploadedImagePreviews', 'persistedImagePaths'
         ]);
@@ -143,6 +145,7 @@ class CreateDayTour extends Component
                 'max:255',
                 Rule::unique('day_tours', 'name')->whereNull('deleted_at'),
             ],
+            'package_type' => 'required|in:with_room,without_room',
             'description' => 'nullable|string|min:10|max:1000',
             'inclusions' => 'nullable|string|max:2000',
             'exclusions' => 'nullable|string|max:2000',
