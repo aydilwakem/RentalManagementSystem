@@ -32,7 +32,9 @@ class EventHalls extends Component
 
     public function render()
     {
-        $this->eventHalls = Property::ofType('Event Hall')->get();
+       $this->eventHalls = Property::ofType('Event Hall')
+        ->where('property_status', 'available')
+        ->get();
         return view('livewire.guest.event-halls', [
             'eventHalls' => $this->eventHalls,
         ]);
