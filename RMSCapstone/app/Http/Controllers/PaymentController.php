@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Payment;
 use App\Services\PaymentService;
 use App\Services\InvoiceService;
@@ -16,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-
     protected ServiceBag $service;
     protected PaymentService $paymentService;
     protected InvoiceService $invoiceService;
@@ -28,212 +26,390 @@ class PaymentController extends Controller
     }
 
     /**
-     * Handles incoming PayMongo webhook events.
-     *
-     * This function:
-     * - Verifies the webhook signature using the PAYMONGO_WEBHOOK_SECRET.
-     * - Parses the event payload and checks for specific payment events.
-     * - If the event is a successful payment (e.g., 'payment.paid'), it stores the payment details in the database.
-     * - Logs various stages for debugging and monitoring purposes.
-     * 
-     * @param Request $request The incoming HTTP request containing the webhook payload and headers.
-     * @return \Illuminate\Http\JsonResponse A JSON response indicating success or error.
+     * Handles incoming PayMongo webhook events safely and reliably
+     * Always returns 200 to PayMongo while maintaining security
      */
-
     public function webhook(Request $request, PaymentService $paymentService, InvoiceService $invoiceService)
     {
-        // Log that the webhook endpoint has been hit
-        Log::info('Webhook Triggered');
+        Log::info('PayMongo Webhook Received', [
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        // Prepare immediate 200 response (to prevent webhook disabling)
+        $successResponse = response()->json([
+            'status' => 'success',
+            'message' => 'Webhook processed',
+            'timestamp' => now()->toISOString()
+        ], 200);
 
         try {
-            // Retrieve the PayMongo webhook secret from the environment file
             $webhook_secret = env('PAYMONGO_WEBHOOK_SECRET');
-
-            // Get the signature header from the incoming request
             $webhook_signature = $request->header('Paymongo-Signature');
-
-            // Get the raw body content of the request (JSON payload)
             $payload = $request->getContent();
 
-            // Decode the JSON payload into an associative array
-            $event = json_decode($payload, true);
-
-            // If there's no signature in the header, log and return a 400 response
-            if (!$webhook_signature) {
-                Log::error('No Paymongo-Signature header present.');
-                return response()->json(['error' => 'Signature header missing.'], 400);
+            // SECURITY: Validate required components
+            if (!$webhook_secret) {
+                Log::error('❌ SECURITY: PAYMONGO_WEBHOOK_SECRET not configured');
+                return $successResponse;
             }
 
-            // Parse the signature header into key/value pairs
+            if (!$webhook_signature) {
+                Log::error('❌ SECURITY: No Paymongo-Signature header present');
+                return $successResponse;
+            }
+
+            if (empty($payload)) {
+                Log::warning('⚠️ Empty webhook payload received');
+                return $successResponse;
+            }
+
+            // Parse and validate webhook signature
+            $signatureValid = $this->validateWebhookSignature($webhook_signature, $payload, $webhook_secret);
+            if (!$signatureValid) {
+                // Already logged in validateWebhookSignature, just return 200
+                return $successResponse;
+            }
+
+            // Parse JSON payload
+            $event = json_decode($payload, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('❌ Invalid JSON in webhook payload', ['error' => json_last_error_msg()]);
+                return $successResponse;
+            }
+
+            // Validate webhook structure
+            if (!$this->isValidWebhookStructure($event)) {
+                Log::error('❌ Invalid webhook structure', ['event_keys' => array_keys($event)]);
+                return $successResponse;
+            }
+
+            Log::info('✅ Webhook authenticated and validated', [
+                'event_type' => $event['data']['attributes']['type'] ?? 'unknown',
+                'event_id' => $event['data']['id'] ?? 'unknown'
+            ]);
+
+            // Process the webhook
+            $this->processWebhookEvent($event, $paymentService, $invoiceService);
+
+            Log::info('✅ Webhook processing completed successfully');
+            return $successResponse;
+        } catch (\Exception $e) {
+            Log::error('💥 Unexpected webhook error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'ip' => $request->ip()
+            ]);
+            return $successResponse; // Always return 200
+        }
+    }
+
+    /**
+     * Validate PayMongo webhook signature securely
+     */
+    private function validateWebhookSignature(string $webhook_signature, string $payload, string $webhook_secret): bool
+    {
+        try {
+            // Parse signature header flexibly
+            $signatureParts = [];
             $parts = explode(',', $webhook_signature);
-            $parsed = [];
 
             foreach ($parts as $part) {
-                [$key, $value] = array_pad(explode('=', $part, 2), 2, null);
-                if ($key && $value !== null && $value !== '') {
-                    $parsed[trim($key)] = trim($value);
+                if (strpos($part, '=') !== false) {
+                    [$key, $value] = explode('=', $part, 2);
+                    $key = trim($key);
+                    $value = trim($value);
+                    if ($key && $value) {
+                        $signatureParts[$key] = $value;
+                    }
                 }
             }
 
-            // Support both standard PayMongo format (v1) and observed format (li)
-            $timestamp = $parsed['t'] ?? null;
-            $signature = $parsed['v1'] ?? ($parsed['li'] ?? null);
+            // Support multiple signature formats
+            $timestamp = $signatureParts['t'] ?? $signatureParts['timestamp'] ?? null;
+            $signature = $signatureParts['v1'] ?? $signatureParts['signature'] ?? $signatureParts['li'] ?? null;
 
-            // If parsing fails or components are missing, return a 400 error
             if (!$timestamp || !$signature) {
-                Log::error('Webhook signature parsing failed.', ['signature' => $webhook_signature]);
-                return response()->json(['error' => 'Invalid signature format.'], 400);
+                Log::error('SECURITY: Missing timestamp or signature in header', [
+                    'parsed_parts' => $signatureParts,
+                    'raw_signature' => $webhook_signature
+                ]);
+                return false;
             }
 
-            // Build the signed payload to verify the signature
-            $signedPayload = $timestamp . '.' . $payload;
+            // Verify signature hasn't expired (optional but recommended)
+            if (!$this->isValidTimestamp($timestamp)) {
+                Log::error('SECURITY: Webhook timestamp expired or invalid', ['timestamp' => $timestamp]);
+                return false;
+            }
 
-            // Compute the expected HMAC SHA256 signature
+            // Compute and verify HMAC signature
+            $signedPayload = $timestamp . '.' . $payload;
             $computedSignature = hash_hmac('sha256', $signedPayload, $webhook_secret);
 
-            // Check if the computed signature matches the received one securely
             if (!hash_equals($computedSignature, $signature)) {
-                Log::warning('Invalid webhook signature.', [
-                    'computed' => $computedSignature,
-                    'received' => $signature,
+                Log::error('SECURITY: Webhook signature mismatch - potential fraud', [
+                    'computed' => substr($computedSignature, 0, 8) . '...',
+                    'received' => substr($signature, 0, 8) . '...',
+                    'timestamp' => $timestamp
                 ]);
-                return response()->json(['error' => 'Invalid signature.'], 403);
+                return false;
             }
 
-            // Log the full payload for debugging
-            Log::info('Webhook full payload:', ['event' => $event]);
-
-            // Extract event type and relevant payment attributes
-            // Data structure : event-> data -> attributes -> type || data
-            $eventType = $event['data']['attributes']['type'] ?? ''; // event->data->attrbutes->type
-            $data = $event['data']['attributes']['data'] ?? []; //  event->data->attributes->data
-            $attributes = $data['attributes'] ?? []; // event->data->attributes->data->attributes
-
-            // Handle 'payment.paid' and 'payment.failed' events
-            if ($eventType === 'payment.paid' || $eventType === 'payment.failed') {
-
-                $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
-                $paymentReferenceNumber = $data['id'] ?? null;
-                $metadata = $attributes['metadata'] ?? [];
-                $invoiceId = (int)($metadata['invoice_id'] ?? 0);
-                $invoice = Invoice::find($invoiceId);
-
-                if (!$invoice) {
-                    Log::error("Invoice not found.", ['invoice_id' => $invoiceId]);
-                    return response()->json(['error' => 'Invoice not found.'], 404);
-                }
-
-                $transaction = $invoice->transaction;
-
-                // PayMongo amount is in cents → convert to pesos
-                $amountInPesos = ($attributes['amount'] ?? 0) / 100;
-                // Take convenience fee directly from metadata as float (already in pesos)
-                $convenienceFeeInPesos = (float)($metadata['convenience_fee'] ?? 0);
-
-                try {
-                    DB::transaction(function () use (
-                        $eventType,
-                        $amountInPesos,
-                        $convenienceFeeInPesos,
-                        $invoice,
-                        $invoiceId,
-                        $modeOfPayment,
-                        $paymentReferenceNumber,
-                        $metadata,
-                        $paymentService,
-                        $transaction,
-                        $invoiceService,
-                    ) {
-                        // Save payment record regardless of event type
-                        $payment = Payment::create([
-                            'amount_paid' => $amountInPesos,
-                            'convenience_fee' => $convenienceFeeInPesos,
-                            'invoice_id' => $invoiceId,
-                            'mode_of_payment' => $modeOfPayment,
-                            'payment_type' => trim($metadata['payment_type'] ?? 'unknown'),
-                            'payment_reference_number' => $paymentReferenceNumber,
-                            'payment_date' => now(),
-                            'verified_at' => now(),
-                            'notes' => trim($metadata['notes'] ?? 'not defined'),
-                            'payment_status' => $eventType === 'payment.paid' ? 'completed' : 'failed',
-
-                        ]);
-
-                        // Proceed only if payment was successful
-                        if ($eventType === 'payment.paid') {
-
-                            $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
-                            $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
-
-                            $invoice->update([
-                                'amount_paid' => $newAmountPaid,
-                                'balance_due' => $newBalanceDue,
-                            ]);
-
-                            if ($newBalanceDue == 0) {
-                                $invoice->update([
-                                    'invoice_status' => 'completed',
-                                    'completed_at' => now(),
-                                ]);
-                            }
-
-                            $invoiceService->updateGrandTotal($invoice, $transaction); // includes convenience fee
-                            $invoiceService->updateBalanceDue($invoice);
-                            $invoiceService->updateStatus($invoice);
-
-                            if ($transaction && $transaction->transaction_status === 'pending') {
-                                $transaction->update([
-                                    'transaction_status' => 'receipt_verified',
-                                    'updated_at' => now(),
-                                ]);
-                            }
-
-                            $user = $transaction->transactionUser;
-                            if (!$user) {
-                                throw new \Exception("No user associated with transaction ID {$transaction->id}");
-                            }
-
-                            $paymentService->applyPaymentToUnpaidItems($transaction, $payment->amount_paid);
-
-
-                            $paymentDetails = [
-                                'full_name' => $user->first_name . ' ' . $user->last_name,
-                                'email' => $user->email,
-                                'payment_method_id' => $payment->mode_of_payment,
-                                'transaction_id' => $transaction->id,
-                                'payment_reference_number' => $payment->payment_reference_number,
-                                'notes' => $payment->notes,
-                                'check_in' => $transaction->start_datetime,
-                                'check_out' => $transaction->end_datetime,
-                                'total_amount' => $transaction->total_amount,
-                                'deposit' => $transaction->deposit_amount,
-                            ];
-
-                            // Send email only for successful payments
-                            Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
-                        }
-                    });
-
-                    Log::info("Payment {$eventType} saved in database.", ['event_type' => $eventType, 'attributes' => $attributes]);
-
-                    return response()->json(['message' => "Payment {$eventType} saved."], 200);
-                } catch (\Exception $e) {
-                    Log::error("Failed to process {$eventType}: " . $e->getMessage());
-                    return response()->json(['error' => 'Processing failed.'], 500);
-                }
-            }
-
-            // Log and return if the event type is not handled
-            Log::info('Webhook event not handled.', ['event_type' => $eventType]);
-            return response()->json(['message' => 'Event not handled.'], 200);
+            return true;
         } catch (\Exception $e) {
-            // Catch and log any unexpected server errors
-            Log::error('Webhook processing error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request_body' => $request->getContent(),
-            ]);
-            return response()->json(['error' => 'Server error.'], 500);
+            Log::error('SECURITY: Signature validation error: ' . $e->getMessage());
+            return false;
         }
+    }
+
+    /**
+     * Validate webhook timestamp to prevent replay attacks
+     */
+    private function isValidTimestamp(string $timestamp): bool
+    {
+        try {
+            $webhookTime = intval($timestamp);
+            $currentTime = time();
+            $timeDifference = abs($currentTime - $webhookTime);
+
+            // Allow 5-minute tolerance for clock skew and delivery delays
+            return $timeDifference <= 300;
+        } catch (\Exception $e) {
+            Log::error('Timestamp validation error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Validate webhook payload structure
+     */
+    private function isValidWebhookStructure(array $event): bool
+    {
+        // Basic structure validation
+        if (
+            !isset($event['data']) || !is_array($event['data']) ||
+            !isset($event['data']['attributes']) || !is_array($event['data']['attributes'])
+        ) {
+            return false;
+        }
+
+        $eventType = $event['data']['attributes']['type'] ?? '';
+
+        // For payment events, validate required nested structure
+        if (in_array($eventType, ['payment.paid', 'payment.failed'])) {
+            if (
+                !isset($event['data']['attributes']['data']['attributes']) ||
+                !isset($event['data']['attributes']['data']['id'])
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Process validated webhook event
+     */
+    private function processWebhookEvent(array $event, PaymentService $paymentService, InvoiceService $invoiceService): void
+    {
+        $eventType = $event['data']['attributes']['type'] ?? '';
+        $data = $event['data']['attributes']['data'] ?? [];
+        $attributes = $data['attributes'] ?? [];
+
+        Log::info('Processing webhook event', ['event_type' => $eventType]);
+
+        if ($eventType === 'payment.paid' || $eventType === 'payment.failed') {
+            $this->processPaymentEvent($eventType, $attributes, $data, $paymentService, $invoiceService);
+        } else {
+            Log::info('Unhandled webhook event type', ['event_type' => $eventType]);
+        }
+    }
+
+    /**
+     * Process payment events (paid or failed)
+     */
+    private function processPaymentEvent(string $eventType, array $attributes, array $data, PaymentService $paymentService, InvoiceService $invoiceService): void
+    {
+        try {
+            $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
+            $paymentReferenceNumber = $data['id'] ?? null;
+            $metadata = $attributes['metadata'] ?? [];
+            $invoiceId = (int)($metadata['invoice_id'] ?? 0);
+
+            Log::info('Processing payment event', [
+                'event_type' => $eventType,
+                'invoice_id' => $invoiceId,
+                'payment_reference' => $paymentReferenceNumber
+            ]);
+
+            // Find invoice - if not found, log and return (but don't throw)
+            $invoice = Invoice::find($invoiceId);
+            if (!$invoice) {
+                Log::error('Invoice not found for webhook payment', ['invoice_id' => $invoiceId]);
+                return;
+            }
+
+            $transaction = $invoice->transaction;
+            $amountInPesos = ($attributes['amount'] ?? 0) / 100;
+            $convenienceFeeInPesos = (float)($metadata['convenience_fee'] ?? 0);
+
+            // Process within transaction
+            DB::transaction(function () use (
+                $eventType,
+                $amountInPesos,
+                $convenienceFeeInPesos,
+                $invoice,
+                $invoiceId,
+                $modeOfPayment,
+                $paymentReferenceNumber,
+                $metadata,
+                $paymentService,
+                $transaction,
+                $invoiceService
+            ) {
+                // Create payment record
+                $payment = Payment::create([
+                    'amount_paid' => $amountInPesos,
+                    'convenience_fee' => $convenienceFeeInPesos,
+                    'invoice_id' => $invoiceId,
+                    'mode_of_payment' => $modeOfPayment,
+                    'payment_type' => trim($metadata['payment_type'] ?? 'unknown'),
+                    'payment_reference_number' => $paymentReferenceNumber,
+                    'payment_date' => now(),
+                    'verified_at' => now(),
+                    'notes' => trim($metadata['notes'] ?? 'not defined'),
+                    'payment_status' => $eventType === 'payment.paid' ? 'completed' : 'failed',
+                ]);
+
+                Log::info('💳 Payment record created', [
+                    'payment_id' => $payment->id,
+                    'status' => $payment->payment_status,
+                    'amount' => $amountInPesos
+                ]);
+
+                // Process successful payment
+                if ($eventType === 'payment.paid') {
+                    $this->processSuccessfulPayment($payment, $invoice, $transaction, $paymentService, $invoiceService, $metadata);
+                }
+            });
+
+            Log::info('Payment event processed successfully', [
+                'event_type' => $eventType,
+                'invoice_id' => $invoiceId
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Payment event processing failed: ' . $e->getMessage(), [
+                'event_type' => $eventType,
+                'invoice_id' => $invoiceId ?? 'unknown',
+                'trace' => $e->getTraceAsString()
+            ]);
+            // Don't re-throw - we've already returned 200 to PayMongo
+        }
+    }
+
+    /**
+     * Process successful payment
+     */
+    private function processSuccessfulPayment($payment, $invoice, $transaction, $paymentService, $invoiceService, $metadata): void
+    {
+        // Update invoice amounts
+        $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
+        $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
+
+        $invoice->update([
+            'amount_paid' => $newAmountPaid,
+            'balance_due' => $newBalanceDue,
+        ]);
+
+        Log::info('📊 Invoice updated', [
+            'invoice_id' => $invoice->id,
+            'new_amount_paid' => $newAmountPaid,
+            'new_balance_due' => $newBalanceDue
+        ]);
+
+        // Mark invoice as completed if fully paid
+        if ($newBalanceDue == 0) {
+            $invoice->update([
+                'invoice_status' => 'completed',
+                'completed_at' => now(),
+            ]);
+            Log::info('Invoice marked as completed', ['invoice_id' => $invoice->id]);
+        }
+
+        // Update invoice services
+        $invoiceService->updateGrandTotal($invoice, $transaction);
+        $invoiceService->updateBalanceDue($invoice);
+        $invoiceService->updateStatus($invoice);
+
+        // Update transaction status if pending
+        if ($transaction && $transaction->transaction_status === 'pending') {
+            $transaction->update([
+                'transaction_status' => 'receipt_verified',
+                'updated_at' => now(),
+            ]);
+            Log::info('Transaction status updated', [
+                'transaction_id' => $transaction->id,
+                'new_status' => 'receipt_verified'
+            ]);
+        }
+
+        // Validate user exists
+        $user = $transaction->transactionUser;
+        if (!$user) {
+            throw new \Exception("No user associated with transaction ID {$transaction->id}");
+        }
+
+        // Apply payment to unpaid items
+        $paymentService->applyPaymentToUnpaidItems($transaction, $payment->amount_paid);
+
+        // Send confirmation email
+        $this->sendPaymentConfirmationEmail($user, $transaction, $payment);
+
+        Log::info('Successful payment processing completed', [
+            'payment_id' => $payment->id,
+            'user_id' => $user->id
+        ]);
+    }
+
+    /**
+     * Send payment confirmation email
+     */
+    private function sendPaymentConfirmationEmail($user, $transaction, $payment): void
+    {
+        try {
+            $paymentDetails = [
+                'full_name' => $user->first_name . ' ' . $user->last_name,
+                'email' => $user->email,
+                'payment_method_id' => $payment->mode_of_payment,
+                'transaction_id' => $transaction->id,
+                'payment_reference_number' => $payment->payment_reference_number,
+                'notes' => $payment->notes,
+                'check_in' => $transaction->start_datetime,
+                'check_out' => $transaction->end_datetime,
+                'total_amount' => $transaction->total_amount,
+                'deposit' => $transaction->deposit_amount,
+            ];
+
+            Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
+
+            Log::info('📧 Payment confirmation email sent', ['email' => $paymentDetails['email']]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+            // Don't throw - email failure shouldn't fail the entire webhook
+        }
+    }
+
+    /**
+     * Test endpoint to verify webhook is accessible
+     */
+    public function webhookTest()
+    {
+        return response()->json([
+            'status' => 'active',
+            'message' => 'Webhook endpoint is operational',
+            'timestamp' => now()->toISOString()
+        ], 200);
     }
 
     public function failed()
@@ -241,178 +417,3 @@ class PaymentController extends Controller
         return view('guest.proof-of-payment-page');
     }
 }
-
-
-
-
-
-// s
-
-
-
-// try {
-//     $webhook_secret = env('PAYMONGO_WEBHOOK_SECRET');
-//     $webhook_signature = $request->header('Paymongo-Signature');
-//     $event_datas = $request->getContent();
-//     $event_filter = json_decode($event_datas, true);
-
-//     // Signature verification
-//     $webhook_signature_raw = preg_split("/,/", $webhook_signature);
-//     $webhook_signature_raw_time = preg_split("/=/", $webhook_signature_raw[0]);
-//     $webhook_signature_raw_data = preg_split("/=/", $webhook_signature_raw[1]);
-
-//     $webhook_signature_time = $webhook_signature_raw_time[1] ?? null;
-//     $webhook_signature_data = $webhook_signature_raw_data[1] ?? null;
-
-//     if (!$webhook_signature_time || !$webhook_signature_data) {
-//         Log::error('Webhook signature parsing failed.', ['signature' => $webhook_signature]);
-//         return response()->json(['error' => 'Invalid signature format.'], 400);
-//     }
-
-//     $webhook_time_with_json_data = $webhook_signature_time . '.' . $event_datas;
-//     $computedSignature = hash_hmac('sha256', $webhook_time_with_json_data, $webhook_secret);
-//     $mySignature = hash_equals($computedSignature, $webhook_signature_data);
-
-//     if ($mySignature === true) {
-//         if ($event_filter['data']['type'] === 'link.payment.paid') {
-//             $attributes = $event_filter['data']['attributes'];
-//             $metadata = $attributes['metadata'] ?? [];
-
-//             Payment::create([
-//                 // 'invoice_id' => isset($metadata['invoice_id']) ? (int)$metadata['invoice_id'] : null,
-//                 'amount_paid' => $attributes['amount'] / 100,
-//             ]);
-
-//             Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
-
-//             return response()->json(['message' => 'Payment saved.'], 200);
-//         }
-
-//         Log::info('Webhook event not handled.', ['event_type' => $event_filter['data']['type']]);
-//         return response()->json(['message' => 'Event not handled.'], 200);
-//     }
-
-//     Log::warning('Invalid webhook signature.', [
-//         'computed' => $computedSignature,
-//         'received' => $webhook_signature_data,
-//     ]);
-//     return response()->json(['error' => 'Invalid signature.'], 403);
-// } catch (\Exception $e) {
-
-//     Log::error('Webhook processing error: ' . $e->getMessage(), [
-//         'trace' => $e->getTraceAsString(),
-//         'request_body' => $request->getContent(),
-//     ]);
-//     return response()->json(['error' => 'Server error.'], 500);
-// }
-
-
-
-
-// if ($eventType === 'payment.paid') {
-
-//     $amountPaid = $attributes['amount'] ?? 0;
-//     $modeOfPayment = $attributes['source']['type'] ?? 'unknown';
-//     $paymentReferenceNumber = $data['id'] ?? null;
-//     $metadata = $attributes['metadata'] ?? [];
-
-//     $invoiceId = (int)($metadata['invoice_id'] ?? 0);
-//     Log::info("Processing payment for invoice ID: {$invoiceId}");
-
-//     $invoice = $this->invoice ?? Invoice::find($invoiceId);
-
-//     if (!$invoice) {
-//         Log::error("Invoice not found.", ['invoice_id' => $invoiceId]);
-//         return response()->json(['error' => 'Invoice not found.'], 404);
-//     }
-
-//     $transaction = $invoice?->transaction;
-//     $amountInPesos = $amountPaid / 100;
-
-//     if ($invoice->balance_due < $amountInPesos) {
-//         Log::warning('Payment exceeds balance due.', [
-//             'invoice_id' => $invoiceId,
-//             'amount_paid' => $amountInPesos,
-//             'balance_due' => $invoice->balance_due,
-//         ]);
-//         return response()->json(['error' => 'Payment exceeds balance due.'], 400);
-//     }
-
-//     try {
-
-//         DB::transaction(function () use (&$paymentDetails, $amountInPesos, $invoice, $invoiceId, $modeOfPayment, $paymentReferenceNumber, $metadata, $transaction) {
-
-//             $payment = Payment::create([
-//                 'amount_paid' => $amountInPesos,
-//                 'invoice_id' => $invoiceId,
-//                 'mode_of_payment' => $modeOfPayment,
-//                 'payment_type' => trim($metadata['payment_type'] ?? 'unknown'),
-//                 'payment_reference_number' => $paymentReferenceNumber,
-//                 'payment_date' => now(),
-//                 'verified_at' => now(),
-//                 'notes' => trim($metadata['notes'] ?? 'not defined'),
-//                 'payment_status' => 'completed',
-//             ]);
-
-
-//             // Update the invoice with the new amount paid and balance due
-//             $newAmountPaid = $invoice->amount_paid + $payment->amount_paid;
-//             $newBalanceDue = max($invoice->sub_total - $newAmountPaid, 0);
-
-//             $invoice->update([
-//                 'amount_paid' => $newAmountPaid,
-//                 'balance_due' => $newBalanceDue,
-//             ]);
-
-//             // Log invoice update
-//             Log::info("Invoice updated: Amount Paid - {$newAmountPaid}, Balance Due - {$newBalanceDue}");
-
-//             // If the balance is 0, update invoice status to 'completed'
-//             if ($newBalanceDue == 0) {
-//                 $invoice->update([
-//                     'invoice_status' => 'completed',
-//                     'completed_at' => now(),
-//                 ]);
-
-//                 // Log status change
-//                 Log::info("Invoice status updated to 'completed' because balance due is 0.");
-//             }
-
-
-//             if ($transaction && $transaction->transaction_status === 'pending') {
-//                 $transaction->update([
-//                     'transaction_status' => 'receipt_verified',
-//                     'updated_at' => now(),
-//                 ]);
-//             }
-
-//             $user = $transaction->transactionUser;
-
-//             if (!$user) {
-//                 throw new \Exception("No user associated with transaction ID {$transaction->id}");
-//             }
-
-//             $paymentDetails = [
-//                 'full_name' => $user->first_name . ' ' . $user->last_name,
-//                 'email' => $user->email,
-//                 'payment_method_id' => $payment->mode_of_payment,
-//                 'transaction_id' => $transaction->id,
-//                 'payment_reference_number' => $payment->payment_reference_number,
-//                 'notes' => $payment->notes,
-//                 'check_in' => $transaction->start_datetime,
-//                 'check_out' => $transaction->end_datetime,
-//                 'total_amount' => $transaction->total_amount,
-//                 'deposit' => $transaction->deposit_amount,
-//             ];
-//         });
-
-//         // Send mail AFTER transaction commits successfully
-//         Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
-
-//         Log::info('Payment saved via webhook.', ['payment_data' => $attributes]);
-//         return response()->json(['message' => 'Payment saved.'], 200);
-//     } catch (\Exception $e) {
-//         Log::error('Webhook payment processing failed: ' . $e->getMessage());
-//         return response()->json(['error' => 'Processing failed.'], 500);
-//     }
-// }

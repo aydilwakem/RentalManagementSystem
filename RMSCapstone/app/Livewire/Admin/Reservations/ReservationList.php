@@ -174,13 +174,15 @@ class ReservationList extends Component
 
     public function confirmReservation($id)
     {
-        $transaction = Transaction::with(['transactionUser', 
-        'invoice.payments', 
-        'properties.category', 
-        'activities', 
-        'services', 
-        'promoCode'])
-        ->find($id);
+        $transaction = Transaction::with([
+            'transactionUser',
+            'invoice.payments',
+            'properties.category',
+            'activities',
+            'services',
+            'promoCode'
+        ])
+            ->find($id);
 
         if (!$transaction) {
             session()->flash('error', 'Transaction not found.');
@@ -510,6 +512,7 @@ class ReservationList extends Component
 
             'no_show' => 'confirmed',
             'terminated' => 'ongoing',
+            'expired' => 'pending',
         ];
 
         // Determine previous status
