@@ -403,6 +403,12 @@ class CreateDayTourReservation extends Component
             'reservation_source' => $this->reservation_source,
             'transaction_status' => $this->transaction_status,
             // 'terms' => $this->terms,
+
+            // Day Tour specific fields
+            'day_tour_id' => $this->selectedTour->id,
+            'day_tour_rate_id' => $this->selectedRate->id,
+            'day_tour_rate_type' => $this->selectedRate->rate_type,
+
         ]);
     }
 

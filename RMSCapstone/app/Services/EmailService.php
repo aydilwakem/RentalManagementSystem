@@ -32,10 +32,10 @@ class EmailService
             Log::info('ReservationSubmittedMail sent to: ' . $reservationData['email']);
 
             //emails for admins
-            Mail::to('username@try.com')->send(
-                new NewReservationMail($reservationData)
-            );
-            Log::info('NewReservationMail sent to: username@try.com');
+            // Mail::to('username@try.com')->send(
+            //     new NewReservationMail($reservationData)
+            // );
+            // Log::info('NewReservationMail sent to: username@try.com');
 
             Mail::to('rmscapstone26@gmail.com')->send(
                 new NewReservationMail($reservationData)
