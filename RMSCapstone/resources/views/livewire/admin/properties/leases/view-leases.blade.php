@@ -16,7 +16,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -50,8 +50,8 @@
                 <div class="flex">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
@@ -60,44 +60,50 @@
                         <!-- Search-->
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search">
                     </div>
 
                     {{-- Bulk Actions Button
-                <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                    <button @click="open = !open" type="button"
-                        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Actions
-                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
+                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
+                        <button @click="open = !open" type="button"
+                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Actions
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
 
-                    <div x-show="open" @click.away="open = false"
-                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                        <div class="py-1">
-                            <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
-                                Delete</a>
+                        <div x-show="open" @click.away="open = false"
+                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                            <div class="py-1">
+                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Bulk
+                                    Delete</a>
+                            </div>
                         </div>
-                    </div>
-                </div> --}}
+                    </div> --}}
                 </div>
 
-                <!-- Status-->
+                <!-- Status Filter -->
                 <div class="flex space-x-3">
                     <div class="flex space-x-3 items-center">
-                        <label class="w-40 text-sm font-medium text-gray-900 dark:text-white">Lease Status:</label>
+                        <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation
+                            Status:</label>
                         <select wire:model.live="statusFilter"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
-                            <option value="pending">Pending</option>
+                            <option value="pending">Awaiting Payment</option>
+                            <option value="reserved">Pending Verification</option>
+                            <option value="receipt_verified">Payment Verified</option>
                             <option value="confirmed">Confirmed</option>
-                            <option value="ongoing">On-Going</option>
+                            <option value="ongoing">On-going</option>
+                            <option value="done">Completed</option>
                             <option value="terminated">Terminated</option>
+                            <option value="expired">Expired</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
                 </div>
@@ -110,8 +116,7 @@
                 <div class="flex flex-col items-center justify-center text-center">
                     <!-- Spinner -->
                     <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4" />
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path class="opacity-75" fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                     </svg>
@@ -125,9 +130,9 @@
                         <tr>
                             <!-- Select All Checkbox-->
                             {{-- <th scope="col" class="px-4 py-3">
-                            <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                class="accent-blue-600 w-4 h-4">
-                        </th> --}}
+                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                    class="accent-blue-600 w-4 h-4">
+                            </th> --}}
 
                             {{-- Transaction Number --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('id')">
@@ -179,16 +184,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -209,16 +212,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -239,16 +240,14 @@
                                         </svg>
                                     @else
                                         @if ($sortDir == 'ASC')
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -269,9 +268,9 @@
                             <tr
                                 class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                 {{-- <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                            <input wire:model.live="selectedRows" type="checkbox" name="transaction[]"
-                                value="{{ $transaction->id }}" class="accent-blue-600 w-4 h-4">
-                        </th> --}}
+                                    <input wire:model.live="selectedRows" type="checkbox" name="transaction[]"
+                                        value="{{ $transaction->id }}" class="accent-blue-600 w-4 h-4">
+                                </th> --}}
                                 <th scope="row" class="font-medium text-gray-900 px-4 py-3 dark:text-white">
                                     <span>{{ $fakeIDs[$transaction->id] ?? 'LSE-???' }}</span>
                                 </th>
@@ -318,34 +317,134 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
-                                    @can('leases-view')
-                                        <!-- View Icon -->
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}">
-                                        </i>
-                                    @endcan
+                                {{-- Action Icons --}}
+                                <td class="px-6 py-3 relative">
+                                    <div x-data="dropdown()" x-init="init" class="relative">
+                                        <!-- Trigger Button -->
+                                        <button @click="toggle" :aria-expanded="open.toString()" aria-haspopup="true"
+                                            class="text-gray-700 hover:text-blue-600 focus:outline-none dark:text-gray-200 dark:hover:text-blue-500">
+                                            <i class="fas fa-ellipsis-h text-xl"></i>
+                                        </button>
+
+                                        <!-- Popover Menu -->
+                                        <div x-show="open" x-ref="menu" @click.outside="open = false" x-transition
+                                            :class="placement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'"
+                                            class="absolute right-0 z-20 w-48 bg-white rounded-md shadow-lg border divide-y divide-gray-100 dark:bg-gray-700">
+                                            <ul class="text-sm text-gray-700 dark:text-gray-200">
+                                                <!--------------------- Safe Actions --------------------------------->
+                                                <!-- View Icon -->
+                                                @can('leases-view')
+                                                    <a href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-eye mr-2 text-blue-600"></i> View
+                                                        Lease
+                                                    </a>
+                                                @endcan
+                                                <!-- Confirm Receipt -->
+                                                @if ($transaction->transaction_status === 'reserved')
+                                                    <li>
+                                                        <a href="{{ route('admin.view-lease', ['transaction' => $transaction->id]) }}#payments"
+                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            <i class="fas fa-check-circle mr-2 text-green-600"></i>
+                                                            Confirm
+                                                            Receipt
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                                <!-- Confirm Lease -->
+                                                @if ($transaction->transaction_status === 'receipt_verified')
+                                                    <li>
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('confirmLease', 'Confirm Lease', 'Are you sure you want to confirm this lease?', {{ $transaction->id }}, 'default')"
+                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            <i class="fas fa-check-circle mr-2 text-green-600"></i>
+                                                            Confirm
+                                                            Lease
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                                <!-- Start Lease -->
+                                                @if ($transaction->transaction_status === 'confirmed')
+                                                    <li>
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('startLease', 'Start Lease', 'Are you sure you want to start this lease?', {{ $transaction->id }}, 'default')"
+                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            <i class="fas fa-play-circle mr-2 text-green-600"></i>
+                                                            Start
+                                                            Lease
+                                                        </a>
+                                                    </li>
+                                                @endif
 
 
-                                    @can('leases-edit')
-                                        <!-- Edit Icon -->
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-lease', ['transaction' => $transaction->id]) }}">
-                                        </i>
-                                    @endcan
 
-                                    @can('leases-delete')
-                                        <!-- Delete Icon -->
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                            wire:click="confirmDelete({{ $transaction->id }})"
-                                            wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
+                                                <!-- Mark as Done -->
+                                                @if ($transaction->transaction_status === 'ongoing')
+                                                    <a href="#"
+                                                        wire:click.prevent="showActionModal('markAsDone', 'Mark as Done', 'Are you sure you want to mark this lease as Done?', {{ $transaction->id }}, 'default')"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-check-double mr-2 text-emerald-600"></i>
+                                                        Mark
+                                                        as Done
+                                                    </a>
+                                                @endif
 
+                                                <!--------------------- Destructive Actions -------------------------->
+                                                <div class="border-t">
+
+                                                    <!-- Cancel -->
+                                                    @if ($transaction->transaction_status === 'reserved')
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('cancelLease', 'Cancel Lease', 'Are you sure you want to cancel this lease?', {{ $transaction->id }}, 'danger')"
+                                                            class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 ">
+                                                            <i class="fas fa-times mr-2"></i> Cancel Lease
+                                                        </a>
+                                                    @endif
+
+                                                    <!-- Terminate -->
+                                                    @if ($transaction->transaction_status === 'ongoing')
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('terminateLease', 'Terminate Lease', 'Are you sure you want to terminate this lease?', {{ $transaction->id }}, 'danger')"
+                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                            <i class="fas fa-ban mr-2"></i> Terminate Lease
+                                                        </a>
+                                                    @endif
+
+                                                    <!-- Delete -->
+                                                    @if (
+                                                            $transaction->transaction_status === 'cancelled' ||
+                                                            $transaction->transaction_status === 'done' ||
+                                                            $transaction->transaction_status === 'no_show' ||
+                                                            $transaction->transaction_status === 'terminated'
+                                                        )
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('deleteLease', 'Delete Lease', 'Are you sure you want to delete this lease?', {{ $transaction->id }}, 'danger')"
+                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 ">
+                                                            <i class="fas fa-trash-alt mr-2"></i> Delete Lease
+                                                        </a>
+                                                    @endif
+
+                                                    <!-- Rollback Status -->
+                                                    @if (
+                                                            $transaction->transaction_status !== 'pending' &&
+                                                            $transaction->transaction_status !== 'reserved' &&
+                                                            $transaction->transaction_status !== 'receipt_verified'
+                                                        )
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('rollbackStatus', 'Undo Lease Status', 'Are you sure you want to undo the status of this lease?', {{ $transaction->id }}, 'danger')"
+                                                            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                                            <i class="fas fa-undo mr-2"></i> Undo Status
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>
@@ -355,6 +454,28 @@
                             </tr>
                         @endforelse
                     </tbody>
+
+                    <div>
+                        @if ($cannotMarkAsDoneModal)
+                            <x-dialog-modal wire:model.live="cannotMarkAsDoneModal" type="ghost">
+                                <x-slot name="title">
+                                    {{ __('Cannot Perform Action') }}
+                                </x-slot>
+
+                                <x-slot name="content">
+                                    {{ __('Cannot mark this lease as done. Invoice still has balance due.') }}
+                                </x-slot>
+
+                                <x-slot name="footer">
+                                    <x-secondary-button wire:click="$set('cannotMarkAsDoneModal', false)"
+                                        wire:loading.attr="disabled">
+                                        {{ __('Cancel') }}
+                                    </x-secondary-button>
+                                </x-slot>
+                            </x-dialog-modal>
+                        @endif
+                    </div>
+
                 </table>
             </div>
             <!-- Pagination -->
@@ -364,7 +485,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live='perPage'
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="10">10</option>
                             <option value="20">20</option>
                             <option value="50">50</option>
@@ -376,65 +497,61 @@
             </div>
         </div>
 
-
-        <!-- Delete Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
+        <!-- Action Confirmation Modal -->
+        <x-dialog-modal wire:model.live="confirmingAction" :type="$actionButtonType">
             <x-slot name="title">
-                {{ __('Delete Lease') }}
+                {{ __($actionTitle) }}
             </x-slot>
 
             <x-slot name="content">
-                {{ __('Are you sure you want to delete this item?') }}
+                {{ __($actionMessage) }}
             </x-slot>
 
             <x-slot name="footer">
-                <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                <x-secondary-button wire:click="$set('confirmingAction', false)" wire:loading.attr="disabled">
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ms-3" wire:click="deleteLease" wire:loading.attr="disabled">
-                    {{ __('Delete Lease') }}
-                </x-danger-button>
+                @if ($actionButtonType === 'danger')
+                    <x-danger-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                        {{ $actionTitle }}
+                    </x-danger-button>
+                @elseif ($actionButtonType === 'warning')
+                    <x-warning-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                        {{ $actionTitle }}
+                    </x-warning-button>
+                @else
+                    <x-button class="ms-3" wire:click="executeAction" wire:loading.attr="disabled">
+                        {{ $actionTitle }}
+                    </x-button>
+                @endif
             </x-slot>
         </x-dialog-modal>
 
-        {{-- Cannot Delete Modal --}}
-        <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
-            <x-slot name="title">
-                {{ __('Unable to Delete') }}
-            </x-slot>
-
-            <x-slot name="content">
-                {{ __('This is an active or on-going lease and cannot be deleted.') }}
-            </x-slot>
-
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
-                    {{ __('OK') }}
-                </x-secondary-button>
-            </x-slot>
-        </x-dialog-modal>
-
-        {{--
-    <!-- Bulk Delete Confirmation Modal -->
-    <x-dialog-modal wire:model.live="confirmBulkDelete">
-        <x-slot name="title">
-            {{ __('Delete Leases') }}
-        </x-slot>
-
-        <x-slot name="content">
-            {{ __('Are you sure you want to delete these items?') }}
-        </x-slot>
-
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmBulkDelete', false)" wire:loading.attr="disabled">
-                {{ __('Cancel') }}
-            </x-secondary-button>
-
-            <x-danger-button class="ms-3" wire:click="deleteSelectedRows" wire:loading.attr="disabled">
-                {{ __('Delete Lease') }}
-            </x-danger-button>
-        </x-slot>
-    </x-dialog-modal> --}}
     @endif
 </div>
+
+<script>
+    document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.stopPropagation(); // Prevent window click from firing
+            const id = button.getAttribute("data-id");
+            const dropdown = document.querySelector(`[data-dropdown="${id}"]`);
+            dropdown.classList.toggle("hidden");
+
+            // Optional: Hide others
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu !== dropdown) {
+                    menu.classList.add("hidden");
+                }
+            });
+        });
+    });
+
+    // Optional: Close all dropdowns when clicking outside
+    window.addEventListener("click", function () {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.add("hidden");
+        });
+    });
+</script>

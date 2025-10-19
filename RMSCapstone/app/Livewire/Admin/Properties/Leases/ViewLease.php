@@ -8,11 +8,18 @@ use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
-use App\Models\Payment;
+use App\Models\PaymentMethod;
+use App\Services\PaymentService;
+use App\Services\ServiceBag;
+use App\Services\InvoiceService;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class ViewLease extends Component
 {
+
+    use WithFileUploads;
+
     public Transaction $transaction;
 
     public $confirmItemDelete = false;
@@ -32,12 +39,30 @@ class ViewLease extends Component
     public $notes;
     public $currency;
     public $verified_at;
+    public $sub_total;
+    public $balance_due;
 
     // ---------------------------- MODALS -------------------------- //
     public $showReceiptModal = false;
     public $cannotGenerateReceiptModal = false;
     public $createPaymentModal = false;
 
+
+    // --------------------- PAYMENTS ------------------------- //
+    public $payment_methods;
+    public $payment_method_id;
+    public $payment_screenshot;
+
+    // --------------------- SERVICES ------------------------- //
+
+    protected PaymentService $paymentService;
+    protected InvoiceService $invoiceService;
+
+    public function boot(ServiceBag $services)
+    {
+        $this->paymentService = $services->paymentService;
+        $this->invoiceService = $services->invoiceService;
+    }
 
     public function confirmDelete($id)
     {
@@ -51,6 +76,7 @@ class ViewLease extends Component
         //default date in create payment modal
         $now = Carbon::now('Asia/Manila');
         $this->payment_date = $now->format('Y-m-d');
+        $this->payment_methods = PaymentMethod::all();
     }
 
     public function loadTransactionData(Transaction $transaction)
@@ -99,7 +125,7 @@ class ViewLease extends Component
     public function exportLeaseDetails()
     {
         //eager load the relationship
-         $transaction = Transaction::with([
+        $transaction = Transaction::with([
             'invoice.payments',
         ])->findOrFail($this->transaction->id);
 
@@ -155,67 +181,49 @@ class ViewLease extends Component
         $this->createPaymentModal = false;
     }
 
-    public function CreatePayment()
+
+    // --------------------- DATABASE INSERTION --------------------------- //
+
+
+    public function CreatePayment(PaymentService $paymentService)
     {
         Log::info('Create Payment method called.');
 
-        // Validate the input data
         $this->validate([
             'amount_paid' => 'required|numeric|min:0',
-            'payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance',
+            'payment_type' => 'required|in:House Rent,Security Deposit',
             'payment_date' => 'required|date',
             'notes' => 'nullable|string|max:500',
+            'payment_method_id' => 'required|exists:pm_payment_methods,id',
+            'payment_screenshot' => 'nullable|image|max:2048',
         ]);
 
-        // Ensure the invoice exists
         if (!$this->invoice) {
-            abort(404, 'No invoice found for this transaction.');
+            abort(404, 'No invoice found.');
         }
 
-        // Create the payment record
-        Payment::create([
-            'invoice_id' => $this->invoice->id,
-            'amount_paid' => $this->amount_paid,
-            'mode_of_payment' => 'cash',
-            'payment_type' => $this->payment_type,
-            'payment_date' => $this->payment_date,
+        // Gets the screenshotpath of the image
+        $screenshotPath = $this->uploadScreenshot();
+
+
+        $paymentService->create([
+            'invoice'       => $this->invoice,
+            'transaction'   => $this->transaction,
+            'amount_paid'   => $this->amount_paid,
+            'payment_type'    => $this->payment_type,
+            'mode_of_payment'  => 'cash',
+            'payment_date'  => $this->payment_date,
+            'notes'         => $this->notes,
             'payment_status' => 'completed',
-            'notes' => $this->notes,
-            'currency' => 'PHP',
-            'verified_at' => now(),
+            'currency'         => 'PHP',
+            'verified_at'      => now(),
+            'payment_screenshot' => $screenshotPath,
+            'payment_method_id' => $this->payment_method_id,
         ]);
 
+        $this->updatePaymentStatus($paymentService, $this->amount_paid);
+        $this->recalculateInvoice();
 
-
-        // Update the invoice with the new amount paid and balance due
-        $newAmountPaid = $this->invoice->amount_paid + $this->amount_paid;
-        $newBalanceDue = max($this->invoice->sub_total - $newAmountPaid, 0);
-
-        $this->invoice->update([
-            'amount_paid' => $newAmountPaid,
-            'balance_due' => $newBalanceDue,
-        ]);
-
-        // If the balance is 0, update invoice status to 'completed'
-        if ($newBalanceDue == 0) {
-            $this->invoice->update([
-                'invoice_status' => 'completed',
-                'completed_at' => now(),
-            ]);
-
-            // Log status change
-            Log::info("Invoice status updated to 'completed' because balance due is 0.");
-        }
-
-        // If the new amount paid is greater than or equal to the deposit amount, update transaction status to 'receipt_verified'
-        if ($newAmountPaid >= $this->transaction->deposit_amount) {
-            $this->transaction->update(['transaction_status' => 'receipt_verified']);
-            Log::info("Transaction status updated to 'reserved' because amount paid is greater than or equal to deposit amount.");
-        }
-
-
-
-        // Reset the form fields after successful creation
         $this->reset([
             'amount_paid',
             'mode_of_payment',
@@ -225,10 +233,58 @@ class ViewLease extends Component
             'notes',
             'currency',
             'verified_at',
+            'payment_screenshot',
         ]);
 
-        // Redirect to the same reservation view to refresh data
         return redirect()->route('admin.view-lease', ['transaction' => $this->transaction->id])
             ->with('success', 'Payment created successfully.');
+    }
+
+    protected function uploadScreenshot(): ?string
+    {
+        // If no file was uploaded, return null
+        if (!$this->payment_screenshot) {
+            return null;
+        }
+
+        // If uploaded file is invalid
+        if (!$this->payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
+        }
+
+        // Store and return the file path
+        return $this->payment_screenshot->store('proof-of-payments', 'public');
+    }
+
+
+
+    // ---------------------- HELPER METHODS --------------------------- //
+
+    public function updatePaymentStatus(PaymentService $paymentService, float $amountPaid)
+    {
+        $paymentService->applyPaymentToUnpaidItems($this->transaction, $amountPaid);
+
+        $this->transaction->load('activities', 'properties', 'services', 'guestPets');
+    }
+
+    public function recalculateInvoice()
+    {
+        $this->invoiceService->updateDiscountTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateGrandTotal($this->invoice, $this->transaction);
+        $this->invoiceService->updateBalanceDue($this->invoice);
+        $this->invoiceService->updateStatus($this->invoice);
+
+        $this->refreshInvoice();
+    }
+
+
+    /**
+     * Reloads the invoice and updates related UI-bound properties.
+     */
+    public function refreshInvoice()
+    {
+        $this->invoice = $this->invoice->fresh();
+        $this->sub_total = $this->invoice->sub_total;
+        $this->balance_due = $this->invoice->balance_due;
     }
 }
