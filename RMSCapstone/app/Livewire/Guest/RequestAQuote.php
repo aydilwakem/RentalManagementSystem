@@ -66,35 +66,35 @@ class RequestAQuote extends Component
         //Validate the data
         $this->validate([
         'company_name' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'max:255',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
         'contact_person' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'max:255',
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
         'email' => 'required|email|max:255',
         'contact_number' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'max:255',
                 'regex:/^[0-9]{11}$/', //11 digits only
-            ], 
+            ],
         'selected_hall' => 'required|exists:properties,id',
         'event_start' => 'required|date|after_or_equal:'.now()->toDateTimeString(),
         'event_end' => 'required|date|after_or_equal:event_start',
         'event_type' => 'required|string',
         'other_event_type' => 'nullable|string',
         'additional_requests' => [
-                'required', 
-                'string', 
+                'nullable',
+                'string',
                 'max:500',
-                'regex:/^[A-Za-z\s\-]+$/', 
-            ], 
+                'regex:/^[A-Za-z\s\-]+$/',
+            ],
     ]);
 
     $hall = Property::find($this->selected_hall);

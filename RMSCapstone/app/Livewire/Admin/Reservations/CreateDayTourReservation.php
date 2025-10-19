@@ -368,7 +368,7 @@ class CreateDayTourReservation extends Component
         }
 
         session()->flash('success', 'Day Tour reservation successfully created!');
-        return redirect()->route('admin.view-daytour-reservation', ['transaction' => $transaction->id]);
+        return redirect()->route('admin.daytour-reservations-list');
     }
 
     protected function createTransactionUser(): TransactionUser
