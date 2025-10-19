@@ -11,6 +11,46 @@
         td {
             font-family: 'Poppins', sans-serif;
         }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            min-width: 480px;
+        }
+
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: rgba(22, 101, 52, 0.5);
+            border-radius: 10px;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        @media only screen and (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+
+            td {
+                padding: 6px !important;
+            }
+
+            h3 {
+                font-size: 16px !important;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
@@ -147,16 +187,16 @@
                 <p style="margin: 0; font-weight: 500; color: #fff;">Connect with us!</p>
 
                 <a href="{{ $facebook_link }}" target="_blank"
-                    style="margin: 0 8px; text-decoration: none; color: #fff;">
-                    <i class="fa-brands fa-facebook"></i>
+                    style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
                 </a>
                 <a href="{{ $instagram_link }}" target="_blank"
-                    style="margin: 0 8px; text-decoration: none; color: #fff;">
-                    <i class="fa-brands fa-instagram"></i>
+                    style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
                 </a>
                 <a href="https://canopyfarmph.com/guest/homepage" target="_blank"
-                    style="margin: 0 8px; text-decoration: none; color: #fff;">
-                    <i class="fa-solid fa-globe"></i>
+                    style="margin: 0 8px; color: #fff; text-decoration: none;">
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
 

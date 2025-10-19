@@ -12,15 +12,43 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            min-width: 480px;
+        }
+
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: rgba(22, 101, 52, 0.5);
+            border-radius: 10px;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
         @media only screen and (max-width: 600px) {
-            .table-container {
-                overflow-x: auto;
-                display: block;
-                width: 100%;
+            table {
+                font-size: 14px;
             }
 
-            table {
-                min-width: 480px;
+            td {
+                padding: 6px !important;
+            }
+
+            h3 {
+                font-size: 16px !important;
             }
         }
     </style>
@@ -117,24 +145,26 @@
                 style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
                 <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
 
-                <table style="width:100%; border-collapse:collapse; font-size:15px;">
-                    <tbody>
-                        <tr>
-                            <td style="padding:8px;">Name: </td>
-                            <td style="padding:8px; text-align:right;">{{ $name }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px;">Email: </td>
-                            <td style="padding:8px; text-align:right;">{{ $email }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px;">Contact Number: </td>
-                            <td style="padding:8px; text-align:right;">{{ $contact_number }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table style="width:100%; border-collapse:collapse; font-size:15px;">
+                        <tbody>
+                            <tr>
+                                <td style="padding:8px;">Name: </td>
+                                <td style="padding:8px; text-align:right;">{{ $name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px;">Email: </td>
+                                <td style="padding:8px; text-align:right;">{{ $email }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px;">Contact Number: </td>
+                                <td style="padding:8px; text-align:right;">{{ $contact_number }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {{-- Invoice Details --}}
@@ -177,21 +207,6 @@
                 </div>
             </div>
 
-            {{-- Guest Details
-            @if (!empty($guest_details) && count($guest_details) > 0)
-            <div
-                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
-                <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    @foreach ($guest_details as $guest)
-                    <li>{{ $guest->name ?? 'Unnamed Guest' }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @else
-            <p>No guest details available.</p>
-            @endif --}}
-
             <p>
                 We hope your visit was memorable!
                 Thank you for spending your day with <strong>{{ $branding_company_name }}</strong>.
@@ -211,15 +226,15 @@
                 <p style="margin: 0; font-weight: 500;">Connect with us!</p>
                 <a href="{{ $facebook_link }}" target="_blank"
                     style="margin: 0 8px; color: #fff; text-decoration: none;">
-                    <i class="fa-brands fa-facebook"></i>
+                    <img src="{{ asset('images/fb-logo.png') }}" alt="Facebook" style="width: 24px; height: 24px;">
                 </a>
                 <a href="{{ $instagram_link }}" target="_blank"
                     style="margin: 0 8px; color: #fff; text-decoration: none;">
-                    <i class="fa-brands fa-instagram"></i>
+                    <img src="{{ asset('images/ig-logo.png') }}" alt="Instagram" style="width: 24px; height: 24px;">
                 </a>
                 <a href="https://canopyfarmph.com/guest/homepage" target="_blank"
                     style="margin: 0 8px; color: #fff; text-decoration: none;">
-                    <i class="fa-solid fa-globe"></i>
+                    <img src="{{ asset('images/web-logo.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
 
