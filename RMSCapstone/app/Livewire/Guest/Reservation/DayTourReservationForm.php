@@ -174,26 +174,29 @@ class DayTourReservationForm extends Component
         return $carbonDate->isWeekend() ? 'weekend' : 'weekday';
     }
 
-    public function selectTour($tourId, $rateId = null)
-    {
-        $this->selectedTour = DayTour::find($tourId);
+public function selectTour($tourId, $rateId = null)
+{
+    $this->selectedTour = DayTour::find($tourId);
 
-        if ($this->selectedTour) {
-            $availableRates = $this->getAvailableRatesForTour($this->selectedTour);
+    if ($this->selectedTour) {
+        $availableRates = $this->getAvailableRatesForTour($this->selectedTour);
 
-            if ($rateId) {
-                $this->selectedRate = $availableRates->firstWhere('id', $rateId);
-            } else {
-                $this->selectedRate = $availableRates->first();
-            }
+        if ($rateId) {
+            $this->selectedRate = $availableRates->firstWhere('id', $rateId);
+        } else {
+            $this->selectedRate = $availableRates->first();
         }
 
-        $this->terms_and_conditions = $this->selectedTour->terms_and_conditions
-            ?? $this->terms_and_conditions;
-
-        $this->calculateSubtotal();
+        // Set terms and conditions from the selected tour
+        $this->terms_and_conditions = $this->selectedTour->terms_conditions ?? $this->terms_and_conditions;
+        
+        Log::info("Selected tour: {$this->selectedTour->name}");
+        Log::info("Terms conditions: " . ($this->selectedTour->terms_conditions ? 'exists' : 'null'));
+        Log::info("Current terms_and_conditions: " . ($this->terms_and_conditions ? 'set' : 'null'));
     }
 
+    $this->calculateSubtotal();
+}
     public function updatedSelectedTour($tourId)
     {
         if ($tourId) {
@@ -201,8 +204,9 @@ class DayTourReservationForm extends Component
         } else {
             // if deselected, reset selectedRate and terms
             $this->selectedRate = null;
-            $this->terms_and_conditions = $this->brandingService->getBrandingData()['terms_and_conditions'] ?? $this->terms_and_conditions;
+            $this->terms_and_conditions = $this->brandingService->getBrandingData()['terms_and_conditions'] ?? '';
         }
+
     }
 
     public function updatedTourDate()

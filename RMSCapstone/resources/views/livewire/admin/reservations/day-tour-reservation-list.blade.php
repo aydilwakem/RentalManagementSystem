@@ -205,7 +205,22 @@
 
                                 {{-- Tour Package --}}
                                 <td class="px-4 py-3">
-                                    {{ $transaction->dayTour->name }}
+                                    @if ($transaction->dayTour)
+                                        {{ $transaction->dayTour->name }}
+                                        @if ($transaction->dayTourRate)
+                                            <span class="text-xs text-gray-500 block">
+                                                {{ $transaction->dayTourRate->rate_name }}
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-red-500 text-sm italic">Day tour not found</span>
+                                        @if(auth()->user()->can('admin'))
+                                            <button wire:click="checkMissingDayTourData({{ $transaction->id }})" 
+                                                    class="text-xs text-blue-500 underline ml-1">
+                                                Check
+                                            </button>
+                                        @endif
+                                    @endif
                                 </td>
 
                                 {{-- Tour Date --}}
