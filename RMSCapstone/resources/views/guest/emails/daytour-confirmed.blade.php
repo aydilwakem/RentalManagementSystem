@@ -25,8 +25,8 @@
         {{-- Header --}}
         <div style="background-color: #166534; color: #fff; padding: 25px 30px; text-align: center;">
             @if ($logo_path)
-                <img src="{{ asset('storage/' . $logo_path) }}" alt="{{ $branding_company_name }}"
-                    style="max-height: 50px; margin-bottom: 10px;">
+            <img src="{{ asset('storage/' . $logo_path) }}" alt="{{ $branding_company_name }}"
+                style="max-height: 50px; margin-bottom: 10px;">
             @endif
             <h1 style="font-size: 26px; font-weight: 700; margin: 0;">Day Tour Reservation Confirmed!</h1>
             <p style="font-size: 15px; margin: 8px 0 0;">Your booking has been successfully confirmed.</p>
@@ -74,6 +74,31 @@
                         <tr>
                             <td style="padding:8px;">Total Guests:</td>
                             <td style="padding:8px; text-align:right;">{{ $total_guests }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Guest Details --}}
+            <div
+                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
+
+                <table style="width:100%; border-collapse:collapse; font-size:15px;">
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px;">Name: </td>
+                            <td style="padding:8px; text-align:right;">{{ $name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;">Email: </td>
+                            <td style="padding:8px; text-align:right;">{{ $email }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;">Contact Number: </td>
+                            <td style="padding:8px; text-align:right;">{{ $contact_number }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -141,26 +166,26 @@
 
             {{-- Requests --}}
             @if (!empty($requests))
-                <div
-                    style="background-color:#fffbea; border:1px solid #f3c614; border-left:5px solid #f3c614; border-radius:5px; padding:15px; margin-bottom:20px;">
-                    <h3 style="font-size:18px; color:#166534; margin-top:0;">Special Requests</h3>
-                    <p><strong>Request:</strong> {{ $requests }}</p>
-                    <p><strong>Reply:</strong> {{ $request_reply ?? 'No reply yet.' }}</p>
-                </div>
+            <div
+                style="background-color:#fffbea; border:1px solid #f3c614; border-left:5px solid #f3c614; border-radius:5px; padding:15px; margin-bottom:20px;">
+                <h3 style="font-size:18px; color:#166534; margin-top:0;">Special Requests</h3>
+                <p><strong>Request:</strong> {{ $requests }}</p>
+                <p><strong>Reply:</strong> {{ $request_reply ?? 'No reply yet.' }}</p>
+            </div>
             @endif
 
             {{-- Guests --}}
-            @if (!empty($guest_details))
-                <div
-                    style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
-                    <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
-                    <ul style="margin: 0; padding-left: 20px;">
-                        @foreach ($guest_details as $guest)
-                            <li>{{ $guest }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            {{-- @if (!empty($guest_details))
+            <div
+                style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; color: #166534; margin-top: 0;">Guest Details</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach ($guest_details as $guest)
+                    <li>{{ $guest }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif --}}
 
             <p>We look forward to seeing you soon for your day tour adventure!</p>
 
@@ -179,8 +204,7 @@
                 <a href="{{ $facebook_link }}" target="_blank" style="margin:0 8px; color:#fff; text-decoration:none;">
                     <i class="fa-brands fa-facebook"></i>
                 </a>
-                <a href="{{ $instagram_link }}" target="_blank"
-                    style="margin:0 8px; color:#fff; text-decoration:none;">
+                <a href="{{ $instagram_link }}" target="_blank" style="margin:0 8px; color:#fff; text-decoration:none;">
                     <i class="fa-brands fa-instagram"></i>
                 </a>
                 <a href="https://canopyfarmph.com/guest/homepage" target="_blank"
