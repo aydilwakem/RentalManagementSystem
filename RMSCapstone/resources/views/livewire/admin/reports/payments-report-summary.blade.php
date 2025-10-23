@@ -153,8 +153,9 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
 
-                <td> {{ $payment->invoice->transaction->transactionUser->first_name ?? '' }}
-                    {{ $payment->invoice->transaction->transactionUser->last_name ?? 'N/A' }}</td>
+                <td> {{ $payment->invoice->transaction->transactionUser->first_name ?? 'Guest Detail Has Been
+                    Deleted' }}
+                    {{ $payment->invoice->transaction->transactionUser->last_name ?? '' }}</td>
 
                 <td> {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}</td>
 

@@ -8,8 +8,7 @@
                     <div class="w-full">
                         <label for="startDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Start Date:</label>
-                        <input type="date" wire:model.lazy="startDate" id="startDate"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="date" wire:model.lazy="startDate" id="startDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         @error('startDate')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -19,10 +18,10 @@
 
                 {{-- End Date --}}
                 <div class="w-full">
-                    <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">End Date:
+                    <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">End
+                        Date:
                     </label>
-                    <input type="date" wire:model.lazy="endDate" id="endDate"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                    <input type="date" wire:model.lazy="endDate" id="endDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('endDate')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -31,9 +30,9 @@
 
                 <!-- Invoice Type Filter -->
                 <div class="w-full">
-                    <label for="invoice_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice Type:</label>
-                    <select id="invoice_type" name="invoice_type" wire:model.live="invoiceTypeFilter"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                    <label for="invoice_type"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice Type:</label>
+                    <select id="invoice_type" name="invoice_type" wire:model.live="invoiceTypeFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         <option value="">All</option>
                         <option value="Event_Hall">Events</option>
@@ -44,10 +43,10 @@
 
                 <!-- Invoice Status Filter -->
                 <div class="w-full">
-                    <label for="invoice_status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
+                    <label for="invoice_status"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Invoice
                         Status:</label>
-                    <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                    <select id="invoice_status" name="invoice_status" wire:model.live="invoiceStatusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                         <option value="">All</option>
                         <option value="pending">Pending</option>
@@ -104,12 +103,14 @@
 
         <!-- Table Content -->
         <!-- Table Body -->
-        <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+        <div
+            class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Table Content -->
             <div class="overflow-x-auto">
                 <table class="min-w-full text-left">
 
-                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    <thead
+                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <th class="px-4 py-3">ID</th>
                             <th class="px-4 py-3 flex items-center space-x-2">
@@ -131,7 +132,8 @@
 
                     <tbody class="dark:bg-gray-700">
                         @forelse ($filteredInvoices as $invoice)
-                        <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                        <tr
+                            class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                             <td class="px-4 py-3">
                                 INV-{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}
                             </td>
@@ -140,7 +142,8 @@
                                 <span>{{ $invoice->invoice_number ?? 'N/A' }}</span>
                             </td>
                             <td class="px-4 py-3">
-                                {{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                                {{ $invoice->transaction->transactionUser->first_name ?? 'Guest Detail Has Been Deleted'
+                                }}
                                 {{ $invoice->transaction->transactionUser->last_name ?? '' }}
                             </td>
                             <td class="px-4 py-3">{{ $invoice->transaction->transaction_number ?? 'N/A' }}</td>

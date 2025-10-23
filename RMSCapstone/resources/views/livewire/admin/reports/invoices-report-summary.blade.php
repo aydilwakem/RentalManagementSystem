@@ -159,7 +159,7 @@
                 <td>
                     {{ $invoice->invoice_number ?? 'N/A' }}
                 </td>
-                <td>{{ $invoice->transaction->transactionUser->first_name ?? '' }}
+                <td>{{ $invoice->transaction->transactionUser->first_name ?? 'Guest Detail Has Been Deleted' }}
                     {{ $invoice->transaction->transactionUser->last_name ?? '' }}</td>
 
                 <td>{{ $invoice->transaction->transaction_number ?? 'N/A' }}</td>
