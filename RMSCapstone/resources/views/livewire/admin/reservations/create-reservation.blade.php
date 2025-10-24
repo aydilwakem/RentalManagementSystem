@@ -684,6 +684,8 @@
                     @enderror
                 </div>
 
+
+
                 <div class="col-span-1">
                     <!-- Source of Hearing -->
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Heard From <span
@@ -744,6 +746,26 @@
                     @enderror
 
                 </div>
+
+
+                                        <!-- Facebook Link/Name -->
+                <div class="col-span-1 sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">
+                        Facebook Profile Link or Name
+                        <span class="text-xs text-gray-500 dark:text-gray-400">(optional)</span>
+                    </label>
+                    <input type="text" wire:model="facebook_link" 
+                        placeholder="Ex. https://facebook.com/username or John Smith"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                        dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+                    @error('facebook_link')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-xs text-gray-500 mt-1 dark:text-gray-400">
+                        You can enter either a full Facebook profile URL or just your Facebook name
+                    </p>
+                </div>
+
 
             </div>
         </div>

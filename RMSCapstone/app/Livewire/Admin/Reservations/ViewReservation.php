@@ -228,6 +228,16 @@ class ViewReservation extends Component
     public $payment_method_id;
     public $request_reply;
 
+    // ---------------- EDIT PAYMENT MODAL ------------------ //
+    public $showEditPaymentModal = false;
+    public $editingPayment;
+    public $edit_amount_paid;
+    public $edit_payment_date;
+    public $edit_payment_type;
+    public $edit_notes;
+    public $edit_payment_method_id;
+    public $edit_payment_screenshot;
+    public $existing_payment_screenshot;
 
 
     public function render()
@@ -532,6 +542,94 @@ class ViewReservation extends Component
     }
 
 
+    public function editPayment($paymentId)
+    {
+        $this->editingPayment = Payment::with('paymentMethod')->find($paymentId);
+        
+        if ($this->editingPayment) {
+            $this->edit_amount_paid = $this->editingPayment->amount_paid;
+            $this->edit_payment_date = $this->editingPayment->payment_date 
+                ? \Carbon\Carbon::parse($this->editingPayment->payment_date)->format('Y-m-d')
+                : now()->format('Y-m-d');
+            $this->edit_payment_type = $this->editingPayment->payment_type;
+            $this->edit_notes = $this->editingPayment->notes;
+            $this->edit_payment_method_id = $this->editingPayment->payment_method_id;
+            $this->existing_payment_screenshot = $this->editingPayment->payment_screenshot;
+            $this->edit_payment_screenshot = null;
+            $this->showEditPaymentModal = true;
+        }
+    }
+
+    public function updatePayment()
+    {
+        $this->validate([
+            'edit_amount_paid' => 'required|numeric|min:0',
+            'edit_payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance',
+            'edit_payment_date' => 'required|date',
+            'edit_notes' => 'nullable|string|max:500',
+            'edit_payment_method_id' => 'required|exists:pm_payment_methods,id',
+            'edit_payment_screenshot' => 'nullable|image|max:2048',
+        ]);
+
+        if ($this->editingPayment) {
+            // Upload new screenshot if provided
+            $screenshotPath = $this->uploadEditScreenshot();
+
+            $updateData = [
+                'amount_paid' => $this->edit_amount_paid,
+                'payment_type' => $this->edit_payment_type,
+                'payment_date' => $this->edit_payment_date,
+                'notes' => $this->edit_notes,
+                'payment_method_id' => $this->edit_payment_method_id,
+                'updated_at' => now(),
+            ];
+
+            // Only update screenshot if a new one was uploaded
+            if ($screenshotPath) {
+                $updateData['payment_screenshot'] = $screenshotPath;
+            }
+
+            $this->editingPayment->update($updateData);
+
+            // Recalculate invoice totals
+            $this->recalculateInvoice();
+            
+            $this->showEditPaymentModal = false;
+            return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
+                ->with('success', 'Payment created successfully.');
+            }
+    }
+
+    public function closeEditPaymentModal()
+    {
+        $this->showEditPaymentModal = false;
+        $this->reset([
+            'editingPayment', 
+            'edit_amount_paid', 
+            'edit_payment_date', 
+            'edit_payment_type', 
+            'edit_notes', 
+            'edit_payment_method_id',
+            'edit_payment_screenshot',
+            'existing_payment_screenshot'
+        ]);
+    }
+
+    protected function uploadEditScreenshot(): ?string
+    {
+        // If no file was uploaded, return null
+        if (!$this->edit_payment_screenshot) {
+            return null;
+        }
+
+        // If uploaded file is invalid
+        if (!$this->edit_payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
+        }
+
+        // Store and return the file path
+        return $this->edit_payment_screenshot->store('proof-of-payments', 'public');
+    }
 
     /**
      * ------------------------------ REQUESTS  ----------------------------------------
