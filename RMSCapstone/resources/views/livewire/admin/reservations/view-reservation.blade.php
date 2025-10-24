@@ -1534,7 +1534,9 @@
 
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
                                             @if ($transaction->transaction_status === 'done' )
-                                                <span class="text-gray-500 italic dark:text-gray-200">N/A</span>
+                                                <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
                                             @else 
                                                 <button wire:click="editPayment({{ $payment->id }})" 
                                                         class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
