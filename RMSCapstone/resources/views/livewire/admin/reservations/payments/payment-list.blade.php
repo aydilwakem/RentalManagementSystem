@@ -61,9 +61,6 @@
                     <select id="payment_type" name="payment_type" wire:model.live="paymentTypeFilter" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
-                        <option value="Room Rent">Room Rent</option>
-                        <option value="House Rent">House Rent</option>
-                        <option value="Activity Fee">Activity Fee</option>
                         <option value="Event Hall">Event Hall</option>
                         <option value="Event Package">Event Package</option>
                         <option value="Security Deposit">Security Deposit</option>

@@ -75,6 +75,7 @@
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="">All</option>
                         <option value="Event_Hall">Events</option>
+                        <option value="Day_Tour">Day Tour</option>
                         <option value="Room">Room Reservations</option>
                         <option value="House">Leases</option>
                     </select>
