@@ -92,15 +92,29 @@
                         @endif
 
                         <div class="relative">
-                            @php $firstImage = $tour->images[0] ?? null; @endphp
+                            @php
+                                if (is_string($tour->images)) {
+                                    $decoded = json_decode($tour->images, true);
+                                    $images = is_array($decoded) ? $decoded : [];
+                                } elseif (is_array($tour->images)) {
+                                    $images = $tour->images;
+                                } else {
+                                    $images = [];
+                                }
+
+                                $firstImage = $images[0] ?? null;
+                            @endphp
+
                             <img src="{{ $firstImage ? asset('storage/' . $firstImage) : asset('images/daytour-default.png') }}"
                                 alt="{{ $tour->name }}"
                                 class="w-full h-52 object-cover transition-transform duration-500">
+
                             <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                             <h3 class="absolute bottom-3 left-3 text-lg font-semibold text-white drop-shadow">
                                 {{ $tour->name }}
                             </h3>
                         </div>
+
 
                         <div class="p-4 space-y-4 bg-white h-full">
                             @if ($tour->description)

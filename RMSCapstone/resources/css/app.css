@@ -599,12 +599,23 @@ html {
     align-items: center;
 }
 
-/* Dashboard
- styling */
+/* ============================================================
+   DASHBOARD CALENDAR STYLES
+   ============================================================ */
+
+/* ----------------------------
+   BUTTONS
+---------------------------- */
 .fc-button {
     background-color: #198754 !important;
     color: white !important;
     border-color: #146c43 !important;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 0.375rem;
+    border: none;
+    transition: background-color 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .fc-button:hover {
@@ -613,28 +624,14 @@ html {
 }
 
 .fc-button-active {
-    background-color: #146c43 !important;
-    border-color: #0f5132 !important;
+    background-color: #0f5132 !important;
+    border: 1px solid #0a3622 !important;
+    color: white !important;
     font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
-.fc-toolbar {
-    background-color: #146c43;
-    color: white;
-    padding: 10px;
-    border-radius: 0.375rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.fc-toolbar-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-}
-
+/* Today Button */
 button.fc-today-button.fc-button.fc-button-primary {
     background-color: #198754 !important;
     color: #ffffff !important;
@@ -657,142 +654,7 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     cursor: default !important;
 }
 
-.fc-button {
-    background-color: #198754;
-    color: white;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 0.375rem;
-    border: none;
-    transition: background-color 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.fc-button:hover {
-    background-color: #157347;
-}
-
-.fc-button-active {
-    background-color: #0f5132;
-    color: white;
-    font-weight: bold;
-    border: 1px solid #0a3622;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.fc-day-today {
-    background-color: #b7f5d8;
-    color: black;
-    font-weight: bold;
-    border: 1px solid #0a3622;
-    border-radius: 0.375rem;
-}
-
-/* Calendar Events */
-.fc-event {
-    background-color: #20c997;
-    color: black;
-    padding: 4px 8px;
-    border-radius: 0.375rem;
-    border: 2px solid #198754;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    font-weight: 500;
-}
-
-.room-reservation {
-    background-color: #86EFAC !important;
-    color: black !important;
-    padding: 4px 8px !important;
-    border-radius: 0.375rem !important;
-    border: 2px solid #198754 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease-in-out !important;
-    font-weight: 500 !important;
-}
-
-.event-booking {
-    background-color: #A5F3FC !important;
-    color: #1f2937 !important;
-    padding: 4px 8px !important;
-    border-radius: 0.375rem !important;
-    border: 2px solid #06B6D4 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease-in-out !important;
-    font-weight: 500 !important;
-}
-
-.daytour-booking {
-    background-color: #fde68a !important;
-    color: #1f2937 !important;
-    padding: 4px 8px !important;
-    border-radius: 0.375rem !important;
-    border: 2px solid #facc15 !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease-in-out !important;
-    font-weight: 500 !important;
-}
-
-.fc-event-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-    display: block;
-}
-
-.fc-event-title,
-.fc-event-main {
-    overflow: hidden;
-}
-
-.room-reservation:hover {
-    background-color: #198754 !important;
-    border-color: #198754 !important;
-    cursor: pointer !important;
-    color: white !important;
-}
-
-.event-booking:hover {
-    background-color: #06B6D4 !important;
-    border-color: #06B6D4 !important;
-    cursor: pointer !important;
-    color: white !important;
-}
-
-.daytour-booking:hover {
-    background-color: #facc15 !important;
-    border-color: #facc15 !important;
-    cursor: pointer !important;
-    color: white !important;
-}
-
-.fc-event:hover {
-    background-color: #198754;
-    border-color: #198754;
-    cursor: pointer;
-}
-
-
-.fc-event .truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-    max-width: 100%;
-}
-
-.status-done {
-    background-color: #b4b9c2 !important;
-    border-color: #6b7280 !important;
-}
-
-.status-done:hover {
-    background-color: #7c8188 !important;
-    border-color: #6b7280 !important;
-}
-
-
+/* Button Group */
 .fc-button-group .fc-button {
     background-color: #20c997;
     color: white;
@@ -813,13 +675,166 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
+
+/* ----------------------------
+   TOOLBAR
+---------------------------- */
+.fc-toolbar {
+    background-color: #146c43;
+    color: white;
+    padding: 10px;
+    border-radius: 0.375rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fc-toolbar-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+
+/* ----------------------------
+   DAY & GRID STYLING
+---------------------------- */
+.fc-day-today {
+    background-color: #b7f5d8;
+    color: black;
+    font-weight: bold;
+    border: 1px solid #0a3622;
+    border-radius: 0.375rem;
+}
+
 .fc-daygrid-day:hover {
     background-color: #e9f5f0;
     cursor: pointer;
     border-radius: 0.375rem;
 }
 
-/*Dark Mode Styling*/
+
+/* ----------------------------
+   BASE EVENT STYLE
+---------------------------- */
+.fc-event {
+    background-color: #20c997;
+    color: #000 !important;
+    padding: 4px 8px;
+    border-radius: 0.375rem;
+    border: 2px solid #198754;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+}
+
+/* Ensure all event text stays black */
+.fc-event,
+.fc-event-main,
+.fc-event-title,
+.fc-event-time,
+.fc-event-text {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+}
+
+/* Fix text clipping */
+.fc-event-title,
+.fc-event-main {
+    overflow: hidden;
+}
+
+/* Hover */
+.fc-event:hover {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    cursor: pointer;
+    color: white !important;
+}
+
+
+/* ----------------------------
+   EVENT TYPE COLORS
+---------------------------- */
+.room-reservation {
+    background-color: #86EFAC !important;
+    color: #000 !important;
+    border: 2px solid #198754 !important;
+}
+
+.event-booking {
+    background-color: #A5F3FC !important;
+    color: #1f2937 !important;
+    border: 2px solid #06B6D4 !important;
+}
+
+.daytour-booking {
+    background-color: #fde68a !important;
+    color: #1f2937 !important;
+    border: 2px solid #facc15 !important;
+}
+
+/* Type-specific Hover */
+.room-reservation:hover {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: white !important;
+}
+
+.event-booking:hover {
+    background-color: #06B6D4 !important;
+    border-color: #06B6D4 !important;
+    color: white !important;
+}
+
+.daytour-booking:hover {
+    background-color: #facc15 !important;
+    border-color: #facc15 !important;
+    color: white !important;
+}
+
+
+/* ----------------------------
+   STATUS STYLES
+---------------------------- */
+.status-done {
+    background-color: #b4b9c2 !important;
+    border-color: #6b7280 !important;
+    color: #000 !important;
+}
+
+.status-done:hover {
+    background-color: #7c8188 !important;
+    border-color: #6b7280 !important;
+    color: white !important;
+}
+
+
+/* ----------------------------
+   TEXT BEHAVIOR INSIDE EVENTS
+---------------------------- */
+.fc-event .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 100%;
+}
+
+.fc-event-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    color: #000 !important;
+}
+
+
+/* ----------------------------
+   DARK MODE
+---------------------------- */
 .dark ::-webkit-scrollbar-track {
     background: #1e1e1e;
 }
@@ -828,11 +843,18 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     background-color: #555;
 }
 
+/* Dark Mode - Event Hover */
 .dark .fc-event:hover {
-    background-color: #2a9d8f;
-    cursor: pointer;
+    background-color: #2a9d8f !important;
     transform: scale(1.05);
     transition: all 0.2s ease-in-out;
+    color: white !important;
+}
+
+/* Dark Mode - Days */
+.dark .fc-day {
+    background-color: #1e1e1e;
+    color: white;
 }
 
 .dark .fc-daygrid-day:hover {
@@ -841,15 +863,11 @@ button.fc-today-button.fc-button.fc-button-primary:disabled {
     border-radius: 0.375rem;
 }
 
+/* Dark Mode - Today Highlight */
 .dark .fc-day-today {
     background-color: #2a9d8f;
     color: white;
     font-weight: bold;
     border: 1px solid #0a3622;
     border-radius: 0.375rem;
-}
-
-.dark .fc-day {
-    background-color: #1e1e1e;
-    color: white;
 }

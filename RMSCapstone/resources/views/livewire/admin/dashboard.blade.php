@@ -50,6 +50,9 @@
             <div class="flex flex-col items-center text-center flex-1">
                 <h2 class="text-gray-800 font-semibold">New Reservations</h2>
                 <p class="text-3xl font-bold text-gray-900">{{ $newReservations }}</p>
+                <p class="text-xs text-gray-600 mt-2">
+                    For the month of {{ now()->format('F Y') }}
+                </p>
             </div>
         </div>
 
@@ -90,6 +93,9 @@
             <div class="flex flex-col items-center text-center flex-1">
                 <h2 class="text-gray-800 font-semibold">Upcoming Events</h2>
                 <p class="text-3xl font-bold text-gray-900">{{ $upcomingEvents }}</p>
+                <p class="text-xs text-gray-600 mt-2">
+                    For the month of {{ now()->format('F Y') }}
+                </p>
             </div>
         </div>
 
@@ -127,6 +133,9 @@
             <div class="flex flex-col items-center text-center flex-1">
                 <h2 class="text-gray-800 font-semibold">Pending Maintenances</h2>
                 <p class="text-3xl font-bold text-gray-900">{{ $pendingMaintenances }}</p>
+                <p class="text-xs text-gray-600 mt-2">
+                    For the month of {{ now()->format('F Y') }}
+                </p>
 
             </div>
 

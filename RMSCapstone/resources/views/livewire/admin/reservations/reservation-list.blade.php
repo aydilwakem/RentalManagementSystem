@@ -126,7 +126,7 @@
                 </div>
             </div>
             <div>
-                <div class="overflow-y-auto overflow-x-auto max-h-[450px] max-w-screen">
+                <div class="overflow-y-auto overflow-x-auto max-h-[550px] max-w-screen">
 
                     <table class="min-w-full text-left">
                         <thead wire:loading.remove wire:target="search, statusFilter"

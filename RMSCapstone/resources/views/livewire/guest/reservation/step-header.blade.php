@@ -1,7 +1,7 @@
 @php
     $steps = [
         1 => 'Choose Room',
-        2 => 'Choose Activity',
+        2 => 'Add Activity',
         3 => 'Guest Details',
         4 => 'Review',
     ];
@@ -26,7 +26,7 @@
             </span>
         </div>
 
-        @if ($i < $end && $i < count($steps))
+        @if (($i < $end && $i < count($steps)) || ($page == 1 && $i == 1))
             <div class="h-px bg-gray-300 flex-1"></div>
         @endif
     @endfor

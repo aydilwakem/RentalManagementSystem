@@ -36,7 +36,7 @@ class Dashboard extends Component
 
             // Get all active reservations that are not completed
             $this->newReservations = Transaction::where('reservation_type_id', 2)
-                ->whereIn('transaction_status', ['pending', 'reserved', 'receipt_verified', 'confirmed'])
+                ->whereNotIn('transaction_status', ['done', 'cancelled', 'expired', 'terminated', 'no_show'])
                 ->whereMonth('start_datetime', now()->month)
                 ->whereYear('start_datetime', now()->year)
                 ->count();
@@ -86,15 +86,15 @@ class Dashboard extends Component
                 // Determine URL based on reservation type
                 switch ($transaction->reservation_type_id) {
                     case 2:
-                        $url = route('admin.view-reservation', ['transaction' => $transaction->id]); // Room
+                        $url = route('admin.view-reservation', ['transaction' => $transaction->id]);
                         break;
 
                     case 3:
-                        $url = route('admin.view-event', ['event' => $transaction->id]); // ✅ Fix: use 'event' here
+                        $url = route('admin.view-event', ['event' => $transaction->id]);
                         break;
 
                     case 4:
-                        $url = route('admin.view-daytour-reservation', ['transaction' => $transaction->id]); // Day Tour
+                        $url = route('admin.view-daytour-reservation', ['transaction' => $transaction->id]);
                         break;
 
                     default:

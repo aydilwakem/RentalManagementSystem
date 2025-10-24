@@ -709,13 +709,13 @@
                                                         $room->name_number === 'Pool House');
                                             @endphp
 
-                                            <div>
-                                                 <a href="#"
-                                                class="text-gray-700 hover:underline hover:text-green-600 transition mt-auto text-sm"
-                                                onclick="openRoomModal({{ $room->id }}); return false;">
-                                                See more details
-                                                <i class="fa-solid fa-arrow-up-right-from-square pl-1"></i>
-                                            </a>
+                                            <div class="pb-6 sm:pb-4">
+                                                <a href="#"
+                                                   class="text-green-700 hover:text-green-600 transition font-semibold text-md sm:text-sm sm:text-gray-700 sm:hover:text-green-600 sm:hover:underline"
+                                                   onclick="openRoomModal({{ $room->id }}); return false;">
+                                                    See more details
+                                                    <i class="fa-solid fa-arrow-up-right-from-square pl-1"></i>
+                                                </a>
                                             </div>
                                             <div>
                                                 @unless ($isUnavailable)

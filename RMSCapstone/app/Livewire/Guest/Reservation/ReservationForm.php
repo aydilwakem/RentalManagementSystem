@@ -511,6 +511,7 @@ class ReservationForm extends Component
         $this->validateData();
         $this->removeUnavailableRooms();
         $this->currentStep = min($this->currentStep + 1, $this->totalSteps);
+        $this->dispatch('stepChanged');
     }
 
     public function decreaseStep()
@@ -518,6 +519,7 @@ class ReservationForm extends Component
         $this->resetErrorBag();
         $this->removeUnavailableRooms();
         $this->currentStep = max($this->currentStep - 1, 1);
+        $this->dispatch('stepChanged');
     }
 
 

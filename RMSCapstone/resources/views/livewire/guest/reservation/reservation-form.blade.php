@@ -624,8 +624,20 @@
 
             <!------------------------------- Summary Tab Mobile View ---------------------------->
             @if ($cartCollection->isNotEmpty())
-                <div x-data="{ expanded: false }"
-                    class="lg:hidden fixed -bottom-1 left-0 right-0 bg-white shadow-lg border-t z-50">
+                <div
+                    x-data="{
+                        expanded: false,
+                        closeOnStepChange() {
+                            Livewire.on('stepChanged', () => {
+                                this.expanded = false;
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            });
+                        }
+                    }"
+                    x-init="closeOnStepChange()"
+                    class="lg:hidden fixed -bottom-1 left-0 right-0 bg-white shadow-lg border-t z-50"
+                >
+
 
                     <!-- Collapsed Bar -->
                     <div class="flex justify-between items-center p-4 cursor-pointer" @click="expanded = !expanded">
