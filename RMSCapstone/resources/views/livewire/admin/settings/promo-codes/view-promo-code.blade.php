@@ -43,7 +43,7 @@
                             {{ number_format($promoCode->discount_value) }}%
                         @endif
                     </div>
-                    <div><strong>Applied To:</strong> {{ $promoCode->propertyCategory->name }}</div>
+                        <div><strong>Applied To:</strong> {{ $promoCode->propertyCategory?->name ?? 'All Categories' }}</div>
 
                 </div>
             </div>

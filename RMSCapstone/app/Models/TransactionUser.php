@@ -33,6 +33,8 @@ class TransactionUser extends Model
         'region',
         'postal_code',
         'country',
+        'facebook_link', 
+
     ];
 
     // -------------------- Activity Log ----------------- //
@@ -57,8 +59,9 @@ class TransactionUser extends Model
             'province',
             'region',
             'postal_code',
-            'country'])
-            // 4.2 Automatically log only the attributes that have changed  
+            'country',
+            'facebook_link'])
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "Transaction User has been {$eventName}")

@@ -84,6 +84,8 @@ class CreateReservation extends Component
     public $country;
     public $heard_from;
     public $terms = 1;
+    public $facebook_link;
+
 
     // Additional Guest related public properties
 
@@ -2270,6 +2272,8 @@ class CreateReservation extends Component
             'reservation_source' => 'required|in:Website,AirBnb,Facebook Messenger,Instagram,Walk-In,Other',
             'terms' => 'required|accepted',
             'requests' => 'nullable|string|max:255',
+            'facebook_link' => 'nullable|string|max:255', 
+
             // 'pets.*.breed' => 'required|string|max:255',
         ]);
     }
@@ -2383,6 +2387,7 @@ class CreateReservation extends Component
             'contact_number' => $this->contact_number,
             'company_name' => $this->company_name,
             'country' => $this->country,
+            'facebook_link' => $this->facebook_link,
             'trn_user_type' => $this->trn_user_type,
         ]);
     }

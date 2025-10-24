@@ -171,7 +171,7 @@ class PaymentReports extends Component
     }
 
     // --------------------- EXPORT CSV METHOD ------------------------ //
-    public function exportPaymentCsv(){
+     public function exportPaymentCsv(){
         //Query the table
         $start = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : null;
         $end = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : null;
@@ -221,9 +221,9 @@ class PaymentReports extends Component
             
             $guest = optional(optional(optional($payment->invoice)->transaction)->transactionUser);
             
-            $guestName = trim(($guest->first_name ?? '') . ' ' . ($guest->last_name ?? ''));
+            $guestName = trim(($guest->first_name ?? '') . ' ' . ($guest->last_name ?? 'Guest Detail Has Been Deleted'));
             
-            $transaction = optional($payment->invoice->transaction);
+            $transaction = optional(optional($payment->invoice)->transaction);
             
             $invoice = optional($payment->invoice);
             

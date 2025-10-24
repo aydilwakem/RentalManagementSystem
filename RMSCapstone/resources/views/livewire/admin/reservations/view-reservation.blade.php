@@ -89,6 +89,9 @@
                     <div>{{ $transaction->transactionUser->company_name ?? 'Not provided' }}</div>
                     <div><strong>Country:</strong></div>
                     <div>{{ $transaction->transactionUser->country ?? 'Not provided' }}</div>
+                    <div><strong>Facebook Link:</strong></div>
+                    <div>{{ $transaction->transactionUser->facebook_link ?? 'Not provided' }}</div>
+
                 </div>
             </div>
             <!--------------- -------- END OF GUEST DETAILS ------------------------------------->
@@ -1446,6 +1449,11 @@
                                         <th
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                             Uploaded Receipt</th>
+
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Actions
+                                        </th>
+
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-600 ">
@@ -1523,6 +1531,21 @@
                                                     @endif
                                                 @endif
                                             </td>
+
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
+                                            @if ($transaction->transaction_status === 'done' )
+                                                <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                            @else 
+                                                <button wire:click="editPayment({{ $payment->id }})" 
+                                                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                                                        title="Edit Payment">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @endif
+                                          
+                                        </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -3174,11 +3197,208 @@
         </div>
     @endif
 
+
+    <!-- Edit Payment Modal -->
+    @if ($showEditPaymentModal && $editingPayment)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+                <div class="relative -mt-6 -mx-6 mb-6 bg-blue-50 text-blue-700 py-4 px-6 rounded-t-lg shadow-sm border-b">
+                    <h2 class="text-2xl font-bold text-center">Edit Payment</h2>
+                    <button wire:click="closeEditPaymentModal"
+                        class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                        <span class="-translate-y-[2px]">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div>
+                    <!-- Amount Paid -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span class="text-red-500">*</span></label>
+                        <input type="number" wire:model="edit_amount_paid" 
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
+                            required>
+                        @error('edit_amount_paid')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Payment Date -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Payment Date <span class="text-red-500">*</span></label>
+                        <input type="date" wire:model="edit_payment_date"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
+                            required>
+                        @error('edit_payment_date')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Payment Type -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Payment Type <span class="text-red-500">*</span></label>
+                        <select wire:model="edit_payment_type"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
+                            required>
+                            <option value="">Select Payment Type</option>
+                            <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
+                            <option value="Accommodation Downpayment">Accommodation Downpayment</option>
+                            <option value="Accommodation Balance">Accommodation Balance</option>
+                        </select>
+                        @error('edit_payment_type')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Payment Method <span class="text-red-500">*</span></label>
+                        <select wire:model="edit_payment_method_id"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Payment Method</option>
+                            @foreach ($payment_methods as $payment_method)
+                                <option value="{{ $payment_method->id }}">
+                                    {{ $payment_method->mode_of_payment_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('edit_payment_method_id')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Proof of Payment Upload -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Proof of Payment</label>
+
+                        <!-- Hidden file input -->
+                        <input id="edit_payment_screenshot" type="file" accept="image/*" wire:model="edit_payment_screenshot"
+                            class="hidden">
+
+                        <!-- Show existing screenshot -->
+                        @if ($existing_payment_screenshot && !$edit_payment_screenshot)
+                            <div class="mb-3">
+                                <p class="text-sm text-gray-600 mb-2">Current proof of payment:</p>
+                                <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden border">
+                                    <img src="{{ asset('storage/' . $existing_payment_screenshot) }}" 
+                                        class="w-full h-full object-cover"
+                                        alt="Current Payment Screenshot"
+                                        onclick="openEditModal('{{ asset('storage/' . $existing_payment_screenshot) }}')">
+                                    
+                                    <label for="edit_payment_screenshot"
+                                        class="absolute top-2 right-2 bg-white text-gray-700 rounded-full px-3 py-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition shadow-md">
+                                        Change File
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Show new screenshot preview -->
+                        @if ($edit_payment_screenshot && method_exists($edit_payment_screenshot, 'temporaryUrl'))
+                            <div class="mb-3">
+                                <p class="text-sm text-gray-600 mb-2">New proof of payment:</p>
+                                <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden border">
+                                    <img src="{{ $edit_payment_screenshot->temporaryUrl() }}" 
+                                        class="w-full h-full object-cover"
+                                        alt="New Payment Screenshot Preview"
+                                        onclick="openEditModal('{{ $edit_payment_screenshot->temporaryUrl() }}')">
+                                    
+                                    <label for="edit_payment_screenshot"
+                                        class="absolute top-2 right-2 bg-white text-gray-700 rounded-full px-3 py-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition shadow-md">
+                                        Re-Upload File
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Show upload area if no screenshot exists -->
+                        @if (!$existing_payment_screenshot && !$edit_payment_screenshot)
+                            <label for="edit_payment_screenshot">
+                                <div class="w-full px-4 py-8 border-2 border-dashed border-gray-300 text-center rounded-md text-gray-500 cursor-pointer hover:border-blue-400 transition-colors">
+                                    <div class="mb-2">
+                                        <i class="fas fa-upload text-2xl"></i>
+                                    </div>
+                                    <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
+                                    <p class="text-xs text-gray-400 mt-1">Max: 2MB (JPEG, PNG, JPG)</p>
+                                </div>
+                            </label>
+                        @endif
+
+                        <!-- Loading Indicator -->
+                        <div wire:loading wire:target="edit_payment_screenshot" class="mt-2 text-gray-600 flex items-center">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-blue-700" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span>Uploading...</span>
+                        </div>
+
+                        <!-- Error Message -->
+                        @error('edit_payment_screenshot')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                        <textarea wire:model="edit_notes" 
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
+                            rows="3"
+                            placeholder="Optional notes about this payment"></textarea>
+                        @error('edit_notes')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-between gap-3 mt-6">
+                    <x-ghost-button wire:click="closeEditPaymentModal">
+                        Cancel
+                    </x-ghost-button>
+                    <x-button wire:click="updatePayment" class="bg-blue-600 hover:bg-blue-700">
+                        Update Payment
+                    </x-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Preview Modal for Edit -->
+        <div id="editImageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="relative modal-content">
+                    <img id="editModalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
+                    <button type="button" onclick="closeEditModal()"
+                        class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                        <span class="leading-none translate-y-[-3px]">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif 
+
     <!-------------------------- END OF MODALS ---------------------------------->
 
 </div>
 
+<script>
+function openEditModal(imageSrc) {
+    document.getElementById('editModalImg').src = imageSrc;
+    document.getElementById('editImageModal').classList.remove('hidden');
+}
 
+function closeEditModal() {
+    document.getElementById('editImageModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside the image
+document.getElementById('editImageModal').addEventListener('click', function(e) {
+    if (e.target.id === 'editImageModal') {
+        closeEditModal();
+    }
+});
+</script>
 
 
 {{-- <div class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
