@@ -1450,9 +1450,9 @@
                                             class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
                                             Uploaded Receipt</th>
 
-                            <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
-                                Actions
-                            </th>
+                                        <th class="border px-4 py-2 font-medium text-gray-900 dark:text-gray-200 dark:border-gray-500">
+                                            Actions
+                                        </th>
 
                                     </tr>
                                 </thead>
@@ -1533,11 +1533,16 @@
                                             </td>
 
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
-                                            <button wire:click="editPayment({{ $payment->id }})" 
-                                                    class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
-                                                    title="Edit Payment">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
+                                            @if ($transaction->transaction_status === 'done' )
+                                                <span class="text-gray-500 italic dark:text-gray-200">N/A</span>
+                                            @else 
+                                                <button wire:click="editPayment({{ $payment->id }})" 
+                                                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                                                        title="Edit Payment">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @endif
+                                          
                                         </td>
                                         </tr>
                                     @endforeach
