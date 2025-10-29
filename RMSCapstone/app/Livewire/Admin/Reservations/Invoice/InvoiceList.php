@@ -6,18 +6,20 @@ use Livewire\Component;
 use App\Models\ReservationType;
 use App\Models\Payment;
 use App\Models\Invoice;
+use Livewire\WithPagination;
 
 class InvoiceList extends Component
 {
 
-
+    use WithPagination;
     public $payments;
-    public $invoices;
+    //public $invoices;
     public $transactionUser;
     public $invoice;
     public $transaction;
     public $sortField = 'created_at'; // default sort column
     public $sortDirection = 'desc';   // or 'asc'
+    public $perPage = 10;
 
     public $invoiceTypeFilter = '';
     public $invoiceStatusFilter = '';
@@ -30,7 +32,7 @@ class InvoiceList extends Component
     {
         $search = trim($this->search);
 
-        $this->invoices = Invoice::with([
+        $invoices = Invoice::with([
             'transaction.transactionUser',
             'payments.paymentMethod'
         ])
@@ -58,15 +60,17 @@ class InvoiceList extends Component
                 $query->where('invoice_type', $this->invoiceTypeFilter);
             })
             ->orderBy($this->sortField, $this->sortDirection)
-            ->get();
+            ->paginate($this->perPage); 
 
-        return view('livewire.admin.reservations.invoice.invoice-list');
+        return view('livewire.admin.reservations.invoice.invoice-list', [
+            'invoices' => $invoices, 
+        ]);
     }
 
 
     public function mount()
     {
-        $this->invoices = Invoice::with([
+        $invoices = Invoice::with([
             'transaction.transactionUser',
             'payments.paymentMethod'
         ])->get();

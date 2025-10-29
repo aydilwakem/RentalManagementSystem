@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\DayTours;
 
 use Livewire\Component;
 use App\Models\DayTour;
+use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
 
 
@@ -48,6 +50,59 @@ class ViewDayTour extends Component
         }
 
         return redirect()->route('admin.day-tours');
+    }
+
+    //-------------------- COMPUTE CONVENIENCE FEE --------------------//
+    public function computeConvenienceFeeTotal()
+    {
+        // Collects all payments related to this transaction
+        $payments = $this->payments ?? collect();
+
+        // Fetches all the convenience fee of the completed payments
+        $total = $payments
+            ->where('payment_status', 'completed')
+            ->sum('convenience_fee');
+
+        // Fallback if no payment was made yet
+        if ($total == 0 && $this->transaction->convenience_fee > 0) {
+            return $this->transaction->convenience_fee;
+        }
+
+        return $total;
+    }
+
+    //-------------------- DAY TOUR EXPORT TO PDF --------------------//
+    public function exportDayTourDetails()
+    {
+        $transaction = Transaction::with([
+            'invoice.payments',
+            'transactionUser',
+             'properties',
+            'guestDetails',
+        ])->findOrFail($this->transaction->id);
+
+        $convenienceFeeTotal = $this->computeConvenienceFeeTotal();
+
+        // $payments = $transaction->invoice->payments ?? collect();
+        // $convenienceFeeTotal = $payments
+        //     ->where('payment_status', 'completed')
+        //     ->sum('convenience_fee');
+
+        $pdf = Pdf::loadView('livewire.admin.reservations.reservation-details', [
+            'transaction' => $transaction,  // Pass the actual transaction
+            //Pass the relationships
+            'guestDetails' => $transaction->guestDetails,
+            'invoice' => $transaction->invoice,
+            'payments' => $transaction->invoice->payments,
+            'convenienceFeeTotal' => $convenienceFeeTotal,
+            //'totalRooms' => $transaction->totalRooms,
+            'properties' => $transaction->properties,
+        ]);
+
+        // Optional: Download directly or store then return URL
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'daytour-details-' . $this->transaction->start_datetime . '.pdf');
     }
 
     public function render()

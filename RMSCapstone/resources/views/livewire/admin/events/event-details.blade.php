@@ -121,6 +121,9 @@
         <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
         <p>+63 962 447 9893</p>
         <h2 style="color: #166534; padding-top: 10px;">Event Booking Details</h2>
+
+        <h2 style="font-size: 16px; color: #166534; padding-top: 20px;">Invoice Number: {{ $invoice->invoice_number}}
+        </h2>
     </header>
 
     {{-- Guest Details --}}
@@ -506,9 +509,6 @@
                         style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 5%; text-align: center; font-size: 14px;">
                         ID</th>
                     <th
-                        style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 8%; text-align: center; font-size: 14px;">
-                        Invoice</th>
-                    <th
                         style="border: 1px solid #d1d5db; padding: 4px 6px; font-weight: bold; width: 10%; text-align: center; font-size: 14px;">
                         Method</th>
                     <th
@@ -532,9 +532,7 @@
                 @foreach ($payments as $payment)
                 <tr>
                     <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
-                        {{ $payment->id }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
-                        {{ $payment->invoice_id }}</td>
+                        {{ $loop->iteration }}</td>
                     <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
                         {{ ucfirst($payment->mode_of_payment) }}</td>
                     <td style="border: 1px solid #d1d5db; padding: 4px 6px; text-align: center; font-size: 14px;">
