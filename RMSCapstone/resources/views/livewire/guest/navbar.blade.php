@@ -5,7 +5,7 @@
 
             <!-- Logo -->
             <a href="{{ route('guest.homepage') }}" class="shrink-0 flex items-center hover:opacity-90 transition">
-                <img src="{{ asset('image/' . $logoPath) }}"
+                <img src="{{ asset('storage/' . $logoPath) }}"
                      alt="{{ $companyName }}"
                      class="block h-9 w-auto rounded-full" />
                 <span class="ml-2 text-xl font-semibold text-yellow-50">

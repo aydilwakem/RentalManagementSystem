@@ -123,7 +123,7 @@
                                                 class="text-sm {{ $isSelected ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300' }} flex-shrink-0">
                                                 <div class="flex items-center justify-between">
                                                     <span
-                                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold 
+                                                        class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                                     {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
                                                         {{ $rate->rate_name }}
                                                     </span>
