@@ -17,18 +17,18 @@ class Homepage extends Component
     public $message;
 
     public string $companyName = 'Company'; //Default
-    public string $logoPath = ''; 
-    public string $companyEmail; 
-    public string $companyContact; 
-    public string $companyAddress; 
-    public string $facebookLink; 
-    public string $instagramLink; 
+    public string $logoPath = '';
+    public string $companyEmail;
+    public string $companyContact;
+    public string $companyAddress;
+    public string $facebookLink;
+    public string $instagramLink;
 
     public function mount()
     {
         //For Branding
         // Fetch the first row of the settings table
-        $setting = Setting::first(); 
+        $setting = Setting::first();
         if ($setting) {
             $this->companyName = $setting->company_name;
             $this->logoPath = $setting->logo;
@@ -39,29 +39,29 @@ class Homepage extends Component
             $this->instagramLink = $setting->instagram;
         }
     }
-    
+
     public function contactUs()
     {
         //Validate the data
         $this->validate([
         'name' => [
-                'required', 
+                'required',
                 'string',
-                'max:255', 
+                'max:255',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
         'email' => 'required|email|max:255',
         'contact_number' => [
-                'required', 
-                'string', 
-                'regex:/^[0-9]{11}$/', //11 digits only
-            ],  
-        'message' => [
-                'required', 
+                'required',
                 'string',
-                'max:255', 
+                'regex:/^[0-9]{11}$/', //11 digits only
+            ],
+        'message' => [
+                'required',
+                'string',
+                'max:255',
                 'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ], 
+            ],
     ]);
         $data = [
         'name' => $this->name,
@@ -89,11 +89,21 @@ class Homepage extends Component
         Mail::to('rmscapstone26@gmail.com')->send(new ContactMail($data));
 
         // Reset form fields
-        $this->reset([
-        'name', 'email', 'contact_number', 'message'
-        ]);
+        $this->resetForm();
 
         session()->flash('message', 'Message sent successfully! An email of the copy of your responses has been sent.');
+        session()->flash('alert-type', 'success');
+
+        //Refresh page
+        return redirect(request()->header('Referer'));
+    }
+
+    public function resetForm()
+    {
+        $this->name = '';
+        $this->email = '';
+        $this->contact_number = '';
+        $this->message = '';
     }
 
 

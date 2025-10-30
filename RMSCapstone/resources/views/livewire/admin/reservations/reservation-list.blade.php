@@ -290,8 +290,8 @@
 
                                             @if($transaction->is_rebooked)
                                                 <span
-                                                    class="ml-2 inline-block py-1 px-2 rounded-full text-xs font-semibold bg-purple-100 text-purple-600 border border-purple-200">
-                                                    <i class="fas fa-calendar-repeat mr-1"></i> Rebooked
+                                                    class="ml-2 inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-600 border ">
+                                                    Rebooked
                                                 </span>
                                             @endif
                                         </div>

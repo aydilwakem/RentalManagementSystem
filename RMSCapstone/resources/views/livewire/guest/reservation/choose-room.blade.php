@@ -15,6 +15,46 @@
                 </div>
             </div>
         @else
+            <div class="mb-4 p-4 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                    <div class="w-full">
+                        <label for="search" class="block text-sm font-medium text-gray-700">Search by Name</label>
+                        <div class="relative mt-1">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                            </div>
+                            <input type="text" id="search" wire:model.live.debounce.300ms="search"
+                                class="w-full pl-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5"
+                                placeholder="e.g., Pool House">
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By</label>
+                        <select id="sort_by" wire:model.live="sortBy"
+                            class="mt-1 w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5">
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="name_asc">Name: A to Z</option>
+                            <option value="name_desc">Name: Z to A</option>
+                        </select>
+                    </div>
+
+                    {{-- <div class="w-full">
+                        <label for="property_category_id" class="block text-sm font-medium text-gray-700">Room
+                            Category</label>
+                        <select id="property_category_id" wire:model.live="roomCategoryFilter"
+                            class="mt-1 w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5">
+                            <option value="">All Categories</option>
+                            @foreach ($roomCategories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div> --}}
+
+                </div>
+            </div>
             <div class="grid grid-cols-1">
 
                 <!-- Room Category Filter -->
@@ -48,13 +88,13 @@
                 </div>
             </div> --}}
 
-                <div wire:loading wire:target="check_in_date,check_out_date,category" class="space-y-4">
+                <div wire:loading wire:target="check_in_date,check_out_date,category,search,sortBy," class="space-y-4">
                     @for ($i = 0; $i < 3; $i++)
                         @include('livewire.guest.room-skeleton')
                     @endfor
                 </div>
 
-                <div wire:loading.remove wire:target="check_in_date,check_out_date,category" class="space-y-4">
+                <div wire:loading.remove wire:target="check_in_date,check_out_date,category,search,sortBy," class="space-y-4">
                     @foreach ($rooms as $room)
                         <div class=" space-y-6" wire:key="room-{{ $room->id }}">
                             <div
@@ -63,15 +103,11 @@
 
                                     <div class="w-full md:w-1/3">
                                         <!-- Image Container -->
-                                        <div
-                                            x-data="{ active: 0, images: @js($room->images ?? []), interval: null, hovering: false }"
-                                            x-init="
-                                                if (images.length > 1) {
-                                                    interval = setInterval(() => {
-                                                        active = (active + 1) % images.length;
-                                                    }, 4000);
-                                                }
-                                            "
+                                        <div x-data="{ active: 0, images: @js($room->images ?? []), interval: null, hovering: false }" x-init="if (images.length > 1) {
+                                            interval = setInterval(() => {
+                                                active = (active + 1) % images.length;
+                                            }, 4000);
+                                        }"
                                             @mouseenter=" hovering = true; clearInterval(interval); "
                                             @mouseleave="
                                                 hovering = false;
@@ -82,58 +118,48 @@
 
                                             <!-- Slides -->
                                             <template x-for="(image, index) in images" :key="index">
-                                                <img
-                                                    x-show="active === index"
-                                                    :src="'/storage/' + image"
+                                                <img x-show="active === index" :src="'/storage/' + image"
                                                     class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out"
-                                                    x-transition:enter="opacity-0"
-                                                    x-transition:enter-end="opacity-100"
+                                                    x-transition:enter="opacity-0" x-transition:enter-end="opacity-100"
                                                     x-transition:leave="opacity-100"
-                                                    x-transition:leave-end="opacity-0"
-                                                />
+                                                    x-transition:leave-end="opacity-0" />
                                             </template>
 
                                             <!-- Fallback if no image -->
                                             <template x-if="images.length === 0">
-                                                <img src="{{ asset('images/rms-default.png') }}" class="absolute inset-0 w-full h-full object-cover" />
+                                                <img src="{{ asset('images/rms-default.png') }}"
+                                                    class="absolute inset-0 w-full h-full object-cover" />
                                             </template>
 
                                             <!-- SOLD OUT Badge -->
                                             @if ($room->is_booked)
-                                                <div class="absolute top-3 right-[-40px] bg-red-600 text-white text-xs font-bold py-1 px-12 transform rotate-45 shadow-lg">
+                                                <div
+                                                    class="absolute top-3 right-[-40px] bg-red-600 text-white text-xs font-bold py-1 px-12 transform rotate-45 shadow-lg">
                                                     SOLD OUT
                                                 </div>
                                             @endif
 
                                             <!-- Left Arrow -->
-                                            <button
-                                                x-show="hovering && images.length > 1"
+                                            <button x-show="hovering && images.length > 1"
                                                 @click="active = active === 0 ? images.length - 1 : active - 1"
-                                                class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none"
-                                            >
+                                                class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none">
                                                 <i class="fa-solid fa-chevron-left h-5 w-5"></i>
                                             </button>
 
                                             <!-- Right Arrow -->
-                                            <button
-                                                x-show="hovering && images.length > 1"
+                                            <button x-show="hovering && images.length > 1"
                                                 @click="active = (active + 1) % images.length"
-                                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none"
-                                            >
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none">
                                                 <i class="fa-solid fa-chevron-right h-5 w-5"></i>
                                             </button>
 
                                             <!-- Dot Indicators -->
-                                            <div
-                                                x-show="hovering && images.length > 1"
-                                                class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2"
-                                            >
+                                            <div x-show="hovering && images.length > 1"
+                                                class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
                                                 <template x-for="(image, index) in images" :key="index">
-                                                    <button
-                                                        @click="active = index"
+                                                    <button @click="active = index"
                                                         :class="active === index ? 'bg-green-200 scale-110' : 'bg-white/80'"
-                                                        class="w-3 h-3 rounded-full border border-green-400 transition-all duration-200"
-                                                    ></button>
+                                                        class="w-3 h-3 rounded-full border border-green-400 transition-all duration-200"></button>
                                                 </template>
                                             </div>
                                         </div>
@@ -255,7 +281,8 @@
                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                 </p>
 
-                                                <p class="text-sm italic text-gray-500 mt-1"> Children 2yrs old and below are free of charge</p>
+                                                <p class="text-sm italic text-gray-500 mt-1"> Children 2yrs old and
+                                                    below are free of charge</p>
 
                                                 @if ($room->freebies)
                                                     <p class="text-base font-normal text-gray-700  ">
@@ -290,15 +317,15 @@
                                                     $totalRate = $rateSummary['total_amount'] ?? 0;
 
                                                     // Determine if we're showing multiple rates or single rate
-                                                    $hasMultipleRates = count($appliedRates) > 1;
-                                                    $hasSpecialRate =
-                                                        count($appliedRates) > 0 &&
-                                                        $appliedRates[0]['rate_type'] !== null;
-                                                    $isBaseRateOnly =
-                                                        !$hasSpecialRate ||
-                                                        (count($appliedRates) === 1 &&
-                                                            $appliedRates[0]['rate_type'] === null);
-                                                    @endphp
+$hasMultipleRates = count($appliedRates) > 1;
+$hasSpecialRate =
+    count($appliedRates) > 0 &&
+    $appliedRates[0]['rate_type'] !== null;
+$isBaseRateOnly =
+    !$hasSpecialRate ||
+    (count($appliedRates) === 1 &&
+        $appliedRates[0]['rate_type'] === null);
+                                                @endphp
 
                                                 <!-- Main Rate Display -->
                                                 <div>
@@ -379,7 +406,8 @@
                                                             class="mt-2 hidden">
                                                             <div
                                                                 class="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                                                <p class="font-semibold text-gray-700 mb-2 text-sm">Rate
+                                                                <p class="font-semibold text-gray-700 mb-2 text-sm">
+                                                                    Rate
                                                                     Calculation:</p>
 
                                                                 <div class="space-y-2">
@@ -711,8 +739,8 @@
 
                                             <div class="pb-6 sm:pb-4">
                                                 <a href="#"
-                                                   class="text-green-700 hover:text-green-600 transition font-semibold text-md sm:text-sm sm:text-gray-700 sm:hover:text-green-600 sm:hover:underline"
-                                                   onclick="openRoomModal({{ $room->id }}); return false;">
+                                                    class="text-green-700 hover:text-green-600 transition font-semibold text-md sm:text-sm sm:text-gray-700 sm:hover:text-green-600 sm:hover:underline"
+                                                    onclick="openRoomModal({{ $room->id }}); return false;">
                                                     See more details
                                                     <i class="fa-solid fa-arrow-up-right-from-square pl-1"></i>
                                                 </a>

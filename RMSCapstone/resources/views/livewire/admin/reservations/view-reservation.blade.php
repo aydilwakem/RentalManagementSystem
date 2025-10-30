@@ -1537,14 +1537,14 @@
                                                 <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
                                                     <i class="fas fa-lock"></i>
                                                 </span>
-                                            @else 
-                                                <button wire:click="editPayment({{ $payment->id }})" 
+                                            @else
+                                                <button wire:click="editPayment({{ $payment->id }})"
                                                         class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                                                         title="Edit Payment">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             @endif
-                                          
+
                                         </td>
                                         </tr>
                                     @endforeach
@@ -1795,10 +1795,10 @@
 
                     {{-- Payment Methods --}}
                     <div class="mt-4">
-                        <label for="payment_method_id" class="bblock text-sm text-gray-700 font-semibold">Payment
+                        <label for="payment_method_id" class="block text-sm text-gray-700 font-semibold">Payment
                             Method <span class="text-red-500">*</span></label>
                         <select wire:model="payment_method_id" id="payment_method_id"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
                             <option value="">Select Payment Method</option>
                             @foreach ($payment_methods as $payment_method)
                                 <option value="{{ $payment_method->id }}">
@@ -1813,9 +1813,8 @@
 
                     {{-- Upload Payment Screenshot --}}
                     <div class="sm:col-span-2 mt-4">
-                        <label for="payment_screenshot" class="block text-sm text-gray-700 font-semibold">Proof
-                            of
-                            Payment <span class="text-red-500">*</span></label>
+                        <label for="payment_screenshot" class="block text-sm text-gray-700 font-semibold mb-1">
+                            Proof of Payment </label>
 
                         <!-- Hidden file input -->
                         <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
@@ -3215,7 +3214,7 @@
                     <!-- Amount Paid -->
                     <div class="mt-4">
                         <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="edit_amount_paid" 
+                        <input type="number" wire:model="edit_amount_paid"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
                             required>
                         @error('edit_amount_paid')
@@ -3280,11 +3279,11 @@
                             <div class="mb-3">
                                 <p class="text-sm text-gray-600 mb-2">Current proof of payment:</p>
                                 <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden border">
-                                    <img src="{{ asset('storage/' . $existing_payment_screenshot) }}" 
+                                    <img src="{{ asset('storage/' . $existing_payment_screenshot) }}"
                                         class="w-full h-full object-cover"
                                         alt="Current Payment Screenshot"
                                         onclick="openEditModal('{{ asset('storage/' . $existing_payment_screenshot) }}')">
-                                    
+
                                     <label for="edit_payment_screenshot"
                                         class="absolute top-2 right-2 bg-white text-gray-700 rounded-full px-3 py-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition shadow-md">
                                         Change File
@@ -3298,11 +3297,11 @@
                             <div class="mb-3">
                                 <p class="text-sm text-gray-600 mb-2">New proof of payment:</p>
                                 <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden border">
-                                    <img src="{{ $edit_payment_screenshot->temporaryUrl() }}" 
+                                    <img src="{{ $edit_payment_screenshot->temporaryUrl() }}"
                                         class="w-full h-full object-cover"
                                         alt="New Payment Screenshot Preview"
                                         onclick="openEditModal('{{ $edit_payment_screenshot->temporaryUrl() }}')">
-                                    
+
                                     <label for="edit_payment_screenshot"
                                         class="absolute top-2 right-2 bg-white text-gray-700 rounded-full px-3 py-1 text-xs cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition shadow-md">
                                         Re-Upload File
@@ -3342,7 +3341,7 @@
                     <!-- Notes -->
                     <div class="mt-4">
                         <label class="block text-sm text-gray-700 font-semibold">Notes</label>
-                        <textarea wire:model="edit_notes" 
+                        <textarea wire:model="edit_notes"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
                             rows="3"
                             placeholder="Optional notes about this payment"></textarea>
@@ -3376,7 +3375,7 @@
                 </div>
             </div>
         </div>
-    @endif 
+    @endif
 
     <!-------------------------- END OF MODALS ---------------------------------->
 

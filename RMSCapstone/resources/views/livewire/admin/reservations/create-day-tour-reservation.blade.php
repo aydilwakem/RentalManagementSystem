@@ -124,13 +124,10 @@
                                                 <div class="flex items-center justify-between">
                                                     <span
                                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold
-                                                                    {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                        {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
                                                         {{ $rate->rate_name }}
                                                     </span>
-                                                    <span class="font-semibold">₱{{ number_format($rate->adult_rate, 2) }}</span>
-                                                </div>
-                                                <div class="text-xs text-gray-500 mt-1">
-                                                    {{ $rate->rate_type === 'with_room' ? 'With Room' : 'Without Room' }}
+                                                    <span class="font-semibold font-xs">{{ $tour->package_type === 'with_room' ? 'With Room' : 'Without Room' }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
