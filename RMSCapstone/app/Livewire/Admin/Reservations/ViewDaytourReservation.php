@@ -570,7 +570,7 @@ class ViewDaytourReservation extends Component
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'daytour-details-' . $this->transaction->start_datetime . '.pdf');
+        }, 'Daytour-Details-' . $transaction->invoice->invoice_number . '.pdf');
     }
 
     /**

@@ -9,7 +9,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class ReservationReports extends Component
 {
@@ -472,5 +478,204 @@ class ReservationReports extends Component
         }
         $this->sortBy = $sortByField;
         $this->sortDir = "ASC"; // Default sorting direction when changing columns
+    }
+
+
+
+    //----------------------- EXPORT EXCEL METHOD ------------------------------------- //
+
+    /**
+     * EXPORT EXCEL FILE
+     *
+     * Queries the database and exports a xlsx File
+     * 
+     *
+     *
+     */
+
+    public function exportReservationExcel(){
+        $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties'])
+        ->where('reservation_type_id', 2) // Reservation type
+        ->when($this->start_date, fn($q) => $q->where('start_datetime', '>=', Carbon::parse($this->start_date)->startOfDay()))
+        ->when($this->end_date, fn($q) => $q->where('start_datetime', '<=', Carbon::parse($this->end_date)->endOfDay()))
+        ->when($this->roomFilter, fn($q) => $q->where('transaction_properties.property_id', $this->roomFilter))
+        ->when($this->reservationStatusFilter, fn($q) => $q->where('transaction_status', $this->reservationStatusFilter))
+        ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
+        ->get();
+
+        //Define dates
+        $start_date = $this->start_date; 
+        $end_date = $this->end_date; 
+
+        //Calculate all summaries
+        $totalReservations = $transactions->count();
+        $totalGuests = $transactions->sum('pax');
+        $totalAmountEarned = $transactions->sum('total_amount');
+        
+        //Get average length of stay
+        $averageLength = 0;
+        if ($totalReservations > 0) {
+            $totalNights = $transactions->sum(function ($t) {
+                return Carbon::parse($t->start_datetime)->diffInDays(Carbon::parse($t->end_datetime));
+            });
+            $averageLength = $totalNights / $totalReservations;
+        }
+
+        //Get most booked room
+        $mostBookedRoom = null;
+        if (!$this->roomFilter && $transactions->isNotEmpty()) {
+            $roomCounts = [];
+            foreach ($transactions as $t) {
+                foreach ($t->properties as $p) {
+                    $roomName = $p->name_number;
+                    $roomCounts[$roomName] = ($roomCounts[$roomName] ?? 0) + 1;
+                }
+            }
+            if (!empty($roomCounts)) {
+                arsort($roomCounts);
+                $topRoom = array_key_first($roomCounts);
+                $mostBookedRoom = $topRoom . " ({$roomCounts[$topRoom]} bookings)";
+            }
+        }
+
+        //Define file name
+        $filename = 'Reservation-Summary-' . Carbon::parse($start_date)->format('Ymd') . '-' . Carbon::parse($end_date)->format('Ymd') . '.xlsx';
+
+    return new StreamedResponse(function() use ($transactions, $totalReservations, $totalGuests, $averageLength, $mostBookedRoom, $totalAmountEarned, $start_date, $end_date) {
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // --- Logo ---
+        $sheet->mergeCells('D1:D2');
+        $drawing = new Drawing();
+        $drawing->setPath(public_path('images/canopy-logo.png'));
+        $drawing->setHeight(55);
+        $drawing->setCoordinates('D1');
+        $drawing->setOffsetX(10);
+        $drawing->setWorksheet($sheet);
+
+        // --- Header Section ---
+        $sheet->mergeCells('A3:J3');
+        $sheet->setCellValue('A3', 'Canopy Farm PH');
+        $sheet->getStyle('A3')->getFont()->setBold(true)->setSize(18)->getColor()->setRGB('166534');
+        $sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->mergeCells('A4:J4');
+        $sheet->setCellValue('A4', '006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines');
+        $sheet->getStyle('A4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A4')->getFont()->setSize(11)->getColor()->setRGB('333333');
+
+        $sheet->mergeCells('A5:J5');
+        $sheet->setCellValue('A5', '+63 962 447 9893');
+        $sheet->getStyle('A5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A5')->getFont()->setSize(11)->getColor()->setRGB('333333');
+
+        $sheet->mergeCells('A6:J6');
+        $sheet->setCellValue('A6', 'Reservations Summary');
+        $sheet->getStyle('A6')->getFont()->setBold(true)->setSize(14)->getColor()->setRGB('166534');
+        $sheet->getStyle('A6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // --- Reporting Period ---
+        $sheet->mergeCells('A7:J7');
+        if ($start_date && $end_date) {
+            $reportingPeriod = 'Reporting Period: ' .
+                Carbon::parse($start_date)->format('F d, Y') . ' – ' .
+                Carbon::parse($end_date)->format('F d, Y');
+        } else {
+            $reportingPeriod = 'Reporting Period: All Records';
+        }
+
+        $sheet->setCellValue('A7', $reportingPeriod);
+        $sheet->getStyle('A7')->getFont()->setBold(true)->setSize(12)->getColor()->setRGB('333333');
+        $sheet->getStyle('A7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // --- Header Row ---
+        $headers = [
+            'Transaction No.',
+            'Booked By',
+            'Room(s)',
+            'Check-In Date',
+            'Check-Out Date',
+            'Total Guests',
+            'Total Amount',
+            'Status'
+        ];
+        $sheet->fromArray($headers, null, 'A9');
+
+        // --- Header Styling ---
+        $headerStyle = $sheet->getStyle('A9:H9');
+        $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+        $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('166534');
+        $sheet->getRowDimension(9)->setRowHeight(25);
+
+        // --- Rows ---
+        $row = 10;
+        foreach ($transactions as $t) {
+            $rooms = $t->properties->pluck('name_number')->implode(', ');
+            $bookedBy = trim(optional($t->transactionUser)?->first_name . ' ' . optional($t->transactionUser)?->last_name) ?: 'N/A';
+
+            $sheet->setCellValue("A{$row}", $t->transaction_number);
+            $sheet->setCellValue("B{$row}", $bookedBy);
+            $sheet->setCellValue("C{$row}", $rooms);
+            $sheet->setCellValue("D{$row}", Carbon::parse($t->start_datetime)->format('F j, Y'));
+            $sheet->setCellValue("E{$row}", Carbon::parse($t->end_datetime)->format('F j, Y'));
+            $sheet->setCellValue("F{$row}", $t->pax);
+            $sheet->setCellValue("G{$row}", number_format($t->total_amount, 2));
+            $sheet->setCellValue("H{$row}", ucfirst($t->transaction_status));
+            $row++;
+        }
+
+        // --- Summary Section ---
+        $row += 1;
+        $sheet->setCellValue("A{$row}", 'Summary of Key Metrics');
+        $sheet->getStyle("A{$row}")->getFont()->setBold(true)->getColor()->setRGB('166534');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Reservations Within Date Range:');
+        $sheet->setCellValue("B{$row}", $totalReservations . ' reservations');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Guests:');
+        $sheet->setCellValue("B{$row}", $totalGuests . ' guests');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Average Length of Stay:');
+        $sheet->setCellValue("B{$row}", round($averageLength, 1) . ' nights');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Most Booked Room:');
+        $sheet->setCellValue("B{$row}", $mostBookedRoom ?? 'N/A');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Amount Earned:');
+        $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
+
+        // Highlight total amount
+        $highlightRange = "A{$row}:B{$row}";
+        $sheet->getStyle($highlightRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E6F4EA');
+        $sheet->getStyle($highlightRange)->getFont()
+            ->setBold(true)
+            ->getColor()->setRGB('166534');
+
+        // --- Auto-size Columns ---
+        foreach (range('A', 'H') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // --- Output ---
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+
+    }, 200, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+    ]);
+    
     }
 }

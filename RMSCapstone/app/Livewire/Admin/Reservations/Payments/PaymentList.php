@@ -5,11 +5,13 @@ namespace App\Livewire\Admin\Reservations\Payments;
 use Livewire\Component;
 use App\Models\Payment;
 use App\Models\PropertyType;
+use Livewire\WithPagination;
 
 class PaymentList extends Component
 {
 
-    public $payments;
+    use WithPagination;
+    //public $payments;
     public $transactionUser;
     public $invoice;
     public $transaction;
@@ -17,6 +19,7 @@ class PaymentList extends Component
     public $sortDirection = 'desc';   // or 'asc'
     public $paymentTypeFilter = '';
     public $paymentStatusFilter = '';
+    public $perPage = 10;
 
     public $search = '';
 
@@ -24,7 +27,7 @@ class PaymentList extends Component
     {
         $search = trim($this->search);
 
-        $this->payments = Payment::with([
+        $payments = Payment::with([
             'invoice.transaction.transactionUser',
             'paymentMethod'
         ])
@@ -54,15 +57,17 @@ class PaymentList extends Component
                 $query->where('payment_status', $this->paymentStatusFilter);
             })
             ->orderBy($this->sortField, $this->sortDirection)
-            ->get();
+            ->paginate($this->perPage);
 
-        return view('livewire.admin.reservations.payments.payment-list');
+        return view('livewire.admin.reservations.payments.payment-list', [
+            'payments' => $payments, 
+        ]);
     }
 
 
     public function mount()
     {
-        $this->payments = Payment::with([
+        $payments = Payment::with([
             'invoice.transaction.transactionUser',
             'paymentMethod'
         ])->get();

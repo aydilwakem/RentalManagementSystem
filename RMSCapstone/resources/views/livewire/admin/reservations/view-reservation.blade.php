@@ -105,9 +105,18 @@
                         {{ __('Additional Guests Details') }}
                     </h2>
                     <!-- Add Guest -->
+
+                @if ($transaction->transaction_status != 'done')
                     <x-button wire:click="openModal('guest')" icon="fas fa-user-plus">
                         Add Guest
                     </x-button>
+                @else
+                    <x-button disabled class="bg-gray-400 cursor-not-allowed" >
+                        <i class="fas fa-lock mr-2"></i>
+                        Add Guest
+                    </x-button>
+                @endif
+
                 </div>
                 @if ($guestDetails->isNotEmpty())
                     <div class="overflow-x-auto">
@@ -390,10 +399,20 @@
                             <div class="text-gray-500 italic">No vouchers.</div>
                         @endif
 
+
+                @if ($transaction->transaction_status != 'done')
                         <button type="button" wire:click="openModal('voucher')"
                             class="mt-2 text-sm text-green-600 hover:underline font-medium">
                             <i class="fa-solid fa-circle-plus"></i> Add Voucher
                         </button>
+                @else
+                    <div class="mt-2 text-sm text-gray-400 italic">
+                        <i class="fa-solid fa-lock mr-1"></i> Vouchers disabled for completed transactions
+                    </div>
+
+                @endif
+
+
                     </div>
 
                     @if ($transaction->transaction_status === 'confirmed')
@@ -678,9 +697,18 @@
                         {{ __('Guest Pet Information') }}
                     </h2>
                     <!-- Add Pet Details -->
+                @if ($transaction->transaction_status != 'done')
                     <x-button wire:click="openModal('pet')" icon="fas fa-paw">
                         Add Pet
                     </x-button>
+                @else
+                    <x-button disabled class="bg-gray-400 cursor-not-allowed">
+                    <i class="fas fa-lock mr-2"></i>
+                        Add Pet
+                    </x-button>
+
+                @endif
+
                 </div>
                 @if ($guestPets->isNotEmpty())
                     <div class="overflow-x-auto">
@@ -875,8 +903,9 @@
                                         x-transition:leave-end="opacity-0 transform scale-95"
                                         class="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-20 origin-top-right">
 
-                                        <div class="py-1">
-                                            <!-- Add Activity -->
+                                    <div class="py-1">
+                                        <!-- Add Activity -->
+                                        @if ($transaction->transaction_status != 'done')
                                             <button wire:click="openModal('activity')"
                                                 class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                 <i class="fas fa-calendar-plus mr-2 text-green-600"></i>
@@ -890,7 +919,6 @@
                                                 Add Other Charges
                                             </button>
 
-
                                             <!-- Add PWD/Senior Discount -->
                                             @if (!$this->discountsApplied)
                                                 <div class="border-t border-gray-200 my-1"></div>
@@ -900,10 +928,18 @@
                                                     Add PWD/Senior Discount
                                                 </button>
                                             @endif
+                                        @else
+                                            <!-- Disabled state for completed transactions -->
+                                            <div class="px-4 py-2 text-sm text-gray-400 italic">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                Actions disabled for completed transactions
+                                            </div>
+                                        @endif
 
-                                            <div class="border-t border-gray-200 my-1"></div>
+                                        <div class="border-t border-gray-200 my-1"></div>
 
-                                            <!-- Add Promo Code Section -->
+                                        <!-- Add Promo Code Section -->
+                                        @if ($transaction->transaction_status != 'done')
                                             <button @click="showPromo = !showPromo"
                                                 class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                                 <i class="fas fa-ticket mr-2 text-green-600"></i>
@@ -951,7 +987,15 @@
                                                     </p>
                                                 @endif
                                             </div>
-                                        </div>
+                                        @else
+                                            <!-- Disabled promo code section -->
+                                            <div class="px-4 py-2 text-sm text-gray-400 italic">
+                                                <i class="fas fa-ticket mr-2"></i>
+                                                Promo codes disabled for completed transactions
+                                            </div>
+                                        @endif
+                                    </div>
+
                                     </div>
                                 </div>
 
@@ -1050,48 +1094,46 @@
                                                 {{-- Activity Actions --}}
                                                 <td class="border px-4 py-2 text-center dark:border-gray-500 space-x-3">
 
-                                                    @if ($item['type'] == 'property')
-                                                        <button wire:click="editRoom({{ $item['pivot_id'] }})"
-                                                            class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
-                                                            title="Edit">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
+                                                    @if ($transaction->transaction_status != 'done')
+                                                        @if ($item['type'] == 'property')
+                                                            <button wire:click="editRoom({{ $item['pivot_id'] }})"
+                                                                class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+                                                                title="Edit">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
 
-                                                        <!-- Change Room Button -->
-                                                        <button wire:click="openChangeRoomModal({{ $item['pivot_id'] }})"
-                                                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
-                                                            title="Change Room">
-                                                            <i class="fas fa-exchange-alt"></i>
-                                                        </button>
+                                                            <!-- Change Room Button -->
+                                                            <button wire:click="openChangeRoomModal({{ $item['pivot_id'] }})"
+                                                                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                                                                title="Change Room">
+                                                                <i class="fas fa-exchange-alt"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="
+                                                                    @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
+                                                                    @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
+                                                                        editExtraHour({{ $item['pivot_id'] }})
+                                                                    @elseif ($item['type'] === 'service')
+                                                                    editService({{ $item['pivot_id'] }}) @endif
+                                                                "
+                                                                class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
+                                                                title="Edit">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
 
-                                                        {{--
-                                                        <!-- Add Another Guest Button -->
-                                                        <button wire:click="addGuest({{ $item['pivot_id']  }})"
-                                                            class="ml-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-500"
-                                                            title="Add Another Guest">
-                                                            <i class="fas fa-user-plus"></i>
-                                                        </button> --}}
+                                                            <button wire:click="
+                                                                    @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
+                                                                    @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
+                                                                "
+                                                                class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
+                                                                title="Delete">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        @endif
                                                     @else
-                                                        <button wire:click="
-                                                                                @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
-                                                                                @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
-                                                                                    editExtraHour({{ $item['pivot_id'] }})
-                                                                                @elseif ($item['type'] === 'service')
-                                                                                editService({{ $item['pivot_id'] }}) @endif
-                                                                            "
-                                                            class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
-                                                            title="Edit">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-
-                                                        <button wire:click="
-                                                                                @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
-                                                                                @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
-                                                                            "
-                                                            class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
-                                                            title="Delete">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                        <span class="text-gray-400 dark:text-gray-500" title="Actions disabled for completed transactions">
+                                                            <i class="fas fa-lock"></i>
+                                                        </span>
                                                     @endif
 
                                                 </td>
@@ -1231,28 +1273,32 @@
                             @if ($transaction->promoCode)
                                 <!-- Promo Applied -->
                                 <div
-                                    class="flex items-center justify-between p-2 font-semibold  bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700">
-                                    <div>
-                                        <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
-                                            Promo Applied: {{ $transaction->promoCode->code ?? '' }}
-                                            @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
-                                                ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
-                                            @elseif ($transaction->promoCode)
-                                                {{-- Flat discount --}}
-                                                (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
-                                            @endif
-                                        </span>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <p class="text-green-600 dark:text-green-400 mt-1 text-sm">
-                                            - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
-                                        </p>
-                                        <button wire:click="removePromoCode"
-                                            class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                                            title="Remove Promo Code">
-                                            <i class="fas fa-circle-xmark"></i>
-                                        </button>
-                                    </div>
+              <!-- Promo Applied -->
+    <div class="flex items-center justify-between p-2 font-semibold  bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700">
+        <div>
+            <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
+                Promo Applied: {{ $transaction->promoCode->code ?? '' }}
+                @if ($transaction->promoCode && $transaction->promoCode->discount_type == 'percentage')
+                    ({{ number_format($transaction->promoCode->discount_value, 0) }}%)
+                @elseif ($transaction->promoCode)
+                    (₱{{ number_format($transaction->promoCode->discount_value, 2) }})
+                @endif
+            </span>
+        </div>
+        <div class="flex space-x-2">
+            <p class="text-green-600 dark:text-green-400 mt-1 text-sm">
+                - ₱{{ number_format($transaction->promo_discount_amount, 2) }}
+            </p>
+            @if ($transaction->transaction_status != 'done')
+                <button wire:click="removePromoCode"
+                    class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                    title="Remove Promo Code">
+                    <i class="fas fa-circle-xmark"></i>
+                </button>
+            @endif
+        </div>
+    </div>
+
                                 </div>
 
                                 <!-- Promo Code Messages -->
@@ -1404,11 +1450,17 @@
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
-
-                            <x-button wire:click="OpenCreatePaymentModal">
-                                <i class="fas fa-plus mr-2"></i>
-                                Create Payment
-                            </x-button>
+                            @if ($transaction->transaction_status != 'done')
+                                <x-button wire:click="OpenCreatePaymentModal">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Create Payment
+                                </x-button>
+                            @else
+                                <x-button disabled class="bg-gray-400 cursor-not-allowed">
+                                    <i class="fas fa-lock mr-2"></i>
+                                    Create Payment
+                                </x-button>
+                            @endif
                         </div>
                     </div>
                     @if ($payments->isNotEmpty())

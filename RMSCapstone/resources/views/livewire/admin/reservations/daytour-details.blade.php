@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Reservation Details</title>
+    <title>Day Tour Details</title>
     <style>
         @page {
             margin: 40px 30px;
@@ -208,48 +208,6 @@
         @endif
     </div>
 
-    {{-- Guest Pet Details --}}
-    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
-        <h2
-            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
-            Guest Pet Details
-        </h2>
-
-        @if ($guestPets->isNotEmpty())
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead>
-                <tr style="background-color: #166534; color: #fff;">
-                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Pet Number</th>
-                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Breed</th>
-                    <th style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">Total Pet Fee</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($guestPets as $guestPet)
-                <tr>
-                    <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
-                        {{ $loop->iteration }}
-                    </td>
-                    <td style="border: 1px solid #ccc; padding: 8px; font-size: 14px;">
-                        {{ $guestPet->breed ?? 'N/A' }}
-                    </td>
-                    <td style="text-align:center">
-                        @if ($guestPet->total_fee == 0)
-                        Pet fee added as additional service
-                        @else
-                        PHP{{ number_format($guestPet->total_fee, 2) }}
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @else
-        <p style="color: #888; font-style: italic; text-align: center; font-size: 14px;">No guest pets found
-            for this transaction.</p>
-        @endif
-    </div>
-
     {{-- Transaction Details --}}
     <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
         <h2
@@ -298,20 +256,10 @@
                 <td style="padding: 8px; font-size: 14px;">{{ $transaction->reservation_source }}</td>
             </tr>
             <tr>
-                <td style="padding: 8px; font-weight: bold; font-size: 14px;">Check-in Date:</td>
+                <td style="padding: 8px; font-weight: bold; font-size: 14px;">Day Tour Date:</td>
                 <td style="padding: 8px; font-size: 14px;">
                     {{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y') }}
                 </td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; font-weight: bold; font-size: 14px;">Check-out Date:</td>
-                <td style="padding: 8px; font-size: 14px;">
-                    {{ \Carbon\Carbon::parse($transaction->end_datetime)->format('F j, Y') }}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; font-weight: bold; font-size: 14px;">Duration of Stay:</td>
-                <td style="padding: 8px; font-size: 14px;">
-                    {{ $transaction->properties->first()?->pivot->days ?? 'N/A' }} day(s)</td>
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold; font-size: 14px;">Total Adults:</td>
@@ -324,25 +272,6 @@
             <tr>
                 <td style="padding: 8px; font-weight: bold; font-size: 14px;">Total Guests:</td>
                 <td style="padding: 8px; font-size: 14px;">{{ $transaction->pax }}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; font-weight: bold; font-size: 14px;">Promo Code Applied:</td>
-                <td style="padding: 8px; font-size: 14px;">{{ $transaction->promoCode->code ?? ''}}
-                    @if ($transaction->promoCode)
-                    <div>
-                        <strong>Promo Code:</strong>
-                        {{ $transaction->promoCode->code }}
-
-                        @if ($transaction->promoCode->discount_type === 'percentage')
-                        ({{ number_format($transaction->promoCode->discount_value, 0) }}% off)
-                        @else
-                        (PHP{{ number_format($transaction->promoCode->discount_value, 2) }} off)
-                        @endif
-                    </div>
-                    @else
-                    <div class="text-gray-500 italic">No promo code used</div>
-                    @endif
-                </td>
             </tr>
             <tr>
                 <td style="padding: 8px; font-weight: bold; font-size: 14px;">Convenience Fee 3%:</td>
@@ -370,7 +299,7 @@
             Room Details
         </h2>
 
-        @if ($properties->isNotEmpty())
+        @if ($transaction->properties->isNotEmpty())
         <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
             <thead style="background-color: #166534; color: #fff;">
                 <tr>
@@ -428,114 +357,11 @@
             Total Room Charges: PHP {{ number_format($totalRooms, 2) }}
         </div>
         @else
-        <p style="color: #6b7280; font-style: italic; text-align: center; font-size: 14px;">No properties found for
+        <p style="color: #6b7280; font-style: italic; text-align: center; font-size: 14px;">No rooms found for
             this transaction.</p>
         @endif
     </div>
 
-    {{-- Activity Details --}}
-    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
-        <h2
-            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
-            Add-On Activities
-        </h2>
-
-        @if ($transaction->activities->isNotEmpty())
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
-            <thead style="background-color: #166534; color: #fff;">
-                <tr>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Activity Name</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Quantity</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Unit Cost</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Activity Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($transaction->activities as $activity)
-                <tr>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        {{ $activity->name }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        {{ $activity->pivot->quantity ?? 'N/A' }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        PHP{{ number_format($activity->amount ?? 0, 2) }}</td>
-                    <td
-                        style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-weight: bold; font-size: 14px;">
-                        PHP{{ number_format(($activity->amount ?? 0) * ($activity->pivot->quantity ?? 0), 2) }}
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
-            Total Activity Charges: PHP{{ number_format($totalAddons, 2) }}
-        </div>
-        @else
-        <p style="color: #6b7280; font-style: italic; text-align: center; font-size: 14px;">No activities found for
-            this transaction.</p>
-        @endif
-    </div>
-
-    {{-- Services Details --}}
-    <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
-        <h2
-            style="color: #166534; font-size: 16px; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed #e0e0e0;">
-            Add-On Services
-        </h2>
-
-        @if ($transaction->services->isNotEmpty())
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
-            <thead style="background-color: #166534; color: #fff;">
-                <tr>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Service Name</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Quantity</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Unit Cost</th>
-                    <th
-                        style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
-                        Service Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($transaction->services as $service)
-                <tr>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        {{ $service->name }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        {{ $service->pivot->quantity ?? 'N/A' }}</td>
-                    <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-size: 14px;">
-                        PHP{{ number_format($service->amount ?? 0, 2) }}</td>
-                    <td
-                        style="border: 1px solid #d1d5db; padding: 8px; text-align: center; font-weight: bold; font-size: 14px;">
-                        PHP{{ number_format(($service->amount ?? 0) * ($service->pivot->quantity ?? 0), 2) }}
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div style="text-align: right; font-weight: bold; font-size: 15px; margin-top: 12px; color: #374151;">
-            Total Service Charges: PHP{{ number_format($totalServiceCharges, 2) }}
-        </div>
-        @else
-        <p style="color: #6b7280; font-style: italic; text-align: center; font-size: 14px;">No activities found for
-            this transaction.</p>
-        @endif
-    </div>
 
     {{-- Invoice Details --}}
     <div style="background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-top: 30px;">
