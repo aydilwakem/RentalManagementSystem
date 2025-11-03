@@ -8,7 +8,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class EventReports extends Component
 {
@@ -311,6 +317,182 @@ class EventReports extends Component
         ->paginate($this->perPage);
 
         return view('livewire.admin.reports.event-reports', compact('transactions'));
+    }
+
+    //-------------------------------------------- EXPORT EXCEL METHOD ------------------------//
+    public function exportEventExcel()
+    {
+    $transactions = Transaction::query()
+        ->select('trn_transactions.*')
+        ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
+        ->with(['transactionUser', 'properties', 'event_type'])
+        ->where('reservation_type_id', 3) // Event type
+        ->when($this->start_date, fn($q) => $q->where('start_datetime', '>=', Carbon::parse($this->start_date)->startOfDay()))
+        ->when($this->end_date, fn($q) => $q->where('start_datetime', '<=', Carbon::parse($this->end_date)->endOfDay()))
+        ->when($this->hallFilter, fn($q) => $q->where('transaction_properties.property_id', $this->hallFilter))
+        ->when($this->eventStatusFilter, fn($q) => $q->where('transaction_status', $this->eventStatusFilter))
+        ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
+        ->get();
+
+    //Define period here
+    $start_date = $this->start_date;
+    $end_date = $this->end_date;
+
+    // Calculations
+    $totalEvents = $transactions->count();
+    $totalGuests = $transactions->sum('pax');
+    $totalAmountEarned = $transactions->sum('total_amount');
+
+    // Get most booked hall
+    $mostBookedHall = null;
+    if (!$this->hallFilter && $transactions->isNotEmpty()) {
+        $hallCounts = [];
+        foreach ($transactions as $t) {
+            foreach ($t->properties as $p) {
+                $hallName = $p->name_number;
+                $hallCounts[$hallName] = ($hallCounts[$hallName] ?? 0) + 1;
+            }
+        }
+        if (!empty($hallCounts)) {
+            arsort($hallCounts);
+            $topHall = array_key_first($hallCounts);
+            $mostBookedHall = $topHall . " ({$hallCounts[$topHall]} events)";
+        }
+    }
+
+    $filename = 'Event-Summary-' . Carbon::parse($this->start_date)->format('Ymd') . '-' . Carbon::parse($this->end_date)->format('Ymd') . '.xlsx';
+
+    return new StreamedResponse(function() use ($transactions, $totalEvents, $totalGuests, $mostBookedHall, $totalAmountEarned, $start_date, $end_date) {
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        //Canopy Header - Logo displayed above
+        //Merge cells for logo: 
+        $sheet->mergeCells('D1:D2');
+        $drawing = new Drawing();
+        $drawing->setPath(public_path('images/canopy-logo.png')); 
+        $drawing->setHeight(55); //Logo size
+        $drawing->setCoordinates('D1'); 
+        $drawing->setOffsetX(70); //Adjust row
+        $drawing->setOffsetX(10); //Adjust down
+        $drawing->setWorksheet($sheet);
+
+        // Title
+        $sheet->mergeCells('A3:J3');
+        $sheet->setCellValue('A3', 'Canopy Farm PH');
+        $sheet->getStyle('A3')->getFont()->setBold(true)->setSize(18)->getColor()->setRGB('166534');
+        $sheet->getStyle('A3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Address
+        $sheet->mergeCells('A4:J4');
+        $sheet->setCellValue('A4', '006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines');
+        $sheet->getStyle('A4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A4')->getFont()->setSize(11)->getColor()->setRGB('333333');
+
+        // Contact
+        $sheet->mergeCells('A5:J5');
+        $sheet->setCellValue('A5', '+63 962 447 9893');
+        $sheet->getStyle('A5')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A5')->getFont()->setSize(11)->getColor()->setRGB('333333');
+
+        // Section Title
+        $sheet->mergeCells('A6:J6');
+        $sheet->setCellValue('A6', 'Reservations Summary');
+        $sheet->getStyle('A6')->getFont()->setBold(true)->setSize(14)->getColor()->setRGB('166534');
+        $sheet->getStyle('A6')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        //Reporting Period
+        $sheet->mergeCells('A7:J7');
+
+        if ($start_date && $end_date) {
+            $reportingPeriod = 'Reporting Period: ' .
+                \Carbon\Carbon::parse($start_date)->format('F d, Y') . ' – ' .
+                \Carbon\Carbon::parse($end_date)->format('F d, Y');
+        } else {
+            $reportingPeriod = 'Reporting Period: All Records';
+        }
+
+        $sheet->setCellValue('A7', $reportingPeriod);
+        $sheet->getStyle('A7')->getFont()->setBold(true)->setSize(12)->getColor()->setRGB('333333');
+        $sheet->getStyle('A7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+
+        // --- Header Row ---
+        $headers = ['Transaction ID','Booked By','Company','Event Hall','Event Type','Guests','Start Date and Time','End Date and Time','Total Amount','Status'];
+        $sheet->fromArray($headers, null, 'A9');
+
+        // --- Style Header ---
+        $headerStyle = $sheet->getStyle('A9:J9'); //Move cells down
+        $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+        $headerStyle->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('166534'); // Dark green
+        $sheet->getRowDimension(1)->setRowHeight(25);
+
+        // --- Transactions ---
+        $row = 10; //orginally 8 Rows
+        foreach ($transactions as $t) {
+            $halls = $t->properties->pluck('name_number')->implode(', ');
+            $userName = trim(optional($t->transactionUser)?->first_name . ' ' . optional($t->transactionUser)?->last_name) ?: 'N/A';
+
+            $sheet->setCellValue("A{$row}", $t->transaction_number);
+            $sheet->setCellValue("B{$row}", $userName);
+            $sheet->setCellValue("C{$row}", optional($t->transactionUser)->company_name);
+            $sheet->setCellValue("D{$row}", $halls);
+            $sheet->setCellValue("E{$row}", optional($t->event_type)->name);
+            $sheet->setCellValue("F{$row}", $t->pax);
+            $sheet->setCellValue("G{$row}", Carbon::parse($t->start_datetime)->format('F j, Y g:i A'));
+            $sheet->setCellValue("H{$row}", Carbon::parse($t->end_datetime)->format('F j, Y g:i A'));
+            $sheet->setCellValue("I{$row}", number_format($t->total_amount, 2));
+            $sheet->setCellValue("J{$row}", ucfirst($t->transaction_status));
+
+            $row++;
+        }
+
+        // Summary
+        $row += 1; // Blank line
+        $sheet->setCellValue("A{$row}", 'Summary of Key Metrics');
+        $sheet->getStyle("A{$row}")->getFont()->setBold(true)->getColor()->setRGB('166534');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Reservations Within Date Range:');
+        $sheet->setCellValue("B{$row}", $totalEvents . ' reservations');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Guests:');
+        $sheet->setCellValue("B{$row}", $totalGuests . ' guests');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Most Booked Hall:');
+        $sheet->setCellValue("B{$row}", $mostBookedHall ?? 'N/A');
+        $row++;
+
+        $sheet->setCellValue("A{$row}", 'Total Amount Earned:');
+        $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
+        
+        // Apply light green background highlight to both A and B cells
+        $highlightRange = "A{$row}:B{$row}";
+        $sheet->getStyle($highlightRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E6F4EA');
+
+        // Make the text bold and dark green for emphasis
+        $sheet->getStyle($highlightRange)->getFont()
+            ->setBold(true)
+            ->getColor()->setRGB('166534');
+
+        // --- Auto-size columns ---
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // --- Output ---
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+
+    }, 200, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+    ]);
     }
 
     //------------------------------------------ SORT BY FUNCTION ------------------------//

@@ -2266,7 +2266,7 @@ class ViewReservation extends Component
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'reservation-details-' . $this->transaction->start_datetime . '.pdf');
+        }, 'Reservation-Details-' . $transaction->invoice->invoice_number . '.pdf');
     }
 
 

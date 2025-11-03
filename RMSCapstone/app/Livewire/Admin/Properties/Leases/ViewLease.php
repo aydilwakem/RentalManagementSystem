@@ -139,7 +139,7 @@ class ViewLease extends Component
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'lease-details-' . $transaction->start_datetime . '.pdf');
+        }, 'Lease-Details-' . $transaction->invoice->invoice_number . '.pdf');
     }
 
     public function getMonthCount($startDatetime, $endDatetime)

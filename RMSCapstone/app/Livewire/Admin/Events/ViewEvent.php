@@ -33,7 +33,9 @@ use App\Services\RoomAvailabilityService;
 use App\Services\EmailService;
 use App\Services\BrandingService;
 use App\Services\PayMongoService;
+use Carbon\Carbon;
 use Livewire\WithFileUploads;
+
 
 #[Layout('layouts.app')]
 class ViewEvent extends Component
@@ -238,7 +240,7 @@ class ViewEvent extends Component
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'event-details-' . $event->start_datetime . '.pdf');
+        }, 'Event-Details-' . $event->invoice->invoice_number . '.pdf');
     }
 
     public function deleteEventItem(Transaction $event)
@@ -299,7 +301,7 @@ class ViewEvent extends Component
         // Upload screenshot if provided
         $screenshotPath = $this->uploadScreenshot();
 
-        // 1️⃣ Create payment
+        //1  Create payment
         $paymentService->create([
             'invoice'             => $this->invoice,
             'transaction'         => $this->transaction,
@@ -315,10 +317,10 @@ class ViewEvent extends Component
             'payment_method_id'   => $this->payment_method_id,
         ]);
 
-        // 2️⃣ Recalculate invoice totals
+        // 2 Recalculate invoice totals
         $this->recalculateInvoice();
 
-        // 4️⃣ Reset form fields
+        // 4 Reset form fields
         $this->reset([
             'amount_paid',
             'mode_of_payment',

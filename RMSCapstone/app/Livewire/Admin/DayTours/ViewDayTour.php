@@ -102,7 +102,7 @@ class ViewDayTour extends Component
         // Optional: Download directly or store then return URL
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
-        }, 'daytour-details-' . $this->transaction->start_datetime . '.pdf');
+        }, 'Daytour-Details-' . $transaction->invoice->invoice_number . '.pdf');
     }
 
     public function render()
