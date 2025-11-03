@@ -105,9 +105,18 @@
                         {{ __('Additional Guests Details') }}
                     </h2>
                     <!-- Add Guest -->
+
+                @if ($transaction->transaction_status != 'done')
                     <x-button wire:click="openModal('guest')" icon="fas fa-user-plus">
                         Add Guest
                     </x-button>
+                @else
+                    <x-button disabled class="bg-gray-400 cursor-not-allowed" >
+                        <i class="fas fa-lock mr-2"></i>
+                        Add Guest
+                    </x-button>
+                @endif
+
                 </div>
                 @if ($guestDetails->isNotEmpty())
                     <div class="overflow-x-auto">
@@ -390,10 +399,20 @@
                             <div class="text-gray-500 italic">No vouchers.</div>
                         @endif
 
+
+                @if ($transaction->transaction_status != 'done')
                         <button type="button" wire:click="openModal('voucher')"
                             class="mt-2 text-sm text-green-600 hover:underline font-medium">
                             <i class="fa-solid fa-circle-plus"></i> Add Voucher
                         </button>
+                @else
+                    <div class="mt-2 text-sm text-gray-400 italic">
+                        <i class="fa-solid fa-lock mr-1"></i> Vouchers disabled for completed transactions
+                    </div>
+
+                @endif
+
+
                     </div>
 
                     @if ($transaction->transaction_status === 'confirmed')
@@ -678,9 +697,18 @@
                         {{ __('Guest Pet Information') }}
                     </h2>
                     <!-- Add Pet Details -->
+                @if ($transaction->transaction_status != 'done')
                     <x-button wire:click="openModal('pet')" icon="fas fa-paw">
                         Add Pet
                     </x-button>
+                @else
+                    <x-button disabled class="bg-gray-400 cursor-not-allowed">
+                    <i class="fas fa-lock mr-2"></i>
+                        Add Pet
+                    </x-button>
+
+                @endif
+
                 </div>
                 @if ($guestPets->isNotEmpty())
                     <div class="overflow-x-auto">
@@ -1422,11 +1450,17 @@
                             Payments (₱{{ number_format($this->invoice->amount_paid, 2) }})
                         </h2>
                         <div class="text-left mb-4 flex items-center gap-2">
-
-                            <x-button wire:click="OpenCreatePaymentModal">
-                                <i class="fas fa-plus mr-2"></i>
-                                Create Payment
-                            </x-button>
+                            @if ($transaction->transaction_status != 'done')
+                                <x-button wire:click="OpenCreatePaymentModal">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Create Payment
+                                </x-button>
+                            @else
+                                <x-button disabled class="bg-gray-400 cursor-not-allowed">
+                                    <i class="fas fa-lock mr-2"></i>
+                                    Create Payment
+                                </x-button>
+                            @endif
                         </div>
                     </div>
                     @if ($payments->isNotEmpty())
