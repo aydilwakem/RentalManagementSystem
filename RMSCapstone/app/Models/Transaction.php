@@ -67,6 +67,7 @@ class Transaction extends Model
         'day_tour_id',
         'day_tour_rate_id',
         'day_tour_rate_type',
+        'pwd_senior_ids',
 
 
     ];
@@ -96,7 +97,9 @@ class Transaction extends Model
 
         // dishes as array
         'dishes' => 'array',
-
+        
+        // pwd_senior_ids as array
+        'pwd_senior_ids' => 'array',
 
 
     ];

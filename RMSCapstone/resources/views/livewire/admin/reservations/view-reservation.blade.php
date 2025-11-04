@@ -1210,81 +1210,97 @@
                     </div>
 
 
-                    <!-- Discounts applied -->
-                    @if ($invoice->discounts->count() > 0)
-                        <div class="mb-1 text-gray-600 text-sm border-t pt-2">
-                            @php
-                                $baseSubtotal = $invoice->base_subtotal;
-                                $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
-                            @endphp
+                            <!-- Discounts applied -->
+                            @if ($invoice->discounts->count() > 0)
+                                <div class="mb-1 text-gray-600 text-sm border-t pt-2">
+                                    @php
+                                        $baseSubtotal = $invoice->base_subtotal;
+                                        $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
+                                    @endphp
 
-                            @foreach ($invoice->discounts->groupBy('discount_type_id') as $discounts)
-                                @php
-                                    $type = $discounts->first()->discountType;
-                                    $count = $discounts->sum('quantity');
-                                    $totalValue = $discounts->sum('discount_value');
-                                    $perPersonAmount =
-                                        $type->type === 'percent' ? ($baseSubtotal / $pax) * ($type->rate / 100) : null;
-                                @endphp
+                                    @foreach ($invoice->discounts->groupBy('discount_type_id') as $discounts)
+                                        @php
+                                            $type = $discounts->first()->discountType;
+                                            $count = $discounts->sum('quantity');
+                                            $totalValue = $discounts->sum('discount_value');
 
-                                {{-- <div class="flex justify-between items-center mb-1">
-                                            <span>
-                                                - {{ $count }} {{ strtoupper($type->name) }}
-                                                @if ($transaction->promoCode)
-                                                @if ($type->type === 'percent' && $perPersonAmount)
-                                                ({{ $type->rate }}% of Extra charge per guest ÷
-                                                {{ $count }} pax)
-                                                @else
-                                                (Fixed)
+                                            // Get PWD/Senior IDs from transaction
+                                            $pwdSeniorIds = $transaction->pwd_senior_ids ?? [];
+                                            $idsSummary = collect($pwdSeniorIds)->map(function ($item) {
+                                                return $item['name'] . ' (' . $item['id'] . ')';
+                                            })->implode(', ');
+                                        @endphp
+
+                                        @if (in_array($type->name, ['pwd', 'senior']))
+                                            <div class="flex flex-col p-3 font-semibold bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700 mb-2">
+                                                <!-- Discount Header -->
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <div>
+                                                        <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
+                                                            PWD/Senior Discount Applied
+                                                        </span>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2">
+                                                        <p class="text-green-600 dark:text-green-400 text-sm font-semibold">
+                                                            - ₱{{ number_format($totalValue, 2) }}
+                                                        </p>
+                                                        @if ($transaction->transaction_status != 'done')
+                                                        <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
+                                                            class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-sm"
+                                                            title="Remove Discount">
+                                                            <i class="fas fa-circle-xmark"></i>
+                                                        </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <!-- PWD/Senior IDs and Names -->
+                                                @if (!empty($idsSummary))
+                                                    <div class="mt-2 pt-2 border-t border-green-200 dark:border-green-700">
+                                                        <div class="flex items-start">
+                                                            <span class="text-xs font-medium text-green-700 dark:text-green-300 mr-2 mt-0.5">
+                                                                IDs:
+                                                            </span>
+                                                            <div class="flex-1">
+                                                                <p class="text-xs text-green-600 dark:text-green-400 break-words">
+                                                                    {{ $idsSummary }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 @endif
-                                                @else
-                                                @if ($type->type === 'percent' && $perPersonAmount)
-                                                ({{ $type->rate }}% of Room base rate ÷ {{ $count }}
-                                                pax)
-                                                @else
-                                                (Fixed)
-                                                @endif
-                                                @endif
-                                            </span>
-
-                                            <div class="flex items-center space-x-2">
-                                                <span>- ₱{{ number_format($totalValue, 2) }}</span>
-
-                                                <!-- Optional: tooltip to show exact formula -->
-                                                {{-- @if ($type->type === 'percent' && $perPersonAmount)
-                                                <span class="text-xs text-gray-400" title="Calculation: (Subtotal ÷ Pax) × Rate × Qty">
-                                                    (~₱{{ number_format($perPersonAmount * $count, 2) }})
-                                                </span>
-                                                @endif
-
-                                                <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
-                                                    class="text-red-500 hover:text-red-700 text-xs" title="Remove discount">
-                                                    <i class="fas fa-circle-xmark"></i>
-                                                </button>
                                             </div>
-                                        </div> --}}
-                                <div
-                                    class="flex items-center justify-between p-2 font-semibold bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700">
-                                    <div>
-                                        <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
-                                            PWD/Senior Discount Applied
-                                        </span>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <p class="text-green-600 dark:text-green-400 mt-1 text-sm">
-                                            - ₱{{ number_format($totalValue, 2) }}
-                                        </p>
-                                        <button
-                                            wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
-                                            class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                                            title="Remove Discount">
-                                            <i class="fas fa-circle-xmark"></i>
-                                        </button>
-                                    </div>
+                                        @else
+                                            <!-- For other discount types, show the original format -->
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span>
+                                                    - {{ $count }} {{ strtoupper($type->name) }}
+                                                    @if ($transaction->promoCode)
+                                                        @if ($type->type === 'percent' && $perPersonAmount)
+                                                            ({{ $type->rate }}% of Extra charge per guest ÷ {{ $count }} pax)
+                                                        @else
+                                                            (Fixed)
+                                                        @endif
+                                                    @else
+                                                        @if ($type->type === 'percent' && $perPersonAmount)
+                                                            ({{ $type->rate }}% of Room base rate ÷ {{ $count }} pax)
+                                                        @else
+                                                            (Fixed)
+                                                        @endif
+                                                    @endif
+                                                </span>
+                                                <div class="flex items-center space-x-2">
+                                                    <span>- ₱{{ number_format($totalValue, 2) }}</span>
+                                                    <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
+                                                        class="text-red-500 hover:text-red-700 text-xs" title="Remove discount">
+                                                        <i class="fas fa-circle-xmark"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
-                            @endforeach
-                        </div>
-                    @endif
+                            @endif
 
                     <!-- Subtotal with discount -->
                     {{-- <div class="flex justify-between font-semibold text-base text-gray-700">
@@ -1626,22 +1642,24 @@
                                                 @endif
                                             </td>
 
-                                            <td
-                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
-                                                @if ($transaction->transaction_status === 'done')
-                                                    <span class="text-gray-400 dark:text-gray-500"
-                                                        title="Not Available - Transaction Completed">
-                                                        <i class="fas fa-lock"></i>
-                                                    </span>
-                                                @else
-                                                    <button wire:click="editPayment({{ $payment->id }})"
+                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
+                                            @if ($this->canEditPayment($payment))
+                                                <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
+                                                <button wire:click="editPayment({{ $payment->id }})"
                                                         class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                                                         title="Edit Payment">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                @endif
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @else
+                                                <span class="text-gray-400 dark:text-gray-500"
+                                                    title="{{ $transaction->transaction_status === 'done'
+                                                        ? 'Not Available - Transaction Completed'
+                                                        : 'Cannot edit online payments' }}">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                            @endif
 
-                                            </td>
+                                        </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -2674,12 +2692,94 @@
                 <!-- Header -->
                 <div
                     class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
-                    <h2 class="text-2xl font-bold text-center">Apply PWD/Senior Discount</h2>
+                        <h2 class="text-2xl font-bold text-center">
+                            {{ $this->discountsApplied ? 'Edit PWD/Senior Discount' : 'Add PWD/Senior Discount' }}
+                        </h2>
                     <button wire:click="closeDiscountModal"
                         class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                         <span class="-translate-y-[2px]">&times;</span>
                     </button>
                 </div>
+
+
+        <!-- PWD/Senior ID Management Section -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3 dark:text-gray-300">PWD/Senior Information</h3>
+
+            <!-- Add New ID Form -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                    Add PWD/Senior Details
+                </label>
+                <div class="space-y-3">
+                    <!-- Name Field -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">Full Name</label>
+                        <input type="text" wire:model="editingPwdSeniorName"
+                            placeholder="Enter full name"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
+                        @error('editingPwdSeniorName')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- ID Field -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">PWD/Senior ID Number</label>
+                        <div class="flex space-x-2">
+                            <input type="text" wire:model="editingPwdSeniorId"
+                                placeholder="Enter PWD or Senior ID number"
+                                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
+                            <x-button wire:click="addPwdSeniorId" class="whitespace-nowrap" wire:loading.attr="disabled">
+                                Add
+                            </x-button>
+                        </div>
+                        @error('editingPwdSeniorId')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing IDs List -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                    Current PWD/Senior Records ({{ count($pwdSeniorIds) }})
+                </label>
+                @if (count($pwdSeniorIds) > 0)
+                    <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3 dark:border-gray-600">
+                        @foreach ($pwdSeniorIds as $index => $idData)
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200 block">{{ $idData['name'] }}</span>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">ID: {{ $idData['id'] }}</span>
+                                        </div>
+                                        @if (isset($idData['added_at']))
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ \Carbon\Carbon::parse($idData['added_at'])->format('M j, Y') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <button wire:click="removePwdSeniorId({{ $index }})"
+                                    class="ml-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm"
+                                    title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-gray-500 italic text-center py-3 dark:text-gray-400 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
+                        No PWD/Senior records added yet.
+                    </p>
+                @endif
+            </div>
+        </div>
+
+
 
                 <!-- Simple Amount Input -->
                 <div class="space-y-4">
@@ -2707,7 +2807,7 @@
                         Cancel
                     </x-ghost-button>
                     <x-button wire:click="applyDiscounts">
-                        Apply Discount
+                        {{ $this->discountsApplied ? 'Update Discount' : 'Apply Discount' }}
                     </x-button>
                 </div>
             </div>

@@ -396,7 +396,7 @@
                         <div class="sm:col-span-2 mt-4">
                             <label for="payment_screenshot" class="block text-sm text-gray-700 font-semibold">Proof
                                 of
-                                Payment <span class="text-red-500">*</span></label>
+                                Payment <span class="text-red-500"></span></label>
 
                             <!-- Hidden file input -->
                             <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
