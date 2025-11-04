@@ -172,6 +172,10 @@ class ViewReservation extends Component
     protected PromoCodeService $promoCodeService;
 
 
+    // ---------------- PWD/SENIOR DISCOUNT ------------------ //
+    public $pwdSeniorIds = [];
+    public $editingPwdSeniorId = '';
+    public $editingPwdSeniorName = '';
 
 
 
@@ -700,6 +704,13 @@ class ViewReservation extends Component
             'manualDiscountAmount' => 'required|numeric|min:0|max:' . $this->computeBaseSubtotal(),
         ]);
 
+        // Validate that PWD/Senior IDs are provided if applying discount
+        if (empty($this->pwdSeniorIds)) {
+            session()->flash('error', 'Please add at least one PWD/Senior ID before applying discount.');
+            return;
+        }
+
+
         // Fetch PWD and Senior discount types
         $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
         $seniorDiscountType = DiscountType::where('name', 'senior')->first();
@@ -723,6 +734,13 @@ class ViewReservation extends Component
             'notes' => 'Manual PWD/Senior Discount',
         ]);
 
+        // Save the PWD/Senior IDs to transaction
+        $this->transaction->update([
+            'pwd_senior_ids' => $this->pwdSeniorIds,
+        ]);
+
+
+
         // Use the same recalculation pattern as promo codes
         $this->recalculateInvoice();
 
@@ -730,30 +748,126 @@ class ViewReservation extends Component
         session()->flash('success', 'PWD/Senior discount applied successfully!');
     }
 
-    public function openDiscountModal()
-    {
+public function openDiscountModal()
+{
+    // Refresh data from database
+    $this->transaction->refresh();
+    $this->invoice->refresh();
+    
+    // Load existing PWD/Senior IDs
+    $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
+    
+    // Load existing discount amount if applied
+    if ($this->discountsApplied) {
+        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
+        
+        if ($pwdDiscountType || $seniorDiscountType) {
+            $existingDiscount = InvoiceDiscount::where('invoice_id', $this->invoice->id)
+                ->whereIn('discount_type_id', [
+                    $pwdDiscountType?->id, 
+                    $seniorDiscountType?->id
+                ])
+                ->first();
+                
+            if ($existingDiscount) {
+                $this->manualDiscountAmount = $existingDiscount->discount_value;
+            }
+        }
+    } else {
         $this->manualDiscountAmount = 0;
-        $this->showDiscountModal = true;
     }
+    
+    // Reset editing fields
+    $this->editingPwdSeniorId = '';
+    $this->editingPwdSeniorName = '';
+    
+    $this->showDiscountModal = true;
+}
 
     public function closeDiscountModal()
     {
         $this->showDiscountModal = false;
-        $this->reset(['manualDiscountAmount']);
+        $this->reset(['manualDiscountAmount', 'pwdSeniorIds', 'editingPwdSeniorId', 'editingPwdSeniorName']);
+
+        // Reload from database to ensure we have fresh data
+        $this->transaction->refresh();
+        $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
+
     }
 
-    /**
-     * Check if PWD/Senior discount is already applied
-     */
+
+    public function addPwdSeniorId()
+    {
+        $this->validate([
+            'editingPwdSeniorId' => 'required|string|max:255',
+            'editingPwdSeniorName' => 'required|string|max:255',
+        ]);
+
+        // Add the new ID
+        $this->pwdSeniorIds[] = [
+            'id' => $this->editingPwdSeniorId,
+            'name' => $this->editingPwdSeniorName,
+            'type' => 'pwd_senior',
+            'added_at' => now()->toDateTimeString(),
+        ];
+
+        // Update the transaction
+        $this->transaction->update([
+            'pwd_senior_ids' => $this->pwdSeniorIds,
+        ]);
+
+        // Clear input fields
+        $this->editingPwdSeniorId = '';
+        $this->editingPwdSeniorName = '';
+        
+        // Refresh transaction
+        $this->transaction->refresh();
+    }
+
+    public function removePwdSeniorId($index)
+    {
+        // Ensure the index exists and remove it
+        if (isset($this->pwdSeniorIds[$index])) {
+            unset($this->pwdSeniorIds[$index]);
+            
+            // Reindex the array to maintain proper indexing
+            $this->pwdSeniorIds = array_values($this->pwdSeniorIds);
+            
+            // Update the transaction immediately to persist changes
+            $this->transaction->update([
+                'pwd_senior_ids' => $this->pwdSeniorIds,
+            ]);
+            
+            // Refresh the transaction to get updated data
+            $this->transaction->refresh();
+        }
+    }
+
+    protected function getPwdSeniorIdsSummary()
+    {
+        return collect($this->pwdSeniorIds)->map(function ($item) {
+            return $item['name'] . ' (' . $item['id'] . ')';
+        })->implode(', ');
+    }
     public function getDiscountsAppliedProperty()
     {
-        $appliedTypes = $this->invoice->discounts->pluck('discount_type_id')->toArray();
-        $requiredTypes = DiscountType::whereIn('name', ['pwd', 'senior'])->pluck('id')->toArray();
+        if (!$this->invoice) {
+            return false;
+        }
 
-        // Check if any PWD/Senior discount is applied
-        return !empty(array_intersect($requiredTypes, $appliedTypes));
+        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
+
+        if (!$pwdDiscountType || !$seniorDiscountType) {
+            return false;
+        }
+
+        // Check if either PWD or Senior discount is applied
+        return $this->invoice->discounts()
+            ->whereIn('discount_type_id', [$pwdDiscountType->id, $seniorDiscountType->id])
+            ->exists();
     }
-
 
 
 
@@ -782,9 +896,16 @@ class ViewReservation extends Component
             ->first();
 
         if ($discount) {
-            $discount->delete(); // remove the row completely
+            $discount->delete();
             Log::info("Discount type {$discountTypeId} removed from invoice {$invoiceId}");
         }
+
+        // Clear the PWD/Senior IDs when discount is removed
+        $this->transaction->update([
+            'pwd_senior_ids' => null,
+        ]);
+        
+        $this->pwdSeniorIds = [];
 
         // Use the same recalculation pattern as promo codes
         $this->recalculateInvoice();
