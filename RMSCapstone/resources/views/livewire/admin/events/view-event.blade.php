@@ -675,7 +675,7 @@
                                 <label for="payment_screenshot"
                                     class="block text-sm text-gray-700 font-semibold mb-1">Proof
                                     of
-                                    Payment <span class="text-red-500">*</span></label>
+                                    Payment <span class="text-red-500"></span></label>
 
                                 <!-- Hidden file input -->
                                 <input id="payment_screenshot" type="file" accept="image/*"

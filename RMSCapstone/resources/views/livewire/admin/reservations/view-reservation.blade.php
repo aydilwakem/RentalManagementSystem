@@ -1602,16 +1602,20 @@
                                             </td>
 
                                             <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
-                                            @if ($transaction->transaction_status === 'done' )
+                                            @if ($this->canEditPayment($payment))
                                                 <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            @else 
                                                 <button wire:click="editPayment({{ $payment->id }})" 
                                                         class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                                                         title="Edit Payment">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
+                                            @else
+                                                <span class="text-gray-400 dark:text-gray-500" 
+                                                    title="{{ $transaction->transaction_status === 'done' 
+                                                        ? 'Not Available - Transaction Completed' 
+                                                        : 'Cannot edit online payments' }}">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
                                             @endif
                                           
                                         </td>
@@ -1884,7 +1888,7 @@
                     <div class="sm:col-span-2 mt-4">
                         <label for="payment_screenshot" class="block text-sm text-gray-700 font-semibold">Proof
                             of
-                            Payment <span class="text-red-500">*</span></label>
+                            Payment <span class="text-red-500"></span></label>
 
                         <!-- Hidden file input -->
                         <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"

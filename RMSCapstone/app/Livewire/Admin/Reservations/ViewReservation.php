@@ -870,6 +870,23 @@ public function openDiscountModal()
     }
 
 
+    /**
+     * Check if payment can be edited (only manual payments can be edited)
+     */
+    public function canEditPayment($payment)
+    {
+        // Don't allow editing for completed transactions
+        if ($this->transaction->transaction_status === 'done') {
+            return false;
+        }
+        
+        // PayMongo payments have reference numbers starting with "pay_"
+        $isPayMongoPayment = !empty($payment->payment_reference_number) && 
+                            Str::startsWith($payment->payment_reference_number, 'pay_');
+        
+        // Only allow editing if it's NOT a PayMongo payment
+        return !$isPayMongoPayment;
+    }
 
 
     public function computeInvoiceWithDiscount(): float
