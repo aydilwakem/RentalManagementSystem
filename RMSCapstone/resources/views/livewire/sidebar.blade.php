@@ -30,8 +30,10 @@
 
             <!-- Header -->
             <div class="flex items-center space-x-2 px-4 py-3 border-b mb-2">
-                <img src="{{ asset('storage/' . $logoPath) }}" alt=" {{ $companyName }}"
+                <a href="{{ route('guest.homepage') }}">
+                    <img src="{{ asset('storage/' . $logoPath) }}" alt=" {{ $companyName }}"
                     class="h-8 w-8 object-cover rounded-full">
+                </a>
                 <h1 class="text-white font-semibold overflow-hidden whitespace-nowrap transition-all duration-300"
                     x-bind:class="$store.sidebar.full ? 'text-lg w-auto ml-2' : 'w-0 ml-0'">
                     {{ $companyName }}

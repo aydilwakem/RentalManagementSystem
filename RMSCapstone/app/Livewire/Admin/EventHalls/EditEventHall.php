@@ -173,17 +173,28 @@ class EditEventHall extends Component
             if (isset($imageToRemove['path'])) {
                 Storage::disk('public')->delete($imageToRemove['path']);
                 // and remove from the storedImages array
-                $this->storedImages = collect($this->storedImages)->filter(function($img) use ($imageToRemove) {
-                    return $img['id'] !== $imageToRemove['id'];
-                })->values()->toArray();
+                $this->storedImages = collect($this->storedImages)
+                    ->filter(function ($img) use ($imageToRemove) {
+                        return $img['id'] !== $imageToRemove['id'];
+                    })
+                    ->values()
+                    ->toArray();
             }
             // if new upload, temp object lang,
             // remove from newImages if it's there
             elseif (isset($imageToRemove['object'])) {
-                $this->newImages = collect($this->newImages)->filter(function($img) use ($imageToRemove) {
-                    return $img->getFilename() !== $imageToRemove['id'];
-                })->values()->toArray();
+                $this->newImages = collect($this->newImages)
+                    ->filter(function ($img) use ($imageToRemove) {
+                        return $img->getFilename() !== $imageToRemove['id'];
+                    })
+                    ->values()
+                    ->toArray();
             }
+
+            $this->displayImages = collect($this->displayImages)
+                ->filter(fn($img) => $img['id'] !== $this->imageToDeleteId)
+                ->values()
+                ->toArray();
 
             $this->updateDisplayImages(); // Re-update display array after removal
         }

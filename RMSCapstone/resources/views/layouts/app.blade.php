@@ -51,7 +51,7 @@
             class="fixed left-0 top-0 bottom-0 w-[var(--sidebar-width)] h-full flex flex-col bg-white shadow-lg" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col ml-[var(--sidebar-width)] transition-all duration-300">
+        <div class="flex-1 flex flex-col ml-[var(--sidebar-width)] transition-all duration-300 min-w-0">
 
             <!-- Page Heading -->
             {{-- @livewire('navigation-menu') --}}

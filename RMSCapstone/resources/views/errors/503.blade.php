@@ -28,7 +28,7 @@
 
         <!-- Message -->
         <p class="text-gray-700 mb-4 text-lg">
-            Sorry for the inconvenience. <br>
+            We apologize for the inconvenience <br>
             Our system is getting a quick clean and refresh. We’ll be back online shortly to serve you better.
         </p>
 

@@ -45,7 +45,7 @@
                         <p>
                             Here at <span class="font-semibold text-green-700">The Canopy Farm,</span> we offer more
                             than
-                            just accommodation and events. We create meaningful experiences — from peaceful overnight
+                            just accommodation and events. We create meaningful experiences from peaceful overnight
                             stays
                             under the stars to unforgettable celebrations like weddings, birthdays, and team gatherings.
                             Every moment here is designed to refresh your spirit and remind you of the simple joy of
@@ -63,7 +63,7 @@
                             class="rounded-2xl p-8 bg-green-50 border border-green-200 hover:shadow-lg transition transform hover:-translate-y-1 duration-300">
                             <h2 class="text-2xl font-bold text-green-700 mb-3">Our Vision</h2>
                             <p class="text-gray-700 leading-relaxed">
-                                To be the Philippines’ premier nature-inspired destination — a place where people find
+                                To be the Philippines’ premier nature-inspired destination, a place where people find
                                 rest,
                                 connection, and unforgettable recreation in the embrace of God's creation.
                             </p>
@@ -75,7 +75,7 @@
                             <p class="text-gray-700 leading-relaxed">
                                 To provide warm hospitality, comfortable stays, and meaningful experiences that make
                                 every
-                                guest feel at home — inspired, refreshed, and renewed.
+                                guest feel at home, inspired, refreshed, and renewed.
                             </p>
                         </div>
                     </section>
