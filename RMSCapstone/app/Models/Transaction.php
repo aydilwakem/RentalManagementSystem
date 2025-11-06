@@ -382,4 +382,30 @@ class Transaction extends Model
             $this->attributes['dishes'] = $value;
         }
     }
+
+
+
+
+// Scope for non-archived records (records from last 5 years)
+public function scopeNonArchived($query)
+{
+    return $query->where('trn_transactions.transaction_status', '!=', 'archived');
+
+}
+
+// Scope for archived records (records older than 5 years)
+public function scopeArchived($query)
+{
+    return $query->where('trn_transactions.transaction_status', 'archived');
+}
+
+// Scope for records that should be archived (for auto-archiving)
+public function scopeShouldBeArchived($query)
+{
+    $fiveYearsAgo = now()->subYears(5);
+    return $query->where('trn_transactions.created_at', '<=', $fiveYearsAgo)
+                ->where('trn_transactions.transaction_status', '!=', 'archived');
+}
+
+
 }

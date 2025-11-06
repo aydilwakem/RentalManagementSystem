@@ -32,7 +32,11 @@ class Kernel extends ConsoleKernel
 
         // Mark overdue invoices (every minute)
         $schedule->command('invoices:mark-overdue')->everyMinute();
+        $schedule->command('reservations:auto-archive')->everyMinute();
+
     }
+
+
 
     /**
      * Register the commands for the application.

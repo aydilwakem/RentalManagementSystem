@@ -202,6 +202,10 @@ class ReservationForm extends Component
     public $expandedService;
     public $deposit_percentage;
 
+    // ----------------------- FILTERS ------------------------ //
+    public $searchQuery = '';
+    public $idealGuestFilter = '';
+
 
 
 
@@ -452,6 +456,16 @@ class ReservationForm extends Component
             ]);
         }
 
+            // Add this to handle category filter changes
+        if ($property === 'roomCategoryFilter') {
+            $this->getAvailableRooms();
+        }
+
+        if ($property === 'idealGuestFilter') {
+            $this->getAvailableRooms();
+        }
+
+
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
             // Clear dependent selections
@@ -493,6 +507,30 @@ class ReservationForm extends Component
         } else {
             $this->pets = array_slice($this->pet_breed, 0, $value);
         }
+    }
+
+    public function updatedSearchQuery()
+    {
+        $this->getAvailableRooms(); // Refresh the rooms list when search query changes
+    }
+
+    public function getIdealGuestOptionsProperty()
+    {
+        return $this->roomAvailabilityService
+            ->getAvailableRooms($this->check_in_date, $this->check_out_date)
+            ->pluck('ideal_guest')
+            ->unique()
+            ->sort()
+            ->values();
+    }
+
+    // Update clearFilters method to include ideal guest filter
+    public function clearFilters()
+    {
+        $this->searchQuery = '';
+        $this->roomCategoryFilter = '';
+        $this->idealGuestFilter = '';
+        $this->getAvailableRooms();
     }
 
 
@@ -538,8 +576,37 @@ class ReservationForm extends Component
      */
     public function getAvailableRooms()
     {
-        $this->rooms = $this->roomAvailabilityService
+        $availableRooms = $this->roomAvailabilityService
             ->getAvailableRooms($this->check_in_date, $this->check_out_date);
+        
+        // Apply all filters
+        $availableRooms = $availableRooms->filter(function ($room) {
+            $matchesSearch = true;
+            $matchesCategory = true;
+            $matchesIdealGuest = true;
+            
+            // Apply search filter
+            if (!empty($this->searchQuery)) {
+                $matchesSearch = str_contains(
+                    strtolower($room->name_number),
+                    strtolower($this->searchQuery)
+                );
+            }
+            
+            // Apply category filter
+            if (!empty($this->roomCategoryFilter)) {
+                $matchesCategory = $room->property_category_id == $this->roomCategoryFilter;
+            }
+            
+            // Apply ideal guest filter
+            if (!empty($this->idealGuestFilter)) {
+                $matchesIdealGuest = $room->ideal_guest == $this->idealGuestFilter;
+            }
+            
+            return $matchesSearch && $matchesCategory && $matchesIdealGuest;
+        });
+        
+        $this->rooms = $availableRooms;
         $this->prepareOccupancyRules();
     }
 

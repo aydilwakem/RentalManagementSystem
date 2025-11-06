@@ -34,6 +34,12 @@
                             </x-warning-button>
                         </div>
                     @endcan
+ 
+
+                <x-button icon="fas fa-archive" href="{{ route('admin.reservations-archives') }}" wire:navigate>
+                    View Archives
+                </x-button>
+
                 <!-- Soft Deletes -->
                 @can('new-reservation-soft-delete')
                     <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
@@ -107,6 +113,8 @@
                             <option value="terminated">Terminated</option>
                             <option value="expired">Expired</option>
                             <option value="cancelled">Cancelled</option>
+                            <option value="archived">Archived</option> 
+
                         </select>
                     </div>
                 </div>
@@ -286,6 +294,11 @@
                                                     class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600 text-center">
                                                     Cancelled
                                                 </span>
+                                            @elseif ($transaction->transaction_status === 'archived')
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-300 text-gray-700 text-center">
+                                                    Archived
+                                                </span>
                                             @endif
 
                                             @if($transaction->is_rebooked)
@@ -321,6 +334,24 @@
                                                             Reservation
                                                         </a>
                                                     @endcan
+
+
+                                                    <!-- Archive Button -->
+                                                    @if (
+                                                        $transaction->transaction_status === 'done' ||
+                                                        $transaction->transaction_status === 'cancelled' ||
+                                                        $transaction->transaction_status === 'no_show' ||
+                                                        $transaction->transaction_status === 'terminated'
+                                                    )
+                                                        <a href="#"
+                                                            wire:click.prevent="showActionModal('archiveReservation', 'Archive Reservation', 'Are you sure you want to archive this reservation? This will move it to the archives section.', {{ $transaction->id }}, 'warning')"
+                                                            class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                            <i class="fas fa-archive mr-2 text-orange-600"></i> Archive
+                                                        </a>
+                                                    @endif
+
+
+
                                                     <!-- Confirm Receipt -->
                                                     @if ($transaction->transaction_status === 'reserved')
                                                         <li>

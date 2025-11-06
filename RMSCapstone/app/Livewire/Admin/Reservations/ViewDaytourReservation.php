@@ -120,6 +120,17 @@ class ViewDaytourReservation extends Component
     public $payment_method_id;
     public $request_reply;
 
+    // ---------------- EDIT PAYMENT ------------------ //
+    public $showEditPaymentModal = false;
+    public $editingPayment;
+    public $edit_amount_paid;
+    public $edit_payment_date;
+    public $edit_payment_type;
+    public $edit_notes;
+    public $edit_payment_method_id;
+    public $edit_payment_screenshot;
+    public $existing_payment_screenshot;
+
     public function render()
     {
         $this->guestTypes = GuestType::all();
@@ -944,4 +955,164 @@ class ViewDaytourReservation extends Component
         Log::info("Invoice {$invoiceId} recalculated after discount removal.");
         session()->flash('success', 'Discount removed successfully!');
     }
+
+    /**
+     * -------------------- EDIT PAYMENT MODAL -----------------------------
+     * Handles editing existing payments
+     * ---------------------------------------------------------------------------------
+     */
+    public function editPayment($paymentId)
+    {
+        $this->editingPayment = Payment::with('paymentMethod')->find($paymentId);
+        
+        if ($this->editingPayment) {
+            $this->edit_amount_paid = $this->editingPayment->amount_paid;
+            $this->edit_payment_date = $this->editingPayment->payment_date 
+                ? \Carbon\Carbon::parse($this->editingPayment->payment_date)->format('Y-m-d')
+                : now()->format('Y-m-d');
+            $this->edit_payment_type = $this->editingPayment->payment_type;
+            $this->edit_notes = $this->editingPayment->notes;
+            $this->edit_payment_method_id = $this->editingPayment->payment_method_id;
+            $this->existing_payment_screenshot = $this->editingPayment->payment_screenshot;
+            $this->edit_payment_screenshot = null;
+            $this->showEditPaymentModal = true;
+        }
+    }
+
+public function updatePayment()
+{
+    $this->validate([
+        'edit_amount_paid' => 'required|numeric|min:0',
+        'edit_payment_type' => 'required|in:Room Rent,House Rent,Activity Fee,Event Hall,Event Package,Security Deposit,Remaining Balance,Merchandise,Accommodation Fully Paid,Accommodation Downpayment,Accommodation Balance,Day Tour',
+        'edit_payment_date' => 'required|date',
+        'edit_notes' => 'nullable|string|max:500',
+        'edit_payment_method_id' => 'required|exists:pm_payment_methods,id',
+        'edit_payment_screenshot' => 'nullable|image|max:2048',
+    ]);
+
+    if ($this->editingPayment) {
+        // Store the original amount before update
+        $originalAmount = $this->editingPayment->amount_paid;
+        $newAmount = $this->edit_amount_paid;
+
+        // Upload new screenshot if provided
+        $screenshotPath = $this->uploadEditScreenshot();
+
+        $updateData = [
+            'amount_paid' => $newAmount,
+            'payment_type' => $this->edit_payment_type,
+            'payment_date' => $this->edit_payment_date,
+            'notes' => $this->edit_notes,
+            'payment_method_id' => $this->edit_payment_method_id,
+            'updated_at' => now(),
+        ];
+
+        // Only update screenshot if a new one was uploaded
+        if ($screenshotPath) {
+            $updateData['payment_screenshot'] = $screenshotPath;
+        }
+
+        // Update the payment directly (bypassing PaymentService for update)
+        $this->editingPayment->update($updateData);
+
+        // MANUALLY recalculate the invoice totals to fix the overpayment issue
+        $this->manualInvoiceRecalculationAfterPaymentUpdate($originalAmount, $newAmount);
+
+        $this->showEditPaymentModal = false;
+        
+        // Refresh component data
+        $this->refreshComponentData();
+        
+        session()->flash('success', 'Payment updated successfully.');
+    }
+}
+
+/**
+ * Manually recalculate invoice totals after payment update
+ * This fixes the overpayment issue without changing the PaymentService
+ */
+protected function manualInvoiceRecalculationAfterPaymentUpdate($originalAmount, $newAmount)
+{
+    // Get all completed payments for this invoice
+    $totalPaid = Payment::where('invoice_id', $this->invoice->id)
+        ->where('payment_status', 'completed')
+        ->sum('amount_paid');
+
+    // Calculate the correct balance due
+    $balanceDue = max($this->invoice->sub_total - $totalPaid, 0);
+
+    // Determine invoice status
+    $invoiceStatus = 'pending';
+    if ($balanceDue === 0 && $totalPaid > 0) {
+        $invoiceStatus = 'completed';
+    } elseif ($totalPaid > 0 && $balanceDue > 0) {
+        $invoiceStatus = 'pending';
+    }
+
+    // Update the invoice with correct totals
+    $this->invoice->update([
+        'amount_paid' => $totalPaid,
+        'balance_due' => $balanceDue,
+        'invoice_status' => $invoiceStatus,
+        'completed_at' => $balanceDue === 0 ? now() : null,
+    ]);
+
+    Log::info("Manual invoice recalculation after payment update", [
+        'original_amount' => $originalAmount,
+        'new_amount' => $newAmount,
+        'total_paid' => $totalPaid,
+        'balance_due' => $balanceDue,
+        'invoice_status' => $invoiceStatus
+    ]);
+}
+
+    public function closeEditPaymentModal()
+    {
+        $this->showEditPaymentModal = false;
+        $this->reset([
+            'editingPayment', 
+            'edit_amount_paid', 
+            'edit_payment_date', 
+            'edit_payment_type', 
+            'edit_notes', 
+            'edit_payment_method_id',
+            'edit_payment_screenshot',
+            'existing_payment_screenshot'
+        ]);
+    }
+
+    protected function uploadEditScreenshot(): ?string
+    {
+        // If no file was uploaded, return null
+        if (!$this->edit_payment_screenshot) {
+            return null;
+        }
+
+        // If uploaded file is invalid
+        if (!$this->edit_payment_screenshot->isValid()) {
+            throw new \Exception('Image upload failed. Please try again.');
+        }
+
+        // Store and return the file path
+        return $this->edit_payment_screenshot->store('proof-of-payments', 'public');
+    }
+
+    /**
+     * Check if payment can be edited (only manual payments can be edited)
+     */
+    public function canEditPayment($payment)
+    {
+        // Don't allow editing for completed transactions
+        if ($this->transaction->transaction_status === 'done') {
+            return false;
+        }
+        
+        // PayMongo payments have reference numbers starting with "pay_"
+        $isPayMongoPayment = !empty($payment->payment_reference_number) && 
+                            \Illuminate\Support\Str::startsWith($payment->payment_reference_number, 'pay_');
+        
+        // Only allow editing if it's NOT a PayMongo payment
+        return !$isPayMongoPayment;
+    }
+
 }
