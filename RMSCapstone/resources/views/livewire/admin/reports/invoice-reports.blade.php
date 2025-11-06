@@ -90,7 +90,7 @@
             </div>
 
             {{-- EXPORT CSV BUTTON --}}
-            <div class="relative">
+            {{-- <div class="relative">
                 <x-warning-button icon="fa-solid fa-file" wire:click="exportInvoiceCsv" wire:loading.attr="disabled">
                     Export CSV
                 </x-warning-button>
@@ -98,6 +98,18 @@
                 <div wire:loading wire:target="exportInvoiceCsv"
                     class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
                     <span class="text-sm text-yellow-700 font-semibold">Exporting CSV...</span>
+                </div>
+            </div> --}}
+
+            {{-- EXPORT EXCEL BUTTON --}}
+            <div class="relative">
+                <x-warning-button icon="fa-solid fa-file" wire:click="exportInvoiceExcel" wire:loading.attr="disabled">
+                    Export Excel
+                </x-warning-button>
+
+                <div wire:loading wire:target="exportInvoiceExcel"
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    <span class="text-sm text-yellow-700 font-semibold">Exporting Excel...</span>
                 </div>
             </div>
         </div>

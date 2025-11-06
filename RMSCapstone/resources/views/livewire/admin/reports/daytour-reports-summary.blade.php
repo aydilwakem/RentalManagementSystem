@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Canopy Farm PH - Payments Summary Report</title>
+    <title>Canopy Farm PH - Day Tour Summary Report</title>
     <style>
         @page {
             margin: 40px 30px;
@@ -39,7 +39,7 @@
         }
 
         .date-range {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-size: 13px;
             color: #555;
         }
@@ -116,70 +116,52 @@
         <h1>Canopy Farm PH</h1>
         <p>006 San Gregorio Extension, Brgy. Buna Cerca, Indang, Philippines</p>
         <p>+63 962 447 9893</p>
-        <h2>Payments Summary</h2>
+        <h2>Day Tour Summary</h2>
         <p class="date-range">
             <strong>Reporting Period:</strong>
-            @if ($startDate && $endDate)
-            {{ \Carbon\Carbon::parse($startDate)->format('F d, Y') }}
+            @if ($start_date && $end_date)
+            {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
             &ndash;
-            {{ \Carbon\Carbon::parse($endDate)->format('F d, Y') }}
+            {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
             @else
             All Records
             @endif
         </p>
-
         <p class="date-range">
-            <strong>Payment Type:</strong>
-            {{ $paymentTypeFilter ?: 'All' }}
+            <strong>Status:</strong>
+            {{ empty($daytourStatusFilter) ? 'All Statuses' : $daytourStatusFilter }}
         </p>
     </header>
-    <p>Report generated on {{ now()->format('F d, Y h:i A') }}</p>
+
     <table>
         <thead>
             <tr>
                 <th style="width: 6%;">#</th>
-                <th style="width: 12%;">Guest Name</th>
-                <th style="width: 12%;">Transaction Number</th>
-                <th style="width: 10%;">Invoice Number</th>
-                <th style="width: 10%;">Payment Type</th>
-                <th style="width: 10%;">Payment Date</th>
-                <th style="width: 10%;">Amount Paid</th>
-                <th style="width: 13%;">Mode of Payment</th>
-                <th style="width: 13%;">Status</th>
+                <th style="width: 13%;">Transaction No.</th>
+                <th style="width: 10%;">Guest Name</th>
+                <th style="width: 10%;">Tour Package</th>
+                <th style="width: 10%;">Tour Date</th>
+                <th style="width: 10%;">Pax</th>
+                <th style="width: 9%;">Amount</th>
+                <th style="width: 14%;">Status</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($payments as $payment)
+            @forelse ($transactions as $transaction)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-
-                <td> {{ $payment->invoice->transaction->transactionUser->first_name ?? 'Guest Detail Has Been
-                    Deleted' }}
-                    {{ $payment->invoice->transaction->transactionUser->last_name ?? '' }}</td>
-
-                <td> {{ $payment->invoice->transaction->transaction_number ?? 'N/A' }}</td>
-
-                <td>
-                    {{ $payment->invoice->invoice_number ?? 'N/A' }}
+                <td>{{ $transaction->transaction_number }}</td>
+                <td>{{ $transaction->transactionUser->first_name }} {{ $transaction->transactionUser->last_name }}
                 </td>
-
-                <td>
-                    {{ $payment->payment_type ?? 'N/A' }}
-                </td>
-
-                <td>
-                    {{ \Carbon\Carbon::parse($payment->payment_date)->format('F j, Y') }}
-                </td>
-
-                <td>{{ number_format($payment->amount_paid, 2) }}</td>
-
-                <td>{{ ucfirst($payment->mode_of_payment) }}</td>
-
-                <td>{{ ucfirst($payment->payment_status) }}</td>
+                <td>{{ $transaction->dayTour->name }}</td>
+                <td>{{ \Carbon\Carbon::parse($transaction->start_datetime)->format('F j, Y g:i A') }}</td>
+                <td>{{ $transaction->pax }}</td>
+                <td>{{ number_format($transaction->sub_total, 2) }}</td>
+                <td>{{ $transaction->transaction_status }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="10" style="text-align: center; padding: 20px;">No payments were recorded for the
+                <td colspan="10" style="text-align: center; padding: 20px;">No day tours were recorded for the
                     selected date range.</td>
             </tr>
             @endforelse
@@ -188,10 +170,9 @@
 
     <div class="summary">
         <h2>Summary of Key Metrics:</h2>
-        <p><strong>Total Payment Records Within Date Range: </strong>{{ $totalPayments }} payment records</p>
-        <p><strong>Total Convenience Fee: </strong>{{ $totalConvenienceFee }} payment records</p>
-        <p><strong>Total Amount Earned (With Deducted Convenience Fee): </strong>PHP {{
-            number_format($totalAmountEarned, 2) }}</p>
+        <p><strong>Total Day Tour Records:</strong> {{ $totalDaytours }}</p>
+        <p><strong>Total Guests Accommodated:</strong> {{ $totalGuests }}</p>
+        <p><strong>Total Revenue Generated:</strong> PHP {{ number_format($totalAmountEarned, 2) }}</p>
     </div>
 
     <footer>
