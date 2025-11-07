@@ -357,6 +357,20 @@
                                                     </li>
                                                 @endif
 
+                                                <!-- Archive Button -->
+                                                @if (
+                                                    $transaction->transaction_status === 'done' ||
+                                                    $transaction->transaction_status === 'cancelled' ||
+                                                    $transaction->transaction_status === 'no_show' ||
+                                                    $transaction->transaction_status === 'terminated'
+                                                )
+                                                    <a href="#"
+                                                        wire:click.prevent="showActionModal('archiveDayTour', 'Archive Day Tour', 'Are you sure you want to archive this day tour? This will move it to the archives section.', {{ $transaction->id }}, 'warning')"
+                                                        class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                        <i class="fas fa-archive mr-2 text-orange-600"></i> Archive
+                                                    </a>
+                                                @endif
+
                                                 <!--------------------- Destructive Actions -------------------------->
                                                 <div class="border-t">
                                                     <!-- Cancel -->

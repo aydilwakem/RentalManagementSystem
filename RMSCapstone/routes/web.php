@@ -30,6 +30,7 @@ use App\Livewire\Admin\DayTours\DeletedDayTours;
 use App\Livewire\Admin\DayTours\EditDayTour;
 use App\Livewire\Admin\DayTours\ViewDayTour;
 use App\Livewire\Admin\DayTours\ViewDayTours;
+use App\Livewire\Admin\Events\ArchiveEvents;
 use App\Livewire\Admin\Events\EditEvent;
 use App\Livewire\Admin\Events\ViewEvent;
 use App\Livewire\Admin\Features\EditFeature;
@@ -61,6 +62,7 @@ use App\Livewire\Admin\Reservations\Payments\ViewReceipt;
 use App\Livewire\Admin\Reservations\ViewReservation;
 use App\Livewire\Admin\Reservations\EditReservation;
 use App\Livewire\Admin\Reservations\AddTransaction;
+use App\Livewire\Admin\Reservations\ArchiveDayTours;
 use App\Livewire\Admin\Reservations\ArchiveReservations;
 use App\Livewire\Admin\Reservations\CreateDayTourReservation;
 use App\Livewire\Admin\Reservations\DayTourReservationList;
@@ -424,6 +426,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->name('admin.deleted-events')
             ->middleware('can:event-soft-delete');
 
+
+        Route::get('/events/archives', ArchiveEvents::class)
+        ->name('admin.events-archives')
+        ->middleware(['auth', 'verified']);
+
+
         // Events Summary
         Route::get('/event-reports', function () {
             return view('admin.reports.event-reports');
@@ -782,6 +790,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->name('admin.reservations-archives')
             ->middleware(['auth', 'verified']);
 
+        Route::get('/daytours/archives', ArchiveDayTours::class)
+            ->name('admin.daytours-archives')
+            ->middleware(['auth', 'verified']);
+
         /***
          * These routes are for Long-Term Rentals.
          *
@@ -878,6 +890,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         })
             ->name('admin.deleted-leases')
             ->middleware('can:leases-soft-delete');
+
+
+        Route::get('/leases/archives', \App\Livewire\Admin\Properties\Leases\ArchiveLeases::class)
+        ->name('admin.leases-archives')
+        ->middleware(['auth', 'verified']);
 
         //Lease Summary
         Route::get('/lease-reports', function () {

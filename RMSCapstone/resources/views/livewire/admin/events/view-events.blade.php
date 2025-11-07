@@ -27,6 +27,13 @@
                         </x-button>
                     </div>
                 @endcan
+
+            <!-- Add this Archive Events button -->
+            <x-button icon="fas fa-archive" href="{{ route('admin.events-archives') }}" wire:navigate>
+                View Archives
+            </x-button>
+
+
                 @can('event-soft-delete')
                     <!-- Deleted Items (Restore and Delete Forever) -->
                     <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"

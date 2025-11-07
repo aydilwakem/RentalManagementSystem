@@ -270,6 +270,19 @@ class ReservationForm extends Component
         $this->kids = session()->get('kids', []);
         $this->total_pax = session()->get('total_pax', 0);
 
+        // ENHANCED: Comprehensive cart cleanup with better error handling
+        $this->cleanupInvalidCartItems();
+        $this->computeTotalPax();
+       
+        // Save cleaned cart back to session
+        session([
+            'cart' => $this->cart,
+            'adults' => $this->adults,
+            'kids' => $this->kids,
+            'total_pax' => $this->total_pax,
+        ]);
+
+
         foreach ($this->cart as $index => $item) {
             if ($item['type'] === 'room') {
                 $room = Property::find($item['room_id']);
@@ -309,6 +322,118 @@ class ReservationForm extends Component
 
         // Load available rooms for display
         $this->getAvailableRooms();
+    }
+
+
+    /**
+     * Comprehensive cart cleanup to remove invalid items
+     */
+    protected function cleanupInvalidCartItems()
+    {
+        $cleanedCart = [];
+        $removedRooms = [];
+
+        foreach ($this->cart as $item) {
+            try {
+                if ($item['type'] === 'room') {
+                    // Validate room exists and has required properties
+                    if (!isset($item['room_id']) || empty($item['room_id'])) {
+                        continue; // Skip items with invalid room_id
+                    }
+
+                    $room = Property::find($item['room_id']);
+                    
+                    if (!$room) {
+                        $removedRooms[] = $item['room_id'] ?? 'unknown';
+                        continue;
+                    }
+
+                    // Check availability
+                    if (!$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                        $removedRooms[] = $room->id;
+                        continue;
+                    }
+
+                    // Validate cart item structure
+                    if (!$this->isValidRoomCartItem($item)) {
+                        $removedRooms[] = $room->id;
+                        continue;
+                    }
+
+                    // Item is valid, add to cleaned cart
+                    $cleanedCart[] = $item;
+                } else {
+                    // For non-room items, basic validation
+                    if ($this->isValidCartItem($item)) {
+                        $cleanedCart[] = $item;
+                    }
+                }
+            } catch (\Exception $e) {
+                // Log error and skip invalid item
+                Log::error('Cart cleanup error for item: ' . json_encode($item), [
+                    'error' => $e->getMessage()
+                ]);
+                continue;
+            }
+        }
+
+        // Clean up adults/kids arrays for removed rooms
+        foreach ($removedRooms as $roomId) {
+            unset($this->adults[$roomId]);
+            unset($this->kids[$roomId]);
+        }
+
+        $this->cart = $cleanedCart;
+        
+        // Add notices for removed items
+        if (!empty($removedRooms)) {
+            $this->cartNotices[] = "Some rooms were removed from your cart due to availability changes.";
+        }
+    }
+
+    /**
+     * Validate room cart item structure
+     */
+    protected function isValidRoomCartItem(array $item): bool
+    {
+        $requiredFields = ['type', 'room_id', 'room_name', 'adults', 'kids', 'total_amount'];
+        
+        foreach ($requiredFields as $field) {
+            if (!array_key_exists($field, $item)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Validate general cart item structure
+     */
+    protected function isValidCartItem(array $item): bool
+    {
+        if (!isset($item['type'])) {
+            return false;
+        }
+        
+        $requiredFields = [
+            'room' => ['room_id', 'room_name', 'adults', 'kids'],
+            'activity' => ['activity_id', 'activity_name', 'quantity'],
+            'service' => ['service_id', 'service_name', 'quantity']
+        ];
+        
+        $type = $item['type'];
+        if (!isset($requiredFields[$type])) {
+            return false;
+        }
+        
+        foreach ($requiredFields[$type] as $field) {
+            if (!array_key_exists($field, $item)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
 

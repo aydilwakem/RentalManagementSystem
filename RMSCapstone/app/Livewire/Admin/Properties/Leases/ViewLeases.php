@@ -86,6 +86,7 @@ class ViewLeases extends Component
     {
         $transactions = Transaction::with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 1) // House reservation type
+            ->where('transaction_status', '!=', 'archived')
             ->when($this->search !== '', function ($query) {
                 $search = '%' . $this->search . '%';
                 $query->whereHas('transactionUser', function ($subQuery) use ($search) {
@@ -452,4 +453,14 @@ class ViewLeases extends Component
 
         return back()->with('success', "Status rolled back to: {$previousStatus}");
     }
+
+    public function archiveLease($id)
+    {
+        $transaction = Transaction::find($id);
+        if ($transaction) {
+            $transaction->update(['transaction_status' => 'archived']);
+            session()->flash('message', 'Lease successfully archived!');
+        }
+    }
+
 }

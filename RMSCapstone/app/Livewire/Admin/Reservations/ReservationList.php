@@ -440,6 +440,7 @@ class ReservationList extends Component
             ->with(['transactionUser', 'properties'])
             ->whereDate('end_datetime', $today)
             ->where('reservation_type_id', 2)
+            ->nonArchived()
             ->orderBy('end_datetime')
             ->get();
 

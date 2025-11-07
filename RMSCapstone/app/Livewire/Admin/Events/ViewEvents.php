@@ -103,6 +103,7 @@ class ViewEvents extends Component
             ->select('trn_transactions.*')
             ->with(['transactionUser', 'properties'])
             ->where('reservation_type_id', 3)
+            ->where('transaction_status', '!=', 'archived')
             ->when($this->search !== '', function ($query) {
                 $search = '%' . $this->search . '%';
                 $query->where(function ($q) use ($search) {
