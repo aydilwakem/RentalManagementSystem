@@ -232,16 +232,52 @@
 
 
 
-                <!-- Payment Proof Expiration Hours -->
+                <!-- Room Payment Proof Expiration Hours -->
                 <div>
-                    <label for="payment_proof_expiration_hours"
+                    <label for="room_payment_proof_expiration_hours"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Payment Proof Expiration (Hours)
+                        Room Payment Proof Expiration (Hours)
                     </label>
-                    <input type="number" min="1" wire:model="payment_proof_expiration_hours"
-                        id="payment_proof_expiration_hours" placeholder="e.g., 24" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                   focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    <input type="number" min="1" wire:model="room_payment_proof_expiration_hours"
+                        id="room_payment_proof_expiration_hours" placeholder="e.g., 24" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    @error('room_payment_proof_expiration_hours')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Event Payment Proof Expiration Hours -->
+                <div>
+                    <label for="event_payment_proof_expiration_hours"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Event Payment Proof Expiration (Hours)
+                    </label>
+                    <input type="number" min="1" wire:model="event_payment_proof_expiration_hours"
+                        id="event_payment_proof_expiration_hours" placeholder="e.g., 24" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    @error('event_payment_proof_expiration_hours')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Day Tour Payment Proof Expiration Hours -->
+                <div>
+                    <label for="day_tour_payment_proof_expiration_hours"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Day Tour Payment Proof Expiration (Hours)
+                    </label>
+                    <input type="number" min="1" wire:model="day_tour_payment_proof_expiration_hours"
+                        id="day_tour_payment_proof_expiration_hours" placeholder="e.g., 24" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                    @error('day_tour_payment_proof_expiration_hours')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Deposit Percentage -->

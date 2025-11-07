@@ -15,14 +15,36 @@ class MarkExpiredTransactions extends Command
 
     public function handle()
     {
-        // Fetch the configured expiration time 
-        $expirationHours = Setting::first()->payment_proof_expiration_hours;
+        $settings = Setting::first();
+        if (!$settings) {
+            $this->error('No settings found.');
+            return;
+        }
 
-        // Mark transactions as expired if their 'created_at' is older than the expiration timeframe
-        $expiredTransactions = Transaction::whereIn('transaction_status', ['pending'])
-            ->where('created_at', '<=', Carbon::now()->subHours($expirationHours))
+        $expiredCount = 0;
+
+        // Process room reservations (reservation_type_id = 2)
+        $roomExpired = Transaction::whereIn('transaction_status', ['pending'])
+            ->where('reservation_type_id', 2) // Room reservations
+            ->where('created_at', '<=', Carbon::now()->subHours($settings->room_payment_proof_expiration_hours))
             ->update(['transaction_status' => 'expired']);
+        $expiredCount += $roomExpired;
 
-        $this->info("Expired transactions updated: $expiredTransactions");
+        // Process event reservations (reservation_type_id = 3)
+        $eventExpired = Transaction::whereIn('transaction_status', ['pending'])
+            ->where('reservation_type_id', 3) // Event reservations
+            ->where('created_at', '<=', Carbon::now()->subHours($settings->event_payment_proof_expiration_hours))
+            ->update(['transaction_status' => 'expired']);
+        $expiredCount += $eventExpired;
+
+        // Process day tour reservations (reservation_type_id = 4)
+        $dayTourExpired = Transaction::whereIn('transaction_status', ['pending'])
+            ->where('reservation_type_id', 4) // Day tour reservations
+            ->where('created_at', '<=', Carbon::now()->subHours($settings->day_tour_payment_proof_expiration_hours))
+            ->update(['transaction_status' => 'expired']);
+        $expiredCount += $dayTourExpired;
+
+        $this->info("Expired transactions updated: {$expiredCount} (Rooms: {$roomExpired}, Events: {$eventExpired}, Day Tours: {$dayTourExpired})");
     }
+    
 }

@@ -29,7 +29,9 @@ class Setting extends Model
         'custom_js',
         'enable_deposit_percentage',
         'deposit_percentage',
-        'payment_proof_expiration_hours'
+        'room_payment_proof_expiration_hours',
+        'event_payment_proof_expiration_hours',
+        'day_tour_payment_proof_expiration_hours'
     ];
 
     protected $casts = [
@@ -59,8 +61,11 @@ class Setting extends Model
                 'custom_js',
                 'enable_deposit_percentage',
                 'deposit_percentage',
-                'payment_proof_expiration_hours'])
-            // 4.2 Automatically log only the attributes that have changed  
+                'room_payment_proof_expiration_hours',
+                'event_payment_proof_expiration_hours',
+                'day_tour_payment_proof_expiration_hours'
+            ])
+            // 4.2 Automatically log only the attributes that have changed
             ->logOnlyDirty()
             // 4.3 Set a custom description for the activity log event
             ->setDescriptionForEvent(fn(string $eventName) => "Branding/Settings has been {$eventName}")
