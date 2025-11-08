@@ -1,7 +1,7 @@
 <div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white mb-1">
-            {{ __('Create Day Tour') }}
+            {{ __('Create Day Tour Package') }}
         </h2>
         <x-breadcrumbs :items="[
             ['label' => 'Day Tours', 'url' => route('admin.day-tours')],

@@ -19,7 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
-class ReservationList extends Component
+class CompletedReservations extends Component
 {
     use WithPagination; // Enables pagination for Livewire component
     // Properties that can be modified via URL parameters
@@ -85,8 +85,7 @@ class ReservationList extends Component
                 $query->where('property_type_id', 1);
             }])
             ->where('reservation_type_id', 2)
-            // Hide completed
-            ->where('transaction_status', '!=', 'done')
+            ->where('transaction_status', 'done')
             ->nonArchived()
             ->when($this->search !== '', function ($query) {
                 $query
@@ -132,7 +131,7 @@ class ReservationList extends Component
             session(['fake_ids_reservation_list' => $fakeIDs]);
         }
 
-        return view('livewire.admin.reservations.reservation-list', compact('transactions', 'fakeIDs'));
+        return view('livewire.admin.reservations.completed-reservations', compact('transactions', 'fakeIDs'));
     }
 
     // -------------------------------------- CONFIRMATION MODAL -------------------------------------- //

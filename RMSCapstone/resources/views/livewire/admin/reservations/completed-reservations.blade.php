@@ -19,21 +19,22 @@
                 {{ session('message') }}
             </div>
         @endif
+
         <!-- Navigation Tabs -->
         <div class="flex items-center justify-between">
 
             <!-- Tabs -->
-            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 ">
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600">
                 <li class="me-2">
                     <a href="{{ route('admin.reservations-list') }}"
-                    class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
+                        class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
                         Active Reservations
                     </a>
                 </li>
 
                 <li class="me-2">
                     <a href="{{ route('admin.completed-reservations') }}"
-                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
+                        class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
                         Completed Reservations
                     </a>
                 </li>
@@ -41,44 +42,21 @@
 
 
 
+
             <!-- Button + Dropdown -->
-            <div class="flex items-center gap-2 mb-4">
-                @can('new-reservation-create')
-                    <x-button icon="fas fa-plus" href="{{ route('admin.create-reservation') }}">
-                        New Reservation
-                    </x-button>
-                @endcan
+            <div class="flex items-center gap-2  mb-4">
+                <x-ghost-button icon="fas fa-plus" wire:navigate href="{{ route('admin.reservations-archives') }}">
+                    View archives
+                </x-ghost-button>
 
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="inline-flex items-center px-4 py-2 bg-gray-600 uppercase tracking-widest text-xs text-white rounded-md font-semibold hover:bg-gray-700">
-                        More Actions <i class="fas fa-chevron-down ml-2"></i>
-                    </button>
 
-                    <div x-show="open" @click.away="open = false" x-transition
-                        class="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border z-50 py-2">
+                <x-button class=" !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
+                    Deleted Reservations
+                </x-button>
 
-                        <button wire:click="exportCheckoutsToday"
-                            class="flex items-center w-full text-left px-4 py-2 text-sm text-yellow-500 hover:bg-gray-100">
-                            <i class="fas fa-file-export mr-2"></i> Export Check-outs Today
-                        </button>
-
-                        <a href="{{ route('admin.reservations-archives') }}" wire:navigate
-                            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fas fa-archive mr-2"></i> View Archives
-                        </a>
-
-                        @can('new-reservation-soft-delete')
-                            <a href="{{ route('admin.deleted-new-transactions') }}"
-                                class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-100">
-                                <i class="fas fa-trash mr-2"></i> Deleted Reservations
-                            </a>
-                        @endcan
-                    </div>
-                </div>
             </div>
         </div>
-
 
         <!-- Table Container -->
         <div

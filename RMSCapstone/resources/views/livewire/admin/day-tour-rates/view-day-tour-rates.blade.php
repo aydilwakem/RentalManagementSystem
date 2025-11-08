@@ -4,10 +4,11 @@
             {{ __('Day Tour Rates') }}
         </h2>
     </x-slot>
-   @if ($dayTourRates->isEmpty() && !$search && !$dayTourFilter && !$rateTypeFilter && !$dayTypeFilter && !$statusFilter)
+    @if ($dayTourRates->isEmpty() && !$search && !$dayTourFilter && !$rateTypeFilter && !$dayTypeFilter && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No day tour rates yet.<br> Click "Create Day Tour Rate" to add a new rate.</p>
+            <p class="text-gray-500 text-lg font-semibold">No day tour rates yet.<br> Click "Create Day Tour Rate" to add
+                a new rate.</p>
             <x-button class="mt-4" href="{{ route('admin.create-day-tour-rate') }}" icon="fas fa-plus">
                 Create Day Tour Rate
             </x-button>
@@ -27,7 +28,8 @@
                 <!-- Create New -->
                 @can('daytourrate-create')
                     <div class="flex justify-between items-center mb-4">
-                        <x-button icon="fas fa-plus" onclick="window.location.href='{{ route('admin.create-day-tour-rate') }}'">
+                        <x-button icon="fas fa-plus"
+                            onclick="window.location.href='{{ route('admin.create-day-tour-rate') }}'">
                             New Day Tour Rate
                         </x-button>
                     </div>
@@ -67,29 +69,29 @@
                     </div>
 
                     <!-- Bulk Delete Button -->
-                    @if($dayTourRates->count() > 0)
-                    <div class="relative inline-block text-left" x-data="{ open: false }">
-                        <button @click="open = !open" type="button"
-                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                    @if ($dayTourRates->count() > 0)
+                        <div class="relative inline-block text-left" x-data="{ open: false }">
+                            <button @click="open = !open" type="button"
+                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
                             dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                            Actions
-                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
+                                Actions
+                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
 
-                        <div x-show="open" @click.away="open = false"
-                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                            <div x-show="open" @click.away="open = false"
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
                             dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                            <div class="py-1">
-                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
-                                    Delete</a>
+                                <div class="py-1">
+                                    <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
+                                        Delete</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
                 </div>
 
@@ -149,7 +151,8 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-left">
-                    <thead wire:loading.remove wire:target="search, dayTourFilter, rateTypeFilter, dayTypeFilter, statusFilter"
+                    <thead wire:loading.remove
+                        wire:target="search, dayTourFilter, rateTypeFilter, dayTypeFilter, statusFilter"
                         class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>
                             <!-- Select All Checkbox -->
@@ -166,10 +169,10 @@
                             {{-- <th scope="col" class="px-4 py-3">Rate Type</th> --}}
 
                             <!-- Day Type -->
-                            <th scope="col" class="px-4 py-3">Day Type</th>
+                            <th scope="col" class="px-4 py-3">Rate Type</th>
 
                             <!-- Adult Rate -->
-                            <th scope="col" class="px-4 py-3">Adjusted Rate</th>
+                            <th scope="col" class="px-4 py-3">Rate</th>
 
                             <!-- Kid Rate -->
                             {{-- <th scope="col" class="px-4 py-3">Kid Rate</th> --}}
@@ -181,7 +184,9 @@
                             <th scope="col" class="px-4 py-3">Actions</th>
                         </tr>
                     </thead>
-                    <tbody wire:loading.remove wire:target="search, dayTourFilter, rateTypeFilter, dayTypeFilter, statusFilter" class="dark:bg-gray-700">
+                    <tbody wire:loading.remove
+                        wire:target="search, dayTourFilter, rateTypeFilter, dayTypeFilter, statusFilter"
+                        class="dark:bg-gray-700">
                         @forelse ($dayTourRates as $rate)
                             <tr
                                 class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
@@ -199,21 +204,35 @@
                                     </span>
                                 </td> --}}
                                 <td class="px-4 py-3">
-                                    <span class="nline-block py-1 px-2 rounded-full text-sm font-semibold
-                                        {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
-                                           ($rate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
-                                        {{ $rate->day_type_label }}
-                                    </span>
+                                    @if ($rate->day_type === 'holiday')
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-600">
+                                            Holiday
+                                        </span>
+                                    @elseif($rate->day_type === 'weekend')
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">
+                                            Weekend
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-600">
+                                            Weekday
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-4 py-3 font-semibold text-green-700">₱{{ number_format($rate->adult_rate, 2) }}</td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    ₱{{ number_format($rate->adult_rate, 2) }}</td>
                                 {{-- <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($rate->kid_rate, 2) }}</td> --}}
                                 <td class="px-4 py-3">
                                     @if ($rate->is_active)
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
                                             Active
                                         </span>
                                     @else
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                             Inactive
                                         </span>
                                     @endif
@@ -222,14 +241,16 @@
                                     <!-- View Icon -->
                                     @can('daytourrate-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
-                                            wire:navigate href="{{ route('admin.view-day-tour-rate', ['dayTourRate' => $rate->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.view-day-tour-rate', ['dayTourRate' => $rate->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('daytourrate-edit')
                                         <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
-                                            wire:navigate href="{{ route('admin.edit-day-tour-rate', ['dayTourRate' => $rate->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.edit-day-tour-rate', ['dayTourRate' => $rate->id]) }}">
                                         </i>
                                     @endcan
 

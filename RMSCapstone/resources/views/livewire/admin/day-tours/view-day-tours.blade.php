@@ -167,7 +167,7 @@
                                 </th>
                                 <td class="px-4 py-3">{{ $tour->duration_hours }} hours</td>
                                 {{-- <td class="px-4 py-3">{{ $tour->max_guests }} guests</td> --}}
-                                <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($tour->base_price, 2) }}</td>
+                                <td class="px-4 py-3 text-gray-800">₱{{ number_format($tour->base_price, 2) }}</td>
                                 {{-- <td class="px-4 py-3">
                                     <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $tour->rates_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">

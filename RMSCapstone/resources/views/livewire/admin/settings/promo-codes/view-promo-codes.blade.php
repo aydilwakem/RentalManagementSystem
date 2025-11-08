@@ -184,7 +184,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-3">
-                            {{ $promoCode->propertyCategory->name ?? 'No Assigned Property' }}</td>
+                            {{ $promoCode->propertyCategory->name ?? 'All Rooms' }}</td>
                         <td class="px-4 py-3">
                             @if ($promoCode->is_active)
                             <span

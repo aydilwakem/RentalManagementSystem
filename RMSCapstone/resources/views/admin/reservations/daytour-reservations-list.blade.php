@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Day Tour Packages') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:text-white">
+            {{ __('Day Tour Reservations') }}
         </h2>
     </x-slot>
 
     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg dark:bg-gray-800 dark:text-white">
-        @livewire('admin.day-tours.view-day-tours')
+        @livewire('admin.reservations.day-tour-reservation-list')
     </div>
 
 </x-app-layout>

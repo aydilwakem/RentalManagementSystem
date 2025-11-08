@@ -30,10 +30,11 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <strong class="font-bold">Success!</strong>
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                    role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
             @endif
 
             <!-- Form Container -->
@@ -45,12 +46,14 @@
 
                         <!-- Promo Name -->
                         <div>
-                            <label for="code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            <label for="code"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Promo Code <span class="text-red-500">*</span>
                             </label>
 
                             <div class="relative">
-                                <input type="text" wire:model="code" id="code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
+                                <input type="text" wire:model="code" id="code"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
                                     dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                     placeholder="Ex. RAINY500">
 
@@ -62,7 +65,7 @@
                             </div>
 
                             @error('code')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -72,11 +75,12 @@
                             <label for="description"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Promo
                                 Name/Description</label>
-                            <input type="text" wire:model="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="description" id="description"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
                             @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -86,61 +90,97 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Discount Type <span class="text-red-500">*</span>
                             </label>
-                            <select wire:model.live="discount_type" id="discount_type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <select wire:model.live="discount_type" id="discount_type" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                                 <option value="">Select Discount Type</option>
                                 <option value="fixed">Fixed</option>
                                 <option value="percentage">Percentage</option>
                             </select>
                             @error('discount_type')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                     </div>
 
-                    <!-- Discount Value -->
-                    <div>
-                        <label for="discount_value"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Discount Value <span class="text-red-500">*</span>
-                        </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+                        <!-- Discount Value -->
+                        <div>
+                            <label for="discount_value"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Discount Value <span class="text-red-500">*</span>
+                            </label>
 
-                        <div class="relative">
-                            {{-- Symbol when type is selected --}}
-                            @if ($discount_type === 'fixed')
-                            <span
-                                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
-                            @elseif ($discount_type === 'percentage')
-                            <span
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
-                            @endif
+                            <div class="relative">
+                                {{-- Symbol when type is selected --}}
+                                @if ($discount_type === 'fixed')
+                                    <span
+                                        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">₱</span>
+                                @elseif ($discount_type === 'percentage')
+                                    <span
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-200">%</span>
+                                @endif
 
-                            {{-- Placeholders based on type --}}
-                            <input type="number" wire:model="discount_value" id="discount_value" class="
-                            @if ($discount_type === 'fixed') pl-8
-                            @elseif ($discount_type === 'percentage') pr-8 @endif
-                            bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                                placeholder="{{ $discount_type === 'percentage' ? 'Ex. 10%' : ($discount_type === 'fixed' ? 'Ex. ₱500' : 'Enter discount value') }}">
+                                {{-- Placeholders based on type --}}
+                                <input type="number" wire:model="discount_value" id="discount_value"
+                                    class="
+                                @if ($discount_type === 'fixed') pl-8
+                                @elseif ($discount_type === 'percentage') pr-8 @endif
+                                bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                    placeholder="{{ $discount_type === 'percentage' ? 'Ex. 10%' : ($discount_type === 'fixed' ? 'Ex. ₱500' : 'Enter discount value') }}">
+                            </div>
+
+                            @error('discount_value')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        @error('discount_value')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        {{-- Assigned Room Category --}}
+                        <div>
+                            <label for="property_category_id"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apply
+                                to <span class="text-red-500">*</span></label>
+                            <select wire:model="property_category_id" id="property_category_id" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                <option value="">Select Room Category</option>
+                                @foreach ($propertyCategories as $propertyCategory)
+                                    <option value="{{ $propertyCategory->id }}">{{ $propertyCategory->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('property_category_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
 
+                        <!-- Minimum Booking Amount -->
+                        <div>
+                            <label for="min_booking_amount"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Minimum
+                                Booking Amount</label>
+                            <input type="text" wire:model="min_booking_amount" id="min_booking_amount"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                placeholder="Ex. P3,000.00">
+                            @error('min_booking_amount')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
                     <!-- Max Uses -->
                     <div>
                         <label for="max_uses" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Uses
                         </label>
-                        <input type="number" wire:model="max_uses" id="max_uses" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"
-                            max="30" placeholder="Ex. 10">
+                        <input type="number" wire:model="max_uses" id="max_uses"
+                            class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            min="1" max="30" placeholder="Ex. 10">
                         @error('max_uses')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -149,43 +189,16 @@
                         <label for="per_user_limit"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Limit Per
                             User <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="per_user_limit" id="per_user_limit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="number" wire:model="per_user_limit" id="per_user_limit"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 1">
                         @error('per_user_limit')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Minimum Booking Amount -->
-                    <div>
-                        <label for="min_booking_amount"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Minimum
-                            Booking Amount</label>
-                        <input type="text" wire:model="min_booking_amount" id="min_booking_amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. P3,000.00">
-                        @error('min_booking_amount')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    {{-- Assigned Room Category --}}
-                    <div>
-                        <label for="property_category_id"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apply
-                            to <span class="text-red-500">*</span></label>
-                        <select wire:model="property_category_id" id="property_category_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                            <option value="">Select Room Category</option>
-                            @foreach ($propertyCategories as $propertyCategory)
-                            <option value="{{ $propertyCategory->id }}">{{ $propertyCategory->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('property_category_id')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
 
                     {{-- Promo Active --}}
                     <div>
@@ -206,7 +219,7 @@
                             <span class="text-gray-700 dark:text-gray-200">Active</span>
                         </div>
                         @error('is_active')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -218,8 +231,8 @@
                         <div class="flex items-center gap-3">
                             <span class="text-gray-700 dark:text-gray-200">No Expiration</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model.live="has_expiration" id="has_expiration" value="1"
-                                    class="sr-only peer">
+                                <input type="checkbox" wire:model.live="has_expiration" id="has_expiration"
+                                    value="1" class="sr-only peer">
                                 <div
                                     class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
                                 </div>
@@ -230,84 +243,85 @@
                             <span class="text-gray-700 dark:text-gray-200">Has Expiration</span>
                         </div>
                         @error('has_expiration')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
 
 
                     @if ($has_expiration)
-                    <!-- Duration Days -->
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Duration</label>
-                        <div class="text-gray-700 text-sm bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                            {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
+                        <!-- Start Date -->
+                        <div>
+                            <label for="start_date"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
+                                Date <span class="text-red-500">*</span></label>
+                            <input type="date" wire:model.live="start_date" id="start_date" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                            @error('start_date')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-                    </div>
 
-
-                    <!-- Start Date -->
-                    <div>
-                        <label for="start_date"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Start
-                            Date <span class="text-red-500">*</span></label>
-                        <input type="date" wire:model.live="start_date" id="start_date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <!-- End Date -->
+                        <div>
+                            <label for="end_date"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                End Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" wire:model.live="end_date" id="end_date" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('start_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                            @error('end_date')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <!-- End Date -->
-                    <div>
-                        <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            End Date <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" wire:model.live="end_date" id="end_date" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('end_date')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <!-- Duration Days -->
+                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                            <span class="font-medium text-gray-900 dark:text-gray-200">Duration:</span>
+                            {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
+                        </p>
                     @endif
 
-<!-- Stay Date Range Section -->
-<div class="col-span-2 mt-6">
-    <h3 class="text-lg font-bold text-green-800 mb-3 dark:text-green-300">Valid Stay Dates (Optional)</h3>
-    <p class="text-sm text-gray-600 mb-4 dark:text-gray-300">
-        If set, this promo will only apply to reservations with check-in/check-out dates within this range.
-        Leave blank to apply to all stay dates.
-    </p>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Valid Stay Start Date -->
-        <div>
-            <label for="stay_start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                Valid Stay Start Date
-            </label>
-            <input type="date" wire:model="stay_start_date" id="stay_start_date" 
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 
-                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-            @error('stay_start_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
+                    <!-- Stay Date Range Section -->
+                    <div class="col-span-2 mt-6">
+                        <h3 class="text-lg font-bold text-green-800 dark:text-green-300">Eligible Booking Dates</h3>
+                        <p class="text-sm text-gray-600 mb-4 dark:text-gray-300">
+                            This promo only works for stays that fall within the selected date range. Leave blank to
+                            apply it to any stay date.
+                        </p>
 
-        <!-- Valid Stay End Date -->
-        <div>
-            <label for="stay_end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                Valid Stay End Date
-            </label>
-            <input type="date" wire:model="stay_end_date" id="stay_end_date" 
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Valid Stay Start Date -->
+                            <div>
+                                <label for="stay_start_date"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Valid Stay Start Date
+                                </label>
+                                <input type="date" wire:model="stay_start_date" id="stay_start_date"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-            @error('stay_end_date')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-    </div>
-</div>
+                                @error('stay_start_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Valid Stay End Date -->
+                            <div>
+                                <label for="stay_end_date"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Valid Stay End Date
+                                </label>
+                                <input type="date" wire:model="stay_end_date" id="stay_end_date"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                                @error('stay_end_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
 
                 </div>

@@ -549,10 +549,10 @@ class ViewReservation extends Component
     public function editPayment($paymentId)
     {
         $this->editingPayment = Payment::with('paymentMethod')->find($paymentId);
-        
+
         if ($this->editingPayment) {
             $this->edit_amount_paid = $this->editingPayment->amount_paid;
-            $this->edit_payment_date = $this->editingPayment->payment_date 
+            $this->edit_payment_date = $this->editingPayment->payment_date
                 ? \Carbon\Carbon::parse($this->editingPayment->payment_date)->format('Y-m-d')
                 : now()->format('Y-m-d');
             $this->edit_payment_type = $this->editingPayment->payment_type;
@@ -597,7 +597,7 @@ class ViewReservation extends Component
 
             // Recalculate invoice totals
             $this->recalculateInvoice();
-            
+
             $this->showEditPaymentModal = false;
             return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
                 ->with('success', 'Payment created successfully.');
@@ -608,11 +608,11 @@ class ViewReservation extends Component
     {
         $this->showEditPaymentModal = false;
         $this->reset([
-            'editingPayment', 
-            'edit_amount_paid', 
-            'edit_payment_date', 
-            'edit_payment_type', 
-            'edit_notes', 
+            'editingPayment',
+            'edit_amount_paid',
+            'edit_payment_date',
+            'edit_payment_type',
+            'edit_notes',
             'edit_payment_method_id',
             'edit_payment_screenshot',
             'existing_payment_screenshot'
@@ -753,23 +753,23 @@ public function openDiscountModal()
     // Refresh data from database
     $this->transaction->refresh();
     $this->invoice->refresh();
-    
+
     // Load existing PWD/Senior IDs
     $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
-    
+
     // Load existing discount amount if applied
     if ($this->discountsApplied) {
         $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
         $seniorDiscountType = DiscountType::where('name', 'senior')->first();
-        
+
         if ($pwdDiscountType || $seniorDiscountType) {
             $existingDiscount = InvoiceDiscount::where('invoice_id', $this->invoice->id)
                 ->whereIn('discount_type_id', [
-                    $pwdDiscountType?->id, 
+                    $pwdDiscountType?->id,
                     $seniorDiscountType?->id
                 ])
                 ->first();
-                
+
             if ($existingDiscount) {
                 $this->manualDiscountAmount = $existingDiscount->discount_value;
             }
@@ -777,11 +777,11 @@ public function openDiscountModal()
     } else {
         $this->manualDiscountAmount = 0;
     }
-    
+
     // Reset editing fields
     $this->editingPwdSeniorId = '';
     $this->editingPwdSeniorName = '';
-    
+
     $this->showDiscountModal = true;
 }
 
@@ -820,7 +820,7 @@ public function openDiscountModal()
         // Clear input fields
         $this->editingPwdSeniorId = '';
         $this->editingPwdSeniorName = '';
-        
+
         // Refresh transaction
         $this->transaction->refresh();
     }
@@ -830,15 +830,15 @@ public function openDiscountModal()
         // Ensure the index exists and remove it
         if (isset($this->pwdSeniorIds[$index])) {
             unset($this->pwdSeniorIds[$index]);
-            
+
             // Reindex the array to maintain proper indexing
             $this->pwdSeniorIds = array_values($this->pwdSeniorIds);
-            
+
             // Update the transaction immediately to persist changes
             $this->transaction->update([
                 'pwd_senior_ids' => $this->pwdSeniorIds,
             ]);
-            
+
             // Refresh the transaction to get updated data
             $this->transaction->refresh();
         }
@@ -879,11 +879,11 @@ public function openDiscountModal()
         if ($this->transaction->transaction_status === 'done') {
             return false;
         }
-        
+
         // PayMongo payments have reference numbers starting with "pay_"
-        $isPayMongoPayment = !empty($payment->payment_reference_number) && 
+        $isPayMongoPayment = !empty($payment->payment_reference_number) &&
                             Str::startsWith($payment->payment_reference_number, 'pay_');
-        
+
         // Only allow editing if it's NOT a PayMongo payment
         return !$isPayMongoPayment;
     }
@@ -921,7 +921,7 @@ public function openDiscountModal()
         $this->transaction->update([
             'pwd_senior_ids' => null,
         ]);
-        
+
         $this->pwdSeniorIds = [];
 
         // Use the same recalculation pattern as promo codes
@@ -2266,6 +2266,9 @@ public function openDiscountModal()
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
+
+        session()->flash('message', 'Email for the remaining balance has been successfully sent to the guest.');
+        session()->flash('alert-type', 'success');
 
         return redirect()->route('admin.view-reservation', ['transaction' => $transaction->id]);
     }

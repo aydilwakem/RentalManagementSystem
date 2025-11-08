@@ -534,7 +534,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->middleware('can:event-inclusions-soft-delete');
 
         // --------------------- Day Tours ---------------------------------------
-        Route::get('/day-tours', ViewDayTours::class)->name('admin.day-tours')->middleware('can:daytour-list');
+        // Route::get('/day-tours', ViewDayTours::class)->name('admin.day-tours')->middleware('can:daytour-list');
+        Route::get('/day-tours', function () {
+            return view('admin.day-tour.view-day-tours');
+        })
+            ->name('admin.day-tours')
+            ->middleware('can:daytour-list');
 
         Route::get('create/day-tour', CreateDayTour::class)->name('admin.create-day-tour')->middleware('can:daytour-create');
 
@@ -545,7 +550,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('deleted-day-tours', DeletedDayTours::class)->name('admin.deleted-day-tours')->middleware('can:daytour-soft-delete');
 
         // --------------------- Day Tour Rates ---------------------------------------
-        Route::get('/day-tour-rates', ViewDayTourRates::class)->name('admin.day-tour-rates')->middleware('can:daytourrate-list');
+        // Route::get('/day-tour-rates', ViewDayTourRates::class)->name('admin.day-tour-rates')->middleware('can:daytourrate-list');
+        Route::get('/day-tour-rates', function () {
+            return view('admin.day-tour.view-daytour-rates');
+        })
+            ->name('admin.day-tour-rates')
+            ->middleware('can:daytourrate-list');
+
 
         Route::get('create/day-tour-rate', CreateDayTourRate::class)->name('admin.create-day-tour-rate')->middleware('can:daytourrate-create');
 
@@ -559,7 +570,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         //Daytour Reports
         Route::get('/daytour-reports', function () {
             return view('admin.reports.daytour-reports');
-        })->name('admin.daytour-reports'); 
+        })->name('admin.daytour-reports');
 
         // --------------------- Maintenance ---------------------------------------
 
@@ -683,6 +694,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             return view('admin.reservations.create-reservation');
         })->name('admin.create-reservation');
 
+        // Completed Reservations
+        Route::get('completed-reservations', function () {
+            return view('admin.reservations.completed-reservation');
+        })->name('admin.completed-reservations');
+
         // View Reservation
         Route::get('view/reservation/{transaction}', ViewReservation::class)->name('admin.view-reservation');
 
@@ -774,7 +790,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->middleware('can:old-booking-list');
 
         // Day Tour Routes
-        Route::get('/daytour-reservations', DayTourReservationList::class)
+        Route::get('/daytour-reservations', function () {
+            return view('admin.reservations.daytour-reservations-list');
+        })
             ->name('admin.daytour-reservations-list')
             ->middleware(['auth', 'can:daytour-reservation-list']);
 

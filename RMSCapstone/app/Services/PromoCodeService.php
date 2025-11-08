@@ -152,7 +152,7 @@ class PromoCodeService
 
         foreach ($roomBreakdown as $room) {
             $propertyCategoryId = $room['property_category_id'] ?? null;
-            
+
             if ($promo->appliesToPropertyCategory($propertyCategoryId)) {
                 $eligibleBaseRoomAmount += $room['base_amount'] ?? $room['roomAmount'] ?? 0;
             }
@@ -181,7 +181,7 @@ class PromoCodeService
         $baseMessage = 'Promo code applied! You saved ₱' . number_format($discount, 2);
 
         if (!$promo->isCategorySpecific()) {
-            return $baseMessage . ' on all room charges.';
+            return $baseMessage . ' on base room charges.';
         }
 
         if ($promo->propertyCategory) {

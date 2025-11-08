@@ -1708,7 +1708,7 @@
                 @if (session('message'))
                     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                         class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-md
-                                        {{ session('alert-type') === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
+                        {{ session('alert-type') === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
                         {{ session('message') }}
                     </div>
                 @endif

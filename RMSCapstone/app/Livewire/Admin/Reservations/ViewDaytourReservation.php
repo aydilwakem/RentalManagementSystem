@@ -964,10 +964,10 @@ class ViewDaytourReservation extends Component
     public function editPayment($paymentId)
     {
         $this->editingPayment = Payment::with('paymentMethod')->find($paymentId);
-        
+
         if ($this->editingPayment) {
             $this->edit_amount_paid = $this->editingPayment->amount_paid;
-            $this->edit_payment_date = $this->editingPayment->payment_date 
+            $this->edit_payment_date = $this->editingPayment->payment_date
                 ? \Carbon\Carbon::parse($this->editingPayment->payment_date)->format('Y-m-d')
                 : now()->format('Y-m-d');
             $this->edit_payment_type = $this->editingPayment->payment_type;
@@ -1019,10 +1019,10 @@ public function updatePayment()
         $this->manualInvoiceRecalculationAfterPaymentUpdate($originalAmount, $newAmount);
 
         $this->showEditPaymentModal = false;
-        
+
         // Refresh component data
         $this->refreshComponentData();
-        
+
         session()->flash('success', 'Payment updated successfully.');
     }
 }
@@ -1070,11 +1070,11 @@ protected function manualInvoiceRecalculationAfterPaymentUpdate($originalAmount,
     {
         $this->showEditPaymentModal = false;
         $this->reset([
-            'editingPayment', 
-            'edit_amount_paid', 
-            'edit_payment_date', 
-            'edit_payment_type', 
-            'edit_notes', 
+            'editingPayment',
+            'edit_amount_paid',
+            'edit_payment_date',
+            'edit_payment_type',
+            'edit_notes',
             'edit_payment_method_id',
             'edit_payment_screenshot',
             'existing_payment_screenshot'
@@ -1106,11 +1106,11 @@ protected function manualInvoiceRecalculationAfterPaymentUpdate($originalAmount,
         if ($this->transaction->transaction_status === 'done') {
             return false;
         }
-        
+
         // PayMongo payments have reference numbers starting with "pay_"
-        $isPayMongoPayment = !empty($payment->payment_reference_number) && 
+        $isPayMongoPayment = !empty($payment->payment_reference_number) &&
                             \Illuminate\Support\Str::startsWith($payment->payment_reference_number, 'pay_');
-        
+
         // Only allow editing if it's NOT a PayMongo payment
         return !$isPayMongoPayment;
     }
