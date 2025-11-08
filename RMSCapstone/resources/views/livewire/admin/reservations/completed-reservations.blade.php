@@ -22,7 +22,19 @@
 
         <!-- Navigation Tabs -->
         <div class="flex items-center justify-between">
+            <!-- Button + Dropdown -->
+            <div class="flex items-center gap-2  mb-4">
+                <x-ghost-button icon="fas fa-archive" wire:navigate href="{{ route('admin.reservations-archives') }}">
+                    View archives
+                </x-ghost-button>
 
+
+                <x-button class=" !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
+                    icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
+                    Deleted Reservations
+                </x-button>
+
+            </div>
             <!-- Tabs -->
             <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600">
                 <li class="me-2">
@@ -39,23 +51,6 @@
                     </a>
                 </li>
             </ul>
-
-
-
-
-            <!-- Button + Dropdown -->
-            <div class="flex items-center gap-2  mb-4">
-                <x-ghost-button icon="fas fa-plus" wire:navigate href="{{ route('admin.reservations-archives') }}">
-                    View archives
-                </x-ghost-button>
-
-
-                <x-button class=" !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                    icon="fas fa-trash" href="{{ route('admin.deleted-new-transactions') }}">
-                    Deleted Reservations
-                </x-button>
-
-            </div>
         </div>
 
         <!-- Table Container -->

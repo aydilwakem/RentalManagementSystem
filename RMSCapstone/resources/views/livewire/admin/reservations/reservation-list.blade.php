@@ -21,26 +21,6 @@
         @endif
         <!-- Navigation Tabs -->
         <div class="flex items-center justify-between">
-
-            <!-- Tabs -->
-            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 ">
-                <li class="me-2">
-                    <a href="{{ route('admin.reservations-list') }}"
-                    class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
-                        Active Reservations
-                    </a>
-                </li>
-
-                <li class="me-2">
-                    <a href="{{ route('admin.completed-reservations') }}"
-                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
-                        Completed Reservations
-                    </a>
-                </li>
-            </ul>
-
-
-
             <!-- Button + Dropdown -->
             <div class="flex items-center gap-2 mb-4">
                 @can('new-reservation-create')
@@ -77,6 +57,22 @@
                     </div>
                 </div>
             </div>
+            <!-- Tabs -->
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 ">
+                <li class="me-2">
+                    <a href="{{ route('admin.reservations-list') }}"
+                    class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
+                        Active Reservations
+                    </a>
+                </li>
+
+                <li class="me-2">
+                    <a href="{{ route('admin.completed-reservations') }}"
+                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
+                        Completed Reservations
+                    </a>
+                </li>
+            </ul>
         </div>
 
 
@@ -296,7 +292,7 @@
                                     {{-- Rooms --}}
                                     <td class="px-4 py-3">
                                         @foreach ($transaction->properties as $property)
-                                            {{ $property->name_number ?? 'N/A' }}<br>
+                                            {{ ucwords($property->name_number) ?? 'N/A' }}{{ !$loop->last ? ', ' : '' }}
                                         @endforeach
                                     </td>
 

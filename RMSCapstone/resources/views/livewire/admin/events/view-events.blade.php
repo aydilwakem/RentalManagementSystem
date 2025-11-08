@@ -28,19 +28,28 @@
                     </div>
                 @endcan
 
-            <!-- Add this Archive Events button -->
-            <x-button icon="fas fa-archive" href="{{ route('admin.events-archives') }}" wire:navigate>
-                View Archives
-            </x-button>
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="inline-flex items-center px-4 py-2 bg-gray-600 uppercase tracking-widest text-xs text-white rounded-md font-semibold hover:bg-gray-700">
+                        More Actions <i class="fas fa-chevron-down ml-2"></i>
+                    </button>
 
+                    <div x-show="open" @click.away="open = false" x-transition
+                        class="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border z-50 py-2">
 
-                @can('event-soft-delete')
-                    <!-- Deleted Items (Restore and Delete Forever) -->
-                    <x-button class="!bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-events') }}">
-                        Deleted Events
-                    </x-button>
-                @endcan
+                        <a href="{{ route('admin.events-archives') }}" wire:navigate
+                            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-archive mr-2"></i> View Archives
+                        </a>
+
+                        @can('event-soft-delete')
+                            <a href="{{ route('admin.deleted-events') }}"
+                                class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                <i class="fas fa-trash mr-2"></i> Deleted Events
+                            </a>
+                        @endcan
+                    </div>
+                </div>
             </div>
 
 
@@ -63,7 +72,8 @@
                             {{-- Search Bar --}}
                             <input wire:model.live.debounce.300ms="search" type="text"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search" required="">
+                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="Search" required="">
                         </div>
                     </div>
 
@@ -92,7 +102,8 @@
                     <div class="flex flex-col items-center justify-center text-center">
                         <!-- Spinner -->
                         <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
                             <path class="opacity-75" fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                         </svg>
@@ -126,8 +137,9 @@
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -150,15 +162,17 @@
                                     @else
                                         @if ($sortDir == 'ASC')
                                             {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                             </svg>
                                         @else
                                             {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                             </svg>
@@ -167,7 +181,7 @@
                                 </button>
                             </th>
                             <th scope="col" class="px-4 py-3">Event End</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3 text-center">Status</th>
                             <th scope="col" class="px-4 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -175,7 +189,8 @@
                         @forelse ($event as $eventItem)
                             <tr
                                 class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $eventItem->transaction_number }}
                                 </th>
 
@@ -189,8 +204,8 @@
                                 </td>
                                 <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A' }} </td>
                                 <td class="px-4 py-3">
-                                    @foreach ($eventItem->properties->where('property_type_id', 3) as $property)
-                                        {{ $property->name_number ?? 'N/A' }}<br>
+                                    @foreach ($eventItem->properties->where('property_type_id', 3) as $index => $property)
+                                        {{ $property->name_number ?? 'N/A' }}{{ !$loop->last ? ', ' : '' }}
                                     @endforeach
                                 </td>
                                 <td class="px-4 py-3">
@@ -202,40 +217,60 @@
                                     {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('g:i A') }}
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if ($eventItem->transaction_status === 'confirmed')
+                                    @if ($eventItem->transaction_status === 'pending')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 text-center">
+                                            Awaiting Payment
+                                        </span>
+                                    @elseif ($eventItem->transaction_status === 'reserved')
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500 text-center">
+                                            Pending Verification
+                                        </span>
+                                    @elseif ($eventItem->transaction_status === 'receipt_verified')
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500 text-center">
+                                            Payment Verified
+                                        </span>
+                                    @elseif ($eventItem->transaction_status === 'confirmed')
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600 text-center">
                                             Confirmed
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'receipt_verified')
+                                    @elseif ($eventItem->transaction_status === 'ongoing')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-600">Payment
-                                            Verified
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600 text-center">
+                                            On-Going
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'reserved')
+                                    @elseif ($eventItem->transaction_status === 'done')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-600">Reserved
-
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600 text-center">
+                                            Completed
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'pending')
+                                    @elseif ($eventItem->transaction_status === 'no_show')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">Pending
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500 text-center">
+                                            No Show
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'ongoing')
+                                    @elseif ($eventItem->transaction_status === 'terminated')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600">On-Going
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600 text-center">
+                                            Terminated
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'done')
+                                    @elseif ($eventItem->transaction_status === 'expired')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500">Done
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500 text-center">
+                                            Expired
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'terminated')
+                                    @elseif ($eventItem->transaction_status === 'cancelled')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-blue-600">Terminated
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600 text-center">
+                                            Cancelled
                                         </span>
-                                    @elseif($eventItem->transaction_status === 'cancelled')
+                                    @elseif ($eventItem->transaction_status === 'archived')
                                         <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600">Cancelled
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-300 text-gray-700 text-center">
+                                            Archived
                                         </span>
                                     @endif
                                 </td>
@@ -243,21 +278,24 @@
                                     <!-- View Icon -->
                                     @can('event-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('event-edit')
                                         <i class=" fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Delete Icon -->
                                     @can('event-delete')
                                         <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                            wire:click="confirmDelete({{ $eventItem->id }})" wire:loading.attr="disabled">
+                                            wire:click="confirmDelete({{ $eventItem->id }})"
+                                            wire:loading.attr="disabled">
                                         </i>
                                     @endcan
 
@@ -302,7 +340,8 @@
                     </x-slot>
 
                     <x-slot name="footer">
-                        <x-secondary-button wire:click="$set('confirmItemDelete', false)" wire:loading.attr="disabled">
+                        <x-secondary-button wire:click="$set('confirmItemDelete', false)"
+                            wire:loading.attr="disabled">
                             {{ __('Cancel') }}
                         </x-secondary-button>
 

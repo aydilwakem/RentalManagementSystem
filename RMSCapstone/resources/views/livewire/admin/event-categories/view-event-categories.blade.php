@@ -100,7 +100,7 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-sm text-left">
+                <table class="w-full text-left">
                     <thead wire:loading.remove wire:target="search"
                         class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                         <tr>

@@ -28,10 +28,11 @@
             </div>
 
             @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <strong class="font-bold">Success!</strong>
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                    role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
             @endif
 
             <!-- Form Container -->
@@ -47,11 +48,12 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 First Name <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" wire:model="first_name" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="first_name" id="first_name"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Juan">
                             @error('first_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -60,11 +62,12 @@
                             <label for="middle_name"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Middle
                                 Name</label>
-                            <input type="text" wire:model="middle_name" id="middle_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="middle_name" id="middle_name"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Mercado">
                             @error('middle_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -74,11 +77,12 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Last Name <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" wire:model="last_name" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="last_name" id="last_name"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Dela Cruz">
                             @error('last_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -88,11 +92,12 @@
                     <div>
                         <label for="suffix"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Suffix</label>
-                        <input type="text" wire:model="suffix" id="suffix" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="text" wire:model="suffix" id="suffix"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Jr., III">
                         @error('suffix')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -101,11 +106,12 @@
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Email <span class="text-red-500">*</span>
                         </label>
-                        <input type="email" wire:model="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="email" wire:model="email" id="email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. juan.delacruz@example.com">
                         @error('email')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -114,33 +120,36 @@
                         <label for="contact_number"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Contact
                             Number</label>
-                        <input type="tel" inputmode="numeric" maxlength="11" id="phone" name="phone" wire:ignore
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" wire:model="contact_number" id="contact_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="tel" inputmode="numeric" maxlength="11" id="phone" name="phone"
+                            wire:ignore oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            wire:model="contact_number" id="contact_number"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. 0912 3456 7890">
                         @error('contact_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <script>
+                    {{-- <script>
                         const input = document.querySelector("#phone");
                         window.intlTelInput(input, {
                             loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.5/build/js/utils.js"),
                             initialCountry: 'ph',
                             strictMode: true,
                         });
-                    </script>
+                    </script> --}}
 
                     <!-- Company Name -->
                     <div>
                         <label for="company_name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Company
                             Name</label>
-                        <input type="text" wire:model="company_name" id="company_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <input type="text" wire:model="company_name" id="company_name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Property Management Inc.">
                         @error('company_name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -156,43 +165,44 @@
                             <option value="Other">Other</option>
                         </select>
                         @error('country')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     {{-- Show only when "Other" is selected --}}
-                    @if($country === 'Other')
-                    <div>
-                        <label for="otherCountry" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Please specify your country <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" wire:model="country" placeholder="Enter your country"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                    @if ($country === 'Other')
+                        <div>
+                            <label for="otherCountry"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Please specify your country <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" wire:model="otherCountry" placeholder="Enter your country"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
 
-                        @error('country')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                            @error('otherCountry')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                     @endif
 
                     @if ($country === 'Philippines')
-                    <div>
-                        <label for="city_municipality"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
-                            Municipality <span class="text-red-500">*</span></label>
-                        <select id="city_municipality" wire:model="city_municipality" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">Select Municipality</option>
-                            @foreach ($municipalities as $municipality)
-                            <option value="{{ $municipality->PSGC_MUNC_DESC }}">
-                                {{ $municipality->PSGC_MUNC_DESC }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('city_municipality')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <div>
+                            <label for="city_municipality"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
+                                Municipality</label>
+                            <select id="city_municipality" wire:model="city_municipality"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                <option value="">Select Municipality</option>
+                                @foreach ($municipalities as $municipality)
+                                    <option value="{{ $municipality->PSGC_MUNC_DESC }}">
+                                        {{ $municipality->PSGC_MUNC_DESC }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('city_municipality')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                     @endif
 
                 </div>

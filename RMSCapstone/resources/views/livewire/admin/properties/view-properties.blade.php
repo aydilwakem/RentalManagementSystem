@@ -259,7 +259,7 @@
                                 <span>{{ $fakeIDs[$house->id] ?? 'HS-???' }}</span>
                             </th>
                             <td class="px-4 py-3">{{ $house->name_number }}</td>
-                            <td class="px-4 py-3">{{ number_format($house->amount, 2) }}</td>
+                            <td class="px-4 py-3">₱{{ number_format($house->amount, 2) }}</td>
                             <td class="px-4 py-3">
                                 @if ($house->property_status === 'available')
                                     <span

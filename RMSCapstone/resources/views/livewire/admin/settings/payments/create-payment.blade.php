@@ -13,11 +13,13 @@
 
     <!-- Body Container -->
     <div class="py-3">
-        <div class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <div
+            class="mx-auto max-w-5xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
             <div class="relative flex items-center mb-4">
                 <!-- Title -->
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Payment Method</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Payment Method
+                </h2>
 
                 <!-- Back Button -->
                 <button onclick="window.location.href='{{ route('admin.payments') }}'" wire:navigate
@@ -32,7 +34,8 @@
 
                     {{-- Payment Method Name --}}
                     <div class="sm:col-span-2">
-                        <label for="mode_of_payment_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Payment
+                        <label for="mode_of_payment_name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Payment
                             Method
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="mode_of_payment_name" id="mode_of_payment_name"
@@ -46,7 +49,8 @@
 
                     {{-- Account Name --}}
                     <div>
-                        <label for="account_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
+                        <label for="account_name"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
                             Name <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="account_name" id="account_name"
                             placeholder="Ex. Juan Dela Cruz"
@@ -59,7 +63,8 @@
 
                     {{-- Account Number --}}
                     <div>
-                        <label for="account_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
+                        <label for="account_number"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Account
                             Number <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="account_number" id="account_number"
                             placeholder="Ex. 09123456789"
@@ -71,7 +76,62 @@
                     </div>
 
                     <!-- QR Image Upload -->
-                    <div class="space-y-3">
+                    <div class="mb-4 col-span-2">
+                        <label for="qrUpload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            QR Code Image
+                        </label>
+
+                        <div class="flex gap-4 items-center">
+
+                            {{-- Show preview if image is selected --}}
+                            @if ($mode_of_payment_qr_image)
+                                <div class="relative">
+                                    <img src="{{ $mode_of_payment_qr_image->temporaryUrl() }}"
+                                        class="w-52 h-40 object-cover rounded-md shadow-sm border" alt="QR Preview">
+
+                                    <!-- Remove button -->
+                                    <button wire:click="$set('mode_of_payment_qr_image', null)" type="button"
+                                        class="absolute top-2 right-2 bg-gray-200 text-gray-600 rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-300 hover:text-red-700 transition">
+                                        ×
+                                    </button>
+                                </div>
+                            @else
+                                {{-- Upload Placeholder --}}
+                                <label for="qrUpload" class="cursor-pointer">
+                                    <div
+                                        class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400 hover:bg-gray-50 transition">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        <span class="text-xs">Upload QR Code</span>
+                                    </div>
+                                </label>
+                            @endif
+
+                            <!-- File Input -->
+                            <input id="qrUpload" type="file" class="hidden" wire:model="mode_of_payment_qr_image"
+                                accept="image/png, image/jpeg">
+                        </div>
+
+                        {{-- Validation Error --}}
+                        @error('mode_of_payment_qr_image')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+
+                        {{-- Uploading Indicator --}}
+                        <div wire:loading wire:target="mode_of_payment_qr_image" class="flex items-center mt-2">
+                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                            <span>Uploading...</span>
+                        </div>
+                    </div>
+
+                    {{-- <div class="space-y-3">
                         <label for="mode_of_payment_qr_image"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Upload QR
                             Image <span class="text-red-500">*</span></label>
@@ -112,7 +172,7 @@
                                 </div>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <!-- Button Wrapper -->

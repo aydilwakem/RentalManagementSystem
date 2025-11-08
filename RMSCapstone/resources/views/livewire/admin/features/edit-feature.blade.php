@@ -43,7 +43,7 @@
                 <!-- Quanity -->
                 <div>
                     <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Quantity
+                        Quantity <span class="text-red-500">*</span>
                     </label>
                     <input type="number" wire:model="quantity" id="quantity" onwheel="this.blur()" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" min="1"

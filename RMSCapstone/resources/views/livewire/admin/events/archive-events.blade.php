@@ -1,13 +1,9 @@
 <div class="min-h-[550px] container mx-auto p-6 max-w-full">
     <div class="mb-4">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Archived Events</h2>
-            </div>
-            <x-button href="{{ route('admin.events') }}" icon="fas fa-arrow-left" wire:navigate>
-                Back to Events
-            </x-button>
-        </div>
+        <x-ghost-button href="{{ route('admin.events') }}" icon="fas fa-chevron-left" wire:navigate
+            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline">
+            Back to Events
+        </x-ghost-button>
         <p class="text-gray-600 dark:text-gray-400 mt-2">
             Showing events older than 5 years that have been automatically archived.
         </p>
@@ -21,7 +17,8 @@
     @endif
 
     <!-- Table Container -->
-    <div class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+    <div
+        class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
         <!-- Header -->
         <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
             <!-- Search -->
@@ -47,7 +44,8 @@
             class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
             <div class="flex flex-col items-center justify-center text-center">
                 <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4" />
                     <path class="opacity-75" fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                 </svg>
@@ -100,8 +98,10 @@
                     </thead>
                     <tbody wire:loading.remove wire:target="search" class="text-left dark:bg-gray-700">
                         @forelse ($events as $event)
-                            <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <tr
+                                class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                <th scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ $event->transaction_number }}
                                 </th>
 
@@ -151,7 +151,7 @@
                                                     class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                                     <i class="fas fa-eye mr-2 text-blue-600"></i> View Event
                                                 </a>
-                                                
+
                                                 <a href="#"
                                                     wire:click.prevent="showRestoreModal({{ $event->id }}, '{{ $event->transaction_number }}')"
                                                     class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">

@@ -108,7 +108,7 @@
                     <tr>
                         <th class="px-4 py-3 flex items-center space-x-2">
                             {{-- <input type="checkbox" class="accent-blue-600 w-4 h-4"> --}}
-                            <span>ID</span>
+                            <span>#</span>
                         </th>
                         <th class="px-4 py-3">Guest Name</th>
                         <th class="px-4 py-3">Transaction No.</th>

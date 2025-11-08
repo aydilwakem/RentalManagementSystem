@@ -36,7 +36,8 @@
             </div>
 
             <!-- Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+            <div
+                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
                 <div
                     class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
@@ -119,7 +120,8 @@
                         </div>
                     </div>
                     <table class="w-full text-left">
-                        <thead wire:loading.remove wire:target="search" class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                        <thead wire:loading.remove wire:target="search"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                             <tr>
                                 <th scope="col" class="px-4 py-3 flex items-center space-x-2">
                                     <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
@@ -201,16 +203,19 @@
                         </thead>
                         <tbody wire:loading.remove wire:target="search" class="text-left">
                             @forelse ($inclusions as $inclusion)
-                                <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         <input wire:model.live="selectedRows" type="checkbox" name="inclusions[]"
                                             value="{{ $inclusion->id }}" class="accent-blue-600 w-4 h-4 me-2">
                                         {{ $fakeIDs[$inclusion->id] ?? 'FTR-???' }}
                                     </th>
-                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">{{ $inclusion->name }}</td>
                                     <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                        {{ $inclusion->name }}</td>
+                                    <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
                                         {{ $inclusion->quantity }}</td>
-                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                    <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
                                         {{ ucfirst($inclusion->property_feature_type) }}
                                     </td>
                                     <td class="px-4 py-3">

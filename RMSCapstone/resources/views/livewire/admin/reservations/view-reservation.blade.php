@@ -369,13 +369,13 @@
                             <div class="mt-2">
                                 <span
                                     class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                    {{ Str::limit($transaction->requests, 50) }}
+                                    {{ Str::limit($transaction->requests, 45) }}
                                 </span>
 
-                                <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
-                                    View & Reply
-                                </x-button>
-
+                                <button type="button" wire:click="openModal('requests')"
+                                    class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                                    <i class="fa-solid fa-comment-dots"></i> View & Reply
+                                </button>
                             </div>
                         @else
                             <div class="text-gray-500 italic">
@@ -1706,12 +1706,21 @@
 
                 <!-- Session Alert -->
                 @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-md
-                        {{ session('alert-type') === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
+                    <div x-data="{ show: true }"
+                        x-init="setTimeout(() => show = false, 3000)"
+                        x-show="show"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform -translate-y-4"
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform -translate-y-4"
+                        class="fixed top-20 right-4 px-4 py-2 rounded-lg shadow-lg z-50
+                        {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                         {{ session('message') }}
                     </div>
                 @endif
+
 
                 <!-- Receipt Details -->
                 <div class="p-6 space-y-4 text-gray-700 text-sm">
@@ -2899,7 +2908,7 @@
                 <div class="mb-4">
                     <strong class="block text-sm text-gray-700 font-semibold">Admin Reply:</strong>
                     <textarea wire:model.defer="request_reply"
-                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3" rows="3"
+                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3 resize-none focus:ring-green-600 focus:border-green-600" rows="3"
                         placeholder="Write your reply here..."></textarea>
                 </div>
 

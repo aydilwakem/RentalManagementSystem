@@ -212,9 +212,9 @@
                                 </th>
                                 <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
                                     {{ $feature->name }}</td>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
                                     {{ $feature->quantity }}</td>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
                                     {{ ucfirst($feature->property_feature_type) }}
                                 </td>
                                 <td class="px-4 py-3">
