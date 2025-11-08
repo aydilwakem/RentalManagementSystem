@@ -20,6 +20,7 @@
                 <x-button icon="fa-solid fa-file" wire:click="exportEventDetails" class="w-40">
                     Export PDF
                 </x-button>
+                
 
                 <!-- Title -->
                 <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Event ID:
@@ -32,6 +33,15 @@
                     <span class="leading-none translate-y-[-3px]">&times;</span>
                 </button>
             </div>
+            
+                <div class="flex space-x-2">
+                    @if (in_array($event->transaction_status, ['done', 'cancelled', 'no_show', 'terminated']))
+                        <x-warning-button type="button" icon="fas fa-archive" 
+                            wire:click="showArchiveModal({{ $event->id }}, '{{ $event->transaction_number }}')">
+                            Archive
+                        </x-warning-button>
+                    @endif
+                </div>
 
             <!-- Guest Details -->
             <h3 class="text-lg font-bold text-green-700 mb-3 dark:text-green-300">Booking Contact Details</h3>
@@ -966,8 +976,9 @@
                         href="{{ route('admin.edit-event', ['event' => $event->id]) }}">
                         Edit
                     </x-ghost-button>
-
                 </div>
+
+                
             </div>
 
             <x-dialog-modal wire:model.live="confirmItemDelete" type="danger">
@@ -1007,6 +1018,28 @@
                     </x-secondary-button>
                 </x-slot>
             </x-dialog-modal>
+
+            <!-- Archive Confirmation Modal -->
+            <x-dialog-modal wire:model.live="confirmingArchive" type="warning">
+                <x-slot name="title">
+                    {{ $archiveTitle }}
+                </x-slot>
+
+                <x-slot name="content">
+                    {{ $archiveMessage }}
+                </x-slot>
+
+                <x-slot name="footer">
+                    <x-secondary-button wire:click="$set('confirmingArchive', false)" wire:loading.attr="disabled">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+
+                    <x-warning-button class="ms-3" wire:click="archiveEvent" wire:loading.attr="disabled">
+                        Archive
+                    </x-warning-button>
+                </x-slot>
+            </x-dialog-modal>
+
         </div>
     </div>
 </div>

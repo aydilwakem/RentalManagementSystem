@@ -109,6 +109,12 @@ class ViewEvent extends Component
     public $edit_payment_screenshot;
     public $existing_payment_screenshot;
 
+    // ---------------- ARCHIVE EVENT PROPERTIES ------------------ //
+    public $confirmingArchive = false;
+    public $archiveId;
+    public $archiveTitle = '';
+    public $archiveMessage = '';
+
 
     public function boot(ServiceBag $services)
     {
@@ -504,4 +510,30 @@ class ViewEvent extends Component
 
         $this->transaction->load('activities', 'properties', 'services', 'guestPets');
     }
+
+
+
+    public function showArchiveModal($id, $transactionNumber)
+    {
+        $this->archiveId = $id;
+        $this->archiveTitle = 'Archive Event';
+        $this->archiveMessage = "Are you sure you want to archive event {$transactionNumber}?";
+        $this->confirmingArchive = true;
+    }
+
+    public function archiveEvent()
+    {
+        $transaction = Transaction::find($this->archiveId);
+        
+        if ($transaction) {
+            // Archive the event
+            $transaction->update(['transaction_status' => 'archived']);
+            
+            session()->flash('message', 'Event successfully archived!');
+        }
+        
+        $this->confirmingArchive = false;
+        return redirect()->route('admin.events');
+    }
+
 }

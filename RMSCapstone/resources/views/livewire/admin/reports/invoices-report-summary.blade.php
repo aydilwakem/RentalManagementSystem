@@ -189,8 +189,16 @@
     <div class="summary">
         <h2>Summary of Key Metrics:</h2>
         <p><strong>Total Invoice Records Within Date Range: </strong>{{ $totalInvoices }} invoice records</p>
-        <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountPaid, 2) }}</p>
-        <p><strong>Total Remaining Balance: </strong>PHP {{ number_format($totalBalanceDue, 2) }}</p>
+
+        {{-- Only show if status is all --}}
+        @if(strtolower($invoiceStatusFilter) === '')
+        <p><strong>Total Pending Invoices: </strong>{{ $statusCounts['pending'] }} records</p>
+        <p><strong>Total Completed Invoices: </strong>{{ $statusCounts['completed'] }} records</p>
+        <p><strong>Total Failed Invoices: </strong>{{ $statusCounts['failed'] }} records</p>
+        <p><strong>Total Overdue Invoices: </strong>{{ $statusCounts['overdue'] }} records</p>
+        @endif
+        {{-- <p><strong>Total Amount Earned: </strong>PHP {{ number_format($totalAmountPaid, 2) }}</p>
+        <p><strong>Total Remaining Balance: </strong>PHP {{ number_format($totalBalanceDue, 2) }}</p> --}}
     </div>
 
     <footer>

@@ -80,6 +80,7 @@ class DayTourReservationList extends Component
             ->select('trn_transactions.*')
             ->with(['transactionUser', 'guestDetails', 'dayTour', 'dayTourRate', 'invoice.payments'])
             ->where('reservation_type_id', $this->reservation_type_id)
+            ->nonArchived()
             ->when($this->search !== '', function ($query) {
                 $query
                     ->whereHas('transactionUser', function ($subQuery) {
@@ -409,6 +410,7 @@ class DayTourReservationList extends Component
         $transactions = Transaction::query()
             ->with(['transactionUser', 'guestDetails'])
             ->whereDate('start_datetime', $today)
+            ->nonArchived()
             ->where('reservation_type_id', $this->reservation_type_id)
             ->orderBy('start_datetime')
             ->get();
@@ -490,5 +492,17 @@ class DayTourReservationList extends Component
     public function placeholder()
     {
         return view('livewire.admin.placeholder');
+    }
+
+    /**
+     * Archives the selected day tour transaction
+     */
+    public function archiveDayTour($id)
+    {
+        $transaction = Transaction::find($id);
+        if ($transaction) {
+            $transaction->update(['transaction_status' => 'archived']);
+            session()->flash('message', 'Day Tour successfully archived!');
+        }
     }
 }

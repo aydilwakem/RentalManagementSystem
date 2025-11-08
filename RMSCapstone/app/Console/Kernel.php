@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AutoArchiveDayTours;
+use App\Console\Commands\AutoArchiveEvents;
+use App\Console\Commands\AutoArchiveLeases;
+use App\Console\Commands\AutoArchiveReservations;
 use App\Console\Commands\MarkExpiredTransactions;
 use App\Console\Commands\MarkOverdueInvoices;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,6 +21,11 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         MarkExpiredTransactions::class,
         MarkOverdueInvoices::class,
+        AutoArchiveReservations::class,
+        AutoArchiveEvents::class, 
+        AutoArchiveLeases::class, 
+        AutoArchiveDayTours::class, 
+
     ];
 
     /**
@@ -32,7 +41,25 @@ class Kernel extends ConsoleKernel
 
         // Mark overdue invoices (every minute)
         $schedule->command('invoices:mark-overdue')->everyMinute();
+
+
+        // Auto-archive reservations (every minute)
+        $schedule->command('reservations:auto-archive')->everyMinute();
+        
+        // Auto-archive events (every minute)
+        $schedule->command('events:auto-archive')->everyMinute();
+
+        //Auto-archive leases (every minute)
+        $schedule->command('leases:auto-archive')->everyMinute();
+
+            // Auto-archive day tours (every minute)
+        $schedule->command('daytours:auto-archive')->everyMinute();
+
+
+
     }
+
+
 
     /**
      * Register the commands for the application.

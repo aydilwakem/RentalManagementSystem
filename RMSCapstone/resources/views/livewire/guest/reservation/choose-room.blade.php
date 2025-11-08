@@ -1,5 +1,122 @@
 <div class="w-full flex justify-center">
     <div class="step-one w-full">
+
+<!-- Search and Filter Section -->
+<div class="mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <!-- Search by Name -->
+        <div class="w-full md:w-auto">
+            <label for="searchQuery" class="block text-sm font-medium text-gray-700 mb-1">
+                Search Rooms by Name
+            </label>
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="searchQuery"
+                    wire:model.live="searchQuery"
+                    placeholder="Enter room name..."
+                    class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
+                >
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    @if($searchQuery)
+                        <button 
+                            wire:click="$set('searchQuery', '')"
+                            class="text-gray-400 hover:text-red-500 transition-colors duration-200"
+                            type="button"
+                        >
+                            <i class="fas fa-times"></i>
+                        </button>
+                    @else
+                        <i class="fas fa-search text-gray-400"></i>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Category Filter -->
+        <div class="w-full md:w-auto">
+            <label for="property_category_id" class="block text-sm font-medium text-gray-700 mb-1">
+                Filter by Category
+            </label>
+            <select 
+                id="property_category_id" 
+                wire:model.live="roomCategoryFilter"
+                class="w-full md:w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5"
+            >
+                <option value="">All Categories</option>
+                @foreach ($roomCategories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Ideal Guest Filter -->
+        <div class="w-full md:w-auto">
+            <label for="idealGuestFilter" class="block text-sm font-medium text-gray-700 mb-1">
+                Filter by Ideal Guests
+            </label>
+            <select 
+                id="idealGuestFilter" 
+                wire:model.live="idealGuestFilter"
+                class="w-full md:w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5"
+            >
+                <option value="">Any Number</option>
+                @foreach ($this->idealGuestOptions as $guestCount)
+                    <option value="{{ $guestCount }}">
+                        {{ $guestCount }} guest{{ $guestCount > 1 ? 's' : '' }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Filter Results Info -->
+    @if(!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter))
+        <div class="mt-3 text-sm text-gray-600">
+            <p>
+                @if(!empty($searchQuery))
+                    Search: "<span class="font-semibold text-green-700">{{ $searchQuery }}</span>"
+                @endif
+                
+                @if(!empty($searchQuery) && (!empty($roomCategoryFilter) || !empty($idealGuestFilter)))
+                    •
+                @endif
+                
+                @if(!empty($roomCategoryFilter))
+                    Category: 
+                    <span class="font-semibold text-green-700">
+                        {{ $roomCategories->firstWhere('id', $roomCategoryFilter)->name ?? 'Unknown' }}
+                    </span>
+                @endif
+                
+                @if(!empty($roomCategoryFilter) && !empty($idealGuestFilter))
+                    •
+                @endif
+                
+                @if(!empty($idealGuestFilter))
+                    Ideal for: 
+                    <span class="font-semibold text-green-700">
+                        {{ $idealGuestFilter }} guest{{ $idealGuestFilter > 1 ? 's' : '' }}
+                    </span>
+                @endif
+                
+                @if($rooms->count() > 0)
+                    - {{ $rooms->count() }} room{{ $rooms->count() > 1 ? 's' : '' }} found
+                @endif
+            </p>
+            
+            @if(!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter))
+                <button 
+                    wire:click="clearFilters"
+                    class="mt-2 text-xs text-red-600 hover:text-red-800 underline transition-colors duration-200"
+                >
+                    Clear all filters
+                </button>
+            @endif
+        </div>
+    @endif
+</div>
+
         <!-- Main Content Grid -->
         @if ($rooms->count() === 0)
             <div class="w-full flex justify-center">

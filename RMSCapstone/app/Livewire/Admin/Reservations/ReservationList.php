@@ -85,6 +85,7 @@ class ReservationList extends Component
                 $query->where('property_type_id', 1);
             }])
             ->where('reservation_type_id', 2)
+            ->nonArchived()
             ->when($this->search !== '', function ($query) {
                 $query
                     ->whereHas('transactionUser', function ($subQuery) {
@@ -439,6 +440,7 @@ class ReservationList extends Component
             ->with(['transactionUser', 'properties'])
             ->whereDate('end_datetime', $today)
             ->where('reservation_type_id', 2)
+            ->nonArchived()
             ->orderBy('end_datetime')
             ->get();
 
@@ -535,5 +537,17 @@ class ReservationList extends Component
     public function placeholder()
     {
         return view('livewire.admin.placeholder');
+    }
+
+    /**
+     * Archives the selected transaction
+     */
+    public function archiveReservation($id)
+    {
+        $transaction = Transaction::find($id);
+        if ($transaction) {
+            $transaction->update(['transaction_status' => 'archived']);
+            session()->flash('message', 'Reservation successfully archived!');
+        }
     }
 }
