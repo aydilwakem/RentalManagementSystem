@@ -230,7 +230,8 @@
                                         <td
                                             class="px-6 py-4 text-center text-sm text-gray-900 dark:text-white align-top mb-8">
                                             <div class="flex flex-col items-center space-y-2">
-                                                <span class="font-semibold mb-2">{{ $maintenance->reported_at->format('F j, Y') }}</span>
+                                                <span
+                                                    class="font-semibold mb-2">{{ $maintenance->reported_at->format('F j, Y') }}</span>
 
                                                 <!-- Images Dropdown -->
                                                 <div x-data="{ open: false }" class="relative my-4 w-full">
@@ -268,7 +269,8 @@
                                             class="px-6 py-4 text-center text-sm text-gray-900 dark:text-white align-top">
                                             <div class="flex flex-col items-center space-y-2">
                                                 @if ($maintenance->resolved_at)
-                                                    <span class="font-semibold mb-2">{{ $maintenance->resolved_at->format('F j, Y') }}</span>
+                                                    <span
+                                                        class="font-semibold mb-2">{{ $maintenance->resolved_at->format('F j, Y') }}</span>
 
                                                     <!-- Resolved Images Dropdown -->
                                                     @if (count($maintenance->resolved_images ?? []))
@@ -344,12 +346,20 @@
                 <!-- Popup Modal -->
                 <div id="imageModal"
                     class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center">
+
+                    <!-- Close button -->
+                    <button onclick="closeModal()"
+                        class="absolute top-5 right-5 bg-white text-black font-bold rounded-full w-10 h-10 flex items-center justify-center text-xl shadow-lg hover:bg-gray-200 transition">
+                        &times;
+                    </button>
+
+                    <!-- Image container -->
                     <div class="relative">
-                        <button onclick="closeModal()"
-                            class="absolute top-0 right-0 m-4 text-white text-3xl font-bold">&times;</button>
-                        <img id="modalImg" src="" class="max-h-[70vh] max-w-[70vw] rounded-lg shadow-xl" />
+                        <img id="modalImg"
+                            class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-xl border border-white" />
                     </div>
                 </div>
+
 
             </div>
 

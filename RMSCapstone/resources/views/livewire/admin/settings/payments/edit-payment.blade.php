@@ -83,7 +83,6 @@
                     </div>
 
                     <!-- Image Upload -->
-                    <!-- QR Upload -->
                     <div class="mb-4 col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             QR Code Image
@@ -100,7 +99,7 @@
                                     <img src="{{ asset('storage/' . $mode_of_payment_qr_image) }}"
                                         class="w-52 h-40 object-cover rounded-md shadow-sm border" alt="Current QR">
                                 @else
-                                    <img src="{{ asset('images/placeholder.png') }}"
+                                    <img src="{{ asset('images/rms-default.png') }}"
                                         class="w-52 h-40 object-cover rounded-md shadow-sm border" alt="Placeholder">
                                 @endif
                             </div>

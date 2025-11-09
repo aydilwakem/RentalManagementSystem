@@ -13,6 +13,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class DaytourReports extends Component
 {
@@ -30,7 +31,7 @@ class DaytourReports extends Component
     //Filters
     public $filteredTransactions = [];
     // public $hallFilter = '';
-    // public $halls = []; 
+    // public $halls = [];
     public $daytourStatusFilter = '';
     public $filterApplied = false;
 
@@ -55,7 +56,7 @@ class DaytourReports extends Component
         ->with(['transactionUser', 'guestDetails', 'dayTour', 'dayTourRate', 'invoice.payments'])
         ->where('trn_transactions.reservation_type_id', $this->reservation_type_id); // 4 for daytour
 
-        //filter by date range and status: 
+        //filter by date range and status:
          if ($this->start_date && $this->end_date) {
         $query->whereBetween('trn_transactions.start_datetime', [
             Carbon::parse($this->start_date)->startOfDay(),
@@ -75,7 +76,7 @@ class DaytourReports extends Component
         // Fetch results with sorting and pagination
         $this->filteredTransactions = $query
             ->orderBy($this->sortBy, $this->sortDir)
-            ->get(); 
+            ->get();
             // ->paginate($this->perPage);
 
         // Mark that a filter is active
@@ -185,12 +186,12 @@ class DaytourReports extends Component
         $sheet = $spreadsheet->getActiveSheet();
 
         //Canopy Header - Logo displayed above
-        //Merge cells for logo: 
+        //Merge cells for logo:
         $sheet->mergeCells('C1:C2');
         $drawing = new Drawing();
-        $drawing->setPath(public_path('images/canopy-logo.png')); 
+        $drawing->setPath(public_path('images/canopy-logo.png'));
         $drawing->setHeight(55); //Logo size
-        $drawing->setCoordinates('C1'); 
+        $drawing->setCoordinates('C1');
         $drawing->setOffsetX(20); //Adjust row
         $drawing->setOffsetX(10); //Adjust down
         $drawing->setWorksheet($sheet);
@@ -278,7 +279,15 @@ class DaytourReports extends Component
 
         $sheet->setCellValue("A{$row}", 'Total Amount Earned:');
         $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
-        
+
+        $summaryStart = $row - 3;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
         // Apply light green background highlight to both A and B cells
         $highlightRange = "A{$row}:B{$row}";
         $sheet->getStyle($highlightRange)->getFill()
@@ -313,6 +322,6 @@ class DaytourReports extends Component
                 ? $this->filteredTransactions
                 : collect(), // Empty before applying filter
         ]);
-    
+
     }
 }

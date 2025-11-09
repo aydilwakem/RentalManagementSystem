@@ -11,7 +11,7 @@ use Livewire\Features\SupportFileUploads\WithFileUploads;
 class CreateMaintenance extends Component
 {
     use WithFileUploads;
-    
+
     public $name;
     public $description;
     public $reported_at;
@@ -20,10 +20,10 @@ class CreateMaintenance extends Component
     public $planned_datetime;
     public $property_id;
     public $properties;
-    public $routine_datetime; 
+    public $routine_datetime;
 
     //IMAGES
-    public $maintenance_images; 
+    public $maintenance_images;
     public $newImages = [];
     public $uploadedImagePreviews = []; // temporary url for preview
     public $persistedImagePaths = []; // string paths once uploaded
@@ -31,8 +31,8 @@ class CreateMaintenance extends Component
 
     //For resolved images
     public $resolvedImages = [];
-    public $resolvedImagePreviews = []; 
-    public $resolvedPersistedPaths = []; 
+    public $resolvedImagePreviews = [];
+    public $resolvedPersistedPaths = [];
 
 
 
@@ -58,7 +58,7 @@ class CreateMaintenance extends Component
     public function updatedNewImages()
     {
         $this->validate([
-            'newImages.*' => 'image|max:2024|mimes:jpeg,png,jpg,gif',
+            'newImages.*' => 'image|mimes:jpeg,png,jpg,gif',
         ]);
 
         foreach ($this->newImages as $image) {
@@ -71,7 +71,7 @@ class CreateMaintenance extends Component
     //------------------------- Update the Resolved Images ---------------------- //
     public function updatedResolvedImages(){
         $this->validate([
-        'resolvedImages.*' => 'image|max:2024|mimes:jpeg,png,jpg,gif',
+        'resolvedImages.*' => 'image|mimes:jpeg,png,jpg,gif',
     ]);
 
         foreach ($this->resolvedImages as $image) {
@@ -122,13 +122,13 @@ class CreateMaintenance extends Component
 
                 //For images
                 'newImages' => 'nullable|array',
-                'newImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
-            
+                'newImages.*' => 'image|mimes:jpeg,png,jpg,gif',
+
                 //For resolved images
                 //Validate the resolved images
                 'resolvedImages' => 'nullable|array',
-                'resolvedImages.*' => 'image|mimes:jpeg,png,jpg,gif|max:2024',
-            
+                'resolvedImages.*' => 'image|mimes:jpeg,png,jpg,gif',
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

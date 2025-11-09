@@ -52,8 +52,9 @@
                 </x-button>
 
                 <div wire:loading wire:target="exportReservationSummary"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-2">
                     <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF...</span>
+                    <i class="fas fa-spinner fa-spin text-green-700 text-md"></i>
                 </div>
             </div>
 

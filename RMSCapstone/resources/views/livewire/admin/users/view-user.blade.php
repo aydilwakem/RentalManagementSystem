@@ -49,7 +49,7 @@
 
                     <div class="mt-6 mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Email Verified At</h3>
-                        <p class=" text-gray-500 dark:text-gray-200">{{ $user->email_verified_at ?? 'Not Verified' }}</p>
+                        <p class=" text-gray-500 dark:text-gray-200">{{ $user->email_verified_at->format('M d, Y - h:i A') ?? 'Not Verified' }}</p>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -69,10 +69,10 @@
                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-500">
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                        {{ $user->created_at }}
+                                        {{ $user->created_at->format('M d, Y - h:i A') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                        {{ $user->updated_at }}
+                                        {{ $user->updated_at->format('M d, Y - h:i A') }}
                                     </td>
                                 </tr>
                             </tbody>

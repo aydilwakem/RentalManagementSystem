@@ -89,8 +89,9 @@
                 </x-button>
 
                 <div wire:loading wire:target="exportReservationSummary"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                    <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF...</span>
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-2 pt-1">
+                    <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF..</span>
+                    <i class="fas fa-spinner fa-spin text-green-700 text-md "></i>
                 </div>
             </div>
 
@@ -115,8 +116,9 @@
                 </x-warning-button>
 
                 <div wire:loading wire:target="exportReservationExcel"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                    <span class="text-sm text-yellow-700 font-semibold">Exporting Excel...</span>
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-2 pt-1">
+                    <span class="text-sm text-yellow-700 font-semibold">Exporting Excel..</span>
+                    <i class="fas fa-spinner fa-spin text-yellow-700 text-md"></i>
                 </div>
             </div>
 
@@ -128,8 +130,9 @@
                 </x-button>
 
                 <div wire:loading wire:target="exportGuestDetailsSummary"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
-                    <span class="text-sm text-pink-700 font-semibold">Exporting Guest Summary...</span>
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-6 pt-1">
+                    <span class="text-sm text-pink-700 font-semibold">Exporting Guest Summary..</span>
+                    <i class="fas fa-spinner fa-spin text-pink-700 text-md"></i>
                 </div>
             </div>
         </div>

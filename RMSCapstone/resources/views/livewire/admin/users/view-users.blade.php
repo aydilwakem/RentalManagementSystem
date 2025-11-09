@@ -214,8 +214,8 @@
                             </td>
 
                             <td class="p-2">{{ $user->email }}</td>
-                            <td class="p-2">{{ $user->created_at }}</td>
-                            <td class="p-2">{{ $user->updated_at }}</td>
+                            <td class="p-2">{{ $user->created_at->format('M d, Y - h:i A') }}</td>
+                            <td class="p-2">{{ $user->updated_at->format('M d, Y - h:i A') }}</td>
                             <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
                                 <!-- View Icon -->

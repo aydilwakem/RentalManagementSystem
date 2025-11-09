@@ -16,7 +16,7 @@
 
             <!-- Navigation Links -->
             <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
+                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')">
                     {{ __('Home') }}
                 </x-nav-link>
 
@@ -61,8 +61,7 @@
                     </div>
                 </div> --}}
 
-                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')"
-                    wire:navigate>
+                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')">
                     {{ __('Activities') }}
                 </x-nav-link>
 
@@ -109,11 +108,11 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" >
                 {{ __('Home') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate>
+            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')">
                 {{ __('Rooms') }}
             </x-responsive-nav-link>
 

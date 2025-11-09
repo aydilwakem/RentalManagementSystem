@@ -1,127 +1,113 @@
 <div>
     <div class="max-w-7xl mx-auto px-6 py-7 mb-8">
         <div class="text-center">
-            <h1 class="text-3xl font-bold text-green-700 mb-3 text-center">Our Activities</h1>
-            <p class="text-lg text-gray-700 text-center mb-3">
-                These activities are <b>add-ons</b> to your bookings, enhancing your experience during your stay at
-                {{ $companyName }}.<br> Book a room now and enjoy a variety of exciting experiences!
+            <h2 class="text-green-700 font-extrabold text-3xl mb-4 tracking-tight">
+                What to do at {{ $companyName }}?
+                <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
+            </h2>
+            {{-- <h1 class="text-3xl font-bold text-green-700 mb-3 text-center">What to do at Canopy Farm?</h1> --}}
+            <p class="text-lg text-gray-700 text-center mx-auto mb-4 w-full md:w-2/3">
+                Looking for a place where relaxation meets adventure? Here at {{ $companyName }}, every corner is made
+                for unforgettable experiences—perfect for families, friends, and nature lovers alike!
             </p>
-            <x-button class="mb-8" href="{{ route('guest.reservation-form') }}">
-                Book Room Now
-            </x-button>
+
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @if (!empty($activities) && $activities->count())
-                <!-- Activity Card -->
-                @foreach ($activities as $activity)
-                    <div
-                        class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition flex flex-col">
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach ($activities as $activity)
+                <div
+                    class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 animate-on-scroll opacity-0 translate-y-10 flex flex-col border border-gray-100">
 
-                        <!-- Image -->
-                        <div x-data="{
-                            active: 0,
-                            images: {{ json_encode($activity->images ?? []) }},
-                            hover: false,
-                            nextImage() {
-                                this.active = (this.active + 1) % this.images.length;
-                            },
-                            prevImage() {
-                                this.active = (this.active - 1 + this.images.length) % this.images.length;
-                            }
-                        }" class="relative w-full h-[250px] overflow-hidden rounded-t-lg"
-                            @mouseenter="hover = true" @mouseleave="hover = false">
+                    <!-- Image -->
+                    <div x-data="{
+                        active: 0,
+                        images: {{ json_encode($activity->images ?? []) }},
+                        hover: false,
+                        nextImage() { this.active = (this.active + 1) % this.images.length },
+                        prevImage() { this.active = (this.active - 1 + this.images.length) % this.images.length },
+                    }" @mouseenter="hover = true" @mouseleave="hover = false"
+                        class="relative w-full h-[260px] overflow-hidden">
 
-                            <!-- Images Section -->
-                            <div>
-                                <template x-for="(image, index) in images" :key="index">
-                                    <img x-show="active === index" :src="'/storage/' + image"
-                                        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                                        x-transition:enter="transition ease-out duration-500"
-                                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                        :alt="'House image ' + (index + 1)" @click="openModal('/storage/' + image)" />
-                                </template>
+                        <!-- Image Loop -->
+                        <template x-for="(image,index) in images" :key="index">
+                            <img x-show="active===index" :src="'/storage/' + image"
+                                class="absolute inset-0 w-full h-full object-cover transition duration-700 scale-100 group-hover:scale-110"
+                                x-transition.opacity />
+                        </template>
 
-                                <!-- Default Image if no images are available -->
-                                <img x-show="images.length === 0" src="{{ asset('images/rms-default.png') }}"
-                                    class="absolute inset-0 w-full h-full object-cover" alt="Default Image" />
-                            </div>
+                        <!-- Default Image -->
+                        <img x-show="images.length===0" src="{{ asset('images/rms-default.png') }}"
+                            class="absolute inset-0 w-full h-full object-cover">
 
-                            <!-- Image Modal Popup View -->
-                            <div id="imageModal"
-                                class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
-                                <div class="flex items-center justify-center min-h-screen">
-                                    <div class="relative modal-content">
-                                        <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
-                                        <button onclick="closeModal()"
-                                            class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                                            <span class="leading-none translate-y-[-3px]">&times;</span>
-                                        </button>
-                                    </div>
+                        <!-- Overlay Gradient -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+
+                        <!-- Navigation arrows -->
+                        <button x-show="hover && images.length > 1" @click="prevImage()"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow">
+                            <i class="fa-solid fa-chevron-left text-gray-700 text-xs"></i>
+                        </button>
+
+                        <button x-show="hover && images.length > 1" @click="nextImage()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow">
+                            <i class="fa-solid fa-chevron-right text-gray-700 text-xs"></i>
+                        </button>
+
+                        <!-- Dots -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1.5">
+                            <template x-for="(img,i) in images" :key="i">
+                                <div @click="active=i" :class="active === i ? 'bg-green-500 scale-110' : 'bg-white'"
+                                    class="w-2.5 h-2.5 rounded-full border border-white/50 transition-all duration-300 cursor-pointer">
                                 </div>
-                            </div>
-
-                            <!-- Prev Button (Visible only on hover) -->
-                            <button x-show="hover" @click="prevImage()"
-                                class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition">
-                                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                                </svg>
-                            </button>
-
-                            <!-- Next Button (Visible only on hover) -->
-                            <button x-show="hover" @click="nextImage()"
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition">
-                                <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-
-                            <!-- Dots (for navigation) -->
-                            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-                                <template x-for="(image, index) in images" :key="index">
-                                    <button @click="active = index"
-                                        :class="{
-                                            'bg-white': active !== index,
-                                            'bg-green-300': active === index
-                                        }"
-                                        class="w-2.5 h-2.5 rounded-full transition-all duration-300"></button>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Activity Details -->
-                        <div class="flex flex-col justify-between px-6 py-3">
-                            <h2 class="text-xl font-semibold text-gray-800"> {{ $activity->name }}</h2>
-
-                            <p class="text-gray-600 text-sm mb-2 text-justify">
-                                @if (!empty($activity->description))
-                                    {{ $activity->description }}
-                                @else
-                                    Try this activity only at Canopy Farm!
-                                @endif
-                            </p>
-
-                            <div class="text-right mt-auto">
-                                <span class="text-green-600 font-bold text-lg">
-                                    @if ($activity->amount == 0)
-                                        <span class="text-green-600 font-semibold">FREE</span>
-                                    @else
-                                        ₱{{ number_format($activity->amount, 2) }}
-                                    @endif
-                                </span>
-                            </div>
+                            </template>
                         </div>
                     </div>
-                @endforeach
-            @else
-                <p class="text-center text-gray-500 py-10">No activities available at the moment.</p>
-            @endif
 
+                    <!-- Details -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">
+                            {{ $activity->name }}
+                        </h3>
+
+                        <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-4">
+                            {{ $activity->description ?: 'Try this activity only at Canopy Farm!' }}
+                        </p>
+
+                        <div class="mt-auto text-green-600 font-extrabold text-lg tracking-wide">
+                            @if ($activity->amount == 0)
+                                FREE
+                            @else
+                                ₱{{ number_format($activity->amount, 2) }}
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
+
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove("opacity-0", "translate-y-10");
+                        entry.target.classList.add("opacity-100", "translate-y-0");
+                        entry.target.style.transition = "all 800ms cubic-bezier(0.25,0.1,0.25,1)";
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15
+            });
+
+            document.querySelectorAll(".animate-on-scroll").forEach((el, i) => {
+                el.style.transitionDelay = `${i * 150}ms`;
+                observer.observe(el);
+            });
+        });
+    </script>
+
     <!-- Popup Function -->
     <script>
         // Function to open modal with the clicked image

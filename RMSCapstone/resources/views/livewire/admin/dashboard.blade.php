@@ -187,15 +187,15 @@
         <div class="flex items-center space-x-4 mb-3">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-4 h-4 rounded bg-green-300"></span>
-                <span class="text-sm">Room Reservations</span>
+                <span class="text-sm dark:text-white">Room Reservations</span>
             </div>
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-4 h-4 rounded bg-cyan-300"></span>
-                <span class="text-sm">Event Bookings</span>
+                <span class="text-sm dark:text-white">Event Bookings</span>
             </div>
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-4 h-4 rounded bg-yellow-200"></span>
-                <span class="text-sm">Day Tour Bookings</span>
+                <span class="text-sm dark:text-white">Day Tour Bookings</span>
             </div>
         </div>
     </div>

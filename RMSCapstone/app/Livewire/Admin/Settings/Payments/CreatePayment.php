@@ -29,7 +29,7 @@ class CreatePayment extends Component
                 'mode_of_payment_name' => 'required|string|max:255|regex:/^[A-Za-z\s\-]+$/|unique:pm_payment_methods,mode_of_payment_name',
                 'account_name' => 'required|string|max:255|regex:/^[^<>?!@#$]+$/u',
                 'account_number' => 'required|string|max:255|not_regex:/[<>?!@#$]/',
-                'mode_of_payment_qr_image' => 'required|image|max:1024',
+                'mode_of_payment_qr_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2024',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

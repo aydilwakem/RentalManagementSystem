@@ -68,7 +68,7 @@
 
                 <li class="me-2">
                     <a href="{{ route('admin.completed-reservations') }}"
-                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
+                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg dark:text-gray-400">
                         Completed Reservations
                     </a>
                 </li>

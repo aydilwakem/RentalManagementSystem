@@ -214,7 +214,8 @@
 
                             <!-- Hidden file input -->
                             <input multiple type="file" wire:model="newImages" id="newImageInput"
-                                accept="image/png, image/jpeg" class="hidden">
+                                accept=".jpg,.jpeg,.png" class="hidden">
+
 
                             @error('newImages.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -299,7 +300,8 @@
 
                                 <!-- Hidden file input -->
                                 <input multiple type="file" wire:model="resolvedImages" id="resolvedImageInput"
-                                    accept="image/png, image/jpeg" class="hidden">
+                                    accept=".jpg,.jpeg,.png" class="hidden">
+
 
                                 @error('resolvedImages.*')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

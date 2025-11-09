@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -125,8 +126,8 @@ class PaymentReports extends Component
         $totalAmount = $payments->sum('amount_paid');
 
         //Get convenience fee total
-        $totalConvenienceFee = $payments->sum('convenience_fee');   
-        
+        $totalConvenienceFee = $payments->sum('convenience_fee');
+
         //Subtract convenience fee from total amount to get net earnings
         $totalAmountEarned = $totalAmount - $totalConvenienceFee;
 
@@ -233,15 +234,15 @@ class PaymentReports extends Component
 
         $i = 1;
         foreach ($payments as $payment) {
-            
+
             $guest = optional(optional(optional($payment->invoice)->transaction)->transactionUser);
-            
+
             $guestName = trim(($guest->first_name ?? '') . ' ' . ($guest->last_name ?? 'Guest Detail Has Been Deleted'));
-            
+
             $transaction = optional(optional($payment->invoice)->transaction);
-            
+
             $invoice = optional($payment->invoice);
-            
+
             $status = $payment->payment_status ?? 'N/A'; // adjust this if you use a different status field
 
             fputcsv($handle, [
@@ -249,7 +250,7 @@ class PaymentReports extends Component
                 $guestName ?: 'N/A',
                 $transaction->transaction_number ?? 'N/A',
                 $invoice->invoice_number ?? 'N/A',
-                $payment->payment_type, 
+                $payment->payment_type,
                 optional($payment->payment_date)->format('M j, Y') ?? 'N/A',
                 number_format($payment->amount_paid, 2),
                 $payment->mode_of_payment ?? $payment->paymentMethod->mode_ofpayment_name,
@@ -269,12 +270,12 @@ class PaymentReports extends Component
 
     // -------------------- EXPORT EXCEL METHOD ------------------------ //
     /**
-     * Export to Excel functionality can be implemented 
+     * Export to Excel functionality can be implemented
      * here using a installed library.
      */
 
     public function exportPaymentExcel(){
-        
+
         $start = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : null;
         $end = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : null;
 
@@ -416,6 +417,14 @@ class PaymentReports extends Component
         $sheet->setCellValue("A{$row}", 'Total Amount Earned (Excluding Fees):');
         $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
 
+        $summaryStart = $row - 4;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
         // Highlight total earned row
         $highlightRange = "A{$row}:B{$row}";
         $sheet->getStyle($highlightRange)->getFill()
@@ -439,5 +448,5 @@ class PaymentReports extends Component
         'Content-Disposition' => "attachment; filename=\"{$filename}\"",
     ]);
     }
-}   
-    
+}
+
