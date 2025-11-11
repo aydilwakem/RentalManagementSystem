@@ -82,6 +82,7 @@ class GuestReservationTest extends TestCase
             'roomAmount' => 2400,
             'extra_charge' => 0,
             'total_amount' => 2400,
+            'roomRateName' => 'Base Rate', 
         ]];
 
         Livewire::test(ReservationForm::class)
@@ -97,7 +98,7 @@ class GuestReservationTest extends TestCase
             ->set('cart', $cart)
             ->set('total_pax', 3)
             ->set('heard_from', 'Facebook')
-            ->set('reservation_source', 'WebApp')
+            ->set('reservation_source', 'Website')
             ->set('transaction_status', 'pending')
             ->set('terms', true)
             ->call('register');

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\TransactionUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,6 +15,7 @@ class TransactionUserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+     protected $model = TransactionUser::class;
     public function definition(): array
     {
         return [

@@ -7,12 +7,13 @@ use App\Services\RoomRateService;
 use App\Models\Property;
 use App\Models\RoomRate;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class RoomRateTest extends TestCase
 {
 
 
-    /** @test */
+    #[Test]
     public function it_returns_peak_rate_for_a_room()
     {
         $room = Property::where('type', 'Room')->firstOrFail();
@@ -35,7 +36,7 @@ class RoomRateTest extends TestCase
         $this->assertEquals('Peak', $result['rate_type']);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_base_rate_if_no_rate_found()
     {
         $room = Property::where('type', 'Room')->firstOrFail();
