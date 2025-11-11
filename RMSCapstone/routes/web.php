@@ -429,7 +429,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
         Route::get('/events/archives', ArchiveEvents::class)
         ->name('admin.events-archives')
-        ->middleware(['auth', 'verified']);
+        ->middleware(['auth', 'can:archive-events-view']);
 
 
         // Events Summary
@@ -806,11 +806,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
         Route::get('/reservations/archives', ArchiveReservations::class)
             ->name('admin.reservations-archives')
-            ->middleware(['auth', 'verified']);
+            ->middleware(['auth', 'can:archive-reservation-view']);
 
         Route::get('/daytours/archives', ArchiveDayTours::class)
             ->name('admin.daytours-archives')
-            ->middleware(['auth', 'verified']);
+            ->middleware(['auth', 'can:archive-daytour-view']);
 
         /***
          * These routes are for Long-Term Rentals.
@@ -912,7 +912,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
         Route::get('/leases/archives', \App\Livewire\Admin\Properties\Leases\ArchiveLeases::class)
         ->name('admin.leases-archives')
-        ->middleware(['auth', 'verified']);
+        ->middleware(['auth', 'can:archive-leases-view']);
 
         //Lease Summary
         Route::get('/lease-reports', function () {
