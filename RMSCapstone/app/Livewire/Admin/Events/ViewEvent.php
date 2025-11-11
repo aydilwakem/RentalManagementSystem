@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Events;
 
+use App\Mail\EventExpiredMail;
 use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\EventHall;
@@ -15,6 +16,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use App\Models\PaymentMethod;
+use App\Models\Setting;
+use App\Models\TransactionProperty;
 use App\Services\PaymentService;
 use App\Services\ServiceBag;
 use App\Services\TransactionLoader;
@@ -34,6 +37,7 @@ use App\Services\EmailService;
 use App\Services\BrandingService;
 use App\Services\PayMongoService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Livewire\WithFileUploads;
 
 
@@ -270,8 +274,9 @@ class ViewEvent extends Component
             return;
         }
 
+        //Delete the event if only they are done, terminated, cancelled, or expired
         if ($this->confirmItemDelete) {
-            if (in_array($event->transaction_status, ['done', 'terminated'])) {
+            if (in_array($event->transaction_status, ['done', 'terminated', 'cancelled', 'expired'])) {
                 $event->delete();
                 $this->confirmItemDelete = false;
 
@@ -391,6 +396,7 @@ class ViewEvent extends Component
         $this->createPaymentModal = false;
     }
 
+    // ------------------------------- ADMIN CREATE PAYMENT -------------------------- //
     // Create Payment
     public function CreatePayment(PaymentService $paymentService)
     {
@@ -430,6 +436,54 @@ class ViewEvent extends Component
 
         // 2 Recalculate invoice totals
         $this->recalculateInvoice();
+        
+        //3 - Check if status has been updated 
+        $this->transaction->refresh();
+
+        if ($this->transaction->transaction_status === 'receipt_verified' && $this->transaction->reservation_type_id == 3) {
+        Log::info("Transaction {$this->transaction->id} is now receipt_verified. Searching for conflicting pending event bookings...");
+
+        // Get the property IDs (event halls) linked to this transaction
+        $propertyIds = TransactionProperty::where('transaction_id', $this->transaction->id)
+            ->pluck('property_id');
+
+        // Find all other pending transactions that share any of these property IDs and overlap in date and time
+        $otherPendingTransactions = Transaction::query()
+            ->join('transaction_properties as tp', 'tp.transaction_id', '=', 'trn_transactions.id')
+            ->whereIn('tp.property_id', $propertyIds)
+            ->where('trn_transactions.id', '!=', $this->transaction->id)
+            ->where('trn_transactions.transaction_status', 'pending')
+            ->where(function ($query) {
+                $query->where('trn_transactions.start_datetime', '<', $this->transaction->end_datetime)
+                      ->where('trn_transactions.end_datetime', '>', $this->transaction->start_datetime);
+            })
+            ->select('trn_transactions.*')
+            ->distinct()
+            ->get();
+
+        Log::info("Found {$otherPendingTransactions->count()} conflicting pending transaction(s) for the same hall(s).");
+
+        //Load branding:
+        $branding = Setting::first();
+        
+        foreach ($otherPendingTransactions as $pending) {
+            $pending->update(['transaction_status' => 'expired']);
+            Log::info("Expired conflicting transaction ID: {$pending->id}");
+
+            try {
+                if ($pending->transactionUser && $pending->transactionUser->email) {
+                    Mail::to($pending->transactionUser->email)
+                        ->send(new EventExpiredMail($pending, $branding));
+
+                    Log::info("Sent EventExpiredMail to {$pending->transactionUser->email} for transaction ID: {$pending->id}");
+                } else {
+                    Log::warning("No email found for expired transaction ID: {$pending->id}");
+                }
+            } catch (\Throwable $e) {
+                Log::error("Failed to send EventExpiredMail for transaction ID: {$pending->id}. Error: " . $e->getMessage());
+            }
+        }
+    }
 
         // 4 Reset form fields
         $this->reset([
@@ -447,6 +501,7 @@ class ViewEvent extends Component
         return redirect()->route('admin.view-event', ['event' => $this->event->id])
             ->with('success', 'Payment created and invoice recalculated successfully.');
     }
+
 
     protected function recalculateInvoice()
     {

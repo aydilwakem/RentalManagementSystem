@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\EventHoursExpiredMail;
 use Illuminate\Console\Command;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class MarkExpiredTransactions extends Command
 {
@@ -22,7 +25,9 @@ class MarkExpiredTransactions extends Command
         }
 
         $expiredCount = 0;
-
+        /**
+         * ROOMS
+         */
         // Process room reservations (reservation_type_id = 2)
         $roomExpired = Transaction::whereIn('transaction_status', ['pending'])
             ->where('reservation_type_id', 2) // Room reservations
@@ -30,13 +35,44 @@ class MarkExpiredTransactions extends Command
             ->update(['transaction_status' => 'expired']);
         $expiredCount += $roomExpired;
 
+        /**
+         * EVENTS
+         */
         // Process event reservations (reservation_type_id = 3)
-        $eventExpired = Transaction::whereIn('transaction_status', ['pending'])
+        $eventTransactions = Transaction::whereIn('transaction_status', ['pending'])
             ->where('reservation_type_id', 3) // Event reservations
             ->where('created_at', '<=', Carbon::now()->subHours($settings->event_payment_proof_expiration_hours))
-            ->update(['transaction_status' => 'expired']);
-        $expiredCount += $eventExpired;
+            ->get(); 
 
+        $eventExpiredCount = $eventTransactions->count();
+        Log::info("Found {$eventExpiredCount} event transactions to mark as expired.");
+
+            foreach($eventTransactions as $eventTransaction){
+                $eventTransaction->update(['transaction_status' => 'expired']);
+                Log::info("Transaction ID {$eventTransaction->id} marked as expired (created at: {$eventTransaction->created_at}).");
+
+
+                //Try to send email
+                try {
+            if ($eventTransaction->transactionUser && $eventTransaction->transactionUser->email) {
+                Mail::to($eventTransaction->transactionUser->email)
+                    ->send(new EventHoursExpiredMail($eventTransaction, $settings));
+
+                Log::info("Successfully sent EventHoursExpiredMail to {$eventTransaction->transactionUser->email} for transaction ID: {$eventTransaction->id}");
+            } else {
+                Log::warning("No email found for transaction ID: {$eventTransaction->id}. Skipping mail send.");
+            }
+        } catch (\Throwable $e) {
+            Log::error("Failed to send EventHoursExpiredMail for transaction ID {$eventTransaction->id}. Error: " . $e->getMessage());
+        }
+
+        $expiredCount++;
+    }
+
+
+        /**
+         * DAYTOUR
+         */
         // Process day tour reservations (reservation_type_id = 4)
         $dayTourExpired = Transaction::whereIn('transaction_status', ['pending'])
             ->where('reservation_type_id', 4) // Day tour reservations
@@ -44,7 +80,7 @@ class MarkExpiredTransactions extends Command
             ->update(['transaction_status' => 'expired']);
         $expiredCount += $dayTourExpired;
 
-        $this->info("Expired transactions updated: {$expiredCount} (Rooms: {$roomExpired}, Events: {$eventExpired}, Day Tours: {$dayTourExpired})");
+        $this->info("Expired transactions updated: {$expiredCount} (Rooms: {$roomExpired}, Events: {$eventExpiredCount}, Day Tours: {$dayTourExpired})");
     }
     
 }
