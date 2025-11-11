@@ -600,7 +600,7 @@ class EditEvent extends Component
     // This function retrieves available halls based on the selected date range
     public function getAvailableHalls()
     {
-        if (!$this->start_datetime || !$this->end_datetime) {
+       if (!$this->start_datetime || !$this->end_datetime) {
             return;
         }
 
@@ -613,25 +613,35 @@ class EditEvent extends Component
             ->where('property_status', 'available')
             ->get();
 
-        // Step 2: Load only transactions that truly overlap, excluding current event
+        // Step 2: Load only transactions that truly overlap
         $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
-            $query->where('trn_transactions.id', '!=', $this->event->id) // Specify table for id
-                ->whereIn('transaction_status', [
-                    'pending',
-                    'reserved',
-                    'receipt_verified',
-                    'confirmed',
-                    'ongoing'
-                ])
-                ->where(function ($q) use ($startDate, $endDate) {
-                    $q->where('end_datetime', '>', $startDate)
-                        ->where('start_datetime', '<', $endDate);
-                });
+        $query->where(function ($q) use ($startDate, $endDate) {
+            $q->where('end_datetime', '>', $startDate)
+              ->where('start_datetime', '<', $endDate);
+        })
+        ->whereNotIn('transaction_status', ['expired', 'terminated', 'cancelled', 'done']); 
+        // Only consider active/confirmed transactions, else, 
+        //hall is still available in expired transactions
         }]);
 
-        // Step 3: Flag each hall as booked if it has overlapping transactions
-        $this->halls = $allHalls->map(function ($hall) {
-            $hall->isBooked = $hall->transactions->isNotEmpty();
+            //Step 3: Filter booked halls, but show available halls with pencil booking 
+            $this->halls = $allHalls->map(function ($hall) {
+                $statuses = $hall->transactions->pluck('transaction_status')->unique();
+
+                //Count the pending statuses
+                $pencilCount = $hall->transactions
+                ->where('transaction_status', 'pending')
+                ->count();
+
+
+                if ($statuses->contains(fn($s) => !in_array($s, ['pending', 'expired', 'terminated', 'cancelled']))) { 
+                $hall->availability_status = 'Booked'; //Show halls that are not pending or expired
+            } elseif ($pencilCount > 0) {
+                $hall->availability_status = 'Available - ' . $pencilCount . ' Pencil Booked'; //Hall is still available that are only tagged as pending
+            } else {
+                $hall->availability_status = 'Available';
+            }
+
             return $hall;
         });
     }

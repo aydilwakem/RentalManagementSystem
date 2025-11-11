@@ -57,7 +57,7 @@ class ViewEvents extends Component
         if ($this->confirmItemDelete) {
             $event = Transaction::find($this->confirmItemDelete);
 
-            if ($event && in_array($event->transaction_status, ['done', 'terminated'])) {
+            if ($event && in_array($event->transaction_status, ['done', 'terminated', 'expired', 'cancelled'])) {
                 $event->delete();
 
                 // Recalculate fake IDs only for reservation_type_id = 3
