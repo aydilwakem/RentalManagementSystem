@@ -14,6 +14,9 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            //DayTour Reports
+           "daytour-reports", 
+
             //Archives
             "archive-events-view", 
             "archive-reservation-view", 

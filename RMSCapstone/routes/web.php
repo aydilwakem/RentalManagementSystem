@@ -570,7 +570,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         //Daytour Reports
         Route::get('/daytour-reports', function () {
             return view('admin.reports.daytour-reports');
-        })->name('admin.daytour-reports');
+        })->name('admin.daytour-reports')
+        ->middleware('can:daytour-reports');
 
         // --------------------- Maintenance ---------------------------------------
 
