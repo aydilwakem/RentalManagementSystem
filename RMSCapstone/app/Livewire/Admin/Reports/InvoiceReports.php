@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -37,7 +38,7 @@ class InvoiceReports extends Component
     public $invoiceTypeFilter = '';
     public $invoiceStatusFilter = '';
 
-    
+
     // ---------------------------------------------------- RENDER ------------------------------------------------ //
     public function render()
     {
@@ -204,7 +205,7 @@ class InvoiceReports extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
         }, $fileName);
-            
+
     }
 
     // ------------------------------- EXPORT CSV METHOD --------------------------------------- //
@@ -239,16 +240,16 @@ class InvoiceReports extends Component
         'Content-Disposition' => "attachment; filename=\"$fileName\"",
     ];
 
-    return response()->stream(function () use ($invoices, 
-    $totalInvoices, 
-    $totalAmountPaid, 
+    return response()->stream(function () use ($invoices,
+    $totalInvoices,
+    $totalAmountPaid,
     $totalBalanceDue) {
         $handle = fopen('php://output', 'w');
 
         // Header row
         fputcsv($handle, [
             'No.',
-            'Invoice Number', 
+            'Invoice Number',
             'Guest Name',
             'Transaction No.',
             'Billing Date',
@@ -421,7 +422,7 @@ class InvoiceReports extends Component
             $sheet->setCellValue("G{$row}", $billDate);
             $sheet->setCellValue("H{$row}", $dueDate);
             $sheet->setCellValue("I{$row}", ucfirst($status));
-            
+
 
             $row++;
         }
@@ -435,6 +436,14 @@ class InvoiceReports extends Component
         $sheet->setCellValue("A{$row}", 'Total Invoices:');
         $sheet->setCellValue("B{$row}", $totalInvoices . ' records');
         $row++;
+
+        $summaryStart = $row - 2;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
 
         // $sheet->setCellValue("A{$row}", 'Total Amount Paid:');
         // $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountPaid, 2));
@@ -465,6 +474,14 @@ class InvoiceReports extends Component
 
             $sheet->setCellValue("A{$row}", 'Overdue Invoices:');
             $sheet->setCellValue("B{$row}", $statusCounts['overdue'] . ' records');
+
+            $summaryStart = $row - 4;
+            $summaryEnd = $row;
+
+            $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+            $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+                ->setBorderStyle(Border::BORDER_THIN);
         }
 
         // --- Auto-size Columns ---

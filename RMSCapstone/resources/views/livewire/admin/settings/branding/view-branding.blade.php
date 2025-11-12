@@ -4,10 +4,11 @@
         <h2 class="mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">Edit Branding</h2>
 
         @if (session('message'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
                 {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-            {{ session('message') }}
-        </div>
+                {{ session('message') }}
+            </div>
         @endif
 
         <form wire:submit.prevent="">
@@ -15,42 +16,72 @@
             <!-- General Information -->
             <h3 class="font-bold text-lg text-green-700 dark:text-green-300">General Information</h3>
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                <!-- Logo Upload -->
-                <div>
-                    <label for="logo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Company
-                        Logo</label>
-                    <input type="file" wire:model="newImage" id="image" accept="image/png, image/jpeg" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                        dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                    @error('newImage')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    <div wire:loading wire:target="newImage" class="mt-2 text-gray-600 dark:text-gray-200">Uploading
-                        image...</div>
-                    <div class="mt-2">
-                        @if ($newImage)
-                        <img src="{{ $newImage->temporaryUrl() }}" class="w-32 h-32 object-cover rounded-lg shadow">
-                        @elseif ($settings && $settings->logo)
-                        <img src="{{ asset('storage/' . $settings->logo) }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
-                        @else
-                        <img src="{{ asset('images/rms-default.png') }}"
-                            class="w-32 h-32 object-cover rounded-lg shadow">
-                        @endif
+                <!-- Company Logo Upload -->
+                <div class="mb-4 col-span-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        Company Logo
+                    </label>
+
+                    <div class="flex gap-4 items-center">
+
+                        {{-- Show preview: if new uploaded logo, show it; otherwise show existing --}}
+                        <div class="relative">
+                            @if ($newImage)
+                                <img src="{{ $newImage->temporaryUrl() }}"
+                                    class="w-40 h-40 object-cover rounded-md shadow-sm border" alt="Logo Preview">
+                            @elseif ($settings && $settings->logo)
+                                <img src="{{ asset('storage/' . $settings->logo) }}"
+                                    class="w-40 h-40 object-cover rounded-md shadow-sm border" alt="Current Logo">
+                            @else
+                                <img src="{{ asset('images/rms-default.png') }}"
+                                    class="w-40 h-40 object-cover rounded-md shadow-sm border" alt="Placeholder Logo">
+                            @endif
+                        </div>
+
+                        {{-- Upload box always visible --}}
+                        <label for="logoUploadEdit" class="cursor-pointer shrink-0">
+                            <div
+                                class="w-40 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400 hover:bg-gray-50 transition">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                <span class="text-xs">Replace Logo</span>
+                            </div>
+                        </label>
+
+                        <!-- Hidden file input -->
+                        <input id="logoUploadEdit" type="file" wire:model="newImage" accept="image/png, image/jpeg"
+                            class="hidden">
                     </div>
-                    @error('logo')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+
+                    @error('newImage')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
+
+                    {{-- Upload Loading Spinner --}}
+                    <div wire:loading wire:target="newImage" class="flex items-center mt-2">
+                        <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                        </svg>
+                        <span>Uploading...</span>
+                    </div>
                 </div>
+
 
                 <!-- Company Name -->
                 <div>
                     <label for="company_name"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Company Name</label>
                     <input type="company_name" wire:model="company_name" id="company_name" required
-                        placeholder="Ex. ABC Rentals" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        placeholder="Ex. ABC Rentals"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('company_name')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -58,11 +89,12 @@
                 <div>
                     <label for="email"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Email</label>
-                    <input type="email" wire:model="email" id="email" required placeholder="Ex. company@example.com"
+                    <input type="email" wire:model="email" id="email" required
+                        placeholder="Ex. company@example.com"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('email')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -71,11 +103,12 @@
                     <label for="contact_number"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Contact
                         Number</label>
-                    <input type="text" wire:model="contact_number" id="contact_number" placeholder="Ex. 0912 345 6789"
+                    <input type="text" wire:model="contact_number" id="contact_number"
+                        placeholder="Ex. 09123456789"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('contact_number')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -83,11 +116,12 @@
                 <div>
                     <label for="address"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Address</label>
-                    <input type="text" wire:model="address" id="address" placeholder="Ex. 123 Main St, City, Country"
+                    <input type="text" wire:model="address" id="address"
+                        placeholder="Ex. 123 Main St, City, Country"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('address')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -100,10 +134,11 @@
                     <label for="facebook"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Facebook</label>
                     <input type="text" wire:model="facebook" id="facebook"
-                        placeholder="Ex. https://facebook.com/yourpage" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        placeholder="Ex. https://facebook.com/yourpage"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('facebook')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -112,10 +147,11 @@
                     <label for="instagram"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Instagram</label>
                     <input type="text" wire:model="instagram" id="instagram"
-                        placeholder="Ex. https://instagram.com/yourprofile" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        placeholder="Ex. https://instagram.com/yourprofile"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                         dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                     @error('instagram')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -149,13 +185,16 @@
 
                 <!-- Privacy Policy -->
                 <div wire:ignore>
-                    <label for="privacy_policy" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    <label for="privacy_policy"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                         Privacy Policy
                     </label>
 
-                    <input type="hidden" id="privacy_policy" name="privacy_policy" wire:model.lazy="privacy_policy">
+                    <input type="hidden" id="privacy_policy" name="privacy_policy"
+                        wire:model.lazy="privacy_policy">
 
-                    <div id="editor-privacy" class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
+                    <div id="editor-privacy"
+                        class="bg-white dark:bg-gray-800 p-2 rounded shadow h-32 overflow-y-auto">
                         {!! $privacy_policy !!}
                     </div>
                 </div>
@@ -226,73 +265,76 @@
                         <span class="text-gray-700 dark:text-gray-200">Enable</span>
                     </div>
                     @error('enable_deposit_percentage')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-
-
-                <!-- Room Payment Proof Expiration Hours -->
-                <div>
-                    <label for="room_payment_proof_expiration_hours"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Room Payment Proof Expiration (Hours)
-                    </label>
-                    <input type="number" min="1" wire:model="room_payment_proof_expiration_hours"
-                        id="room_payment_proof_expiration_hours" placeholder="e.g., 24" 
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                    @error('room_payment_proof_expiration_hours')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Event Payment Proof Expiration Hours -->
-                <div>
-                    <label for="event_payment_proof_expiration_hours"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Event Payment Proof Expiration (Hours)
-                    </label>
-                    <input type="number" min="1" wire:model="event_payment_proof_expiration_hours"
-                        id="event_payment_proof_expiration_hours" placeholder="e.g., 24" 
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                    @error('event_payment_proof_expiration_hours')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Day Tour Payment Proof Expiration Hours -->
-                <div>
-                    <label for="day_tour_payment_proof_expiration_hours"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Day Tour Payment Proof Expiration (Hours)
-                    </label>
-                    <input type="number" min="1" wire:model="day_tour_payment_proof_expiration_hours"
-                        id="day_tour_payment_proof_expiration_hours" placeholder="e.g., 24" 
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                            focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                    @error('day_tour_payment_proof_expiration_hours')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Deposit Percentage -->
                 @if ($enable_deposit_percentage)
-                <div>
-                    <label for="deposit_percentage"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                        Deposit Percentage (%)
-                    </label>
-                    <input type="number" min="0" max="100" step="0.01" wire:model="deposit_percentage"
-                        id="deposit_percentage" placeholder="e.g., 50" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                    <div>
+                        <label for="deposit_percentage"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Deposit Percentage (%)
+                        </label>
+                        <input type="number" min="0" max="100" step="0.01"
+                            wire:model="deposit_percentage" id="deposit_percentage" placeholder="e.g., 50"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                     focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                </div>
+                    </div>
                 @endif
+
+                <div class="grid grid-cols-3 space-x-4 col-span-2">
+                    <!-- Room Payment Proof Expiration Hours -->
+                    <div>
+                        <label for="room_payment_proof_expiration_hours"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Room Payment Proof Expiration (Hours)
+                        </label>
+                        <input type="number" min="1" wire:model="room_payment_proof_expiration_hours"
+                            id="room_payment_proof_expiration_hours" placeholder="e.g., 24"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                                focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                        @error('room_payment_proof_expiration_hours')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Event Payment Proof Expiration Hours -->
+                    <div>
+                        <label for="event_payment_proof_expiration_hours"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Event Payment Proof Expiration (Hours)
+                        </label>
+                        <input type="number" min="1" wire:model="event_payment_proof_expiration_hours"
+                            id="event_payment_proof_expiration_hours" placeholder="e.g., 24"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                                focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                        @error('event_payment_proof_expiration_hours')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Day Tour Payment Proof Expiration Hours -->
+                    <div>
+                        <label for="day_tour_payment_proof_expiration_hours"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Day Tour Payment Proof Expiration (Hours)
+                        </label>
+                        <input type="number" min="1" wire:model="day_tour_payment_proof_expiration_hours"
+                            id="day_tour_payment_proof_expiration_hours" placeholder="e.g., 24"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                                focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                        @error('day_tour_payment_proof_expiration_hours')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+
             </div>
 
             <!-- Submit Button -->
@@ -331,7 +373,7 @@
     </x-dialog-modal>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // TERMS
             const quillTerms = new Quill('#editor-terms', {
                 theme: 'snow'
@@ -340,7 +382,7 @@
             if (inputTerms.value) {
                 quillTerms.root.innerHTML = inputTerms.value;
             }
-            quillTerms.on('text-change', function () {
+            quillTerms.on('text-change', function() {
                 inputTerms.value = quillTerms.root.innerHTML;
                 inputTerms.dispatchEvent(new Event('input'));
             });
@@ -353,7 +395,7 @@
             if (inputPrivacy.value) {
                 quillPrivacy.root.innerHTML = inputPrivacy.value;
             }
-            quillPrivacy.on('text-change', function () {
+            quillPrivacy.on('text-change', function() {
                 inputPrivacy.value = quillPrivacy.root.innerHTML;
                 inputPrivacy.dispatchEvent(new Event('input'));
             });
@@ -366,7 +408,7 @@
             if (inputRefund.value) {
                 quillRefund.root.innerHTML = inputRefund.value;
             }
-            quillRefund.on('text-change', function () {
+            quillRefund.on('text-change', function() {
                 inputRefund.value = quillRefund.root.innerHTML;
                 inputRefund.dispatchEvent(new Event('input'));
             });
@@ -379,7 +421,7 @@
             if (inputRental.value) {
                 quillRental.root.innerHTML = inputRental.value;
             }
-            quillRental.on('text-change', function () {
+            quillRental.on('text-change', function() {
                 inputRental.value = quillRental.root.innerHTML;
                 inputRental.dispatchEvent(new Event('input'));
             });

@@ -22,7 +22,7 @@
     </section>
 
     <!-- SERVICES -->
-    <section id="services" class="py-20 md:py-24 bg-gradient-to-b from-white to-green-50 overflow-hidden">
+    <section id="services" class="py-20 md:py-24 bg-gradient-to-b from-white to-yellow-50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
             <div class="animate-on-scroll opacity-0 translate-y-10">
                 <h2 class="text-green-700 font-extrabold text-3xl tracking-tight mb-10 relative inline-block">
@@ -130,7 +130,7 @@
     </section>
 
     <!-- DESCRIPTION -->
-    <section id="description" class="py-20 md:py-24 bg-gray-50">
+    <section id="description" class="py-20 md:py-24 bg-gradient-to-b from-yellow-50 to-green-50 ">
         <div class="max-w-7xl mx-auto space-y-12 px-6 sm:px-8">
 
             <!-- Experience -->
@@ -204,7 +204,7 @@
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
             <div class="animate-on-scroll opacity-0 translate-y-10">
                 <h2 class="text-green-700 font-extrabold text-3xl mb-12 tracking-tight">
-                    What Our Guests Say
+                    WHAT OUR GUESTS SAY
                     <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
                 </h2>
             </div>
@@ -288,6 +288,8 @@
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         <input type="tel" name="contact_number" placeholder="Phone Number"
                             wire:model="contact_number" required
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            inputmode="numeric" maxlength="11"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         <textarea name="message" placeholder="Message" wire:model="message" rows="3" required
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 resize-none"></textarea>

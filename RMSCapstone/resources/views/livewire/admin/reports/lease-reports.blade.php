@@ -88,8 +88,9 @@
                 </x-button>
 
                 <div wire:loading wire:target="exportLeaseSummary"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-2 pt-1">
                     <span class="text-sm text-green-700 font-semibold pt-3">Exporting PDF...</span>
+                    <i class="fas fa-spinner fa-spin text-green-700 text-md"></i>
                 </div>
             </div>
 
@@ -112,8 +113,9 @@
                 </x-warning-button>
 
                 <div wire:loading wire:target="exportLeaseExcel"
-                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-4">
+                    class="absolute inset-0 flex items-center justify-center bg-white/70 rounded pl-2 pt-1">
                     <span class="text-sm text-yellow-700 font-semibold">Exporting Excel...</span>
+                    <i class="fas fa-spinner fa-spin text-yellow-700 text-md"></i>
                 </div>
             </div>
         </div>

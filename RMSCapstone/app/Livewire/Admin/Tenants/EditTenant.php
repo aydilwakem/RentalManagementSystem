@@ -89,6 +89,9 @@ class EditTenant extends Component
                 'company_name' => 'nullable|string|max:100',
                 'city_municipality' => 'nullable|string|max:100',
                 'country' => 'required|string|max:100',
+                'otherCountry' => $this->country === 'Other'
+                    ? 'required|string|max:100'
+                    : 'nullable',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal

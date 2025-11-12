@@ -369,13 +369,13 @@
                             <div class="mt-2">
                                 <span
                                     class="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-2 rounded-lg shadow-sm">
-                                    {{ Str::limit($transaction->requests, 50) }}
+                                    {{ Str::limit($transaction->requests, 45) }}
                                 </span>
 
-                                <x-button wire:click="openModal('requests')" icon="fas fa-comment-dots">
-                                    View & Reply
-                                </x-button>
-
+                                <button type="button" wire:click="openModal('requests')"
+                                    class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                                    <i class="fa-solid fa-comment-dots"></i> View & Reply
+                                </button>
                             </div>
                         @else
                             <div class="text-gray-500 italic">
@@ -1234,7 +1234,7 @@
                                         @if (in_array($type->name, ['pwd', 'senior']))
                                             <div class="flex flex-col p-3 font-semibold bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700 mb-2">
                                                 <!-- Discount Header -->
-                                                <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center justify-between ">
                                                     <div>
                                                         <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
                                                             PWD/Senior Discount Applied
@@ -1258,11 +1258,11 @@
                                                 @if (!empty($idsSummary))
                                                     <div class="mt-2 pt-2 border-t border-green-200 dark:border-green-700">
                                                         <div class="flex items-start">
-                                                            <span class="text-xs font-medium text-green-700 dark:text-green-300 mr-2 mt-0.5">
+                                                            <span class="text-xs font-medium text-green-700 dark:text-green-300 mr-2">
                                                                 IDs:
                                                             </span>
                                                             <div class="flex-1">
-                                                                <p class="text-xs text-green-600 dark:text-green-400 break-words">
+                                                                <p class="text-xs text-gray-800 dark:text-green-400 break-words">
                                                                     {{ $idsSummary }}
                                                                 </p>
                                                             </div>
@@ -1561,7 +1561,7 @@
                                             </td>
                                             <td
                                                 class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500">
-                                                {{ $payment->paymentMethod?->mode_of_payment_name ?? ($payment->mode_of_payment ?? 'N/A') }}
+                                                {{ ucwords($payment->paymentMethod?->mode_of_payment_name ?? ($payment->mode_of_payment ?? 'N/A')) }}
                                             </td>
                                             <td
                                                 class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 leading-tight">
@@ -1706,12 +1706,21 @@
 
                 <!-- Session Alert -->
                 @if (session('message'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                        class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-md
-                        {{ session('alert-type') === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
+                    <div x-data="{ show: true }"
+                        x-init="setTimeout(() => show = false, 3000)"
+                        x-show="show"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform -translate-y-4"
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform -translate-y-4"
+                        class="fixed top-20 right-4 px-4 py-2 rounded-lg shadow-lg z-50
+                        {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                         {{ session('message') }}
                     </div>
                 @endif
+
 
                 <!-- Receipt Details -->
                 <div class="p-6 space-y-4 text-gray-700 text-sm">
@@ -2704,19 +2713,20 @@
 
         <!-- PWD/Senior ID Management Section -->
         <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-700 mb-3 dark:text-gray-300">PWD/Senior Information</h3>
+            <h3 class="text-lg font-semibold text-gray-700 mb-1 dark:text-gray-300">Beneficiary Information</h3>
 
             <!-- Add New ID Form -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                {{-- <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     Add PWD/Senior Details
-                </label>
+                </label> --}}
                 <div class="space-y-3">
                     <!-- Name Field -->
                     <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">Full Name</label>
                         <input type="text" wire:model="editingPwdSeniorName"
-                            placeholder="Enter full name"
+                            placeholder="Ex. Juan Dela Cruz"
+                            oninput="this.value = this.value.replace(/[^\p{L}\s]/gu, '')"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
                         @error('editingPwdSeniorName')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -2725,10 +2735,11 @@
 
                     <!-- ID Field -->
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">PWD/Senior ID Number</label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">ID Number</label>
                         <div class="flex space-x-2">
                             <input type="text" wire:model="editingPwdSeniorId"
-                                placeholder="Enter PWD or Senior ID number"
+                                placeholder="Ex. 198765432"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
                             <x-button wire:click="addPwdSeniorId" class="whitespace-nowrap" wire:loading.attr="disabled">
                                 Add
@@ -2743,8 +2754,8 @@
 
             <!-- Existing IDs List -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    Current PWD/Senior Records ({{ count($pwdSeniorIds) }})
+                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">
+                    Beneficiaries ({{ count($pwdSeniorIds) }})
                 </label>
                 @if (count($pwdSeniorIds) > 0)
                     <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3 dark:border-gray-600">
@@ -2784,14 +2795,14 @@
                 <!-- Simple Amount Input -->
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Enter PWD/Senior
+                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Enter
                             Discount
                             Amount
                             <span class="text-red-500">*</span></label>
                         <input type="number" wire:model="manualDiscountAmount" min="0"
                             max="{{ $this->computeBaseSubtotal() }}" onwheel="this.blur()"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600"
-                            placeholder="Ex. ₱250">
+                            placeholder="Ex. 250">
                         <p class="text-xs text-gray-500 mt-1 dark:text-gray-400">
                             Maximum allowed: ₱{{ number_format($this->computeBaseSubtotal(), 2) }}
                         </p>
@@ -2899,7 +2910,7 @@
                 <div class="mb-4">
                     <strong class="block text-sm text-gray-700 font-semibold">Admin Reply:</strong>
                     <textarea wire:model.defer="request_reply"
-                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3" rows="3"
+                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3 resize-none focus:ring-green-600 focus:border-green-600" rows="3"
                         placeholder="Write your reply here..."></textarea>
                 </div>
 

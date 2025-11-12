@@ -7,7 +7,7 @@
 
             @can('leases-create')
                 <x-button class="mt-4" href="{{ route('admin.create-lease') }}" icon="fas fa-plus">
-                    Create Leasessss
+                    Create Lease
                 </x-button>
             @endcan
 
@@ -19,7 +19,7 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                                                                                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -33,18 +33,28 @@
                     </x-button>
                 @endcan
 
-                <x-button icon="fas fa-archive" href="{{ route('admin.leases-archives') }}" wire:navigate>
-                    View Archives
-                </x-button>
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="inline-flex items-center px-4 py-2 bg-gray-600 uppercase tracking-widest text-xs text-white rounded-md font-semibold hover:bg-gray-700">
+                        More Actions <i class="fas fa-chevron-down ml-2"></i>
+                    </button>
 
+                    <div x-show="open" @click.away="open = false" x-transition
+                        class="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg border z-50 py-2">
 
-                @can('leases-soft-delete')
-                    <!-- Soft Deletes -->
-                    <x-button class="  !bg-gray-600 hover:!bg-gray-700 focus:ring focus:!ring-gray-600 focus:!ring-offset-2"
-                        icon="fas fa-trash" href="{{ route('admin.deleted-leases') }}">
-                        Deleted Leases
-                    </x-button>
-                @endcan
+                        <a href="{{ route('admin.leases-archives') }}" wire:navigate
+                            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-archive mr-2"></i> View Archives
+                        </a>
+
+                       @can('leases-soft-delete')
+                            <a href="{{ route('admin.deleted-leases') }}"
+                                class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                <i class="fas fa-trash mr-2"></i> Deleted Leases
+                            </a>
+                        @endcan
+                    </div>
+                </div>
 
             </div>
         </div>

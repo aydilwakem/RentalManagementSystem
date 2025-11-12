@@ -76,14 +76,13 @@
                     </button>
 
                     <!-- Dots (for navigation) -->
-                    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+                    <div x-cloak
+                        class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1 transition-opacity duration-300"
+                        :class="hover && images.length > 1 ? 'opacity-100' : 'opacity-0'">
                         <template x-for="(image, index) in images" :key="index">
                             <button @click="active = index"
-                                :class="{
-                                    'bg-white': active !== index,
-                                    'bg-green-300': active === index
-                                }"
-                                class="w-2.5 h-2.5 rounded-full transition-all duration-300"></button>
+                                :class="active === index ? 'bg-green-400 scale-110' : 'bg-white'"
+                                class="w-2.5 h-2.5 rounded-full border border-white/50 transition-all duration-300"></button>
                         </template>
                     </div>
                 </div>

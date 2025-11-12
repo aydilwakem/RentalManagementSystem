@@ -76,44 +76,80 @@
                         @enderror
                     </div>
 
-                    <!-- Password -->
-                    <div class="sm:col-span-2 relative">
-                        <label for="password"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Password <span
-                                class="text-red-500">*</span></label>
-                        <input type="password" wire:model="password" id="password"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Enter password" required>
-                        <!-- Toggle button -->
-                        <div class="absolute inset-y-0 mt-6 right-0 flex items-center pr-5">
-                            <i id="togglePassword" class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
+                    <div x-data="{ passwordInput: '', confirmInput: '' }" class="sm:col-span-2 w-full">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                            <!-- Password -->
+                            <div class="relative">
+                                <label for="password"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
+
+                                <input type="password" wire:model="password" id="password"
+                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                    placeholder="Enter password" required x-model="passwordInput">
+
+                                <!-- Eye icon inside -->
+                                <div class="absolute inset-y-0 -mt-12 right-0 flex items-center pr-5">
+                                    <i id="togglePassword" class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
+                                </div>
+
+                                @error('password')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+
+                                <!-- Live password rules -->
+                                <div class="mt-1 text-xs space-y-0.5">
+                                    <p :class="passwordInput.length >= 8 ? 'text-green-600' : 'text-gray-500'">• Minimum
+                                        8 characters</p>
+                                    <p :class="/[A-Za-z]/.test(passwordInput) ? 'text-green-600' : 'text-gray-500'">•
+                                        Contains letters</p>
+                                    <p :class="/[0-9]/.test(passwordInput) ? 'text-green-600' : 'text-gray-500'">•
+                                        Contains numbers</p>
+                                    <p :class="/[^A-Za-z0-9]/.test(passwordInput) ? 'text-green-600' : 'text-gray-500'">
+                                        • Contains symbols</p>
+                                </div>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="relative">
+                                <label for="password_confirmation"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Confirm Password <span class="text-red-500">*</span>
+                                </label>
+
+                                <input type="password" wire:model="password_confirmation" id="password_confirmation"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                    dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                    placeholder="Confirm password" required x-model="confirmInput">
+
+                                <!-- Eye icon inside -->
+                                <div class="absolute inset-y-0 -mt-12 right-0 flex items-center pr-5">
+                                    <i id="toggleConfirmPassword"
+                                        class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
+                                </div>
+
+                                @error('password_confirmation')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+
+                                <!-- Live match indicator -->
+                                <p class="text-xs mt-1"
+                                    :class="confirmInput === '' ? 'text-gray-500' : (passwordInput === confirmInput ?
+                                        'text-green-600' : 'text-red-600')">
+                                    <span x-show="confirmInput === ''">Re-enter password</span>
+                                    <span x-show="confirmInput !== '' && passwordInput === confirmInput"><i class="fa-solid fa-circle-check"></i> Passwords
+                                        match</span>
+                                    <span x-show="confirmInput !== '' && passwordInput !== confirmInput"><i class="fa-solid fa-circle-xmark"></i> Passwords do
+                                        not match</span>
+                                </p>
+                            </div>
+
                         </div>
-                        @error('password')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <!-- Confirm Password -->
-                    <div class="sm:col-span-2 relative">
-                        <label for="password_confirmation"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Confirm
-                            Password <span class="text-red-500">*</span></label>
-                        <input type="password" wire:model="password_confirmation" id="password_confirmation"
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Confirm password" required>
-
-                        <!-- Toggle button -->
-                        <div class="absolute inset-y-0 mt-6 right-0 flex items-center pr-5">
-                            <i id="toggleConfirmPassword" class="fa-solid fa-eye text-gray-400 cursor-pointer"></i>
-                        </div>
-                        @error('password_confirmation')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
                 </div>
 
 

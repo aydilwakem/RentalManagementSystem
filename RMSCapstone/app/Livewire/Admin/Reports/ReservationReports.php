@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -34,7 +35,7 @@ class ReservationReports extends Component
     public $filterApplied = false;
 
     //-------------------- GUEST DETAILS
-    public $country_of_origin = []; 
+    public $country_of_origin = [];
 
     // ---FOR DATE RANGES INPUT ------ //
     public $start_date;
@@ -422,12 +423,12 @@ class ReservationReports extends Component
         'start_date' => $this->start_date,
         'end_date' => $this->end_date,
         'totalReservations' => $totalReservations,
-        'totalNights' => $totalNights, 
+        'totalNights' => $totalNights,
         'totalGuests' => $totalGuests,
         'totalFilipinos' => $totalFilipinos,
         'totalForeigners' => $totalForeigners,
         'guestByCountry' => $guestByCountry,
-        'roomFilter' => $this->roomFilter, 
+        'roomFilter' => $this->roomFilter,
         'rooms' => $this->rooms,
         'reservationStatusFilter' => $this->reservationStatusFilter,
     ]);
@@ -488,7 +489,7 @@ class ReservationReports extends Component
      * EXPORT EXCEL FILE
      *
      * Queries the database and exports a xlsx File
-     * 
+     *
      *
      *
      */
@@ -507,14 +508,14 @@ class ReservationReports extends Component
         ->get();
 
         //Define dates
-        $start_date = $this->start_date; 
-        $end_date = $this->end_date; 
+        $start_date = $this->start_date;
+        $end_date = $this->end_date;
 
         //Calculate all summaries
         $totalReservations = $transactions->count();
         $totalGuests = $transactions->sum('pax');
         $totalAmountEarned = $transactions->sum('total_amount');
-        
+
         //Get average length of stay
         $averageLength = 0;
         if ($totalReservations > 0) {
@@ -663,6 +664,14 @@ class ReservationReports extends Component
             ->setBold(true)
             ->getColor()->setRGB('166534');
 
+        $summaryStart = $row - 5;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
         // --- Auto-size Columns ---
         foreach (range('A', 'H') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -676,6 +685,6 @@ class ReservationReports extends Component
         'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition' => "attachment; filename=\"{$filename}\"",
     ]);
-    
+
     }
 }

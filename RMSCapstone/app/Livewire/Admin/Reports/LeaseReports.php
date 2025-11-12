@@ -11,6 +11,7 @@ use Livewire\Component;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -34,7 +35,7 @@ class LeaseReports extends Component
     //-------------------------- FILTERS ------------------------------- //
     public $filteredTransactions = [];
     public $propertyFilter = '';
-    public $properties = []; 
+    public $properties = [];
     public $propertyStatusFilter = '';
     public $filterApplied = false;
 
@@ -100,7 +101,7 @@ class LeaseReports extends Component
 
     //----------------------------------- EXPORT PDF BUTTON ---------------------------- - //
     public function exportLeaseSummary(){
-        
+
         //Query all tables with join
         $transactions = Transaction::query()
             ->select('trn_transactions.*')
@@ -188,7 +189,7 @@ class LeaseReports extends Component
             'totalTenants' => $totalTenants,
             'totalAmountEarned' => $totalAmountEarned,
             'properties' => $this->properties,
-            'propertyFilter' => $this->propertyFilter, //Added variables to pdf 
+            'propertyFilter' => $this->propertyFilter, //Added variables to pdf
             'propertyStatusFilter' => $this->propertyStatusFilter,
             'mostBookedProperty' => $mostBookedProperty
         ]);
@@ -271,7 +272,7 @@ class LeaseReports extends Component
         'Content-Disposition' => "attachment; filename=\"$filename\"",
     ];
 
-    //Define variables in CSV 
+    //Define variables in CSV
     return new StreamedResponse(function () use (
         $transactions,
         $totalLeases,
@@ -286,7 +287,7 @@ class LeaseReports extends Component
             'Transaction ID',
             'Primary Tenant',
             'Property Rented',
-            'Total Tenants', 
+            'Total Tenants',
             'Start Date',
             'End Date',
             'Lease Duration',
@@ -528,6 +529,14 @@ class LeaseReports extends Component
 
         $sheet->setCellValue("A{$row}", 'Total Amount Earned:');
         $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
+
+        $summaryStart = $row - 5;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
 
         // Highlight total amount
         $highlightRange = "A{$row}:B{$row}";

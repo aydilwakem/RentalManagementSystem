@@ -111,7 +111,7 @@
                             <label class="block text-sm font-medium text-gray-800 mb-1">Country <span
                                     class="text-red-500">*</span></label>
                             <select wire:model.live="country" wire:change="$refresh"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="" disabled selected>Select a country</option>
                                 @foreach ($countries as $countryOption)
                                 <option value="{{ $countryOption }}">{{ $countryOption }}</option>
@@ -126,8 +126,7 @@
                         <!-- Region -->
                         <div>
                             <label for="region"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Region <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Region </label>
                             <select id="region" wire:model.live="selectedRegion" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Region</option>
@@ -145,8 +144,7 @@
                         <!-- Province -->
                         <div>
                             <label for="province"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Province <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Province  </label>
                             <select id="province" wire:model.live="selectedProvince" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Province</option>
@@ -165,7 +163,7 @@
                         <div>
                             <label for="city_municipality"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">City/Municipality
-                                <span class="text-red-500">*</span></label>
+                                </label>
                             <select id="city_municipality" wire:model.live="selectedMunicipality" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select City/Municipality</option>
@@ -183,8 +181,7 @@
                         <!-- Barangay -->
                         <div>
                             <label for="barangay"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Barangay <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Barangay </label>
                             <select id="city_municipality" wire:model.live="selectedBarangay" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Barangay</option>
@@ -203,7 +200,7 @@
                         <div>
                             <label for="house_number"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">House
-                                Number <span class="text-red-500">*</span></label>
+                                Number </label>
                             <input type="text" wire:model="house_number" id="house_number" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 123, Blk 1 Lot 5">
@@ -215,8 +212,7 @@
                         <!-- Street -->
                         <div>
                             <label for="street"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Street <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Street  </label>
                             <input type="text" wire:model="street" id="street" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Sampaguita Street">
@@ -229,8 +225,8 @@
                         <div>
                             <label for="postal_code"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Postal
-                                Code <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="postal_code" id="postal_code" required readonly class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                                Code  </label>
+                            <input type="text" wire:model="postal_code" id="postal_code" required readonly class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 1630">
                             @error('postal_code')

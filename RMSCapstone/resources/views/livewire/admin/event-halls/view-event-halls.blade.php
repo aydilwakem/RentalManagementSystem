@@ -181,7 +181,7 @@
                                 </button>
                             </th>
 
-                            <th scope="col" class="px-4 py-3">Description</th>
+                            {{-- <th scope="col" class="px-4 py-3">Description</th> --}}
                             <th scope="col" class="px-4 py-3" wire:click="setSortBy('capacity')">
                                 <button class="flex items-center">
                                     Capacity
@@ -264,17 +264,17 @@
                                 </th>
                                 <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white">
                                     {{ $hall->name_number }} </td>
-                                <td class="px-4 py-3">
+                                {{-- <td class="px-4 py-3">
                                     @if (!empty($hall->description))
                                         {{ Str::limit($hall->description, 40, '...') }}
                                     @else
                                         <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
                                             provided.</em>
                                     @endif
-                                </td>
-                                <td class="px-4 py-3"> {{ $hall->capacity }}</td>
-                                <td class="px-4 py-3"> {{ number_format($hall->amount, 2) }} </td>
-                                <td class="px-4 py-3"> {{ number_format($hall->extra_charge_per_hour, 2) }} </td>
+                                </td> --}}
+                                <td class="px-4 py-3"> {{ $hall->capacity }} Pax</td>
+                                <td class="px-4 py-3">₱{{ number_format($hall->amount, 2) }} </td>
+                                <td class="px-4 py-3">₱{{ number_format($hall->extra_charge_per_hour, 2) }} </td>
                                 <td class="px-4 py-3">
                                     @if ($hall->property_status === 'available')
                                         <span

@@ -119,7 +119,7 @@
                     <!-- Monthly Rent -->
                     <div>
                         <label for="monthly_rent" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Monthly Rent <span class="text-red-500">*</span>
+                            Monthly Rent
                         </label>
                         <input type="text" wire:model.live="monthly_rent" id="monthly_rent"
                             class="bg-gray-50 border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 cursor-not-allowed
@@ -169,27 +169,6 @@
                 Create Lease
             </x-button>
         </div>
-
-        <!-- Create Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmCreateItem">
-            <x-slot name="title">
-                {{ __('Create Lease') }}
-            </x-slot>
-
-            <x-slot name="content">
-                {{ __('Are you sure you want to create this item?') }}
-            </x-slot>
-
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$set('confirmCreateItem', false)" wire:loading.attr="disabled">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-button class="ms-3 bg-green text-white" wire:click="saveLease" wire:loading.attr="disabled">
-                    {{ __('Create Lease') }}
-                </x-button>
-            </x-slot>
-        </x-dialog-modal>
 
     </div>
 </div>

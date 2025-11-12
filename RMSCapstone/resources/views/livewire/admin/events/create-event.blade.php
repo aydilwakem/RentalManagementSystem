@@ -147,23 +147,23 @@
                             @endif
 
                             @if ($country === 'Philippines')
-                            <div>
-                                <label for="city_municipality"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
-                                    Municipality <span class="text-red-500">*</span></label>
-                                <select id="city_municipality" wire:model="city_municipality" required
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                                    <option value="">Select Municipality</option>
-                                    @foreach ($municipalities as $municipality)
-                                    <option value="{{ $municipality->PSGC_MUNC_DESC }}">
-                                        {{ $municipality->PSGC_MUNC_DESC }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                @error('city_municipality')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                                <div>
+                                    <label for="city_municipality"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City /
+                                        Municipality</label>
+                                    <select id="city_municipality" wire:model="city_municipality"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                        <option value="">Select Municipality</option>
+                                        @foreach ($municipalities as $municipality)
+                                            <option value="{{ $municipality->PSGC_MUNC_DESC }}">
+                                                {{ $municipality->PSGC_MUNC_DESC }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('city_municipality')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             @endif
 
                         </div>

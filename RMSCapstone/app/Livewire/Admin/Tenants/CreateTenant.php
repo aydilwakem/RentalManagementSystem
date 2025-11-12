@@ -60,6 +60,9 @@ class CreateTenant extends Component
                 'company_name' => 'nullable|string|max:100',
                 'city_municipality' => 'nullable|string|max:100',
                 'country' => 'required|string|max:100',
+                'otherCountry' => $this->country === 'Other'
+                    ? 'required|string|max:100'
+                    : 'nullable',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // If validation fails, close the modal
@@ -80,11 +83,11 @@ class CreateTenant extends Component
             'company_name' => $this->company_name,
             'contact_number' => $this->contact_number,
             'city_municipality' => $this->city_municipality,
-            'country' => $this->country,
+            'country' => $finalCountry,
         ]);
 
         // Reset form fields
-        $this->reset(['trn_user_type', 'first_name', 'middle_name', 'last_name', 'suffix',  'contact_number', 'company_name', 'email', 'city_municipality', 'country']);
+        $this->reset(['trn_user_type', 'first_name', 'middle_name', 'last_name', 'suffix',  'contact_number', 'company_name', 'email', 'city_municipality', 'country', 'otherCountry']);
 
         // Flash message for success
         session()->flash('message', 'Tenant successfully created!');

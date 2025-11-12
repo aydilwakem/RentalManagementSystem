@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -33,7 +34,7 @@ class EventReports extends Component
     //------------------- FILTERS ------------------ //
     public $filteredTransactions = [];
     public $hallFilter = '';
-    public $halls = []; 
+    public $halls = [];
     public $eventStatusFilter = '';
     public $filterApplied = false;
 
@@ -161,7 +162,7 @@ class EventReports extends Component
             'totalGuests' => $totalGuests,
             'totalAmountEarned' => $totalAmountEarned,
             'halls' => $this->halls,
-            'hallFilter' => $this->hallFilter, //Added variables to pdf 
+            'hallFilter' => $this->hallFilter, //Added variables to pdf
             'eventStatusFilter' => $this->eventStatusFilter,
             'mostBookedHall' => $mostBookedHall //Pass variable to pdf for occupancy rate
         ]);
@@ -174,8 +175,8 @@ class EventReports extends Component
 
     // ------------------------- EXPORT CSV METHOD ---------------//
     public function exportEventCsv(){
-        //Query transactions and fetch all 
-        
+        //Query transactions and fetch all
+
         $transactions = Transaction::query()
         ->select('trn_transactions.*')
         ->join('transaction_properties', 'trn_transactions.id', '=', 'transaction_properties.transaction_id')
@@ -230,7 +231,7 @@ class EventReports extends Component
         'Content-Disposition' => "attachment; filename=\"$filename\"",
     ];
 
-    //Define variables in CSV 
+    //Define variables in CSV
     return new StreamedResponse(function () use (
         $transactions,
         $totalEvents,
@@ -246,8 +247,8 @@ class EventReports extends Component
             'Booked By',
             'Company',
             'Event Hall',
-            'Event Type', 
-            'Guests', 
+            'Event Type',
+            'Guests',
             'Start Date and Time',
             'End Date and Time',
             'Total Amount',
@@ -368,12 +369,12 @@ class EventReports extends Component
         $sheet = $spreadsheet->getActiveSheet();
 
         //Canopy Header - Logo displayed above
-        //Merge cells for logo: 
+        //Merge cells for logo:
         $sheet->mergeCells('D1:D2');
         $drawing = new Drawing();
-        $drawing->setPath(public_path('images/canopy-logo.png')); 
+        $drawing->setPath(public_path('images/canopy-logo.png'));
         $drawing->setHeight(55); //Logo size
-        $drawing->setCoordinates('D1'); 
+        $drawing->setCoordinates('D1');
         $drawing->setOffsetX(70); //Adjust row
         $drawing->setOffsetX(10); //Adjust down
         $drawing->setWorksheet($sheet);
@@ -468,7 +469,15 @@ class EventReports extends Component
 
         $sheet->setCellValue("A{$row}", 'Total Amount Earned:');
         $sheet->setCellValue("B{$row}", 'PHP ' . number_format($totalAmountEarned, 2));
-        
+
+        $summaryStart = $row - 4;
+        $summaryEnd = $row;
+
+        $summaryRange = "A{$summaryStart}:B{$summaryEnd}";
+
+        $sheet->getStyle($summaryRange)->getBorders()->getAllBorders()
+            ->setBorderStyle(Border::BORDER_THIN);
+
         // Apply light green background highlight to both A and B cells
         $highlightRange = "A{$row}:B{$row}";
         $sheet->getStyle($highlightRange)->getFill()

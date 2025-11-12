@@ -180,7 +180,7 @@
 
 <x-auth-layout>
 
-    <body class="relative min-h-screen bg-green-800 text-black overflow-hidden">
+    <body class="relative min-h-screen bg-green-800 text-black overflow-x-hidden overflow-y-auto p-4 py-6">
 
         <!-- Image Background -->
         <div class="absolute inset-0 z-0">
@@ -190,8 +190,9 @@
         </div>
 
         <!-- Form -->
-        <div class="relative z-10 flex items-center justify-center min-h-screen">
+        <div class="relative z-10 flex items-center justify-center min-h-screen px-4 py-6">
             <div class="flex flex-col items-center p-6 bg-white bg-opacity-90 rounded-3xl shadow-xl w-full max-w-lg">
+
 
                 <!-- Logo -->
                 <div class="relative -mt-20">
@@ -258,7 +259,7 @@
                                     class=" mt-5 mb-1 text-sm font-medium text-gray-700 flex-col">Middle Name</label>
                                 <input id="middle_name"
                                     class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    type="text" name="middle_name" :value="old('middle_name')"  autofocus
+                                    type="text" name="middle_name" :value="old('middle_name')" autofocus
                                     placeholder="Ex. Mercado" />
 
                                 <!-- icon -->
@@ -307,7 +308,7 @@
                                     class=" mt-5 mb-1 text-sm font-medium text-gray-700 flex-col">Suffix</label>
                                 <input id="suffix"
                                     class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    type="text" name="suffix" :value="old('suffix')"  autofocus
+                                    type="text" name="suffix" :value="old('suffix')" autofocus
                                     placeholder="Ex. Jr." />
 
                                 <!-- icon -->
@@ -333,7 +334,8 @@
                             <input id="email"
                                 class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
                                 type="email" name="email" :value="old('email')" required autofocus
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$" placeholder="Ex. Mercado" />
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,5}$"
+                                placeholder="Ex. juan.delacruz@example.com" />
 
                             <!-- icon -->
                             <div class="absolute inset-y-0 left-0 flex items-center pl-5 mt-7">
@@ -342,66 +344,102 @@
                         </div>
 
 
-                        <!-- Password -->
-                        <div x-data="{ show: false }">
-                            <label for="password" class="mt-5 mb-1 text-sm font-medium text-gray-700 flex-col">
-                                Password
-                                <span class="text-red-500">*</span>
-                            </label>
+                        <!-- Password Section -->
+                        <div x-data="{ show: false, password: '', confirm: '' }" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-5">
+
+                            <!-- Password -->
                             <div class="relative">
-                                <input id="password" x-bind:type="show ? 'text' : 'password'"
-                                    class="block w-full py-2.5 px-12 mt-1 mb-2 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                                    required autocomplete="current-password"
-                                    placeholder="Password (8+ chars with letter, number, symbol)" />
-                                <!-- icon -->
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-5">
-                                    <i class="fa-solid fa-lock text-gray-400"></i>
+                                <label for="password" class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
+
+                                <div class="relative">
+                                    <input id="password" name="password" x-model="password"
+                                        :type="show ? 'text' : 'password'" wire:model="password"
+                                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                                        class="block w-full py-2.5 px-12 mt-1 mb-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                                        placeholder="Password" required>
+
+
+                                    <!--  lock icon -->
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-5">
+                                        <i class="fa-solid fa-lock text-gray-400"></i>
+                                    </div>
+
+                                    <!-- View/Hide toggle  -->
+                                    <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 flex items-center px-4 text-sm font-medium text-gray-600">
+                                        <span x-text="show ? 'Hide' : 'View'"></span>
+                                    </button>
                                 </div>
 
-                                <button type="button"
-                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
-                                    @click="show = !show">
-                                    <span x-text="show ? 'Hide' : 'View'"></span>
-                                </button>
+                                <!-- Live requirements -->
+                                <div class="text-xs space-y-0.5 pl-2 mt-1">
+                                    <p :class="password.length >= 8 ? 'text-green-600' : 'text-gray-500'">• Minimum 8
+                                        characters</p>
+                                    <p :class="/[A-Za-z]/.test(password) ? 'text-green-600' : 'text-gray-500'">•
+                                        Contains letters</p>
+                                    <p :class="/[0-9]/.test(password) ? 'text-green-600' : 'text-gray-500'">• Contains
+                                        numbers</p>
+                                    <p :class="/[^A-Za-z0-9]/.test(password) ? 'text-green-600' : 'text-gray-500'">•
+                                        Contains symbols</p>
+                                </div>
+
+                                @error('password')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                            @error('password')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
 
                             <!-- Confirm Password -->
-                            <label for="password_confirmation"
-                                class="mt-8 mb-1 text-sm font-medium text-gray-700 flex-col">
-                                Confirm Password <span class="text-red-500">*</span>
-                            </label>
                             <div class="relative">
-                                <input id="password_confirmation" x-bind:type="show ? 'text' : 'password'"
-                                    class="block w-full py-2.5 px-12 mt-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500"
-                                    name="password_confirmation" required placeholder="Confirm your password" />
-                                <!-- icon -->
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-5">
-                                    <i class="fa-solid fa-lock text-gray-400"></i>
+                                <label for="password_confirmation"
+                                    class="mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Confirm Password <span class="text-red-500">*</span>
+                                </label>
+
+                                <div class="relative">
+                                    <input id="password_confirmation" name="password_confirmation" x-model="confirm"
+                                        :type="show ? 'text' : 'password'" wire:model="password_confirmation"
+                                        placeholder="Password"
+                                        class="block w-full py-2.5 px-12 mt-1 mb-1 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none bg-gray-100 placeholder-gray-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+
+                                    <!-- lock icon -->
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-5">
+                                        <i class="fa-solid fa-lock text-gray-400"></i>
+                                    </div>
+
+                                    <!-- View/Hide toggle -->
+                                    <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 flex items-center px-4 text-sm font-medium text-gray-600">
+                                        <span x-text="show ? 'Hide' : 'View'"></span>
+                                    </button>
                                 </div>
 
-                                <button type="button"
-                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 font-medium"
-                                    @click="show = !show">
-                                    <span x-text="show ? 'Hide' : 'View'"></span>
-                                </button>
-                            </div>
-                            @error('password_confirmation')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                                <!-- Live match indicator -->
+                                <p class="text-xs mt-1"
+                                    :class="confirm === '' ? 'text-gray-500' : (password === confirm ?
+                                        'text-green-600' : 'text-red-600')">
+                                    <span x-show="confirm === ''">Re-enter password</span>
+                                    <span x-show="confirm !== '' && password === confirm"><i
+                                            class="fa-solid fa-circle-check"></i> Passwords match</span>
+                                    <span x-show="confirm !== '' && password !== confirm"><i
+                                            class="fa-solid fa-circle-xmark"></i> Passwords do not
+                                        match</span>
+                                </p>
 
+                                @error('password_confirmation')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
 
                         @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                             <div class="mt-5">
                                 <x-label for="terms">
                                     <div class="flex items-center">
                                         <input id="terms" name="terms" type="checkbox" required
-                                        class="rounded text-green-500 focus:ring-green-500 border-gray-300" />
+                                            class="rounded text-green-500 focus:ring-green-500 border-gray-300" />
 
                                         <div class="ms-2">
                                             {!! __('I agree to the :terms_of_service and :privacy_policy', [
@@ -409,14 +447,14 @@
                                                     '<a target="_blank" href="' .
                                                     route('terms.show') .
                                                     '"
-                                                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">' .
+                                                                                                                                                                                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">' .
                                                     __('Terms of Service') .
                                                     '</a>',
                                                 'privacy_policy' =>
                                                     '<a target="_blank" href="' .
                                                     route('policy.show') .
                                                     '"
-                                                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">' .
+                                                                                                                                                                                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">' .
                                                     __('Privacy Policy') .
                                                     '</a>',
                                             ]) !!}

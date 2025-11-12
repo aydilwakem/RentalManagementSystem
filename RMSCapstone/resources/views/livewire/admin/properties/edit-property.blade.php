@@ -111,11 +111,24 @@
                     <!-- House Details -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
 
+                        <!-- Country -->
+                        <div>
+                            <label for="country"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Country <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" wire:model="country" id="country" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
+                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="Ex. Philippines">
+                            @error('country')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <!-- Region -->
                         <div>
                             <label for="region"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Region <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Region </label>
                             <select id="region" wire:model.live="selectedRegion" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Region</option>
@@ -133,8 +146,8 @@
                         <!-- Province -->
                         <div>
                             <label for="province"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Province <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Province
+                            </label>
                             <select id="province" wire:model.live="selectedProvince" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Province</option>
@@ -153,7 +166,7 @@
                         <div>
                             <label for="city_municipality"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">City/Municipality
-                                <span class="text-red-500">*</span></label>
+                                </label>
                             <select id="city_municipality" wire:model.live="selectedMunicipality" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select City/Municipality</option>
@@ -171,8 +184,8 @@
                         <!-- Barangay -->
                         <div>
                             <label for="barangay"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Barangay <span
-                                    class="text-red-500">*</span></label>
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Barangay
+                            </label>
                             <select id="city_municipality" wire:model.live="selectedBarangay" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Select Barangay</option>
@@ -191,7 +204,7 @@
                         <div>
                             <label for="postal_code"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Postal
-                                Code <span class="text-red-500">*</span></label>
+                                Code </label>
                             <input type="text" wire:model="postal_code" id="postal_code" readonly required
                                 class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
                                 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -202,19 +215,7 @@
                         </div>
                     </div>
 
-                    <!-- Country -->
-                    <div>
-                        <label for="country"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Country <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" wire:model="country" id="country" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-green-600 focus:border-green-600
-                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="Ex. Philippines">
-                        @error('country')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+
 
                     <!-- Property Description -->
                     <div>
@@ -232,8 +233,7 @@
 
                     <!-- Available Amenities (Dynamic) -->
                     <div class="sm:col-span-2">
-                        <label
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                             @foreach ($house_features as $feature)
                                 <div class="flex items-center">

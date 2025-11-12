@@ -800,9 +800,17 @@ public function openDiscountModal()
     public function addPwdSeniorId()
     {
         $this->validate([
-            'editingPwdSeniorId' => 'required|string|max:255',
-            'editingPwdSeniorName' => 'required|string|max:255',
+            'editingPwdSeniorName' => [
+                'required',
+                'max:255',
+                'regex:/^[\p{L}\s]+$/u', // Allow letters (all languages) + spaces
+            ],
+            'editingPwdSeniorId' => [
+                'required',
+                'numeric', // Digits only
+            ],
         ]);
+
 
         // Add the new ID
         $this->pwdSeniorIds[] = [
