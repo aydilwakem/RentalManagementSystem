@@ -926,7 +926,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             return view('admin.rentals.leases.archived-leases');
         })
         ->name('admin.leases-archives')
-        ->middleware(['auth', 'verified']);
+        // ->middleware(['auth', 'verified']);
         // Route::get('/leases/archives', \App\Livewire\Admin\Properties\Leases\ArchiveLeases::class)
         ->middleware(['auth', 'can:archive-leases-view']);
 
@@ -996,9 +996,19 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->middleware('can:tenant-soft-delete');
 
         // Backup routes
-        Route::get('view/backups', ViewBackups::class)->name('admin.view-backups')->middleware('can:backup-view');
+        // Route::get('view/backups', ViewBackups::class)->name('admin.view-backups')->middleware('can:backup-view');
+        // Route::get('create/backup', CreateBackup::class)->name('admin.create-backup')->middleware('can:backup-create');
+        Route::get('view/backups', function () {
+            return view('admin.backups.view-backups');
+        })
+            ->name('admin.view-backups')
+            ->middleware('can:backup-view');
 
-        Route::get('create/backup', CreateBackup::class)->name('admin.create-backup')->middleware('can:backup-create');
+        Route::get('create/backup', function () {
+            return view('admin.backups.create-backups');
+        })
+            ->name('admin.create-backup')
+            ->middleware('can:backup-create');
 
         // ----------------- Activity Logs
         Route::get('/audit-trail', function () {

@@ -31,7 +31,7 @@
                         <!-- Image Loop -->
                         <template x-for="(image,index) in images" :key="index">
                             <img x-show="active===index" :src="'/storage/' + image"
-                                class="absolute inset-0 w-full h-full object-cover transition duration-700 scale-100 group-hover:scale-110"
+                                class="absolute inset-0 w-full h-full object-cover transition duration-700 "
                                 x-transition.opacity />
                         </template>
 
@@ -45,22 +45,26 @@
                         <!-- Navigation arrows -->
                         <button x-show="hover && images.length > 1" @click="prevImage()"
                             class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow">
-                            <i class="fa-solid fa-chevron-left text-gray-700 text-xs"></i>
+                            <i class="fa-solid fa-chevron-left text-gray-700 text-xs w-5 h-5"></i>
                         </button>
 
                         <button x-show="hover && images.length > 1" @click="nextImage()"
                             class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow">
-                            <i class="fa-solid fa-chevron-right text-gray-700 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-700 text-xs w-5 h-5"></i>
                         </button>
 
                         <!-- Dots -->
-                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1.5">
-                            <template x-for="(img,i) in images" :key="i">
-                                <div @click="active=i" :class="active === i ? 'bg-green-500 scale-110' : 'bg-white'"
+                        <div x-cloak
+                            class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1.5 transition-opacity duration-300"
+                            :class="hover && images.length > 1 ? 'opacity-100' : 'opacity-0'">
+                            <template x-for="(img, i) in images" :key="i">
+                                <div @click="active = i" :class="active === i ? 'bg-green-500 scale-110' : 'bg-white'"
                                     class="w-2.5 h-2.5 rounded-full border border-white/50 transition-all duration-300 cursor-pointer">
                                 </div>
                             </template>
                         </div>
+
+
                     </div>
 
                     <!-- Details -->

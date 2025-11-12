@@ -122,6 +122,7 @@ class ReservationForm extends Component
     public $terms_and_conditions;
     public $expirationHours;
     public $roomCategoryFilter = '';
+    public $priceSort = '';
 
 
     // --------------- PAYMENT ------------------- //
@@ -273,7 +274,7 @@ class ReservationForm extends Component
         // ENHANCED: Comprehensive cart cleanup with better error handling
         $this->cleanupInvalidCartItems();
         $this->computeTotalPax();
-       
+
         // Save cleaned cart back to session
         session([
             'cart' => $this->cart,
@@ -342,7 +343,7 @@ class ReservationForm extends Component
                     }
 
                     $room = Property::find($item['room_id']);
-                    
+
                     if (!$room) {
                         $removedRooms[] = $item['room_id'] ?? 'unknown';
                         continue;
@@ -384,7 +385,7 @@ class ReservationForm extends Component
         }
 
         $this->cart = $cleanedCart;
-        
+
         // Add notices for removed items
         if (!empty($removedRooms)) {
             $this->cartNotices[] = "Some rooms were removed from your cart due to availability changes.";
@@ -397,13 +398,13 @@ class ReservationForm extends Component
     protected function isValidRoomCartItem(array $item): bool
     {
         $requiredFields = ['type', 'room_id', 'room_name', 'adults', 'kids', 'total_amount'];
-        
+
         foreach ($requiredFields as $field) {
             if (!array_key_exists($field, $item)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -415,24 +416,24 @@ class ReservationForm extends Component
         if (!isset($item['type'])) {
             return false;
         }
-        
+
         $requiredFields = [
             'room' => ['room_id', 'room_name', 'adults', 'kids'],
             'activity' => ['activity_id', 'activity_name', 'quantity'],
             'service' => ['service_id', 'service_name', 'quantity']
         ];
-        
+
         $type = $item['type'];
         if (!isset($requiredFields[$type])) {
             return false;
         }
-        
+
         foreach ($requiredFields[$type] as $field) {
             if (!array_key_exists($field, $item)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -590,6 +591,11 @@ class ReservationForm extends Component
             $this->getAvailableRooms();
         }
 
+        if ($property === 'priceSort') {
+            $this->getAvailableRooms();
+        }
+
+
 
         // --------------- CHECK-IN AND CHECK-OUT DATES ------------------- //
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
@@ -655,6 +661,7 @@ class ReservationForm extends Component
         $this->searchQuery = '';
         $this->roomCategoryFilter = '';
         $this->idealGuestFilter = '';
+        $this->priceSort = '';
         $this->getAvailableRooms();
     }
 
@@ -705,13 +712,13 @@ class ReservationForm extends Component
     {
         $availableRooms = $this->roomAvailabilityService
             ->getAvailableRooms($this->check_in_date, $this->check_out_date);
-        
+
         // Apply all filters
         $availableRooms = $availableRooms->filter(function ($room) {
             $matchesSearch = true;
             $matchesCategory = true;
             $matchesIdealGuest = true;
-            
+
             // Apply search filter
             if (!empty($this->searchQuery)) {
                 $matchesSearch = str_contains(
@@ -719,20 +726,31 @@ class ReservationForm extends Component
                     strtolower($this->searchQuery)
                 );
             }
-            
+
             // Apply category filter
             if (!empty($this->roomCategoryFilter)) {
                 $matchesCategory = $room->property_category_id == $this->roomCategoryFilter;
             }
-            
+
             // Apply ideal guest filter
             if (!empty($this->idealGuestFilter)) {
                 $matchesIdealGuest = $room->ideal_guest == $this->idealGuestFilter;
             }
-            
+
             return $matchesSearch && $matchesCategory && $matchesIdealGuest;
         });
-        
+
+        // Price Sorting
+        if ($this->priceSort === 'low_high') {
+            $availableRooms = $availableRooms->sortBy(function ($room) {
+                return $room->dynamic_rate ?? $room->amount ?? 0;
+            });
+        } elseif ($this->priceSort === 'high_low') {
+            $availableRooms = $availableRooms->sortByDesc(function ($room) {
+                return $room->dynamic_rate ?? $room->amount ?? 0;
+            });
+        }
+
         $this->rooms = $availableRooms;
         $this->prepareOccupancyRules();
     }

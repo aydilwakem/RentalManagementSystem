@@ -7,8 +7,6 @@ use App\Services\BackupService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 
-
-#[Layout('layouts.app')]
 class CreateBackup extends Component
 {
     public $dbSize;
@@ -19,15 +17,18 @@ class CreateBackup extends Component
         // Get database size estimation
         $database = config('database.connections.mysql.database');
         $dbSize = 0;
-        
+
         try {
-            $result = DB::select("
+            $result = DB::select(
+                "
                 SELECT SUM(data_length + index_length) / 1024 AS size
-                FROM information_schema.TABLES 
+                FROM information_schema.TABLES
                 WHERE table_schema = ?
                 GROUP BY table_schema
-            ", [$database]);
-            
+            ",
+                [$database],
+            );
+
             $this->dbSize = $result[0]->size ?? 0;
         } catch (\Exception $e) {
             $this->dbSize = 'unknown (estimation failed)';
@@ -37,14 +38,14 @@ class CreateBackup extends Component
     public function createBackup()
     {
         $this->isCreating = true;
-        
+
         try {
             $backupService = new BackupService();
             $backup = $backupService->createBackup();
-            
-            session()->flash('message', 'Backup created successfully: ' . $backup->name);
-            $this->redirect(route('admin.view-backups'));
-            
+
+            return redirect()
+                ->route('admin.view-backups')
+                ->with('message', 'Backup created successfully: ' . $backup->name);
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to create backup: ' . $e->getMessage());
             $this->isCreating = false;

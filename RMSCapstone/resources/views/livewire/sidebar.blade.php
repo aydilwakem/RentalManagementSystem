@@ -59,7 +59,7 @@
                 <div>
                     <a href="{{ route('dashboard') }}">
                         <div class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
-                                        {{ Route::is('dashboard') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                            {{ Route::is('dashboard') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                             <i class="fa-solid fa-house"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">
                                 Dashboard
@@ -521,7 +521,7 @@
                     @can('branding-view')
                     <div @click="toggle('settings')"
                         class="flex justify-between items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
-                                    {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.appearance') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                        {{ Route::is('admin.manage-users') || Route::is('admin.branding') || Route::is('admin.activity-logs') || Route::is('admin.view-backups') || Route::is('admin.appearance') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
                         <div class="flex items-center space-x-2">
                             <i class="fa-solid fa-cogs"></i>
                             <h1 x-cloak x-show="$store.sidebar.full">
