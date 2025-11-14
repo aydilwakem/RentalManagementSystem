@@ -93,6 +93,7 @@ class ReservationReports extends Component
 
     //use variable for filtering transactions
     $this->filteredTransactions = $query
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy, $this->sortDir)
         ->get();
 
@@ -131,6 +132,7 @@ class ReservationReports extends Component
             ->when($this->reservationStatusFilter, function ($query) { //Status filter
             $query->where('transaction_status', $this->reservationStatusFilter);
         })
+            ->distinct('trn_transactions.id') 
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
@@ -355,6 +357,7 @@ class ReservationReports extends Component
         ->when($this->reservationStatusFilter, function ($query) {
             $query->where('transaction_status', $this->reservationStatusFilter);
         })
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy, $this->sortDir)
         ->get();
 
@@ -462,6 +465,7 @@ class ReservationReports extends Component
             $end = Carbon::parse($this->end_date)->endOfDay();
             $query->where('start_datetime', '<=', $end);
         })
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
 
@@ -504,6 +508,7 @@ class ReservationReports extends Component
         ->when($this->end_date, fn($q) => $q->where('start_datetime', '<=', Carbon::parse($this->end_date)->endOfDay()))
         ->when($this->roomFilter, fn($q) => $q->where('transaction_properties.property_id', $this->roomFilter))
         ->when($this->reservationStatusFilter, fn($q) => $q->where('transaction_status', $this->reservationStatusFilter))
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
         ->get();
 
