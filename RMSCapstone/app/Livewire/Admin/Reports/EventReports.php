@@ -83,6 +83,7 @@ class EventReports extends Component
 
         //use variable for filtering transactions
         $this->filteredTransactions = $query
+            ->distinct('trn_transactions.id') 
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
@@ -112,6 +113,7 @@ class EventReports extends Component
             ->when($this->eventStatusFilter, function ($query) { //Status filter
                 $query->where('transaction_status', $this->eventStatusFilter);
             })
+            ->distinct('trn_transactions.id') 
             ->orderBy($this->sortBy, $this->sortDir)
             ->get();
 
@@ -314,6 +316,7 @@ class EventReports extends Component
             $end = Carbon::parse($this->end_date)->endOfDay();
             $query->where('start_datetime', '<=', $end);
         })
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy, $this->sortDir)
         ->paginate($this->perPage);
 
@@ -332,6 +335,7 @@ class EventReports extends Component
         ->when($this->end_date, fn($q) => $q->where('start_datetime', '<=', Carbon::parse($this->end_date)->endOfDay()))
         ->when($this->hallFilter, fn($q) => $q->where('transaction_properties.property_id', $this->hallFilter))
         ->when($this->eventStatusFilter, fn($q) => $q->where('transaction_status', $this->eventStatusFilter))
+        ->distinct('trn_transactions.id') 
         ->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc')
         ->get();
 
