@@ -134,7 +134,7 @@
             </x-responsive-nav-link>
 
             <x-responsive-nav-link href="{{ route('guest.feedback-form') }}" :active="request()->routeIs('guest.feedback-form')" wire:navigate>
-                {{ __('Event Halls') }}
+                {{ __('Feedback Form') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link href="{{ route('guest.about-us') }}" :active="request()->routeIs('guest.about-us')" wire:navigate>
