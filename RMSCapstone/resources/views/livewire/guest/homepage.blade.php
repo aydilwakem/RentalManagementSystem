@@ -1,23 +1,97 @@
 <div class="bg-white text-gray-800 font-sans overflow-x-hidden">
 
-    <!-- HERO -->
-    <section
-        class="relative min-h-[70vh] md:h-screen flex items-center justify-center bg-cover bg-center overflow-hidden"
+    <!-- HERO SECTION -->
+    <section class="relative h-screen flex flex-col justify-center items-center bg-cover bg-center overflow-hidden"
         style="background-image: url('{{ asset('images/canopy-login2.webp') }}');">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-transparent"></div>
 
-        <div class="relative z-10 text-center px-6 py-24 max-w-3xl animate-on-scroll opacity-0 translate-y-10">
-            <h1 class="text-yellow-50 text-4xl md:text-6xl font-extrabold mb-3 tracking-tight drop-shadow-md">
+        <!-- 1. Overlay -->
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <!-- 2. Main Content -->
+        <div
+            class="relative z-10 text-center px-4 max-w-5xl mx-auto animate-on-scroll opacity-0 translate-y-10 transition-all duration-1000 delay-300">
+
+            <!-- Icon -->
+            {{-- <div class="mb-6 opacity-90">
+                <i class="fas fa-leaf text-4xl text-white drop-shadow-md"></i>
+            </div> --}}
+
+            <h1 class="text-white text-5xl md:text-7xl font-serif font-bold mb-6 tracking-tight drop-shadow-xl">
                 {{ $companyName }}
             </h1>
-            <p class="text-yellow-50 text-lg md:text-2xl font-light mb-8">
+
+            <p
+                class="text-white text-md md:text-xl font-light tracking-[0.1em] uppercase mb-12 drop-shadow-md opacity-90">
                 Where nature meets elegance
             </p>
-            <x-button
-                class="px-10 py-4 !bg-yellow-50 hover:!bg-yellow-100 !text-green-700 !font-bold shadow-lg transition-transform duration-150 transform hover:scale-105 rounded-full"
-                href="#services">
+
+            <a href="#services"
+                class="inline-block border-b-2 tracking-wide border-white pb-1 text-white text-lg font-medium hover:text-green-400 hover:border-green-400 transition-colors duration-300">
                 Explore Services
-            </x-button>
+            </a>
+        </div>
+
+        <!-- Booking Section -->
+        <div
+            class="absolute bottom-0 left-0 w-full z-20 bg-white/95 backdrop-blur-md border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <form action="{{ route('guest.reservation-form') }}" method="GET" class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+
+                    <div
+                        class="hidden md:block text-green-900 font-medium text-xl whitespace-nowrap pr-4 border-r border-gray-300">
+                        Book your stay
+                    </div>
+
+                    <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-4 flex-grow">
+                        <!-- Check In -->
+                        <div class="relative group">
+                            <label
+                                class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-green-700 transition-colors">Check
+                                In</label>
+                            <input type="date" name="check_in" required
+                                min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
+                                class="w-full bg-transparent border-0 border-b border-gray-300 p-0 pb-1 text-gray-800 font-medium focus:ring-0 focus:border-green-600 transition-colors cursor-pointer">
+                        </div>
+
+                        <!-- Check Out -->
+                        <div class="relative group">
+                            <label
+                                class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-green-700 transition-colors">Check
+                                Out</label>
+                            <input type="date" name="check_out" required
+                                min="{{ isset($check_in_date) ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : \Carbon\Carbon::now('Asia/Manila')->addDay()->format('Y-m-d') }}"
+                                class="w-full bg-transparent border-0 border-b border-gray-300 p-0 pb-1 text-gray-800 font-medium focus:ring-0 focus:border-green-600 transition-colors cursor-pointer">
+                        </div>
+
+                        <!-- Guest Count -->
+                        <div class="relative group hidden md:block">
+                            <label
+                                class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-green-700 transition-colors">Guests</label>
+                            <select name="guests"
+                                class="w-full bg-transparent border-0 border-b border-gray-300 p-0 pb-1 text-gray-800 font-medium focus:ring-0 focus:border-green-600 cursor-pointer">
+                                <option>2 Guests</option>
+                                <option>4 Guests</option>
+                                <option>6 Guests</option>
+                                <option>8 Guests</option>
+                                <option>10 Guests</option>
+                                <option>20 Guests</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    {{-- <button
+                        class="w-full md:w-auto bg-green-700 text-white px-8 py-4 rounded-lg font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-green-900/30 whitespace-nowrap flex items-center justify-center gap-2">
+                        <span>Check Availability</span>
+                        <i class="fas fa-arrow-right text-sm"></i>
+                    </button> --}}
+                    <x-button type="submit"
+                        class="w-full md:w-auto bg-green-700 text-white px-8 py-4 rounded-lg font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-green-900/30 whitespace-nowrap flex items-center justify-center gap-2">
+                        <span>Check Availability</span>
+                        <i class="fas fa-arrow-right text-sm"></i>
+                    </x-button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -288,8 +362,8 @@
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         <input type="tel" name="contact_number" placeholder="Phone Number"
                             wire:model="contact_number" required
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                            inputmode="numeric" maxlength="11"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric"
+                            maxlength="11"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
                         <textarea name="message" placeholder="Message" wire:model="message" rows="3" required
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 resize-none"></textarea>
