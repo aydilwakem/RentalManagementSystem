@@ -112,6 +112,15 @@
 
                 <!-- Right Section: Guest Review Card -->
                 <div class="w-full lg:w-2/3 lg:pl-6 space-y-6 pb-12">
+                    <!-- Sort Filter -->
+                    <div class="flex items-center space-x-2 text-sm">
+                        <span class="text-gray-600">Sort by:</span>
+                        <select wire:model.live="reviewSort" class="border-none bg-gray-50 text-gray-700 font-medium text-sm rounded-lg focus:ring-green-500 focus:border-green-500 py-1 pl-3 pr-8 cursor-pointer hover:bg-gray-100 transition-colors">
+                            <option value="newest">Date</option>
+                            <option value="likes">Likes</option>
+                            <option value="stars">Stars</option>
+                        </select>
+                    </div>
                     @forelse ($propertyReviews as $review)
                         <div
                             class="p-5 border border-gray-100 rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-200">

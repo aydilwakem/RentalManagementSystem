@@ -87,13 +87,13 @@
                     class="w-full flex items-center justify-center min-h-[50px] relative mt-24">
                     <div class="flex flex-col items-center justify-center text-center">
                         <!-- Spinner -->
-                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
+                        <svg class="animate-spin h-6 w-6 text-green-700 mb-2 dark:text-green-400" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                 stroke-width="4" />
                             <path class="opacity-75" fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                         </svg>
-                        <span class="text-green-700 text-sm">Loading...</span>
+                        <span class="text-green-700 text-sm dark:text-green-400">Loading...</span>
                     </div>
                 </div>
                 <table class="w-full text-left">
@@ -221,7 +221,7 @@
                                     @if (!empty($activity->description))
                                         {{ Str::limit($activity->description, 50) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed">No description provided.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-300">No description provided.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -235,7 +235,7 @@
                                     @if (!empty($activity->inclusions))
                                         {{ Str::limit($activity->inclusions, 50) }}
                                     @else
-                                        <em class="text-gray-600 leading-relaxed">No inclusions listed.</em>
+                                        <em class="text-gray-600 leading-relaxed dark:text-gray-300">No inclusions listed.</em>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 flex items-center justify-center space-x-3">

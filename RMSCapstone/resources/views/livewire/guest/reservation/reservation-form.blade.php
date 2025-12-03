@@ -108,7 +108,7 @@
 
                 @if ($check_in_date)
                     <div
-                        class="-mt-6 -mx-4 mb-4 bg-gray-100 text-green-700 text-center text-lg font-semibold p-2 rounded-t-lg shadow-sm border-b">
+                        class="-mt-6 -mx-4 mb-4 bg-green-50 text-green-700 text-center text-lg font-semibold p-2 rounded-t-lg shadow-sm border-b">
                         Reservation Summary
                     </div>
 

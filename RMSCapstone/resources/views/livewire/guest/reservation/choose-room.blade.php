@@ -7,21 +7,24 @@
             <!-- Top bar with icons -->
             <div class="flex items-center justify-between">
                 <h2 class="text-md font-semibold text-gray-700 flex items-center gap-2">
-                    <!-- Expand / Collapse Button -->
-                    <button @click="open = !open"
-                        class="flex items-center justify-center w-9 h-9 rounded-full bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 transition"
-                        title="Show filters">
-                        <template x-if="!open">
-                            <i class="fas fa-sliders-h"></i>
-                        </template>
-                        <template x-if="open">
-                            <i class="fas fa-times"></i>
-                        </template>
-                    </button>
                     Room Filters
                 </h2>
+                <!-- Expand / Collapse Button -->
+                <button @click="open = !open"
+                    class="flex items-center justify-center w-9 h-9 rounded-full border transition duration-200
+                    {{ (!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort))
+                        ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200'
+                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+                    }}"
+                    title="Show filters">
 
-                <div></div>
+                    <template x-if="!open">
+                        <i class="fas fa-sliders-h"></i>
+                    </template>
+                    <template x-if="open">
+                        <i class="fas fa-times"></i>
+                    </template>
+                </button>
             </div>
 
             <!-- Collapsible Filter Panel -->

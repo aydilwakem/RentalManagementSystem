@@ -1,4 +1,13 @@
-<nav x-data="{ open: false }" class="bg-primary-800 border-b border-gray-300 sticky top-0 z-50">
+<nav x-data="{ open: false, scrolled: false }"
+     @scroll.window="scrolled = (window.pageYOffset > 20)"
+     class="w-full z-50 transition-all duration-300 {{ request()->routeIs('guest.homepage') ? 'fixed top-0 border-transparent' : 'sticky top-0 border-gray-300 bg-primary-800' }}"
+     :class="{
+         @if(request()->routeIs('guest.homepage'))
+             'bg-gradient-to-b from-black/60 to-transparent': !scrolled && !open,
+             'bg-primary-800 border-gray-300 shadow-md': scrolled || open
+         @endif
+     }">
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -8,7 +17,7 @@
                 <img src="{{ asset('storage/' . $logoPath) }}"
                      alt="{{ $companyName }}"
                      class="block h-9 w-auto rounded-full" />
-                <span class="ml-2 text-xl font-semibold text-yellow-50">
+                <span class="ml-2 text-xl font-semibold text-white">
                     {{ $companyName }}
                 </span>
             </a>
@@ -24,43 +33,6 @@
                     {{ __('Rooms') }}
                 </x-nav-link>
 
-                {{-- <div x-data="{ open: false }" class="relative">
-                    <!-- Toggle -->
-                    <button @click="open = !open" @click.away="open = false"
-                        class="flex items-center text-gray-800 hover:text-green-700 font-semibold transition">
-                        <span>Activities</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-4 h-4 ml-1 transition-transform duration-200"
-                            :class="{ 'rotate-180': open }">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown Panel -->
-                    <div x-show="open" x-transition.origin.top
-                        class="absolute left-0 mt-3 w-64 bg-white border border-green-100 rounded-2xl shadow-xl p-4 z-50">
-
-                        <div class="space-y-2">
-                            <a href="{{ route('guest.day-tour-reservation') }}" wire:navigate
-                                class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-green-50 text-gray-700 hover:text-green-700 transition">
-                                <span>Day Tour</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="2" stroke="currentColor" class="w-4 h-4 text-green-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </a>
-                            <a href="{{ route('guest.activities') }}" wire:navigate
-                                class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-green-50 text-gray-700 hover:text-green-700 transition">
-                                <span>Free Activities</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="2" stroke="currentColor" class="w-4 h-4 text-green-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div> --}}
-
                 <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')">
                     {{ __('Activities') }}
                 </x-nav-link>
@@ -69,11 +41,6 @@
                     wire:navigate>
                     {{ __('Day Tour') }}
                 </x-nav-link>
-
-                {{-- <x-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
-                    wire:navigate>
-                    {{ __('Spaces') }}
-                </x-nav-link> --}}
 
                 <x-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')" wire:navigate>
                     {{ __('Event Halls') }}
@@ -106,7 +73,7 @@
 
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-primary-800 border-t border-gray-700">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" >
                 {{ __('Home') }}
@@ -123,11 +90,6 @@
             <x-responsive-nav-link href="{{ route('guest.day-tour-reservation') }}" :active="request()->routeIs('guest.day-tour-reservation')" wire:navigate>
                 {{ __('Day Tour') }}
             </x-responsive-nav-link>
-
-            {{-- <x-responsive-nav-link href="{{ route('guest.houses') }}" :active="request()->routeIs('guest.houses')"
-                wire:navigate>
-                {{ __('Spaces') }}
-            </x-responsive-nav-link> --}}
 
             <x-responsive-nav-link href="{{ route('guest.event-halls') }}" :active="request()->routeIs('guest.event-halls')" wire:navigate>
                 {{ __('Event Halls') }}

@@ -484,7 +484,7 @@
 
                                     <!-- Actions -->
                                     <div
-                                        class="flex flex-col sm:flex-row justify-between sm:justify-end gap-3 mt-6 w-full">
+                                        class="flex flex-col sm:flex-row justify-between gap-3 mt-6 w-full">
                                         <button @click="showModal = false"
                                             class="w-full sm:w-auto mt-2 sm:mt-4 px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
                                             Cancel
