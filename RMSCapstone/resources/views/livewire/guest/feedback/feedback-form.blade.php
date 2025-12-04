@@ -3,6 +3,7 @@
 
         <!-- Header Section -->
         <div class="text-center mb-8">
+            <i class="fa-solid fa-comment text-5xl font-bold text-green-700"></i>
             <h1 class="text-3xl font-bold text-green-700">We’d Love Your Feedback</h1>
             <p class="mt-4 text-gray-600 leading-relaxed text-base">
                 Thank you for choosing <strong>Canopy Farm</strong> for your recent stay!
@@ -25,8 +26,8 @@
             <div>
                 <label class="block text-md font-semibold text-gray-700 mb-1">Reservation / Transaction Number</label>
                 <input type="text" wire:model.defer="transaction_number"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    placeholder="e.g. TXN-XXXXXXX">
+                    class="w-full border border-gray-300 rounded-xl px-4 py-2 rounde shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Ex. TXN-XXXXXXX">
 
                 @error('transaction_number')
                 <span class=" text-red-500 text-sm mt-1 block">{{ $message }}</span>

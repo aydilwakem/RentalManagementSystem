@@ -1,13 +1,13 @@
 <footer class="bg-green-800 text-white text-center py-3">
     <div class="container mx-auto flex flex-col items-center">
         <div class="flex space-x-3 mb-2">
-            <a href="{{ $facebookLink }}" class="text-white hover:text-gray-200">
+            <a href="{{ $facebookLink }}" target="_blank" class="text-white hover:text-gray-200">
                 <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="https://www.tiktok.com/@canopyfarmph" class="text-white hover:text-gray-200">
+            <a href="https://www.tiktok.com/@canopyfarmph" target="_blank" class="text-white hover:text-gray-200">
                 <i class="fab fa-tiktok"></i>
             </a>
-            <a href="{{ $instagramLink }}" class="text-white hover:text-gray-200">
+            <a href="{{ $instagramLink }}" target="_blank" class="text-white hover:text-gray-200">
                 <i class="fab fa-instagram"></i>
             </a>
         </div>

@@ -2,21 +2,22 @@
     <div class="step-one w-full">
 
         <!-- Search and Filter Section -->
-        <div x-data="{ open: false }" class="mb-6 p-4 bg-white border rounded-xl relative">
+        <div x-data="{ open: false }" class="mb-4 p-3 border bg-white rounded-xl relative">
 
             <!-- Top bar with icons -->
             <div class="flex items-center justify-between">
-                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-filter text-gray-600"></i>
+                <h2 class="text-md font-semibold text-gray-700 flex items-center gap-2">
                     Room Filters
                 </h2>
-
                 <!-- Expand / Collapse Button -->
-                <button
-                    @click="open = !open"
-                    class="flex items-center justify-center w-9 h-9 rounded-full bg-green-50 hover:bg-green-100 border border-green-200 text-green-700 transition"
-                    title="Show filters"
-                >
+                <button @click="open = !open"
+                    class="flex items-center justify-center w-9 h-9 rounded-full border transition duration-200
+                    {{ (!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort))
+                        ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200'
+                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+                    }}"
+                    title="Show filters">
+
                     <template x-if="!open">
                         <i class="fas fa-sliders-h"></i>
                     </template>
@@ -27,11 +28,7 @@
             </div>
 
             <!-- Collapsible Filter Panel -->
-            <div
-                x-show="open"
-                x-transition.opacity.scale.80
-                class="mt-4 space-y-5"
-            >
+            <div x-show="open" x-transition.opacity.scale.80 class="mt-4 space-y-5">
                 <!-- Search & Filters Row -->
                 <div class="flex flex-col md:flex-row gap-5 items-start md:items-end justify-between">
 
@@ -41,20 +38,14 @@
                             <i class="fas fa-search text-gray-600 mr-1"></i> Search by Room Name
                         </label>
                         <div class="relative">
-                            <input
-                                type="text"
-                                id="searchQuery"
-                                wire:model.live="searchQuery"
-                                placeholder="Enter room name..."
-                                class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 text-sm"
-                            >
+                            <input type="text" id="searchQuery" wire:model.live="searchQuery"
+                                placeholder="Enter room name"
+                                class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 text-sm">
                             <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                @if($searchQuery)
-                                    <button
-                                        wire:click="$set('searchQuery', '')"
+                                @if ($searchQuery)
+                                    <button wire:click="$set('searchQuery', '')"
                                         class="text-gray-400 hover:text-red-500 transition-colors duration-200"
-                                        type="button"
-                                    >
+                                        type="button">
                                         <i class="fas fa-times text-sm"></i>
                                     </button>
                                 @else
@@ -69,11 +60,8 @@
                         <label for="property_category_id" class="block text-sm font-medium text-gray-700 mb-1">
                             <i class="fas fa-tags text-gray-600 mr-1"></i> Category
                         </label>
-                        <select
-                            id="property_category_id"
-                            wire:model.live="roomCategoryFilter"
-                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer"
-                        >
+                        <select id="property_category_id" wire:model.live="roomCategoryFilter"
+                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer">
                             <option value="">All Categories</option>
                             @foreach ($roomCategories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -86,11 +74,8 @@
                         <label for="idealGuestFilter" class="block text-sm font-medium text-gray-700 mb-1">
                             <i class="fas fa-users text-gray-600 mr-1"></i> Ideal Guests
                         </label>
-                        <select
-                            id="idealGuestFilter"
-                            wire:model.live="idealGuestFilter"
-                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer"
-                        >
+                        <select id="idealGuestFilter" wire:model.live="idealGuestFilter"
+                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer">
                             <option value="">Any Number</option>
                             @foreach ($this->idealGuestOptions as $guestCount)
                                 <option value="{{ $guestCount }}">
@@ -105,11 +90,8 @@
                         <label for="priceSort" class="block text-sm font-medium text-gray-700 mb-1">
                             <i class="fas fa-coins text-gray-600 mr-1"></i> Sort by Price
                         </label>
-                        <select
-                            id="priceSort"
-                            wire:model.lazy="priceSort"
-                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer"
-                        >
+                        <select id="priceSort" wire:model.lazy="priceSort"
+                            class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 cursor-pointer">
                             <option value="">Default</option>
                             <option value="low_high">Price: Low to High</option>
                             <option value="high_low">Price: High to Low</option>
@@ -118,42 +100,42 @@
                 </div>
 
                 <!-- Filter Results Info -->
-                @if(!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort))
-                    <div class="mt-3 text-sm text-gray-600 bg-gray-50 border border-gray-100 rounded-lg px-4 py-3">
+                @if (!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort))
+                    <div class="mt-3 text-sm text-gray-600 bg-white border border-gray-100 rounded-lg px-4 py-3">
                         <p class="flex flex-wrap items-center gap-x-2 leading-relaxed">
-                            @if(!empty($searchQuery))
+                            @if (!empty($searchQuery))
                                 <span><i class="fas fa-search mr-1 text-green-600"></i> "{{ $searchQuery }}"</span>
                             @endif
 
-                            @if(!empty($searchQuery) && (!empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort)))
+                            @if (!empty($searchQuery) && (!empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort)))
                                 <span class="text-gray-400">•</span>
                             @endif
 
-                            @if(!empty($roomCategoryFilter))
+                            @if (!empty($roomCategoryFilter))
                                 <span><i class="fas fa-tag mr-1 text-green-600"></i>
                                     {{ $roomCategories->firstWhere('id', $roomCategoryFilter)->name ?? 'Unknown' }}
                                 </span>
                             @endif
 
-                            @if(!empty($roomCategoryFilter) && (!empty($idealGuestFilter) || !empty($priceSort)))
+                            @if (!empty($roomCategoryFilter) && (!empty($idealGuestFilter) || !empty($priceSort)))
                                 <span class="text-gray-400">•</span>
                             @endif
 
-                            @if(!empty($idealGuestFilter))
+                            @if (!empty($idealGuestFilter))
                                 <span><i class="fas fa-user-group mr-1 text-green-600"></i>
                                     {{ $idealGuestFilter }} guest{{ $idealGuestFilter > 1 ? 's' : '' }}
                                 </span>
                             @endif
 
-                            @if(!empty($idealGuestFilter) && !empty($priceSort))
+                            @if (!empty($idealGuestFilter) && !empty($priceSort))
                                 <span class="text-gray-400">•</span>
                             @endif
 
                             {{-- Price Sort Display --}}
-                            @if(!empty($priceSort))
+                            @if (!empty($priceSort))
                                 <span>
                                     <i class="fas fa-coins mr-1 text-green-600"></i>
-                                    @if($priceSort === 'low_high')
+                                    @if ($priceSort === 'low_high')
                                         Price: Low → High
                                     @elseif($priceSort === 'high_low')
                                         Price: High → Low
@@ -161,15 +143,13 @@
                                 </span>
                             @endif
 
-                            @if($rooms->count() > 0)
+                            @if ($rooms->count() > 0)
                                 <span class="text-gray-500">— {{ $rooms->count() }} found</span>
                             @endif
                         </p>
 
-                        <button
-                            wire:click="clearFilters"
-                            class="mt-2 text-xs text-red-600 hover:text-red-700 underline font-medium transition"
-                        >
+                        <button wire:click="clearFilters"
+                            class="mt-2 text-xs text-red-600 hover:text-red-700 underline font-medium transition">
                             Clear all filters
                         </button>
                     </div>
@@ -268,18 +248,17 @@
                 </div>
             </div> --}}
 
-                <div
-                    wire:loading
+                <div wire:loading
                     wire:target="check_in_date,check_out_date,category,search,sortBy,searchQuery,roomCategoryFilter,idealGuestFilter,priceSort"
-                    class="space-y-4"
-                >
+                    class="space-y-4">
 
                     @for ($i = 0; $i < 3; $i++)
                         @include('livewire.guest.room-skeleton')
                     @endfor
                 </div>
 
-                <div wire:loading.remove wire:target="check_in_date,check_out_date,category,search,sortBy," class="space-y-4">
+                <div wire:loading.remove wire:target="check_in_date,check_out_date,category,search,sortBy,"
+                    class="space-y-4">
                     @foreach ($rooms as $room)
                         <div class=" space-y-6" wire:key="room-{{ $room->id }}">
                             <div
@@ -367,7 +346,8 @@
 
                                             <!-- Room Capacity and Charges -->
                                             <div>
-                                                <p class="text-sm text-gray-700 mb-1 px-1"> {{ $room->description }}</p>
+                                                <p class="text-sm text-gray-700 mb-1 px-1"> {{ $room->description }}
+                                                </p>
 
                                                 {{-- Show Pool House relationship note --}}
                                                 @php
@@ -395,7 +375,8 @@
                                                         for
                                                         individual booking.
                                                         @if ($poolHouseBooked)
-                                                            <div class="mt-1 italic text-gray-600">Currently unavailable
+                                                            <div class="mt-1 italic text-gray-600">Currently
+                                                                unavailable
                                                                 — the
                                                                 full Pool
                                                                 House is reserved.</div>

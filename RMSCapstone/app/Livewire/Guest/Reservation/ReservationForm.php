@@ -42,6 +42,7 @@ use PragmaRX\Countries\Package\Countries;
 use App\Helpers\Toast;
 use App\Services\PaymentMethodService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class ReservationForm extends Component
 {
@@ -255,9 +256,21 @@ class ReservationForm extends Component
      * It initializes various properties and loads necessary data.
      * -------------------------------------------------------------
      */
-    public function mount()
+    public function mount(Request $request)
     {
         $this->initializeDates();
+
+    // Capture Guest Count and force it to be an integer
+    if ($request->has('guests')) {
+        $this->idealGuestFilter = (int) $request->query('guests');
+    }
+
+    // Capture Dates
+    if ($request->has('check_in') && $request->has('check_out')) {
+        $this->check_in_date = $request->query('check_in');
+        $this->check_out_date = $request->query('check_out');
+    }
+
         $this->prepareOccupancyRules();
         $this->loadStaticData();
         $this->loadRooms();

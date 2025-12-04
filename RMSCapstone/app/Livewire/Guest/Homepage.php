@@ -86,7 +86,7 @@ class Homepage extends Component
         Mail::to($this->email)->send(new ContactUsMail($data));
 
         // Optional: also send copy to Canopy Farm's internal email
-        Mail::to('sarah.malaras.edu@gmail.com')->send(new ContactMail($data));
+        Mail::to('rmscapstone26@gmail.com')->send(new ContactMail($data));
 
         session()->flash('message', 'Message sent successfully! An email of the copy of your responses has been sent.');
         session()->flash('alert-type', 'success');

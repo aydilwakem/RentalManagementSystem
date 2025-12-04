@@ -136,7 +136,7 @@
 
                         <!-- Total Room Charge -->
                         <div
-                            class="flex justify-between items-center font-semibold text-gray-800 dark:text-whitet">
+                            class="flex justify-between items-center font-semibold text-gray-800 dark:text-white">
                             <div class="text-sm">Room Subtotal: </div>
                             <div class="text-sm">₱{{ number_format($this->computeTotalAmountOfAllRooms(), 2) }}</div>
 
@@ -192,7 +192,7 @@
 
                     <!-- Deposit (if enabled) -->
                     @if ($this->enable_deposit_percentage)
-                        <div class="flex justify-between items-center text-sm font-semibold text-yellow-700">
+                        <div class="flex justify-between items-center text-sm font-semibold text-yellow-700 dark:text-yellow-300">
                             <div>Required Deposit ({{ $this->deposit_percentage }}%)</div>
                             <div class="font-semibold">
                                 ₱{{ number_format($this->deposit ?? 0, 2) }}
@@ -214,7 +214,7 @@
 
                     <!-- Total Payable Now -->
                     <div
-                        class="flex justify-between items-center text-xl font-bold text-green-700 mt-3 pt-2 border-t border-gray-200">
+                        class="flex justify-between items-center text-xl font-bold text-green-700 mt-3 pt-2 border-t border-gray-200 dark:text-green-400">
                         <div>Amount Due Now</div>
                         <div>₱{{ number_format($this->computePayableAmount(), 2) }}</div>
                     </div>
@@ -243,7 +243,7 @@
                         <div class="relative max-w-xl mb-2 flex justify-center w-full">
                             <input type="text" wire:model="promoCode"
                                 wire:key="promo-code-{{ $hasCode ? 'applied' : 'empty' }}"
-                                class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1
+                                class="border rounded-md px-4 py-2 w-full pr-16 shadow-sm transition focus:outline-none focus:ring-1 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400
                         {{ $hasCode ? 'border-green-500 ring-green-500 bg-green-50 text-green-800 font-semibold' : 'border-gray-300 focus:ring-green-500 focus:border-green-500' }}"
                                 placeholder="Enter Promo Code (applies to rooms only)" autocomplete="off"
                                 {{ $hasCode ? 'disabled' : '' }}>
@@ -754,7 +754,7 @@
                         Facebook Profile Link or Name
                         <span class="text-xs text-gray-500 dark:text-gray-400">(optional)</span>
                     </label>
-                    <input type="text" wire:model="facebook_link" 
+                    <input type="text" wire:model="facebook_link"
                         placeholder="Ex. https://facebook.com/username or John Smith"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
@@ -966,25 +966,25 @@
                                                     @endphp
 
                                                     @if ($formatted->isNotEmpty())
-                                                        <p class="text-base font-normal text-gray-700">
+                                                        <p class="text-base font-normal text-gray-700 dark:text-gray-300">
                                                             <i class="fas fa-users mr-2"></i>
                                                             Max occupancy: {{ $formatted->implode(' or ') }}
                                                         </p>
                                                     @endif
                                                 @endif
 
-                                                <p class="text-base font-normal text-gray-700">
+                                                <p class="text-base font-normal text-gray-700 dark:text-gray-300">
                                                     <i class="fas fa-plus mr-2"></i> Extra Person Charge:
                                                     ₱{{ number_format($room->extra_person_charge, 2) }}
                                                 </p>
 
                                                 @if ($room->freebies)
-                                                    <p class="text-base font-normal text-gray-700">
+                                                    <p class="text-base font-normal text-gray-700 dark:text-gray-300">
                                                         <i class="fas fa-utensils mr-2"></i> Free breakfast included
                                                     </p>
                                                 @endif
 
-                                                <p class="text-sm italic text-gray-500 mt-1">{{ $room->description }}
+                                                <p class="text-sm italic text-gray-500 mt-1 dark:text-gray-300">{{ $room->description }}
                                                 </p>
 
                                                 <p class="text-sm italic text-gray-500 mt-1">Children 2 years old and
@@ -1020,14 +1020,14 @@
                                                             $nights > 0 ? $totalRate / $nights : $baseRate;
 
                                                         // Determine if we're showing multiple rates or single rate
-$hasMultipleRates = count($appliedRates) > 1;
-$hasSpecialRate =
-    count($appliedRates) > 0 &&
-    $appliedRates[0]['rate_type'] !== null;
-$isBaseRateOnly =
-    !$hasSpecialRate ||
-    (count($appliedRates) === 1 &&
-        $appliedRates[0]['rate_type'] === null);
+                                                        $hasMultipleRates = count($appliedRates) > 1;
+                                                        $hasSpecialRate =
+                                                            count($appliedRates) > 0 &&
+                                                            $appliedRates[0]['rate_type'] !== null;
+                                                        $isBaseRateOnly =
+                                                            !$hasSpecialRate ||
+                                                            (count($appliedRates) === 1 &&
+                                                                $appliedRates[0]['rate_type'] === null);
                                                     @endphp
 
                                                     <!-- Main Rate Display -->
@@ -1037,7 +1037,7 @@ $isBaseRateOnly =
                                                             @if ($isBaseRateOnly)
                                                                 <!-- Only base rate applied -->
                                                                 <p class="text-lg font-medium">
-                                                                    <span class="text-green-700 font-bold">
+                                                                    <span class="text-green-700 font-bold dark:text-green-400">
                                                                         Base Rate - ₱{{ number_format($baseRate, 2) }}
                                                                         per night
                                                                     </span>
@@ -1055,7 +1055,7 @@ $isBaseRateOnly =
                                                                             </span>
                                                                         @else
                                                                             <!-- Special Rate -->
-                                                                            <span class="text-green-700 font-bold">
+                                                                            <span class="text-green-700 font-bold dark:text-green-400">
                                                                                 {{ $appliedRate['name'] }} -
                                                                                 ₱{{ number_format($appliedRate['average_rate'], 2) }}
                                                                                 per night
@@ -1749,7 +1749,7 @@ $isBaseRateOnly =
 
                         <!-- Residency Status-->
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Residency Status<span
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Residency Status<span
                                     class="text-red-500">*</span></label>
                             <select wire:model.live="guest_residency"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
@@ -1765,11 +1765,12 @@ $isBaseRateOnly =
 
                         <!-- Country -->
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
                                     class="text-red-500">*</span></label>
                             <select wire:model="guest_country_of_origin"
                                 @if ($guest_residency === 'local') readonly disabled @endif
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
+                                class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                                 <option value="">Select a country</option>
                                 @foreach ($countries as $countryOption)
                                     <option value="{{ $countryOption }}">{{ $countryOption }}</option>
