@@ -144,7 +144,7 @@
                             @endif
 
                             @if ($rooms->count() > 0)
-                                <span class="text-gray-500">— {{ $rooms->count() }} found</span>
+                                <span class="text-gray-500">— {{ $rooms->count() }} results found</span>
                             @endif
                         </p>
 

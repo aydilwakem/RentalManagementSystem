@@ -8,6 +8,7 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
+use Illuminate\Http\Request;
 
 class Homepage extends Component
 {
@@ -23,8 +24,10 @@ class Homepage extends Component
     public string $companyAddress;
     public string $facebookLink;
     public string $instagramLink;
+    public $check_in;
+    public $check_out;
 
-    public function mount()
+    public function mount(Request $request)
     {
         //For Branding
         // Fetch the first row of the settings table
@@ -38,6 +41,11 @@ class Homepage extends Component
             $this->facebookLink = $setting->facebook;
             $this->instagramLink = $setting->instagram;
         }
+
+        //Mount default dates
+        $this->check_in = $request->query('check_in', date('Y-m-d'));
+        $this->check_out = $request->query('check_out', date('Y-m-d', strtotime('+1 day')));
+
     }
 
     public function contactUs()

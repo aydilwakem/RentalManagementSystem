@@ -130,14 +130,24 @@ class FeedbackChart extends Component
             ->with('success', 'Feedback created successfully.');
     }
 
-    public function RemoveRatingType($id)
+
+    public function RemoveRatingType()
     {
         Log::info('Remove Rating Type method called.');
 
-        FeedbackRatingType::findOrFail($id)->delete();
-        $this->feedbackRatingTypes = FeedbackRatingType::all();
 
-         $this->confirmItemDelete = false; 
+        if ($this->confirmItemDelete) {
+            $ratingType = FeedbackRatingType::find($this->confirmItemDelete);
+
+            if($ratingType) {
+                $ratingType->delete();
+                session()->flash('message', 'Category deleted successfully.');
+            }
+
+            // Refresh list and reset ID
+            $this->feedbackRatingTypes = FeedbackRatingType::all();
+            $this->confirmItemDelete = false;
+        }
     }
 }
 

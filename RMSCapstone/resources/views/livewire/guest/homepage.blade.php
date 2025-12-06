@@ -33,9 +33,11 @@
 
         <!-- Booking Section -->
         <div
-            class="absolute bottom-0 left-0 w-full z-20 bg-white/95 backdrop-blur-md border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+            class="absolute bottom-0 left-0 w-full z-20 bg-white backdrop-blur-md border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <form action="{{ route('guest.reservation-form') }}" method="GET" class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                <form action="{{ route('guest.reservation-form') }}" method="GET" x-data="{ loading: false }"
+                     @submit="loading = true"
+                    class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
 
                     <div
                         class="hidden md:block text-green-900 font-medium text-xl whitespace-nowrap pr-4 border-r border-gray-300">
@@ -48,7 +50,7 @@
                             <label
                                 class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-green-700 transition-colors">Check
                                 In</label>
-                            <input type="date" name="check_in" required
+                            <input type="date" name="check_in" required value="{{ $check_in }}"
                                 min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
                                 class="w-full bg-transparent border-0 border-b border-gray-300 p-0 pb-1 text-gray-800 font-medium focus:ring-0 focus:border-green-600 transition-colors cursor-pointer">
                         </div>
@@ -58,7 +60,7 @@
                             <label
                                 class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 group-hover:text-green-700 transition-colors">Check
                                 Out</label>
-                            <input type="date" name="check_out" required
+                            <input type="date" name="check_out" required value="{{ $check_out }}"
                                 min="{{ isset($check_in_date) ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : \Carbon\Carbon::now('Asia/Manila')->addDay()->format('Y-m-d') }}"
                                 class="w-full bg-transparent border-0 border-b border-gray-300 p-0 pb-1 text-gray-800 font-medium focus:ring-0 focus:border-green-600 transition-colors cursor-pointer">
                         </div>
@@ -85,11 +87,20 @@
                         <span>Check Availability</span>
                         <i class="fas fa-arrow-right text-sm"></i>
                     </button> --}}
-                    <x-button type="submit"
-                        class="w-full md:w-auto bg-green-700 text-white px-8 py-4 rounded-lg font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-green-900/30 whitespace-nowrap flex items-center justify-center gap-2">
-                        <span>Check Availability</span>
-                        <i class="fas fa-arrow-right text-sm"></i>
-                    </x-button>
+                    <div class="relative">
+                        <x-button type="submit"
+                            class="w-full md:w-auto bg-green-700 text-white px-8 py-4 rounded-lg font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-green-900/30 whitespace-nowrap flex items-center justify-center gap-2">
+                            <span>Check Availability</span>
+                            <i class="fas fa-arrow-right text-sm"></i>
+                        </x-button>
+
+                        <div x-show="loading" style="display: none;"
+                            class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg z-10 backdrop-blur-[1px]">
+                            <span class="text-sm text-green-700 font-semibold mr-2">Checking availability...</span>
+                            <i class="fas fa-spinner fa-spin text-green-700 text-lg"></i>
+
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -99,7 +110,7 @@
     <section id="services" class="py-20 md:py-24 bg-gradient-to-b from-white to-yellow-50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
             <div class="animate-on-scroll opacity-0 translate-y-10">
-                <h2 class="text-green-700 font-extrabold text-3xl tracking-tight mb-10 relative inline-block">
+                <h2 class="text-green-700 font-bold tracking-wide uppercase mb-10 relative inline-block text-3xl">
                     OUR SERVICES
                     <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
                 </h2>
@@ -277,7 +288,7 @@
     <section id="testimonials" class="py-20 md:py-24 bg-gradient-to-b from-green-50 to-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
             <div class="animate-on-scroll opacity-0 translate-y-10">
-                <h2 class="text-green-700 font-extrabold text-3xl mb-12 tracking-tight">
+                <h2 class="text-green-700 font-bold tracking-wide uppercase mb-10 relative inline-block text-3xl">
                     WHAT OUR GUESTS SAY
                     <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
                 </h2>
@@ -344,8 +355,7 @@
             </div>
         @endif
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
-            <h2
-                class="text-green-700 font-extrabold text-3xl mb-10 tracking-tight animate-on-scroll opacity-0 translate-y-10">
+            <h2 class="text-green-700 font-bold text-3xl mb-10 tracking-wide animate-on-scroll opacity-0 translate-y-10">
                 CONTACT US
                 <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
             </h2>

@@ -5,14 +5,14 @@
         <button @click="$store.sidebar.navOpen = !$store.sidebar.navOpen"
             class="sm:hidden absolute top-5 right-5 focus:outline-none">
             <!-- Menu Icons -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 dark:text-white"
                 x-bind:class="$store.sidebar.navOpen ? 'hidden' : ''" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
 
             <!-- Close Menu -->
-            <svg x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+            <svg x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 dark:text-white"
                 x-bind:class="$store.sidebar.navOpen ? '' : 'hidden'" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -461,6 +461,14 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-white bg-primary-600 rounded-lg shadow-sm mt-2">
 
+                        <!-- Feedback -->
+                        @can('feedback')
+                        <a href="{{ route('admin.feedback') }}" wire:navigate
+                            class="block px-3 py-2 {{ Route::is('admin.feedback') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
+                            <h1 class="cursor-pointer">Feedback</h1>
+                        </a>
+                        @endcan
+
                         <!-- Reservation Report -->
                         @can('reservation-reports')
                         <a href="{{ route('admin.reservation-reports') }}" wire:navigate
@@ -490,14 +498,6 @@
                         <a href="{{ route('admin.lease-reports') }}" wire:navigate
                             class="block px-3 py-2 {{ Route::is('admin.lease-reports') ? 'underline text-gray-200' : 'hover:text-gray-200 hover:underline' }} rounded-lg transition">
                             <h1 class="cursor-pointer">Lease</h1>
-                        </a>
-                        @endcan
-
-                        <!-- Feedback -->
-                        @can('feedback')
-                        <a href="{{ route('admin.feedback') }}" wire:navigate
-                            class="block px-3 py-2 {{ Route::is('admin.feedback') ? 'underline text-white' : 'hover:text-white hover:underline' }} rounded-lg transition">
-                            <h1 class="cursor-pointer">Feedback</h1>
                         </a>
                         @endcan
 

@@ -736,7 +736,7 @@ class ReservationForm extends Component
             if (!empty($this->searchQuery)) {
                 $matchesSearch = str_contains(
                     strtolower($room->name_number),
-                    strtolower($this->searchQuery)
+                    strtolower(trim($this->searchQuery))
                 );
             }
 

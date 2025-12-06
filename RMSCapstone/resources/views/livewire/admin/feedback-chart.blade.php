@@ -1,7 +1,10 @@
 <div class="p-6 rounded-lg shadow-md max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-    @if (session()->has('message'))
-        <div class="p-2 text-green-600 font-semibold">
+    <!-- Display Session Message -->
+    @if (session('message'))
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
+            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
             {{ session('message') }}
         </div>
     @endif
@@ -91,7 +94,8 @@
                         <!-- Header -->
                         <div
                             class=" bg-green-50 flex items-center border-b border-gray-200 px-6 py-4 dark:bg-gray-800 dark:border-gray-700">
-                            <h2 class="text-2xl font-semibold text-center text-green-700 dark:text-green-200">Add Rating Category
+                            <h2 class="text-2xl font-semibold text-center text-green-700 dark:text-green-200">Add Rating
+                                Category
                                 Name
                             </h2>
                         </div>
@@ -101,8 +105,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Rating
                                     Category
                                     Name <span class="text-red-500">*</span></label>
-                                <input type="text" wire:model="rating_name"
-                                    placeholder="Ex. Cleanliness"
+                                <input type="text" wire:model="rating_name" placeholder="Ex. Cleanliness"
                                     class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-green-600 focus:border-green-600"
                                     required>
                                 @error('rating_name')
@@ -181,7 +184,8 @@
 
                 <ul class="space-y-4 max-h-96 overflow-y-auto pr-1">
                     @forelse ($comments->where('status', 'approved') as $comment)
-                        <li class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md ease-in-out duration-300">
+                        <li
+                            class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md ease-in-out duration-300">
                             <img src="{{ asset('images/canopy-logo.png') }}"
                                 class="w-10 h-10 rounded-full object-cover">
 
@@ -214,7 +218,8 @@
 
                 <ul class="space-y-4 max-h-96 overflow-y-auto pr-1">
                     @forelse ($comments->where('status', 'rejected') as $comment)
-                        <li class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md ease-in-out duration-300">
+                        <li
+                            class="flex items-start gap-4 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md ease-in-out duration-300">
                             <img src="{{ asset('images/canopy-logo.png') }}"
                                 class="w-10 h-10 rounded-full object-cover">
 
