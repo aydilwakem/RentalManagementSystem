@@ -75,6 +75,18 @@
                 <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     {{ __('Guest Details') }}
                 </h2>
+
+                @if ($transaction->transaction_status != 'done')
+                    <x-button wire:click="openEditMainGuestModal" icon="fas fa-edit" class="ml-auto">
+                        Edit Guest Details
+                    </x-button>
+                @else
+                    <x-button disabled class="bg-gray-400 cursor-not-allowed ml-auto">
+                        <i class="fas fa-lock mr-2"></i>
+                        Edit Guest Details
+                    </x-button>
+                @endif
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
                     <div><strong>Guest Name:</strong></div>
                     <div>
@@ -3453,6 +3465,185 @@
         </div>
     @endif
 
+
+<!-- Edit Main Guest Modal -->
+@if ($showEditMainGuestModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+            <!-- Header -->
+            <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                <h2 class="text-2xl font-bold text-center">Edit Main Guest Details</h2>
+                <button wire:click="closeEditMainGuestModal"
+                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                    <span class="-translate-y-[2px]">&times;</span>
+                </button>
+            </div>
+
+            <!-- Form Content -->
+            <div class="space-y-4">
+                <!-- Name Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- First Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            First Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" wire:model="editMainGuest.first_name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required>
+                        @error('editMainGuest.first_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Middle Name
+                        </label>
+                        <input type="text" wire:model="editMainGuest.middle_name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        @error('editMainGuest.middle_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Last Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" wire:model="editMainGuest.last_name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required>
+                        @error('editMainGuest.last_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Suffix -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Suffix
+                        </label>
+                        <input type="text" wire:model="editMainGuest.suffix"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            placeholder="Jr., Sr., III">
+                        @error('editMainGuest.suffix')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" wire:model="editMainGuest.email"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required>
+                        @error('editMainGuest.email')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Contact Number <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" wire:model="editMainGuest.contact_number"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required>
+                        @error('editMainGuest.contact_number')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Company & Country -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Company Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Company Name
+                        </label>
+                        <input type="text" wire:model="editMainGuest.company_name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        @error('editMainGuest.company_name')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Country -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Country
+                        </label>
+                        <select wire:model="editMainGuest.country"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Select Country</option>
+                            @foreach ($countries ?? ['Philippines', 'United States', 'Canada', 'Australia', 'United Kingdom', 'Japan', 'South Korea', 'Singapore'] as $country)
+                                <option value="{{ $country }}">{{ $country }}</option>
+                            @endforeach
+                        </select>
+                        @error('editMainGuest.country')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Facebook Link -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                        Facebook Link
+                    </label>
+                    <input type="url" wire:model="editMainGuest.facebook_link"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        placeholder="https://facebook.com/username">
+                    @error('editMainGuest.facebook_link')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Read-only Fields (if any) -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <strong>Transaction ID:</strong> {{ $transaction->transaction_number }}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <strong>Reservation Date:</strong> {{ $transaction->created_at->format('F j, Y g:i A') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-between items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <x-ghost-button wire:click="closeEditMainGuestModal">
+                    Cancel
+                </x-ghost-button>
+                
+                <x-button wire:click="updateMainGuest" wire:loading.attr="disabled">
+                    <div class="flex items-center justify-center">
+                        <span wire:loading class="mr-2" wire:target="updateMainGuest">
+                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                        </span>
+                        <span wire:loading.remove wire:target="updateMainGuest">
+                            Save Changes
+                        </span>
+                    </div>
+                </x-button>
+            </div>
+        </div>
+    </div>
+@endif
 
     <!-- Edit Payment Modal -->
     @if ($showEditPaymentModal && $editingPayment)
