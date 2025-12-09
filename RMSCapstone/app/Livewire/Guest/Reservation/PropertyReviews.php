@@ -83,25 +83,40 @@ class PropertyReviews extends Component
 
         $liked = session()->get('liked_reviews', []);
 
-        //Prevent multiple liking in one session
-        if (in_array($feedbackId, $this->liked)) {
-        return; // Already liked; do nothing
-        }
-
-        //Add the likes
         $feedback = Feedback::find($feedbackId);
-        if ($feedback) {
-            $feedback->increment('feedback_likes');
+
+        if (!$feedback){
+            return;
         }
 
-        //Store in session
+        //If review is already liked, allow unlike 
+        if (in_array($feedbackId, $liked)){
+             if ($feedback->feedback_likes > 0) {
+            $feedback->decrement('feedback_likes');
+        }
+
+         // Remove from liked list
+        $liked = array_diff($liked, [$feedbackId]);
+
+        session()->put('liked_reviews', $liked);
+        $this->liked = $liked;
+
+        // Reload UI
+        $this->showReviews();
+        return;
+        }
+        //Else, proceed to like
+
+         $feedback->increment('feedback_likes');
+
+        // Add to liked list
         $liked[] = $feedbackId;
         session()->put('liked_reviews', $liked);
 
-        //Update
-        $this->liked = $liked;;
+        // Update Livewire state
+        $this->liked = $liked;
 
-        //Reload the reviews summary to update likes count
+        // Refresh list
         $this->showReviews();
         
     }
