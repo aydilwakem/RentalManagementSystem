@@ -18,12 +18,20 @@ class PropertyReviews extends Component
     public $totalReviews = 0;
     public $ratingBreakdown = [];
     public $propertyName;
+    public $liked = []; 
+    public $disliked = [];
+
+    public $reviewSort = 'newest'; //For sorting
+    
 
     public function mount($propertyId)
     {
         $this->propertyId = $propertyId;
         $this->propertyName = Property::find($propertyId)->name_number ?? 'Property';
         $this->loadPropertyReviewsSummary();
+
+        //For comment likes session
+        $this->liked = session()->get('liked_reviews', []);
     }
 
     public function loadPropertyReviewsSummary()
@@ -37,8 +45,10 @@ class PropertyReviews extends Component
             $feedbacks = Feedback::whereIn('transaction_id', $propertyTransactions)
                 ->where('status', 'approved')
                 ->with(['feedbackRatings.ratingType', 'user'])
+                ->select('trn_feedback.*')
                 ->get();
 
+           
             $this->totalReviews = $feedbacks->count();
             
             if ($this->totalReviews > 0) {
@@ -68,6 +78,104 @@ class PropertyReviews extends Component
         }
     }
 
+    // ----------------- LIKES COUNTER ------------------ // --di pa gumagana session store of liked mark
+    public function getLikesCount($feedbackId){
+
+        $liked = session()->get('liked_reviews', []);
+
+        //Prevent multiple liking in one session
+        if (in_array($feedbackId, $this->liked)) {
+        return; // Already liked; do nothing
+        }
+
+        //Add the likes
+        $feedback = Feedback::find($feedbackId);
+        if ($feedback) {
+            $feedback->increment('feedback_likes');
+        }
+
+        //Store in session
+        $liked[] = $feedbackId;
+        session()->put('liked_reviews', $liked);
+
+        //Update
+        $this->liked = $liked;;
+
+        //Reload the reviews summary to update likes count
+        $this->showReviews();
+        
+    }
+
+    public function getDislikesCount($feedbackId){
+        $disliked = session()->get('disliked_reviews', []);
+
+        //Prevent multiple liking in one session
+        if (in_array($feedbackId, $this->liked)) {
+        return; // Already liked; do nothing
+        }
+
+        $feedback = Feedback::find($feedbackId);
+        if ($feedback) {
+            $feedback->increment('feedback_dislikes');
+        }
+
+        $disliked[] = $feedbackId;
+        session()->put('disliked_reviews', $disliked);
+
+        //Update session handler
+        $this->disliked = $disliked;;
+
+        //Reload the reviews summary to update likes count
+        $this->showReviews(); 
+    }
+
+
+    // ------------------ Sort Reviews ------------------ //
+    public function updatedReviewSort()
+    {
+        $this->sortReviews();
+    }
+
+    public function sortReviews(){
+        // Must be a collection, not empty
+    if (!$this->propertyReviews || !count($this->propertyReviews)) {
+        return;
+    }
+
+    $collection = collect($this->propertyReviews);
+
+    switch ($this->reviewSort) {
+
+        case 'likes':
+            // Sort by number of likes (high to low)
+            $sorted = $collection->sortByDesc(function ($review) {
+                return $review['feedback_likes'] ?? 0;
+            });
+            break;
+
+        case 'stars':
+            // Sort by overall rating (high to low)
+            $sorted = $collection->sortByDesc(function ($review) {
+                return $review['overall_rating'] ?? 0;
+            });
+            break;
+
+        case 'newest':
+        default:
+            // Sort by submitted_at (latest → oldest)
+            $sorted = $collection->sortByDesc(function ($review) {
+                return $review['submitted_at']
+                    ? Carbon::parse($review['submitted_at'])
+                    : null;
+            });
+            break;
+    }
+
+    // Reassign the sorted list back
+    $this->propertyReviews = $sorted->values();
+    }
+
+    // ------------------ Show Reviews Modal ------------------ //
     public function showReviews()
     {
         // Get all transactions for this property
@@ -125,6 +233,8 @@ class PropertyReviews extends Component
                         'comments' => $feedback->comments,
                         'submitted_at' => $submittedAt,
                         'date_formatted' => $dateFormatted,
+                        'feedback_likes' => $feedback->feedback_likes,
+                        'feedback_dislikes' => $feedback->feedback_dislikes,
                         'overall_rating' => $overallRating ? $overallRating->rating_value : 0,
                         'ratings' => $feedback->feedbackRatings->map(function ($rating) {
                             return [
@@ -134,9 +244,11 @@ class PropertyReviews extends Component
                         })->toArray()
                     ];
                 });
-        }
 
         $this->showReviewsModal = true;
+        }
+
+        $this->liked = session()->get('liked_reviews', []);
     }
 
     public function closeReviews()

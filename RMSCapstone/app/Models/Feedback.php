@@ -22,6 +22,8 @@ class Feedback extends Model
         'submitted_at',
         'comments',
         'status',
+        'feedback_likes',
+        'feedback_dislikes',
     ];
 
     // Add date casting
