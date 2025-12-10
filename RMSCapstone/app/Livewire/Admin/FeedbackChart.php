@@ -6,6 +6,8 @@ use Livewire\Component;
 use App\Models\FeedbackRatingType;
 use Illuminate\Support\Facades\DB;
 use App\Models\Feedback;
+use App\Models\FeedbackRating;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 
 
@@ -20,6 +22,7 @@ class FeedbackChart extends Component
 
     //Modals for deleting
     public $confirmItemDelete = false;
+    public $cannotDeleteItem = false;
 
     public function confirmDelete($id)
     {
@@ -57,7 +60,9 @@ class FeedbackChart extends Component
 
     public function loadComments($transactionNumber = null)
     {
-        $query = Feedback::with('transaction.transactionUser')
+        $query = Feedback::with
+        ('transaction.transactionUser',
+        'feedbackRatings.ratingType')
             ->whereNotNull('comments')
             ->orderBy('submitted_at', 'desc');
 
@@ -65,7 +70,8 @@ class FeedbackChart extends Component
             $query->where('transaction_number', $transactionNumber);
         }
 
-        $this->comments = $query->take(10)->get();
+        $this->comments = $query->take(10)
+        ->get();
     }
 
     public function approveComment($id)
@@ -130,24 +136,41 @@ class FeedbackChart extends Component
             ->with('success', 'Feedback created successfully.');
     }
 
-
     public function RemoveRatingType()
     {
-        Log::info('Remove Rating Type method called.');
+        $ratingType = FeedbackRatingType::find($this->confirmItemDelete);
 
-
-        if ($this->confirmItemDelete) {
-            $ratingType = FeedbackRatingType::find($this->confirmItemDelete);
-
-            if($ratingType) {
-                $ratingType->delete();
-                session()->flash('message', 'Category deleted successfully.');
-            }
-
-            // Refresh list and reset ID
-            $this->feedbackRatingTypes = FeedbackRatingType::all();
-            $this->confirmItemDelete = false;
+        if (!$ratingType) {
+            session()->flash('error', 'Rating Type not found.');
+            return;
         }
+
+        //If rating is used in feedback, do not delete
+        if (FeedbackRating::where('rating_type_id', $ratingType->id)->exists()) {
+            $this->cannotDeleteItem = true; // Show the cannot delete modal
+            $this->confirmItemDelete = null; // Close the confirmation modal
+            return;
+        }
+
+        try{
+            $ratingType->delete(); // Attempt soft deletion
+
+            // Reset confirmation modal
+            $this->confirmItemDelete = null;
+
+            //Re-fetch rating types
+            $this->feedbackRatingTypes = FeedbackRatingType::all();
+
+            // Flash success message
+            session()->flash('message', 'Rating Type successfully deleted!');
+            }catch (QueryException $e) {
+                // Check if the error is an integrity constraint violation
+                if ($e->getCode() == 23000) {
+                // $this->cannotDeleteItem = true; // Show the cannot delete modal
+                } else {
+                    throw $e; // Re-throw other exceptions
+                }
+            }
     }
 }
 

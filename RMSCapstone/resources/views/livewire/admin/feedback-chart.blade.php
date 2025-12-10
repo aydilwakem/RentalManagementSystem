@@ -45,11 +45,11 @@
             <div class="absolute bottom-0 left-10 right-0 flex items-end justify-around h-full px-4">
                 <!-- Bar Item -->
                 @foreach ($feedbackRatingTypes as $ratingType)
-                    <div class="flex flex-col items-center">
-                        <i class="fas fa-broom text-gray-600 mt-2 text-xs dark:text-gray-200"></i>
-                        <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
-                        <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
-                    </div>
+                <div class="flex flex-col items-center">
+                    <i class="fas fa-broom text-gray-600 mt-2 text-xs dark:text-gray-200"></i>
+                    <span class="text-xs mt-1">{{ $ratingType->rating_name }}</span>
+                    <div class="bar bg-yellow-400 w-6 rounded-t" data-value="5.0"></div>
+                </div>
                 @endforeach
             </div>
 
@@ -67,29 +67,29 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach ($feedbackRatingTypes as $ratingType)
-                <div
-                    class="flex items-center justify-between border p-4 rounded-md relative dark:bg-gray-700 dark:border-gray-600">
-                    <!-- Remove Button -->
-                    <button type="button"
-                        class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-5 h-5 flex items-center justify-center text-lg focus:outline-none absolute right-2 translate-y-[-12px]"
-                        wire:click="confirmDelete({{ $ratingType->id }})">
-                        <span class="leading-none translate-y-[-3px]">&times;</span>
-                    </button>
-                    <div class="flex items-center space-x-2 text-gray-700 font-medium dark:text-white">
-                        <i class="fas fa-star"></i>
-                        <span>{{ $ratingType->rating_name }}</span>
-                    </div>
-                    {{-- <div class="flex items-center space-x-1">
+            <div
+                class="flex items-center justify-between border p-4 rounded-md relative dark:bg-gray-700 dark:border-gray-600">
+                <!-- Remove Button -->
+                <button type="button"
+                    class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-5 h-5 flex items-center justify-center text-lg focus:outline-none absolute right-2 translate-y-[-12px]"
+                    wire:click="confirmDelete({{ $ratingType->id }})">
+                    <span class="leading-none translate-y-[-3px]">&times;</span>
+                </button>
+                <div class="flex items-center space-x-2 text-gray-700 font-medium dark:text-white">
+                    <i class="fas fa-star"></i>
+                    <span>{{ $ratingType->rating_name }}</span>
+                </div>
+                {{-- <div class="flex items-center space-x-1">
                     <span class="text-sm text-gray-900 font-semibold">5.0</span>
                     <i class="fas fa-star text-yellow-400"></i>
                 </div> --}}
-                </div>
+            </div>
             @endforeach
         </div>
         <div>
             @if ($createRatingTypeModal)
-                <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div class="bg-white rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
+            <div id="guestModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div class="bg-white rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
 
                         <!-- Header -->
                         <div
@@ -113,19 +113,19 @@
                                 @enderror
                             </div>
 
-                            <!-- Actions -->
-                            <div class="flex justify-between items-center gap-2 mt-6 mb-2">
-                                <x-button type="button" wire:click="CloseRatingTypeModal"
-                                    class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
-                                    Cancel
-                                </x-button>
-                                <x-button type="button" wire:click="CreateRatingType">
-                                    Create
-                                </x-button>
-                            </div>
+                        <!-- Actions -->
+                        <div class="flex justify-between items-center gap-2 mt-6 mb-2">
+                            <x-button type="button" wire:click="CloseRatingTypeModal"
+                                class="!bg-gray-200 !text-black hover:!bg-gray-300 focus:!ring-2 focus:!ring-gray-400 focus:!outline-none">
+                                Cancel
+                            </x-button>
+                            <x-button type="button" wire:click="CreateRatingType">
+                                Create
+                            </x-button>
                         </div>
                     </div>
                 </div>
+            </div>
             @endif
         </div>
     </div>
@@ -144,35 +144,54 @@
                 <!-- Scrollable list -->
                 <ul class="space-y-4 max-h-96 overflow-y-auto pr-1">
                     @forelse ($comments->where('status', 'pending') as $comment)
-                        <li
-                            class="flex items-start gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm hover:shadow-md ease-in-out duration-300">
-                            <img src="{{ asset('images/canopy-logo.png') }}"
-                                class="w-10 h-10 rounded-full object-cover">
+                    <li
+                        class="flex items-start gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm hover:shadow-md ease-in-out duration-300">
+                        <img src="{{ asset('images/canopy-logo.png') }}" class="w-10 h-10 rounded-full object-cover">
 
-                            <div class="flex-1">
-                                <div class="flex justify-between">
-                                    <p class="text-sm font-semibold text-gray-800">
-                                        {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                        {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                                    </p>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $comment->created_at->diffForHumans() }}
-                                    </span>
-                                </div>
-
-                                <p class="text-sm text-gray-700 mt-2">
-                                    {{ $comment->comments !== '' ? $comment->comments : 'No comment provided.' }}
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <p class="text-sm font-semibold text-gray-800">
+                                    {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                                    {{ $comment->transaction->transactionUser->last_name ?? '' }}
                                 </p>
-
-                                <div class="flex gap-2 mt-3">
-                                    <x-button wire:click="approveComment({{ $comment->id }})">Approve</x-button>
-                                    <x-danger-button
-                                        wire:click="rejectComment({{ $comment->id }})">Reject</x-danger-button>
-                                </div>
+                                <span class="text-xs text-gray-500">
+                                    {{ $comment->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                        </li>
+
+
+                            <!-- Display overall rating as stars -->
+                            <div class="flex items-center mt-1">
+                                @php
+                                $overallRating = optional(
+                                $comment->feedbackRatings->firstWhere('ratingType.rating_name', 'Overall Experience')
+                                )->rating_value;
+                                @endphp
+
+                                @for ($i = 1; $i <= 5; $i++) @if ($i <=$overallRating) <i
+                                    class="fas fa-star text-yellow-400 text-[12px]"></i>
+                                    @else
+                                    <i class="far fa-star text-gray-300 text-[12px]"></i>
+                                    @endif
+                                    @endfor
+
+                                    {{-- <span class="text-xs text-gray-500 ml-2">{{ $overallRating }}/5</span> --}}
+                            </div>
+
+
+                            <p class="text-sm text-gray-700 mt-2">
+                                {{ $comment->comments !== '' ? $comment->comments : 'No comment provided.' }}
+                            </p>
+
+                            <div class="flex gap-2 mt-3">
+                                <x-button wire:click="approveComment({{ $comment->id }})">Approve</x-button>
+                                <x-danger-button wire:click="rejectComment({{ $comment->id }})">Reject
+                                </x-danger-button>
+                            </div>
+                        </div>
+                    </li>
                     @empty
-                        <li class="text-gray-500 text-sm">No pending comments.</li>
+                    <li class="text-gray-500 text-sm">No pending comments.</li>
                     @endforelse
                 </ul>
             </div>
@@ -189,24 +208,24 @@
                             <img src="{{ asset('images/canopy-logo.png') }}"
                                 class="w-10 h-10 rounded-full object-cover">
 
-                            <div class="flex-1">
-                                <div class="flex justify-between">
-                                    <p class="text-sm font-semibold text-gray-800">
-                                        {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                        {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                                    </p>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $comment->created_at->diffForHumans() }}
-                                    </span>
-                                </div>
-
-                                <p class="text-sm text-gray-700 mt-2">
-                                    {{ $comment->comments }}
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <p class="text-sm font-semibold text-gray-800">
+                                    {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                                    {{ $comment->transaction->transactionUser->last_name ?? '' }}
                                 </p>
+                                <span class="text-xs text-gray-500">
+                                    {{ $comment->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                        </li>
+
+                            <p class="text-sm text-gray-700 mt-2">
+                                {{ $comment->comments }}
+                            </p>
+                        </div>
+                    </li>
                     @empty
-                        <li class="text-gray-500 text-sm">No approved comments.</li>
+                    <li class="text-gray-500 text-sm">No approved comments.</li>
                     @endforelse
                 </ul>
             </div>
@@ -223,24 +242,24 @@
                             <img src="{{ asset('images/canopy-logo.png') }}"
                                 class="w-10 h-10 rounded-full object-cover">
 
-                            <div class="flex-1">
-                                <div class="flex justify-between">
-                                    <p class="text-sm font-semibold text-gray-800">
-                                        {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
-                                        {{ $comment->transaction->transactionUser->last_name ?? '' }}
-                                    </p>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $comment->created_at->diffForHumans() }}
-                                    </span>
-                                </div>
-
-                                <p class="text-sm text-gray-700 mt-2">
-                                    {{ $comment->comments }}
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <p class="text-sm font-semibold text-gray-800">
+                                    {{ $comment->transaction->transactionUser->first_name ?? 'Unknown' }}
+                                    {{ $comment->transaction->transactionUser->last_name ?? '' }}
                                 </p>
+                                <span class="text-xs text-gray-500">
+                                    {{ $comment->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                        </li>
+
+                            <p class="text-sm text-gray-700 mt-2">
+                                {{ $comment->comments }}
+                            </p>
+                        </div>
+                    </li>
                     @empty
-                        <li class="text-gray-500 text-sm">No rejected comments.</li>
+                    <li class="text-gray-500 text-sm">No rejected comments.</li>
                     @endforelse
                 </ul>
             </div>
@@ -268,6 +287,23 @@
                 {{ __('Delete Rating Category') }}
             </x-danger-button>
 
+        </x-slot>
+    </x-dialog-modal>
+
+    {{-- Cannot Delete Modal --}}
+    <x-dialog-modal wire:model="cannotDeleteItem" type="ghost">
+        <x-slot name="title">
+            {{ __('Unable to Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('This rating type is currently in use and cannot be deleted.') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('cannotDeleteItem', false)" wire:loading.attr="disabled">
+                {{ __('OK') }}
+            </x-secondary-button>
         </x-slot>
     </x-dialog-modal>
 </div>

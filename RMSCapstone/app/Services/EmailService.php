@@ -37,7 +37,7 @@ class EmailService
             // );
             // Log::info('NewReservationMail sent to: username@try.com');
 
-            Mail::to('rmscapstone26@gmail.com')->send(
+            Mail::to(['rmscapstone26@gmail.com', 'events.canopyfarmindang@gmail.com'])->send(
                 new NewReservationMail($reservationData)
             );
             Log::info('NewReservationMail also sent to: rmscapstone26@gmail.com');

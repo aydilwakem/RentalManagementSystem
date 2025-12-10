@@ -8,6 +8,7 @@ use App\Console\Commands\AutoArchiveLeases;
 use App\Console\Commands\AutoArchiveReservations;
 use App\Console\Commands\MarkExpiredTransactions;
 use App\Console\Commands\MarkOverdueInvoices;
+use App\Console\Commands\SendPreCheckinBalanceRequests;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,7 +26,7 @@ class Kernel extends ConsoleKernel
         AutoArchiveEvents::class, 
         AutoArchiveLeases::class, 
         AutoArchiveDayTours::class, 
-
+        SendPreCheckinBalanceRequests::class,
     ];
 
     /**
@@ -54,6 +55,8 @@ class Kernel extends ConsoleKernel
 
             // Auto-archive day tours (every minute)
         $schedule->command('daytours:auto-archive')->everyMinute();
+        
+        $schedule->command('balance-requests:send-pre-checkin')->everyMinute();
 
 
 

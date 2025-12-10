@@ -178,6 +178,20 @@ class ViewReservation extends Component
     public $editingPwdSeniorName = '';
 
 
+    // ---------------- MAIN GUEST EDITING ------------------ //
+    public $showEditMainGuestModal = false;
+    public $editMainGuest = [
+        'first_name' => '',
+        'middle_name' => '',
+        'last_name' => '',
+        'suffix' => '',
+        'email' => '',
+        'contact_number' => '',
+        'company_name' => '',
+        'country' => '',
+        'facebook_link' => '',
+    ];
+
 
     // ---------------- GUEST EDITING FIELDS ------------------ //
     public $editingGuestId, $editingFirstName, $editingMiddleName, $editingLastName, $editingSuffix, $editingGender, $editingResidency, $editingCountryOfOrigin, $editingGuestTypeId, $editingTransactionPropertyId;
@@ -2420,6 +2434,85 @@ public function openDiscountModal()
 
 
 
+
+    /**
+ * ------------------------- MAIN GUEST EDITING ---------------------------
+ *
+ * Handles editing of the main guest (transaction user) details.
+ * ------------------------------------------------------------------------
+ */
+
+public function openEditMainGuestModal()
+{
+    Log::info('Opening edit main guest modal.');
+
+    // Load the current main guest data
+    $this->editMainGuest = [
+        'first_name' => $this->transactionUser->first_name ?? '',
+        'middle_name' => $this->transactionUser->middle_name ?? '',
+        'last_name' => $this->transactionUser->last_name ?? '',
+        'suffix' => $this->transactionUser->suffix ?? '',
+        'email' => $this->transactionUser->email ?? '',
+        'contact_number' => $this->transactionUser->contact_number ?? '',
+        'company_name' => $this->transactionUser->company_name ?? '',
+        'country' => $this->transactionUser->country ?? 'Philippines',
+        'facebook_link' => $this->transactionUser->facebook_link ?? '',
+    ];
+
+    $this->showEditMainGuestModal = true;
+}
+
+public function closeEditMainGuestModal()
+{
+    $this->showEditMainGuestModal = false;
+    $this->reset(['editMainGuest']);
+}
+
+public function updateMainGuest()
+{
+    Log::info('Updating main guest details.');
+
+    $this->validate([
+        'editMainGuest.first_name' => 'required|string|max:255',
+        'editMainGuest.last_name' => 'required|string|max:255',
+        'editMainGuest.email' => 'required|email|max:255',
+        'editMainGuest.contact_number' => 'required|string|max:20',
+        'editMainGuest.middle_name' => 'nullable|string|max:255',
+        'editMainGuest.suffix' => 'nullable|string|max:10',
+        'editMainGuest.company_name' => 'nullable|string|max:255',
+        'editMainGuest.country' => 'nullable|string|max:255',
+        'editMainGuest.facebook_link' => 'nullable|url|max:255',
+    ]);
+
+    try {
+        // Update the transaction user
+        $this->transactionUser->update([
+            'first_name' => $this->editMainGuest['first_name'],
+            'middle_name' => $this->editMainGuest['middle_name'] ?? null,
+            'last_name' => $this->editMainGuest['last_name'],
+            'suffix' => $this->editMainGuest['suffix'] ?? null,
+            'email' => $this->editMainGuest['email'],
+            'contact_number' => $this->editMainGuest['contact_number'],
+            'company_name' => $this->editMainGuest['company_name'] ?? null,
+            'country' => $this->editMainGuest['country'] ?? null,
+            'facebook_link' => $this->editMainGuest['facebook_link'] ?? null,
+            'updated_at' => now(),
+        ]);
+
+        // Refresh the transaction user data
+        $this->transactionUser->refresh();
+
+        // Close modal and show success message
+        $this->closeEditMainGuestModal();
+        session()->flash('success', 'Main guest details updated successfully!');
+        
+        Log::info('Main guest updated successfully for transaction: ' . $this->transaction->id);
+
+    } catch (\Exception $e) {
+        Log::error('Failed to update main guest: ' . $e->getMessage());
+        session()->flash('error', 'Failed to update main guest details: ' . $e->getMessage());
+    }
+}
 
 
     /**
