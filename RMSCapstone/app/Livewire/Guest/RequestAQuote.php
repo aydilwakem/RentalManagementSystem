@@ -50,8 +50,8 @@ class RequestAQuote extends Component
 
         //Set default values
         $now = Carbon::now('Asia/Manila');
-        $this->event_start = $now->format('Y-m-d\H:i');
-        $this->event_end = $now->copy()->addHours(4)->format('Y-m-d\H:i'); // Default to 4 hours later
+        $this->event_start = $now->format('Y-m-d\TH:i');
+        $this->event_end = $now->copy()->addHours(4)->format('Y-m-d\TH:i'); // Default to 4 hours later
     }
 
     public function render()
@@ -66,11 +66,12 @@ class RequestAQuote extends Component
         //Validate the data
         $this->validate([
         'company_name' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[A-Za-z\s\-]+$/', //only letters, space, and hyphens
-            ],
+            'required',
+            'string',
+            'max:255',
+            // allow slashes for 'N/A'
+            'regex:/^[A-Za-z\s\-\/]+$/',
+        ],
         'contact_person' => [
                 'required',
                 'string',

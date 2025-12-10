@@ -25,20 +25,19 @@
 
             <!-- Navigation Links -->
             <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')">
+                <x-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
                     {{ __('Home') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate>
+                <x-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate >
                     {{ __('Rooms') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')">
+                <x-nav-link href="{{ route('guest.activities') }}" :active="request()->routeIs('guest.activities')" wire:navigate>
                     {{ __('Activities') }}
                 </x-nav-link>
 
-                <x-nav-link href="{{ route('guest.day-tour-reservation') }}" :active="request()->routeIs('guest.day-tour-reservation')"
-                    wire:navigate>
+                <x-nav-link href="{{ route('guest.day-tour-reservation') }}" :active="request()->routeIs('guest.day-tour-reservation')" wire:navigate>
                     {{ __('Day Tour') }}
                 </x-nav-link>
 
@@ -75,11 +74,11 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-primary-800 border-t border-gray-700">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" >
+            <x-responsive-nav-link href="{{ route('guest.homepage') }}" :active="request()->routeIs('guest.homepage')" wire:navigate>
                 {{ __('Home') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')">
+            <x-responsive-nav-link href="{{ route('guest.reservation-form') }}" :active="request()->routeIs('guest.reservation-form')" wire:navigate>
                 {{ __('Rooms') }}
             </x-responsive-nav-link>
 

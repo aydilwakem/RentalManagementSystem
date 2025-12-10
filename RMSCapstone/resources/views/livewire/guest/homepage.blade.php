@@ -36,8 +36,7 @@
             class="absolute bottom-0 left-0 w-full z-20 bg-white backdrop-blur-md border-t border-white/20 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <form action="{{ route('guest.reservation-form') }}" method="GET" x-data="{ loading: false }"
-                     @submit="loading = true"
-                    class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                    @submit="loading = true" class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
 
                     <div
                         class="hidden md:block text-green-900 font-medium text-xl whitespace-nowrap pr-4 border-r border-gray-300">
@@ -127,16 +126,35 @@
                         <span
                             class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Rooms</span>
                     </div>
-                    <div class="p-6 md:p-8 text-left flex flex-col flex-grow">
+                    <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
                         <h3 class="text-xl font-semibold mb-3 text-gray-900">Cozy Retreats</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
                             Experience comfort and tranquility in our thoughtfully designed rooms, perfect for a restful
                             night surrounded by nature.
                         </p>
                         <div class="mt-auto">
-                            <x-button href="{{ route('guest.reservation-form') }}">
-                                Book a room
-                            </x-button>
+
+                            <div x-data="{ loading: false }" class="w-full">
+                                <x-button href="{{ route('guest.reservation-form') }}" @click="loading = true"
+                                    class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
+                                    ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
+
+                                    <span x-show="!loading">
+                                        Book a room
+                                    </span>
+
+                                    <span x-show="loading" style="display: none;" class="flex items-center gap-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                </x-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -151,16 +169,34 @@
                             class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Day
                             Tour</span>
                     </div>
-                    <div class="p-6 md:p-8 text-left flex flex-col flex-grow">
+                    <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
                         <h3 class="text-xl font-semibold mb-3 text-gray-900">Quick Getaways</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
                             Surrounded yourself with nature, enjoy refreshing swims and outdoor lounges perfect for
                             short escapes or quick relaxation.
                         </p>
                         <div class="mt-auto">
-                            <x-button href="{{ route('guest.day-tour-reservation') }}">
-                                Book a Day Tour
-                            </x-button>
+                            <div x-data="{ loading: false }" class="w-full">
+                                <x-button href="{{ route('guest.day-tour-reservation') }}" @click="loading = true"
+                                    class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
+                                    ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
+
+                                    <span x-show="!loading">
+                                        Book a Day Tour
+                                    </span>
+
+                                    <span x-show="loading" style="display: none;" class="flex items-center gap-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                </x-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -174,16 +210,34 @@
                         <span
                             class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Activities</span>
                     </div>
-                    <div class="p-6 md:p-8 text-left flex flex-col flex-grow">
+                    <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
                         <h3 class="text-xl font-semibold mb-3 text-gray-900">Signature Experiences</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
                             From guided nature walks to rejuvenating wellness offerings, our services are designed to
                             refresh your body, mind, and soul.
                         </p>
                         <div class="mt-auto">
-                            <x-button href="{{ route('guest.activities') }}">
-                                View Activities
-                            </x-button>
+                            <div x-data="{ loading: false }" class="w-full">
+                                <x-button href="{{ route('guest.activities') }}" @click="loading = true"
+                                    class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
+                                    ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
+
+                                    <span x-show="!loading">
+                                        View Activities
+                                    </span>
+
+                                    <span x-show="loading" style="display: none;" class="flex items-center gap-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                </x-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,16 +251,34 @@
                         <span
                             class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Events</span>
                     </div>
-                    <div class="p-6 md:p-8 text-left flex flex-col flex-grow">
+                    <div class="p-6 md:p-8 flex flex-col flex-grow text-center">
                         <h3 class="text-xl font-semibold mb-3 text-gray-900">Memorable Moments</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
                             Host unforgettable events in our spacious halls, ideal for weddings, parties, corporate
                             gatherings, and celebrations of all kinds.
                         </p>
                         <div class="mt-auto">
-                            <x-button href="{{ route('guest.event-halls') }}">
-                                Request a Quote
-                            </x-button>
+                            <div x-data="{ loading: false }" class="w-full">
+                                <x-button href="{{ route('guest.event-halls') }}" @click="loading = true"
+                                    class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
+                                    ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
+
+                                    <span x-show="!loading">
+                                        Request a Quote
+                                    </span>
+
+                                    <span x-show="loading" style="display: none;" class="flex items-center gap-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                </x-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -355,41 +427,97 @@
             </div>
         @endif
         <div class="max-w-7xl mx-auto px-6 sm:px-8 text-center">
-            <h2 class="text-green-700 font-bold text-3xl mb-10 tracking-wide animate-on-scroll opacity-0 translate-y-10">
+            <h2
+                class="text-green-700 font-bold text-3xl mb-10 tracking-wide animate-on-scroll opacity-0 translate-y-10">
                 CONTACT US
                 <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
                 <div
-                    class="bg-gray-50 p-10 md:p-12 rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out animate-on-scroll opacity-0 translate-y-10">
-                    <div class="lg:w-full px-2 mb-4 text-center">
-                        <h2 class="text-green-700 font-bold text-2xl">Message Here</h2>
-                    </div>
-                    <form wire:submit.prevent="contactUs" class="space-y-3">
-                        <input type="text" name="name" placeholder="Name" wire:model="name" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
-                        <input type="email" name="email" placeholder="Email" wire:model="email" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
-                        <input type="tel" name="contact_number" placeholder="Phone Number"
-                            wire:model="contact_number" required
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric"
-                            maxlength="11"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
-                        <textarea name="message" placeholder="Message" wire:model="message" rows="3" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 resize-none"></textarea>
+                    class="bg-gray-50 backdrop-blur-md p-10 md:p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out animate-on-scroll opacity-0 translate-y-10 border border-gray-100">
 
-                        <x-button wire:loading.attr="disabled">
-                            <span wire:loading.remove wire:target="contactUs">Send</span>
-                            <span wire:loading wire:target="contactUs">
-                                <svg class="animate-spin h-5 w-5 text-white inline-block" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                    </path>
-                                </svg>
-                            </span>
-                        </x-button>
+                    <div class="lg:w-full px-2 mb-8 text-center">
+                        <h2 class="text-green-700 font-extrabold text-3xl tracking-normal">Get in Touch</h2>
+                        <p class="text-gray-500 text-sm mt-2">We'd love to hear from you!</p>
+                    </div>
+
+                    <form wire:submit.prevent="contactUs" class="space-y-6">
+
+                        <div class="relative">
+                            <input type="text" id="name" wire:model="name" required
+                                class="peer w-full bg-white border border-gray-300 bg-transparent rounded-lg px-4 py-3 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="Name" />
+                            <label for="name"
+                                class="absolute left-4 -top-2.5 bg-white rounded-sm px-1 text-xs text-green-600 transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5
+                       peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-green-600">
+                                Name
+                            </label>
+                        </div>
+
+                        <!-- Email Input -->
+                        <div class="relative">
+                            <input type="email" id="email" wire:model="email" required
+                                class="peer w-full bg-white border border-gray-300 bg-transparent rounded-lg px-4 py-3 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="Email Address" />
+                            <label for="email"
+                                class="absolute left-4 -top-2.5 bg-white rounded-sm px-1 text-xs text-green-600 transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5
+                       peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-green-600">
+                                Email Address
+                            </label>
+                        </div>
+
+                        <!-- Phone Input -->
+                        <div class="relative">
+                            <input type="tel" id="contact_number" wire:model="contact_number" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric"
+                                maxlength="11"
+                                class="peer w-full bg-white border border-gray-300 bg-transparent rounded-lg px-4 py-3 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                                placeholder="Phone Number" />
+                            <label for="contact_number"
+                                class="absolute left-4 -top-2.5 bg-white rounded-sm px-1 text-xs text-green-600 transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5
+                       peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-green-600">
+                                Phone Number
+                            </label>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="relative">
+                            <textarea id="message" wire:model="message" rows="4" required
+                                class="peer w-full bg-white border border-gray-300 bg-transparent rounded-lg px-4 py-3 text-gray-900 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                                placeholder="Message"></textarea>
+                            <label for="message"
+                                class="absolute left-4 -top-2.5 bg-white rounded-sm px-1 text-xs text-green-600 transition-all
+                       peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5
+                       peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-green-600">
+                                How can we help?
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-2">
+                            <x-button
+                                class="w-full py-4 text-lg font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2 disabled:cursor-not-allowed"
+                                wire:loading.attr="disabled" wire:target="contactUs">
+
+                                <span wire:loading.remove wire:target="contactUs">
+                                    Send Message <i class="fas fa-paper-plane ml-1 text-sm"></i>
+                                </span>
+
+                                <span wire:loading wire:target="contactUs" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </x-button>
+                        </div>
+
                     </form>
                 </div>
 
@@ -406,25 +534,31 @@
 
 {{-- Scroll Animation --}}
 <script>
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.remove("opacity-0", "translate-y-10");
-                    entry.target.classList.add("opacity-100", "translate-y-0");
+    function initAnimations() {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove("opacity-0", "translate-y-10");
+                        entry.target.classList.add("opacity-100", "translate-y-0");
 
-                    entry.target.style.transition = "all 700ms cubic-bezier(0.25, 0.1, 0.25, 1)";
+                        entry.target.style.transition = "all 700ms cubic-bezier(0.25, 0.1, 0.25, 1)";
 
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.15
-        }
-    );
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15
+            }
+        );
 
-    document.querySelectorAll(".animate-on-scroll").forEach((el, i) => {
-        el.style.transitionDelay = `${i * 150}ms`;
-        observer.observe(el);
-    });
+        document.querySelectorAll(".animate-on-scroll").forEach((el, i) => {
+            el.style.transitionDelay = `${i * 150}ms`;
+            observer.observe(el);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initAnimations);
+
+    document.addEventListener('livewire:navigated', initAnimations);
 </script>

@@ -1,12 +1,12 @@
 <div>
     <div class="max-w-7xl mx-auto px-6 py-7 mb-8">
         <div class="text-center">
-            <h2 class="text-green-700 font-extrabold text-3xl mb-4 tracking-tight">
+            <h1 class="text-green-700 font-bold tracking-wide uppercase mb-4 text-center text-3xl">
                 What to do at {{ $companyName }}?
                 <span class="block mx-auto mt-2 w-16 h-1 bg-green-600 rounded-full"></span>
-            </h2>
+            </h1>
             {{-- <h1 class="text-3xl font-bold text-green-700 mb-3 text-center">What to do at Canopy Farm?</h1> --}}
-            <p class="text-lg text-gray-700 text-center mx-auto mb-4 w-full md:w-2/3">
+            <p class="text-lg text-gray-700 text-center mx-auto mb-8 w-full md:w-2/3">
                 Looking for a place where relaxation meets adventure? Here at {{ $companyName }}, every corner is made
                 for unforgettable experiences—perfect for families, friends, and nature lovers alike!
             </p>
@@ -90,9 +90,10 @@
         </div>
 
     </div>
+    {{-- scroll animation --}}
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const observer = new IntersectionObserver(entries => {
+        function initActivityAnimations() {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.remove("opacity-0", "translate-y-10");
@@ -109,7 +110,11 @@
                 el.style.transitionDelay = `${i * 150}ms`;
                 observer.observe(el);
             });
-        });
+        }
+
+        document.addEventListener("DOMContentLoaded", initActivityAnimations);
+
+        document.addEventListener("livewire:navigated", initActivityAnimations);
     </script>
 
     <!-- Popup Function -->

@@ -12,10 +12,9 @@
                 <!-- Expand / Collapse Button -->
                 <button @click="open = !open"
                     class="flex items-center justify-center w-9 h-9 rounded-full border transition duration-200
-                    {{ (!empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort))
+                    {{ !empty($searchQuery) || !empty($roomCategoryFilter) || !empty($idealGuestFilter) || !empty($priceSort)
                         ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200'
-                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
-                    }}"
+                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100' }}"
                     title="Show filters">
 
                     <template x-if="!open">
@@ -629,209 +628,187 @@ $isBaseRateOnly =
                                                 See more details
                                             </a> --}}
 
-                                            <!-- Modal -->
+                                            <!-- See more details Modal -->
                                             <div id="modal-room-{{ $room->id }}"
                                                 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+
+                                                <!-- MODAL CONTAINER -->
                                                 <div
-                                                    class="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-6 relative max-h-[80vh] overflow-y-auto">
-                                                    <button type="button"
-                                                        onclick="closeRoomModal({{ $room->id }})"
-                                                        class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-7 h-7 flex items-center justify-center text-2xl focus:outline-none">
-                                                        <span
-                                                            class="w-full h-full flex items-center justify-center pointer-events-none">&times;</span>
-                                                    </button>
+                                                    class="bg-white rounded-2xl shadow-lg max-w-4xl w-full relative max-h-[80vh] flex flex-col overflow-hidden">
 
-                                                    <!-- Carousel -->
-                                                    @php
-                                                        $images = $room->images ?? [];
-                                                    @endphp
-                                                    <div class="relative mb-4 px-12 mt-3">
-                                                        <img id="modal-room-img-{{ $room->id }}"
-                                                            src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
-                                                            class="w-full max-h-[350px] object-contain rounded-lg shadow bg-gray-100 mx-auto" />
-
-                                                        @if (count($images) > 1)
-                                                            <!-- Prev Button -->
-                                                            <button
-                                                                onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
-                                                                class="absolute left-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1 w-8 h-8">
-                                                                <i class="fa-solid fa-chevron-left"></i>
-                                                            </button>
-                                                            <!-- Next Button -->
-                                                            <button
-                                                                onclick="nextRoomImage({{ $room->id }}, {{ count($images) }})"
-                                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1 w-8 h-8">
-                                                                <i class="fa-solid fa-chevron-right"></i>
-                                                            </button>
-                                                        @endif
-                                                        <!-- Index Indicators -->
-                                                        <div
-                                                            class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 mt-2">
-                                                            @foreach ($images as $idx => $img)
-                                                                <div id="modal-room-dot-{{ $room->id }}-{{ $idx }}"
-                                                                    onclick="setRoomImage({{ $room->id }}, {{ $idx }})"
-                                                                    class="w-2.5 h-2.5 rounded-full cursor-pointer bg-gray-400 border border-gray-400">
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
+                                                    <!-- HEADER -->
+                                                    <div
+                                                        class="relative bg-green-50 border-b border-gray-200 px-6 py-3 flex justify-between items-center shrink-0 z-10">
+                                                        <h3 class="text-xl font-extrabold text-green-700">Room:
+                                                            {{ ucwords($room->name_number) }}</h3>
+                                                        <button x-on:click="closeRoomModal({{ $room->id }})"
+                                                            class="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-gray-100"
+                                                            title="Close">
+                                                            <i class="fas fa-times text-lg"></i>
+                                                        </button>
                                                     </div>
 
-                                                    <!-- Modal Body -->
-                                                    <div class="mt-4 text-sm text-gray-700 p-3">
-                                                        <h2 class="text-2xl font-extrabold text-green-700">
-                                                            Room: {{ ucwords($room->name_number) }}
-                                                        </h2>
+                                                    <!-- BODY  -->
+                                                    <div class="overflow-y-auto h-full">
 
-                                                        <p class="text-md font-semibold text-gray-700 mb-3">
-                                                            {{ $room->description }}
-                                                        </p>
-                                                        {{-- {{ $room->name_number }} is a room ideal for
-                                                        {{ $room->ideal_guest }}
-                                                        guest{{ $room->ideal_guest > 1 ? 's' : '' }} with a
-                                                        maximum capacity of {{ $room->max_adults }} Adults and
-                                                        {{ $room->max_kids }} Kids.
-                                                        The base rate is
-                                                        ₱{{ number_format($room->amount, 2) }}{{
-                                                        $room->extra_person_charge ? ',
-                                                        with an extra charge of ₱' .
-                                                        number_format($room->extra_person_charge,
-                                                        2) . ' per additional guest per night' : '' }}. --}}
+                                                        <!-- Carousel -->
+                                                        @php
+                                                            $images = $room->images ?? [];
+                                                        @endphp
+                                                        <div class="relative mb-4 px-12 mt-8">
+                                                            <img id="modal-room-img-{{ $room->id }}"
+                                                                src="{{ count($images) ? asset('storage/' . $images[0]) : asset('images/rms-default.png') }}"
+                                                                class="w-full max-h-[350px] object-contain rounded-lg shadow bg-gray-100 mx-auto" />
 
-                                                        <ul class="list-disc list-inside space-y-1">
-                                                            <li><strong>Bed:</strong>
-                                                                @if ($room->beds->count())
-                                                                    @foreach ($room->beds as $bed)
-                                                                        {{ $bed->bed_quantity }}
-                                                                        {{ ucfirst($bed->bed_type) }}
-                                                                        Bed(s)
-                                                                        @if (!$loop->last)
-                                                                            ,
-                                                                        @endif
-                                                                    @endforeach
-                                                                @else
-                                                                    Not indicated
-                                                                @endif
-                                                            </li>
-
-
-                                                            <li><strong>Ideal Guests:</strong>
-                                                                {{ $room->ideal_guest }}
-                                                            </li>
-
-                                                            @if ($room->occupancy_type === 'whole_number')
-                                                                <li><strong>Maximum Guests:</strong>
-                                                                    {{ $room->max_guests }} guests
-                                                                </li>
-                                                            @elseif ($room->occupancy_type === 'combinations')
-                                                                @php
-                                                                    $originalCombinations = collect(
-                                                                        $room->occupancy_rules,
-                                                                    )->where('type', 'original');
-
-                                                                    $formatted = $originalCombinations->map(function (
-                                                                        $combo,
-                                                                    ) {
-                                                                        $parts = [];
-
-                                                                        if (!empty($combo['adults'])) {
-                                                                            $parts[] =
-                                                                                $combo['adults'] .
-                                                                                ' adult' .
-                                                                                ($combo['adults'] > 1 ? 's' : '');
-                                                                        }
-
-                                                                        if (!empty($combo['kids'])) {
-                                                                            $parts[] =
-                                                                                $combo['kids'] .
-                                                                                ' kid' .
-                                                                                ($combo['kids'] > 1 ? 's' : '');
-                                                                        }
-
-                                                                        return implode(' and ', $parts);
-                                                                    });
-                                                                @endphp
-
-                                                                @if ($formatted->isNotEmpty())
-                                                                    <li><strong>Maximum Occupancy:</strong>
-                                                                        {{ $formatted->implode(' or ') }}
-                                                                    </li>
-                                                                @endif
+                                                            @if (count($images) > 1)
+                                                                <!-- Prev Button -->
+                                                                <button
+                                                                    onclick="prevRoomImage({{ $room->id }}, {{ count($images) }})"
+                                                                    class="absolute left-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1 w-8 h-8 hover:bg-gray-300 transition">
+                                                                    <i class="fa-solid fa-chevron-left"></i>
+                                                                </button>
+                                                                <!-- Next Button -->
+                                                                <button
+                                                                    onclick="nextRoomImage({{ $room->id }}, {{ count($images) }})"
+                                                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 px-2 py-1 w-8 h-8 hover:bg-gray-300 transition">
+                                                                    <i class="fa-solid fa-chevron-right"></i>
+                                                                </button>
                                                             @endif
 
-                                                            <li><strong>Extra Person Charge:</strong>
-                                                                ₱{{ number_format($room->extra_person_charge, 2) }}
-                                                            </li>
-
-                                                            <li><strong>Base Rate Per Night:</strong>
-                                                                ₱{{ number_format($room->amount, 2) }}
-                                                            </li>
-                                                            @if ($this->check_in_date && $this->check_out_date && $nights > 0)
-                                                                @php
-                                                                    $appliedRates = $this->getAppliedRatesForStay(
-                                                                        $room,
-                                                                        $this->check_in_date,
-                                                                        $this->check_out_date,
-                                                                    );
-                                                                    $hasSpecialRate =
-                                                                        count($appliedRates) > 0 &&
-                                                                        $appliedRates[0]['rate_type'] !== null;
-                                                                @endphp
-
-                                                                @if ($hasSpecialRate)
-                                                                    <!-- Show applied rates -->
-                                                                    @foreach ($appliedRates as $appliedRate)
-                                                                        <li>
-                                                                            <strong>
-                                                                                @if ($appliedRate['rate_type'] === null)
-                                                                                    Base Rate:
-                                                                                @else
-                                                                                    {{ $appliedRate['name'] }}:
-                                                                                @endif
-                                                                            </strong>
-                                                                            ₱{{ number_format($appliedRate['average_rate'], 2) }}
-                                                                            per night
-                                                                            ({{ $appliedRate['nights'] }}
-                                                                            night{{ $appliedRate['nights'] > 1 ? 's' : '' }})
-                                                                        </li>
-                                                                    @endforeach
-                                                                @endif
-
-                                                                <li><strong>Total Rate for Stay:</strong>
-                                                                    ₱{{ number_format($totalRate, 2) }} for
-                                                                    {{ $nights }}
-                                                                    night{{ $nights > 1 ? 's' : '' }}
-                                                                </li>
-                                                            @endif
-
-                                                            {{-- <li><strong>Rate Per Night:</strong> ₱{{
-                                                                number_format($room->dynamic_rate, 2) }}</li> --}}
-                                                        </ul>
-                                                        <hr class="my-2">
-
-                                                        <!-- Room Amenities -->
-                                                        <div class="mt-2 mb-4">
-                                                            <h3 class="font-semibold text-gray-700 mb-2 text-lg">
-                                                                Included
-                                                                Amenities</h3>
-
-                                                            @if ($room->features && count($room->features))
-                                                                <div class="grid grid-cols-2 md:grid-cols-3 gap-y-2">
-                                                                    @foreach ($room->features as $feature)
-                                                                        <div class="flex items-center space-x-2">
-                                                                            <!-- Check Icon -->
-                                                                            <i
-                                                                                class="fa-solid fa-check text-green-700"></i>
-                                                                            <span
-                                                                                class="text-gray-700 text-md">{{ $feature->name }}</span>
+                                                            <!-- Index Indicators -->
+                                                            @if (count($images) > 1)
+                                                                <div
+                                                                    class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2 mt-2">
+                                                                    @foreach ($images as $idx => $img)
+                                                                        <div id="modal-room-dot-{{ $room->id }}-{{ $idx }}"
+                                                                            onclick="setRoomImage({{ $room->id }}, {{ $idx }})"
+                                                                            class="w-2.5 h-2.5 rounded-full cursor-pointer bg-gray-400 border border-gray-400">
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
-                                                            @else
-                                                                <span class="text-gray-400 text-sm">No amenities
-                                                                    listed.</span>
                                                             @endif
                                                         </div>
 
+                                                        <!-- Modal Text Content -->
+                                                        <div class="mt-2 text-sm text-gray-700 p-6">
+                                                            <h2 class="text-2xl font-extrabold text-green-700">
+                                                                {{ ucwords($room->name_number) }}
+                                                            </h2>
+
+                                                            <p class="text-md font-semibold text-gray-700 mb-3">
+                                                                {{ $room->description }}
+                                                            </p>
+
+                                                            <ul class="list-disc list-inside space-y-1">
+                                                                <li><strong>Bed:</strong>
+                                                                    @if ($room->beds->count())
+                                                                        @foreach ($room->beds as $bed)
+                                                                            {{ $bed->bed_quantity }}
+                                                                            {{ ucfirst($bed->bed_type) }} Bed(s)
+                                                                            @if (!$loop->last)
+                                                                                ,
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @else
+                                                                        Not indicated
+                                                                    @endif
+                                                                </li>
+
+                                                                <li><strong>Ideal Guests:</strong>
+                                                                    {{ $room->ideal_guest }}</li>
+
+                                                                @if ($room->occupancy_type === 'whole_number')
+                                                                    <li><strong>Maximum Guests:</strong>
+                                                                        {{ $room->max_guests }} guests</li>
+                                                                @elseif ($room->occupancy_type === 'combinations')
+                                                                    @php
+                                                                        $formatted = collect($room->occupancy_rules)
+                                                                            ->where('type', 'original')
+                                                                            ->map(function ($combo) {
+                                                                                $parts = [];
+                                                                                if (!empty($combo['adults'])) {
+                                                                                    $parts[] =
+                                                                                        $combo['adults'] .
+                                                                                        ' adult' .
+                                                                                        ($combo['adults'] > 1
+                                                                                            ? 's'
+                                                                                            : '');
+                                                                                }
+                                                                                if (!empty($combo['kids'])) {
+                                                                                    $parts[] =
+                                                                                        $combo['kids'] .
+                                                                                        ' kid' .
+                                                                                        ($combo['kids'] > 1 ? 's' : '');
+                                                                                }
+                                                                                return implode(' and ', $parts);
+                                                                            });
+                                                                    @endphp
+                                                                    @if ($formatted->isNotEmpty())
+                                                                        <li><strong>Maximum Occupancy:</strong>
+                                                                            {{ $formatted->implode(' or ') }}</li>
+                                                                    @endif
+                                                                @endif
+
+                                                                <li><strong>Extra Person Charge:</strong>
+                                                                    ₱{{ number_format($room->extra_person_charge, 2) }}
+                                                                </li>
+                                                                <li><strong>Base Rate Per Night:</strong>
+                                                                    ₱{{ number_format($room->amount, 2) }}</li>
+
+                                                                @if ($this->check_in_date && $this->check_out_date && $nights > 0)
+                                                                    @php
+                                                                        $appliedRates = $this->getAppliedRatesForStay(
+                                                                            $room,
+                                                                            $this->check_in_date,
+                                                                            $this->check_out_date,
+                                                                        );
+                                                                        $hasSpecialRate =
+                                                                            count($appliedRates) > 0 &&
+                                                                            $appliedRates[0]['rate_type'] !== null;
+                                                                    @endphp
+
+                                                                    @if ($hasSpecialRate)
+                                                                        @foreach ($appliedRates as $appliedRate)
+                                                                            <li>
+                                                                                <strong>{{ $appliedRate['rate_type'] === null ? 'Base Rate:' : $appliedRate['name'] . ':' }}</strong>
+                                                                                ₱{{ number_format($appliedRate['average_rate'], 2) }}
+                                                                                per night
+                                                                                ({{ $appliedRate['nights'] }}
+                                                                                night{{ $appliedRate['nights'] > 1 ? 's' : '' }})
+                                                                            </li>
+                                                                        @endforeach
+                                                                    @endif
+                                                                    <li><strong>Total Rate for Stay:</strong>
+                                                                        ₱{{ number_format($totalRate, 2) }} for
+                                                                        {{ $nights }}
+                                                                        night{{ $nights > 1 ? 's' : '' }}</li>
+                                                                @endif
+                                                            </ul>
+
+                                                            <hr class="my-2">
+
+                                                            <!-- Room Amenities -->
+                                                            <div class="mt-2 mb-4">
+                                                                <h3 class="font-semibold text-gray-700 mb-2 text-lg">
+                                                                    Included Amenities</h3>
+                                                                @if ($room->features && count($room->features))
+                                                                    <div
+                                                                        class="grid grid-cols-2 md:grid-cols-3 gap-y-2">
+                                                                        @foreach ($room->features as $feature)
+                                                                            <div class="flex items-center space-x-2">
+                                                                                <i
+                                                                                    class="fa-solid fa-check text-green-700"></i>
+                                                                                <span
+                                                                                    class="text-gray-700 text-md">{{ $feature->name }}</span>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @else
+                                                                    <span class="text-gray-400 text-sm">No amenities
+                                                                        listed.</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

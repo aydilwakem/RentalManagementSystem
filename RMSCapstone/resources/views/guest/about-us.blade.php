@@ -107,16 +107,6 @@
                                 Share Your Feedback
                             </x-button>
                         </div>
-                        <!-- Contact -->
-                        <footer class="mt-6 border-t border-gray-200 pt-4 text-center">
-                            <h3 class="text-md font-semibold text-green-700 mb-2">Contact Us</h3>
-                            <p class="text-gray-600 text-sm">
-                                For inquiries or suggestions, reach us at:
-                            </p>
-                            <p class="text-green-600 font-medium text-sm">
-                                rmscapstone26@gmail.com
-                            </p>
-                        </footer>
                     </section>
 
                 </div>

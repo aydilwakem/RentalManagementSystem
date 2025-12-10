@@ -1,182 +1,197 @@
-<div class="container mx-auto py-8 px-6">
-    <!-- Page Title -->
-    <div class="text-center mb-3 md:mb-8">
-        <h1 class="text-3xl font-semibold text-green-700">Request a quote for your event</h1>
-        <p class="text-lg text-gray-600 mt-2">Provide your details below, and we'll get back to you with a quote!</p>
+<div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+    <!-- Page Header -->
+    <div class="text-center max-w-3xl mx-auto mb-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-green-700 tracking-tight">
+            Plan Your Perfect Event
+        </h1>
+        <p class="text-lg text-gray-600 mt-3 leading-relaxed">
+            Tell us about your upcoming event at Canopy Farm, and our team will craft a personalized quote just for you.
+        </p>
     </div>
 
-    {{-- For sessionn messages --}}
+    <!-- Session Messages -->
     @if (session('message'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-            class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-            {{ session('message') }}
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 transform -translate-y-2"
+             x-transition:enter-end="opacity-100 transform translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 transform translate-y-0"
+             x-transition:leave-end="opacity-0 transform -translate-y-2"
+             class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full px-6">
+
+            <div class="rounded-lg shadow-lg p-4 flex items-center gap-3 border-l-4 {{ session('alert-type') === 'success' ? 'bg-green-50 border-green-500 text-green-800' : 'bg-red-50 border-red-500 text-red-800' }}">
+                <i class="{{ session('alert-type') === 'success' ? 'fas fa-check-circle text-green-500' : 'fas fa-exclamation-circle text-red-500' }} text-xl"></i>
+                <span class="font-medium text-sm">{{ session('message') }}</span>
+                <button @click="show = false" class="ml-auto text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </div>
     @endif
 
-    <!-- Request a Quote Form -->
-    <div class="max-w-2xl mx-auto bg-white p-6 mb-6 rounded-lg shadow-md border">
-        <form wire:submit.prevent="requestQuote">
+    <!-- Form Container -->
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
 
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <!-- Company Name -->
+        <!-- Top Bar -->
+        <div class="h-2 bg-green-600"></div>
+
+        <div class="p-8 md:p-10">
+            <form wire:submit.prevent="requestQuote" class="space-y-8">
+
+                <!-- Contact Information -->
                 <div>
-                    <label for="company-name" class="block text-sm font-medium text-gray-700">Company Name <span
-                            class="text-red-500">*</span></label>
-                    <input type="text" id="company-name" name="company_name" wire:model="company_name"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        placeholder="Ex. ABC Company" required>
+                    <h3 class="text-lg font-bold text-gray-800 border-b border-gray-200 pb-2 mb-6 flex items-center gap-2">
+                        <i class="fas fa-user-circle text-green-600"></i> Contact Details
+                    </h3>
 
-                    @error('company_name')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Company Name -->
+                        <div>
+                            <label for="company-name" class="block text-sm font-semibold text-gray-700 mb-1">Company / Organization <span class="text-red-500">*</span></label>
+                            <input type="text" id="company-name" wire:model="company_name" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-gray-400"
+                                placeholder="Ex. ABC Corp or N/A">
+                            @error('company_name') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Contact Person -->
+                        <div>
+                            <label for="contact-person" class="block text-sm font-semibold text-gray-700 mb-1">Contact Person <span class="text-red-500">*</span></label>
+                            <input type="text" id="contact-person" wire:model="contact_person" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-gray-400"
+                                placeholder="Ex. Juan Dela Cruz">
+                            @error('contact_person') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+                            <input type="email" id="email" wire:model="email" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-gray-400"
+                                placeholder="Ex. juan.delacruz@example.com">
+                            @error('email') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label for="contact-number" class="block text-sm font-semibold text-gray-700 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+                            <input type="tel" id="contact-number" wire:model="contact_number" required
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric" maxlength="11"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all placeholder-gray-400"
+                                placeholder="Ex. 09123456789">
+                            @error('contact_number') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Contact Person -->
+                <!-- Event Details -->
                 <div>
-                    <label for="contact-person" class="block text-sm font-medium text-gray-700">Contact Person <span
-                            class="text-red-500">*</span></label>
-                    <input type="text" id="contact-person" name="contact_person" wire:model="contact_person"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        placeholder="Ex. Juan Dela Cruz" required>
-                    @error('contact_person')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    <h3 class="text-lg font-bold text-gray-800 border-b border-gray-200 pb-2 mb-6 flex items-center gap-2">
+                        <i class="fas fa-calendar-alt text-green-600"></i> Event Information
+                    </h3>
+
+                    <div class="space-y-6">
+                        <!-- Hall Selection -->
+                        <div>
+                            <label for="hall" class="block text-sm font-semibold text-gray-700 mb-1">Preferred Venue <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <select id="hall" wire:model="selected_hall" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all appearance-none bg-white">
+                                    <option value="">Select an Event Hall</option>
+                                    @foreach ($halls as $hall)
+                                        <option value="{{ $hall->id }}">{{ $hall->name_number }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                            @error('selected_hall') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="event-start" class="block text-sm font-semibold text-gray-700 mb-1">Start Date & Time <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" id="event-start" wire:model.live="event_start" required
+                                    min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-gray-600">
+                                @error('event_start') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label for="event-end" class="block text-sm font-semibold text-gray-700 mb-1">End Date & Time <span class="text-red-500">*</span></label>
+                                <input type="datetime-local" id="event-end" wire:model.live="event_end" required
+                                    min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-gray-600">
+                                @error('event_end') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
+                        <!-- Event Type -->
+                        <div>
+                            <label for="event-type" class="block text-sm font-semibold text-gray-700 mb-1">Type of Event <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <select id="event-type" wire:model="event_type" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all appearance-none bg-white">
+                                    <option value="">Select Event Type</option>
+                                    <option value="Wedding">Wedding</option>
+                                    <option value="Birthday">Birthday</option>
+                                    <option value="Team Building">Team Building</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                            @error('event_type') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Other Type -->
+                        <div x-data="{ type: @entangle('event_type') }" x-show="type === 'other'" x-transition class="mt-3">
+                            <label for="other-event-type-text" class="block text-sm font-semibold text-gray-700 mb-1">Please Specify</label>
+                            <input type="text" id="other-event-type-text" wire:model="other_event_type"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                                placeholder="Ex. Reunion, Seminar">
+                            @error('other_event_type') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Additional Requests -->
+                        <div>
+                            <label for="additional-requests" class="block text-sm font-semibold text-gray-700 mb-1">Special Requests / Notes</label>
+                            <textarea id="additional-requests" wire:model="additional_requests" rows="4"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all resize-none placeholder-gray-400"
+                                placeholder="Any dietary restrictions, setup requirements, or questions?"></textarea>
+                            @error('additional_requests') <span class="text-red-500 text-xs mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <!-- Email Address -->
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address <span
-                            class="text-red-500">*</span></label>
-                    <input type="email" id="email" name="email" wire:model="email"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        placeholder="Ex. juan.delacruz@example.com" required>
-                    @error('email')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                <!-- Submit -->
+                <div class="pt-3 flex justify-between">
+                    <x-ghost-button href="{{ route('guest.event-halls') }}">
+                        Back to Event Halls
+                    </x-ghost-button>
+                    <x-button type="submit"
+                        class="px-8 py-3 bg-green-700 hover:bg-green-800 text-white font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2">
+
+                        <span wire:loading.remove wire:target="requestQuote">
+                            Submit Request <i class="fas fa-paper-plane ml-1"></i>
+                        </span>
+
+                        <span wire:loading wire:target="requestQuote" class="flex items-center gap-2">
+                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                        </span>
+                    </x-button>
                 </div>
 
-                <!-- Contact Number -->
-                <div class="mb-4">
-                    <label for="contact-number" class="block text-sm font-medium text-gray-700">Contact Number <span
-                            class="text-red-500">*</span></label>
-                    <input type="tel" id="contact-number" name="contact_number" wire:model="contact_number"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        placeholder="Ex. 0912 345 6789" required>
-                    @error('contact_number')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-
-            {{-- Selected Hall --}}
-            <div class="mb-4">
-                <label for="hall" class="block text-sm font-medium text-gray-700">Select Event Hall <span
-                        class="text-red-500">*</span></label>
-                <select id="hall" wire:model="selected_hall"
-                    class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600">
-                    <option value="">Choose a hall</option>
-                    @foreach ($halls as $hall)
-                        <option value="{{ $hall->id }}"> {{ $hall->name_number }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('selected_hall')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Event Start and End Dates -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="event-start" class="block text-sm font-medium text-gray-700">Event Start Date &
-                        Time <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" id="event-start" name="event_start" wire:model.live="event_start"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        required>
-                    @error('event_start')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="event-end" class="block text-sm font-medium text-gray-700">Event End Date & Time <span
-                            class="text-red-500">*</span></label>
-                    <input type="datetime-local" id="event-end" name="event_end" wire:model.live="event_end"
-                        class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                        required>
-                    @error('event_end')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Event Type Dropdown -->
-            <div class="mb-4">
-                <label for="event-type" class="block text-sm font-medium text-gray-700">Event Type <span
-                        class="text-red-500">*</span></label>
-                <select id="event-type" name="event_type" wire:model="event_type"
-                    class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                    required>
-                    <option value="">Select Event Type</option>
-                    <option value="Wedding">Wedding</option>
-                    <option value="Birthday">Birthday</option>
-                    <option value="Team Building">Team Building</option>
-                    <option value="other">Other (Please specify)</option>
-                </select>
-                @error('event_type')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- If 'Other' Event Type is selected, show additional input field -->
-            <div class="mb-4 hidden" id="other-event-type">
-                <label for="other-event-type-text" class="block text-sm font-medium text-gray-700">Specify Event
-                    Type</label>
-                <input type="text" id="other-event-type-text" name="other_event_type"
-                    wire:model="other_event_type"
-                    class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600"
-                    placeholder="Enter event type">
-                @error('other_event_type')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Additional Requests -->
-            <div class="mb-4">
-                <label for="additional-requests" class="block text-sm font-medium text-gray-700">Additional
-                    Requests</label>
-                <textarea id="additional-requests" name="additional_requests" rows="4" wire:model="additional_requests"
-                    class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-green-600 focus:border-green-600 resize-none"
-                    placeholder="Any additional details or special requests"></textarea>
-                @error('additional_requests')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Submit Button -->
-            <div class="flex justify-center">
-                <x-button type="submit" class="w-auto mx-auto text-center transition duration-300"
-                    icon="fas fa-check">
-                    Request Quote
-                </x-button>
-            </div>
-
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
-<script>
-    const eventTypeSelect = document.getElementById('event-type');
-    const otherEventTypeDiv = document.getElementById('other-event-type');
-
-    eventTypeSelect.addEventListener('change', function() {
-        if (this.value === 'other') {
-            otherEventTypeDiv.classList.remove('hidden');
-        } else {
-            otherEventTypeDiv.classList.add('hidden');
-        }
-    });
-</script>
