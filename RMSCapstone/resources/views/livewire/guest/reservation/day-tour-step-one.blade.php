@@ -71,7 +71,7 @@
                     @endphp
 
                     <div @class([
-                        'relative group border rounded-xl overflow-hidden shadow-sm hover:shadow-lg bg-whitetransition cursor-pointer',
+                        'relative group border rounded-xl overflow-hidden shadow-sm hover:shadow-lg bg-white transition cursor-pointer',
                         'border-green-500 ring-2 ring-green-300' => $isSelected && $isAvailable,
                         'border-red-500 ring-2 ring-red-300' => $isSelected && !$isAvailable,
                         'border-gray-200 ' => !$isSelected,
@@ -116,12 +116,22 @@
                         </div>
 
 
-                        <div class="p-4 space-y-4 bg-white h-full">
-                            @if ($tour->description)
+                        <div class="px-4 space-y-4 bg-white mb-4">
+                            {{-- @if ($tour->description)
                                 <div class="text-sm text-gray-600 line-clamp-2">
                                     {{ Str::limit($tour->description, 120) }}
                                 </div>
-                            @endif
+                            @endif --}}
+
+                        <!-- See more details -->
+                        <div class="pt-3 mt-2">
+                            <a href="#"
+                                class="text-green-700 hover:text-green-600 transition font-semibold text-sm flex items-center hover:underline"
+                                onclick="event.stopPropagation(); openTourModal({{ $tour->id }}); return false;">
+                                See more details
+                                <i class="fa-solid fa-arrow-up-right-from-square pl-1 text-xs"></i>
+                            </a>
+                        </div>
 
                             <div class="space-y-3">
                                 @if ($tour->inclusions)
@@ -193,6 +203,8 @@
                                 </div>
                             @endif
                         </div>
+
+
                     </div>
                 @endforeach
             </div>

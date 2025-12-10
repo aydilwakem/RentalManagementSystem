@@ -13,7 +13,7 @@
     <x-app-layout>
         <div class="py-18">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-[#2A2A2A] overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-xl p-6">
                     @livewire('admin.dashboard')
                 </div>
             </div>

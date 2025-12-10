@@ -57,8 +57,6 @@
         </div>
 
 
-
-
         <!-- Events Card -->
         <div
             class="bg-yellow-50 border-yellow-100 border-2 rounded-xl shadow p-6 flex items-center justify-between relative hover:shadow-md transition">
@@ -172,7 +170,7 @@
     </div>
 
     <!-- Calendar Sort -->
-    <div class="flex justify-between">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 ">
         <div class="mb-4 flex items-center space-x-2">
             <label for="reservationFilter" class="text-sm font-medium text-gray-900 dark:text-white">View:</label>
             <select id="reservationFilter"
@@ -184,7 +182,7 @@
                 <option value="4">Day Tour Bookings</option>
             </select>
         </div>
-        <div class="flex items-center space-x-4 mb-3">
+        <div class="flex flex-wrap items-center space-x-4 mb-3">
             <div class="flex items-center space-x-2">
                 <span class="inline-block w-4 h-4 rounded bg-green-300"></span>
                 <span class="text-sm dark:text-white">Room Reservations</span>
@@ -200,6 +198,22 @@
         </div>
     </div>
 
+
+<!-- mobile stacking -->
+    <style>
+        @media (max-width: 768px) {
+            .fc-header-toolbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            .fc-toolbar-chunk {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
 
     <div id='calendar'></div>
 
@@ -227,20 +241,40 @@
                 // Default label
                 let currentLabel = labelMap['all'];
 
+                // Helper function to determine header config based on screen width
+                function getHeaderConfig() {
+                    if (window.innerWidth < 768) {
+                        return {
+                            left: 'prev,next',
+                            center: 'title',
+                            right: ''
+                        };
+                    } else {
+                        return {
+                            left: 'customLabel',
+                            center: 'title',
+                            right: 'prev,next'
+                        };
+                    }
+                }
+
                 // Calendar layout
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
                     events: filteredEvents,
-                    headerToolbar: {
-                        left: 'customLabel',
-                        center: 'title',
-                        right: 'prev,next'
+
+                    headerToolbar: getHeaderConfig(),
+
+                    windowResize: function(view) {
+                        calendar.setOption('headerToolbar', getHeaderConfig());
+
                     },
+
                     customButtons: {
                         customLabel: {
                             text: currentLabel,
-                            click: null // no action needed
+                            click: null
                         }
                     },
                     eventDidMount: function(info) {
@@ -312,12 +346,7 @@
                         }
                     });
 
-                    // Force re-render of header
-                    calendar.setOption('headerToolbar', {
-                        left: 'customLabel',
-                        center: 'title',
-                        right: 'prev,next'
-                    });
+                    calendar.setOption('headerToolbar', getHeaderConfig());
                 });
             });
         </script>

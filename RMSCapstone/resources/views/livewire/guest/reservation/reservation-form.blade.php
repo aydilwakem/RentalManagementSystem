@@ -15,7 +15,7 @@
                 <div class="header">
                     @if ($currentStep != 4)
                         <!-- Title -->
-                        <h1 class="text-3xl font-bold text-green-700 text-center mb-4">Book Your Stay</h1>
+                        <h1 class="text-green-700 font-bold tracking-wide uppercase mb-4 text-center text-3xl">Book Your Stay</h1>
                         <!-- Date Picker & Search -->
                         <div class="flex items-center justify-center md:gap-4 mb-8 ">
                             <div class="flex flex-col items-center">

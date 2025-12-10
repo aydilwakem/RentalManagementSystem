@@ -50,6 +50,15 @@ class PaymentUploadedMail extends Mailable
                 'check_out' => $this->paymentDetails['check_out'],
                 'total_amount' => $this->paymentDetails['total_amount'],
                 'deposit' => $this->paymentDetails['deposit'],
+
+                // branding details
+                'branding_company_name' => $this->paymentDetails['branding_company_name'] ?? 'Canopy Farm',
+                'logo_path' => $this->paymentDetails['logo_path'] ?? '',
+                'branding_company_email' => $this->paymentDetails['branding_company_email'] ?? '',
+                'branding_company_contact' => $this->paymentDetails['branding_company_contact'] ?? '',
+                'company_address' => $this->paymentDetails['company_address'] ?? '',
+                'facebook_link' => $this->paymentDetails['facebook_link'] ?? '#',
+                'instagram_link' => $this->paymentDetails['instagram_link'] ?? '#',
             ]);
     }
 }

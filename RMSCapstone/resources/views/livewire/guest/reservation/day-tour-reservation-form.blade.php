@@ -3,7 +3,9 @@
 
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-green-700">Book Your Day Tour</h1>
+            <h1 class="text-green-700 font-bold tracking-wide uppercase mb-4 text-center text-3xl">
+                Book your day tour
+            </h1>
         </div>
 
         <!-- Step Header -->

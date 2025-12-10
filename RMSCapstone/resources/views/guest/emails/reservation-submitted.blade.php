@@ -11,6 +11,54 @@
         td {
             font-family: 'Poppins', sans-serif;
         }
+
+        .mobile-label {
+            display: none;
+        }
+
+        /* Mobile Styling */
+        @media only screen and (max-width: 600px) {
+
+            /* Card view */
+            .responsive-table,
+            .responsive-body,
+            .responsive-row,
+            .responsive-cell {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .responsive-header {
+                display: none !important;
+            }
+
+            .responsive-row {
+                margin-bottom: 20px !important;
+                border: 1px solid #e0e0e0 !important;
+                border-radius: 8px !important;
+                padding: 15px !important;
+                background-color: #ffffff !important;
+            }
+
+            .responsive-cell {
+                text-align: right !important;
+                padding: 5px 0 !important;
+                border-bottom: 1px dashed #eee !important;
+                display: flex !important;
+                justify-content: space-between !important;
+            }
+
+            .responsive-cell:last-child {
+                border-bottom: none !important;
+            }
+
+            .mobile-label {
+                display: inline-block !important;
+                font-weight: bold !important;
+                color: #166534 !important;
+                float: left !important;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
@@ -36,7 +84,8 @@
         </div>
 
         {{-- Transaction Number Header --}}
-        <div style="
+        <div
+            style="
             padding: 20px 30px;
             text-align: center;
             border-bottom: 2px solid #166534;
@@ -45,7 +94,7 @@
             <h1 style="font-size: 32px; color: #166534; margin: 0; font-weight: 700;">
                 {{ $transaction_number }}
             </h1>
-            <p style="font-size: 14px; color: #555; margin-top: 10px;">Please keep this number for all inquiries.</p>
+            <p style="font-size: 14px; color: #555; margin-top: 10px;">Please keep this ID for future inquiries.</p>
         </div>
 
 
@@ -60,7 +109,8 @@
             </p>
 
             {{-- Disclaimer --}}
-            <div style="
+            <div
+                style="
                 background-color: #fffacd; /* Light yellow background for attention */
                 border: 1px solid #e6b300; /* Yellow border */
                 border-left: 5px solid #e6b300;
@@ -95,8 +145,9 @@
             </div>
 
             {{-- Cart Items Table --}}
-            @if(!empty($cart_items))
-                <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items</h3>
+            @if (!empty($cart_items))
+                <h3 style="font-size: 18px; color: #166534; margin-top: 30px; margin-bottom: 10px;">Your Selected Items
+                </h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
                     <thead>
                         <tr style="background-color: #166534; color: #fff;">
@@ -108,12 +159,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($cart_items as $item)
+                        @foreach ($cart_items as $item)
                             <tr style="border-bottom: 1px solid #e0e0e0;">
                                 <td style="padding: 8px;">{{ $item['type'] }}</td>
                                 <td style="padding: 8px;">{{ $item['name'] }}</td>
                                 <td style="padding: 8px; text-align: center;">
-                                    @if($item['type'] === 'Room')
+                                    @if ($item['type'] === 'Room')
                                         {{ $item['quantity'] }} days
                                     @else
                                         {{ $item['quantity'] }}
@@ -123,7 +174,7 @@
                                     ₱{{ number_format($item['total_amount'] ?? 0, 2) }}
                                 </td>
                                 <td style="padding: 8px; text-align: center;">
-                                    @if(isset($item['datetime']))
+                                    @if (isset($item['datetime']))
                                         {{ \Carbon\Carbon::parse($item['datetime'])->format('h:i A') }}
                                     @else
                                         N/A
@@ -145,12 +196,14 @@
                     <tbody>
                         <tr>
                             <td style="padding:8px;">Base Subtotal:</td>
-                            <td style="padding:8px; text-align:right;">₱{{ number_format($base_subtotal ?? 0, 2) }}</td>
+                            <td style="padding:8px; text-align:right;">₱{{ number_format($base_subtotal ?? 0, 2) }}
+                            </td>
                         </tr>
-                        @if(!empty($promo_code))
+                        @if (!empty($promo_code))
                             <tr>
                                 <td style="padding:8px;">Promo Code ({{ $promo_code }}):</td>
-                                <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}</td>
+                                <td style="padding:8px; text-align:right;">-₱{{ number_format($promo_amount ?? 0, 2) }}
+                                </td>
                             </tr>
                         @endif
                         <tr>
@@ -182,8 +235,8 @@
             </div>
 
 
-            <p style="margin-bottom: 15px;">Please pay the required deposit within <strong style="color: #d9534f;">{{
-    $expirationHours }} hours</strong> to confirm your reservation.
+            <p style="margin-bottom: 15px;">Please pay the required deposit within <strong
+                    style="color: #d9534f;">{{ $expirationHours }} hours</strong> to confirm your reservation.
             </p>
 
             {{-- Manual Payment Options
@@ -215,7 +268,8 @@
 
             {{-- Payment Link Button --}}
             <p style="text-align: center; margin: 20px 0;">
-                <a href="{{ $payment_link }}" target="_blank" style="
+                <a href="{{ $payment_link }}" target="_blank"
+                    style="
                     display: inline-block;
                     padding: 12px 25px;
                     background-color: #166534; /* Your brand green */
@@ -246,9 +300,9 @@
             of payment.
             <br>
 
-            <p style="margin-top: 20px;">
-                Thank you,<br>
-                {{ $branding_company_name }}
+            <p style="margin-top: 30px;">
+                Warm regards,<br>
+                The {{ $branding_company_name }} Team
             </p>
 
         </div>
@@ -283,8 +337,8 @@
             </div>
 
 
-            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }} {{
-    $branding_company_name }}. All rights reserved.</span>
+            <span style="font-weight: 600; padding-top: 10px; display: block; color:#fff;">&copy; {{ date('Y') }}
+                {{ $branding_company_name }}. All rights reserved.</span>
 
         </div>
     </div>

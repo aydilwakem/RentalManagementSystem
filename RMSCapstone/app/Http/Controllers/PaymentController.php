@@ -389,6 +389,13 @@ class PaymentController extends Controller
                 'check_out' => $transaction->end_datetime,
                 'total_amount' => $transaction->total_amount,
                 'deposit' => $transaction->deposit_amount,
+
+                // branding details
+                'branding_company_name' => $setting->company_name ?? 'Canopy Farm PH',
+                'logo_path' => $setting->logo ?? '',
+                'company_address' => $setting->address ?? '',
+                'facebook_link' => $setting->facebook ?? '#',
+                'instagram_link' => $setting->instagram ?? '#',
             ];
 
             Mail::to($paymentDetails['email'])->send(new PaymentUploadedMail($paymentDetails));
