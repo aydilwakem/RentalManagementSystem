@@ -136,11 +136,12 @@
                                 </div>
                             </th>
 
+                            <!-- Package Type -->
+                            <th scope="col" class="px-4 py-3">Package Type</th>
+
                             <!-- Duration -->
                             <th scope="col" class="px-4 py-3">Duration</th>
 
-                            <!-- Max Guests -->
-                            {{-- <th scope="col" class="px-4 py-3">Max Guests</th> --}}
 
                             <!-- Base Price -->
                             <th scope="col" class="px-4 py-3">Base Price</th>
@@ -165,9 +166,19 @@
                                         value="{{ $tour->id }}" class="accent-blue-600 w-4 h-4">
                                         {{ $tour->name }}
                                 </th>
+                                <td class="px-4 py-3">
+                                    @if ($tour->package_type == "with_room")
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-600">
+                                            With Room
+                                        </span>
+                                    @else
+                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">
+                                            No Room
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3">{{ $tour->duration_hours }} hours</td>
-                                {{-- <td class="px-4 py-3">{{ $tour->max_guests }} guests</td> --}}
-                                <td class="px-4 py-3 text-gray-800">₱{{ number_format($tour->base_price, 2) }}</td>
+                                <td class="px-4 py-3 text-gray-800 dark:text-white">₱{{ number_format($tour->base_price, 2) }}</td>
                                 {{-- <td class="px-4 py-3">
                                     <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $tour->rates_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">

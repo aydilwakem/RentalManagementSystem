@@ -20,7 +20,7 @@
             </div>
         @endif
         <!-- Navigation Tabs -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <!-- Button + Dropdown -->
             <div class="flex items-center gap-2 mb-4">
                 @can('new-reservation-create')
@@ -163,7 +163,7 @@
 
 
                 <!-- Status Filter -->
-                <div class="w-full md:w-auto">
+                <div class="w-full">
                     <div class="flex gap-3 items-center">
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Reservation
                             Status:</label>
