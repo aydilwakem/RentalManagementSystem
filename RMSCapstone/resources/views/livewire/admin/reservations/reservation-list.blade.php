@@ -13,9 +13,8 @@
     @else
         {{-- Display Session Message --}}
         @if (session('message'))
-            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
-                class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
+                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
@@ -61,14 +60,14 @@
             <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 ">
                 <li class="me-2 flex-1 sm:flex-none">
                     <a href="{{ route('admin.reservations-list') }}"
-                    class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
+                        class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
                         Active Reservations
                     </a>
                 </li>
 
                 <li class="me-2 flex-1 sm:flex-none">
                     <a href="{{ route('admin.completed-reservations') }}"
-                    class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg whit dark:text-gray-400  dark:hover:bg-green-50 ">
+                        class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg whit dark:text-gray-400  dark:hover:bg-green-50 ">
                         Completed Reservations
                     </a>
                 </li>
@@ -85,16 +84,15 @@
                 <div class="w-full md:w-auto md:flex-1 md:max-w-md">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        <input wire:model.live.debounce.300ms="search" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
+                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
 
@@ -122,40 +120,26 @@
 
                 {{-- <div class="relative bg-green-600 rounded-full p-1 w-64 flex">
                     <!-- Sliding highlight -->
-                    <div
-                        class="absolute top-1 bottom-1 rounded-full bg-white shadow transition-all duration-300 ease-in-out"
+                    <div class="absolute top-1 bottom-1 rounded-full bg-white shadow transition-all duration-300 ease-in-out"
                         style="
-                            @if ($viewMode === 'ongoing')
-                                left: 4px; right: 50%;
-                            @else
-                                left: 50%; right: 4px;
-                            @endif
-                        "
-                    ></div>
+                                @if ($viewMode === 'ongoing')
+                                    left: 4px; right: 50%;
+                                @else
+                                    left: 50%; right: 4px;
+                                @endif
+                            "></div>
 
                     <!-- Ongoing -->
-                    <button
-                        wire:click="$set('viewMode', 'ongoing')"
+                    <button wire:click="$set('viewMode', 'ongoing')"
                         class="relative flex-1 text-center py-2 rounded-full text-sm font-medium transition-all duration-300"
-                        @if ($viewMode === 'ongoing')
-                            style="color:#166534"
-                        @else
-                            style="color:white"
-                        @endif
-                    >
+                        @if ($viewMode==='ongoing' ) style="color:#166534" @else style="color:white" @endif>
                         Upcoming
                     </button>
 
                     <!-- Completed -->
-                    <button
-                        wire:click="$set('viewMode', 'completed')"
+                    <button wire:click="$set('viewMode', 'completed')"
                         class="relative flex-1 text-center py-2 rounded-full text-sm font-medium transition-all duration-300"
-                        @if ($viewMode === 'completed')
-                            style="color:#166534"
-                        @else
-                            style="color:white"
-                        @endif
-                    >
+                        @if ($viewMode==='completed' ) style="color:#166534" @else style="color:white" @endif>
                         Completed
                     </button>
                 </div> --}}
@@ -167,9 +151,8 @@
                     <div class="flex gap-3 items-center">
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Reservation
                             Status:</label>
-                        <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-12 p-2.5
-                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <select wire:model.live="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-12 p-2.5
+                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -194,8 +177,7 @@
                 <div class="flex flex-col items-center justify-center text-center">
                     <!-- Spinner -->
                     <svg class="animate-spin h-6 w-6 text-green-700 mb-2" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4" />
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path class="opacity-75" fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z" />
                     </svg>
@@ -224,17 +206,15 @@
                                         @else
                                             @if ($sortDir == 'ASC')
                                                 {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                                 </svg>
                                             @else
                                                 {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                                 </svg>
@@ -269,8 +249,7 @@
 
                             </tr>
                         </thead>
-                        <tbody wire:loading.remove wire:target="search, statusFilter"
-                            class="text-left dark:bg-gray-700">
+                        <tbody wire:loading.remove wire:target="search, statusFilter" class="text-left dark:bg-gray-700">
                             @forelse ($transactions as $transaction)
                                 <tr
                                     class="border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
@@ -387,15 +366,13 @@
                                     <td class="px-6 py-3 relative">
                                         <div x-data="dropdown()" x-init="init" class="relative">
                                             <!-- Trigger Button -->
-                                            <button @click="toggle" :aria-expanded="open.toString()"
-                                                aria-haspopup="true"
+                                            <button @click="toggle" :aria-expanded="open.toString()" aria-haspopup="true"
                                                 class="text-gray-700 hover:text-blue-600 focus:outline-none dark:text-gray-200 dark:hover:text-blue-500">
                                                 <i class="fas fa-ellipsis-h text-xl"></i>
                                             </button>
 
                                             <!-- Popover Menu -->
-                                            <div x-show="open" x-ref="menu" @click.outside="open = false"
-                                                x-transition
+                                            <div x-show="open" x-ref="menu" @click.outside="open = false" x-transition
                                                 :class="placement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'"
                                                 class="absolute right-0 z-20 w-48 bg-white rounded-md shadow-lg border divide-y divide-gray-100 dark:bg-gray-700">
                                                 <ul class="text-sm text-gray-700 dark:text-gray-200">
@@ -412,10 +389,11 @@
 
                                                     <!-- Archive Button -->
                                                     @if (
-                                                        $transaction->transaction_status === 'done' ||
+                                                            $transaction->transaction_status === 'done' ||
                                                             $transaction->transaction_status === 'cancelled' ||
                                                             $transaction->transaction_status === 'no_show' ||
-                                                            $transaction->transaction_status === 'terminated')
+                                                            $transaction->transaction_status === 'terminated'
+                                                        )
                                                         <a href="#"
                                                             wire:click.prevent="showActionModal('archiveReservation', 'Archive Reservation', 'Are you sure you want to archive this reservation? This will move it to the archives section.', {{ $transaction->id }}, 'warning')"
                                                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -464,7 +442,10 @@
                                                     @endif
 
                                                     {{-- <!-- Edit Transaction -->
-                                                    @if ($transaction->transaction_status === 'pending' || $transaction->transaction_status === 'reserved' || $transaction->transaction_status === 'receipt_verified' || $transaction->transaction_status === 'confirmed')
+                                                    @if ($transaction->transaction_status === 'pending' ||
+                                                    $transaction->transaction_status === 'reserved' ||
+                                                    $transaction->transaction_status === 'receipt_verified' ||
+                                                    $transaction->transaction_status === 'confirmed')
                                                     <li>
                                                         <a href="{{ route('admin.edit-reservation', ['transaction' => $transaction->id]) }}"
                                                             class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -523,7 +504,10 @@
                                                     <div class="border-t">
 
                                                         <!-- Cancel -->
-                                                        @if ($transaction->transaction_status === 'reserved')
+                                                        @if (
+                                                                $transaction->transaction_status === 'reserved' ||
+                                                                $transaction->transaction_status === 'receipt_verified'
+                                                            )
                                                             <a href="#"
                                                                 wire:click.prevent="showActionModal('cancelReservation', 'Cancel Reservation', 'Are you sure you want to cancel this reservation?', {{ $transaction->id }}, 'danger')"
                                                                 class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:hover:bg-gray-600 ">
@@ -542,11 +526,12 @@
 
                                                         <!-- Delete -->
                                                         @if (
-                                                            $transaction->transaction_status === 'cancelled' ||
+                                                                $transaction->transaction_status === 'cancelled' ||
                                                                 $transaction->transaction_status === 'expired' ||
                                                                 $transaction->transaction_status === 'done' ||
                                                                 $transaction->transaction_status === 'no_show' ||
-                                                                $transaction->transaction_status === 'terminated')
+                                                                $transaction->transaction_status === 'terminated'
+                                                            )
                                                             <a href="#"
                                                                 wire:click.prevent="showActionModal('deleteReservation', 'Delete Reservation', 'Are you sure you want to delete this reservation?', {{ $transaction->id }}, 'danger')"
                                                                 class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 ">
@@ -557,9 +542,10 @@
 
                                                         <!-- Rollback Status -->
                                                         @if (
-                                                            $transaction->transaction_status !== 'pending' &&
+                                                                $transaction->transaction_status !== 'pending' &&
                                                                 $transaction->transaction_status !== 'reserved' &&
-                                                                $transaction->transaction_status !== 'receipt_verified')
+                                                                $transaction->transaction_status !== 'receipt_verified'
+                                                            )
                                                             <a href="#"
                                                                 wire:click.prevent="showActionModal('rollbackStatus', 'Undo Reservation Status', 'Are you sure you want to undo the status of this reservation?', {{ $transaction->id }}, 'danger')"
                                                                 class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -612,7 +598,7 @@
                         <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Per Page</label>
                         <select wire:model.live="perPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>
@@ -660,7 +646,7 @@
 
 <script>
     document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
-        button.addEventListener("click", function(e) {
+        button.addEventListener("click", function (e) {
             e.stopPropagation(); // Prevent window click from firing
             const id = button.getAttribute("data-id");
             const dropdown = document.querySelector(`[data-dropdown="${id}"]`);
@@ -676,7 +662,7 @@
     });
 
     // Optional: Close all dropdowns when clicking outside
-    window.addEventListener("click", function() {
+    window.addEventListener("click", function () {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
             menu.classList.add("hidden");
         });
