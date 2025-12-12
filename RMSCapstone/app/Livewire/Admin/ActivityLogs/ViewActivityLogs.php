@@ -8,7 +8,7 @@ use Spatie\Activitylog\Models\Activity;
 use Livewire\Attributes\Url;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ViewActivityLogs extends Component
 {
@@ -199,6 +199,104 @@ class ViewActivityLogs extends Component
         }, $filename);
     }
 
+
+    public function exportLogsCsv(){
+        
+   $query = Activity::query()->with('causer');
+
+    $search = trim(preg_replace('/\s+/', ' ', $this->search));
+
+    $query->when($this->start_date, function ($query) {
+            $query->whereDate('created_at', '>=', Carbon::parse($this->start_date));
+        })
+        ->when($this->end_date, function ($query) {
+            $query->whereDate('created_at', '<=', Carbon::parse($this->end_date));
+        })
+        ->when($this->audit_event_filter, function ($query) {
+            $query->where('event', $this->audit_event_filter);
+        })
+        ->when($this->audit_log_name_filter, function ($query) {
+            $query->where('log_name', $this->audit_log_name_filter);
+        })
+        ->when($this->search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('description', 'like', "%{$search}%")
+                    ->orWhere('log_name', 'like', "%{$search}%")
+                    ->orWhere('subject_type', 'like', "%{$search}%")
+                    ->orWhereHas('causer', function ($q) use ($search) {
+                        $q->whereRaw("CONCAT_WS(' ', name, middle_name, last_name, suffix) LIKE ?", ["%{$search}%"])
+                            ->orWhere('name', 'like', "%{$search}%")
+                            ->orWhere('middle_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('suffix', 'like', "%{$search}%");
+                    });
+            });
+        });
+
+    // Sorting
+    $query->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc');
+
+    // Fetch all logs
+    $logs = $query->get();
+
+    if ($logs->isEmpty()) {
+        session()->flash('error', 'No logs found to export.');
+        return;
+    }
+
+    // CSV Filename
+    $filename = 'Audit-Logs-' .
+        Carbon::parse($this->start_date ?? now())->format('Ymd') . '-' .
+        Carbon::parse($this->end_date ?? now())->format('Ymd') . '.csv';
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=\"$filename\"",
+    ];
+
+    return new StreamedResponse(function () use ($logs) {
+
+        $handle = fopen('php://output', 'w');
+
+        // CSV header row
+        fputcsv($handle, [
+            'Timestamp',
+            'Event',
+            'Log Name',
+            'Description',
+            'Causer',
+            'Subject Type',
+        ]);
+
+        // Data rows
+        foreach ($logs as $log) {
+            $causerName = $log->causer
+                ? trim($log->causer->name . ' ' . $log->causer->last_name)
+                : 'System';
+
+            fputcsv($handle, [
+                Carbon::parse($log->created_at)->format('Y-m-d H:i:s'),
+                ucfirst($log->event),
+                $log->log_name,
+                $log->description,
+                $causerName,
+                $log->subject_type,
+            ]);
+        }
+
+        // Blank line
+        fputcsv($handle, []);
+
+        // Summary section
+        fputcsv($handle, ['Summary']);
+        fputcsv($handle, ['Total Logs Exported:', $logs->count()]);
+        fputcsv($handle, ['Event Filter:', $this->audit_event_filter ?? 'None']);
+        fputcsv($handle, ['Log Name Filter:', $this->audit_log_name_filter ?? 'None']);
+        fputcsv($handle, ['Date Range:', ($this->start_date ?? 'N/A') . ' - ' . ($this->end_date ?? 'N/A')]);
+
+        fclose($handle);
+    }, 200, $headers);
+    }
 
     public function setSortBy($sortByField)
     {
