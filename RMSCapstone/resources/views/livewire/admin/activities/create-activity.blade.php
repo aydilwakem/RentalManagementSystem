@@ -29,9 +29,9 @@
 
             <!-- Form container -->
             <form wire:submit.prevent="">
-                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
                     <!-- Name of Activity -->
-                    <div>
+                    <div class="sm: col-span-2">
                         <label for="name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Activity Name <span
                                 class="text-red-500">*</span></label>
@@ -46,7 +46,7 @@
 
 
                     <!-- Amount -->
-                    <div>
+                    <div class="sm: col-span-2">
                         <label for="amount"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amount <span
                                 class="text-red-500">*</span></label>
@@ -59,7 +59,7 @@
                     </div>
 
                     <!-- Description -->
-                    <div>
+                    <div class="sm: col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
                         <textarea wire:model="description" id="description" rows="4" class="block p-2.5 max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
@@ -71,7 +71,7 @@
                     </div>
 
                     <!-- Inclusions -->
-                    <div>
+                    <div class="sm: col-span-2">
                         <label for="inclusions"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Inclusions</label>
                         <textarea wire:model="inclusions" id="inclusions" rows="3" class="block p-2.5  max-h-20 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
@@ -83,7 +83,7 @@
                     </div>
 
                     <!-- Schedule Type -->
-                    <div >
+                    <div class="sm: col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Scheduling Option <span
                                 class="text-red-500">*</span></label>
                         <select wire:model.live="schedule_type"

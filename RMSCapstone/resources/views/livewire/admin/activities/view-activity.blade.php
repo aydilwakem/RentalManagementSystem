@@ -101,7 +101,7 @@
                             @if (!empty($activity->inclusions))
                                 {{ $activity->inclusions }}
                             @else
-                                <em class="text-gray-500 leading-relaxed">No inclusions provided.</em>
+                                <em class="text-gray-500 leading-relaxed dark:text-gray-200">No inclusions provided.</em>
                             @endif
                         </p>
                     </div>
@@ -114,7 +114,7 @@
                                     <li>{{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}</li>
                                 @endforeach
                             @else
-                                <li><em class="text-gray-500">No time slots provided.</em></li>
+                                <li><em class="text-gray-500 dark:text-gray-200">No time slots provided.</em></li>
                             @endif
                         </ul>
                     </div>

@@ -61,7 +61,7 @@
                 <li class="me-2 flex-1 sm:flex-none">
                     <a href="{{ route('admin.reservations-list') }}"
                         class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
-                        Active Reservations
+                        Active <br class="md:hidden"> Reservations
                     </a>
                 </li>
 
@@ -81,7 +81,7 @@
             <!-- Header-->
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 dark:bg-gray-800 rounded-lg">
                 <!-- Search-->
-                <div class="w-full md:w-auto md:flex-1 md:max-w-md">
+                <div class="w-full md:w-auto md:flex-1 md:max-w-xs">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
@@ -147,12 +147,13 @@
 
 
                 <!-- Status Filter -->
-                <div class="w-full">
+                <div class="w-full md:w-auto">
                     <div class="flex gap-3 items-center">
                         <label class="flex text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Reservation
                             Status:</label>
-                        <select wire:model.live="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-12 p-2.5
-                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <select wire:model.live="statusFilter"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-40 p-2.5
+                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>

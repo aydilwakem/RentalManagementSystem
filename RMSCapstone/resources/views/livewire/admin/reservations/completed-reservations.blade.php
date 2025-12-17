@@ -21,7 +21,7 @@
         @endif
 
         <!-- Navigation Tabs -->
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <!-- Button + Dropdown -->
             <div class="flex items-center gap-2  mb-4">
                 <x-ghost-button icon="fas fa-archive" wire:navigate href="{{ route('admin.reservations-archives') }}">
@@ -36,15 +36,15 @@
 
             </div>
             <!-- Tabs -->
-            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600">
-                <li class="me-2">
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-600 ">
+                <li class="me-2 flex-1 sm:flex-none">
                     <a href="{{ route('admin.reservations-list') }}"
-                        class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg">
-                        Active Reservations
+                        class="inline-block p-3 hover:text-green-700 hover:bg-green-50 rounded-t-lg whit dark:text-gray-400  dark:hover:bg-green-50 ">
+                        Active <br class="md:hidden"> Reservations
                     </a>
                 </li>
 
-                <li class="me-2">
+                <li class="me-2 flex-1 sm:flex-none">
                     <a href="{{ route('admin.completed-reservations') }}"
                         class="inline-block p-3 text-green-700 bg-green-100 font-semibold rounded-t-lg">
                         Completed Reservations
@@ -57,9 +57,9 @@
         <div
             class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 dark:bg-gray-800 rounded-lg">
                 <!-- Search-->
-                <div class="flex">
+                <div class="w-full md:w-auto md:flex-1 md:max-w-xs">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
@@ -140,12 +140,12 @@
 
 
                 <!-- Status Filter -->
-                <div class="flex space-x-3">
+                <div class="w-full md:w-auto">
                     <div class="flex space-x-3 items-center">
-                        <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation
+                        <label class="flex text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Reservation
                             Status:</label>
                         <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-40 p-2.5
                              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>

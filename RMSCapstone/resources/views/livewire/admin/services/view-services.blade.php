@@ -13,12 +13,12 @@
         @if (session('message'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                 class="fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg
-                                                        {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                {{ session('alert-type') === 'success' ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
                 {{ session('message') }}
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 gap-8">
                 <!-- Create Service Button -->
                 @can('service-create')
                     <div class="flex items-center justify-between">
@@ -37,7 +37,7 @@
             </div>
 
             <div
-                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                class="bg-white rounded-lg shadow-md  border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
                     <!-- Search Tab -->
@@ -95,169 +95,171 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            {{-- ID --}}
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                    class="accent-blue-600 w-4 h-4">
-                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                    <span>ID</span>
-                                    @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                            <tr>
+                                {{-- ID --}}
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+                                    <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                        <span>ID</span>
+                                        @if ($sortBy !== 'id')
+                                            {{-- Default icon when sorting is not active --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
-                                    @endif
-                                </div>
-                            </th>
-
-                            {{-- Service Name --}}
-                            <th scope="col" class="px-4 py-3 ">Service Name</th>
-
-                            {{-- Details --}}
-                            <th scope="col" class="px-4 py-3 ">Description</th>
-                            <th scope="col" class="px-4 py-3 ">Amount</th>
-                            <th scope="col" class="px-4 py-3 ">Type</th>
-                            <th scope="col" class="px-4 py-3 ">Status</th>
-                            <th scope="col" class="px-4 py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
-                        @forelse ($services as $service)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
-                                    @if(!$service->is_protected)
-                                        <input wire:model.live="selectedRows" type="checkbox" name="services[]"
-                                            value="{{ $service->id }}" class="accent-blue-600 w-4 h-4">
-                                    @else
-                                        <input type="checkbox" disabled class="accent-gray-400 w-4 h-4 cursor-not-allowed">
-                                    @endif
-                                    <span>{{ $fakeIDs[$service->id] ?? 'SRV-???' }}</span>
+                                    </div>
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
-                                    {{ $service->name }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if (!empty($service->description))
-                                        {{ Str::limit($service->description, 50) }}
-                                    @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
-                                            provided.</em>
-                                    @endif
-                                </td>
 
-                                @if($service->id == 10)
-                                    <td class="px-4 py-3">
-                                        <span class="text-gray-500">N/A</span>
-                                    </td>
-                                @else
-                                    <td class="px-4 py-3">
-                                        ₱{{ number_format($service->amount, 2) }}/{{ ucwords(strtolower($service->unit)) }}
-                                    </td>
-                                @endif
-                                <td class="px-4 py-3">
-                                    @if ($service->type == "addon")
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
-                                            Add On
-                                        </span>
-                                    @elseif ($service->type == "penalty")
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">
-                                            Penalty
-                                        </span>
-                                    @elseif ($service->type == "package")
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
-                                            Package
-                                        </span>
-                                    @elseif ($service->type == "food")
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
-                                            Food
-                                        </span>
-                                    @elseif ($service->type == "merchandise")
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
-                                            Merchandise
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if ($service->is_active)
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
-                                            Active
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
-                                            Inactive
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                                {{-- Service Name --}}
+                                <th scope="col" class="px-4 py-3 ">Service Name</th>
 
-                                    <!-- View Icon -->
-                                    @can('service-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate href="{{ route('admin.view-service', ['service' => $service->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Edit Icon -->
-                                    @can('service-edit')
-                                        @if($service->name !== 'Extra Hour') <!-- Use the service name instead of ID -->
-                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                                wire:navigate href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
-                                            </i>
-                                        @endif
-                                    @endcan
-
-                                    <!-- Delete Icon -->
-                                    @can('service-soft-delete')
-                                        @if(!$service->is_protected && $service->name !== 'Extra Hour')
-                                            <!-- Prevent deletion of Extra Hour -->
-                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                                wire:click="confirmDelete({{ $service->id }})" wire:loading.attr="disabled">
-                                            </i>
-                                        @endif
-                                    @endcan
-
-                                </td>
+                                {{-- Details --}}
+                                <th scope="col" class="px-4 py-3 ">Description</th>
+                                <th scope="col" class="px-4 py-3 ">Amount</th>
+                                <th scope="col" class="px-4 py-3 ">Type</th>
+                                <th scope="col" class="px-4 py-3 ">Status</th>
+                                <th scope="col" class="px-4 py-3 text-center">Action</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500 dark:text-white">
-                                    No services found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
+                            @forelse ($services as $service)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
+                                        @if(!$service->is_protected)
+                                            <input wire:model.live="selectedRows" type="checkbox" name="services[]"
+                                                value="{{ $service->id }}" class="accent-blue-600 w-4 h-4">
+                                        @else
+                                            <input type="checkbox" disabled class="accent-gray-400 w-4 h-4 cursor-not-allowed">
+                                        @endif
+                                        <span>{{ $fakeIDs[$service->id] ?? 'SRV-???' }}</span>
+                                    </th>
+                                    <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
+                                        {{ $service->name }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if (!empty($service->description))
+                                            {{ Str::limit($service->description, 50) }}
+                                        @else
+                                            <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                                provided.</em>
+                                        @endif
+                                    </td>
+
+                                    @if($service->id == 10)
+                                        <td class="px-4 py-3">
+                                            <span class="text-gray-500">N/A</span>
+                                        </td>
+                                    @else
+                                        <td class="px-4 py-3">
+                                            ₱{{ number_format($service->amount, 2) }}/{{ ucwords(strtolower($service->unit)) }}
+                                        </td>
+                                    @endif
+                                    <td class="px-4 py-3">
+                                        @if ($service->type == "addon")
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500">
+                                                Add On
+                                            </span>
+                                        @elseif ($service->type == "penalty")
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500">
+                                                Penalty
+                                            </span>
+                                        @elseif ($service->type == "package")
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                                Package
+                                            </span>
+                                        @elseif ($service->type == "food")
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                                Food
+                                            </span>
+                                        @elseif ($service->type == "merchandise")
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-500">
+                                                Merchandise
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if ($service->is_active)
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                                                Active
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                                                Inactive
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-2">
+
+                                        <!-- View Icon -->
+                                        @can('service-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
+                                                wire:navigate href="{{ route('admin.view-service', ['service' => $service->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Edit Icon -->
+                                        @can('service-edit')
+                                            @if($service->name !== 'Extra Hour') <!-- Use the service name instead of ID -->
+                                                <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
+                                                    wire:navigate href="{{ route('admin.edit-service', ['service' => $service->id]) }}">
+                                                </i>
+                                            @endif
+                                        @endcan
+
+                                        <!-- Delete Icon -->
+                                        @can('service-soft-delete')
+                                            @if(!$service->is_protected && $service->name !== 'Extra Hour')
+                                                <!-- Prevent deletion of Extra Hour -->
+                                                <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
+                                                    wire:click="confirmDelete({{ $service->id }})" wire:loading.attr="disabled">
+                                                </i>
+                                            @endif
+                                        @endcan
+
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500 dark:text-white">
+                                        No services found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
 
                 <!-- Pagination -->

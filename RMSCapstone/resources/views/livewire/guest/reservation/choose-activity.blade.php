@@ -50,13 +50,13 @@
                             @elseif ($expandedActivity === $activity->id)
                                 {{ $activity->description }}
                                 <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
-                                    class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                    class="text-gray-600 hover:underline ml-1 ">Show
                                     less</a>
                             @else
                                 {{ Str::limit($activity->description, 120, '...') }}
                                 @if (Str::length($activity->description) > 100)
                                     <a href="#" wire:click.prevent="toggleActivityDescription({{ $activity->id }})"
-                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                        class="text-gray-600 hover:underline ml-1 ">Show
                                         more</a>
                                 @endif
                             @endif
@@ -66,14 +66,14 @@
                         @if ($activity->schedule_type !== 'no_schedule')
                             <div class="mt-4">
                                 @if ($activity->schedule_type === 'system')
-                                    <h3 class="text-md font-medium text-gray-900 dark:text-white">Choose Time Slot</h3>
+                                    <h3 class="text-md font-medium text-gray-900 ">Choose Time Slot</h3>
                                     @if (is_array($activity->available_times) && count($activity->available_times))
                                         @foreach ($activity->available_times as $time)
                                             <label class="flex items-center space-x-2">
                                                 <input type="radio" name="selected_time_{{ $activity->id }}" {{-- This groups radios per
                                                     activity --}} wire:model="selectedTimes.{{ $activity->id }}" value="{{ $time }}"
                                                     class="text-green-600 focus:ring-green-500 border-gray-300 text-sm">
-                                                <span class="text-gray-700 dark:text-gray-200 text-sm">
+                                                <span class="text-gray-700  text-sm">
                                                     {{ \Carbon\Carbon::createFromFormat('H:i', $time)->format('g:i A') }}
                                                 </span>
                                             </label>
@@ -83,10 +83,10 @@
                                             activity.</p>
                                     @endif
                                 @elseif ($activity->schedule_type === 'guest')
-                                    <h3 class="text-md font-medium text-gray-900 dark:text-white">Input preferred time
+                                    <h3 class="text-md font-medium text-gray-900 ">Input preferred time
                                     </h3>
                                     <input type="time" wire:model.lazy="selectedTimes.{{ $activity->id }}"
-                                        class="border border-gray-300 rounded px-3 py-2 w-full dark:bg-gray-700 dark:text-white">
+                                        class="border border-gray-300 rounded px-3 py-2 w-full ">
                                 @endif
 
                                 @error("selectedTimes.{$activity->id}")
@@ -231,13 +231,13 @@
                             @elseif ($expandedActivity === $service->id)
                                 {{ $services->description }}
                                 <a href="#" wire:click.prevent="toggleServiceDescription({{ $service->id }})"
-                                    class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                    class="text-gray-600 hover:underline ml-1 ">Show
                                     less</a>
                             @else
                                 {{ Str::limit($service->description, 120, '...') }}
                                 @if (Str::length($service->description) > 100)
                                     <a href="#" wire:click.prevent="toggleServiceDescription({{ $service->id }})"
-                                        class="text-gray-600 hover:underline ml-1 dark:text-gray-200">Show
+                                        class="text-gray-600 hover:underline ml-1 ">Show
                                         more</a>
                                 @endif
                             @endif

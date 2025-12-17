@@ -38,7 +38,7 @@
 
             <!-- Form Container -->
             <form wire:submit.prevent="">
-                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
 
                     <!-- Promo Details -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
@@ -168,126 +168,122 @@
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
-
-
-                    <!-- Max Uses -->
-                    <div>
-                        <label for="max_uses" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Maximum Uses
-                        </label>
-                        <input type="number" wire:model="max_uses" id="max_uses" onwheel="this.blur()"
-                            class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            min="1" max="30" placeholder="Ex. 10">
-                        @error('max_uses')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Per User Limit Count -->
-                    <div>
-                        <label for="per_user_limit"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Limit Per
-                            User <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="per_user_limit" id="per_user_limit" onwheel="this.blur()"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 1">
-                        @error('per_user_limit')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-
-
-
-
-                    <!-- Promo Status -->
-                    <div>
-                        <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Promo Status <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-700 dark:text-gray-200">Inactive</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model="is_active" id="is_active" value="1"
-                                    class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
-                                   ">
-                                </div>
-                                <div
-                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
-                                </div>
-                            </label>
-                            <span class="text-gray-700 dark:text-gray-200">Active</span>
-                        </div>
-                        @error('is_active')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Has Expiration -->
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Promo Expiration <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-700 dark:text-gray-200">No Expiration</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" wire:model.live="has_expiration" id="has_expiration"
-                                    value="1" class="sr-only peer">
-                                <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
-                                    ">
-                                </div>
-                                <div
-                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
-                                </div>
-                            </label>
-                            <span class="text-gray-700 dark:text-gray-200">Has Expiration</span>
-                        </div>
-                        @error('has_expiration')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-
-                    @if ($has_expiration)
-                        <!-- Start Date -->
+                        <!-- Max Uses -->
                         <div>
-                            <label for="start_date"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Promo Start
-                                Date <span class="text-red-500">*</span></label>
-                            <input type="date" wire:model.live="start_date" id="start_date" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            @error('start_date')
+                            <label for="max_uses" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Maximum Uses
+                            </label>
+                            <input type="number" wire:model="max_uses" id="max_uses" onwheel="this.blur()"
+                                class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                min="1" max="30" placeholder="Ex. 10">
+                            @error('max_uses')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <!-- End Date -->
+                        <!-- Per User Limit Count -->
                         <div>
-                            <label for="end_date"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                Promo End Date <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" wire:model.live="end_date" id="end_date" required
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            @error('end_date')
+                            <label for="per_user_limit"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Limit Per
+                                User <span class="text-red-500">*</span></label>
+                            <input type="number" wire:model="per_user_limit" id="per_user_limit" onwheel="this.blur()"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                placeholder="Ex. 1">
+                            @error('per_user_limit')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <!-- Duration Days -->
-                        <p class="text-sm text-gray-700 dark:text-gray-300">
-                            <span class="font-medium text-gray-900 dark:text-gray-200">Duration:</span>
-                            {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
-                        </p>
+                        <!-- Promo Status -->
+                        <div>
+                            <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Promo Status <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-700 dark:text-gray-200">Inactive</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model="is_active" id="is_active" value="1"
+                                        class="sr-only peer">
+                                    <div
+                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                       ">
+                                    </div>
+                                    <div
+                                        class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                    </div>
+                                </label>
+                                <span class="text-gray-700 dark:text-gray-200">Active</span>
+                            </div>
+                            @error('is_active')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Has Expiration -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                Promo Expiration <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-700 dark:text-gray-200">No Expiration</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model.live="has_expiration" id="has_expiration"
+                                        value="1" class="sr-only peer">
+                                    <div
+                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition
+                                        ">
+                                    </div>
+                                    <div
+                                        class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                    </div>
+                                </label>
+                                <span class="text-gray-700 dark:text-gray-200">Has Expiration</span>
+                            </div>
+                            @error('has_expiration')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
 
 
-                    @endif
+                        @if ($has_expiration)
+                            <!-- Start Date -->
+                            <div>
+                                <label for="start_date"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Promo Start
+                                    Date <span class="text-red-500">*</span></label>
+                                <input type="date" wire:model.live="start_date" id="start_date" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('start_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- End Date -->
+                            <div>
+                                <label for="end_date"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Promo End Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" wire:model.live="end_date" id="end_date" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                @error('end_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Duration Days -->
+                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                <span class="font-medium text-gray-900 dark:text-gray-200">Duration:</span>
+                                {{ $duration_days ? $duration_days . ' Day' . ($duration_days > 1 ? 's' : '') : '—' }}
+                            </p>
+
+
+                        @endif
+                    </div>
+
+
 
                     <!-- Stay Date Range Section -->
                     <div class="col-span-2 mt-4">

@@ -72,20 +72,22 @@
 
             <!---------------------------- GUEST DETAILS ---------------------------------------->
             <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
-                    {{ __('Guest Details') }}
-                </h2>
+                <div class="flex justify-between mb-4 gap-6">
+                    <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-300">
+                        {{ __('Guest Details') }}
+                    </h2>
 
-                @if ($transaction->transaction_status != 'done')
-                    <x-button wire:click="openEditMainGuestModal" icon="fas fa-edit" class="ml-auto">
-                        Edit Guest Details
-                    </x-button>
-                @else
-                    <x-button disabled class="bg-gray-400 cursor-not-allowed ml-auto">
-                        <i class="fas fa-lock mr-2"></i>
-                        Edit Guest Details
-                    </x-button>
-                @endif
+                    @if ($transaction->transaction_status != 'done')
+                        <x-button wire:click="openEditMainGuestModal" icon="fas fa-edit" class="ml-auto">
+                            Edit Guest Details
+                        </x-button>
+                    @else
+                        <x-button disabled class="bg-gray-400 cursor-not-allowed ml-auto">
+                            <i class="fas fa-lock mr-2"></i>
+                            Edit Guest Details
+                        </x-button>
+                    @endif
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 dark:text-gray-200">
                     <div><strong>Guest Name:</strong></div>
@@ -349,7 +351,7 @@
                                     @endif
                                 </div>
                             @else
-                                <div class="text-gray-500 italic">No promo code used</div>
+                                <div class="text-gray-500 italic dark:text-gray-300">No promo code used</div>
                             @endif
 
                         </div>
@@ -390,7 +392,7 @@
                                 </button>
                             </div>
                         @else
-                            <div class="text-gray-500 italic">
+                            <div class="text-gray-500 italic dark:text-gray-300">
                                 No requests.
                             </div>
                         @endif
@@ -416,7 +418,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-gray-500 italic">No vouchers.</div>
+                            <div class="text-gray-500 italic dark:text-gray-300">No vouchers.</div>
                         @endif
 
 
@@ -642,7 +644,7 @@
                         </div>
                     </div>
                 @else
-                    <p class="text-gray-600 italic">No activities found for this transaction.</p>
+                    <p class="text-gray-600 italic dark:text-gray-300">No activities found for this transaction.</p>
                 @endif
             </div>
             <!---------------------- END OF ACTIVITY DETAILS ----------------------------------->
@@ -710,7 +712,8 @@
                         </div>
                     </div>
                 @else
-                    <p class="text-gray-600 italic">No additional charges found for this transaction.</p>
+                    <p class="text-gray-600 italic dark:text-gray-300">No additional charges found for this
+                        transaction.</p>
                 @endif
             </div>
             <!---------------------- END OF SERVICE DETAILS ----------------------------------->
@@ -718,7 +721,7 @@
             <!-------------------------- GUEST PET INFO --------------------------------------->
             <div
                 class="bg-white shadow-lg rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-                <div class="mb-4 flex items-center justify-between">
+                <div class="mb-4 flex items-center justify-between gap-6">
                     <h2 class="font-semibold text-xl text-green-700 leading-tight mb-2 dark:text-green-300">
                         {{ __('Guest Pet Information') }}
                     </h2>
@@ -791,7 +794,8 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-gray-600 italic text-center col-span-7 py-3">No pet data found for this transaction.
+                    <p class="text-gray-600 italic col-span-7 py-3 dark:text-gray-300">No pet data found for this
+                        transaction.
                     </p>
                 @endif
 
@@ -884,7 +888,7 @@
                     <hr class="py-2 mt-4">
 
                     <!-- Actions Dropdown -->
-                    <div class="flex justify-between">
+                    <div class="flex justify-between w-full md:w-auto gap-8">
                         <!-- Email Balance Request -->
                         <div>
                             @if ($invoice->balance_due > 0 && !$invoice->requested_remaining_balance)
@@ -1030,7 +1034,7 @@
 
                     </div>
 
-                    <div class=" mt-4">
+                    <div class=" mt-4 overflow-x-auto">
                         <table class="min-w-full border-collapse border border-gray-300 text-sm text-left">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
@@ -1222,97 +1226,107 @@
                     </div>
 
 
-                            <!-- Discounts applied -->
-                            @if ($invoice->discounts->count() > 0)
-                                <div class="mb-1 text-gray-600 text-sm border-t pt-2">
-                                    @php
-                                        $baseSubtotal = $invoice->base_subtotal;
-                                        $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
-                                    @endphp
+                    <!-- Discounts applied -->
+                    @if ($invoice->discounts->count() > 0)
+                        <div class="mb-1 text-gray-600 text-sm border-t pt-2">
+                            @php
+                                $baseSubtotal = $invoice->base_subtotal;
+                                $pax = $transaction->pax ?: 1; // fallback to 1 to avoid division by zero
+                            @endphp
 
-                                    @foreach ($invoice->discounts->groupBy('discount_type_id') as $discounts)
-                                        @php
-                                            $type = $discounts->first()->discountType;
-                                            $count = $discounts->sum('quantity');
-                                            $totalValue = $discounts->sum('discount_value');
+                            @foreach ($invoice->discounts->groupBy('discount_type_id') as $discounts)
+                                @php
+                                    $type = $discounts->first()->discountType;
+                                    $count = $discounts->sum('quantity');
+                                    $totalValue = $discounts->sum('discount_value');
 
-                                            // Get PWD/Senior IDs from transaction
-                                            $pwdSeniorIds = $transaction->pwd_senior_ids ?? [];
-                                            $idsSummary = collect($pwdSeniorIds)->map(function ($item) {
-                                                return $item['name'] . ' (' . $item['id'] . ')';
-                                            })->implode(', ');
-                                        @endphp
+                                    // Get PWD/Senior IDs from transaction
+                                    $pwdSeniorIds = $transaction->pwd_senior_ids ?? [];
+                                    $idsSummary = collect($pwdSeniorIds)
+                                        ->map(function ($item) {
+                                            return $item['name'] . ' (' . $item['id'] . ')';
+                                        })
+                                        ->implode(', ');
+                                @endphp
 
-                                        @if (in_array($type->name, ['pwd', 'senior']))
-                                            <div class="flex flex-col p-3 font-semibold bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700 mb-2">
-                                                <!-- Discount Header -->
-                                                <div class="flex items-center justify-between ">
-                                                    <div>
-                                                        <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
-                                                            PWD/Senior Discount Applied
-                                                        </span>
-                                                    </div>
-                                                    <div class="flex items-center space-x-2">
-                                                        <p class="text-green-600 dark:text-green-400 text-sm font-semibold">
-                                                            - ₱{{ number_format($totalValue, 2) }}
-                                                        </p>
-                                                        @if ($transaction->transaction_status != 'done')
-                                                        <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
-                                                            class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-sm"
-                                                            title="Remove Discount">
-                                                            <i class="fas fa-circle-xmark"></i>
-                                                        </button>
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <!-- PWD/Senior IDs and Names -->
-                                                @if (!empty($idsSummary))
-                                                    <div class="mt-2 pt-2 border-t border-green-200 dark:border-green-700">
-                                                        <div class="flex items-start">
-                                                            <span class="text-xs font-medium text-green-700 dark:text-green-300 mr-2">
-                                                                IDs:
-                                                            </span>
-                                                            <div class="flex-1">
-                                                                <p class="text-xs text-gray-800 dark:text-green-400 break-words">
-                                                                    {{ $idsSummary }}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @else
-                                            <!-- For other discount types, show the original format -->
-                                            <div class="flex justify-between items-center mb-1">
-                                                <span>
-                                                    - {{ $count }} {{ strtoupper($type->name) }}
-                                                    @if ($transaction->promoCode)
-                                                        @if ($type->type === 'percent' && $perPersonAmount)
-                                                            ({{ $type->rate }}% of Extra charge per guest ÷ {{ $count }} pax)
-                                                        @else
-                                                            (Fixed)
-                                                        @endif
-                                                    @else
-                                                        @if ($type->type === 'percent' && $perPersonAmount)
-                                                            ({{ $type->rate }}% of Room base rate ÷ {{ $count }} pax)
-                                                        @else
-                                                            (Fixed)
-                                                        @endif
-                                                    @endif
+                                @if (in_array($type->name, ['pwd', 'senior']))
+                                    <div
+                                        class="flex flex-col p-3 font-semibold bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700 mb-2">
+                                        <!-- Discount Header -->
+                                        <div class="flex items-center justify-between ">
+                                            <div>
+                                                <span class="font-semibold text-green-700 dark:text-green-300 text-sm">
+                                                    PWD/Senior Discount Applied
                                                 </span>
-                                                <div class="flex items-center space-x-2">
-                                                    <span>- ₱{{ number_format($totalValue, 2) }}</span>
-                                                    <button wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
-                                                        class="text-red-500 hover:text-red-700 text-xs" title="Remove discount">
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <p class="text-green-600 dark:text-green-400 text-sm font-semibold">
+                                                    - ₱{{ number_format($totalValue, 2) }}
+                                                </p>
+                                                @if ($transaction->transaction_status != 'done')
+                                                    <button
+                                                        wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
+                                                        class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-sm"
+                                                        title="Remove Discount">
                                                         <i class="fas fa-circle-xmark"></i>
                                                     </button>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <!-- PWD/Senior IDs and Names -->
+                                        @if (!empty($idsSummary))
+                                            <div class="mt-2 pt-2 border-t border-green-200 dark:border-green-700">
+                                                <div class="flex items-start">
+                                                    <span
+                                                        class="text-xs font-medium text-green-700 dark:text-green-300 mr-2">
+                                                        IDs:
+                                                    </span>
+                                                    <div class="flex-1">
+                                                        <p
+                                                            class="text-xs text-gray-800 dark:text-green-400 break-words">
+                                                            {{ $idsSummary }}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endif
-                                    @endforeach
-                                </div>
-                            @endif
+                                    </div>
+                                @else
+                                    <!-- For other discount types, show the original format -->
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span>
+                                            - {{ $count }} {{ strtoupper($type->name) }}
+                                            @if ($transaction->promoCode)
+                                                @if ($type->type === 'percent' && $perPersonAmount)
+                                                    ({{ $type->rate }}% of Extra charge per guest ÷
+                                                    {{ $count }} pax)
+                                                @else
+                                                    (Fixed)
+                                                @endif
+                                            @else
+                                                @if ($type->type === 'percent' && $perPersonAmount)
+                                                    ({{ $type->rate }}% of Room base rate ÷ {{ $count }}
+                                                    pax)
+                                                @else
+                                                    (Fixed)
+                                                @endif
+                                            @endif
+                                        </span>
+                                        <div class="flex items-center space-x-2">
+                                            <span>- ₱{{ number_format($totalValue, 2) }}</span>
+                                            <button
+                                                wire:click="removeDiscount({{ $invoice->id }}, {{ $type->id }})"
+                                                class="text-red-500 hover:text-red-700 text-xs"
+                                                title="Remove discount">
+                                                <i class="fas fa-circle-xmark"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
 
                     <!-- Subtotal with discount -->
                     {{-- <div class="flex justify-between font-semibold text-base text-gray-700">
@@ -1389,7 +1403,7 @@
                     <hr class="my-2">
 
                     <!-- Grand Total -->
-                    <div class="flex justify-between font-bold text-base text-green-700">
+                    <div class="flex justify-between font-bold text-base text-green-700 dark:text-green-300">
                         Grand Total:
                         <div>
                             ₱{{ number_format($this->invoice->sub_total, 2) }}
@@ -1399,7 +1413,7 @@
                     <!-- Amount Paid -->
                     <div
                         class="flex justify-between font-semibold text-base
-                                        {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700' : 'text-yellow-500' }}">
+                        {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700 dark:text-green-300' : 'text-yellow-500 dark:text-yellow-300' }}">
                         Amount Paid:
                         <div>
                             ₱{{ number_format($this->invoice->amount_paid, 2) }}
@@ -1418,7 +1432,7 @@
                         <!-- Balance Due -->
                         <div
                             class="flex justify-between font-semibold text-base
-                                                {{ $this->invoice->balance_due == 0 ? 'text-green-700' : 'text-red-500' }}">
+                            {{ $this->invoice->balance_due == 0 ? 'text-green-700 dark:text-green-300' : 'text-red-500 dark:text-red-400' }}">
                             Balance Due:
                             <div>
                                 ₱{{ number_format($this->invoice->balance_due, 2) }}
@@ -1515,7 +1529,7 @@
                         </div>
                     </div>
                     @if ($payments->isNotEmpty())
-                        <div class="">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full border-collapse border border-gray-300 text-sm">
                                 <thead class="bg-gray-50 dark:bg-gray-800">
                                     <tr>
@@ -1586,7 +1600,8 @@
                                                         convenience fee)
                                                     </div>
                                                 @else
-                                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 italic text-center">
+                                                    <div
+                                                        class="text-xs text-gray-500 dark:text-gray-400 mt-1 italic text-center">
                                                         No convenience fee
                                                     </div>
                                                 @endif
@@ -1629,7 +1644,7 @@
                                                         <span class="text-gray-500 italic dark:text-gray-200">
                                                             No receipt uploaded
                                                         </span>
-                                                    {{-- @elseif ($payment->mode_of_payment_name === 'Cash')
+                                                        {{-- @elseif ($payment->mode_of_payment_name === 'Cash')
                                                         <span class="text-gray-700 dark:text-gray-200">
                                                             Cash payment received
                                                         </span> --}}
@@ -1638,7 +1653,6 @@
                                                             Completed via secure online payment
                                                         </span>
                                                     @endif
-
                                                 @else
                                                     @if ($payment->payment_status === 'pending')
                                                         <a href="{{ route('admin.view-payment-receipt', ['payment' => $payment->id]) }}"
@@ -1654,31 +1668,33 @@
                                                 @endif
                                             </td>
 
-                                            <td class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
-                                            @if ($this->canEditPayment($payment))
-                                                <span class="text-gray-400 dark:text-gray-500" title="Not Available - Transaction Completed">
-                                                <button wire:click="editPayment({{ $payment->id }})"
-                                                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
-                                                        title="Edit Payment">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            @else
-                                                <span class="text-gray-400 dark:text-gray-500"
-                                                    title="{{ $transaction->transaction_status === 'done'
-                                                        ? 'Not Available - Transaction Completed'
-                                                        : 'Cannot edit online payments' }}">
-                                                    <i class="fas fa-lock"></i>
-                                                </span>
-                                            @endif
+                                            <td
+                                                class="border px-4 py-2 text-gray-700 dark:text-gray-200 dark:border-gray-500 text-center">
+                                                @if ($this->canEditPayment($payment))
+                                                    <span class="text-gray-400 dark:text-gray-500"
+                                                        title="Not Available - Transaction Completed">
+                                                        <button wire:click="editPayment({{ $payment->id }})"
+                                                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                                                            title="Edit Payment">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    @else
+                                                        <span class="text-gray-400 dark:text-gray-500"
+                                                            title="{{ $transaction->transaction_status === 'done'
+                                                                ? 'Not Available - Transaction Completed'
+                                                                : 'Cannot edit online payments' }}">
+                                                            <i class="fas fa-lock"></i>
+                                                        </span>
+                                                @endif
 
-                                        </td>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     @else
-                        <p class="text-gray-600 italic">No payments found for this invoice.</p>
+                        <p class="text-gray-600 italic dark:text-gray-300">No payments found for this invoice.</p>
                     @endif
                 </div>
             </section>
@@ -1718,9 +1734,7 @@
 
                 <!-- Session Alert -->
                 @if (session('message'))
-                    <div x-data="{ show: true }"
-                        x-init="setTimeout(() => show = false, 3000)"
-                        x-show="show"
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show"
                         x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 transform -translate-y-4"
                         x-transition:enter-end="opacity-100 transform translate-y-0"
@@ -1868,11 +1882,12 @@
 
     <!-- Add Payment Modal -->
     @if ($createPaymentModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
+            <div
+                class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
 
                 <div
-                    class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b">
+                    class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
                     <!-- Title -->
                     <h2 class="text-2xl font-bold text-center">Add Payment</h2>
 
@@ -1887,10 +1902,11 @@
                 <div>
                     <!-- Amount Paid -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Amount Paid <span
                                 class="text-red-500">*</span></label>
                         <input type="number" wire:model.defer="amount_paid" placeholder="Ex. 1,200.00"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             required>
                         @error('amount_paid')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1899,10 +1915,11 @@
 
                     <!-- Payment Date -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment Date <span
                                 class="text-red-500">*</span></label>
                         <input type="date" wire:model.defer="payment_date"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             required>
                         @error('payment_date')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -1911,16 +1928,17 @@
 
                     <!-- Payment Type -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment Type <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="payment_type"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             required>
                             <option value="">Select Payment Type</option>
                             {{-- <option value="Room Rent">Room Rent</option>
-                            <option value="Security Deposit">Security Deposit</option>
-                            <option value="Remaining Balance">Remaining Balance</option>
-                            <option value="Merchandise">Merchandise</option> --}}
+                                <option value="Security Deposit">Security Deposit</option>
+                                <option value="Remaining Balance">Remaining Balance</option>
+                                <option value="Merchandise">Merchandise</option> --}}
                             <option value="Accommodation Fully Paid">Accommodation Fully Paid</option>
                             <option value="Accommodation Downpayment">Accommodation Downpayment</option>
                             <option value="Accommodation Balance">Accommodation Balance</option>
@@ -1933,10 +1951,11 @@
 
                     {{-- Payment Methods --}}
                     <div class="mt-4">
-                        <label for="payment_method_id" class="block text-sm text-gray-700 font-semibold">Payment
+                        <label for="payment_method_id" class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment
                             Method <span class="text-red-500">*</span></label>
                         <select wire:model="payment_method_id" id="payment_method_id"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                             <option value="">Select Payment Method</option>
                             @foreach ($payment_methods as $payment_method)
                                 <option value="{{ $payment_method->id }}">
@@ -1951,18 +1970,18 @@
 
                     {{-- Upload Payment Screenshot --}}
                     <div class="sm:col-span-2 mt-4">
-                        <label for="payment_screenshot" class="block text-sm text-gray-700 font-semibold mb-1">
+                        <label for="payment_screenshot" class="block text-sm text-gray-700 dark:text-gray-200 font-semibold mb-1">
                             Proof of Payment </label>
 
                         <!-- Hidden file input -->
-                        <input id="payment_screenshot" type="file" accept="image/*"
-                            wire:model="payment_screenshot" class="hidden">
+                        <input id="payment_screenshot" type="file" accept="image/*" wire:model="payment_screenshot"
+                            class="hidden">
 
                         @if ($payment_screenshot && method_exists($payment_screenshot, 'temporaryUrl'))
                             <!-- Show image preview -->
                             <div class="relative w-full h-44 rounded-md shadow-sm overflow-hidden">
-                                <img src="{{ $payment_screenshot->temporaryUrl() }}"
-                                    class="w-full h-full object-cover" alt="Payment Screenshot Preview"
+                                <img src="{{ $payment_screenshot->temporaryUrl() }}" class="w-full h-full object-cover"
+                                    alt="Payment Screenshot Preview"
                                     onclick="openModal('{{ $payment_screenshot->temporaryUrl() }}')">
 
                                 <label for="payment_screenshot"
@@ -1971,12 +1990,10 @@
                                 </label>
                             </div>
                             <!-- Image Popup View -->
-                            <div id="imageModal"
-                                class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
+                            <div id="imageModal" class="fixed z-50 inset-0 overflow-y-auto bg-black bg-opacity-80 hidden">
                                 <div class="flex items-center justify-center min-h-screen">
                                     <div class=" relative modal-content">
-                                        <img id="modalImg" src=""
-                                            class="max-w-full max-h-[80vh] rounded-md">
+                                        <img id="modalImg" src="" class="max-w-full max-h-[80vh] rounded-md">
                                         <button type="button" onclick="closeModal()"
                                             class="absolute top-2 right-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                                             <span class="leading-none translate-y-[-3px]">&times;</span>
@@ -1999,11 +2016,10 @@
                         @endif
 
                         <!-- Loading Indicator -->
-                        <div wire:loading wire:target="payment_screenshot"
-                            class="mt-2 text-gray-600 flex items-center">
+                        <div wire:loading wire:target="payment_screenshot" class="mt-2 text-gray-600 flex items-center">
                             <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4">
                                 </circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
@@ -2020,9 +2036,10 @@
 
                     <!-- Notes -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                        <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Notes</label>
                         <input type="text" wire:model="notes" placeholder="Optionally add description of payment"
-                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         @error('notes')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -2194,7 +2211,8 @@
                     @enderror
 
                     @foreach ($availableActivities as $activity)
-                        <div class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
+                        <div
+                            class="flex items-center justify-between bg-gray-50 border rounded-xl shadow-sm hover:shadow-md transition p-4 mb-4 dark:bg-gray-500 dark:border-gray-400">
 
 
                             <!-- Activity Image -->
@@ -2380,12 +2398,11 @@
         <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
             <div
                 class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-                <div
-                    class="relative -mt-6 -mx-6 mb-4 bg-green-50 text-green-700 py-3 px-6 rounded-t-lg shadow-sm border-b">
-                    <!-- Title -->
-                    <h2 class="text-2xl font-bold text-center">Enter Guest Details</h2>
 
-                    <!-- Close Button -->
+                <!-- Header -->
+                <div
+                    class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                    <h2 class="text-2xl font-bold text-center">Enter Guest Details</h2>
                     <button wire:click="closeModal"
                         class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                         <span class="-translate-y-[2px]">&times;</span>
@@ -2533,7 +2550,7 @@
 
                 <!-- Country of Origin -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
+                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
                             class="text-red-500">*</span></label>
                     <select wire:model="guest.country_of_origin"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
@@ -2600,7 +2617,8 @@
                 <div class="mb-4">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Breed</label>
                     <input type="text" wire:model="breed"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600" />
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" />
                     @error('breed')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -2713,9 +2731,9 @@
                 <!-- Header -->
                 <div
                     class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
-                        <h2 class="text-2xl font-bold text-center">
-                            {{ $this->discountsApplied ? 'Edit PWD/Senior Discount' : 'Add PWD/Senior Discount' }}
-                        </h2>
+                    <h2 class="text-2xl font-bold text-center">
+                        {{ $this->discountsApplied ? 'Edit PWD/Senior Discount' : 'Add PWD/Senior Discount' }}
+                    </h2>
                     <button wire:click="closeDiscountModal"
                         class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
                         <span class="-translate-y-[2px]">&times;</span>
@@ -2723,84 +2741,92 @@
                 </div>
 
 
-        <!-- PWD/Senior ID Management Section -->
-        <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-700 mb-1 dark:text-gray-300">Beneficiary Information</h3>
+                <!-- PWD/Senior ID Management Section -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-1 dark:text-gray-300">Beneficiary Information
+                    </h3>
 
-            <!-- Add New ID Form -->
-            <div class="mb-4">
-                {{-- <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                    <!-- Add New ID Form -->
+                    <div class="mb-4">
+                        {{-- <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     Add PWD/Senior Details
                 </label> --}}
-                <div class="space-y-3">
-                    <!-- Name Field -->
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">Full Name</label>
-                        <input type="text" wire:model="editingPwdSeniorName"
-                            placeholder="Ex. Juan Dela Cruz"
-                            oninput="this.value = this.value.replace(/[^\p{L}\s]/gu, '')"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
-                        @error('editingPwdSeniorName')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
-                        @enderror
+                        <div class="space-y-3">
+                            <!-- Name Field -->
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">Full
+                                    Name</label>
+                                <input type="text" wire:model="editingPwdSeniorName"
+                                    placeholder="Ex. Juan Dela Cruz"
+                                    oninput="this.value = this.value.replace(/[^\p{L}\s]/gu, '')"
+                                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
+                                @error('editingPwdSeniorName')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- ID Field -->
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">ID
+                                    Number</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" wire:model="editingPwdSeniorId" placeholder="Ex. 198765432"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
+                                    <x-button wire:click="addPwdSeniorId" class="whitespace-nowrap"
+                                        wire:loading.attr="disabled">
+                                        Add
+                                    </x-button>
+                                </div>
+                                @error('editingPwdSeniorId')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- ID Field -->
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1 dark:text-gray-400">ID Number</label>
-                        <div class="flex space-x-2">
-                            <input type="text" wire:model="editingPwdSeniorId"
-                                placeholder="Ex. 198765432"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:text-white text-sm">
-                            <x-button wire:click="addPwdSeniorId" class="whitespace-nowrap" wire:loading.attr="disabled">
-                                Add
-                            </x-button>
-                        </div>
-                        @error('editingPwdSeniorId')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
-                        @enderror
+                    <!-- Existing IDs List -->
+                    <div class="mb-4">
+                        <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">
+                            Beneficiaries ({{ count($pwdSeniorIds) }})
+                        </label>
+                        @if (count($pwdSeniorIds) > 0)
+                            <div
+                                class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3 dark:border-gray-600">
+                                @foreach ($pwdSeniorIds as $index => $idData)
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <span
+                                                        class="font-medium text-gray-800 dark:text-gray-200 block">{{ $idData['name'] }}</span>
+                                                    <span class="text-sm text-gray-600 dark:text-gray-400">ID:
+                                                        {{ $idData['id'] }}</span>
+                                                </div>
+                                                @if (isset($idData['added_at']))
+                                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                        {{ \Carbon\Carbon::parse($idData['added_at'])->format('M j, Y') }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <button wire:click="removePwdSeniorId({{ $index }})"
+                                            class="ml-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm"
+                                            title="Remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p
+                                class="text-gray-500 italic text-center py-3 dark:text-gray-400 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
+                                No PWD/Senior records added yet.
+                            </p>
+                        @endif
                     </div>
                 </div>
-            </div>
-
-            <!-- Existing IDs List -->
-            <div class="mb-4">
-                <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">
-                    Beneficiaries ({{ count($pwdSeniorIds) }})
-                </label>
-                @if (count($pwdSeniorIds) > 0)
-                    <div class="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3 dark:border-gray-600">
-                        @foreach ($pwdSeniorIds as $index => $idData)
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <span class="font-medium text-gray-800 dark:text-gray-200 block">{{ $idData['name'] }}</span>
-                                            <span class="text-sm text-gray-600 dark:text-gray-400">ID: {{ $idData['id'] }}</span>
-                                        </div>
-                                        @if (isset($idData['added_at']))
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                {{ \Carbon\Carbon::parse($idData['added_at'])->format('M j, Y') }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <button wire:click="removePwdSeniorId({{ $index }})"
-                                    class="ml-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm"
-                                    title="Remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-gray-500 italic text-center py-3 dark:text-gray-400 bg-gray-50 rounded border dark:bg-gray-700 dark:border-gray-600">
-                        No PWD/Senior records added yet.
-                    </p>
-                @endif
-            </div>
-        </div>
 
 
 
@@ -2846,7 +2872,7 @@
 
                 {{-- Header --}}
                 <div
-                    class="relative -mt-6 -mx-6 mb-6 bg-blue-50 text-blue-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-blue-300">
+                    class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
                     <h2 class="text-2xl font-bold text-center">Add Voucher</h2>
                     <button wire:click="closeModal"
                         class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
@@ -2857,10 +2883,10 @@
                 {{-- Form Fields --}}
                 <div class="space-y-4">
                     <div>
-                        <label class="block font-medium mb-1">Voucher Type</label>
+                        <label class="block font-medium mb-1 dark:text-white">Voucher Type</label>
                         <select wire:model="voucher_type"
-                            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
-                            <option value="">-- Select Type --</option>
+                            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                            <option value="">Select Type</option>
                             <option value="Food">Food</option>
                             <option value="Other">Other</option>
                         </select>
@@ -2870,8 +2896,9 @@
                     </div>
 
                     <div>
-                        <label class="block font-medium mb-1">Voucher Amount</label>
+                        <label class="block font-medium mb-1 dark:text-white">Voucher Amount</label>
                         <input type="number" min="0" step="0.01" wire:model="voucher_amount"
+                            placeholder="Ex. 500"
                             class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
                         @error('voucher_amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -2922,8 +2949,8 @@
                 <div class="mb-4">
                     <strong class="block text-sm text-gray-700 font-semibold">Admin Reply:</strong>
                     <textarea wire:model.defer="request_reply"
-                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3 resize-none focus:ring-green-600 focus:border-green-600" rows="3"
-                        placeholder="Write your reply here..."></textarea>
+                        class="w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm mt-2 p-3 resize-none focus:ring-green-600 focus:border-green-600"
+                        rows="3" placeholder="Write your reply here..."></textarea>
                 </div>
 
                 <!-- Actions -->
@@ -3466,184 +3493,191 @@
     @endif
 
 
-<!-- Edit Main Guest Modal -->
-@if ($showEditMainGuestModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-            <!-- Header -->
-            <div class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
-                <h2 class="text-2xl font-bold text-center">Edit Main Guest Details</h2>
-                <button wire:click="closeEditMainGuestModal"
-                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
-                    <span class="-translate-y-[2px]">&times;</span>
-                </button>
-            </div>
+    <!-- Edit Main Guest Modal -->
+    @if ($showEditMainGuestModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+                class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800 w-[90%] md:w-[600px]">
+                <!-- Header -->
+                <div
+                    class="relative -mt-6 -mx-6 mb-6 bg-green-50 text-green-700 py-4 px-6 rounded-t-lg shadow-sm border-b dark:bg-gray-700 dark:text-green-300">
+                    <h2 class="text-2xl font-bold text-center">Edit Main Guest Details</h2>
+                    <button wire:click="closeEditMainGuestModal"
+                        class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                        <span class="-translate-y-[2px]">&times;</span>
+                    </button>
+                </div>
 
-            <!-- Form Content -->
-            <div class="space-y-4">
-                <!-- Name Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- First Name -->
+                <!-- Form Content -->
+                <div class="space-y-4">
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- First Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                First Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" wire:model="editMainGuest.first_name"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                required>
+                            @error('editMainGuest.first_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Middle Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Middle Name
+                            </label>
+                            <input type="text" wire:model="editMainGuest.middle_name"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            @error('editMainGuest.middle_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Last Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" wire:model="editMainGuest.last_name"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                required>
+                            @error('editMainGuest.last_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Suffix -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Suffix
+                            </label>
+                            <input type="text" wire:model="editMainGuest.suffix"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                placeholder="Jr., Sr., III">
+                            @error('editMainGuest.suffix')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Email <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" wire:model="editMainGuest.email"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                required>
+                            @error('editMainGuest.email')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Contact Number -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Contact Number <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" wire:model="editMainGuest.contact_number"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                required>
+                            @error('editMainGuest.contact_number')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Company & Country -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Company Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Company Name
+                            </label>
+                            <input type="text" wire:model="editMainGuest.company_name"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            @error('editMainGuest.company_name')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Country -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                Country
+                            </label>
+                            <select wire:model="editMainGuest.country"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="">Select Country</option>
+                                @foreach ($countries ?? ['Philippines', 'United States', 'Canada', 'Australia', 'United Kingdom', 'Japan', 'South Korea', 'Singapore'] as $country)
+                                    <option value="{{ $country }}">{{ $country }}</option>
+                                @endforeach
+                            </select>
+                            @error('editMainGuest.country')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Facebook Link -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            First Name <span class="text-red-500">*</span>
+                            Facebook Link
                         </label>
-                        <input type="text" wire:model="editMainGuest.first_name"
+                        <input type="url" wire:model="editMainGuest.facebook_link"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required>
-                        @error('editMainGuest.first_name')
+                            placeholder="https://facebook.com/username">
+                        @error('editMainGuest.facebook_link')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Middle Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Middle Name
-                        </label>
-                        <input type="text" wire:model="editMainGuest.middle_name"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        @error('editMainGuest.middle_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Last Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Last Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" wire:model="editMainGuest.last_name"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required>
-                        @error('editMainGuest.last_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Suffix -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Suffix
-                        </label>
-                        <input type="text" wire:model="editMainGuest.suffix"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="Jr., Sr., III">
-                        @error('editMainGuest.suffix')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                    <!-- Read-only Fields (if any) -->
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <strong>Transaction ID:</strong> {{ $transaction->transaction_number }}
+                        </p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <strong>Reservation Date:</strong>
+                            {{ $transaction->created_at->format('F j, Y g:i A') }}
+                        </p>
                     </div>
                 </div>
 
-                <!-- Contact Information -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Email -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Email <span class="text-red-500">*</span>
-                        </label>
-                        <input type="email" wire:model="editMainGuest.email"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required>
-                        @error('editMainGuest.email')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                <!-- Modal Footer -->
+                <div
+                    class="flex justify-between items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <x-ghost-button wire:click="closeEditMainGuestModal">
+                        Cancel
+                    </x-ghost-button>
 
-                    <!-- Contact Number -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Contact Number <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" wire:model="editMainGuest.contact_number"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required>
-                        @error('editMainGuest.contact_number')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-button wire:click="updateMainGuest" wire:loading.attr="disabled">
+                        <div class="flex items-center justify-center">
+                            <span wire:loading class="mr-2" wire:target="updateMainGuest">
+                                <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                    </path>
+                                </svg>
+                            </span>
+                            <span wire:loading.remove wire:target="updateMainGuest">
+                                Save Changes
+                            </span>
+                        </div>
+                    </x-button>
                 </div>
-
-                <!-- Company & Country -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Company Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Company Name
-                        </label>
-                        <input type="text" wire:model="editMainGuest.company_name"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        @error('editMainGuest.company_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Country -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                            Country
-                        </label>
-                        <select wire:model="editMainGuest.country"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <option value="">Select Country</option>
-                            @foreach ($countries ?? ['Philippines', 'United States', 'Canada', 'Australia', 'United Kingdom', 'Japan', 'South Korea', 'Singapore'] as $country)
-                                <option value="{{ $country }}">{{ $country }}</option>
-                            @endforeach
-                        </select>
-                        @error('editMainGuest.country')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Facebook Link -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                        Facebook Link
-                    </label>
-                    <input type="url" wire:model="editMainGuest.facebook_link"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        placeholder="https://facebook.com/username">
-                    @error('editMainGuest.facebook_link')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <!-- Read-only Fields (if any) -->
-                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        <strong>Transaction ID:</strong> {{ $transaction->transaction_number }}
-                    </p>
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        <strong>Reservation Date:</strong> {{ $transaction->created_at->format('F j, Y g:i A') }}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="flex justify-between items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <x-ghost-button wire:click="closeEditMainGuestModal">
-                    Cancel
-                </x-ghost-button>
-                
-                <x-button wire:click="updateMainGuest" wire:loading.attr="disabled">
-                    <div class="flex items-center justify-center">
-                        <span wire:loading class="mr-2" wire:target="updateMainGuest">
-                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                            </svg>
-                        </span>
-                        <span wire:loading.remove wire:target="updateMainGuest">
-                            Save Changes
-                        </span>
-                    </div>
-                </x-button>
             </div>
         </div>
-    </div>
-@endif
+    @endif
 
     <!-- Edit Payment Modal -->
     @if ($showEditPaymentModal && $editingPayment)
@@ -3770,7 +3804,8 @@
                                     <div class="mb-2">
                                         <i class="fas fa-upload text-2xl"></i>
                                     </div>
-                                    <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span></p>
+                                    <p>Drag & drop a file or <span class="text-blue-500 underline">browse</span>
+                                    </p>
                                     <p class="text-xs text-gray-400 mt-1">Max: 2MB (JPEG, PNG, JPG)</p>
                                 </div>
                             </label>
@@ -3783,7 +3818,8 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10"
                                     stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                </path>
                             </svg>
                             <span>Uploading...</span>
                         </div>

@@ -40,7 +40,7 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                     <!-- Service Details -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-1 sm:col-span-2">
 
                         <!-- Service Name -->
                         <div>

@@ -178,7 +178,7 @@
                                 Are you bringing pets?
                             </label>
                             <div class="flex items-center gap-4">
-                                <span class="text-gray-800 dark:text-gray-200">No</span>
+                                <span class="text-gray-800 ">No</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="bringing_pets" wire:model.live="bringingPets"
                                         value="1" class="sr-only peer">
@@ -189,7 +189,7 @@
                                         class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
                                     </div>
                                 </label>
-                                <span class="text-gray-800 dark:text-gray-200">Yes</span>
+                                <span class="text-gray-800 ">Yes</span>
                             </div>
                             @error('bringingPets')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>

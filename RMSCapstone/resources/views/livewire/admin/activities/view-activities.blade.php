@@ -18,7 +18,7 @@
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 gap-12">
                 <!-- Create Activity Button -->
                 @can('activity-create')
                     <div class="flex items-center justify-between">
@@ -36,7 +36,7 @@
             </div>
 
             <div
-                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                class="bg-white rounded-lg shadow-md  border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
                 <div class="flex items-center justify-between p-4">
                     <!-- Search Tab -->
@@ -96,184 +96,186 @@
                         <span class="text-green-700 text-sm dark:text-green-400">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            {{-- ID --}}
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                    class="accent-blue-600 w-4 h-4">
-                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                    <span>ID</span>
-                                    @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </div>
-                            </th>
-
-                            {{-- Name --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                <button class="flex items-center">
-                                    Name
-                                    @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            {{-- Description --}}
-                            <th scope="col" class="px-4 py-3 ">Description</th>
-
-                            {{-- Amount --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('amount')">
-                                <button class="flex items-center">
-                                    Amount
-                                    @if ($sortBy !== 'amount')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-                            <th scope="col" class="px-4 py-3 ">Inclusions</th>
-                            <th scope="col" class="px-4 py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
-                        @forelse ($activities as $activity)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
-                                    <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
-                                        value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
-                                    <span>{{ $fakeIDs[$activity->id] ?? 'ACT-???' }}</span>
-                                </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
-                                    {{ $activity->name }}</td>
-                                <td class="px-4 py-3">
-                                    @if (!empty($activity->description))
-                                        {{ Str::limit($activity->description, 50) }}
-                                    @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-300">No description provided.</em>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if ($activity->amount == 0)
-                                        <span class="text-green-600 font-semibold dark:text-green-300">FREE</span>
-                                    @else
-                                        ₱{{ number_format($activity->amount, 2) }}
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if (!empty($activity->inclusions))
-                                        {{ Str::limit($activity->inclusions, 50) }}
-                                    @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-300">No inclusions listed.</em>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-3">
-
-                                    <!-- View Icon -->
-                                    @can('activity-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-activity', ['activity' => $activity->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Edit Icon -->
-                                    @can('activity-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Delete Icon -->
-                                    @can('activity-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                            wire:click="confirmDelete({{ $activity->id }})" wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
-
-                                </td>
-                            </tr>
-                        @empty
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                             <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No activities found.
-                                </td>
+                                {{-- ID --}}
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+                                    <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                        <span>ID</span>
+                                        @if ($sortBy !== 'id')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </th>
+
+                                {{-- Name --}}
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                    <button class="flex items-center">
+                                        Name
+                                        @if ($sortBy !== 'name')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+
+                                {{-- Description --}}
+                                <th scope="col" class="px-4 py-3 ">Description</th>
+
+                                {{-- Amount --}}
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('amount')">
+                                    <button class="flex items-center">
+                                        Amount
+                                        @if ($sortBy !== 'amount')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+                                <th scope="col" class="px-4 py-3 ">Inclusions</th>
+                                <th scope="col" class="px-4 py-3 text-center">Action</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search" class="dark:bg-gray-700">
+                            @forelse ($activities as $activity)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
+                                        <input wire:model.live="selectedRows" type="checkbox" name="activities[]"
+                                            value="{{ $activity->id }}" class="accent-blue-600 w-4 h-4">
+                                        <span>{{ $fakeIDs[$activity->id] ?? 'ACT-???' }}</span>
+                                    </th>
+                                    <td class="px-4 py-3 text-gray-900 font-semibold dark:text-gray-200">
+                                        {{ $activity->name }}</td>
+                                    <td class="px-4 py-3">
+                                        @if (!empty($activity->description))
+                                            {{ Str::limit($activity->description, 50) }}
+                                        @else
+                                            <em class="text-gray-600 leading-relaxed dark:text-gray-300">No description provided.</em>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if ($activity->amount == 0)
+                                            <span class="text-green-600 font-semibold dark:text-green-300">FREE</span>
+                                        @else
+                                            ₱{{ number_format($activity->amount, 2) }}
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if (!empty($activity->inclusions))
+                                            {{ Str::limit($activity->inclusions, 50) }}
+                                        @else
+                                            <em class="text-gray-600 leading-relaxed dark:text-gray-300">No inclusions listed.</em>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-3">
+
+                                        <!-- View Icon -->
+                                        @can('activity-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
+                                                wire:navigate
+                                                href="{{ route('admin.view-activity', ['activity' => $activity->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Edit Icon -->
+                                        @can('activity-edit')
+                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
+                                                wire:navigate
+                                                href="{{ route('admin.edit-activity', ['activity' => $activity->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Delete Icon -->
+                                        @can('activity-delete')
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
+                                                wire:click="confirmDelete({{ $activity->id }})" wire:loading.attr="disabled">
+                                            </i>
+                                        @endcan
+
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500">
+                                        No activities found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
 
                 <!-- Pagination -->

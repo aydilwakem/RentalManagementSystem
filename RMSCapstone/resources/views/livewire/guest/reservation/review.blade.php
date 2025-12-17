@@ -355,8 +355,10 @@
                 <!-- Total Summary -->
                 <div
                     class="border rounded-md bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
-                    <h3 class="text-xl font-semibold mb-3 text-green-700">Summary</h3>
-
+                    <h3 class="text-green-700 font-semibold flex items-center gap-2 mb-3 text-xl">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        Summary
+                    </h3>
 
                     <!-- Subtotal -->
                     <div class="flex justify-between items-center text-sm text-gray-600 mt-3">
@@ -464,57 +466,72 @@
                             <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
                                 x-show="showModal" x-transition style="display: none;">
                                 <div
-                                    class="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
-                                    <h2 class="text-xl font-bold mb-4 text-green-800">Terms and Conditions</h2>
+                                    class="bg-white rounded-lg shadow-lg w-[90%] md:w-[600px] max-h-[90vh] overflow-y-auto">
 
-                                    <div class="prose max-w-none">
-                                        {!! $terms_and_conditions !!}
-                                    </div>
-
-                                    <!-- Checkbox -->
-                                    <div class="mt-4">
-                                        <label class="inline-flex items-center">
-                                            <input type="checkbox" x-model="agreed" wire:model="terms"
-                                                class="form-checkbox text-green-600">
-                                            <span class="ml-2 text-sm text-gray-700">
-                                                I agree to the Terms and Conditions
-                                            </span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Actions -->
+                                    <!-- HEADER -->
                                     <div
-                                        class="flex flex-col sm:flex-row justify-between gap-3 mt-6 w-full">
+                                        class="relative bg-green-50 border-b border-gray-200 px-6 py-3 flex justify-between items-center shrink-0 z-10">
+                                        <h3 class="text-xl font-extrabold text-green-700">
+                                            Terms and Conditions
+                                        </h3>
                                         <button @click="showModal = false"
-                                            class="w-full sm:w-auto mt-2 sm:mt-4 px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
-                                            Cancel
+                                            class="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-gray-100"
+                                            title="Close">
+                                            <i class="fas fa-times text-lg"></i>
                                         </button>
+                                    </div>
 
-                                        <button wire:loading.attr="disabled" type="button" :disabled="!agreed"
-                                            @click="if (agreed) { $wire.register(); }"
-                                            class="w-full sm:w-auto mt-2 sm:mt-4 px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150 tracking-widest"
-                                            :class="agreed
-                                                ?
-                                                'bg-green-700 bg-opacity-85 hover:bg-green-700 cursor-pointer' :
-                                                'bg-gray-400 cursor-not-allowed'">
-                                            <div class="flex items-center justify-center">
-                                                <!-- Spinner -->
-                                                <span wire:loading wire:target="register" class="mr-2">
-                                                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                                        <circle class="opacity-25" cx="12" cy="12"
-                                                            r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                        <path class="opacity-75" fill="currentColor"
-                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
-                                                        </path>
-                                                    </svg>
-                                                </span>
+                                    <div class=" p-6 ">
+                                        <div class="prose max-w-none">
+                                            {!! $terms_and_conditions !!}
+                                        </div>
 
-                                                <!-- Button Text -->
-                                                <span wire:loading.remove wire:target="register">
-                                                    Proceed to Payment
+                                        <!-- Checkbox -->
+                                        <div class="mt-4">
+                                            <label class="inline-flex items-center">
+                                                <input type="checkbox" x-model="agreed" wire:model="terms"
+                                                    class="form-checkbox text-green-600">
+                                                <span class="ml-2 text-sm text-gray-700">
+                                                    I agree to the Terms and Conditions
                                                 </span>
-                                            </div>
-                                        </button>
+                                            </label>
+                                        </div>
+
+                                        <!-- Actions -->
+                                        <div class="flex flex-col sm:flex-row justify-between gap-3 mt-6 w-full">
+                                            <button @click="showModal = false"
+                                                class="w-full sm:w-auto mt-2 sm:mt-4 px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 border border-transparent font-semibold rounded-md text-xs uppercase transition ease-in-out duration-150">
+                                                Cancel
+                                            </button>
+
+                                            <button wire:loading.attr="disabled" type="button" :disabled="!agreed"
+                                                @click="if (agreed) { $wire.register(); }"
+                                                class="w-full sm:w-auto mt-2 sm:mt-4 px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase transition ease-in-out duration-150 tracking-widest"
+                                                :class="agreed
+                                                    ?
+                                                    'bg-green-700 bg-opacity-85 hover:bg-green-700 cursor-pointer' :
+                                                    'bg-gray-400 cursor-not-allowed'">
+                                                <div class="flex items-center justify-center">
+                                                    <!-- Spinner -->
+                                                    <span wire:loading wire:target="register" class="mr-2">
+                                                        <svg class="animate-spin h-5 w-5 text-white"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4">
+                                                            </circle>
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                                            </path>
+                                                        </svg>
+                                                    </span>
+
+                                                    <!-- Button Text -->
+                                                    <span wire:loading.remove wire:target="register">
+                                                        Proceed to Payment
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

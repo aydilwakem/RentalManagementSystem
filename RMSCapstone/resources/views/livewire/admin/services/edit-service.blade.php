@@ -6,10 +6,10 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-        ['label' => 'Services', 'url' => route('admin.services')],
-        ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
-        ['label' => 'Edit Service', 'url' => route('admin.edit-service', ['service' => $service->id])],
-    ]" />
+            ['label' => 'Services', 'url' => route('admin.services')],
+            ['label' => 'View Service', 'url' => route('admin.view-service', ['service' => $service->id])],
+            ['label' => 'Edit Service', 'url' => route('admin.edit-service', ['service' => $service->id])],
+        ]" />
     </x-slot>
 
     {{-- Body Container --}}
@@ -30,7 +30,8 @@
 
             {{-- Session Message --}}
             @if (session()->has('message'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                    role="alert">
                     <strong class="font-bold">Success!</strong>
                     <span class="block sm:inline">{{ session('message') }}</span>
                 </div>
@@ -41,19 +42,21 @@
                 <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
                     <!-- Service Details -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-1 sm:col-span-2">
 
                         <!-- Service Name -->
                         <div>
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            <label for="name"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Service Name <span class="text-red-500">*</span>
                             </label>
 
                             <div class="relative">
-                                @if(!$service->is_protected)
+                                @if (!$service->is_protected)
                                     <input type="text" wire:model="name" id="name"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
-                                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400" placeholder="Ex. Pet Fee">
+                                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                        placeholder="Ex. Pet Fee">
                                 @else
                                     <input type="text" value="{{ $service->name }}" id="name" readonly
                                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 pr-24
@@ -74,7 +77,8 @@
                             <label for="description"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Service Description</label>
-                            <input type="text" wire:model="description" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                            <input type="text" wire:model="description" id="description"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                                 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. P500 off for rainy day season reservations">
                             @error('description')
@@ -84,10 +88,12 @@
 
                         <!-- Amount -->
                         <div>
-                            <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            <label for="amount"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                                 Amount
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="amount" id="amount" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
+                            <input type="text" wire:model="amount" id="amount" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 focus:outline-none block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. 2800.00" onwheel="this.blur()" />
 
@@ -105,7 +111,8 @@
                         </label>
 
                         <div class="relative">
-                            <input type="text" wire:model="unit" id="unit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
+                            <input type="text" wire:model="unit" id="unit"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 pr-24
                                     dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                                 placeholder="Ex. Per day">
                         </div>
@@ -120,7 +127,8 @@
                     <div>
                         <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Type <span class="text-red-500">*</span></label>
-                        <select wire:model="type" id="type" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
+                        <select wire:model="type" id="type" required
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="">Select Service</option>
                             <option value="addon">Add On</option>
@@ -140,7 +148,7 @@
                             Status <span class="text-red-500">*</span>
                         </label>
 
-                        @if($service->is_protected)
+                        @if ($service->is_protected)
                             <!-- Read-only display -->
                             <div class="flex items-center gap-3">
                                 <span class="text-gray-700 dark:text-gray-200">
