@@ -34,13 +34,13 @@
                 <div class="flex gap-4 flex-none">
                     <button wire:click="exportLogsCsv"
                         class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm">
-                        <i class="fa fa-file-export mr-1"></i> Export Logs
+                        <i class="fa fa-file-export mr-1"></i> Export CSV Logs
                     </button>
 
-                    {{-- <button wire:click="exportLogsCsv"
+                    <button wire:click="exportLogsToPDF"
                         class="px-4 py-2 text-white bg-pink-600 hover:bg-pink-700 rounded-lg text-sm">
-                        <i class="fa fa-file-export mr-1"></i> Export Logs CSV
-                    </button> --}}
+                        <i class="fa fa-file-export mr-1"></i> Export PDF Logs
+                    </button>
                     <button wire:click="resetFilters"
                         class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg text-sm">
                         <i class="fa fa-redo mr-1"></i> Reset Filters
