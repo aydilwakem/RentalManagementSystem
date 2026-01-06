@@ -170,36 +170,83 @@ class ViewActivityLogs extends Component
      */
     public function exportLogsToPDF()
     {
-        $logs = $this->getLogsProperty();
+       $query = Activity::query()->with('causer');
 
-        if ($logs->isEmpty()) {
-            session()->flash('error', 'No logs found to export.');
-            return;
-        }
+    $search = trim(preg_replace('/\s+/', ' ', $this->search));
 
-        // Define variables safely
-        $start_date = $this->start_date ?? now();
-        $end_date = $this->end_date ?? now();
-        $logNameFilter = $this->audit_log_name_filter ?? null;
-        $eventStatusFilter = $this->audit_event_filter ?? null;
+    $query->when($this->start_date, function ($query) {
+            $query->whereDate('created_at', '>=', Carbon::parse($this->start_date));
+        })
+        ->when($this->end_date, function ($query) {
+            $query->whereDate('created_at', '<=', Carbon::parse($this->end_date));
+        })
+        ->when($this->audit_event_filter, function ($query) {
+            $query->where('event', $this->audit_event_filter);
+        })
+        ->when($this->audit_log_name_filter, function ($query) {
+            $query->where('log_name', $this->audit_log_name_filter);
+        })
+        ->when($this->search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('description', 'like', "%{$search}%")
+                    ->orWhere('log_name', 'like', "%{$search}%")
+                    ->orWhere('subject_type', 'like', "%{$search}%")
+                    ->orWhereHas('causer', function ($q) use ($search) {
+                        $q->whereRaw(
+                            "CONCAT_WS(' ', name, middle_name, last_name, suffix) LIKE ?",
+                            ["%{$search}%"]
+                        )
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('middle_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('suffix', 'like', "%{$search}%");
+                    });
+            });
+        });
 
-        // Pass all required data to the PDF view
-        $pdf = Pdf::loadView('livewire.admin.reports.audit-logs', compact(
+    // Sorting
+    $query->orderBy($this->sortBy ?? 'created_at', $this->sortDir ?? 'desc');
+
+    // Fetch logs
+    $logs = $query->get();
+
+    if ($logs->isEmpty()) {
+        session()->flash('error', 'No logs found to export.');
+        return;
+    }
+
+    // Safe defaults
+    $start_date = $this->start_date ?? now();
+    $end_date = $this->end_date ?? now();
+    $logNameFilter = $this->audit_log_name_filter ?? 'None';
+    $eventStatusFilter = $this->audit_event_filter ?? 'None';
+
+    $pdf = Pdf::loadView(
+        'livewire.admin.reports.audit-logs',
+        compact(
             'logs',
             'start_date',
             'end_date',
             'logNameFilter',
             'eventStatusFilter'
-        ));
+        )
+    );
 
-        $filename = 'Audit-Logs-Summary-' . Carbon::parse($start_date)->format('Ymd') . '-' . Carbon::parse($end_date)->format('Ymd') . '.pdf';
+    $filename = 'Audit-Logs-Summary-' .
+        Carbon::parse($start_date)->format('Ymd') . '-' .
+        Carbon::parse($end_date)->format('Ymd') . '.pdf';
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, $filename);
+    return response()->streamDownload(function () use ($pdf) {
+        echo $pdf->stream();
+    }, $filename);
     }
 
 
+    /**
+     * This method exports the activity logs to a CSV file.
+     * It checks if there are logs to export, loads the view with the logs data,
+     * and streams the CSV file download.
+     */
     public function exportLogsCsv(){
         
    $query = Activity::query()->with('causer');

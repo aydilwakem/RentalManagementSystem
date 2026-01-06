@@ -120,21 +120,23 @@
         <p class="date-range">
             <strong>Reporting Period:</strong>
             @if ($start_date && $end_date)
-                {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
-                &ndash;
-                {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
+            {{ \Carbon\Carbon::parse($start_date)->format('F d, Y') }}
+            &ndash;
+            {{ \Carbon\Carbon::parse($end_date)->format('F d, Y') }}
             @else
-                All Records
+            All Records
             @endif
         </p>
         <p class="date-range">
             <strong>Module:</strong>
-            {{ $logNameFilter ? $logs->firstWhere('id', $logNameFilter)?->log_name ?? 'Unknown Module' : 'All Modules' }}
+            {{ $logNameFilter ? $logs->firstWhere('id', $logNameFilter)?->log_name ?? 'Unknown Module' : 'All Modules'
+            }}
 
         </p>
         <p class="date-range">
             <strong>Event:</strong>
-            {{ $eventStatusFilter ? $logs->firstWhere('id', $eventStatusFilter)?->event ?? 'Unknown Event' : 'All Events' }}
+            {{ $eventStatusFilter ? $logs->firstWhere('id', $eventStatusFilter)?->event ?? 'Unknown Event' : 'All
+            Events' }}
         </p>
     </header>
 
@@ -142,8 +144,9 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 10%;">Log No.</th>
+                <th style="width: 5%;">No.</th>
+                {{-- <th style="width: 10%;">Log No.</th> --}}
+                <th style="width: 10%;">Timestamp</th>
                 <th style="width: 15%;">Log Name</th>
                 <th style="width: 25%;">Description</th>
                 <th style="width: 10%;">Subject ID</th>
@@ -153,49 +156,50 @@
         </thead>
         <tbody>
             @forelse ($logs as $log)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $log->id }}</td>
-                    <td>{{ $log->log_name }}</td>
-                    <td>{{ $log->description }}</td>
-                    <td>{{ $log->subject_id ?? 'N/A' }}</td>
-                    <td>
-                        @if ($log->causer)
-                            {{ $log->causer->name }} {{ $log->causer->last_name }}
-                        @else
-                            System
-                        @endif
-                    </td>
-                    {{-- <td>
-                        @php
-                        $changes = $log->properties->toArray();
-                        $old = $changes['old'] ?? [];
-                        $new = $changes['attributes'] ?? [];
-                        @endphp
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                {{-- <td>{{ $log->id }}</td> --}}
+                <td> {{ \Carbon\Carbon::parse($log->created_at)->format('F d, Y h:i A') }}</td>
+                <td>{{ $log->log_name }}</td>
+                <td>{{ $log->description }}</td>
+                <td>{{ $log->subject_type ?? 'N/A' }}</td>
+                <td>
+                    @if ($log->causer)
+                    {{ $log->causer->name }} {{ $log->causer->last_name }}
+                    @else
+                    System
+                    @endif
+                </td>
+                {{-- <td>
+                    @php
+                    $changes = $log->properties->toArray();
+                    $old = $changes['old'] ?? [];
+                    $new = $changes['attributes'] ?? [];
+                    @endphp
 
-                        @if ($old && $new)
-                        <ul>
-                            @foreach ($new as $key => $newValue)
-                            @php
-                            $oldValue = $old[$key] ?? 'N/A';
-                            $formattedKey = ucfirst(str_replace('_', ' ', $key));
-                            @endphp
-                            @if ($oldValue != $newValue)
-                            <li><strong>{{ $formattedKey }}:</strong> "{{ $oldValue }}" → "{{ $newValue }}"</li>
-                            @endif
-                            @endforeach
-                        </ul>
-                        @else
-                        <em>No detailed changes</em>
+                    @if ($old && $new)
+                    <ul>
+                        @foreach ($new as $key => $newValue)
+                        @php
+                        $oldValue = $old[$key] ?? 'N/A';
+                        $formattedKey = ucfirst(str_replace('_', ' ', $key));
+                        @endphp
+                        @if ($oldValue != $newValue)
+                        <li><strong>{{ $formattedKey }}:</strong> "{{ $oldValue }}" → "{{ $newValue }}"</li>
                         @endif
-                    </td> --}}
-                </tr>
+                        @endforeach
+                    </ul>
+                    @else
+                    <em>No detailed changes</em>
+                    @endif
+                </td> --}}
+            </tr>
             @empty
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 20px;">
-                        No audit logs found for the selected filters.
-                    </td>
-                </tr>
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px;">
+                    No audit logs found for the selected filters.
+                </td>
+            </tr>
             @endforelse
         </tbody>
     </table>
