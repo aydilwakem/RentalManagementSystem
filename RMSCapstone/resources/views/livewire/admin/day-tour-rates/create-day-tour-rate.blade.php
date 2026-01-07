@@ -10,10 +10,12 @@
     </x-slot>
 
     <div class="py-3">
-        <div class="mx-auto max-w-4xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        <div
+            class="mx-auto max-w-4xl sm:px-6 lg:px-8 bg-white rounded-xl border shadow-md p-6 dark:bg-gray-700 dark:text-white dark:border-gray-600">
 
             <div class="relative flex items-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Day Tour Rate</h2>
+                <h2 class="text-2xl font-bold text-gray-900 w-full text-center dark:text-white">Add New Day Tour Rate
+                </h2>
                 <button onclick="window.location.href='{{ route('admin.day-tour-rates') }}'" wire:navigate
                     class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
                     <span class="leading-none translate-y-[-3px]">&times;</span>
@@ -21,10 +23,11 @@
             </div>
 
             <form wire:submit.prevent="">
-                <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Day Tour Selection -->
                     <div>
-                        <label for="day_tour_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="day_tour_id"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Day Tour Package <span class="text-red-500">*</span>
                         </label>
                         <select wire:model.live="day_tour_id" id="day_tour_id" required
@@ -158,15 +161,19 @@
                             <span class="text-gray-800 dark:text-gray-200 text-sm">Inactive</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="is_active" value="1" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition"></div>
-                                <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5"></div>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                </div>
                             </label>
                             <span class="text-gray-800 dark:text-gray-200 text-sm">Active</span>
                         </div>
                     </div>
 
                     <!-- Notes -->
-                    <div class="col-span-2">
+                    <div class="md:col-span-2">
                         <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Additional Notes
                         </label>
@@ -182,7 +189,8 @@
 
                 <!-- Action Buttons -->
                 <div class="flex justify-between items-center space-y-2 mt-6">
-                    <x-ghost-button onclick="window.location.href='{{ route('admin.day-tour-rates') }}'" type="button">
+                    <x-ghost-button onclick="window.location.href='{{ route('admin.day-tour-rates') }}'"
+                        type="button">
                         Cancel
                     </x-ghost-button>
 

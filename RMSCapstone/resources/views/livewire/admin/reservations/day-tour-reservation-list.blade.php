@@ -57,9 +57,9 @@
         <div
             class="bg-white rounded-lg shadow-md border relative z-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 dark:bg-gray-800 rounded-lg">
                 <!-- Search-->
-                <div class="flex">
+                <div class="w-full md:w-auto md:flex-1 md:max-w-xs">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewbox="0 0 20 20"
@@ -77,12 +77,12 @@
                 </div>
 
                 <!-- Status Filter -->
-                <div class="flex space-x-3">
+                <div class="w-full md:w-auto">
                     <div class="flex space-x-3 items-center">
-                        <label class="flex text-sm font-medium text-gray-900 dark:text-white">Reservation Status:</label>
+                        <label class="flex text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Reservation Status:</label>
                         <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-40 p-2.5
+                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="">All</option>
                             <option value="pending">Awaiting Payment</option>
                             <option value="reserved">Pending Verification</option>
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <div>
+            <div class="overflow-x-auto">
                 <table class="min-w-full text-left">
                     <thead wire:loading.remove wire:target="search, statusFilter"
                         class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
@@ -208,18 +208,18 @@
                                     @if ($transaction->dayTour)
                                         {{ $transaction->dayTour->name }}
                                         @if ($transaction->dayTourRate)
-                                            <span class="text-xs text-gray-500 block">
+                                            <span class="text-xs text-gray-500 block dark:text-gray-200">
                                                 {{ $transaction->dayTourRate->rate_name }}
                                             </span>
                                         @endif
                                     @else
                                         <span class="text-red-500 text-sm italic">Day tour not found</span>
-                                        @if(auth()->user()->can('admin'))
+                                        {{-- @if(auth()->user()->can('admin'))
                                             <button wire:click="checkMissingDayTourData({{ $transaction->id }})"
                                                     class="text-xs text-blue-500 underline ml-1">
                                                 Check
                                             </button>
-                                        @endif
+                                        @endif --}}
                                     @endif
                                 </td>
 

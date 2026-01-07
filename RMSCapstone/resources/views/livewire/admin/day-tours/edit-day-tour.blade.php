@@ -23,18 +23,17 @@
             </div>
 
             <form wire:submit.prevent="">
-                <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+
                     <!-- Tour Name -->
                     <div class="md:col-span-2">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Tour Name <span class="text-red-500">*</span>
                         </label>
                         <input type="text" wire:model="name" id="name" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5
+                focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                             placeholder="Ex. Standard Day Tour Package">
-                        @error('name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
                     <!-- Description -->
@@ -44,142 +43,94 @@
                             Description
                         </label>
                         <textarea wire:model="description" id="description" rows="3"
-                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            class="resize-none bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5
+                focus:ring-green-600 focus:border-green-600 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                             placeholder="Describe the day tour package..."></textarea>
-                        @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <!-- Duration and Time -->
+                    <!-- Duration -->
                     <div>
-                        <label for="duration_hours"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Duration (Hours) <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="duration_hours" id="duration_hours" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="8" min="1" max="24">
-                        @error('duration_hours')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <input type="number" wire:model="duration_hours"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                     </div>
 
-                    <!-- Package TYpe -->
+                    <!-- Package Type -->
                     <div>
-                        <label for="package_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Package Type <span class="text-red-500">*</span>
                         </label>
-                        <select wire:model="package_type" id="package_type" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                        <select wire:model="package_type"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                             <option value="without_room">Without Room</option>
                             <option value="with_room">With Room</option>
                         </select>
-                        @error('package_type')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <!-- Start and End Time -->
+                    <!-- Start Time -->
                     <div>
-                        <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Start Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="start_time" id="start_time" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('start_time')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <input type="time" wire:model="start_time"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                     </div>
 
+                    <!-- End Time -->
                     <div>
-                        <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             End Time <span class="text-red-500">*</span>
                         </label>
-                        <input type="time" wire:model="end_time" id="end_time" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
-                        @error('end_time')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <input type="time" wire:model="end_time"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                     </div>
 
                     <!-- Base Price -->
                     <div>
-                        <label for="base_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Base Price <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="base_price" id="base_price" required step="0.01"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="0.00" min="0" onwheel="this.blur()">
-                        @error('base_price')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <input type="number" wire:model="base_price"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                     </div>
 
+                    <!-- Max Guests -->
                     <div>
-                        <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Maximum Guests <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" wire:model="max_guests" id="max_guests" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="50" min="1" max="1000">
-                        @error('max_guests')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <input type="number" wire:model="max_guests"
+                            class="w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                     </div>
 
                     <!-- Inclusions -->
-                    <div>
-                        <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Inclusions
                         </label>
-                        <textarea wire:model="inclusions" id="inclusions" rows="4"
-                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                        <textarea wire:model="inclusions" rows="4"
+                            class="resize-none w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                             placeholder="List what's included in the tour (one per line)&#10;• Swimming pool access&#10;• Lunch buffet&#10;• Welcome drinks"></textarea>
-                        @error('inclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <!-- Terms & Conditions -->
-                    <div>
-                        <label for="terms_conditions"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    <!-- Terms -->
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Terms & Conditions
                         </label>
-                        <textarea wire:model="terms_conditions" id="terms_conditions" rows="4"
-                            class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Enter terms and conditions..."></textarea>
-                        @error('terms_conditions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                        <textarea wire:model="terms_conditions" rows="4"
+                            class="resize-none w-full p-2.5 rounded-lg border dark:bg-gray-600 dark:border-gray-500 dark:text-white"></textarea>
                     </div>
 
-                    <!-- Exclusions -->
-                    {{-- <div>
-                        <label for="exclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Exclusions
-                        </label>
-                        <textarea wire:model="exclusions" id="exclusions" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="List what's not included in the tour (one per line)&#10;• Alcoholic beverages&#10;• Spa services&#10;• Transportation"></textarea>
-                        @error('exclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div> --}}
-
-
-
-                    <!-- Main Image Upload -->
-                    <!-- Day Tour Image Upload -->
-                    <div class="mb-4 col-span-2">
-                        <!-- Section Title -->
-                        <label for="newImageInput"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Day Tour Image(s)
+                    <!-- Images -->
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Day Tour Images
                         </label>
 
-                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-4" wire:sortable="reorderImages">
                             @if ($displayImages && count($displayImages) > 0)
                                 @foreach ($displayImages as $image)
                                     <div class="relative shrink-0" wire:sortable.item="{{ $image['id'] }}"
@@ -188,12 +139,10 @@
                                         <!-- Image Preview -->
                                         @if (isset($image['object']) && method_exists($image['object'], 'temporaryUrl'))
                                             <img src="{{ $image['object']->temporaryUrl() }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Image Preview">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Image Preview">
                                         @elseif (isset($image['path']))
                                             <img src="{{ asset('storage/' . $image['path']) }}"
-                                                class="w-52 h-40 object-cover rounded-md shadow-sm"
-                                                alt="Stored Image">
+                                                class="w-52 h-40 object-cover rounded-md shadow-sm" alt="Stored Image">
                                         @endif
 
                                         <!-- Remove Image Button -->
@@ -218,8 +167,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -231,8 +180,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex flex-col items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -264,40 +213,36 @@
                         </div>
                     </div>
 
-
-
                     <!-- Status -->
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Status
                         </label>
-                        <div class="flex items-center gap-3">
-                            <span class="text-gray-800 dark:text-gray-200 text-sm">Inactive</span>
+                        <div class="flex items-center gap-3 dark:text-gray-200">
+                            <span class="text-sm">Inactive</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="is_active" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-green-600"></div>
                                 <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition">
-                                </div>
-                                <div
-                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+                                    class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full peer-checked:translate-x-5 transition">
                                 </div>
                             </label>
-                            <span class="text-gray-800 dark:text-gray-200 text-sm">Active</span>
+                            <span class="text-sm">Active</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="flex justify-between items-center space-y-2 mt-6">
+                <!-- ACTION BUTTONS -->
+                <div class="flex justify-between gap-3 mt-6">
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
-                    <x-button type="submit" wire:loading.attr="disabled" wire:target="newMainImage,newImages"
-                        wire:click="confirmEdit">
+                    <x-button type="submit" wire:click="confirmEdit">
                         Save Changes
                     </x-button>
                 </div>
             </form>
+
         </div>
 
         <!-- Edit Confirmation Modal -->

@@ -6,20 +6,15 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-        ['label' => 'Reservations', 'url' => route('admin.daytour-reservations-list')],
-        ['label' => 'Create Day Tour Reservation', 'url' => route('admin.create-day-tour-reservation')],
-    ]" />
+            ['label' => 'Reservations', 'url' => route('admin.daytour-reservations-list')],
+            ['label' => 'Create Day Tour Reservation', 'url' => route('admin.create-day-tour-reservation')],
+        ]" />
     </x-slot>
 
     <div class="relative flex items-center mb-3 mt-3">
         <h2 class="text-xl font-bold text-green-700 w-full text-center dark:text-green-300">
             Day Tour Reservation
         </h2>
-        <!-- Back Button -->
-        <button onclick="history.back()"
-            class="text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full mt-2 w-8 h-8 flex items-center justify-center text-2xl focus:outline-none absolute right-0 translate-y-[-12px]">
-            <span class="leading-none translate-y-[-3px]">&times;</span>
-        </button>
     </div>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -30,7 +25,8 @@
                 <div class="flex flex-col">
                     <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Tour Date</label>
                     <input type="date" wire:model.live="tour_date"
-                        min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}" class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-green-600 focus:border-green-600
+                        min="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}"
+                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                 </div>
             </div>
@@ -38,11 +34,11 @@
 
         <!------------------------- TOUR SELECTION SECTION -------------------------->
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-            <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-200">
+            <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                 Select Day Tour
             </h2>
 
-            @if($tour_date)
+            @if ($tour_date)
                 <p class="text-sm text-gray-500 mb-4 dark:text-gray-300">
                     Showing rates for: {{ \Carbon\Carbon::parse($tour_date)->format('M d, Y') }}
                     ({{ $this->getDayType($tour_date) }})
@@ -51,13 +47,13 @@
 
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach($availableTours as $tour)
+                @foreach ($availableTours as $tour)
                     <div class="relative flex">
                         <div class="border-2 rounded-lg overflow-hidden transition-all duration-200 cursor-pointer flex flex-col w-full
                         {{ $selectedTour && $selectedTour->id == $tour->id ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 hover:border-gray-300' }}"
                             wire:click="selectTour({{ $tour->id }})">
 
-                            @if($selectedTour && $selectedTour->id == $tour->id)
+                            @if ($selectedTour && $selectedTour->id == $tour->id)
                                 <div
                                     class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold z-10">
                                     <i class="fas fa-check mr-1"></i> Selected
@@ -68,25 +64,28 @@
                                 $firstImage = isset($tour->images[0]) ? $tour->images[0] : null;
                             @endphp
 
-                            <!-- Fixed height image section -->
+                            <!-- image -->
                             <div class="flex-shrink-0">
                                 <img src="{{ $firstImage ? asset('storage/' . $firstImage) : asset('images/daytour-default.png') }}"
                                     alt="{{ $tour->name }}" class="w-full h-40 object-cover">
                             </div>
 
-                            <!-- Content section that grows equally -->
                             <div class="p-4 flex flex-col flex-grow">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2 dark:text-white flex-shrink-0">
+                                <h3
+                                    class="text-lg font-semibold mb-2 flex-shrink-0
+                                    {{ $selectedTour && $selectedTour->id == $tour->id
+                                        ? 'text-gray-800 dark:text-gray-900'
+                                        : 'text-gray-800 dark:text-white' }}">
                                     {{ $tour->name }}
-                                    @if($tour->activeRates && count($tour->activeRates) > 0)
-                                        @php
-                                            $firstRate = $tour->activeRates->first();
-                                        @endphp
-                                        - <span class="text-green-700 font-semibold">
+
+                                    @if ($tour->activeRates && count($tour->activeRates) > 0)
+                                        @php $firstRate = $tour->activeRates->first(); @endphp
+                                        - <span class="text-green-700 dark:text-green-400 font-semibold">
                                             ₱{{ number_format($firstRate->adult_rate, 2) }}
                                         </span>
                                     @endif
                                 </h3>
+
 
                                 <!-- Show rates with availability status -->
                                 @php
@@ -96,7 +95,9 @@
 
                                     if ($hasRates) {
                                         foreach ($tour->activeRates as $rate) {
-                                            $isAvailableForDate = $this->tour_date ? $rate->day_type === $this->getDayType($this->tour_date) : true;
+                                            $isAvailableForDate = $this->tour_date
+                                                ? $rate->day_type === $this->getDayType($this->tour_date)
+                                                : true;
                                             if ($isAvailableForDate) {
                                                 $hasRatesForSelectedDate = true;
                                                 $availableRatesForDate[] = $rate;
@@ -106,7 +107,7 @@
                                 @endphp
 
                                 <div class="space-y-2 flex-grow flex flex-col justify-end">
-                                    @if(!$hasRates)
+                                    @if (!$hasRates)
                                         <!-- No rates configured at all -->
                                         <div
                                             class="text-center p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-700 text-sm dark:bg-yellow-900 dark:border-yellow-800 dark:text-yellow-200 flex items-center justify-center flex-shrink-0">
@@ -117,17 +118,22 @@
                                         <!-- Has rates for the selected date -->
                                         @foreach ($availableRatesForDate as $rate)
                                             @php
-                                                $isSelected = $selectedTour && $selectedTour->id == $tour->id && $selectedRate && $selectedRate->id == $rate->id;
+                                                $isSelected =
+                                                    $selectedTour &&
+                                                    $selectedTour->id == $tour->eid &&
+                                                    $selectedRate &&
+                                                    $selectedRate->id == $rate->id;
                                             @endphp
                                             <div
-                                                class="text-sm {{ $isSelected ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-300' }} flex-shrink-0">
+                                                class="text-sm {{ $isSelected ? 'text-green-600 font-semibold' : 'text-gray-600 dark:text-gray-500' }} flex-shrink-0">
                                                 <div class="flex items-center justify-between">
                                                     <span
                                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold
                                                         {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
                                                         {{ $rate->rate_name }}
                                                     </span>
-                                                    <span class="font-semibold font-xs">{{ $tour->package_type === 'with_room' ? 'With Room' : 'Without Room' }}</span>
+                                                    <span
+                                                        class="font-semibold font-xs">{{ $tour->package_type === 'with_room' ? 'With Room' : 'Without Room' }}</span>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -146,7 +152,7 @@
                 @endforeach
             </div>
 
-            @if($availableTours->isEmpty())
+            @if ($availableTours->isEmpty())
                 <div class="text-center py-8">
                     <p class="text-gray-500 dark:text-gray-300">No day tours available for the selected date.</p>
                 </div>
@@ -154,9 +160,9 @@
         </div>
 
         <!------------------------- GUEST COUNT SECTION -------------------------->
-        @if($selectedTour && $selectedRate)
+        @if ($selectedTour && $selectedRate)
             <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-200">
+                <h2 class="font-semibold text-xl text-green-700 leading-tight mb-4 dark:text-green-300">
                     Guest Count
                 </h2>
 
@@ -180,14 +186,14 @@
                             </button>
 
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-green-700">{{ $adultCount }}</div>
+                                <div class="text-2xl font-bold text-green-700 dark:text-green-500">{{ $adultCount }}</div>
                                 <div class="text-sm text-gray-500 dark:text-gray-300 mt-1">
                                     ₱{{ number_format($selectedRate->adult_rate, 2) }} / Per Pax
                                 </div>
                             </div>
 
                             <button type="button" wire:click="incrementAdult"
-                                class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
+                                class="w-10 h-10 rounded-full dark:bg-green-500 dark:hover:bg-green-600 bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v16m8-8H4"></path>
@@ -215,14 +221,14 @@
                             </button>
 
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-green-700">{{ $kidCount }}</div>
+                                <div class="text-2xl font-bold text-green-700 dark:text-green-500">{{ $kidCount }}</div>
                                 <div class="text-sm text-gray-500 dark:text-gray-300 mt-1">
                                     ₱{{ number_format($selectedRate->kid_rate, 2) }} / Per Pax
                                 </div>
                             </div>
 
                             <button type="button" wire:click="incrementKid"
-                                class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
+                                class="w-10 h-10 rounded-full dark:bg-green-500 dark:hover:bg-green-600 bg-green-700 flex items-center justify-center hover:bg-green-800 transition text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v16m8-8H4"></path>
@@ -237,7 +243,7 @@
                     <p class="text-lg font-semibold text-gray-700 dark:text-white">
                         Total Guests: <span class="text-green-600">{{ $totalGuests }}</span>
                     </p>
-                    {{-- @if($selectedRate && $totalGuests > $selectedRate->max_guests)
+                    {{-- @if ($selectedRate && $totalGuests > $selectedRate->max_guests)
                     <p class="text-red-500 text-sm mt-1">
                         Maximum guests for this rate is {{ $selectedRate->max_guests }}
                     </p>
@@ -247,7 +253,7 @@
         @endif
 
         <!------------------------- PRICE SUMMARY SECTION -------------------------->
-        @if($selectedTour && $selectedRate)
+        @if ($selectedTour && $selectedRate)
             <div class="bg-white shadow-md rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
                 <h2
                     class="font-bold text-2xl text-green-700 text-center leading-snug mb-2 bg-green-50 py-3 rounded-t-lg shadow-sm dark:bg-green-200">
@@ -267,10 +273,12 @@
                                     {{ \Carbon\Carbon::parse($tour_date)->format('M d, Y') }}</p>
                             </div>
                             <div class="space-y-1">
-                                <p><span class="font-medium text-gray-800 dark:text-white">Adults:</span> {{ $adultCount }}
+                                <p><span class="font-medium text-gray-800 dark:text-white">Adults:</span>
+                                    {{ $adultCount }}
                                     × ₱{{ number_format($selectedRate->adult_rate, 2) }}</p>
-                                @if($kidCount > 0)
-                                    <p><span class="font-medium text-gray-800 dark:text-white">Children:</span> {{ $kidCount }}
+                                @if ($kidCount > 0)
+                                    <p><span class="font-medium text-gray-800 dark:text-white">Children:</span>
+                                        {{ $kidCount }}
                                         × ₱{{ number_format($selectedRate->kid_rate, 2) }}</p>
                                 @endif
                                 <p><span class="font-medium text-gray-800 dark:text-white">Total Guests:</span>
@@ -288,13 +296,15 @@
                             <span
                                 class="font-medium">₱{{ number_format($adultCount * $selectedRate->adult_rate, 2) }}</span>
                         </div>
-                        @if($kidCount > 0)
+                        @if ($kidCount > 0)
                             <div class="flex justify-between text-base text-gray-700 dark:text-gray-300">
                                 <span>Children ({{ $kidCount }}):</span>
-                                <span class="font-medium">₱{{ number_format($kidCount * $selectedRate->kid_rate, 2) }}</span>
+                                <span
+                                    class="font-medium">₱{{ number_format($kidCount * $selectedRate->kid_rate, 2) }}</span>
                             </div>
                         @endif
-                        <div class="flex justify-between font-semibold text-gray-900 dark:text-white border-t pt-2 mt-2">
+                        <div
+                            class="flex justify-between font-semibold text-gray-900 dark:text-white border-t pt-2 mt-2">
                             <span>Subtotal:</span>
                             <span>₱{{ number_format($subtotal, 2) }}</span>
                         </div>
@@ -314,7 +324,7 @@
                         <div
                             class="flex justify-between text-xl font-semibold text-gray-800 dark:text-white border-t pt-3 mt-3">
                             <span>Total Amount:</span>
-                            <span class="text-green-700">₱{{ number_format($total_amount, 2) }}</span>
+                            <span class="text-green-700 dark:text-green-500">₱{{ number_format($total_amount, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -324,7 +334,7 @@
 
         <!------------------------- GUEST DETAIL SECTION -------------------------->
         <div class="bg-white shadow-md rounded-lg border border-gray-200 p-6 dark:bg-gray-700 dark:border-gray-600">
-            <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-200">
+            <h2 class="font-semibold text-xl text-green-700 leading-tight dark:text-green-300">
                 Guest Details
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4 mb-4">
@@ -332,7 +342,8 @@
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">First Name <span
                             class="text-red-500">*</span></label>
-                    <input type="text" wire:model="first_name" placeholder="Ex. Juan" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <input type="text" wire:model="first_name" placeholder="Ex. Juan"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('first_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -342,7 +353,8 @@
                 <!-- Middle Name -->
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Middle Name</label>
-                    <input type="text" wire:model="middle_name" placeholder="Ex. Mercado" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <input type="text" wire:model="middle_name" placeholder="Ex. Mercado"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('middle_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -353,7 +365,8 @@
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Last Name <span
                             class="text-red-500">*</span></label>
-                    <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <input type="text" wire:model="last_name" placeholder="Ex. Dela Cruz"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('last_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -364,7 +377,8 @@
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Email <span
                             class="text-red-500">*</span></label>
-                    <input type="email" wire:model="email" placeholder="Ex. juan.delacruz@example.com" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <input type="email" wire:model="email" placeholder="Ex. juan.delacruz@example.com"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('email')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -376,7 +390,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Contact
                         Number <span class="text-red-500">*</span></label>
                     <input type="tel" inputmode="numeric" maxlength="11" wire:model="contact_number"
-                        placeholder="Ex. 09123456789" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                        placeholder="Ex. 09123456789"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('contact_number')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -387,7 +402,8 @@
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Country <span
                             class="text-red-500">*</span></label>
-                    <select wire:model="country" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <select wire:model="country"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="" disabled selected>Select a country</option>
                         @foreach ($countries as $countryOption)
@@ -402,7 +418,8 @@
                 <!-- Company Name -->
                 <div class="col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Company Name</label>
-                    <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <input type="text" wire:model="company_name" placeholder="Ex. ABC Corporation"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                     @error('company_name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -413,7 +430,8 @@
                     <!-- Source of Hearing -->
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Heard From <span
                             class="text-red-500">*</span></label>
-                    <select wire:model="heard_from" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <select wire:model="heard_from"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="">Select an option</option>
                         <option value="Facebook">Facebook</option>
@@ -431,7 +449,8 @@
                     <!-- Source of Booking -->
                     <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Reservation
                         Source <span class="text-red-500">*</span></label>
-                    <select wire:model="reservation_source" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
+                    <select wire:model="reservation_source"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
                         dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="">Select an option</option>
                         <option value="AirBnb">AirBnb</option>
@@ -526,7 +545,8 @@
                     <!-- Spinner -->
                     <span wire:loading class="mr-2" wire:target="createDayTourReservation">
                         <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4">
                             </circle>
                             <path class="opacity-75" fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
@@ -601,7 +621,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Suffix</label>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Suffix</label>
                             <input type="text" wire:model="guest_suffix" placeholder="Ex. Jr., Sr., III"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
@@ -665,8 +686,8 @@
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
                                 class="text-red-500">*</span></label>
-                        <select wire:model="guest_country_of_origin" @if ($guest_residency === 'local') readonly disabled
-                        @endif
+                        <select wire:model="guest_country_of_origin"
+                            @if ($guest_residency === 'local') readonly disabled @endif
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select a country</option>
                             @foreach ($countries as $countryOption)
@@ -717,7 +738,8 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">First
                                 Name
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.defer="editingGuest.guest_first_name" placeholder="Ex. Juan"
+                            <input type="text" wire:model.defer="editingGuest.guest_first_name"
+                                placeholder="Ex. Juan"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600"
                                 required>
@@ -729,7 +751,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Middle
                                 Name</label>
-                            <input type="text" wire:model.defer="editingGuest.guest_middle_name" placeholder="Ex. Mercado"
+                            <input type="text" wire:model.defer="editingGuest.guest_middle_name"
+                                placeholder="Ex. Mercado"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             @error('editingGuest.guest_middle_name')
@@ -741,7 +764,8 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Last
                                 Name
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.defer="editingGuest.guest_last_name" placeholder="Ex. Dela Cruz"
+                            <input type="text" wire:model.defer="editingGuest.guest_last_name"
+                                placeholder="Ex. Dela Cruz"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600"
                                 required>
@@ -751,8 +775,10 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Suffix</label>
-                            <input type="text" wire:model.defer="editingGuest.guest_suffix" placeholder="Ex. Jr., Sr., III"
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Suffix</label>
+                            <input type="text" wire:model.defer="editingGuest.guest_suffix"
+                                placeholder="Ex. Jr., Sr., III"
                                 class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
                                             dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white focus:outline-none focus:ring-green-600 focus:border-green-600">
                             @error('editingGuest.guest_suffix')
@@ -815,8 +841,8 @@
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Country <span
                                 class="text-red-500">*</span></label>
-                        <select wire:model.defer="editingGuest.guest_country_of_origin" @if ($guest_residency === 'local')
-                        readonly disabled @endif
+                        <select wire:model.defer="editingGuest.guest_country_of_origin"
+                            @if ($guest_residency === 'local') readonly disabled @endif
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600">
                             <option value="">Select a country</option>
                             @foreach ($countries as $countryOption)

@@ -157,27 +157,27 @@
                                     <tr class="border-b dark:border-gray-600">
                                         <td class="px-4 py-2 dark:text-white">{{ $rate->rate_name }}</td>
                                         <td class="px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
+                                            <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center
                                                 {{ $rate->rate_type === 'with_room' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
                                                 {{ $rate->rate_type_label }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-2">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs
+                                            <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center
                                                 {{ $rate->day_type === 'holiday' ? 'bg-red-100 text-red-800' :
                                                    ($rate->day_type === 'weekend' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                                 {{ $rate->day_type_label }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 font-semibold text-green-600">₱{{ number_format($rate->adult_rate, 2) }}</td>
-                                        <td class="px-4 py-2 font-semibold text-green-600">₱{{ number_format($rate->kid_rate, 2) }}</td>
+                                        <td class="px-4 py-2 font-semibold text-green-600 dark:text-green-300">₱{{ number_format($rate->adult_rate, 2) }}</td>
+                                        <td class="px-4 py-2 font-semibold text-green-600  dark:text-green-300">₱{{ number_format($rate->kid_rate, 2) }}</td>
                                         <td class="px-4 py-2">
                                             @if ($rate->is_active)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-green-100 text-green-800">
+                                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center bg-green-100 text-green-800">
                                                     Active
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-red-100 text-red-800">
+                                                <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center bg-red-100 text-red-800">
                                                     Inactive
                                                 </span>
                                             @endif

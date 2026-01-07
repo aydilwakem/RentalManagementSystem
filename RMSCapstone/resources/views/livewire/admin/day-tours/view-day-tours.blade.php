@@ -7,7 +7,8 @@
     @if ($dayTours->isEmpty() && !$search && !$statusFilter)
         <!-- Empty Page Message -->
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg font-semibold">No day tours packages yet.<br> Click "Create Day Tour" to add a new day tour package.</p>
+            <p class="text-gray-500 text-lg font-semibold">No day tours packages yet.<br> Click "Create Day Tour" to add
+                a new day tour package.</p>
             <x-button class="mt-4" href="{{ route('admin.create-day-tour') }}" icon="fas fa-plus">
                 Create Day Tour
             </x-button>
@@ -23,7 +24,7 @@
         @endif
 
         <div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-4">
                 <!-- Create New -->
                 @can('daytour-create')
                     <div class="flex justify-between items-center mb-4">
@@ -46,67 +47,70 @@
         <!-- Table -->
         <div
             class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-            <!-- Header-->
-            <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
-                <!-- Search Tab -->
-                <div class="flex">
-                    <div class="relative w-full">
+            <!-- Header -->
+            <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 dark:bg-gray-800 rounded-lg space-y-3 sm:space-y-0">
+
+                <!-- Left: Search + Actions -->
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0 w-full sm:w-auto">
+                    <!-- Search Tab -->
+                    <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor"
+                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <!-- Search-->
                         <input wire:model.live.debounce.300ms="search" type="text"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                       dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Search" required="">
                     </div>
 
                     <!-- Bulk Delete Button -->
-                    @if($dayTours->count() > 0)
-                    <div class="relative inline-block text-left ml-2" x-data="{ open: false }">
-                        <button @click="open = !open" type="button"
-                            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
-                            dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                            Actions
-                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
+                    @if ($dayTours->count() > 0)
+                        <div class="relative inline-block text-left w-full sm:w-auto" x-data="{ open: false }">
+                            <button @click="open = !open" type="button"
+                                class="inline-flex justify-center w-full sm:w-auto rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+                       dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                                Actions
+                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
 
-                        <div x-show="open" @click.away="open = false"
-                            class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
-                            dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                            <div class="py-1">
-                                <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
-                                    Delete</a>
+                            <div x-show="open" @click.away="open = false"
+                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
+                       dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                                <div class="py-1">
+                                    <a wire:click.prevent="confirmDeleteInBulk" href="#"
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
+                                        Delete</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
                 </div>
 
-                <!-- Status Filter -->
-                <div class="flex space-x-3">
-                    <div class="flex space-x-3 items-center">
-                        <label class="w-32 text-sm font-medium text-gray-900 dark:text-white">Tour Status:</label>
-                        <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">All</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
+                <!-- Right: Status Filter -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 w-full sm:w-auto">
+                    <label class="w-full sm:w-auto text-sm font-medium text-gray-900 dark:text-white mb-1">Tour
+                        Status:</label>
+                    <select wire:model.live="statusFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-40 p-2.5
+                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <option value="">All</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
                 </div>
             </div>
+
 
             <!-- Table Body-->
             <div wire:loading wire:target="search, statusFilter"
@@ -164,21 +168,26 @@
                                     class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1 dark:text-white">
                                     <input wire:model.live="selectedRows" type="checkbox" name="tour[]"
                                         value="{{ $tour->id }}" class="accent-blue-600 w-4 h-4">
-                                        {{ $tour->name }}
+                                    {{ $tour->name }}
                                 </th>
-                                <td class="px-4 py-3">
-                                    @if ($tour->package_type == "with_room")
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-600">
-                                            With Room
-                                        </span>
-                                    @else
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600">
-                                            No Room
-                                        </span>
-                                    @endif
+                                <td class="px-4 py-2 text-center align-middle">
+                                    <div class="flex items-center justify-center text-center">
+                                        @if ($tour->package_type == 'with_room')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center bg-cyan-100 text-cyan-600">
+                                                With Room
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold text-center bg-gray-100 text-gray-600">
+                                                No Room
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-4 py-3">{{ $tour->duration_hours }} hours</td>
-                                <td class="px-4 py-3 text-gray-800 dark:text-white">₱{{ number_format($tour->base_price, 2) }}</td>
+                                <td class="px-4 py-3 text-gray-800 dark:text-white">
+                                    ₱{{ number_format($tour->base_price, 2) }}</td>
                                 {{-- <td class="px-4 py-3">
                                     <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold
                                         {{ $tour->rates_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
@@ -187,11 +196,13 @@
                                 </td> --}}
                                 <td class="px-4 py-3">
                                     @if ($tour->is_active)
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">
                                             Active
                                         </span>
                                     @else
-                                        <span class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
+                                        <span
+                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">
                                             Inactive
                                         </span>
                                     @endif
@@ -200,14 +211,16 @@
                                     <!-- View Icon -->
                                     @can('daytour-view')
                                         <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
-                                            wire:navigate href="{{ route('admin.view-day-tour', ['dayTour' => $tour->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.view-day-tour', ['dayTour' => $tour->id]) }}">
                                         </i>
                                     @endcan
 
                                     <!-- Edit Icon -->
                                     @can('daytour-edit')
                                         <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
-                                            wire:navigate href="{{ route('admin.edit-day-tour', ['dayTour' => $tour->id]) }}">
+                                            wire:navigate
+                                            href="{{ route('admin.edit-day-tour', ['dayTour' => $tour->id]) }}">
                                         </i>
                                     @endcan
 

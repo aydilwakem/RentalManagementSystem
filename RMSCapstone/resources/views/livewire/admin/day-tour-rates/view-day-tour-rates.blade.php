@@ -24,7 +24,7 @@
         @endif
 
         <div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-8">
                 <!-- Create New -->
                 @can('daytourrate-create')
                     <div class="flex justify-between items-center mb-4">
@@ -46,94 +46,90 @@
         </div>
 
         <!-- Table -->
-        <div
-            class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+        <div class="bg-white rounded-lg shadow-md border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
-                <!-- Search Tab -->
-                <div class="flex space-x-2">
-                    <div class="relative w-64">
+            <div
+                class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between p-4 dark:bg-gray-800 rounded-lg">
+
+                <!-- Search + Actions -->
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+
+                    <!-- Search -->
+                    <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor"
-                                viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor"
+                                viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <!-- Search-->
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                            placeholder="Search rates..." required="">
+
+                        <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search rates..."
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2
+                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     </div>
 
-                    <!-- Bulk Delete Button -->
+                    <!-- Actions -->
                     @if ($dayTourRates->count() > 0)
-                        <div class="relative inline-block text-left" x-data="{ open: false }">
-                            <button @click="open = !open" type="button"
-                                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
-                            dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                        <div class="relative w-full sm:w-auto" x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="inline-flex justify-center items-center w-full sm:w-auto
+                    rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white
+                    text-sm font-medium text-gray-700 hover:bg-gray-50
+                    dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                 Actions
-                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
 
                             <div x-show="open" @click.away="open = false"
-                                class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50
-                            dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                                <div class="py-1">
-                                    <a wire:click.prevent="confirmDeleteInBulk" href="#"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Bulk
-                                        Delete</a>
-                                </div>
+                                class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50
+                    dark:bg-gray-700">
+                                <a wire:click.prevent="confirmDeleteInBulk"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    Bulk Delete
+                                </a>
                             </div>
                         </div>
                     @endif
                 </div>
 
                 <!-- Filters -->
-                <div class="flex space-x-3">
-                    <div class="flex space-x-2 items-center">
-                        <select wire:model.live="dayTourFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-40 p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">All Tours</option>
-                            @foreach ($dayTours as $tour)
-                                <option value="{{ $tour->id }}">{{ $tour->name }}</option>
-                            @endforeach
-                        </select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full md:w-auto">
 
-                        {{-- <select wire:model.live="rateTypeFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-40 p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">All Rate Types</option>
-                            <option value="with_room">With Room</option>
-                            <option value="without_room">Without Room</option>
-                        </select> --}}
+                    <select wire:model.live="dayTourFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">All Tours</option>
+                        @foreach ($dayTours as $tour)
+                            <option value="{{ $tour->id }}">{{ $tour->name }}</option>
+                        @endforeach
+                    </select>
 
-                        <select wire:model.live="dayTypeFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-40 p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">All Day Types</option>
-                            <option value="weekday">Weekday</option>
-                            <option value="weekend">Weekend</option>
-                            <option value="holiday">Holiday</option>
-                        </select>
+                    <select wire:model.live="dayTypeFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">All Day Types</option>
+                        <option value="weekday">Weekday</option>
+                        <option value="weekend">Weekend</option>
+                        <option value="holiday">Holiday</option>
+                    </select>
 
-                        <select wire:model.live="statusFilter"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-32 p-2.5
-                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
+                    <select wire:model.live="statusFilter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
                 </div>
             </div>
+
 
             <!-- Table Body-->
             <div wire:loading wire:target="search, dayTourFilter, rateTypeFilter, dayTypeFilter, statusFilter"
@@ -221,7 +217,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-gray-700">
+                                <td class="px-4 py-3 text-gray-700 dark:text-white">
                                     ₱{{ number_format($rate->adult_rate, 2) }}</td>
                                 {{-- <td class="px-4 py-3 font-semibold text-green-600">₱{{ number_format($rate->kid_rate, 2) }}</td> --}}
                                 <td class="px-4 py-3">

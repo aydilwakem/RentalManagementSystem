@@ -22,7 +22,7 @@
             </div>
 
             <form wire:submit.prevent="">
-                <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Tour Name -->
                     <div>
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
@@ -50,7 +50,7 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="md:col-span-2">
+                    <div class="col-span-1 md:col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Description
@@ -63,8 +63,7 @@
                         @enderror
                     </div>
 
-
-                    <!-- Duration and Time -->
+                    <!-- Duration -->
                     <div>
                         <label for="duration_hours"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
@@ -78,9 +77,10 @@
                         @enderror
                     </div>
 
-                    <!-- Package TYpe -->
+                    <!-- Package Type -->
                     <div>
-                        <label for="package_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="package_type"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Package Type <span class="text-red-500">*</span>
                         </label>
                         <select wire:model="package_type" id="package_type" required
@@ -93,7 +93,7 @@
                         @enderror
                     </div>
 
-                    <!-- Start and End Time -->
+                    <!-- Start Time -->
                     <div>
                         <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Start Time <span class="text-red-500">*</span>
@@ -105,6 +105,7 @@
                         @enderror
                     </div>
 
+                    <!-- End Time -->
                     <div>
                         <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             End Time <span class="text-red-500">*</span>
@@ -116,50 +117,21 @@
                         @enderror
                     </div>
 
-
-
-                    {{-- <div>
-                        <label for="max_guests" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Maximum Guests <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" wire:model="max_guests" id="max_guests" required
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="50" min="1" max="1000">
-                        @error('max_guests')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div> --}}
-
-
-
                     <!-- Inclusions -->
-                    <div>
+                    <div class="col-span-1 md:col-span-2">
                         <label for="inclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Inclusions
                         </label>
                         <textarea wire:model="inclusions" id="inclusions" rows="4"
                             class="resize-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="List what's included in the tour (one per line)&#10;• Swimming pool access&#10;• Lunch buffet&#10;• Welcome drinks"></textarea>
+                            placeholder="List what's included in the tour..."></textarea>
                         @error('inclusions')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <!-- Exclusions -->
-                    {{-- <div>
-                        <label for="exclusions" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                            Exclusions
-                        </label>
-                        <textarea wire:model="exclusions" id="exclusions" rows="4"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="List what's not included in the tour (one per line)&#10;• Alcoholic beverages&#10;• Spa services&#10;• Transportation"></textarea>
-                        @error('exclusions')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div> --}}
-
                     <!-- Terms & Conditions -->
-                    <div>
+                    <div class="col-span-1 md:col-span-2">
                         <label for="terms_conditions"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Terms & Conditions
@@ -172,14 +144,13 @@
                         @enderror
                     </div>
 
-                    <!-- Images Upload -->
-                    <div class="mb-4 col-span-2">
+                    <!-- Day Tour Images -->
+                    <div class="col-span-1 md:col-span-2">
                         <label for="newImageInput"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
                             Day Tour Images
                         </label>
-
-                        <div class="flex flex-wrap gap-4" wire:sortable="reorderImages">
+                        <div class="flex flex-col md:flex-row flex-wrap gap-4" wire:sortable="reorderImages">
                             @php
                                 $displayImages = array_merge($uploadedImagePreviews, $persistedImagePaths);
                             @endphp
@@ -195,22 +166,18 @@
                                             <img src="{{ asset('storage/' . $image) }}"
                                                 class="w-52 h-40 object-cover rounded-md shadow-sm">
                                         @endif
-
                                         <button type="button" wire:click="removeImage({{ $index }})"
                                             class="absolute top-2 right-2 bg-gray-200 text-gray-500 rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-300 hover:text-red-700 transition">
                                             ×
                                         </button>
-
                                         @if ($loop->first)
                                             <span
-                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">
-                                                Main Image
-                                            </span>
+                                                class="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs rounded-sm px-1">Main
+                                                Image</span>
                                         @endif
                                     </div>
                                 @endforeach
 
-                                <!-- Add more placeholder -->
                                 <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
                                     wire:target="newImages">
                                     <div
@@ -223,7 +190,6 @@
                                     </div>
                                 </label>
                             @else
-                                <!-- First upload placeholder -->
                                 <label for="newImageInput" class="cursor-pointer shrink-0" wire:loading.remove
                                     wire:target="newImages">
                                     <div
@@ -238,27 +204,13 @@
                                 </label>
                             @endif
 
-                            <!-- Hidden Input -->
                             <input multiple type="file" wire:model="newImages" id="newImageInput"
                                 accept="image/png, image/jpeg" class="hidden">
-
                             @error('newImages.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        <!-- Upload Spinner -->
-                        <div wire:loading wire:target="newImages" class="flex items-center justify-start mt-2">
-                            <svg class="animate-spin h-5 w-5 mr-2 text-green-700" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
-                            </svg>
-                            <span>Uploading...</span>
-                        </div>
                     </div>
-
 
                     <!-- Status -->
                     <div>
@@ -279,11 +231,10 @@
                             <span class="text-gray-800 dark:text-gray-200 text-sm">Active</span>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex justify-between items-center space-y-2 mt-6">
+                <div class="flex justify-between items-center space-y-2 mt-6 gap-2">
                     <x-ghost-button onclick="window.location.href='{{ route('admin.day-tours') }}'" type="button">
                         Cancel
                     </x-ghost-button>
@@ -294,6 +245,7 @@
                     </x-button>
                 </div>
             </form>
+
         </div>
 
         <!-- Create Confirmation Modal -->
