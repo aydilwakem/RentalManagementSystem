@@ -29,15 +29,17 @@
 
             <!-- Form container -->
             <form wire:submit.prevent="">
-                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+
                     <!-- Name of Event Hall -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label for="name_number"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
-                            Name <span class="text-red-500">*</span></label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Event Hall Name <span class="text-red-500">*</span>
+                        </label>
                         <input type="text" wire:model="name_number" id="name_number"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Amity Hall" required>
                         @error('name_number')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -45,12 +47,12 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
                         <textarea wire:model="description" id="description" rows="3"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600 resize-none
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
                             placeholder="Ex. Enjoy our spacious hall with stunning outdoor access."></textarea>
                         @error('description')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -59,13 +61,13 @@
 
                     <!-- Amount -->
                     <div>
-                        <label for="amount"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Base Rate (first 4
-                            hours) <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="amount" id="amount" rows="8"
+                        <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Base Rate (first 4 hours) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" wire:model="amount" id="amount"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 45,000.00"></input>
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. 45,000.00">
                         @error('amount')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -73,13 +75,13 @@
 
                     <!-- Capacity -->
                     <div>
-                        <label for="capacity"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Maximum
-                            Capacity <span class="text-red-500">*</span></label>
-                        <input type="number" wire:model="capacity" id="capacity" rows="8"
+                        <label for="capacity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Maximum Capacity <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" wire:model="capacity" id="capacity"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 100 Pax"></input>
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. 100 Pax">
                         @error('capacity')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -88,25 +90,27 @@
                     <!-- Extra Charge Per Hour -->
                     <div>
                         <label for="extra_charge_per_hour"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Extra
-                            Charge Per Hour <span class="text-red-500">*</span></label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Extra Charge Per Hour <span class="text-red-500">*</span>
+                        </label>
                         <input type="text" wire:model="extra_charge_per_hour" id="extra_charge_per_hour"
-                            rows="8"
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-600 focus:border-green-600
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            placeholder="Ex. 7,000.00"></input>
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                            placeholder="Ex. 7,000.00">
                         @error('extra_charge_per_hour')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
+                    <!-- Status -->
                     <div>
                         <label for="property_status"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
-                            Status <span class="text-red-500">*</span></label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Event Hall Status <span class="text-red-500">*</span>
+                        </label>
                         <select wire:model="property_status" id="property_status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5
-                            dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
+                dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
                             <option value="available">Available</option>
                             <option value="out_of_service">Out of Service</option>
                         </select>
@@ -115,10 +119,10 @@
                         @enderror
                     </div>
 
-                    <!-- Available Amenities (Dynamic) -->
-                    <div class="sm:col-span-2">
+                    <!-- Amenities -->
+                    <div class="md:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             @foreach ($features as $feature)
                                 <div class="flex items-center">
                                     <input type="checkbox" wire:model="selectedFeatures" value="{{ $feature->id }}"
@@ -134,8 +138,9 @@
                         @enderror
                     </div>
 
+
                     <!-- Image Upload -->
-                    <div class="mb-4 col-span-2">
+                    <div class="mb-4 md:col-span-2">
                         <label for="newImageInput"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Image(s)</label>
@@ -179,8 +184,8 @@
                                     wire:target="newImages">
                                     <div
                                         class="w-52 h-40 border-2 border-dashed border-gray-400 rounded-md flex items-center justify-center text-gray-400">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
@@ -217,14 +222,15 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10"
                                     stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z">
+                                </path>
                             </svg>
                             <span>Uploading...</span>
                         </div>
                     </div>
 
-                    <!-- Submit & Cancel Buttons at Bottom -->
-                    <div class="mt-6 flex justify-between gap-4 sm:col-span-2">
+                    <!-- Buttons -->
+                    <div class="mt-6 flex justify-between gap-4 md:col-span-2">
                         <x-ghost-button onclick="history.back()" type="button">
                             Cancel
                         </x-ghost-button>
@@ -233,7 +239,10 @@
                             Create Event Hall
                         </x-button>
                     </div>
+
+                </div>
             </form>
+
 
             <!-- Create Confirmation Modal -->
             <x-dialog-modal wire:model.live="confirmCreateItem">

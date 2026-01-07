@@ -55,9 +55,9 @@
 
             <!-- Table -->
             <div
-                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                class="bg-white rounded-lg shadow-md  border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
-                <div class="flex items-center justify-between d p-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 space-y-2 md:space-y-0">
                     <div class="flex">
                         <div class="relative w-full">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -110,205 +110,207 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search, transactionStatus"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            {{-- Transaction Number --}}
-                            <th scope="col" class="px-4 py-3">Event ID</th>
-                            <th scope="col" class="px-4 py-3">Company Name</th>
-                            {{-- <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                <button class="flex items-center">
-                                    Booked By
-                                    @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending)
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending)
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th> --}}
-                            <th scope="col" class="px-4 py-3">Event Type</th>
-                            <th scope="col" class="px-4 py-3">Event Hall</th>
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('event_date_start')">
-                                <button class="flex items-center">
-                                    Event Start
-                                    @if ($sortBy !== 'event_date_start')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-                            <th scope="col" class="px-4 py-3">Event End</th>
-                            <th scope="col" class="px-4 py-3 text-center">Status</th>
-                            <th scope="col" class="px-4 py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search, transactionStatus" class="dark:bg-gray-700">
-                        @forelse ($event as $eventItem)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ $eventItem->transaction_number }}
-                                </th>
-
-                                <td class="px-4 py-3">
-                                    {{ $eventItem->transactionUser->company_name ?? 'N/A' }}
-                                </td>
-
-                                {{-- <td class="px-4 py-3">
-                                    {{ $eventItem->transactionUser->first_name }}
-                                    {{ $eventItem->transactionUser->last_name }}
-                                </td> --}}
-                                <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A' }} </td>
-                                <td class="px-4 py-3">
-                                    @foreach ($eventItem->properties->where('property_type_id', 3) as $index => $property)
-                                        {{ $property->name_number ?? 'N/A' }}{{ !$loop->last ? ', ' : '' }}
-                                    @endforeach
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('F j, Y') }}<br>
-                                    {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('g:i A') }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('F j, Y') }}<br>
-                                    {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('g:i A') }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if ($eventItem->transaction_status === 'pending')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 text-center">
-                                            Awaiting Payment
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'reserved')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500 text-center">
-                                            Pending Verification
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'receipt_verified')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500 text-center">
-                                            Payment Verified
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'confirmed')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600 text-center">
-                                            Confirmed
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'ongoing')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600 text-center">
-                                            On-Going
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'done')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600 text-center">
-                                            Completed
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'no_show')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500 text-center">
-                                            No Show
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'terminated')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600 text-center">
-                                            Terminated
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'expired')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500 text-center">
-                                            Expired
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'cancelled')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600 text-center">
-                                            Cancelled
-                                        </span>
-                                    @elseif ($eventItem->transaction_status === 'archived')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-300 text-gray-700 text-center">
-                                            Archived
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
-                                    <!-- View Icon -->
-                                    @can('event-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Edit Icon -->
-                                    @can('event-edit')
-                                        <i class=" fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Delete Icon -->
-                                    @can('event-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
-                                            wire:click="confirmDelete({{ $eventItem->id }})"
-                                            wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
-
-                                </td>
-                            </tr>
-                        @empty
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search, transactionStatus"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                             <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No events found.
-                                </td>
+                                {{-- Transaction Number --}}
+                                <th scope="col" class="px-4 py-3">Event ID</th>
+                                <th scope="col" class="px-4 py-3">Company Name</th>
+                                {{-- <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                    <button class="flex items-center">
+                                        Booked By
+                                        @if ($sortBy !== 'name')
+                                            {{-- Default icon when sorting is not active
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending)
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending)
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th> --}}
+                                <th scope="col" class="px-4 py-3">Event Type</th>
+                                <th scope="col" class="px-4 py-3">Event Hall</th>
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('event_date_start')">
+                                    <button class="flex items-center">
+                                        Event Start
+                                        @if ($sortBy !== 'event_date_start')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+                                <th scope="col" class="px-4 py-3">Event End</th>
+                                <th scope="col" class="px-4 py-3 text-center">Status</th>
+                                <th scope="col" class="px-4 py-3 text-center">Action</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search, transactionStatus" class="dark:bg-gray-700">
+                            @forelse ($event as $eventItem)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ $eventItem->transaction_number }}
+                                    </th>
+
+                                    <td class="px-4 py-3">
+                                        {{ $eventItem->transactionUser->company_name ?? 'N/A' }}
+                                    </td>
+
+                                    {{-- <td class="px-4 py-3">
+                                        {{ $eventItem->transactionUser->first_name }}
+                                        {{ $eventItem->transactionUser->last_name }}
+                                    </td> --}}
+                                    <td class="px-4 py-3"> {{ $eventItem->event_type->name ?? 'N/A' }} </td>
+                                    <td class="px-4 py-3">
+                                        @foreach ($eventItem->properties->where('property_type_id', 3) as $index => $property)
+                                            {{ $property->name_number ?? 'N/A' }}{{ !$loop->last ? ', ' : '' }}
+                                        @endforeach
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('F j, Y') }}<br>
+                                        {{ \Carbon\Carbon::parse($eventItem->start_datetime)->format('g:i A') }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('F j, Y') }}<br>
+                                        {{ \Carbon\Carbon::parse($eventItem->end_datetime)->format('g:i A') }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if ($eventItem->transaction_status === 'pending')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 text-center">
+                                                Awaiting Payment
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'reserved')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-500 text-center">
+                                                Pending Verification
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'receipt_verified')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-500 text-center">
+                                                Payment Verified
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'confirmed')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600 text-center">
+                                                Confirmed
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'ongoing')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-600 text-center">
+                                                On-Going
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'done')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-indigo-200 text-indigo-600 text-center">
+                                                Completed
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'no_show')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-pink-100 text-pink-500 text-center">
+                                                No Show
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'terminated')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-rose-100 text-rose-600 text-center">
+                                                Terminated
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'expired')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-500 text-center">
+                                                Expired
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'cancelled')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600 text-center">
+                                                Cancelled
+                                            </span>
+                                        @elseif ($eventItem->transaction_status === 'archived')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-gray-300 text-gray-700 text-center">
+                                                Archived
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-2">
+                                        <!-- View Icon -->
+                                        @can('event-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 dark:hover:text-blue-500"
+                                                wire:navigate
+                                                href="{{ route('admin.view-event', ['event' => $eventItem->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Edit Icon -->
+                                        @can('event-edit')
+                                            <i class=" fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 dark:hover:text-yellow-500"
+                                                wire:navigate
+                                                href="{{ route('admin.edit-event', ['event' => $eventItem->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Delete Icon -->
+                                        @can('event-delete')
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 dark:hover:text-red-500"
+                                                wire:click="confirmDelete({{ $eventItem->id }})"
+                                                wire:loading.attr="disabled">
+                                            </i>
+                                        @endcan
+
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500">
+                                        No events found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                 {{-- Pagination --}}
                 <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">

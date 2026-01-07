@@ -3697,7 +3697,7 @@
                 <div>
                     <!-- Amount Paid -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Amount Paid <span
+                        <label class="block text-sm text-gray-700 font-semibold dark:text-gray-300">Amount Paid <span
                                 class="text-red-500">*</span></label>
                         <input type="number" wire:model="edit_amount_paid"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
@@ -3709,7 +3709,7 @@
 
                     <!-- Payment Date -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Payment Date <span
+                        <label class="block text-sm text-gray-700 font-semibold dark:text-gray-300">Payment Date <span
                                 class="text-red-500">*</span></label>
                         <input type="date" wire:model="edit_payment_date"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
@@ -3721,7 +3721,7 @@
 
                     <!-- Payment Type -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Payment Type <span
+                        <label class="block text-sm text-gray-700 font-semibold dark:text-gray-300">Payment Type <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="edit_payment_type"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
@@ -3738,7 +3738,7 @@
 
                     <!-- Payment Method -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Payment Method <span
+                        <label class="block text-sm text-gray-700 font-semibold dark:text-gray-300">Payment Method <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="edit_payment_method_id"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white">
@@ -3756,7 +3756,7 @@
 
                     <!-- Proof of Payment Upload -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold mb-2">Proof of Payment</label>
+                        <label class="block text-sm text-gray-700 font-semibold mb-2 dark:text-gray-300">Proof of Payment</label>
 
                         <!-- Hidden file input -->
                         <input id="edit_payment_screenshot" type="file" accept="image/*"
@@ -3832,7 +3832,7 @@
 
                     <!-- Notes -->
                     <div class="mt-4">
-                        <label class="block text-sm text-gray-700 font-semibold">Notes</label>
+                        <label class="block text-sm text-gray-700 font-semibold dark:text-gray-300">Notes</label>
                         <textarea wire:model="edit_notes"
                             class="resize-none w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-600 dark:bg-gray-700 dark:text-white"
                             rows="3" placeholder="Optional notes about this payment"></textarea>

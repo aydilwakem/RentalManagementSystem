@@ -10,7 +10,7 @@
         </div>
     @else
         <div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between space-x-4">
                 <!-- Create Room Button -->
                 @can('event-hall-create')
                     <div class="flex items-center justify-between mb-4">
@@ -39,8 +39,9 @@
                         {{ session('message') }}
                     </div>
                 @endif
+
                 <!-- Header -->
-                <div class="flex items-center justify-between d p-4">
+                <div class="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
                     {{-- Search Tab --}}
                     <div class="flex">
                         <div class="relative w-full">
@@ -112,214 +113,222 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search, statusFilter"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                    class="accent-blue-600 w-4 h-4">
-                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                    <span>ID</span>
-                                    @if ($sortBy !== 'id')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search, statusFilter"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+                                    <div class="flex items-center space-x-2 cursor-pointer"
+                                        wire:click="setSortBy('id')">
+                                        <span>ID</span>
+                                        @if ($sortBy !== 'id')
+                                            {{-- Default icon when sorting is not active --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
-                                    @endif
-                                </div>
-                            </th>
-
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                <button class="flex items-center">
-                                    Name
-                                    @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-
-                            {{-- <th scope="col" class="px-4 py-3">Description</th> --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('capacity')">
-                                <button class="flex items-center">
-                                    Capacity
-                                    @if ($sortBy !== 'capacity')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-                            <th scope="col" class="px-4 py-3">
-                                <button class="flex items-center" wire:click="setSortBy('amount')">
-                                    Base Rate
-                                    @if ($sortBy !== 'amount')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-                            <th scope="col" class="px-4 py-3">Extra Charge Per Hr</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
-                            <th scope="col" class="px-4 py-3 text-center">Actions</th>
-                            {{-- <th scope="col" class="px-4 py-3">
-                            <span class="sr-only">Actions</span>
-                        </th> --}}
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search, statusFilter" class="dark:bg-gray-700">
-                        @forelse ($halls as $hall)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <input wire:model.live="selectedRows" type="checkbox" name="halls[]"
-                                        value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
-                                    {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
+                                    </div>
                                 </th>
-                                <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white">
-                                    {{ $hall->name_number }} </td>
-                                {{-- <td class="px-4 py-3">
-                                    @if (!empty($hall->description))
-                                        {{ Str::limit($hall->description, 40, '...') }}
-                                    @else
-                                        <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
-                                            provided.</em>
-                                    @endif
-                                </td> --}}
-                                <td class="px-4 py-3"> {{ $hall->capacity }} Pax</td>
-                                <td class="px-4 py-3">₱{{ number_format($hall->amount, 2) }} </td>
-                                <td class="px-4 py-3">₱{{ number_format($hall->extra_charge_per_hour, 2) }} </td>
-                                <td class="px-4 py-3">
-                                    @if ($hall->property_status === 'available')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
-                                    @elseif($hall->property_status === 'out_of_service')
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out
-                                            of Service</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-2">
 
-                                    <!-- View Icon -->
-                                    @can('event-hall-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
-                                        </i>
-                                    @endcan
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                    <button class="flex items-center">
+                                        Name
+                                        @if ($sortBy !== 'name')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
 
-                                    <!-- Edit Icon -->
-                                    @can('event-hall-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    <!-- Delete Icon -->
-                                    @can('event-hall-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
-                                            wire:click="confirmDelete({{ $hall->id }})" wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
-                                </td>
+                                {{-- <th scope="col" class="px-4 py-3">Description</th> --}}
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('capacity')">
+                                    <button class="flex items-center">
+                                        Capacity
+                                        @if ($sortBy !== 'capacity')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+                                <th scope="col" class="px-4 py-3">
+                                    <button class="flex items-center" wire:click="setSortBy('amount')">
+                                        Base Rate
+                                        @if ($sortBy !== 'amount')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+                                <th scope="col" class="px-4 py-3">Extra Charge Per Hr</th>
+                                <th scope="col" class="px-4 py-3">Status</th>
+                                <th scope="col" class="px-4 py-3 text-center">Actions</th>
+                                {{-- <th scope="col" class="px-4 py-3">
+                                <span class="sr-only">Actions</span>
+                            </th> --}}
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="15" class="text-center py-10 text-gray-500">
-                                    No event halls found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search, statusFilter" class="dark:bg-gray-700">
+                            @forelse ($halls as $hall)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <input wire:model.live="selectedRows" type="checkbox" name="halls[]"
+                                            value="{{ $hall->id }}" class="accent-blue-600 w-4 h-4 me-1">
+                                        {{ $fakeIDs[$hall->id] ?? 'HALL-???' }}
+                                    </th>
+                                    <td class="px-4 py-3 text-gray-900 font-semibold dark:text-white">
+                                        {{ $hall->name_number }} </td>
+                                    {{-- <td class="px-4 py-3">
+                                        @if (!empty($hall->description))
+                                            {{ Str::limit($hall->description, 40, '...') }}
+                                        @else
+                                            <em class="text-gray-600 leading-relaxed dark:text-gray-200">No description
+                                                provided.</em>
+                                        @endif
+                                    </td> --}}
+                                    <td class="px-4 py-3"> {{ $hall->capacity }} Pax</td>
+                                    <td class="px-4 py-3">₱{{ number_format($hall->amount, 2) }} </td>
+                                    <td class="px-4 py-3">₱{{ number_format($hall->extra_charge_per_hour, 2) }} </td>
+                                    <td class="px-4 py-3">
+                                        @if ($hall->property_status === 'available')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-600">Available</span>
+                                        @elseif($hall->property_status === 'out_of_service')
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-600">Out
+                                                of Service</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-2">
+
+                                        <!-- View Icon -->
+                                        @can('event-hall-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                                wire:navigate
+                                                href="{{ route('admin.view-event-hall', ['eventHall' => $hall->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Edit Icon -->
+                                        @can('event-hall-edit')
+                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                                wire:navigate
+                                                href="{{ route('admin.edit-event-hall', ['eventHall' => $hall->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        <!-- Delete Icon -->
+                                        @can('event-hall-delete')
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
+                                                wire:click="confirmDelete({{ $hall->id }})"
+                                                wire:loading.attr="disabled">
+                                            </i>
+                                        @endcan
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="text-center py-10 text-gray-500">
+                                        No event halls found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
                 {{-- Pagination --}}
                 <div class="py-4 px-3 dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex ">

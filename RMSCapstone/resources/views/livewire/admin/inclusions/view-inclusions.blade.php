@@ -18,7 +18,7 @@
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center justify-between mb-3 space-x-4">
 
                 @can('event-inclusions-create')
                     <x-button icon="fas fa-plus" href="{{ route('admin.create-inclusion') }}">
@@ -40,9 +40,10 @@
                 class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                 <!-- Header-->
                 <div
-                    class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                    class="bg-white rounded-lg shadow-md border dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                     <!-- Header-->
-                    <div class="flex items-center justify-between d p-4">
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between p-4 space-y-2 md:space-y-0">
                         <!-- Search-->
                         <div class="flex">
                             <div class="relative w-full">
@@ -87,10 +88,10 @@
                         {{-- Amenity Type Sort --}}
                         <div class="flex space-x-3">
                             <div class="flex space-x-3 items-center">
-                                <label class=" text-sm font-medium text-gray-900 dark:text-white">Inclusion
+                                <label class=" text-sm font-medium text-gray-900 dark:text-white md:w-auto w-full">Inclusion
                                     Type:</label>
                                 <select wire:model.live="propertyFeatureType"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-auto p-2.5
                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                     <option value="">All</option>
                                     <option value="appliance">Appliance</option>
@@ -119,156 +120,159 @@
                             <span class="text-green-700 text-sm">Loading...</span>
                         </div>
                     </div>
-                    <table class="w-full text-left">
-                        <thead wire:loading.remove wire:target="search"
-                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                            <tr>
-                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                        class="accent-blue-600 w-4 h-4">
-                                    {{-- ID --}}
-                                    <div class="flex items-center space-x-2 cursor-pointer"
-                                        wire:click="setSortBy('id')">
-                                        <span>ID</span>
-                                        @if ($sortBy !== 'id')
-                                            {{-- Default icon when sorting is not active --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                            </svg>
-                                        @else
-                                            @if ($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
-                                        @endif
-                                        </button>
-                                    </div>
-                                </th>
 
-                                {{-- Name --}}
-                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                    <button class="flex items-center">
-                                        Name
-                                        @if ($sortBy !== 'name')
-                                            {{-- Default icon when sorting is not active --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                            </svg>
-                                        @else
-                                            @if ($sortDir == 'ASC')
-                                                {{-- Up arrow (Ascending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                                </svg>
-                                            @else
-                                                {{-- Down arrow (Descending) --}}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="size-4 ml-1">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            @endif
-                                        @endif
-                                    </button>
-                                </th>
-                                <th scope="col" class="px-4 py-3">Quantity</th>
-                                <th scope="col" class="px-4 py-3">Amenity Type</th>
-                                <th scope="col" class="px-4 py-3">Status</th>
-
-                                {{-- Actions --}}
-                                <th scope="col" class="px-4 py-3 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody wire:loading.remove wire:target="search" class="text-left">
-                            @forelse ($inclusions as $inclusion)
-                                <tr
-                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                    <th scope="row"
-                                        class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                        <input wire:model.live="selectedRows" type="checkbox" name="inclusions[]"
-                                            value="{{ $inclusion->id }}" class="accent-blue-600 w-4 h-4 me-2">
-                                        {{ $fakeIDs[$inclusion->id] ?? 'FTR-???' }}
-                                    </th>
-                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
-                                        {{ $inclusion->name }}</td>
-                                    <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
-                                        {{ $inclusion->quantity }}</td>
-                                    <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
-                                        {{ ucfirst($inclusion->property_feature_type) }}
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        @if ($inclusion->is_active)
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
-                                                Active
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
-                                                Inactive
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 flex items-center justify-center space-x-3">
-
-                                        @can('event-inclusions-view')
-                                            {{-- View --}}
-                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-100 dark:hover:text-blue-500"
-                                                wire:navigate
-                                                href="{{ route('admin.view-inclusion', ['inclusion' => $inclusion->id]) }}">
-                                            </i>
-                                        @endcan
-
-                                        @can('event-inclusions-edit')
-                                            {{-- Edit --}}
-                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-100 dark:hover:text-yellow-500"
-                                                wire:navigate
-                                                href="{{ route('admin.edit-inclusion', ['inclusion' => $inclusion->id]) }}">
-                                            </i>
-                                        @endcan
-
-                                        @can('event-inclusions-delete')
-                                            {{-- Delete --}}
-                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-100 dark:hover:text-red-500"
-                                                wire:click="confirmDelete({{ $inclusion->id }})"
-                                                wire:loading.attr="disabled">
-                                            </i>
-                                        @endcan
-
-
-                                    </td>
-                                </tr>
-                            @empty
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead wire:loading.remove wire:target="search"
+                                class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
                                 <tr>
-                                    <td colspan="15" class="text-center py-10 text-gray-500">
-                                        No inclusions found.
-                                    </td>
+                                    <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                        <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                            class="accent-blue-600 w-4 h-4">
+                                        {{-- ID --}}
+                                        <div class="flex items-center space-x-2 cursor-pointer"
+                                            wire:click="setSortBy('id')">
+                                            <span>ID</span>
+                                            @if ($sortBy !== 'id')
+                                                {{-- Default icon when sorting is not active --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                </svg>
+                                            @else
+                                                @if ($sortDir == 'ASC')
+                                                    {{-- Up arrow (Ascending) --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                        class="size-4 ml-1">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                    </svg>
+                                                @else
+                                                    {{-- Down arrow (Descending) --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                        class="size-4 ml-1">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                    </svg>
+                                                @endif
+                                            @endif
+                                            </button>
+                                        </div>
+                                    </th>
+
+                                    {{-- Name --}}
+                                    <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                        <button class="flex items-center">
+                                            Name
+                                            @if ($sortBy !== 'name')
+                                                {{-- Default icon when sorting is not active --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                </svg>
+                                            @else
+                                                @if ($sortDir == 'ASC')
+                                                    {{-- Up arrow (Ascending) --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                        class="size-4 ml-1">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                    </svg>
+                                                @else
+                                                    {{-- Down arrow (Descending) --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                        class="size-4 ml-1">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                    </svg>
+                                                @endif
+                                            @endif
+                                        </button>
+                                    </th>
+                                    <th scope="col" class="px-4 py-3">Quantity</th>
+                                    <th scope="col" class="px-4 py-3">Amenity Type</th>
+                                    <th scope="col" class="px-4 py-3">Status</th>
+
+                                    {{-- Actions --}}
+                                    <th scope="col" class="px-4 py-3 text-center">Action</th>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody wire:loading.remove wire:target="search" class="text-left">
+                                @forelse ($inclusions as $inclusion)
+                                    <tr
+                                        class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                        <th scope="row"
+                                            class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                            <input wire:model.live="selectedRows" type="checkbox" name="inclusions[]"
+                                                value="{{ $inclusion->id }}" class="accent-blue-600 w-4 h-4 me-2">
+                                            {{ $fakeIDs[$inclusion->id] ?? 'FTR-???' }}
+                                        </th>
+                                        <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                            {{ $inclusion->name }}</td>
+                                        <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
+                                            {{ $inclusion->quantity }}</td>
+                                        <td class="px-4 py-3  text-gray-900 dark:text-gray-200">
+                                            {{ ucfirst($inclusion->property_feature_type) }}
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            @if ($inclusion->is_active)
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                                                    Active
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                                                    Inactive
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3 flex items-center justify-center space-x-3">
+
+                                            @can('event-inclusions-view')
+                                                {{-- View --}}
+                                                <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-100 dark:hover:text-blue-500"
+                                                    wire:navigate
+                                                    href="{{ route('admin.view-inclusion', ['inclusion' => $inclusion->id]) }}">
+                                                </i>
+                                            @endcan
+
+                                            @can('event-inclusions-edit')
+                                                {{-- Edit --}}
+                                                <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-100 dark:hover:text-yellow-500"
+                                                    wire:navigate
+                                                    href="{{ route('admin.edit-inclusion', ['inclusion' => $inclusion->id]) }}">
+                                                </i>
+                                            @endcan
+
+                                            @can('event-inclusions-delete')
+                                                {{-- Delete --}}
+                                                <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-100 dark:hover:text-red-500"
+                                                    wire:click="confirmDelete({{ $inclusion->id }})"
+                                                    wire:loading.attr="disabled">
+                                                </i>
+                                            @endcan
+
+
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="15" class="text-center py-10 text-gray-500">
+                                            No inclusions found.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
 
                     {{-- Pagination --}}

@@ -30,9 +30,9 @@
 
             <!-- Form container -->
             <form wire:submit.prevent="">
-                <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
                     <!-- Name of Event Hall -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label for="name_number"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Event Hall
                             Name <span class="text-red-500">*</span></label>
@@ -46,7 +46,7 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label for="description"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Description</label>
                         <textarea wire:model="description" id="description" rows="3"
@@ -115,7 +115,7 @@
                     </div>
 
                     <!-- Available Amenities (Dynamic) -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 gap-2">
                             @foreach ($inclusions as $inclusion)
@@ -134,7 +134,7 @@
                     </div>
 
                     <!-- Image Upload -->
-                    <div class="mb-4 col-span-2">
+                    <div class="mb-4 md:col-span-2">
                         <!-- Section Title -->
                         <label for="newImageInput"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Property
@@ -225,7 +225,7 @@
                     </div>
 
                     <!-- Submit & Cancel Buttons at Bottom -->
-                    <div class="mt-6 flex justify-between gap-4 sm:col-span-2">
+                    <div class="mt-6 flex justify-between gap-4 md:col-span-2">
                         <x-ghost-button onclick="history.back()" type="button">
                             Cancel
                         </x-ghost-button>
