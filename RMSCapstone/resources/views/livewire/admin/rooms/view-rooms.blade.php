@@ -41,7 +41,7 @@
         <div
             class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
             <!-- Header-->
-            <div class="flex items-center justify-between p-4 dark:bg-gray-800 rounded-lg">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 space-y-2 md:space-y-0">
                 <!-- Search Tab -->
                 <div class="flex">
                     <div class="relative w-full">

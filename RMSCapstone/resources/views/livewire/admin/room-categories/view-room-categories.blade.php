@@ -22,7 +22,7 @@
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between  mb-4">
+            <div class="flex items-center justify-between  mb-4 space-x-4">
                 <!-- Create Room Button -->
                 @can('room-category-create')
                     <div class="flex justify-between items-center">
@@ -175,7 +175,7 @@
                                 <tr
                                     class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
                                     <th scope="row"
-                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap space-x-1">
+                                        class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap space-x-1">
                                         <input wire:model.live="selectedRows" type="checkbox" name="roomCategories[]"
                                             value="{{ $roomCategory->id }}" class="accent-blue-600 w-4 h-4">
                                         <span>{{ $fakeIDs[$roomCategory->id] ?? 'RCT-???' }}</span>

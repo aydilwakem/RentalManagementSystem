@@ -3,7 +3,7 @@
     <!-- Back Button -->
     <div class="mb-4">
         <button onclick="window.history.back();"
-            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline">
+            class="inline-flex items-center text-gray-700 hover:text-gray-900 font-semibold focus:outline-none hover:underline dark:text-white dark:hover:text-gray-300">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />
@@ -30,7 +30,7 @@
             <div class="bg-white rounded-lg shadow-md overflow-x-auto border">
                 <!-- Table Body-->
                 <table class="w-full text-left">
-                    <thead class="text-sm text-gray-700 bg-gray-200">
+                    <thead class="text-sm text-gray-700 bg-gray-200 dark:bg-green-100">
                         <tr>
                             <!-- ID -->
                             <th scope="col" class="px-4 py-3 text-left">ID</th>
@@ -45,10 +45,11 @@
                             <th scope="col" class="px-4 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody class="text-center dark:bg-gray-700 ">
                         @foreach ($deletedRooms as $room)
-                            <tr class="border-b">
-                                <td class="px-4 py-3 text-left font-medium text-gray-900">{{ $fakeIDs[$room->id] ?? 'HS-???' }}
+                            <tr class="border-b dark:text-white">
+                                <td class="px-4 py-3 font-medium text-gray-900 text-left dark:text-white">
+                                    {{ $fakeIDs[$room->id] ?? 'HS-???' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">{{ $room->name_number }}</td>
                                 <td class="px-4 py-3 text-left">{{ $room->category->name ?? 'N/A' }}</td>

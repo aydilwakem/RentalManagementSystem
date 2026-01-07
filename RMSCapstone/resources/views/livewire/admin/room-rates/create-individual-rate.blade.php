@@ -12,11 +12,11 @@
     ]" />
     </x-slot>
 
-    <div class="mx-auto border rounded-lg p-6 max-w-3xl mb-6 mt-3 bg-white">
+    <div class="mx-auto border rounded-lg p-6 max-w-3xl mb-6 mt-3 bg-white dark:bg-gray-700 dark:border-gray-600">
 
-        <div class="relative flex justify-center items-center mb-4">
+        <div class="relative flex justify-center items-center mb-4 ">
             <!-- Title -->
-            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center">Add new room rate for {{ $room->name_number }}
+            <h2 class="mb-4 text-xl font-bold text-gray-900 text-center dark:text-white">Add new room rate for {{ $room->name_number }}
             </h2>
 
             <!-- Back Button -->
@@ -31,7 +31,7 @@
 
                 <!-- Room Rate Name -->
                 <div class="sm:col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Room Rate Name <span
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Room Rate Name <span
                             class="text-red-500">*</span></label>
                     <input type="text" wire:model="name" id="name" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
@@ -43,7 +43,7 @@
 
                 <!-- Start Date -->
                 <div>
-                    <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900">Start Date <span
+                    <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Start Date <span
                             class="text-red-500">*</span></label>
                     <input type="date" wire:model.live="start_date" id="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
@@ -54,7 +54,7 @@
 
                 <!-- End Date -->
                 <div>
-                    <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900">End Date <span
+                    <label for="end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">End Date <span
                             class="text-red-500">*</span></label>
                     <input type="date" wire:model.live="end_date" id="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
@@ -65,16 +65,16 @@
 
                 <!-- Adjusted Rate (by percentage) -->
                 <div>
-                    <label for="rate_percentage" class="block mb-2 text-sm font-medium text-gray-900">
+                    <label for="rate_percentage" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                         Adjusted Rate <span class="text-red-500">*</span>
-                        <span class="text-xs text-gray-500">(Current Base Rate:
+                        <span class="text-xs text-gray-500 dark:text-gray-300">(Current Base Rate:
                             {{ number_format($room->amount, 2) }})</span>
                     </label>
 
                     <div class="flex items-center gap-2">
                         <input type="number" wire:model="amount" id="amount" min="0" max="500000" onwheel="this.blur()"
-                            class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 
-            focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 
+                            class="text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300
+            focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500
             dark:text-white dark:placeholder-gray-400" placeholder="Ex. 10">
                     </div>
 
@@ -88,7 +88,7 @@
 
                 <!-- Rate Type -->
                 <div>
-                    <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900">Rate Type <span
+                    <label for="rate_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Rate Type <span
                             class="text-red-500">*</span></label>
                     <select wire:model="rate_type" id="rate_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
                             dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400">
@@ -104,7 +104,7 @@
 
                 <!-- Description -->
                 <div class="sm:col-span-2">
-                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
+                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Description</label>
                     <textarea wire:model="description" id="description"
                         placeholder="Ex. Updated rate for peak season pricing"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
@@ -198,7 +198,7 @@
 
                 <!-- Min Stay -->
                 <div class="sm:col-span-1">
-                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Minimum Nights
+                    <label for="min_stay_nights" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Minimum Nights
                         Required <span class="text-red-500">*</span></label>
                     <input type="number" wire:model="min_stay_nights" id="min_stay_nights" placeholder="Ex. 2 Nights"
                         onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize
@@ -209,7 +209,7 @@
 
                 <!-- Max Stay -->
                 <div class="sm:col-span-1">
-                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900">Maximum Nights
+                    <label for="max_stay_nights" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Maximum Nights
                         Allowed <span class="text-red-500">*</span></label>
                     <input type="number" wire:model="max_stay_nights" id="max_stay_nights" placeholder="Ex. 4 nights"
                         onwheel="this.blur()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 capitalize

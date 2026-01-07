@@ -29,7 +29,7 @@
 
             <!-- Form container -->
             <form wire:submit.prevent="">
-                <div class="grid gap-4 md:grid-cols-2 sm:gap-6">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
                     <!-- Room Name -->
                     <div>
                         <label for="name_number"
@@ -61,7 +61,7 @@
                     </div>
 
                     <!-- Guest Inputs -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
 
                         <!-- Ideal Guest -->
                         <div>
@@ -95,7 +95,7 @@
 
                         <!-- Max Occupancy Rules (Only if 'combinations') -->
                         @if ($occupancy_type === 'combinations')
-                            <div class="col-span-2 border rounded-md shadow-sm bg-gray-50 p-4">
+                            <div class="md:col-span-2 border rounded-md shadow-sm bg-gray-50 p-4">
                                 <h3 class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Occupancy
                                     Rules
                                 </h3>
@@ -167,7 +167,7 @@
                     </div>
 
                     <!-- Bed Sections -->
-                    <div class="space-y-4 col-span-2">
+                    <div class="space-y-4 md:col-span-2">
                         @foreach ($bed_type as $index => $type)
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                                 <!-- Bed Quantity -->
@@ -210,7 +210,7 @@
                                     <!-- Only show when there is default 1 bed -->
                                     @if ($index === 0)
                                         <button type="button" wire:click="addBed"
-                                            class="mt-2 text-sm text-green-600 hover:underline font-medium">
+                                            class="mt-2 text-sm text-green-600 dark:text-green-500 hover:underline font-medium">
                                             <i class="fa-solid fa-circle-plus"></i> Add Bed
                                         </button>
                                     @else
@@ -319,7 +319,7 @@
                     </div>
 
                     <!-- Available Amenities -->
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Amenities</label>
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
                             @forelse ($features as $feature)
@@ -352,7 +352,7 @@
                     </div>
 
                     <!-- Image Upload -->
-                    <div class="mb-4 col-span-2">
+                    <div class="mb-4 md:col-span-2">
                         <label for="newImageInput"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Room
                             Image(s)</label>

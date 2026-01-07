@@ -18,7 +18,7 @@
             </div>
         @endif
         <div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between space-x-4">
                 @can('amenity-create')
                     <div class="mb-4">
                         <x-button icon="fas fa-plus" href="{{ route('admin.create-amenity') }}">
@@ -37,9 +37,9 @@
             </div>
             <!-- Table -->
             <div
-                class="bg-white rounded-lg shadow-md overflow-x-auto border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                class="bg-white rounded-lg shadow-md  border dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                 <!-- Header-->
-                <div class="flex items-center justify-between d p-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between p-4 space-y-2 md:space-y-0">
                     <!-- Search-->
                     <div class="flex">
                         <div class="relative w-full">
@@ -85,10 +85,10 @@
                     </div>
                     {{-- Amenity Type Sort --}}
                     <div class="flex space-x-3">
-                        <div class="flex space-x-3 items-center">
+                        <div class="flex space-x-3 items-center w-full">
                             <label class=" text-sm font-medium text-gray-900 dark:text-white">Amenity Type:</label>
                             <select wire:model.live="propertyFeatureType"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full md:w-auto p-2.5
                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">All</option>
                                 <option value="appliance">Appliance</option>
@@ -119,148 +119,150 @@
                         <span class="text-green-700 text-sm">Loading...</span>
                     </div>
                 </div>
-                <table class="w-full text-left">
-                    <thead wire:loading.remove wire:target="search"
-                        class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
-                        <tr>
-                            <th scope="col" class="px-4 py-3 flex items-center space-x-2">
-                                <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
-                                    class="accent-blue-600 w-4 h-4">
-                                <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
-                                    <span>Amenity ID</span>
-                                    @if ($sortBy !== 'ID')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead wire:loading.remove wire:target="search"
+                            class="text-sm text-gray-700 bg-gray-200 dark:bg-gray-800 dark:text-white dark:border-t dark:border-gray-700">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 flex items-center space-x-2">
+                                    <input wire:model.live="selectPageRows" type="checkbox" id="checkAll"
+                                        class="accent-blue-600 w-4 h-4">
+                                    <div class="flex items-center space-x-2 cursor-pointer" wire:click="setSortBy('id')">
+                                        <span>Amenity ID</span>
+                                        @if ($sortBy !== 'ID')
+                                            {{-- Default icon when sorting is not active --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                                             </svg>
                                         @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
                                         @endif
-                                    @endif
-                                </div>
-                            </th>
-
-                            {{-- Name --}}
-                            <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
-                                <button class="flex items-center">
-                                    Name
-                                    @if ($sortBy !== 'name')
-                                        {{-- Default icon when sorting is not active --}}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                        </svg>
-                                    @else
-                                        @if ($sortDir == 'ASC')
-                                            {{-- Up arrow (Ascending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                            </svg>
-                                        @else
-                                            {{-- Down arrow (Descending) --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                class="size-4 ml-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        @endif
-                                    @endif
-                                </button>
-                            </th>
-                            <th scope="col" class="px-4 py-3">Quantity</th>
-                            <th scope="col" class="px-4 py-3">Amenity Type</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
-
-                            {{-- Actions --}}
-                            <th scope="col" class="px-4 py-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody wire:loading.remove wire:target="search" class="text-left dark:bg-gray-700">
-                        @forelse ($amenities as $amenity)
-                            <tr
-                                class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
-                                <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2 dark:text-gray-200">
-                                    <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
-                                        value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
-                                    <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
+                                    </div>
                                 </th>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
-                                    {{ $amenity->name }}</td>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
-                                    {{ $amenity->quantity }}</td>
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
-                                    {{ ucfirst($amenity->property_feature_type) }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if ($amenity->is_active)
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
-                                            Active
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
-                                            Inactive
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex items-center justify-center space-x-3 dark:text-gray-200">
 
-                                    @can('amenity-view')
-                                        <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
-                                            wire:navigate
-                                            href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
-                                        </i>
-                                    @endcan
+                                {{-- Name --}}
+                                <th scope="col" class="px-4 py-3" wire:click="setSortBy('name')">
+                                    <button class="flex items-center">
+                                        Name
+                                        @if ($sortBy !== 'name')
+                                            {{-- Default icon when sorting is not active --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-4 ml-1">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                            </svg>
+                                        @else
+                                            @if ($sortDir == 'ASC')
+                                                {{-- Up arrow (Ascending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                </svg>
+                                            @else
+                                                {{-- Down arrow (Descending) --}}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="size-4 ml-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                </svg>
+                                            @endif
+                                        @endif
+                                    </button>
+                                </th>
+                                <th scope="col" class="px-4 py-3">Quantity</th>
+                                <th scope="col" class="px-4 py-3">Amenity Type</th>
+                                <th scope="col" class="px-4 py-3">Status</th>
 
-
-                                    @can('amenity-edit')
-                                        <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
-                                            wire:navigate
-                                            href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
-                                        </i>
-                                    @endcan
-
-                                    @can('amenity-delete')
-                                        <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
-                                            wire:click="confirmDelete({{ $amenity->id }})" wire:loading.attr="disabled">
-                                        </i>
-                                    @endcan
-
-                                </td>
+                                {{-- Actions --}}
+                                <th scope="col" class="px-4 py-3 text-center">Action</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <!-- No Match Search / Filter Result Message -->
-                                <td colspan="15" class="text-center py-10 text-gray-500 dark:text-gray-200">
-                                    No amenities found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody wire:loading.remove wire:target="search" class="text-left dark:bg-gray-700">
+                            @forelse ($amenities as $amenity)
+                                <tr
+                                    class="border-b hover:bg-gray-50 dark:hover:bg-gray-600 dark:border-gray-700 odd:dark:bg-gray-700 even:dark:bg-gray-800">
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap flex items-center space-x-2 dark:text-gray-200">
+                                        <input wire:model.live="selectedRows" type="checkbox" name="amenities[]"
+                                            value="{{ $amenity->id }}" class="accent-blue-600 w-4 h-4">
+                                        <span>{{ $fakeIDs[$amenity->id] ?? 'AMY-???' }}</span>
+                                    </th>
+                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                        {{ $amenity->name }}</td>
+                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                        {{ $amenity->quantity }}</td>
+                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">
+                                        {{ ucfirst($amenity->property_feature_type) }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if ($amenity->is_active)
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-green-100 text-green-500">
+                                                Active
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-block py-1 px-2 rounded-full text-sm font-semibold bg-red-100 text-red-500">
+                                                Inactive
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 flex items-center justify-center space-x-3 dark:text-gray-200">
+
+                                        @can('amenity-view')
+                                            <i class="fas fa-eye text-gray-700 hover:text-blue-600 cursor-pointer dark:text-gray-200 hover:dark:text-blue-500"
+                                                wire:navigate
+                                                href="{{ route('admin.view-amenity', ['amenity' => $amenity->id]) }}">
+                                            </i>
+                                        @endcan
+
+
+                                        @can('amenity-edit')
+                                            <i class="fas fa-edit text-gray-700 hover:text-yellow-600 cursor-pointer dark:text-gray-200 hover:dark:text-yellow-500"
+                                                wire:navigate
+                                                href="{{ route('admin.edit-amenity', ['amenity' => $amenity->id]) }}">
+                                            </i>
+                                        @endcan
+
+                                        @can('amenity-delete')
+                                            <i class="fas fa-trash-alt text-gray-700 hover:text-red-600 cursor-pointer dark:text-gray-200 hover:dark:text-red-500"
+                                                wire:click="confirmDelete({{ $amenity->id }})" wire:loading.attr="disabled">
+                                            </i>
+                                        @endcan
+
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <!-- No Match Search / Filter Result Message -->
+                                    <td colspan="15" class="text-center py-10 text-gray-500 dark:text-gray-200">
+                                        No amenities found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
                 <div class="py-6 px-4 bg-white shadow-sm dark:bg-gray-800 dark:text-white rounded-lg">
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center space-x-3">

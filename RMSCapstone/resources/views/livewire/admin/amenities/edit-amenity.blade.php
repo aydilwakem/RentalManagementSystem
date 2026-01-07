@@ -103,7 +103,7 @@
                 <div class="flex-grow"></div>
 
                 {{-- Action buttons --}}
-                <div class="flex justify-between space-x-3 pt-4 mt-auto">
+                <div class="flex justify-between gap-8 pt-4 mt-auto">
                     <x-ghost-button onclick="history.back()" type="button">
                         Cancel
                     </x-ghost-button>
