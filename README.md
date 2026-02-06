@@ -33,11 +33,11 @@ We decided to build on the TALL stack to maintain full control over the admin in
 5. Run migrations: `php artisan migrate`
 6. Run the development server: `php artisan serve`
 
-
 ### 👥 Meet the Team
 
-| Name | Role | GitHub |
-| :--- | :--- | :--- |
-| **Barbie** | Project Manager, Lead Backend Developer | [@aydilwakem](https://github.com/aydilwakem) |
-| **Kristine** | Backend Developer, QA Tester | [@krstinkyl](https://github.com/krstinkyl) |
-| **Sarah** | UI/UX, Frontend Developer | [@ssarzxc](https://github.com/ssarzxc) |
+| Name         | Role                                    | GitHub                                           |
+| :----------- | :-------------------------------------- | :----------------------------------------------- |
+| **Barbie**   | Project Manager, Lead Backend Developer | [@aydilwakem](https://github.com/aydilwakem)     |
+| **Kristine** | Backend Developer, QA Tester            | [@krstinkyl](https://github.com/krstinkyl)       |
+| **Sarah**    | UI/UX, Frontend Developer               | [@ssarzxc](https://github.com/ssarzxc)           |
+| **Leo**      | Backend Developer, API Checker          | [@JanLeoEgamen](https://github.com/JanLeoEgamen) |
