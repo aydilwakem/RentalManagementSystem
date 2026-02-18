@@ -51,6 +51,7 @@ use App\Services\GuestDetailService;
 use App\Services\PaymentMethodService;
 use App\Services\PromoCodeService;
 use App\Services\RoomAvailabilityService;
+use App\Services\RoomRateService;
 use PragmaRX\Countries\Package\Countries;
 
 #[Layout('layouts.app')]
@@ -257,6 +258,10 @@ class ViewReservation extends Component
     public $edit_payment_screenshot;
     public $existing_payment_screenshot;
 
+    // Add these with other payment-related properties
+    public $showDeletePaymentModal = false;
+    public $deletingPayment;
+    public $deletePaymentId;
 
     public function render()
     {
@@ -359,26 +364,40 @@ class ViewReservation extends Component
 
     public function loadAllInvoiceItems()
     {
-        $items = [];
+      $items = [];
+        $roomRateService = app(RoomRateService::class);
 
-        // Display also the extra guest
         foreach ($this->transaction->properties as $property) {
+            $rateSummary = $roomRateService->getRateSummary(
+                $property,
+                $this->transaction->start_datetime,
+                $this->transaction->end_datetime
+            );
+            
+            $dynamicTotalRate = $rateSummary['total_amount'] ?? 0;
+            $nights = $rateSummary['nights'] ?? $property->pivot->days;
+            
+            // Calculate dynamic nightly rate
+            $dynamicNightlyRate = $nights > 0 ? $dynamicTotalRate / $nights : $property->amount;
+
             $items[] = [
                 'type' => 'property',
                 'name' => 'Room – ' . $property->name_number,
                 'quantity' => 1,
-                'days' => $property->pivot->days,
+                'days' => $nights,
                 'extra_guest' => $property->pivot->extra_guest,
                 'extra_charge' => $property->extra_person_charge,
                 'extra_charge_total' => $property->pivot->extra_charge,
-                'amount' => $property->amount,
-                'total' => $property->pivot->amount,
+                'amount' => $dynamicNightlyRate, // Dynamic rate, not base rate
+                'total' => $property->pivot->total_amount,
                 'created_at' => $property->pivot->created_at,
                 'payment_status' => $property->pivot->payment_status,
                 'id' => $property->id,
                 'pivot_id' => $property->pivot->id,
             ];
         }
+
+
 
         foreach ($this->transaction->activities as $activity) {
             $items[] = [
@@ -536,17 +555,37 @@ class ViewReservation extends Component
                 throw new \Exception('Room not found.');
             }
 
-            // Update the transaction property with new room
+            // USE THE SAME LOGIC AS GUEST RESERVATION
+            $roomRateService = app(RoomRateService::class);
+            
+            // Get the rate summary for the entire stay period
+            $rateSummary = $roomRateService->getRateSummary(
+                $newRoom,
+                $this->transaction->start_datetime,
+                $this->transaction->end_datetime
+            );
+            
+            // This is the TOTAL amount for the entire stay (not nightly rate)
+            $totalRateForStay = $rateSummary['total_amount'] ?? 0;
+
+            // Calculate extra guest charges if any
+            $days = $currentPivot->days ?? 1;
+            $extraGuests = $currentPivot->extra_guest ?? 0;
+            $extraChargePerPerson = $newRoom->extra_person_charge ?? 0;
+            $extraCharge = $extraGuests * $days * $extraChargePerPerson;
+            
+            $totalAmount = $totalRateForStay + $extraCharge;
+
+            // Update the transaction property with new room and correct rate
             $currentPivot->update([
                 'property_id' => $this->selectedNewRoomId,
-                'amount' => $newRoom->amount * $currentPivot->days,
+                'amount' => $totalRateForStay, // Total room rate for stay
+                'extra_charge' => $extraCharge, // Keep existing extra charges
+                'total_amount' => $totalAmount, // Room rate + extra charges
                 'updated_at' => now(),
             ]);
 
-            // Recalculate the transaction property amounts
-            $this->recalculateTransactionProperty($this->changingRoomPivotId);
-
-            // Update invoice totals
+            // Recalculate invoice totals
             $this->recalculateInvoice();
             $this->loadAllInvoiceItems();
 
@@ -559,6 +598,91 @@ class ViewReservation extends Component
         }
     }
 
+
+    /**
+ * ------------------------- DELETE PAYMENT ---------------------------
+ * 
+ * Opens confirmation modal for deleting a payment
+ * ---------------------------------------------------------------------
+ */
+public function confirmDeletePayment($paymentId)
+{
+    $this->deletingPayment = Payment::find($paymentId);
+    
+    if ($this->deletingPayment) {
+        $this->deletePaymentId = $paymentId;
+        $this->showDeletePaymentModal = true;
+    }
+}
+
+/**
+ * Deletes a payment from the database
+ * ---------------------------------------------------------------------
+ */
+public function deletePayment()
+{
+    Log::info('Delete Payment method called for ID: ' . $this->deletePaymentId);
+    
+    try {
+        DB::beginTransaction();
+        
+        $payment = Payment::find($this->deletePaymentId);
+        
+        if (!$payment) {
+            throw new \Exception('Payment not found.');
+        }
+        
+        // Don't allow deleting PayMongo payments
+        $isPayMongoPayment = !empty($payment->payment_reference_number) &&
+                            Str::startsWith($payment->payment_reference_number, 'pay_');
+        
+        if ($isPayMongoPayment) {
+            throw new \Exception('Online payments cannot be deleted.');
+        }
+        
+        // Don't allow deleting payments for completed transactions
+        if ($this->transaction->transaction_status === 'done') {
+            throw new \Exception('Cannot delete payment for completed transaction.');
+        }
+        
+        // Store amount before deletion for recalculation
+        $amountPaid = $payment->amount_paid;
+        
+        // Delete the payment
+        $payment->delete();
+        
+        // Recalculate invoice totals
+        $this->recalculateInvoice();
+        
+        // Refresh payments list
+        $this->payments = Payment::where('invoice_id', $this->invoice->id)->get();
+        
+        DB::commit();
+        
+        $this->closeDeletePaymentModal();
+        
+        session()->flash('success', 'Payment deleted successfully.');
+        
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Payment deletion failed: ' . $e->getMessage());
+        session()->flash('error', 'Failed to delete payment: ' . $e->getMessage());
+        $this->closeDeletePaymentModal();
+    }
+}
+
+/**
+ * Closes the delete payment modal and resets properties
+ * ---------------------------------------------------------------------
+ */
+public function closeDeletePaymentModal()
+{
+    $this->showDeletePaymentModal = false;
+    $this->reset([
+        'deletingPayment',
+        'deletePaymentId'
+    ]);
+}
 
     public function editPayment($paymentId)
     {
@@ -1990,7 +2114,6 @@ public function openDiscountModal()
 
     public function recalculateTransactionProperty($transactionPropertyId)
     {
-
         Log::info('Transaction ID ' . $transactionPropertyId);
         $transactionProperty = TransactionProperty::with('property')->find($transactionPropertyId);
 
@@ -1998,6 +2121,16 @@ public function openDiscountModal()
         if (!$transactionProperty || !$transactionProperty->property) {
             return;
         }
+
+        // USE ROOM RATE SERVICE TO GET TOTAL FOR STAY
+        $roomRateService = app(RoomRateService::class);
+        $rateSummary = $roomRateService->getRateSummary(
+            $transactionProperty->property,
+            $this->transaction->start_datetime,
+            $this->transaction->end_datetime
+        );
+        
+        $totalRateForStay = $rateSummary['total_amount'] ?? 0;
 
         // Use already-saved guest counts
         $kids = $transactionProperty->kids;
@@ -2011,10 +2144,9 @@ public function openDiscountModal()
 
         // Calculate charges
         $days = $transactionProperty->days ?? 1;
-        $ratePerDay = $transactionProperty->property->amount;
         $extraChargePerPerson = $transactionProperty->property->extra_person_charge;
 
-        $baseAmount = $days * $ratePerDay;
+        $baseAmount = $totalRateForStay; // Use the dynamic total rate for stay
         $extraCharge = $extraGuests * $days * $extraChargePerPerson;
         $totalAmount = $baseAmount + $extraCharge;
 

@@ -1678,6 +1678,12 @@
                                                             title="Edit Payment">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
+                                                        <button wire:click="confirmDeletePayment({{ $payment->id }})"
+                                                            class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500"
+                                                            title="Delete Payment">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+
                                                     @else
                                                         <span class="text-gray-400 dark:text-gray-500"
                                                             title="{{ $transaction->transaction_status === 'done'
@@ -2058,6 +2064,103 @@
             </div>
         </div>
     @endif
+
+    <!-- Delete Payment Confirmation Modal -->
+@if ($showDeletePaymentModal && $deletingPayment)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md dark:bg-gray-800">
+            <!-- Header -->
+            <div class="relative -mt-6 -mx-6 mb-4 bg-red-50 text-red-700 py-3 px-6 rounded-t-lg shadow-sm border-b dark:bg-red-900 dark:text-red-300">
+                <h2 class="text-2xl font-bold text-center">Delete Payment</h2>
+                <button wire:click="closeDeletePaymentModal"
+                    class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-2xl focus:outline-none">
+                    <span class="-translate-y-[2px]">&times;</span>
+                </button>
+            </div>
+
+            <!-- Warning Icon and Message -->
+            <div class="text-center mb-6">
+                <div class="text-red-600 text-5xl mb-4 dark:text-red-400">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 dark:text-white">Are you sure?</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    You are about to delete this payment. This action cannot be undone.
+                </p>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Amount:</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">
+                            ₱{{ number_format($deletingPayment->amount_paid, 2) }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Method:</span>
+                        <span class="text-sm text-gray-900 dark:text-white">
+                            {{ ucwords($deletingPayment->paymentMethod?->mode_of_payment_name ?? ($deletingPayment->mode_of_payment ?? 'N/A')) }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Type:</span>
+                        <span class="text-sm text-gray-900 dark:text-white">
+                            {{ ucfirst($deletingPayment->payment_type) }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Date:</span>
+                        <span class="text-sm text-gray-900 dark:text-white">
+                            {{ $deletingPayment->payment_date ? $deletingPayment->payment_date->format('M d, Y') : 'N/A' }}
+                        </span>
+                    </div>
+                    @if($deletingPayment->notes)
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Notes:</span>
+                            <span class="text-sm text-gray-900 dark:text-white">
+                                {{ Str::limit($deletingPayment->notes, 30) }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Warning Note for Online Payments -->
+            @if(!empty($deletingPayment->payment_reference_number) && Str::startsWith($deletingPayment->payment_reference_number, 'pay_'))
+                <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900 dark:border-yellow-700">
+                    <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        This appears to be an online payment. Deleting it may affect payment reconciliation.
+                    </p>
+                </div>
+            @endif
+
+            <!-- Actions -->
+            <div class="flex justify-between gap-3">
+                <x-ghost-button wire:click="closeDeletePaymentModal">
+                    Cancel
+                </x-ghost-button>
+                <button wire:click="deletePayment" 
+                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                    wire:loading.attr="disabled">
+                    <div class="flex items-center justify-center">
+                        <span wire:loading class="mr-2" wire:target="deletePayment">
+                            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12v-4a8 8 0 01-8-8z"></path>
+                            </svg>
+                        </span>
+                        <span wire:loading.remove wire:target="deletePayment">
+                            Yes, Delete Payment
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+@endif
 
     <!-- Add Charge Modal -->
     @if ($activeModal === 'service')

@@ -394,6 +394,23 @@ class CreateReservation extends Component
 
             Log::info('Dates are changed.');
 
+            // Validate that check-out is after check-in
+            if ($this->check_in_date && $this->check_out_date) {
+                $checkIn = Carbon::parse($this->check_in_date);
+                $checkOut = Carbon::parse($this->check_out_date);
+                
+                if ($checkOut->lte($checkIn)) {
+                    if ($property === 'check_out_date') {
+                        // If user selected a check-out date that's not after check-in, reset it
+                        $this->check_out_date = $checkIn->copy()->addDay()->format('Y-m-d');
+                        $this->addError('check_out_date', 'Check-out date must be after check-in date.');
+                    } else {
+                        // If user changed check-in date and it's now after or equal to check-out
+                        $this->check_out_date = $checkIn->copy()->addDay()->format('Y-m-d');
+                    }
+                }
+            }
+
             // Clears out the selected rooms, activities, and services
             $this->selectedRooms = [];
             $this->selectedActivities = [];
@@ -402,15 +419,6 @@ class CreateReservation extends Component
             // Reset pet-related properties
             $this->pet_count = 0;
             $this->pets = [];
-
-            if ($property === 'check_in_date') {
-                $checkIn = Carbon::parse($this->check_in_date);
-                $checkOut = Carbon::parse($this->check_out_date);
-
-                if ($checkOut->lte($checkIn)) {
-                    $this->check_out_date = $checkIn->copy()->addDay()->format('Y-m-d');
-                }
-            }
 
             // Re-fetch available rooms based on new dates
             $this->getAvailableRooms();
@@ -2172,8 +2180,17 @@ class CreateReservation extends Component
 
     public function getAvailableRooms()
     {
+        if (!$this->check_in_date || !$this->check_out_date) {
+            $this->rooms = collect();
+            return;
+        }
+
+        // Set check-in time to 3:00 PM and check-out time to 12:00 PM
+        $checkIn = Carbon::parse($this->check_in_date)->setTime(15, 0, 0); // 3:00 PM
+        $checkOut = Carbon::parse($this->check_out_date)->setTime(12, 0, 0); // 12:00 PM
+
         $this->rooms = $this->roomAvailabilityService
-            ->getAvailableRooms($this->check_in_date, $this->check_out_date);
+            ->getAvailableRooms($checkIn->format('Y-m-d H:i:s'), $checkOut->format('Y-m-d H:i:s'));
 
         $this->prepareOccupancyRules();
     }

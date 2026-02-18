@@ -454,8 +454,9 @@ class ReservationForm extends Component
 
     protected function isRoomAvailable($room, $checkInDate, $checkOutDate)
     {
-        $checkIn = Carbon::parse($checkInDate);
-        $checkOut = Carbon::parse($checkOutDate);
+        // Set check-in time to 3:00 PM and check-out time to 12:00 PM
+        $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0); // 3:00 PM
+        $checkOut = Carbon::parse($checkOutDate)->setTime(12, 0, 0); // 12:00 PM
 
         // Check if room has overlapping transactions
         $booked = $room->transactions()
@@ -467,8 +468,10 @@ class ReservationForm extends Component
                 'ongoing'
             ])
             ->where(function ($q) use ($checkIn, $checkOut) {
+                // Room is booked if:
+                // Existing booking start < new checkout AND existing booking end > new check-in
                 $q->where('start_datetime', '<', $checkOut)
-                    ->where('end_datetime', '>', $checkIn);
+                ->where('end_datetime', '>', $checkIn);
             })
             ->exists();
 
@@ -723,8 +726,17 @@ class ReservationForm extends Component
      */
     public function getAvailableRooms()
     {
+        if (!$this->check_in_date || !$this->check_out_date) {
+            $this->rooms = collect();
+            return;
+        }
+
+        // Set check-in time to 3:00 PM and check-out time to 12:00 PM
+        $checkIn = Carbon::parse($this->check_in_date)->setTime(15, 0, 0); // 3:00 PM
+        $checkOut = Carbon::parse($this->check_out_date)->setTime(12, 0, 0); // 12:00 PM
+
         $availableRooms = $this->roomAvailabilityService
-            ->getAvailableRooms($this->check_in_date, $this->check_out_date);
+            ->getAvailableRooms($checkIn->format('Y-m-d H:i:s'), $checkOut->format('Y-m-d H:i:s'));
 
         // Apply all filters
         $availableRooms = $availableRooms->filter(function ($room) {
@@ -767,7 +779,6 @@ class ReservationForm extends Component
         $this->rooms = $availableRooms;
         $this->prepareOccupancyRules();
     }
-
     public function getStayDurationProperty()
     {
         return $this->getStayDuration($this->check_in_date, $this->check_out_date);

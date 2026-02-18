@@ -41,10 +41,11 @@
 
                 <div class="flex flex-col">
                     <label class="text-sm font-medium text-gray-700 mb-1 dark:text-gray-200">Check-Out</label>
-                    <input type="date" wire:model.live="check_out_date"
-                        class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500
-                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="Check-out">
+                        <input type="date" wire:model.live="check_out_date"
+                            min="{{ $check_in_date ? \Carbon\Carbon::parse($check_in_date)->addDay()->format('Y-m-d') : '' }}"
+                            class="w-full md:w-auto px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-green-500
+                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Check-out">
                 </div>
             </div>
 

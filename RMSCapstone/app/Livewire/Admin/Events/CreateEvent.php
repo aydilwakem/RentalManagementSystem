@@ -450,62 +450,50 @@ class CreateEvent extends Component
     }
 
     // ----------------------- DYNAMIC HALL AVAILABILITY -----------------------------
-    public function getAvailableHalls()
-    {
-        if (!$this->start_datetime || !$this->end_datetime) {
-            return;
-        }
+public function getAvailableHalls()
+{
+    if (!$this->start_datetime || !$this->end_datetime) {
+        return;
+    }
 
-        // Parse the start and end datetime to Carbon instances
-        $startDate = \Carbon\Carbon::parse($this->start_datetime)->setSeconds(0);
-        $endDate = \Carbon\Carbon::parse($this->end_datetime)->setSeconds(0);
+    // Parse the start and end datetime
+    $startDate = Carbon::parse($this->start_datetime);
+    $endDate = Carbon::parse($this->end_datetime);
 
-        // Step 1: Get all available event halls (unfiltered)
-        $allHalls = Property::ofType('Event Hall')
-            ->where('property_status', 'available')
-            ->get();
+    // Get all available event halls
+    $allHalls = Property::ofType('Event Hall')
+        ->where('property_status', 'available')
+        ->get();
 
-        // Step 2: Load only transactions that truly overlap
-        $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
+    // Load transactions that truly overlap
+    $allHalls->load(['transactions' => function ($query) use ($startDate, $endDate) {
         $query->where(function ($q) use ($startDate, $endDate) {
+            // Hall is booked if:
+            // Existing booking end > new start AND existing booking start < new end
             $q->where('end_datetime', '>', $startDate)
               ->where('start_datetime', '<', $endDate);
         })
-        ->whereNotIn('transaction_status', ['expired', 'terminated', 'cancelled', 'done']); 
-        // Only consider active/confirmed transactions, else, 
-        //hall is still available in expired transactions
+        ->whereNotIn('transaction_status', ['expired', 'terminated', 'cancelled', 'done']);
     }]);
 
-        //Step 3: Filter booked halls, but show available halls with pencil booking 
-        $this->halls = $allHalls->map(function ($hall) {
-            $statuses = $hall->transactions->pluck('transaction_status')->unique();
-
-            //Count the pending statuses
-            $pencilCount = $hall->transactions
+    // Filter and mark availability
+    $this->halls = $allHalls->map(function ($hall) {
+        $statuses = $hall->transactions->pluck('transaction_status')->unique();
+        $pencilCount = $hall->transactions
             ->where('transaction_status', 'pending')
             ->count();
 
-
-            if ($statuses->contains(fn($s) => !in_array($s, ['pending', 'expired', 'terminated', 'cancelled']))) { 
-            $hall->availability_status = 'Booked'; //Show halls that are not pending or expired
+        if ($statuses->contains(fn($s) => !in_array($s, ['pending', 'expired', 'terminated', 'cancelled']))) { 
+            $hall->availability_status = 'Booked';
         } elseif ($pencilCount > 0) {
-            $hall->availability_status = 'Available - ' . $pencilCount . ' Pencil Booked'; //Hall is still available that are only tagged as pending
+            $hall->availability_status = 'Available - ' . $pencilCount . ' Pencil Booked';
         } else {
             $hall->availability_status = 'Available';
         }
 
         return $hall;
     });
-
-
-
-
-        // Step 3: Flag each hall as booked if it has overlapping transactions
-        // $this->halls = $allHalls->map(function ($hall) {
-        //     $hall->isBooked = $hall->transactions->isNotEmpty();
-        //     return $hall;
-        // });
-    }
+}
 
     // To handle multiple hall selection
     public $multipleHalls = false;
