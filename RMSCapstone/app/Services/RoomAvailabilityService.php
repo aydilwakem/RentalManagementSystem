@@ -43,6 +43,21 @@ public function getAvailableRooms($checkInDate, $checkOutDate)
             }
         ])
         ->get()
+        ->filter(function ($room) use ($checkIn, $checkOut) {
+            // Check if room is blocked on ANY date within the stay period
+            $blockedDates = $room->blocked_dates ?? [];
+            
+            // Generate all dates between check-in and check-out (excluding check-out day)
+            $currentDate = $checkIn->copy();
+            while ($currentDate->lt($checkOut)) {
+                if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                    return false; // Room is blocked on this date - filter it out
+                }
+                $currentDate->addDay();
+            }
+            
+            return true; // No blocked dates found
+        })
         ->map(function ($room) use ($checkIn) {
             $rate = $this->roomRateService->getDynamicRate($room, $checkIn->toDateString());
 
@@ -53,7 +68,8 @@ public function getAvailableRooms($checkInDate, $checkOutDate)
 
             return $room;
         })
-        ->sortBy('is_booked');
+        ->sortBy('is_booked')
+        ->values(); // Reset keys after filtering
 }
 
     // NEW METHOD: Check if a specific room is available for given dates
@@ -90,6 +106,18 @@ public function getAvailableRooms($checkInDate, $checkOutDate)
             return false;
         }
 
+        // Check if room is blocked on ANY date within the stay period
+        $blockedDates = $room->blocked_dates ?? [];
+        
+        $currentDate = $checkIn->copy();
+        while ($currentDate->lt($checkOut)) {
+            if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                return false; // Room is blocked on this date
+            }
+            $currentDate->addDay();
+        }
+
+        // No transactions and no blocked dates = available
         return $room->transactions->isEmpty();
     }
 

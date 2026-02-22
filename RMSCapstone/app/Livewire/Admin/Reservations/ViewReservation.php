@@ -364,7 +364,7 @@ class ViewReservation extends Component
 
     public function loadAllInvoiceItems()
     {
-      $items = [];
+        $items = [];
         $roomRateService = app(RoomRateService::class);
 
         foreach ($this->transaction->properties as $property) {
@@ -375,8 +375,9 @@ class ViewReservation extends Component
             );
             
             $dynamicTotalRate = $rateSummary['total_amount'] ?? 0;
-            $nights = $rateSummary['nights'] ?? $property->pivot->days;
-            
+            $nights = (int) floor($rateSummary['nights'] ?? $property->pivot->days);
+            $nights = max(1, $nights); // Ensure at least 1 night
+                
             // Calculate dynamic nightly rate
             $dynamicNightlyRate = $nights > 0 ? $dynamicTotalRate / $nights : $property->amount;
 

@@ -435,6 +435,21 @@
                 </div>
                 @endcan
 
+                <!-- Room Blocking Calendar -->
+                @can('room-edit')
+                <div>
+                    <a href="{{ route('admin.rooms.block-calendar') }}" wire:navigate>
+                        <div
+                            class="relative flex items-center space-x-2 rounded-md p-2 cursor-pointer hover:text-white hover:bg-primary-700
+                                        {{ Route::is('admin.rooms.block-calendar') ? 'text-white bg-primary-600' : 'text-gray-400' }}">
+                            <i class="fa-solid fa-calendar-alt"></i>
+                            <h1 x-cloak x-show="$store.sidebar.full">Room Blocking Calendar</h1>
+                        </div>
+                    </a>
+                </div>
+                @endcan
+
+
                 <!-- Reports Menu -->
                 <div x-data="dropdown" class="relative">
                     @can('reports')

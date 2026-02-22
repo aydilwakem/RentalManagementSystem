@@ -58,7 +58,34 @@ class Property extends Model
     protected $casts = [
         'occupancy_rules' => 'array',  // Automatically decode JSON to array
         'images' => 'array',           // Automatically decode JSON to array
+        'blocked_dates' => 'array', // Add this line
+
     ];
+
+
+        // Add this helper method
+    public function isBlockedOn($date)
+    {
+        $blockedDates = $this->blocked_dates ?? [];
+        return in_array($date, $blockedDates);
+    }
+
+    // Add this method to toggle block
+    public function toggleBlock($date)
+    {
+        $blockedDates = $this->blocked_dates ?? [];
+        
+        if (in_array($date, $blockedDates)) {
+            $blockedDates = array_values(array_diff($blockedDates, [$date]));
+        } else {
+            $blockedDates[] = $date;
+        }
+        
+        $this->blocked_dates = $blockedDates;
+        $this->save();
+    }
+
+
 
     // -------------------- Activity Logs --------------------- //
     protected static $logOnlyDirty = true; //Only changed attributes are logged

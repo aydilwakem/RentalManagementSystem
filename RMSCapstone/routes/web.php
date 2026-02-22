@@ -244,6 +244,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // Edit
         Route::get('edit/room/{room}', EditRoom::class)->name('admin.edit-room')->middleware('can:room-edit');
 
+        // Room Blocking Calendar - Add this line
+Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar::class)
+    ->name('admin.rooms.block-calendar')
+    ->middleware('can:room-edit'); // Uses room-edit permission
+
+
         // Deleted Rooms (Soft Deletes)
         Route::get('deleted-rooms', function () {
             return view('admin.rooms.deleted-rooms');

@@ -262,17 +262,28 @@ class CreateReservation extends Component
         $this->getAvailableRooms();
         $this->initializeCountries();
 
+        // Clear any existing notices
+        $this->cartNotices = [];
+        
         foreach ($this->selectedRooms as $index => $item) {
             if ($item['type'] === 'room') {
                 $room = Property::find($item['room_id']);
-                if (
-                    !$room || // room does not exist
-                    !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date) // no longer available
-                ) {
+                
+                if (!$room) {
+                    // Room doesn't exist - remove it
                     unset($this->selectedRooms[$index]);
                     unset($this->adults[$item['room_id']]);
                     unset($this->kids[$item['room_id']]);
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> no longer exists and has been removed.";
+                } 
+                // Check if room is available (has conflicting transactions) - but allow blocked rooms
+                elseif (!$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                    unset($this->selectedRooms[$index]);
+                    unset($this->adults[$item['room_id']]);
+                    unset($this->kids[$item['room_id']]);
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is no longer available (already booked) and has been removed.";
                 }
+                // Note: Blocked rooms are KEPT in cart - no removal
             }
         }
 
@@ -281,32 +292,65 @@ class CreateReservation extends Component
         // Recompute total pax after filtering unavailable rooms
         $this->computeTotalPax();
     }
+        public $cartNotices = [];
 
-    public $cartNotices = [];
 
-    protected function isRoomAvailable($room, $checkInDate, $checkOutDate)
+    /**
+     * Check if a room is blocked for the selected dates
+     * This is a more specific check for blocked dates only
+     */
+    protected function isRoomBlockedForDates($roomId, $checkInDate, $checkOutDate)
     {
+        if (!$checkInDate || !$checkOutDate) {
+            return false;
+        }
+
         $checkIn = Carbon::parse($checkInDate);
         $checkOut = Carbon::parse($checkOutDate);
-
-        // Check if room has overlapping transactions
-        $booked = $room->transactions()
-            ->whereIn('transaction_status', [
-                'pending',
-                'reserved',
-                'receipt_verified',
-                'confirmed',
-                'ongoing'
-            ])
-            ->where(function ($q) use ($checkIn, $checkOut) {
-                $q->where('start_datetime', '<', $checkOut)
-                    ->where('end_datetime', '>', $checkIn);
-            })
-            ->exists();
-
-        return !$booked; // available if not booked
+        
+        $room = Property::find($roomId);
+        
+        if (!$room) {
+            return false;
+        }
+        
+        $blockedDates = $room->blocked_dates ?? [];
+        
+        $currentDate = $checkIn->copy();
+        while ($currentDate->lt($checkOut)) {
+            if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                return true; // Room is blocked on this date
+            }
+            $currentDate->addDay();
+        }
+        
+        return false; // No blocked dates found
     }
 
+
+protected function isRoomAvailable($room, $checkInDate, $checkOutDate)
+{
+    $checkIn = Carbon::parse($checkInDate);
+    $checkOut = Carbon::parse($checkOutDate);
+
+    // Check if room has overlapping transactions (ONLY check for bookings)
+    $booked = $room->transactions()
+        ->whereIn('transaction_status', [
+            'pending',
+            'reserved',
+            'receipt_verified',
+            'confirmed',
+            'ongoing'
+        ])
+        ->where(function ($q) use ($checkIn, $checkOut) {
+            $q->where('start_datetime', '<', $checkOut)
+              ->where('end_datetime', '>', $checkIn);
+        })
+        ->exists();
+
+    return !$booked; // available if not booked (blocked rooms ARE available for admin to override)
+}
+    
     /**
      * Remove unavailable rooms from selectedRooms based on current check-in/out dates.
      */
@@ -331,7 +375,7 @@ class CreateReservation extends Component
                     $removedRoom = true;
 
                     // Add a notice for the summary tab
-                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is no longer available and has been removed.";
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is already booked and has been removed.";
                 }
             }
         }
@@ -389,10 +433,13 @@ class CreateReservation extends Component
             $this->getAvailableRooms();
         }
 
+
         // If check-in and check-out dates are updated
         if (in_array($property, ['check_in_date', 'check_out_date'])) {
 
             Log::info('Dates are changed.');
+        // Clear any previous cart notices
+        $this->cartNotices = [];
 
             // Validate that check-out is after check-in
             if ($this->check_in_date && $this->check_out_date) {
@@ -897,7 +944,6 @@ class CreateReservation extends Component
 
     public function SelectedRooms($roomId)
     {
-
         // Resets any previous error messages
         $this->resetErrorBag();
 
@@ -915,6 +961,14 @@ class CreateReservation extends Component
             $this->addError('selectedRooms', 'This room is already in the cart.');
             return;
         }
+        
+        // Check if room has conflicting transactions (booked) - but allow blocked rooms
+        if (!$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+            $this->addError('selectedRooms', 'This room is already booked on your selected dates and cannot be added.');
+            return;
+        }
+        
+        // Note: No check for blocked dates - blocked rooms CAN be added
 
         $context = $this->prepareRoomCartContext($room, $roomId);
         Log::info('Prepared context for cart item:', $context);
@@ -1556,7 +1610,16 @@ class CreateReservation extends Component
      */
     public function CreateReservation(PayMongoService $payMongo, EmailService $emailService)
     {
+
+        // Remove only booked/unavailable rooms, NOT blocked rooms
         $this->removeUnavailableRooms();
+        
+        // If all rooms were removed, show error and return
+        if (empty($this->selectedRooms)) {
+            session()->flash('error', 'All selected rooms are now booked for your dates. Please select different dates or rooms.');
+            return;
+        }
+
 
         Log::info('CreateReservation method called with data:');
 
@@ -2178,22 +2241,57 @@ class CreateReservation extends Component
         return $this->getStayDuration($this->check_in_date, $this->check_out_date);
     }
 
-    public function getAvailableRooms()
-    {
-        if (!$this->check_in_date || !$this->check_out_date) {
-            $this->rooms = collect();
-            return;
-        }
-
-        // Set check-in time to 3:00 PM and check-out time to 12:00 PM
-        $checkIn = Carbon::parse($this->check_in_date)->setTime(15, 0, 0); // 3:00 PM
-        $checkOut = Carbon::parse($this->check_out_date)->setTime(12, 0, 0); // 12:00 PM
-
-        $this->rooms = $this->roomAvailabilityService
-            ->getAvailableRooms($checkIn->format('Y-m-d H:i:s'), $checkOut->format('Y-m-d H:i:s'));
-
-        $this->prepareOccupancyRules();
+public function getAvailableRooms()
+{
+    if (!$this->check_in_date || !$this->check_out_date) {
+        $this->rooms = collect();
+        return;
     }
+
+    // Set check-in time to 3:00 PM and check-out time to 12:00 PM
+    $checkIn = Carbon::parse($this->check_in_date)->setTime(15, 0, 0); // 3:00 PM
+    $checkOut = Carbon::parse($this->check_out_date)->setTime(12, 0, 0); // 12:00 PM
+
+    // Get ALL rooms of type 'Room' (bypass the service's filtering)
+    $allRooms = Property::ofType('Room')
+        ->whereNotIn('property_status', ['out_of_service', 'held'])
+        ->with([
+            'transactions' => function ($query) use ($checkIn, $checkOut) {
+                $query->whereIn('transaction_status', [
+                    'pending',
+                    'reserved',
+                    'receipt_verified',
+                    'confirmed',
+                    'ongoing'
+                ])
+                ->where(function ($q) use ($checkIn, $checkOut) {
+                    $q->where('start_datetime', '<', $checkOut)
+                      ->where('end_datetime', '>', $checkIn);
+                });
+            }
+        ])
+        ->get()
+        ->map(function ($room) use ($checkIn) {
+            // Get rate info
+            $rate = $this->roomRateService->getDynamicRate($room, $checkIn->toDateString());
+
+            $room->is_booked = $room->transactions->isNotEmpty();
+            $room->dynamic_rate = $rate['amount'];
+            $room->rate_name = $rate['name'];
+            $room->rate_type = $rate['rate_type'];
+            
+            // Add blocked status
+            $room->is_blocked = $this->isRoomBlockedForDates($room->id, $this->check_in_date, $this->check_out_date);
+
+            return $room;
+        })
+        ->sortBy('is_booked')
+        ->values();
+
+    $this->rooms = $allRooms;
+
+    $this->prepareOccupancyRules();
+}
 
     // DEPOSIT 
     public function getDepositProperty()

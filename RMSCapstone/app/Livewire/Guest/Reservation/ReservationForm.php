@@ -374,6 +374,11 @@ class ReservationForm extends Component
                         continue;
                     }
 
+                    // Check availability (both booked and blocked)
+                    if (!$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                        $removedRooms[] = $room->id;
+                        continue;
+                    }
                     // Item is valid, add to cleaned cart
                     $cleanedCart[] = $item;
                 } else {
@@ -399,6 +404,7 @@ class ReservationForm extends Component
 
         $this->cart = $cleanedCart;
 
+        
         // Add notices for removed items
         if (!empty($removedRooms)) {
             $this->cartNotices[] = "Some rooms were removed from your cart due to availability changes.";
@@ -458,6 +464,17 @@ class ReservationForm extends Component
         $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0); // 3:00 PM
         $checkOut = Carbon::parse($checkOutDate)->setTime(12, 0, 0); // 12:00 PM
 
+        // Check if room is blocked on ANY date within the stay period
+        $blockedDates = $room->blocked_dates ?? [];
+        
+        $currentDate = $checkIn->copy();
+        while ($currentDate->lt($checkOut)) {
+            if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                return false; // Room is blocked on this date
+            }
+            $currentDate->addDay();
+        }
+
         // Check if room has overlapping transactions
         $booked = $room->transactions()
             ->whereIn('transaction_status', [
@@ -475,7 +492,30 @@ class ReservationForm extends Component
             })
             ->exists();
 
-        return !$booked; // available if not booked
+        return !$booked; // available if not booked and not blocked
+    }
+
+    /**
+     * Check if a room is blocked for the selected dates
+     */
+    protected function isRoomBlocked($room, $checkInDate, $CheckOutDate)
+    {
+        $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0); // 3:00 PM
+        $checkOut = Carbon::parse($CheckOutDate)->setTime(12, 0, 0); // 12:00 PM
+        
+        // Check if room is blocked on ANY date within the stay period
+        $blockedDates = $room->blocked_dates ?? [];
+        
+        // Generate all dates between check-in and check-out (excluding check-out day)
+        $currentDate = $checkIn->copy();
+        while ($currentDate->lt($checkOut)) {
+            if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                return true; // Room is blocked on this date
+            }
+            $currentDate->addDay();
+        }
+        
+        return false; // No blocked dates found
     }
 
     /**
@@ -489,13 +529,20 @@ class ReservationForm extends Component
             if ($item['type'] === 'room') {
                 $room = Property::find($item['room_id']);
                 if (!$room || !$this->isRoomAvailable($room, $this->check_in_date, $this->check_out_date)) {
+                    $reason = '';
+                    if ($room && $this->isRoomBlocked($room, $this->check_in_date, $this->check_out_date)) {
+                        $reason = 'blocked';
+                    } else {
+                        $reason = 'no longer available';
+                    }
+                    
                     unset($this->cart[$index]);
                     unset($this->adults[$item['room_id']]);
                     unset($this->kids[$item['room_id']]);
                     $removedRoom = true;
 
                     // Add a notice for the summary tab
-                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is no longer available and has been removed.";
+                    $this->cartNotices[] = "Room <strong>{$item['room_name']}</strong> is {$reason} on your selected dates and has been removed.";
                 }
             }
         }
@@ -1574,6 +1621,16 @@ class ReservationForm extends Component
     {
         // Reset validation error messages
         $this->resetErrorBag();
+        
+        // Check for blocked/unavailable rooms before proceeding
+        $this->removeUnavailableRooms();
+
+            // If all rooms were removed, show error and return
+        if (empty($this->cart)) {
+            session()->flash('error', 'All selected rooms are now blocked or unavailable for your dates. Please select different dates or rooms.');
+            return;
+        }
+
 
         // Will hold data needed for email notifications
         $reservationData = [];
