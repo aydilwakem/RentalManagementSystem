@@ -14,19 +14,19 @@ class RoomAvailabilityService
         $this->roomRateService = $roomRateService;
     }
 
-public function getAvailableRooms($checkInDate, $checkOutDate)
-{
-    if (!$checkInDate || !$checkOutDate) {
-        return collect(); // return empty collection
-    }
+    public function getAvailableRooms($checkInDate, $checkOutDate)
+    {
+        if (!$checkInDate || !$checkOutDate) {
+            return collect();
+        }
 
-    $checkIn = Carbon::parse($checkInDate);
-    $checkOut = Carbon::parse($checkOutDate);
+        // Force standard times kahit anong ipasa
+        $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0); // Force 3PM
+        $checkOut = Carbon::parse($checkOutDate)->setTime(12, 0, 0); // Force 12PM
 
-    return Property::ofType('Room')
-        ->whereNotIn('property_status', ['out_of_service', 'held'])
-        ->with([
-            'transactions' => function ($query) use ($checkIn, $checkOut) {
+        return Property::ofType('Room')
+            ->whereNotIn('property_status', ['out_of_service', 'held'])
+            ->with(['transactions' => function ($query) use ($checkIn, $checkOut) {
                 $query->whereIn('transaction_status', [
                     'pending',
                     'reserved',
@@ -34,90 +34,88 @@ public function getAvailableRooms($checkInDate, $checkOutDate)
                     'confirmed',
                     'ongoing'
                 ])
-                ->where(function ($q) use ($checkIn, $checkOut) {
-                    // Room is booked if:
-                    // Existing booking start < new checkout AND existing booking end > new check-in
-                    $q->where('start_datetime', '<', $checkOut)  // Booking starts before guest leaves
-                      ->where('end_datetime', '>', $checkIn);   // Booking ends after guest arrives
-                });
-            }
-        ])
-        ->get()
-        ->filter(function ($room) use ($checkIn, $checkOut) {
-            // Check if room is blocked on ANY date within the stay period
-            $blockedDates = $room->blocked_dates ?? [];
-            
-            // Generate all dates between check-in and check-out (excluding check-out day)
-            $currentDate = $checkIn->copy();
-            while ($currentDate->lt($checkOut)) {
-                if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
-                    return false; // Room is blocked on this date - filter it out
+                    ->where(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('start_datetime', '<', $checkOut)
+                            ->where('end_datetime', '>', $checkIn);
+                    });
+            }])
+            ->get()
+            ->filter(function ($room) use ($checkIn, $checkOut) {
+                // Check blocked dates (dates only, ignore time)
+                $blockedDates = $room->blocked_dates ?? [];
+
+                $currentDate = $checkIn->copy()->startOfDay();
+                $lastDate = $checkOut->copy()->startOfDay();
+
+                while ($currentDate->lte($lastDate)) {
+                    if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
+                        return false;
+                    }
+                    $currentDate->addDay();
                 }
-                $currentDate->addDay();
-            }
-            
-            return true; // No blocked dates found
-        })
-        ->map(function ($room) use ($checkIn) {
-            $rate = $this->roomRateService->getDynamicRate($room, $checkIn->toDateString());
 
-            $room->is_booked = $room->transactions->isNotEmpty();
-            $room->dynamic_rate = $rate['amount'];
-            $room->rate_name = $rate['name'];
-            $room->rate_type = $rate['rate_type'];
+                return true;
+            })
+            ->map(function ($room) use ($checkIn) {
+                $room->is_booked = $room->transactions->isNotEmpty();
 
-            return $room;
-        })
-        ->sortBy('is_booked')
-        ->values(); // Reset keys after filtering
-}
+                // Pass only date for rate calculation
+                $rate = $this->roomRateService->getDynamicRate($room, $checkIn->format('Y-m-d'));
 
-    // NEW METHOD: Check if a specific room is available for given dates
+                $room->dynamic_rate = $rate['amount'];
+                $room->rate_name = $rate['name'];
+                $room->rate_type = $rate['rate_type'];
+
+                return $room;
+            })
+            ->sortBy('is_booked')
+            ->values();
+    }
+
     public function isRoomAvailable($roomId, $checkInDate, $checkOutDate)
     {
         if (!$checkInDate || !$checkOutDate) {
             return false;
         }
 
-        $checkIn = Carbon::parse($checkInDate);
-        $checkOut = Carbon::parse($checkOutDate);
+        // Force standard times
+        $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0);
+        $checkOut = Carbon::parse($checkOutDate)->setTime(12, 0, 0);
 
         $room = Property::ofType('Room')
             ->where('id', $roomId)
             ->whereNotIn('property_status', ['out_of_service', 'held'])
-            ->with([
-                'transactions' => function ($query) use ($checkIn, $checkOut) {
-                    $query->whereIn('transaction_status', [
-                        'pending',
-                        'reserved',
-                        'receipt_verified',
-                        'confirmed',
-                        'ongoing'
-                    ])
-                        ->where(function ($q) use ($checkIn, $checkOut) {
-                            $q->where('start_datetime', '<', $checkOut)
-                                ->where('end_datetime', '>', $checkIn);
-                        });
-                }
-            ])
+            ->with(['transactions' => function ($query) use ($checkIn, $checkOut) {
+                $query->whereIn('transaction_status', [
+                    'pending',
+                    'reserved',
+                    'receipt_verified',
+                    'confirmed',
+                    'ongoing'
+                ])
+                    ->where(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('start_datetime', '<', $checkOut)
+                            ->where('end_datetime', '>', $checkIn);
+                    });
+            }])
             ->first();
 
         if (!$room) {
             return false;
         }
 
-        // Check if room is blocked on ANY date within the stay period
+        // Check blocked dates
         $blockedDates = $room->blocked_dates ?? [];
-        
-        $currentDate = $checkIn->copy();
-        while ($currentDate->lt($checkOut)) {
+        $currentDate = $checkIn->copy()->startOfDay();
+        $lastDate = $checkOut->copy()->startOfDay();
+
+        while ($currentDate->lte($lastDate)) {
             if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
-                return false; // Room is blocked on this date
+                return false;
             }
             $currentDate->addDay();
         }
 
-        // No transactions and no blocked dates = available
         return $room->transactions->isEmpty();
     }
 
@@ -139,8 +137,4 @@ public function getAvailableRooms($checkInDate, $checkOutDate)
 
         return $availableDates;
     }
-
-    
-    
-
 }

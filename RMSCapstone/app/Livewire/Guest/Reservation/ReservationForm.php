@@ -260,16 +260,16 @@ class ReservationForm extends Component
     {
         $this->initializeDates();
 
-    // Capture Guest Count and force it to be an integer
-    if ($request->has('guests')) {
-        $this->idealGuestFilter = (int) $request->query('guests');
-    }
+        // Capture Guest Count and force it to be an integer
+        if ($request->has('guests')) {
+            $this->idealGuestFilter = (int) $request->query('guests');
+        }
 
-    // Capture Dates
-    if ($request->has('check_in') && $request->has('check_out')) {
-        $this->check_in_date = $request->query('check_in');
-        $this->check_out_date = $request->query('check_out');
-    }
+        // Capture Dates
+        if ($request->has('check_in') && $request->has('check_out')) {
+            $this->check_in_date = $request->query('check_in');
+            $this->check_out_date = $request->query('check_out');
+        }
 
         $this->prepareOccupancyRules();
         $this->loadStaticData();
@@ -404,7 +404,7 @@ class ReservationForm extends Component
 
         $this->cart = $cleanedCart;
 
-        
+
         // Add notices for removed items
         if (!empty($removedRooms)) {
             $this->cartNotices[] = "Some rooms were removed from your cart due to availability changes.";
@@ -466,7 +466,7 @@ class ReservationForm extends Component
 
         // Check if room is blocked on ANY date within the stay period
         $blockedDates = $room->blocked_dates ?? [];
-        
+
         $currentDate = $checkIn->copy();
         while ($currentDate->lt($checkOut)) {
             if (in_array($currentDate->format('Y-m-d'), $blockedDates)) {
@@ -488,7 +488,7 @@ class ReservationForm extends Component
                 // Room is booked if:
                 // Existing booking start < new checkout AND existing booking end > new check-in
                 $q->where('start_datetime', '<', $checkOut)
-                ->where('end_datetime', '>', $checkIn);
+                    ->where('end_datetime', '>', $checkIn);
             })
             ->exists();
 
@@ -502,10 +502,10 @@ class ReservationForm extends Component
     {
         $checkIn = Carbon::parse($checkInDate)->setTime(15, 0, 0); // 3:00 PM
         $checkOut = Carbon::parse($CheckOutDate)->setTime(12, 0, 0); // 12:00 PM
-        
+
         // Check if room is blocked on ANY date within the stay period
         $blockedDates = $room->blocked_dates ?? [];
-        
+
         // Generate all dates between check-in and check-out (excluding check-out day)
         $currentDate = $checkIn->copy();
         while ($currentDate->lt($checkOut)) {
@@ -514,7 +514,7 @@ class ReservationForm extends Component
             }
             $currentDate->addDay();
         }
-        
+
         return false; // No blocked dates found
     }
 
@@ -535,7 +535,7 @@ class ReservationForm extends Component
                     } else {
                         $reason = 'no longer available';
                     }
-                    
+
                     unset($this->cart[$index]);
                     unset($this->adults[$item['room_id']]);
                     unset($this->kids[$item['room_id']]);
@@ -645,7 +645,7 @@ class ReservationForm extends Component
             ]);
         }
 
-            // Add this to handle category filter changes
+        // Add this to handle category filter changes
         if ($property === 'roomCategoryFilter') {
             $this->getAvailableRooms();
         }
@@ -1621,11 +1621,11 @@ class ReservationForm extends Component
     {
         // Reset validation error messages
         $this->resetErrorBag();
-        
+
         // Check for blocked/unavailable rooms before proceeding
         $this->removeUnavailableRooms();
 
-            // If all rooms were removed, show error and return
+        // If all rooms were removed, show error and return
         if (empty($this->cart)) {
             session()->flash('error', 'All selected rooms are now blocked or unavailable for your dates. Please select different dates or rooms.');
             return;
@@ -1777,6 +1777,10 @@ class ReservationForm extends Component
     {
         $totalAmount = $this->computeTotalAmount();
 
+        $checkIn = Carbon::parse($this->check_in_date)->setTime(15, 0, 0); // 3:00 PM
+        $checkOut = Carbon::parse($this->check_out_date)->setTime(12, 0, 0); // 12:00 PM
+
+
         return Transaction::create([
 
             // -------------------- BASIC DETAILS -------------------- //
@@ -1784,8 +1788,8 @@ class ReservationForm extends Component
             'reservation_type_id' => $this->reservation_type_id,
             'created_by' => $transactionUser->id,
             'promo_id' => $promo?->id,
-            'start_datetime' => $this->check_in_date,
-            'end_datetime' => $this->check_out_date,
+            'start_datetime' => $checkIn,
+            'end_datetime' => $checkOut,
             'total_adults' => collect($this->cart)->sum('adults'),
             'total_kids' => collect($this->cart)->sum('kids'),
             'pax' => $this->total_pax,
