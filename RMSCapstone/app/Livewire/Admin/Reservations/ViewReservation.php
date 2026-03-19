@@ -740,7 +740,7 @@ public function closeDeletePaymentModal()
             $this->showEditPaymentModal = false;
             return redirect()->route('admin.view-reservation', ['transaction' => $this->transaction->id])
                 ->with('success', 'Payment created successfully.');
-            }
+        }
     }
 
     public function closeEditPaymentModal()
@@ -887,42 +887,42 @@ public function closeDeletePaymentModal()
         session()->flash('success', 'PWD/Senior discount applied successfully!');
     }
 
-public function openDiscountModal()
-{
-    // Refresh data from database
-    $this->transaction->refresh();
-    $this->invoice->refresh();
+    public function openDiscountModal()
+    {
+        // Refresh data from database
+        $this->transaction->refresh();
+        $this->invoice->refresh();
 
-    // Load existing PWD/Senior IDs
-    $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
+        // Load existing PWD/Senior IDs
+        $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
 
-    // Load existing discount amount if applied
-    if ($this->discountsApplied) {
-        $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
-        $seniorDiscountType = DiscountType::where('name', 'senior')->first();
+        // Load existing discount amount if applied
+        if ($this->discountsApplied) {
+            $pwdDiscountType = DiscountType::where('name', 'pwd')->first();
+            $seniorDiscountType = DiscountType::where('name', 'senior')->first();
 
-        if ($pwdDiscountType || $seniorDiscountType) {
-            $existingDiscount = InvoiceDiscount::where('invoice_id', $this->invoice->id)
-                ->whereIn('discount_type_id', [
-                    $pwdDiscountType?->id,
-                    $seniorDiscountType?->id
-                ])
-                ->first();
+            if ($pwdDiscountType || $seniorDiscountType) {
+                $existingDiscount = InvoiceDiscount::where('invoice_id', $this->invoice->id)
+                    ->whereIn('discount_type_id', [
+                        $pwdDiscountType?->id,
+                        $seniorDiscountType?->id
+                    ])
+                    ->first();
 
-            if ($existingDiscount) {
-                $this->manualDiscountAmount = $existingDiscount->discount_value;
+                if ($existingDiscount) {
+                    $this->manualDiscountAmount = $existingDiscount->discount_value;
+                }
             }
+        } else {
+            $this->manualDiscountAmount = 0;
         }
-    } else {
-        $this->manualDiscountAmount = 0;
+
+        // Reset editing fields
+        $this->editingPwdSeniorId = '';
+        $this->editingPwdSeniorName = '';
+
+        $this->showDiscountModal = true;
     }
-
-    // Reset editing fields
-    $this->editingPwdSeniorId = '';
-    $this->editingPwdSeniorName = '';
-
-    $this->showDiscountModal = true;
-}
 
     public function closeDiscountModal()
     {
@@ -932,7 +932,6 @@ public function openDiscountModal()
         // Reload from database to ensure we have fresh data
         $this->transaction->refresh();
         $this->pwdSeniorIds = $this->transaction->pwd_senior_ids ?? [];
-
     }
 
 
@@ -1029,7 +1028,7 @@ public function openDiscountModal()
 
         // PayMongo payments have reference numbers starting with "pay_"
         $isPayMongoPayment = !empty($payment->payment_reference_number) &&
-                            Str::startsWith($payment->payment_reference_number, 'pay_');
+            Str::startsWith($payment->payment_reference_number, 'pay_');
 
         // Only allow editing if it's NOT a PayMongo payment
         return !$isPayMongoPayment;
@@ -2569,83 +2568,82 @@ public function openDiscountModal()
 
 
     /**
- * ------------------------- MAIN GUEST EDITING ---------------------------
- *
- * Handles editing of the main guest (transaction user) details.
- * ------------------------------------------------------------------------
- */
+     * ------------------------- MAIN GUEST EDITING ---------------------------
+     *
+     * Handles editing of the main guest (transaction user) details.
+     * ------------------------------------------------------------------------
+     */
 
-public function openEditMainGuestModal()
-{
-    Log::info('Opening edit main guest modal.');
+    public function openEditMainGuestModal()
+    {
+        Log::info('Opening edit main guest modal.');
 
-    // Load the current main guest data
-    $this->editMainGuest = [
-        'first_name' => $this->transactionUser->first_name ?? '',
-        'middle_name' => $this->transactionUser->middle_name ?? '',
-        'last_name' => $this->transactionUser->last_name ?? '',
-        'suffix' => $this->transactionUser->suffix ?? '',
-        'email' => $this->transactionUser->email ?? '',
-        'contact_number' => $this->transactionUser->contact_number ?? '',
-        'company_name' => $this->transactionUser->company_name ?? '',
-        'country' => $this->transactionUser->country ?? 'Philippines',
-        'facebook_link' => $this->transactionUser->facebook_link ?? '',
-    ];
+        // Load the current main guest data
+        $this->editMainGuest = [
+            'first_name' => $this->transactionUser->first_name ?? '',
+            'middle_name' => $this->transactionUser->middle_name ?? '',
+            'last_name' => $this->transactionUser->last_name ?? '',
+            'suffix' => $this->transactionUser->suffix ?? '',
+            'email' => $this->transactionUser->email ?? '',
+            'contact_number' => $this->transactionUser->contact_number ?? '',
+            'company_name' => $this->transactionUser->company_name ?? '',
+            'country' => $this->transactionUser->country ?? 'Philippines',
+            'facebook_link' => $this->transactionUser->facebook_link ?? '',
+        ];
 
-    $this->showEditMainGuestModal = true;
-}
+        $this->showEditMainGuestModal = true;
+    }
 
-public function closeEditMainGuestModal()
-{
-    $this->showEditMainGuestModal = false;
-    $this->reset(['editMainGuest']);
-}
+    public function closeEditMainGuestModal()
+    {
+        $this->showEditMainGuestModal = false;
+        $this->reset(['editMainGuest']);
+    }
 
-public function updateMainGuest()
-{
-    Log::info('Updating main guest details.');
+    public function updateMainGuest()
+    {
+        Log::info('Updating main guest details.');
 
-    $this->validate([
-        'editMainGuest.first_name' => 'required|string|max:255',
-        'editMainGuest.last_name' => 'required|string|max:255',
-        'editMainGuest.email' => 'required|email|max:255',
-        'editMainGuest.contact_number' => 'required|string|max:20',
-        'editMainGuest.middle_name' => 'nullable|string|max:255',
-        'editMainGuest.suffix' => 'nullable|string|max:10',
-        'editMainGuest.company_name' => 'nullable|string|max:255',
-        'editMainGuest.country' => 'nullable|string|max:255',
-        'editMainGuest.facebook_link' => 'nullable|url|max:255',
-    ]);
-
-    try {
-        // Update the transaction user
-        $this->transactionUser->update([
-            'first_name' => $this->editMainGuest['first_name'],
-            'middle_name' => $this->editMainGuest['middle_name'] ?? null,
-            'last_name' => $this->editMainGuest['last_name'],
-            'suffix' => $this->editMainGuest['suffix'] ?? null,
-            'email' => $this->editMainGuest['email'],
-            'contact_number' => $this->editMainGuest['contact_number'],
-            'company_name' => $this->editMainGuest['company_name'] ?? null,
-            'country' => $this->editMainGuest['country'] ?? null,
-            'facebook_link' => $this->editMainGuest['facebook_link'] ?? null,
-            'updated_at' => now(),
+        $this->validate([
+            'editMainGuest.first_name' => 'required|string|max:255',
+            'editMainGuest.last_name' => 'required|string|max:255',
+            'editMainGuest.email' => 'required|email|max:255',
+            'editMainGuest.contact_number' => 'required|string|max:20',
+            'editMainGuest.middle_name' => 'nullable|string|max:255',
+            'editMainGuest.suffix' => 'nullable|string|max:10',
+            'editMainGuest.company_name' => 'nullable|string|max:255',
+            'editMainGuest.country' => 'nullable|string|max:255',
+            'editMainGuest.facebook_link' => 'nullable|url|max:255',
         ]);
 
-        // Refresh the transaction user data
-        $this->transactionUser->refresh();
+        try {
+            // Update the transaction user
+            $this->transactionUser->update([
+                'first_name' => $this->editMainGuest['first_name'],
+                'middle_name' => $this->editMainGuest['middle_name'] ?? null,
+                'last_name' => $this->editMainGuest['last_name'],
+                'suffix' => $this->editMainGuest['suffix'] ?? null,
+                'email' => $this->editMainGuest['email'],
+                'contact_number' => $this->editMainGuest['contact_number'],
+                'company_name' => $this->editMainGuest['company_name'] ?? null,
+                'country' => $this->editMainGuest['country'] ?? null,
+                'facebook_link' => $this->editMainGuest['facebook_link'] ?? null,
+                'updated_at' => now(),
+            ]);
 
-        // Close modal and show success message
-        $this->closeEditMainGuestModal();
-        session()->flash('success', 'Main guest details updated successfully!');
-        
-        Log::info('Main guest updated successfully for transaction: ' . $this->transaction->id);
+            // Refresh the transaction user data
+            $this->transactionUser->refresh();
 
-    } catch (\Exception $e) {
-        Log::error('Failed to update main guest: ' . $e->getMessage());
-        session()->flash('error', 'Failed to update main guest details: ' . $e->getMessage());
+            // Close modal and show success message
+            $this->closeEditMainGuestModal();
+            session()->flash('success', 'Main guest details updated successfully!');
+
+            Log::info('Main guest updated successfully for transaction: ' . $this->transaction->id);
+        } catch (\Exception $e) {
+            Log::error('Failed to update main guest: ' . $e->getMessage());
+            session()->flash('error', 'Failed to update main guest details: ' . $e->getMessage());
+        }
     }
-}
 
 
     /**

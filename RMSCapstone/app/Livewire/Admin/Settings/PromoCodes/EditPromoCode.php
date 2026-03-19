@@ -66,7 +66,7 @@ class EditPromoCode extends Component
         $this->duration_days = $promoCode->duration_days;
         // $this->has_expiration = $promoCode->has_expiration;
         // $this->is_active = $promoCode->is_active;
-        
+
         $this->stay_start_date = optional($promoCode->stay_start_date)->format('Y-m-d');
         $this->stay_end_date = optional($promoCode->stay_end_date)->format('Y-m-d');
 
@@ -104,10 +104,10 @@ class EditPromoCode extends Component
                 ],
                 'description' => 'nullable|string|max:100',
                 'discount_type' => 'required|in:fixed,percentage',
-                'discount_value' => 'required|numeric|min:2|max:1000',
+                'discount_value' => 'required|numeric|min:2|max:1000000',
                 'max_uses' => 'nullable|numeric|min:1|max:100',
                 'per_user_limit' => 'required|numeric|min:1|max:5',
-                'min_booking_amount' => 'nullable|numeric|min:0|max:20000',
+                'min_booking_amount' => 'nullable|numeric|min:0|max:1000000',
                 'start_date' => 'nullable|date|before_or_equal:end_date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
                 'stay_start_date' => 'nullable|date|before_or_equal:stay_end_date',

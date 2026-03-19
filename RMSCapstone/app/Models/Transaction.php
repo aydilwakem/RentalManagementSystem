@@ -97,7 +97,7 @@ class Transaction extends Model
 
         // dishes as array
         'dishes' => 'array',
-        
+
         // pwd_senior_ids as array
         'pwd_senior_ids' => 'array',
 
@@ -386,26 +386,23 @@ class Transaction extends Model
 
 
 
-// Scope for non-archived records (records from last 5 years)
-public function scopeNonArchived($query)
-{
-    return $query->where('trn_transactions.transaction_status', '!=', 'archived');
+    // Scope for non-archived records (records from last 5 years)
+    public function scopeNonArchived($query)
+    {
+        return $query->where('trn_transactions.transaction_status', '!=', 'archived');
+    }
 
-}
+    // Scope for archived records (records older than 5 years)
+    public function scopeArchived($query)
+    {
+        return $query->where('trn_transactions.transaction_status', 'archived');
+    }
 
-// Scope for archived records (records older than 5 years)
-public function scopeArchived($query)
-{
-    return $query->where('trn_transactions.transaction_status', 'archived');
-}
-
-// Scope for records that should be archived (for auto-archiving)
-public function scopeShouldBeArchived($query)
-{
-    $fiveYearsAgo = now()->subYears(5);
-    return $query->where('trn_transactions.created_at', '<=', $fiveYearsAgo)
-                ->where('trn_transactions.transaction_status', '!=', 'archived');
-}
-
-
+    // Scope for records that should be archived (for auto-archiving)
+    public function scopeShouldBeArchived($query)
+    {
+        $fiveYearsAgo = now()->subYears(5);
+        return $query->where('trn_transactions.created_at', '<=', $fiveYearsAgo)
+            ->where('trn_transactions.transaction_status', '!=', 'archived');
+    }
 }
