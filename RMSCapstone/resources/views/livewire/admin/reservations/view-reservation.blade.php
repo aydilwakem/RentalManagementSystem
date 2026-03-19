@@ -1099,9 +1099,9 @@
                                                 <td class="border px-4 py-2 text-center dark:border-gray-500">
                                                     <span
                                                         class="inline-block py-1 px-2 rounded-full text-xs font-semibold
-                                                                                                                {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
-                                                                                                                {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
-                                                                                                                {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
+                                                                                                                                {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
+                                                                                                                                {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
+                                                                                                                                {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
                                                         {{ ucfirst($item['payment_status']) }}
                                                     </span>
                                                 </td> --}}
@@ -1123,22 +1123,24 @@
                                                                 <i class="fas fa-exchange-alt"></i>
                                                             </button>
                                                         @else
-                                                            <button wire:click="
-                                                                                                                                            @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
-                                                                                                                                            @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
-                                                                                                                                                editExtraHour({{ $item['pivot_id'] }})
-                                                                                                                                            @elseif ($item['type'] === 'service')
-                                                                                                                                            editService({{ $item['pivot_id'] }}) @endif
-                                                                                                                                        "
+                                                            <button
+                                                                wire:click="
+                                                                                                                                                                    @if ($item['type'] === 'activity') editActivity({{ $item['pivot_id'] }})
+                                                                                                                                                                    @elseif ($item['type'] === 'service' && $item['service_name'] === 'Extra Hour')
+                                                                                                                                                                        editExtraHour({{ $item['pivot_id'] }})
+                                                                                                                                                                    @elseif ($item['type'] === 'service')
+                                                                                                                                                                    editService({{ $item['pivot_id'] }}) @endif
+                                                                                                                                                                "
                                                                 class="text-yellow-600 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-500"
                                                                 title="Edit">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
 
-                                                            <button wire:click="
-                                                                                                                                            @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
-                                                                                                                                            @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
-                                                                                                                                        "
+                                                            <button
+                                                                wire:click="
+                                                                                                                                                                    @if ($item['type'] === 'activity') deleteActivity({{ $item['pivot_id'] }})
+                                                                                                                                                                    @elseif($item['type'] === 'service') deleteService({{ $item['pivot_id'] }}) @endif
+                                                                                                                                                                "
                                                                 class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
                                                                 title="Delete">
                                                                 <i class="fas fa-trash-alt"></i>
@@ -1181,9 +1183,9 @@
                                                     {{-- <td class="border px-4 py-2 text-center dark:border-gray-500">
                                                         <span
                                                             class="inline-block py-1 px-2 rounded-full text-xs font-semibold
-                                                                                                                                {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
-                                                                                                                                {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
-                                                                                                                                {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
+                                                                                                                                                    {{ $item['payment_status'] === 'partial' ? 'bg-yellow-100 text-yellow-500' : '' }}
+                                                                                                                                                    {{ $item['payment_status'] === 'unpaid' ? 'bg-red-100 text-red-500' : '' }}
+                                                                                                                                                    {{ $item['payment_status'] === 'pain' ? 'bg-green-100 text-green-500' : '' }}">
                                                             {{ ucfirst($item['payment_status']) }}
                                                         </span>
                                                     </td> --}}
@@ -1386,7 +1388,7 @@
                             <!-- Amount Paid -->
                             <div
                                 class="flex justify-between font-semibold text-base
-                                                            {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700 dark:text-green-300' : 'text-yellow-500 dark:text-yellow-300' }}">
+                                                                        {{ $this->invoice->amount_paid == $this->invoice->sub_total ? 'text-green-700 dark:text-green-300' : 'text-yellow-500 dark:text-yellow-300' }}">
                                 Amount Paid:
                                 <div>
                                     ₱{{ number_format($this->invoice->amount_paid, 2) }}
@@ -1405,7 +1407,7 @@
                                 <!-- Balance Due -->
                                 <div
                                     class="flex justify-between font-semibold text-base
-                                                                            {{ $this->invoice->balance_due == 0 ? 'text-green-700 dark:text-green-300' : 'text-red-500 dark:text-red-400' }}">
+                                                                                            {{ $this->invoice->balance_due == 0 ? 'text-green-700 dark:text-green-300' : 'text-red-500 dark:text-red-400' }}">
                                     Balance Due:
                                     <div>
                                         ₱{{ number_format($this->invoice->balance_due, 2) }}
@@ -1590,9 +1592,9 @@
                                             <td class="border px-4 py-2 dark:text-gray-200 dark:border-gray-500">
                                                 <span
                                                     class="inline-block py-1 px-2 rounded-full text-xs font-semibold
-                                                                                {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
-                                                                                {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
-                                                                                {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
+                                                                                        {{ $payment->payment_status === 'pending' ? 'bg-yellow-100 text-yellow-500' : '' }}
+                                                                                        {{ $payment->payment_status === 'failed' ? 'bg-red-100 text-red-500' : '' }}
+                                                                                        {{ $payment->payment_status === 'completed' ? 'bg-green-100 text-green-500' : '' }}">
                                                     {{ ucfirst($payment->payment_status) }}
                                                 </span>
                                             </td>
@@ -1705,7 +1707,7 @@
                         x-transition:leave-start="opacity-100 transform translate-y-0"
                         x-transition:leave-end="opacity-0 transform -translate-y-4"
                         class="fixed top-20 right-4 px-4 py-2 rounded-lg shadow-lg z-50
-                                                {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
+                                                        {{ session('alert-type') === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white' }}">
                         {{ session('message') }}
                     </div>
                 @endif
@@ -1866,7 +1868,8 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Amount Paid <span
                                 class="text-red-500">*</span></label>
                         <input type="number" wire:model.defer="amount_paid" placeholder="Ex. 1,200.00" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required>
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                            required>
                         @error('amount_paid')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -1877,7 +1880,8 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment Date <span
                                 class="text-red-500">*</span></label>
                         <input type="date" wire:model.defer="payment_date" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required>
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                            required>
                         @error('payment_date')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -1888,7 +1892,8 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment Type <span
                                 class="text-red-500">*</span></label>
                         <select wire:model="payment_type" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required>
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                            required>
                             <option value="">Select Payment Type</option>
                             {{-- <option value="Room Rent">Room Rent</option>
                             <option value="Security Deposit">Security Deposit</option>
@@ -1910,7 +1915,7 @@
                             class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Payment
                             Method <span class="text-red-500">*</span></label>
                         <select wire:model="payment_method_id" id="payment_method_id" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                             <option value="">Select Payment Method</option>
                             @foreach ($payment_methods as $payment_method)
                                 <option value="{{ $payment_method->id }}">
@@ -1993,7 +1998,7 @@
                     <div class="mt-4">
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Notes</label>
                         <input type="text" wire:model="notes" placeholder="Optionally add description of payment" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         @error('notes')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -2366,7 +2371,7 @@
                                         <div class="flex items-center">
                                             <button type="button" wire:click.prevent="decrementActivity('{{ $activity->id }}')"
                                                 class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-l px-2 py-1 focus:outline-none focus:shadow-outline
-                                                                                    dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                                                                                            dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                                 -
                                             </button>
 
@@ -2377,7 +2382,7 @@
                                             @if ($quantity[$activity->id] ?? 1)
                                                 <button type="button" wire:click.prevent="incrementActivity('{{ $activity->id }}')"
                                                     class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-r px-2 py-1 focus:outline-none focus:shadow-outline
-                                                                                                    dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                                                                                                                dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                                     +
                                                 </button>
                                             @endif
@@ -2461,7 +2466,7 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">First Name
                             <span class="text-red-500">*</span></label>
                         <input type="text" wire:model.defer="guest.first_name" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Juan" required>
                         @error('guest.first_name')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -2473,7 +2478,7 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Middle
                             Name</label>
                         <input type="text" wire:model.defer="guest.middle_name" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Mercado">
                         @error('guest.middle_name')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -2485,8 +2490,8 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Last Name
                             <span class="text-red-500">*</span></label>
                         <input type="text" wire:model.defer="guest.last_name" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required
-                            placeholder="Ex. Dela Cruz">
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                            required placeholder="Ex. Dela Cruz">
                         @error('guest.last_name')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -2496,7 +2501,7 @@
                     <div>
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
                         <input type="text" wire:model.defer="guest.suffix" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Jr., Sr., III">
                         @error('guest.suffix')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -2511,8 +2516,9 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room</label>
                         <input type="hidden" wire:model="guest.transaction_property_id"
                             value="{{ $transactionProperties->first()->id }}">
-                        <p class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
-                                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                        <p
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md
+                                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                             {{ $transactionProperties->first()->property->name_number ?? 'Property #' . $transactionProperties->first()->id }}
                         </p>
                     @else
@@ -2521,7 +2527,7 @@
                         </label>
                         <select wire:model.defer="guest.transaction_property_id"
                             class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                             <option value="">Select Room</option>
                             @foreach ($transactionProperties as $property)
                                 <option value="{{ $property->id }}">
@@ -2542,7 +2548,7 @@
                         Guest Type <span class="text-red-500">*</span>
                     </label>
                     <select wire:model.defer="guest.guest_type_id" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                            dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Guest Type</option>
                         @foreach ($guestTypes as $type)
                             <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
@@ -2559,7 +2565,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Gender <span
                             class="text-red-500">*</span></label>
                     <select wire:model.defer="guest.gender" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -2575,7 +2581,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Residency <span
                             class="text-red-500">*</span></label>
                     <select wire:model.defer="guest.residency" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Residency</option>
                         <option value="local">Local</option>
                         <option value="foreigner">Foreigner</option>
@@ -2591,7 +2597,7 @@
                             class="text-red-500">*</span></label>
                     <select wire:model="guest.country_of_origin"
                         class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
-                                            dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                                                dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         <option value="" disabled selected>Select a country</option>
                         @foreach ($countries as $countryOption)
                             <option value="{{ $countryOption }}">{{ $countryOption }}</option>
@@ -2654,7 +2660,7 @@
                 <div class="mb-4">
                     <label class="block text-md font-medium text-gray-700 mb-1 dark:text-gray-300">Breed</label>
                     <input type="text" wire:model="breed" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-600 focus:border-green-600
-                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" />
+                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" />
                     @error('breed')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -3231,7 +3237,7 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">First Name
                             <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="editingFirstName" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Juan">
                         @error('editingFirstName')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -3243,7 +3249,7 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Middle
                             Name</label>
                         <input type="text" wire:model="editingMiddleName" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Mercado">
                         @error('editingMiddleName')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -3255,7 +3261,7 @@
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Last Name
                             <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="editingLastName" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500" required
                             placeholder="Ex. Dela Cruz">
                         @error('editingLastName')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -3266,7 +3272,7 @@
                     <div>
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Suffix</label>
                         <input type="text" wire:model="editingSuffix" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                             placeholder="Ex. Jr., Sr., III">
                         @error('editingSuffix')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -3279,7 +3285,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Room <span
                             class="text-red-500">*</span></label>
                     <select wire:model.defer="editingTransactionPropertyId" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Room</option>
                         @foreach ($transactionProperties as $property)
                             <option value="{{ $property->id }}">
@@ -3307,8 +3313,9 @@
                     <div class="mt-4">
                         <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Guest Type
                             <span class="text-red-500">*</span></label>
-                        <select wire:model.defer="editingGuestTypeId" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                        <select wire:model.defer="editingGuestTypeId"
+                            class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
+                                                                        dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                             <option value="">Select Guest Type</option>
                             @foreach ($guestTypes as $type)
                                 <option value="{{ $type->id }}">{{ ucfirst($type->name) }}</option>
@@ -3322,7 +3329,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Gender <span
                             class="text-red-500">*</span></label>
                     <select wire:model="editingGender" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -3338,7 +3345,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Residency
                         <span class="text-red-500">*</span></label>
                     <select wire:model="editingResidency" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500">
                         <option value="">Select Residency</option>
                         <option value="local">Local</option>
                         <option value="foreigner">Foreigner</option>
@@ -3353,7 +3360,7 @@
                     <label class="block text-sm text-gray-700 dark:text-gray-200 font-semibold">Country of
                         Origin <span class="text-red-500">*</span></label>
                     <input type="text" wire:model="editingCountryOfOrigin" class="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600 block p-2.5
-                                                dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
+                                                    dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500"
                         placeholder="Ex. Philippines">
                     @error('editingCountryOfOrigin')
                         <span class="text-red-500 text-sm">{{ $message }}</span>

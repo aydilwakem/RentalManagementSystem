@@ -294,14 +294,6 @@
                                                     class="absolute inset-0 w-full h-full object-cover" />
                                             </template>
 
-                                            <!-- SOLD OUT Badge -->
-                                            @if ($room->is_booked)
-                                                <div
-                                                    class="absolute top-3 right-[-40px] bg-red-600 text-white text-xs font-bold py-1 px-12 transform rotate-45 shadow-lg">
-                                                    SOLD OUT
-                                                </div>
-                                            @endif
-
                                             <!-- Left Arrow -->
                                             <button x-show="hovering && images.length > 1"
                                                 @click="active = active === 0 ? images.length - 1 : active - 1"
