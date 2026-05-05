@@ -22,7 +22,7 @@
 
             <p
                 class="text-white text-md md:text-xl font-light tracking-[0.1em] uppercase mb-12 drop-shadow-md opacity-90">
-                Where nature meets elegance
+                Your striking business tagline here
             </p>
 
             <a href="#services"
@@ -117,30 +117,29 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-                <!-- Rooms -->
+                <!-- Service 1 -->
                 <div
                     class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-150 ease-out transform hover:-translate-y-2 animate-on-scroll opacity-0 translate-y-10 flex flex-col">
                     <div class="relative group overflow-hidden">
-                        <img src="{{ asset('images/canopy-retreat.jpg') }}" alt="Rooms"
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Service 1"
                             class="w-full h-56 object-cover" />
                         <span
-                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Rooms</span>
+                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Service 1</span>
                     </div>
                     <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Cozy Retreats</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Service 1 Title</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
-                            Experience comfort and tranquility in our thoughtfully designed rooms, perfect for a restful
-                            night surrounded by nature.
+                            Service 1 description. This is a placeholder description for the first service.
                         </p>
                         <div class="mt-auto">
 
                             <div x-data="{ loading: false }" class="w-full">
-                                <x-button href="{{ route('guest.reservation-form') }}" @click="loading = true"
+                                <x-button href="#" @click="loading = true"
                                     class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
                                     ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
 
                                     <span x-show="!loading">
-                                        Book a room
+                                        Learn More
                                     </span>
 
                                     <span x-show="loading" style="display: none;" class="flex items-center gap-2">
@@ -159,30 +158,28 @@
                     </div>
                 </div>
 
-                <!-- Day Tour -->
+                <!-- Service 2 -->
                 <div
                     class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-150 ease-out transform hover:-translate-y-2 animate-on-scroll opacity-0 translate-y-10 flex flex-col">
                     <div class="relative group overflow-hidden">
-                        <img src="{{ asset('images/Infinity Pool(4).jpg') }}" alt="Day Tour"
+                        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Service 2"
                             class="w-full h-56 object-cover" />
                         <span
-                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Day
-                            Tour</span>
+                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Service 2</span>
                     </div>
                     <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Quick Getaways</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Service 2 Title</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
-                            Surrounded yourself with nature, enjoy refreshing swims and outdoor lounges perfect for
-                            short escapes or quick relaxation.
+                            Service 2 description. This is a placeholder description for the second service.
                         </p>
                         <div class="mt-auto">
                             <div x-data="{ loading: false }" class="w-full">
-                                <x-button href="{{ route('guest.day-tour-reservation') }}" @click="loading = true"
+                                <x-button href="#" @click="loading = true"
                                     class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
                                     ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
 
                                     <span x-show="!loading">
-                                        Book a Day Tour
+                                        Learn More
                                     </span>
 
                                     <span x-show="loading" style="display: none;" class="flex items-center gap-2">
@@ -201,29 +198,28 @@
                     </div>
                 </div>
 
-                <!-- Activities -->
+                <!-- Service 3 -->
                 <div
                     class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-150 ease-out transform hover:-translate-y-2 animate-on-scroll opacity-0 translate-y-10 flex flex-col">
                     <div class="relative group overflow-hidden">
-                        <img src="{{ asset('images/service-coffeeTour.png') }}" alt="Activities"
+                        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Service 3"
                             class="w-full h-56 object-cover" />
                         <span
-                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Activities</span>
+                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Service 3</span>
                     </div>
                     <div class="p-6 md:p-8 text-center flex flex-col flex-grow">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Signature Experiences</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Service 3 Title</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
-                            From guided nature walks to rejuvenating wellness offerings, our services are designed to
-                            refresh your body, mind, and soul.
+                            Service 3 description. This is a placeholder description for the third service.
                         </p>
                         <div class="mt-auto">
                             <div x-data="{ loading: false }" class="w-full">
-                                <x-button href="{{ route('guest.activities') }}" @click="loading = true"
+                                <x-button href="#" @click="loading = true"
                                     class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
                                     ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
 
                                     <span x-show="!loading">
-                                        View Activities
+                                        Learn More
                                     </span>
 
                                     <span x-show="loading" style="display: none;" class="flex items-center gap-2">
@@ -242,29 +238,28 @@
                     </div>
                 </div>
 
-                <!-- Events -->
+                <!-- Service 4 -->
                 <div
                     class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-transform duration-150 ease-out transform hover:-translate-y-2 animate-on-scroll opacity-0 translate-y-10 flex flex-col">
                     <div class="relative group overflow-hidden">
-                        <img src="{{ asset('images/event-hall.jpg') }}" alt="Events"
+                        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Service 4"
                             class="w-full h-56 object-cover" />
                         <span
-                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Events</span>
+                            class="absolute top-4 left-4 bg-white/90 text-green-700 text-xs px-3 py-1 rounded-md border font-medium shadow-sm">Service 4</span>
                     </div>
                     <div class="p-6 md:p-8 flex flex-col flex-grow text-center">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Memorable Moments</h3>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-900">Service 4 Title</h3>
                         <p class="text-base text-gray-600 mb-6 leading-relaxed flex-grow">
-                            Host unforgettable events in our spacious halls, ideal for weddings, parties, corporate
-                            gatherings, and celebrations of all kinds.
+                            Service 4 description. This is a placeholder description for the fourth service.
                         </p>
                         <div class="mt-auto">
                             <div x-data="{ loading: false }" class="w-full">
-                                <x-button href="{{ route('guest.event-halls') }}" @click="loading = true"
+                                <x-button href="#" @click="loading = true"
                                     class="w-full py-3 text-md font-bold shadow-lg hover:shadow-green-900/20 hover:-translate-y-1 transition-all duration-300 flex justify-center items-center gap-2"
                                     ::class="{ 'opacity-75 cursor-wait pointer-events-none': loading }">
 
                                     <span x-show="!loading">
-                                        Request a Quote
+                                        Learn More
                                     </span>
 
                                     <span x-show="loading" style="display: none;" class="flex items-center gap-2">
@@ -292,9 +287,9 @@
 
             <!-- Experience -->
             <div
-                class="flex flex-col md:flex-row items-stretch bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out overflow-hidden animate-on-scroll opacity-0 translate-y-10">
-                <div class="w-full md:w-[400px] h-64 md:h-auto flex">
-                    <img src="{{ asset('images/service-coffeeTour.png') }}" alt="Event Image"
+                class="flex flex-col md:flex-row items-stretch bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out overflow-hidden animate-on-scroll opacity-0 translate-y-10 min-h-[360px]">
+                <div class="w-full md:w-[400px] h-64 md:h-[360px] flex">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Experience Image"
                         class="object-cover w-full h-full" />
                 </div>
                 <div class="p-10 md:p-12 space-y-4 flex-1 flex flex-col justify-center">
@@ -302,54 +297,45 @@
                     <p class="text-gray-700 text-left leading-relaxed">
                         Take your stay to the next level with our thoughtfully curated activities. Whether you're
                         looking to unwind, explore, or simply make the most of
-                        your time in nature, we offer a variety of choices to suit your mood and interests. From
-                        hands-on coffee tours and nature walks to farm experiences and local craft sessions, each
+                        your time, we offer a variety of choices to suit your mood and interests. Each
                         activity is designed to enrich your visit and create lasting memories.
                     </p>
                     <div class="flex flex-wrap gap-2 pt-2">
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Nature
-                            Walks</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Activity 1</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Coffee
-                            Farm Tour</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Activity 2</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Coffee
-                            Class</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Activity 3</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Wellness
-                            Massage</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Activity 4</span>
                     </div>
                 </div>
             </div>
 
             <!-- Events -->
             <div
-                class="flex flex-col md:flex-row items-stretch bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out overflow-hidden animate-on-scroll opacity-0 translate-y-10">
+                class="flex flex-col md:flex-row items-stretch bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out overflow-hidden animate-on-scroll opacity-0 translate-y-10 min-h-[360px]">
                 <div class="p-10 md:p-12 space-y-4 order-2 md:order-1 flex-1 flex flex-col justify-center">
                     <h5 class="text-2xl font-bold text-gray-900">Memorable Moments, Made Here</h5>
                     <p class="text-gray-700 text-left leading-relaxed">
-                        Host your next celebration in one of our versatile event halls, perfect for weddings, birthdays,
-                        corporate events, or intimate gatherings. We offer a range of indoor and outdoor venues to suit
-                        your needs. Our team customizes event packages based on your vision—just share your ideas, and
-                        we’ll handle the rest. Request a quote today and let’s bring your event to life!
-
+                        Host your next celebration in one of our versatile venues, perfect for various occasions. We offer a range of spaces to suit
+                        your needs. Our team customizes packages based on your vision—just share your ideas, and
+                        we'll handle the rest. Request a quote today and let’s bring your event to life!
                     </p>
                     <div class="flex flex-wrap gap-2 mb-4">
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Weddings</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Event Type 1</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Birthdays</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Event Type 2</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Team
-                            Buildings</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Event Type 3</span>
                         <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Church
-                            Retreats</span>
+                            class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Event Type 4</span>
                     </div>
                 </div>
-                <div class="w-full md:w-[400px] h-64 md:h-auto flex order-1 md:order-2">
-                    <img src="{{ asset('images/wedding.png') }}" alt="Event Image"
+                <div class="w-full md:w-[400px] h-64 md:h-[360px] flex order-1 md:order-2">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Event Image"
                         class="object-cover w-full h-full" />
                 </div>
             </div>
@@ -372,38 +358,27 @@
                     class="bg-white p-8 md:p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out animate-on-scroll opacity-0 translate-y-10">
                     <i class="fa-solid fa-quote-left w-10 h-10 text-green-600 mb-4 mx-auto text-3xl"></i>
                     <p class="text-gray-700 italic leading-relaxed mb-6">
-                        “The place is all you need if you want to relax
-                        and stay away from all the stress in the city!
-                        A great place to spend time with your family
-                        and it is kid friendly. Will definitely come
-                        back again soon”
+                        "Testimonial 1. This is a placeholder testimonial from a satisfied customer."
                     </p>
-                    <p class="text-gray-900 font-bold">— Angelica, Manila.</p>
+                    <p class="text-gray-900 font-bold">— Customer 1</p>
                 </div>
 
                 <div
                     class="bg-white p-8 md:p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out animate-on-scroll opacity-0 translate-y-10">
                     <i class="fa-solid fa-quote-left w-10 h-10 text-green-600 mb-4 mx-auto text-3xl"></i>
                     <p class="text-gray-700 italic leading-relaxed mb-6">
-                        “Relaxing family vacation at Canopy Farm.
-                        The place was clean, comfortable for our
-                        group of 9 pax. Climate was cool and air
-                        was fresh. A great place to unwind and
-                        spend family time. Will come back..”
+                        "Testimonial 2. Another placeholder testimonial highlighting our services."
                     </p>
-                    <p class="text-gray-900 font-bold">— Donabelle</p>
+                    <p class="text-gray-900 font-bold">— Customer 2</p>
                 </div>
 
                 <div
                     class="bg-white p-8 md:p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-transform duration-150 ease-out animate-on-scroll opacity-0 translate-y-10">
                     <i class="fa-solid fa-quote-left w-10 h-10 text-green-600 mb-4 mx-auto text-3xl"></i>
                     <p class="text-gray-700 italic leading-relaxed mb-6">
-                        “It was very clean and the staff was friendly and helpful.
-                        The Japanese inspired interior design is good for guests
-                        with small children because everything is close to the
-                        ground making it safe.”
+                        "Testimonial 3. A third placeholder testimonial for variety."
                     </p>
-                    <p class="text-gray-900 font-bold">— Maika, Quezon.</p>
+                    <p class="text-gray-900 font-bold">— Customer 3</p>
                 </div>
 
 
@@ -522,10 +497,11 @@
                 </div>
 
                 <div
-                    class="overflow-hidden rounded-3xl shadow-lg h-full min-h-[450px] animate-on-scroll opacity-0 translate-y-10">
+                    class="overflow-hidden rounded-3xl shadow-lg h-full min-h-[450px] animate-on-scroll opacity-0 translate-y-10 relative bg-gray-100">
                     <iframe class="w-full h-full"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3868.2502287794205!2d120.885106586352!3d14.180116951815094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd83d64e074a45%3A0x74d9317979d3664b!2sThe%20Canopy%20Farm%20PH!5e0!3m2!1sen!2sph!4v1732550161255!5m2!1sen!2sph"
+                        src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d123552.64394611071!2d121.0107556!3d14.5979292!3m2!1i1024!2i768!4f13.1!2m1!1sgoogle%20maps%20pup!5e0!3m2!1sen!2sph!4v1775720935885!5m2!1sen!2sph"
                         allowfullscreen loading="lazy"></iframe>
+
                 </div>
             </div>
         </div>
