@@ -39,13 +39,13 @@
 
         <div class="flex justify-center gap-6">
             <!-- Facebook -->
-            <a href="https://www.facebook.com/thecanopyfarmph" target="_blank"
+            <a href="https://www.facebook.com/yourcompany" target="_blank"
                 class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 hover:bg-blue-200 transition">
                 <i class="fa-brands fa-facebook text-blue-600 text-xl"></i>
             </a>
 
             <!-- Instagram -->
-            <a href="https://www.instagram.com/thecanopyfarmph/" target="_blank"
+            <a href="https://www.instagram.com/yourcompany/" target="_blank"
                 class="flex items-center justify-center w-12 h-12 rounded-full bg-pink-100 hover:bg-pink-200 transition">
                 <i class="fa-brands fa-instagram text-pink-500 text-xl"></i>
             </a>
