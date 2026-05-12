@@ -60,8 +60,10 @@ class Dashboard extends Component
 
             $this->reservations = Transaction::where('reservation_type_id', 2)->get();
             // Fetch only transactions with reservation_type_id 2 or 3
+            // Fetch only active transactions (excluding cancelled, expired, etc.)
             $allTransactions = Transaction::with('reservationType', 'transactionUser', 'properties')
                 ->whereIn('reservation_type_id', [2, 3, 4])
+                ->whereNotIn('transaction_status', ['done', 'cancelled', 'expired', 'terminated', 'no_show'])
                 ->get();
 
             // ->whereNotIn('transaction_status', ['done'])

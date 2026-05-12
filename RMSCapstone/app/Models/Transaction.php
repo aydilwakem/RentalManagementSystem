@@ -56,6 +56,7 @@ class Transaction extends Model
         'heard_from',
         'reservation_source',
         'transaction_status',
+        'paymongo_checkout_url',
         'requests',
         'request_reply',
         'actual_start_datetime',

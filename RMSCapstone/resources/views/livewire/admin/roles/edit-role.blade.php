@@ -5,10 +5,10 @@
         </h2>
         <!-- Navigation -->
         <x-breadcrumbs :items="[
-            ['label' => 'Roles', 'url' => route('admin.manage-users')],
-            ['label' => 'View Role', 'url' => route('admin.view-role', ['role' => $role->id])],
-            ['label' => 'Edit Role', 'url' => route('admin.edit-role', ['role' => $role->id])],
-        ]" />
+        ['label' => 'Roles', 'url' => route('admin.manage-users')],
+        ['label' => 'View Role', 'url' => route('admin.view-role', ['role' => $role->id])],
+        ['label' => 'Edit Role', 'url' => route('admin.edit-role', ['role' => $role->id])],
+    ]" />
     </x-slot>
 
     <div class="rounded-lg p-6 mx-auto mb-6">
@@ -37,7 +37,7 @@
                                focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                         placeholder="Enter Role" required>
                     @error('name')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -46,120 +46,122 @@
                     <label for="permissions"
                         class="block mb-2 text-xl font-medium text-gray-900 dark:text-green-200">Permissions</label>
                     @error('selectedPermissions')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
 
                     <div class="space-y-6">
                         @php
-                        $groupedPermissionGroups = [
-                        'Room Management' => [
-                        'Rooms' => fn($p) => preg_match('/^room-(?!rate|category)/', $p->name),
-                        'Room Categories' => fn($p) => str_starts_with($p->name, 'room-category'),
-                        'Room Rates' => fn($p) => str_starts_with($p->name, 'room-rate'),
-                        'Amenities' => fn($p) => str_starts_with($p->name, 'amenity'),
-                        ],
-                        'Booking & Reservations' => [
-                        'New Reservations' => fn($p) => str_starts_with($p->name, 'new-reservation-'),
-                        'Confirmed Reservations' => fn($p) => str_starts_with(
-                        $p->name,
-                        'confirmed-reservation',
-                        ),
-                        'On-going Bookings' => fn($p) => str_starts_with($p->name, 'on-going'),
-                        'Old Bookings' => fn($p) => str_starts_with($p->name, 'old'),
-                        ],
-                        'Event Management' => [
-                        'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
-                        !str_starts_with($p->name, 'event-category') &&
-                        !str_starts_with($p->name, 'event-hall') &&
-                        !str_starts_with($p->name, 'event-inclusions'),
-                        'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
-                        'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
-                        'Event Inclusions' => fn($p) => str_starts_with($p->name, 'event-inclusions'),
-                        ],
-                        'Property Management' => [
-                        'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
-                        !str_starts_with($p->name, 'house-category') &&
-                        !str_starts_with($p->name, 'house-features'),
-                        'House Features' => fn($p) => str_starts_with($p->name, 'house-features'),
-                        'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
-                        'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
-                        'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
-                        ],
-                        'Billing & Payments' => [
-                        'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
-                        'Payments' => fn($p) => str_starts_with($p->name, 'payments-list'),
-                        'Invoices' => fn($p) => str_starts_with($p->name, 'invoices-list'),
-                        ],
-                        'System Settings' => [
-                        'Settings' => fn($p) => str_starts_with($p->name, 'appearance-view'),
-                        'Dashboard' => fn($p) => str_starts_with($p->name, 'dashboard'),
-                        ],
-                        'User Management' => [
-                        'Roles' => fn($p) => str_starts_with($p->name, 'role'),
-                        'Users' => fn($p) => str_starts_with($p->name, 'user'),
-                        ],
-                        'Activities' => [
-                        'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
-                        ],
-                        'Day Tour' => [
-                        'Day Tour' => fn($p) => str_starts_with($p->name, 'daytour'),
-                        ],
-                        'Services' => [
-                        'Service' => fn($p) => str_starts_with($p->name, 'service'),
-                        ],
-                        'Activity Logs' => [
-                        'Activity Logs' => fn($p) => str_starts_with($p->name, 'activity-logs'),
-                        ],
-                        'Promo Codes' => [
-                        'Promo Codes' => fn($p) => str_starts_with($p->name, 'promo-code'),
-                        ],
-                        'Reports' => [
-                        'Reports' => fn($p) => str_starts_with($p->name, 'reports') ||
-                        str_ends_with($p->name, 'reports'),
-                        ],
-                        'Feedback' => [
-                        'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
-                        ],
-                        'Archives' => [
-                        'Archives' => fn($p) => str_starts_with($p->name, 'archive') ||
-                        str_ends_with($p->name, 'archive'),
-                        ],
-                        'Database Backup' => [
-                        'Backup' => fn($p) => str_starts_with($p->name, 'backup') || str_ends_with($p->name,
-                        'backup'),
-                        ],
-                        ];
+                            $groupedPermissionGroups = [
+                                'Room Management' => [
+                                    'Rooms' => fn($p) => preg_match('/^room-(?!rate|category)/', $p->name),
+                                    'Room Categories' => fn($p) => str_starts_with($p->name, 'room-category'),
+                                    'Room Rates' => fn($p) => str_contains($p->name, 'room-rate'),
+                                    'Amenities' => fn($p) => str_starts_with($p->name, 'amenity'),
+                                ],
+                                'Booking & Reservations' => [
+                                    'New Reservations' => fn($p) => str_starts_with($p->name, 'new-reservation-'),
+                                    'Confirmed Reservations' => fn($p) => str_starts_with(
+                                        $p->name,
+                                        'confirmed-reservation',
+                                    ),
+                                    'On-going Bookings' => fn($p) => str_starts_with($p->name, 'on-going'),
+                                    'Old Bookings' => fn($p) => str_starts_with($p->name, 'old'),
+                                ],
+                                'Event Management' => [
+                                    'Events' => fn($p) => str_starts_with($p->name, 'event-') &&
+                                        !str_starts_with($p->name, 'event-category') &&
+                                        !str_starts_with($p->name, 'event-hall') &&
+                                        !str_starts_with($p->name, 'event-inclusions'),
+                                    'Event Categories' => fn($p) => str_starts_with($p->name, 'event-category'),
+                                    'Event Halls' => fn($p) => str_starts_with($p->name, 'event-hall'),
+                                    'Event Inclusions' => fn($p) => str_starts_with($p->name, 'event-inclusions'),
+                                ],
+                                'Property Management' => [
+                                    'Houses' => fn($p) => str_starts_with($p->name, 'house-') &&
+                                        !str_starts_with($p->name, 'house-category') &&
+                                        !str_starts_with($p->name, 'house-features'),
+                                    'House Features' => fn($p) => str_starts_with($p->name, 'house-features'),
+                                    'Tenants' => fn($p) => str_starts_with($p->name, 'tenant'),
+                                    'Maintenance' => fn($p) => str_starts_with($p->name, 'maintenance'),
+                                    'Leases' => fn($p) => str_starts_with($p->name, 'leases'),
+                                ],
+                                'Billing & Payments' => [
+                                    'Payment Methods' => fn($p) => str_starts_with($p->name, 'payment-method'),
+                                    'Payments' => fn($p) => str_starts_with($p->name, 'payments-list'),
+                                    'Invoices' => fn($p) => str_starts_with($p->name, 'invoices-list'),
+                                ],
+                                'System Settings' => [
+                                    'Settings' => fn($p) => str_starts_with($p->name, 'appearance-view'),
+                                    'Dashboard' => fn($p) => str_starts_with($p->name, 'dashboard'),
+                                ],
+                                'User Management' => [
+                                    'Roles' => fn($p) => str_starts_with($p->name, 'role'),
+                                    'Users' => fn($p) => str_starts_with($p->name, 'user'),
+                                ],
+                                'Activities' => [
+                                    'Activities' => fn($p) => str_starts_with($p->name, 'activity'),
+                                ],
+                                'Day Tour' => [
+                                    'Day Tour' => fn($p) => str_starts_with($p->name, 'daytour'),
+                                ],
+                                'Services' => [
+                                    'Service' => fn($p) => str_starts_with($p->name, 'service'),
+                                ],
+                                'Activity Logs' => [
+                                    'Activity Logs' => fn($p) => str_starts_with($p->name, 'activity-logs'),
+                                ],
+                                'Promo Codes' => [
+                                    'Promo Codes' => fn($p) => str_starts_with($p->name, 'promo-code'),
+                                ],
+                                'Reports' => [
+                                    'Reports' => fn($p) => str_starts_with($p->name, 'reports') ||
+                                        str_ends_with($p->name, 'reports'),
+                                ],
+                                'Feedback' => [
+                                    'Feedback' => fn($p) => str_starts_with($p->name, 'feedback'),
+                                ],
+                                'Archives' => [
+                                    'Archives' => fn($p) => str_starts_with($p->name, 'archive') ||
+                                        str_ends_with($p->name, 'archive'),
+                                ],
+                                'Database Backup' => [
+                                    'Backup' => fn($p) => str_starts_with($p->name, 'backup') || str_ends_with(
+                                        $p->name,
+                                        'backup'
+                                    ),
+                                ],
+                            ];
                         @endphp
 
                         @foreach ($groupedPermissionGroups as $categoryLabel => $permissionGroups)
-                        <div class="border rounded-lg bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
-                            x-data="{ open: false }">
-                            <button type="button" @click="open = !open"
-                                class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
-                                {{ $categoryLabel }}
-                                <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
+                            <div class="border rounded-lg bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:placeholder-gray-400"
+                                x-data="{ open: false }">
+                                <button type="button" @click="open = !open"
+                                    class="w-full text-left px-4 py-2 font-semibold flex justify-between items-center">
+                                    {{ $categoryLabel }}
+                                    <svg :class="{ 'rotate-180': open }" class="h-4 w-4 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
 
-                            <div x-show="open" x-transition class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4">
-                                @foreach ($permissionGroups as $groupLabel => $filter)
-                                <div>
-                                    <h4 class="font-semibold mb-2">{{ $groupLabel }}</h4>
-                                    @foreach ($permissions->filter($filter) as $permission)
-                                    <label class="flex items-center space-x-2 text-sm">
-                                        <input type="checkbox" wire:model="selectedPermissions"
-                                            value="{{ $permission->name }}"
-                                            class="rounded border-gray-300 text-blue-600">
-                                        <span>{{ $permission->name }}</span>
-                                    </label>
+                                <div x-show="open" x-transition class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4">
+                                    @foreach ($permissionGroups as $groupLabel => $filter)
+                                        <div>
+                                            <h4 class="font-semibold mb-2">{{ $groupLabel }}</h4>
+                                            @foreach ($permissions->filter($filter) as $permission)
+                                                <label class="flex items-center space-x-2 text-sm">
+                                                    <input type="checkbox" wire:model="selectedPermissions"
+                                                        value="{{ $permission->name }}"
+                                                        class="rounded border-gray-300 text-blue-600">
+                                                    <span>{{ $permission->name }}</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
                                     @endforeach
                                 </div>
-                                @endforeach
                             </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>

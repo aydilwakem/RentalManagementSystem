@@ -1631,12 +1631,14 @@ class ReservationForm extends Component
             return;
         }
 
-
         // Will hold data needed for email notifications
         $reservationData = [];
 
+        // 🔴 DECLARE DITO PARA MAGAMIT SA LABAS
+        $paymongoCheckoutUrl = null;
+
         // Begin database transaction to ensure atomic operations
-        DB::transaction(function () use (&$reservationData, $payMongo, $emailService) {
+        DB::transaction(function () use (&$reservationData, $payMongo, $emailService, &$paymongoCheckoutUrl) {
 
             // Retrieve settings from the database
             $setting = Setting::first();
@@ -1652,7 +1654,6 @@ class ReservationForm extends Component
             // Check if a valid promo code was entered
             $promo = PromoCode::where('code', $this->promoCode)->first();
 
-
             // ------------------------- CREATE RESERVATION RECORDS ------------------------- //
             $transactionUser = $this->createTransactionUser();
             $transaction = $this->createTransaction($transactionUser, $promo);
@@ -1662,8 +1663,15 @@ class ReservationForm extends Component
             $this->insertGuestPetDetails($transaction);
             // ----------------------- END CREATE RESERVATION RECORDS ----------------------- //
 
-
             //---------------------------- PAYMONGO CHECKOUT SESSION ----------------------------//
+
+            // 🔴 LINK 1: VALIDATION LINK (ipapasa sa email)
+            $validationLink = route('payment.validate', [
+                'transaction' => $transaction->transaction_number
+            ]);
+
+            // 🔴 LINK 2: PAYMENT LINK (pupuntahan ni user after mag-register)
+            $paymentLink = $validationLink;
 
             // If enable_deposit_percentage is true, base amount is the deposit
             // Otherwise, it's the full total amount
@@ -1675,6 +1683,7 @@ class ReservationForm extends Component
 
             // Convert the amount to centavos for PayMongo (e.g., 1500 -> 150000)
             $amountInCentavos = intval($baseAmount * 100);
+
             // Prepare payload for PayMongo checkout session
             $payload = $this->preparePayMongoPayload($amountInCentavos, $transaction, $invoice);
 
@@ -1683,21 +1692,39 @@ class ReservationForm extends Component
                 $response = $payMongo->createCheckoutSession($payload);
 
                 // Get the generated payment link from the response
-                $paymentLink = $response['data']['attributes']['checkout_url'] ?? null;
+                $paymongoCheckoutUrl = $response['data']['attributes']['checkout_url'] ?? null;
+                Log::info('paymongo checkout url generated: ' . $paymongoCheckoutUrl);
 
-                // Save the payment link to the transaction for later reference
-                if ($paymentLink) {
-                    $transaction->update(['payment_link' => $paymentLink]);
+                // Prepare update data
+                $updateData = [
+                    'payment_link' => $paymentLink,
+                ];
+
+                // Add PayMongo URL if available
+                if ($paymongoCheckoutUrl) {
+                    $updateData['paymongo_checkout_url'] = $paymongoCheckoutUrl;
                 }
+
+                // Update transaction
+                $transaction->update($updateData);
 
                 // Increment promo code usage count if used
                 if ($promo) {
                     $promo->increment('uses_count');
                 }
+
+                Log::info('PayMongo checkout session created', [
+                    'transaction' => $transaction->transaction_number,
+                    'has_paymongo_url' => !is_null($paymongoCheckoutUrl)
+                ]);
             } catch (\Exception $e) {
                 // Log any PayMongo API errors
                 Log::error('PayMongo link creation failed: ' . $e->getMessage());
-                $paymentLink = null;
+
+                // Update transaction kahit may error
+                $transaction->update([
+                    'payment_link' => $paymentLink,
+                ]);
             }
 
             //---------------------------- END PAYMONGO CHECKOUT SESSION ----------------------------//
@@ -1706,14 +1733,15 @@ class ReservationForm extends Component
             $total = $this->computeTotalAmount();
             $deposit = $this->sub_total * ($this->deposit_percentage / 100);
 
-            //Fetch payment method data for email
+            // Fetch payment method data for email
             $paymentMethods = app(PaymentMethodService::class)->getPaymentMethodsData();
 
             // Prepare data for confirmation email
             $reservationData = $this->prepareReservationData($transaction, $invoice, $total, $deposit);
-            $reservationData['payment_link'] = $paymentLink;
 
-            // $reservationData['payment_methods'] = $paymentMethods; // Add payment methods data to be accessed by email
+            // ✅ Validation link ang ipapasa sa email
+            $reservationData['payment_link'] = $validationLink;
+            $reservationData['expiration_date'] = now()->addHours($this->expirationHours)->format('F j, Y \a\t g:i A');
         });
 
         // Attempt to send confirmation emails
@@ -1721,14 +1749,11 @@ class ReservationForm extends Component
             $pdfContent = $this->generateAvailablePaymentMethods();
             $emailService->sendReservationEmails($reservationData, $pdfContent);
         } catch (\Exception $e) {
-            // If email sending fails, flash error but still continue
             session()->flash('error', 'Reservation saved, but confirmation email failed to send.');
         }
 
-        // Show success flash message
         session()->flash('success', 'Reservation successfully submitted!');
 
-        // Clear session data related to the reservation
         session()->forget([
             'cart',
             'promoCode',
@@ -1737,15 +1762,12 @@ class ReservationForm extends Component
             'pets',
         ]);
 
-        // Redirect user to payment page if available
-        if (!empty($reservationData['payment_link'])) {
+        // ✅ REDIRECT TO PAYMONGO CHECKOUT URL after register
+        if (!empty($paymongoCheckoutUrl)) {
             session()->flash('success', 'Reservation submitted. You are being redirected to the payment page.');
-            return redirect()->away($reservationData['payment_link']);
+            return redirect()->away($paymongoCheckoutUrl);
         }
 
-
-
-        // Fallback if no payment link — direct to proof of payment submission page
         return redirect()->route('guest.proof-of-payment-page');
     }
 

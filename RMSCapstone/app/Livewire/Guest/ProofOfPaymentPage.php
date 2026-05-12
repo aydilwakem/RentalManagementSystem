@@ -139,15 +139,8 @@ class ProofOfPaymentPage extends Component
 
     public function submitProofOfPayment(PaymentService $paymentService, EmailService $emailService)
     {
-        // Declines payment if the transaction is marked as 'expired'.
-        if ($this->transactionExpired) {
-            session()->flash('error', 'Your transaction has expired. You cannot upload proof of payment.');
-            return;
-        }
-
         try {
-
-            // Validate user inputs
+            // Validate user inputs FIRST
             $this->validateInput();
 
             // Stores payment details
@@ -155,11 +148,21 @@ class ProofOfPaymentPage extends Component
 
             DB::transaction(function () use (&$paymentDetails, $paymentService) {
 
+                // Get the transaction WITHIN the transaction with a lock if needed
+                $transaction = $this->getTransactionWithRelations();
+
+                // Check transaction status INSIDE the transaction
+                if (!$transaction) {
+                    throw new \Exception('Transaction not found.');
+                }
+
+                if (in_array($transaction->transaction_status, ['expired'])) {
+                    throw new \Exception("This transaction is {$transaction->transaction_status} and cannot accept payments.");
+                }
+
                 // Gets the screenshotpath of the image
                 $screenshotPath = $this->uploadScreenshot();
 
-                // Get transaction relations: transaction->invoice
-                $transaction = $this->getTransactionWithRelations();
                 $invoice = $transaction->invoice;
 
                 // Error handling for non-existing invoice
@@ -167,7 +170,7 @@ class ProofOfPaymentPage extends Component
                     throw new \Exception('Invoice not found for this transaction.');
                 }
 
-                // Creates payment usint the PaymentService class (create)
+                // Creates payment using the PaymentService class (create)
                 $paymentService->create([
                     'invoice' => $invoice,
                     'transaction' => $transaction,
@@ -209,7 +212,7 @@ class ProofOfPaymentPage extends Component
             throw $e;
         } catch (\Exception $e) {
             logger()->error('Payment submission failed: ' . $e->getMessage());
-            session()->flash('error', 'An error occurred during payment submission.');
+            session()->flash('error', $e->getMessage()); // Show the actual error message
         }
     }
 }

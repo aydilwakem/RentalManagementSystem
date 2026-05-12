@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentValidationController;
 use App\Livewire\Admin\EventCategories\EditEventCategory;
 use App\Livewire\Admin\EventCategories\ViewEventCategory;
 use App\Livewire\Admin\EventHalls\EditEventHall;
@@ -245,9 +246,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('edit/room/{room}', EditRoom::class)->name('admin.edit-room')->middleware('can:room-edit');
 
         // Room Blocking Calendar - Add this line
-Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar::class)
-    ->name('admin.rooms.block-calendar')
-    ->middleware('can:room-edit'); // Uses room-edit permission
+        Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar::class)
+            ->name('admin.rooms.block-calendar')
+            ->middleware('can:room-edit'); // Uses room-edit permission
 
 
         // Deleted Rooms (Soft Deletes)
@@ -317,10 +318,10 @@ Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar:
         // Individual Room Rates Route
 
         // Create
-        Route::get('/create/individual-room-rate/{roomId}', CreateIndividualRate::class)->name('admin.create-individual-rate')->middleware('can:individual-room-rate-create');
+        Route::get('/create/individual-room-rate/{roomId}', CreateIndividualRate::class)->name('admin.create-individual-rate')->middleware('can:room-rate-create');
 
         // Edit
-        Route::get('edit/individual-room-rate/{roomRate}', EditIndividualRate::class)->name('admin.edit-individual-rate')->middleware('can:individual-room-rate-edit');
+        Route::get('edit/individual-room-rate/{roomRate}', EditIndividualRate::class)->name('admin.edit-individual-rate')->middleware('can:room-rate-edit');
 
         // Amenities Route
 
@@ -436,8 +437,8 @@ Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar:
         Route::get('/events/archives', function () {
             return view('admin.events.archived-events');
         })
-        ->name('admin.events-archives')
-        ->middleware(['auth', 'can:archive-events-view']);
+            ->name('admin.events-archives')
+            ->middleware(['auth', 'can:archive-events-view']);
 
 
         // Events Summary
@@ -579,7 +580,7 @@ Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar:
         Route::get('/daytour-reports', function () {
             return view('admin.reports.daytour-reports');
         })->name('admin.daytour-reports')
-        ->middleware('can:daytour-reports');
+            ->middleware('can:daytour-reports');
 
         // --------------------- Maintenance ---------------------------------------
 
@@ -688,46 +689,69 @@ Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar:
             ->name('admin.deleted-promo-codes')
             ->middleware('can:promo-code-soft-delete');
 
+
+
+
+
+
         /**
-         * Reservations
+         * --------------------------------------------------------------------------------------
+         *                                     RESERVATIONS
+         * --------------------------------------------------------------------------------------
          */
 
-        // Reservation Lists
 
+        // Reservations List
         Route::get('/reservations-list', function () {
             return view('admin.reservations.reservations-list');
-        })->name('admin.reservations-list');
+        })->name('admin.reservations-list')
+            ->middleware('can:new-reservation-list');
 
-        //Create Transaction
+        // View Reservation
+        Route::get('view/reservation/{transaction}', ViewReservation::class)
+            ->name('admin.view-reservation')
+            ->middleware('can:new-reservation-view');
+
+        // Create Transaction
         Route::get('create/new-reservation', function () {
             return view('admin.reservations.create-reservation');
-        })->name('admin.create-reservation');
+        })->name('admin.create-reservation')
+            ->middleware('can:new-reservation-create');
+
+        // Edit Reservation
+        Route::get('edit/reservation/{transaction}', EditReservation::class)
+            ->name('admin.edit-reservation')
+            ->middleware('can:new-reservation-edit');
 
         // Completed Reservations
         Route::get('completed-reservations', function () {
             return view('admin.reservations.completed-reservation');
-        })->name('admin.completed-reservations');
+        })->name('admin.completed-reservations')
+            ->middleware('can:new-reservation-list');
 
-        // View Reservation
-        Route::get('view/reservation/{transaction}', ViewReservation::class)->name('admin.view-reservation');
-
-        // Edit Reservation
-        Route::get('edit/reservation/{transaction}', EditReservation::class)->name('admin.edit-reservation');
-
-        // Add Transaction
-        Route::get('add/transaction/{transaction}', AddTransaction::class)->name('admin.add-transaction');
+        // Add Transaction (Modifying an existing reservation)
+        Route::get('add/transaction/{transaction}', AddTransaction::class)
+            ->name('admin.add-transaction')
+            ->middleware('can:new-reservation-edit');
 
         // Rebook Reservation
-        Route::get('rebook/reservation/{transaction}', RebookReservation::class)->name('admin.rebook-reservation');
+        Route::get('rebook/reservation/{transaction}', RebookReservation::class)
+            ->name('admin.rebook-reservation')
+            ->middleware('can:new-reservation-edit');
 
+        // Archived Reservations
         Route::get('reservations/archives', function () {
             return view('admin.reservations.archived-reservations');
         })->name('admin.reservations-archives')
-            ->middleware(['auth', 'verified']);
+            ->middleware(['auth', 'verified', 'can:new-reservation-soft-delete']);
 
-        // Route::get('/reservations/archives', ArchiveReservations::class)
-        //     ->name('admin.reservations-archives')
-        //     ->middleware(['auth', 'verified']);
+
+
+
+
+
+
+
 
         /**
          * Payments
@@ -931,10 +955,10 @@ Route::get('/rooms/block-calendar', \App\Livewire\Admin\Rooms\RoomBlockCalendar:
         Route::get('/leases/archives', function () {
             return view('admin.rentals.leases.archived-leases');
         })
-        ->name('admin.leases-archives')
-        // ->middleware(['auth', 'verified']);
-        // Route::get('/leases/archives', \App\Livewire\Admin\Properties\Leases\ArchiveLeases::class)
-        ->middleware(['auth', 'can:archive-leases-view']);
+            ->name('admin.leases-archives')
+            // ->middleware(['auth', 'verified']);
+            // Route::get('/leases/archives', \App\Livewire\Admin\Properties\Leases\ArchiveLeases::class)
+            ->middleware(['auth', 'can:archive-leases-view']);
 
         //Lease Summary
         Route::get('/lease-reports', function () {
@@ -1654,7 +1678,25 @@ Route::prefix('guest')->group(function () {
 // ------------------------------- WEBHOOK ----------------------------------------- //
 
 Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
+Route::get('/payment/validate/{transaction}', [App\Http\Controllers\PaymentValidationController::class, 'validate'])
+    ->name('payment.validate');
 
+// ✅ PAYMENT ERROR PAGES
+Route::get('/payment/expired', function () {
+    return view('livewire.guest.payment-expired-page');
+})->name('guest.payment-expired');
+
+Route::get('/payment/already-paid', function () {
+    return view('livewire.guest.payment-already-paid-page');
+})->name('guest.payment-already-paid');
+
+Route::get('/payment/cancelled', function () {
+    return view('livewire.guest.payment-cancelled-page');
+})->name('guest.payment-cancelled');
+
+Route::get('/payment/error', function () {
+    return view('livewire.guest.payment-error-page');
+})->name('guest.payment-error');
 // ------------------------------- VIEW LOGS ----------------------------------------- //
 
 Route::get('/view-logs', function () {
