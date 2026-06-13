@@ -41,3 +41,5 @@ We decided to build on the TALL stack to maintain full control over the admin in
 | **Barbie** | Project Manager, Lead Backend Developer | [@aydilwakem](https://github.com/aydilwakem) |
 | **Kristine** | Backend Developer, QA Tester | [@krstinkyl](https://github.com/krstinkyl) |
 | **Sarah** | UI/UX, Frontend Developer | [@ssarzxc](https://github.com/ssarzxc) |
+| **Leo** | Developer | [@janleo](https://github.com/JanLeoEgamen) |
+
